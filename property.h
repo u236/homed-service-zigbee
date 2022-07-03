@@ -69,13 +69,24 @@ protected:
 
 };
 
-class OnOff : public PropertyObject
+class OnOffStatus : public PropertyObject
 {
 
 public:
 
-    OnOff(void);
-    virtual ~OnOff(void) {}
+    OnOffStatus(void);
+    virtual ~OnOffStatus(void) {}
+    void convert(const Cluster &cluster) override;
+
+};
+
+class Illuminance : public PropertyObject
+{
+
+public:
+
+    Illuminance(void);
+    virtual ~Illuminance(void) {}
     void convert(const Cluster &cluster) override;
 
 };
@@ -98,6 +109,17 @@ public:
 
     Humidity(void);
     virtual ~Humidity(void) {}
+    void convert(const Cluster &cluster) override;
+
+};
+
+class Occupancy : public PropertyObject
+{
+
+public:
+
+    Occupancy(void);
+    virtual ~Occupancy(void) {}
     void convert(const Cluster &cluster) override;
 
 };
