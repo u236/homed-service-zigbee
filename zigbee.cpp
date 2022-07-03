@@ -15,7 +15,7 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
 
-    connect(m_timer, &QTimer::timeout, this, &ZigBee::storeState);
+    connect(m_timer, &QTimer::timeout, this, &ZigBee::storeStatus);
 }
 
 void ZigBee::init(void)
@@ -55,12 +55,18 @@ void ZigBee::unserializeDevices(const QJsonArray &array)
             if (json.value("ineterviewFinished").toBool())
                 device->setInterviewFinished();
 
-            device->setName(json.value("name").toString());
             device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
             device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
+            device->setName(json.value("name").toString());
+            device->setVendor(json.value("vendor").toString());
+            device->setModel(json.value("model").toString());
             device->setLastSeen(json.value("lastSeen").toInt());
 
             unserializeEndPoints(device, json.value("endPoints").toArray());
+
+            if (device->interviewFinished())
+                device->setProperties();
+
             m_devices.insert(device->ieeeAddress(), device);
         }
     }
@@ -104,11 +110,17 @@ QJsonArray ZigBee::serializeDevices(void)
         json.insert("logicalType", static_cast <quint8> (it.value()->logicalType()));
         json.insert("ineterviewFinished", it.value()->interviewFinished());
 
+        if (it.value()->manufacturerCode())
+            json.insert("manufacturerCode", it.value()->manufacturerCode());
+
         if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
             json.insert("name", it.value()->name());
 
-        if (it.value()->manufacturerCode())
-            json.insert("manufacturerCode", it.value()->manufacturerCode());
+        if (!it.value()->vendor().isEmpty())
+            json.insert("vendor", it.value()->vendor());
+
+        if (!it.value()->model().isEmpty())
+            json.insert("model", it.value()->model());
 
         if (it.value()->lastSeen())
             json.insert("lastSeen", it.value()->lastSeen());
@@ -198,17 +210,19 @@ void ZigBee::interviewDevice(const Device &device)
             return;
         }
 
-        // TODO: check for vendor/modle is set or return here
-        if (it.value()->inClusters().contains(CLUSTER_BASIC))
+        if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->vendor().isEmpty() || device->model().isEmpty()))
         {
             readAttributes(device, it.key(), CLUSTER_BASIC, {ATTRIBUTE_BASIC_VENDOR, ATTRIBUTE_BASIC_MODEL});
-            // return;
+            return;
         }
     }
 
-    logInfo << "Device" << device->name() << "interview finished";
+    logInfo << "Device" << device->name() << "interview finished, vendor is" << device->vendor() << "and model is" << device->model();;
+
     device->setInterviewFinished();
-    storeState();
+    device->setProperties();
+
+    storeStatus();
 }
 
 void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clusterId, QList <quint16> attributes)
@@ -232,14 +246,133 @@ void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clu
     logWarning << "Device" << device->name() << "read attributes request failed";
 }
 
-void ZigBee::clusterCommandReceived(EndPoint endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
+void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    logInfo << "Cluster specific command" << commandId << "received from" << endPoint->device()->ieeeAddress().toHex(':') << "cluster" << QString::asprintf("0x%04X", clusterId) << "payload" << payload.toHex(':') << "id" << transactionId;
+    if (clusterId == CLUSTER_BASIC && (attributeId == ATTRIBUTE_BASIC_VENDOR || attributeId == ATTRIBUTE_BASIC_MODEL))
+    {
+        if (dataType != DATA_TYPE_STRING)
+            return;
+
+        switch (attributeId)
+        {
+            case ATTRIBUTE_BASIC_VENDOR:
+                endPoint->device()->setVendor(QString(data).trimmed());
+                break;
+
+            case ATTRIBUTE_BASIC_MODEL:
+                endPoint->device()->setModel(QString(data).trimmed());
+                break;
+        }
+
+        return;
+    }
+
+    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->fromDevice().count()); i++)
+    {
+        Property property = endPoint->device()->fromDevice().value(i);
+
+        if (property->clusterId() == clusterId)
+        {
+            Cluster cluster = endPoint->cluster(clusterId);
+            Attribute attribute = cluster->attribute(attributeId);
+
+            attribute->setDataType(dataType);
+            attribute->setData(data);
+
+            property->convert(cluster);
+            endPoint->setDataUpdated(true);
+        }
+    }
+
+    if (endPoint->dataUpdated())
+        return;
+
+    logWarning << "No valid property found for device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId);
 }
 
-void ZigBee::globalCommandReceived(EndPoint endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
+void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
 {
-    logInfo << "Global command" << commandId << "received from" << endPoint->device()->ieeeAddress().toHex(':') << "cluster" << QString::asprintf("0x%04X", clusterId) << "payload" << payload.toHex(':') << "id" << transactionId;
+    Q_UNUSED(transactionId)
+    logInfo << "Cluster specific command" << QString::asprintf("0x%02X", commandId) << "received from device" << endPoint->device()->ieeeAddress().toHex(':') << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.toHex(':');
+}
+
+void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
+{   
+    Q_UNUSED(transactionId)
+
+    switch (commandId)
+    {
+        case CMD_GLOBAL_READ_ATTRIBUTES_RESPONSE:
+        case CMD_GLOBAL_REPORT_ATTRIBUTES:
+        {
+            while (payload.length())
+            {
+                quint8 dataType, offset, size = 0;
+                quint16 attributeId;
+
+                if (commandId == CMD_GLOBAL_READ_ATTRIBUTES_RESPONSE)
+                {
+                    // TODO: check this
+                    if (payload.at(2))
+                        break;
+
+                    dataType = static_cast <quint8> (payload.at(3));
+                    offset = 4;
+                }
+                else
+                {
+                    dataType = static_cast <quint8> (payload.at(2));
+                    offset = 3;
+                }
+
+                memcpy(&attributeId, payload.constData(), sizeof(attributeId));
+                attributeId = qFromLittleEndian(attributeId);
+
+                switch (dataType)
+                {
+                    case DATA_TYPE_BOOLEAN:
+                    case DATA_TYPE_8BIT_BITMAP:
+                    case DATA_TYPE_8BIT_UNSIGNED:
+                    case DATA_TYPE_8BIT_SIGNED:
+                        size = 1;
+                        break;
+
+                    case DATA_TYPE_16BIT_UNSIGNED:
+                    case DATA_TYPE_16BIT_SIGNED:
+                        size = 2;
+                        break;
+
+                    case DATA_TYPE_SINGLE_PRECISION:
+                        size = 4;
+                        break;
+
+                    case DATA_TYPE_STRING:
+                        size = payload.at(offset++);
+                        break;
+
+                        // TODO: check this
+                    case DATA_TYPE_STRUCTURE:
+                        size = static_cast <quint8> (payload.length() - 3);
+                        break;
+
+                    default:
+                        logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << endPoint->device()->name();
+                        break;
+                }
+
+                if (size && payload.length() >= offset + size)
+                    parseAttribute(endPoint, clusterId, attributeId, dataType, payload.mid(offset, size));
+
+                payload.remove(0, offset + size);
+            }
+
+            break;
+        }
+
+        default:
+            logWarning << "Unrecognized command" << QString::asprintf("0x%02X", commandId) << "received from device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.toHex(':');
+            break;
+    }
 }
 
 void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
@@ -286,7 +419,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     m_devices.insert(ieeeAddress, device);
     m_adapter->setPermitJoin(m_permitJoin);
-    storeState();
+    storeStatus();
 }
 
 void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities)
@@ -384,8 +517,6 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId,
 
 void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
 {
-    Q_UNUSED(linkQuality)
-
     Device device = findDevice(networkAddress);
     EndPoint endPoint;
     zclHeaderStruct header;
@@ -422,17 +553,24 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 
     //    if (!device->interviewFinished())
     //        interviewDevice(device);
 
+    device->setLinkQuality(linkQuality);
     device->updateLastSeen();
+
+    if (endPoint->dataUpdated())
+    {
+        endPoint->setDataUpdated(false);
+        emit endPointUpdated(endPoint);
+    }
 }
 
-void ZigBee::storeState(void)
+void ZigBee::storeStatus(void)
 {
     QFile file(m_databaseFile);
     QJsonObject json;
 
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
-        logWarning << "Can't store state";
+        logWarning << "Can't store status";
         return;
     }
 
@@ -442,6 +580,6 @@ void ZigBee::storeState(void)
     file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
     file.close();
 
-    logInfo << "State stored successfully";
-    emit stateUpdated(json);
+    logInfo << "Status stored successfully";
+    emit statusStored(json);
 }
