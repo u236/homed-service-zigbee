@@ -15,7 +15,7 @@ Attribute ClusterObject::attribute(quint16 attributeId)
 
 using namespace Properties;
 
-Status::Status(void) : PropertyObject(CLUSTER_ON_OFF, "status") {}
+Status::Status(void) : PropertyObject("status", CLUSTER_ON_OFF) {}
 
 void Status::convert(const Cluster &cluster)
 {
@@ -27,7 +27,33 @@ void Status::convert(const Cluster &cluster)
     m_value = attribute->data().at(0) ? "on" : "off";
 }
 
-Illuminance::Illuminance(void) : PropertyObject(CLUSTER_ILLUMINANCE_MEASUREMENT, "illuminance") {}
+Level::Level(void) : PropertyObject("level", CLUSTER_LEVEL_CONTROL) {}
+
+void Level::convert(const Cluster &cluster)
+{
+    Attribute attribute = cluster->attribute(0x0000);
+
+    if (attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
+        return;
+
+    m_value = static_cast <quint8> (attribute->data().at(0));
+}
+
+ColorTemperature::ColorTemperature(void) : PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
+
+void ColorTemperature::convert(const Cluster &cluster)
+{
+    Attribute attribute = cluster->attribute(0x0007);
+    qint16 value;
+
+    if (attribute->dataType() != DATA_TYPE_16BIT_UNSIGNED || attribute->data().length() != 2)
+        return;
+
+    memcpy(&value, attribute->data().constData(), sizeof(value));
+    m_value = qFromLittleEndian(value);
+}
+
+Illuminance::Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
 
 void Illuminance::convert(const Cluster &cluster)
 {
@@ -41,7 +67,7 @@ void Illuminance::convert(const Cluster &cluster)
     m_value = static_cast <quint32> (value ? pow(10, (value - 1) / 10000.0) : 0);
 }
 
-Temperature::Temperature(void) : PropertyObject(CLUSTER_TEMPERATURE_MEASUREMENT, "temperature") {}
+Temperature::Temperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT) {}
 
 void Temperature::convert(const Cluster &cluster)
 {
@@ -55,7 +81,7 @@ void Temperature::convert(const Cluster &cluster)
     m_value = static_cast <double> (qFromLittleEndian(value)) / 100;
 }
 
-Humidity::Humidity(void) : PropertyObject(CLUSTER_RELATIVE_HUMIDITY, "humidity") {}
+Humidity::Humidity(void) : PropertyObject("humidity", CLUSTER_RELATIVE_HUMIDITY) {}
 
 void Humidity::convert(const Cluster &cluster)
 {
@@ -69,7 +95,7 @@ void Humidity::convert(const Cluster &cluster)
     m_value = static_cast <double> (qFromLittleEndian(value)) / 100;
 }
 
-Occupancy::Occupancy(void) : PropertyObject(CLUSTER_OCCUPANCY_SENSING, "occupied") {}
+Occupancy::Occupancy(void) : PropertyObject("occupied", CLUSTER_OCCUPANCY_SENSING) {}
 
 void Occupancy::convert(const Cluster &cluster)
 {

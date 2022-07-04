@@ -13,6 +13,9 @@
 #define CMD_GLOBAL_REPORT_ATTRIBUTES                0x0A
 #define CMD_GLOBAL_DEFAULT_RESPONSE                 0x0B
 
+#define ATTRIBUTE_BASIC_VENDOR                      0x0004
+#define ATTRIBUTE_BASIC_MODEL                       0x0005
+
 #define PROFILE_IPM                                 0x0101 // Industrial Plant Monitoring
 #define PROFILE_HA                                  0x0104 // Home Automation
 #define PROFILE_CBA                                 0x0105 // Commercial Building Automation
@@ -50,9 +53,6 @@
 #define CLUSTER_DIAGNOSTICS                         0x0B05
 #define CLUSTER_TOUCHLINK                           0x1000
 
-#define ATTRIBUTE_BASIC_VENDOR                      0x0004
-#define ATTRIBUTE_BASIC_MODEL                       0x0005
-
 #define DATA_TYPE_BOOLEAN                           0x10
 #define DATA_TYPE_8BIT_BITMAP                       0x18
 #define DATA_TYPE_8BIT_UNSIGNED                     0x20
@@ -76,12 +76,6 @@ struct zclHeaderStruct
     quint8 frameControl;
     quint8 transactionId;
     quint8 commandId;
-};
-
-struct levelControlStruct
-{
-    quint8  level;
-    quint16 time;
 };
 
 #pragma pack(pop)

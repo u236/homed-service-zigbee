@@ -53,10 +53,10 @@ class PropertyObject
 
 public:
 
-    PropertyObject(quint16 clusterId, QString name) : m_clusterId(clusterId), m_name(name) {}
+    PropertyObject(const QString &name, quint16 clusterId) : m_clusterId(clusterId), m_name(name) {}
 
-    inline quint16 clusterId(void) { return m_clusterId; }
     inline QString name(void) { return m_name; }
+    inline quint16 clusterId(void) { return m_clusterId; }
     inline QVariant value(void) { return m_value; }
 
     virtual void convert(const Cluster &cluster) = 0;
@@ -78,6 +78,28 @@ namespace Properties
 
         Status(void);
         virtual ~Status(void) {}
+        void convert(const Cluster &cluster) override;
+
+    };
+
+    class Level : public PropertyObject
+    {
+
+    public:
+
+        Level(void);
+        virtual ~Level(void) {}
+        void convert(const Cluster &cluster) override;
+
+    };
+
+    class ColorTemperature : public PropertyObject
+    {
+
+    public:
+
+        ColorTemperature(void);
+        virtual ~ColorTemperature(void) {}
         void convert(const Cluster &cluster) override;
 
     };

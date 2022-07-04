@@ -3,6 +3,22 @@
 
 #include <QSharedPointer>
 
+#pragma pack(push, 1)
+
+struct levelStruct
+{
+    quint8  level;
+    quint16 time;
+};
+
+struct colorTemperatureStruct
+{
+    quint16 temperature;
+    quint16 time;
+};
+
+#pragma pack(pop)
+
 class ActionObject;
 typedef QSharedPointer <ActionObject> Action;
 
@@ -11,20 +27,19 @@ class ActionObject
 
 public:
 
-    ActionObject(quint8 endPointId, quint16 clusterId, QString name) : m_endPointId(endPointId), m_clusterId(clusterId), m_name(name), m_transactionId(0) {}
+    ActionObject(const QString &name, quint16 clusterId, quint8 endPointId) : m_name(name), m_clusterId(clusterId), m_endPointId(endPointId), m_transactionId(0) {}
 
+    inline QString name(void) { return m_name; }
     inline quint8 endPointId(void) { return m_endPointId; }
     inline quint16 clusterId(void) { return m_clusterId; }
-    inline QString name(void) { return m_name; }
 
     virtual QByteArray request(const QVariant &data) = 0;
 
 protected:
 
-    quint8 m_endPointId;
-    quint16 m_clusterId;
     QString m_name;
-    quint8 m_transactionId;
+    quint16 m_clusterId;
+    quint8 m_endPointId, m_transactionId;
 
 };
 
@@ -48,6 +63,17 @@ namespace Actions
 
         Level(quint8 endPointId);
         virtual ~Level(void) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class ColorTemperature : public ActionObject
+    {
+
+    public:
+
+        ColorTemperature(quint8 endPointId);
+        virtual ~ColorTemperature(void) {}
         QByteArray request(const QVariant &data) override;
 
     };
