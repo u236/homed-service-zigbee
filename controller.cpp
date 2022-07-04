@@ -10,22 +10,35 @@ Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this))
 void Controller::mqttConnected(void)
 {
     logInfo << "MQTT connected";
+    mqttSubscribe("homed/td/zigbee/#");
     m_zigbee->init();
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
-    Q_UNUSED(message)
-    Q_UNUSED(topic)
+    QJsonObject json = QJsonDocument::fromJson(message).object();
+
+    if (topic.name().startsWith("homed/td/zigbee/"))
+    {
+        QByteArray ieeeAddress = QByteArray::fromHex(topic.name().split('/').last().toLocal8Bit());
+
+        for (auto it = json.begin(); it != json.end(); it++)
+        {
+            if (!it.value().toVariant().isValid())
+                continue;
+
+            m_zigbee->deviceAction(ieeeAddress, it.key(), it.value().toVariant());
+        }
+    }
 }
 
 void Controller::endPointUpdated(const EndPoint &endPoint)
 {
     QJsonObject json;
 
-    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->fromDevice().count()); i++)
+    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->properties().count()); i++)
     {
-        Property property = endPoint->device()->fromDevice().value(i);
+        Property property = endPoint->device()->properties().value(i);
 
         if (!property->value().isValid())
             continue;

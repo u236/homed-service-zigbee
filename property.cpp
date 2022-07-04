@@ -13,16 +13,18 @@ Attribute ClusterObject::attribute(quint16 attributeId)
     return it.value();
 }
 
-OnOffStatus::OnOffStatus(void) : PropertyObject(CLUSTER_ON_OFF, "enabled") {}
+using namespace Properties;
 
-void OnOffStatus::convert(const Cluster &cluster)
+Status::Status(void) : PropertyObject(CLUSTER_ON_OFF, "status") {}
+
+void Status::convert(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0000);
 
     if (attribute->dataType() != DATA_TYPE_BOOLEAN || attribute->data().length() != 1)
         return;
 
-    m_value = attribute->data().at(0) ? true : false;
+    m_value = attribute->data().at(0) ? "on" : "off";
 }
 
 Illuminance::Illuminance(void) : PropertyObject(CLUSTER_ILLUMINANCE_MEASUREMENT, "illuminance") {}

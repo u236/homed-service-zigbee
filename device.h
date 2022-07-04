@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QSharedPointer>
+#include "action.h"
 #include "property.h"
 #include "zstack.h"
 
@@ -85,8 +86,8 @@ public:
 
     inline QMap <quint8, EndPoint> &endPoints(void) { return m_endPoints; }
 
-    inline QList <Property> &fromDevice(void) { return m_fromDevice; }
-    inline QList <Property> &toDevice(void) { return m_toDevice; }
+    inline QList <Action> &actions(void) { return m_actions; }
+    inline QList <Property> &properties(void) { return m_properties; }
 
     void setProperties(void);
 
@@ -104,7 +105,9 @@ private:
     qint64 m_lastSeen;
 
     QMap <quint8, EndPoint> m_endPoints;
-    QList <Property> m_fromDevice, m_toDevice;
+
+    QList <Action> m_actions;
+    QList <Property> m_properties;
 
 };
 

@@ -1,6 +1,7 @@
 include(../homed-common/homed-common.pri)
 
 HEADERS += \
+    action.h \
     controller.h \
     device.h \
     property.h \
@@ -8,6 +9,7 @@ HEADERS += \
     zstack.h
 
 SOURCES += \
+    action.cpp \
     controller.cpp \
     device.cpp \
     property.cpp \

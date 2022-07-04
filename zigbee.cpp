@@ -42,6 +42,29 @@ void ZigBee::setPermitJoin(bool enabled)
     m_adapter->setPermitJoin(m_permitJoin);
 }
 
+void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData)
+{
+    auto it = m_devices.find(ieeeAddress);
+
+    if (it == m_devices.end())
+        return;
+
+    for (quint8 i = 0; i < static_cast <quint8> (it.value()->actions().count()); i++)
+    {
+        Action action = it.value()->actions().value(i);
+
+        if (action->name() == actionName)
+        {
+            QByteArray data = action->request(actionData);
+
+            if (data.isEmpty() || m_adapter->dataRequest(it.value()->networkAddress(), action->endPointId(), action->clusterId(), data))
+                continue;
+
+            logWarning << "Device" << it.value()->name() << actionName << "action failed";
+        }
+    }
+}
+
 void ZigBee::unserializeDevices(const QJsonArray &array)
 {
     for (auto it = array.begin(); it != array.end(); it++)
@@ -273,9 +296,9 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
     if (!endPoint->device()->interviewFinished())
         return;
 
-    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->fromDevice().count()); i++)
+    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->properties().count()); i++)
     {
-        Property property = endPoint->device()->fromDevice().value(i);
+        Property property = endPoint->device()->properties().value(i);
 
         if (property->clusterId() == clusterId)
         {

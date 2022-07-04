@@ -78,6 +78,12 @@ struct zclHeaderStruct
     quint8 commandId;
 };
 
+struct levelControlStruct
+{
+    quint8  level;
+    quint16 time;
+};
+
 #pragma pack(pop)
 
 class ZigBee : public QObject
@@ -90,6 +96,7 @@ public:
 
     void init(void);
     void setPermitJoin(bool enabled);
+    void deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData);
 
 private:
 

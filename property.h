@@ -69,59 +69,62 @@ protected:
 
 };
 
-class OnOffStatus : public PropertyObject
+namespace Properties
 {
+    class Status : public PropertyObject
+    {
 
-public:
+    public:
 
-    OnOffStatus(void);
-    virtual ~OnOffStatus(void) {}
-    void convert(const Cluster &cluster) override;
+        Status(void);
+        virtual ~Status(void) {}
+        void convert(const Cluster &cluster) override;
 
-};
+    };
 
-class Illuminance : public PropertyObject
-{
+    class Illuminance : public PropertyObject
+    {
 
-public:
+    public:
 
-    Illuminance(void);
-    virtual ~Illuminance(void) {}
-    void convert(const Cluster &cluster) override;
+        Illuminance(void);
+        virtual ~Illuminance(void) {}
+        void convert(const Cluster &cluster) override;
 
-};
+    };
 
-class Temperature : public PropertyObject
-{
+    class Temperature : public PropertyObject
+    {
 
-public:
+    public:
 
-    Temperature(void);
-    virtual ~Temperature(void) {}
-    void convert(const Cluster &cluster) override;
+        Temperature(void);
+        virtual ~Temperature(void) {}
+        void convert(const Cluster &cluster) override;
 
-};
+    };
 
-class Humidity : public PropertyObject
-{
+    class Humidity : public PropertyObject
+    {
 
-public:
+    public:
 
-    Humidity(void);
-    virtual ~Humidity(void) {}
-    void convert(const Cluster &cluster) override;
+        Humidity(void);
+        virtual ~Humidity(void) {}
+        void convert(const Cluster &cluster) override;
 
-};
+    };
 
-class Occupancy : public PropertyObject
-{
+    class Occupancy : public PropertyObject
+    {
 
-public:
+    public:
 
-    Occupancy(void);
-    virtual ~Occupancy(void) {}
-    void convert(const Cluster &cluster) override;
+        Occupancy(void);
+        virtual ~Occupancy(void) {}
+        void convert(const Cluster &cluster) override;
 
-};
+    };
+}
 
 #endif
