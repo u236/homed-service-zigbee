@@ -55,7 +55,7 @@ class DeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_interviewFinished(false), m_linkQuality(0), m_lastSeen(0) {}
+        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_interviewFinished(false), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
@@ -80,12 +80,12 @@ public:
     inline bool interviewFinished(void) { return m_interviewFinished; }
     inline void setInterviewFinished(void) { m_interviewFinished = true; }
 
-    inline quint8 linkQuality(void) { return m_linkQuality; }
-    inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
-
     inline qint64 lastSeen(void) { return m_lastSeen; }
     inline void setLastSeen(qint64 value) { m_lastSeen = value; }
     inline void updateLastSeen(void) { m_lastSeen = QDateTime::currentSecsSinceEpoch(); }
+
+    inline quint8 linkQuality(void) { return m_linkQuality; }
+    inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
 
     inline QMap <quint8, EndPoint> &endPoints(void) { return m_endPoints; }
 
@@ -105,8 +105,8 @@ private:
     QString m_name, m_vendor, m_model;
 
     bool m_interviewFinished;
-    quint8 m_linkQuality;
     qint64 m_lastSeen;
+    quint8 m_linkQuality;
 
     QMap <quint8, EndPoint> m_endPoints;
 

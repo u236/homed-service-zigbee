@@ -24,7 +24,7 @@ void BatteryVoltage::convert(const Cluster &cluster)
     if (attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
         return;
 
-    m_value = QString("%1v").arg(static_cast <double> (attribute->data().at(0)) * 0.1);
+    m_value = static_cast <double> (attribute->data().at(0)) * 0.1;
 }
 
 BatteryPercentage::BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
@@ -36,7 +36,7 @@ void BatteryPercentage::convert(const Cluster &cluster)
     if (attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
         return;
 
-    m_value = QString("%1%").arg(static_cast <double> (attribute->data().at(0)) / 2);
+    m_value = static_cast <double> (attribute->data().at(0)) / 2;
 }
 
 BatteryIKEA::BatteryIKEA(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
@@ -48,7 +48,7 @@ void BatteryIKEA::convert(const Cluster &cluster)
     if (attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
         return;
 
-    m_value = QString("%1%").arg(static_cast <double> (attribute->data().at(0)));
+    m_value = static_cast <double> (attribute->data().at(0));
 }
 
 BatteryLUMI::BatteryLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
@@ -70,7 +70,7 @@ void BatteryLUMI::convert(const Cluster &cluster)
                     break;
 
                 memcpy(&value, attribute->data().constData() + 2, sizeof(value));
-                m_value = QString("%1v").arg(qFromLittleEndian(value) / 1000.0);
+                m_value = qFromLittleEndian(value) / 1000.0;
                 return;
 
             case 0xFF02:
@@ -79,7 +79,7 @@ void BatteryLUMI::convert(const Cluster &cluster)
                     break;
 
                 memcpy(&value, attribute->data().constData() + 5, sizeof(value));
-                m_value = QString("%1v").arg(qFromLittleEndian(value) / 1000.0);
+                m_value = qFromLittleEndian(value) / 1000.0;
                 return;
         }
     }
@@ -175,4 +175,33 @@ void Occupancy::convert(const Cluster &cluster)
         return;
 
     m_value = attribute->data().at(0) ? true : false;
+}
+
+CubeAction::CubeAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
+
+void CubeAction::convert(const Cluster &cluster)
+{
+    Attribute attribute = cluster->attribute(0x0055);
+    qint16 value;
+
+    if (attribute->dataType() != DATA_TYPE_16BIT_UNSIGNED || attribute->data().length() != 2)
+        return;
+
+    memcpy(&value, attribute->data().constData(), sizeof(value));
+    value = qFromLittleEndian(value);
+
+    if (!value)
+        m_value = "shake";
+    else if (value == 2)
+        m_value = "wake";
+    else if (value == 3)
+        m_value = "fall";
+    else if (value >= 512)
+        m_value = "tap";
+    else if (value >= 256)
+        m_value = "slide";
+    else if (value >= 128)
+        m_value = "flip";
+    else if (value >= 64)
+        m_value = "drop";
 }

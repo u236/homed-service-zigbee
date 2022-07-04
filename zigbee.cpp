@@ -131,7 +131,6 @@ QJsonArray ZigBee::serializeDevices(void)
         json.insert("ieeeAddress", QString(it.value()->ieeeAddress().toHex(':')));
         json.insert("networkAddress", it.value()->networkAddress());
         json.insert("logicalType", static_cast <quint8> (it.value()->logicalType()));
-        json.insert("ineterviewFinished", it.value()->interviewFinished());
 
         if (it.value()->manufacturerCode())
             json.insert("manufacturerCode", it.value()->manufacturerCode());
@@ -144,6 +143,9 @@ QJsonArray ZigBee::serializeDevices(void)
 
         if (!it.value()->model().isEmpty())
             json.insert("model", it.value()->model());
+
+        if (it.value()->logicalType() != LogicalType::Coordinator)
+            json.insert("ineterviewFinished", it.value()->interviewFinished());
 
         if (it.value()->lastSeen())
             json.insert("lastSeen", it.value()->lastSeen());

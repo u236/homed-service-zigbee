@@ -1,4 +1,5 @@
 #include "device.h"
+#include "logger.h"
 
 Cluster EndPointObject::cluster(quint16 clusterId)
 {
@@ -25,7 +26,7 @@ void DeviceObject::setProperties(void)
     {
         if (m_model == "TRADFRI on/off switch")
         {
-            m_properties = {Property(new Properties::BatteryIKEA)}; // TODO: add other properties
+            m_properties = {Property(new Properties::BatteryIKEA), Property(new Properties::Status)}; // TODO: add level move property
             m_reportings = {Reporting(new Reportings::BatteryPercentage)};
             return;
         }
@@ -48,7 +49,20 @@ void DeviceObject::setProperties(void)
     }
     else if (m_vendor == "LUMI")
     {
-        if (m_model == "lumi.sens" || m_model == "lumi.sensor_ht")
+        if (m_model == "lumi.plug.maeu01")
+        {
+            m_properties = {Property(new Properties::Status)}; // TODO: add power measuring properties
+            m_reportings = {Reporting(new Reportings::Status)};
+            return;
+        }
+
+        if (m_model == "lumi.sensor_cube")
+        {
+            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::CubeAction)};
+            return;
+        }
+
+        if (m_model == "lumi.sensor_ht" || m_model == "lumi.sens")
         {
             m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::Temperature), Property(new Properties::Humidity)};
             return;
@@ -69,4 +83,6 @@ void DeviceObject::setProperties(void)
             return;
         }
     }
+
+    logWarning << "Unrecognized device" << name() << "vendor" << m_vendor << "and model" << m_model;
 }

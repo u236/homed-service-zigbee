@@ -2,8 +2,6 @@
 #include "action.h"
 #include "zigbee.h"
 
-#include "logger.h"
-
 using namespace Actions;
 
 Actions::Status::Status(quint8 endPointId) : ActionObject("status", CLUSTER_ON_OFF, endPointId) {}

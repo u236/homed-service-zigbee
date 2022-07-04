@@ -192,6 +192,17 @@ namespace Properties
         void convert(const Cluster &cluster) override;
 
     };
+
+    class CubeAction : public PropertyObject
+    {
+
+    public:
+
+        CubeAction(void);
+        virtual ~CubeAction(void) {}
+        void convert(const Cluster &cluster) override;
+
+    };
 }
 
 #endif
