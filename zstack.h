@@ -2,7 +2,7 @@
 #define ZSTACK_H
 
 #define ADAPTER_RESET_DELAY                         10
-#define ADAPTER_REQUEST_TIMEOUT                     5000
+#define ADAPTER_REQUEST_TIMEOUT                     10000
 #define ADAPTER_CHANNEL_LIST                        0x07FFF800
 
 #define ZSTACK_PACKET_START                         0xFE

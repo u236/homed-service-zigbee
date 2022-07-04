@@ -264,8 +264,14 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
                 break;
         }
 
+        if (!endPoint->device()->vendor().isEmpty() && !endPoint->device()->model().isEmpty())
+            interviewDevice(endPoint->device());
+
         return;
     }
+
+    if (!endPoint->device()->interviewFinished())
+        return;
 
     for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->fromDevice().count()); i++)
     {
@@ -287,7 +293,7 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
     if (endPoint->dataUpdated())
         return;
 
-    logWarning << "No valid property found for device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId);
+    logWarning << "No property found for device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId);
 }
 
 void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -347,7 +353,7 @@ void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, 
                         break;
 
                     case DATA_TYPE_STRING:
-                        size = payload.at(offset++);
+                        size = static_cast <quint8> (payload.at(offset++));
                         break;
 
                         // TODO: check this

@@ -12,7 +12,7 @@ Cluster EndPointObject::cluster(quint16 clusterId)
 
 void DeviceObject::setProperties(void)
 {
-    if (m_vendor == "xiaomi" && m_model == "sensor")
+    if (m_vendor == "LUMI" && (m_model == "lumi.sens" || m_model == "lumi.sensor_ht"))
     {
         m_fromDevice.append(Property(new Temperature));
         m_fromDevice.append(Property(new Humidity));

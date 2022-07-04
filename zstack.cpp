@@ -150,7 +150,6 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clus
     request.length = static_cast <quint8> (data.length());
 
     connect(this, &ZStack::dataConfirm, &loop, &QEventLoop::quit);
-    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
 
     if(!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
@@ -158,7 +157,7 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clus
         return false;
     }
 
-    timer.start(ADAPTER_REQUEST_TIMEOUT);
+    timer.singleShot(ADAPTER_REQUEST_TIMEOUT, &loop, &QEventLoop::quit);
     loop.exec();
     m_transactionId++;
 
@@ -190,9 +189,9 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case AF_DATA_CONFIRM:
 
-            if (static_cast <quint8> (data[2]) == m_transactionId)
+            if (static_cast <quint8> (data.at(2)) == m_transactionId)
             {
-                m_requestSuccess = data[0] ? false : true;
+                m_requestSuccess = data.at(0) ? false : true;
                 emit dataConfirm();
             }
 
