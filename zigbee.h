@@ -127,7 +127,7 @@ private:
     void readAttributes(const Device &device, quint8 endPointId, quint16 clusterId, QList <quint16> attributes);
     void parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data);
 
-    void clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload); // TODO: maybe const payload?
+    void clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload);
     void globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload);
 
 private slots:

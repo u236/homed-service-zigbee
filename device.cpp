@@ -26,7 +26,7 @@ void DeviceObject::setProperties(void)
     {
         if (m_model == "TRADFRI on/off switch")
         {
-            m_properties = {Property(new Properties::BatteryIKEA), Property(new Properties::Status)}; // TODO: add level move property
+            m_properties = {Property(new Properties::BatteryIKEA), Property(new Properties::SwitchAction), Property(new Properties::LevelAction)};
             m_reportings = {Reporting(new Reportings::BatteryPercentage)};
             return;
         }
@@ -71,6 +71,12 @@ void DeviceObject::setProperties(void)
         if (m_model == "lumi.sensor_motion")
         {
             m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::Occupancy)};
+            return;
+        }
+
+        if (m_model == "lumi.sensor_switch")
+        {
+            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::SwitchActionLUMI)};
             return;
         }
     }

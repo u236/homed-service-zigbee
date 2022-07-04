@@ -40,9 +40,23 @@ class ClusterObject
 public:
 
     ClusterObject(void) {}
+
+    inline quint8 commandId(void) { return m_commandId; }
+    inline void setCommandId(quint8 value) { m_commandId = value; }
+
+    inline QByteArray commandData(void) { return m_commandData; }
+    inline void setCommandData(const QByteArray &value) { m_commandData = value; }
+
+    inline bool commandReceived(void) { return m_commandReceived; }
+    inline void setCommandReceived(bool value = true) { m_commandReceived = value; }
+
     Attribute attribute(quint16 attributeId);
 
 private:
+
+    quint8 m_commandId;
+    QByteArray m_commandData;
+    bool m_commandReceived;
 
     QMap <quint16, Attribute> m_attributes;
 
@@ -60,7 +74,7 @@ public:
     inline quint16 clusterId(void) { return m_clusterId; }
     inline QVariant value(void) { return m_value; }
 
-    virtual void convert(const Cluster &cluster) = 0;
+    virtual void parse(const Cluster &cluster) = 0;
 
 protected:
 
@@ -79,7 +93,7 @@ namespace Properties
 
         BatteryVoltage(void);
         virtual ~BatteryVoltage(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -90,7 +104,7 @@ namespace Properties
 
         BatteryPercentage(void);
         virtual ~BatteryPercentage(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -101,7 +115,7 @@ namespace Properties
 
         BatteryIKEA(void);
         virtual ~BatteryIKEA(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -112,7 +126,7 @@ namespace Properties
 
         BatteryLUMI(void);
         virtual ~BatteryLUMI(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -123,7 +137,7 @@ namespace Properties
 
         Status(void);
         virtual ~Status(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -134,7 +148,7 @@ namespace Properties
 
         Level(void);
         virtual ~Level(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -145,7 +159,7 @@ namespace Properties
 
         ColorTemperature(void);
         virtual ~ColorTemperature(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -156,7 +170,7 @@ namespace Properties
 
         Illuminance(void);
         virtual ~Illuminance(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -167,7 +181,7 @@ namespace Properties
 
         Temperature(void);
         virtual ~Temperature(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -178,7 +192,7 @@ namespace Properties
 
         Humidity(void);
         virtual ~Humidity(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -189,7 +203,7 @@ namespace Properties
 
         Occupancy(void);
         virtual ~Occupancy(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
 
     };
 
@@ -200,7 +214,51 @@ namespace Properties
 
         CubeAction(void);
         virtual ~CubeAction(void) {}
-        void convert(const Cluster &cluster) override;
+        void parse(const Cluster &cluster) override;
+
+    };
+
+    class SwitchAction : public PropertyObject
+    {
+
+    public:
+
+        SwitchAction(void);
+        virtual ~SwitchAction(void) {}
+        void parse(const Cluster &cluster) override;
+
+    };
+
+    class SwitchActionPTVO : public PropertyObject
+    {
+
+    public:
+
+        SwitchActionPTVO(void);
+        virtual ~SwitchActionPTVO(void) {}
+        void parse(const Cluster &cluster) override;
+
+    };
+
+    class SwitchActionLUMI : public PropertyObject
+    {
+
+    public:
+
+        SwitchActionLUMI(void);
+        virtual ~SwitchActionLUMI(void) {}
+        void parse(const Cluster &cluster) override;
+
+    };
+
+    class LevelAction : public PropertyObject
+    {
+
+    public:
+
+        LevelAction(void);
+        virtual ~LevelAction(void) {}
+        void parse(const Cluster &cluster) override;
 
     };
 }

@@ -19,9 +19,10 @@ class EndPointObject
 
 public:
 
-    EndPointObject(Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-        m_device(device), m_profileId(profileId), m_deviceId(deviceId), m_dataUpdated(false) {}
+    EndPointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
+        m_id(id), m_device(device), m_profileId(profileId), m_deviceId(deviceId), m_dataUpdated(false) {}
 
+    inline quint8 id(void) {return m_id; }
     inline Device device(void) { return m_device; }
 
     inline quint16 profileId(void) { return m_profileId; }
@@ -31,7 +32,7 @@ public:
     inline void setDeviceId(quint16 value) { m_deviceId = value; }
 
     inline bool dataUpdated(void) { return m_dataUpdated; }
-    inline void setDataUpdated(bool value) { m_dataUpdated = value; }
+    inline void setDataUpdated(bool value = true) { m_dataUpdated = value; }
 
     inline QList <quint16> &inClusters(void) { return m_inClusters; }
     inline QList <quint16> &outClusters(void) { return m_outClusters; }
@@ -40,6 +41,7 @@ public:
 
 private:
 
+    quint8 m_id;
     Device m_device;
     quint16 m_profileId, m_deviceId;
     bool m_dataUpdated;

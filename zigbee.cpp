@@ -103,7 +103,8 @@ void ZigBee::unserializeEndPoints(const Device &device, const QJsonArray &array)
 
         if (json.contains("endPointId"))
         {
-            EndPoint endPoint(new EndPointObject(device));
+            quint8 endPointId = static_cast <quint8> (json.value("endPointId").toInt());
+            EndPoint endPoint(new EndPointObject(endPointId, device));
             QJsonArray inClustersArray = json.value("inClusters").toArray(), outClustersArray = json.value("outClusters").toArray();
 
             endPoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
@@ -115,7 +116,7 @@ void ZigBee::unserializeEndPoints(const Device &device, const QJsonArray &array)
             for (const QJsonValue &clusterId : outClustersArray)
                 endPoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
 
-            device->endPoints().insert(static_cast <quint8> (json.value("endPointId").toInt()), endPoint);
+            device->endPoints().insert(endPointId, endPoint);
         }
     }
 }
@@ -346,8 +347,8 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
             attribute->setDataType(dataType);
             attribute->setData(data);
 
-            property->convert(cluster);
-            endPoint->setDataUpdated(true);
+            property->parse(cluster);
+            endPoint->setDataUpdated();
         }
     }
 
@@ -357,10 +358,33 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
     logWarning << "No property found for device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId);
 }
 
-void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
+void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
 {
-    Q_UNUSED(transactionId)
-    logInfo << "Cluster specific command" << QString::asprintf("0x%02X", commandId) << "received from device" << endPoint->device()->ieeeAddress().toHex(':') << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.toHex(':');
+    if (clusterId == CLUSTER_OTA_UPGRADE)
+    {
+        if (commandId == 0x01)
+        {
+            zclHeaderStruct header;
+
+            header.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT;
+            header.transactionId = transactionId;
+            header.commandId = 0x02;
+
+            m_adapter->dataRequest(endPoint->device()->networkAddress(), endPoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(0x98));
+        }
+    }
+    else
+    {
+        Cluster cluster = endPoint->cluster(clusterId);
+
+        cluster->setCommandId(commandId);
+        cluster->setCommandData(payload);
+        cluster->setCommandReceived();
+
+        // TODO: remove log
+        logInfo << "Cluster specific command" << QString::asprintf("0x%02X", commandId) << "received from device" << endPoint->device()->ieeeAddress().toHex(':') << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.toHex(':');
+        endPoint->setDataUpdated();
+    }
 }
 
 void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -463,20 +487,20 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     device->setLogicalType(LogicalType::Coordinator);
     device->setInterviewFinished();
 
-    device->endPoints().insert(0x01, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0005)));
-    device->endPoints().insert(0x02, EndPoint(new EndPointObject(device, PROFILE_IPM,   0x0005)));
-    device->endPoints().insert(0x03, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0005)));
-    device->endPoints().insert(0x04, EndPoint(new EndPointObject(device, PROFILE_TA,    0x0005)));
-    device->endPoints().insert(0x05, EndPoint(new EndPointObject(device, PROFILE_PHHC,  0x0005)));
-    device->endPoints().insert(0x06, EndPoint(new EndPointObject(device, PROFILE_AMI,   0x0005)));
-    device->endPoints().insert(0x08, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0005)));
-    device->endPoints().insert(0x0A, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0005)));
-    device->endPoints().insert(0x0B, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0400)));
-    device->endPoints().insert(0x0C, EndPoint(new EndPointObject(device, PROFILE_ZLL,   0x0005)));
-    device->endPoints().insert(0x0D, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0005)));
-    device->endPoints().insert(0x2F, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0005)));
-    device->endPoints().insert(0x6E, EndPoint(new EndPointObject(device, PROFILE_HA,    0x0005)));
-    device->endPoints().insert(0xF2, EndPoint(new EndPointObject(device, PROFILE_HUE,   0x0005)));
+    device->endPoints().insert(0x01, EndPoint(new EndPointObject(0x01, device, PROFILE_HA,   0x0005)));
+    device->endPoints().insert(0x02, EndPoint(new EndPointObject(0x01, device, PROFILE_IPM,  0x0005)));
+    device->endPoints().insert(0x03, EndPoint(new EndPointObject(0x03, device, PROFILE_HA,   0x0005)));
+    device->endPoints().insert(0x04, EndPoint(new EndPointObject(0x04, device, PROFILE_TA,   0x0005)));
+    device->endPoints().insert(0x05, EndPoint(new EndPointObject(0x05, device, PROFILE_PHHC, 0x0005)));
+    device->endPoints().insert(0x06, EndPoint(new EndPointObject(0x06, device, PROFILE_AMI,  0x0005)));
+    device->endPoints().insert(0x08, EndPoint(new EndPointObject(0x08, device, PROFILE_HA,   0x0005)));
+    device->endPoints().insert(0x0A, EndPoint(new EndPointObject(0x0A, device, PROFILE_HA,   0x0005)));
+    device->endPoints().insert(0x0B, EndPoint(new EndPointObject(0x0B, device, PROFILE_HA,   0x0400)));
+    device->endPoints().insert(0x0C, EndPoint(new EndPointObject(0x0C, device, PROFILE_ZLL,  0x0005)));
+    device->endPoints().insert(0x0D, EndPoint(new EndPointObject(0x0D, device, PROFILE_HA,   0x0005)));
+    device->endPoints().insert(0x2F, EndPoint(new EndPointObject(0x2F, device, PROFILE_HA,   0x0005)));
+    device->endPoints().insert(0x6E, EndPoint(new EndPointObject(0x6E, device, PROFILE_HA,   0x0005)));
+    device->endPoints().insert(0xF2, EndPoint(new EndPointObject(0xF2, device, PROFILE_HUE,  0x0005)));
 
     device->endPoints().value(0x0B)->inClusters().append(CLUSTER_TIME);
     device->endPoints().value(0x0B)->inClusters().append(CLUSTER_IAS_ACE);
@@ -560,7 +584,7 @@ void ZigBee::activeEndPointsReceived(quint16 networkAddress, const QByteArray da
 
     for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
         if (device->endPoints().find(static_cast <quint8> (data.at(i))) == device->endPoints().end())
-            device->endPoints().insert(static_cast <quint8> (data.at(i)), EndPoint(new EndPointObject(device)));
+            device->endPoints().insert(static_cast <quint8> (data.at(i)), EndPoint(new EndPointObject(data.at(i), device)));
 
     interviewDevice(device);
     device->updateLastSeen();
@@ -626,17 +650,14 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 
     else
         globalCommandReceived(endPoint, clusterId, header.transactionId, header.commandId, payload);
 
-    //    if (!device->interviewFinished())
-    //        interviewDevice(device);
-
     device->setLinkQuality(linkQuality);
     device->updateLastSeen();
 
     if (endPoint->dataUpdated())
-    {
-        endPoint->setDataUpdated(false);
         emit endPointUpdated(endPoint);
-    }
+
+    endPoint->cluster(clusterId)->setCommandReceived(false);
+    endPoint->setDataUpdated(false);
 }
 
 void ZigBee::storeStatus(void)

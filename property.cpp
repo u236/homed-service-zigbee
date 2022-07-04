@@ -17,7 +17,7 @@ using namespace Properties;
 
 BatteryVoltage::BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
-void BatteryVoltage::convert(const Cluster &cluster)
+void BatteryVoltage::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0020);
 
@@ -29,7 +29,7 @@ void BatteryVoltage::convert(const Cluster &cluster)
 
 BatteryPercentage::BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
-void BatteryPercentage::convert(const Cluster &cluster)
+void BatteryPercentage::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0021);
 
@@ -41,7 +41,7 @@ void BatteryPercentage::convert(const Cluster &cluster)
 
 BatteryIKEA::BatteryIKEA(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
-void BatteryIKEA::convert(const Cluster &cluster)
+void BatteryIKEA::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0021);
 
@@ -53,7 +53,7 @@ void BatteryIKEA::convert(const Cluster &cluster)
 
 BatteryLUMI::BatteryLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
 
-void BatteryLUMI::convert(const Cluster &cluster)
+void BatteryLUMI::parse(const Cluster &cluster)
 {
     QList <quint16> list = {0xFF01, 0xFF02};
     quint16 value;
@@ -87,7 +87,7 @@ void BatteryLUMI::convert(const Cluster &cluster)
 
 Status::Status(void) : PropertyObject("status", CLUSTER_ON_OFF) {}
 
-void Status::convert(const Cluster &cluster)
+void Status::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0000);
 
@@ -99,7 +99,7 @@ void Status::convert(const Cluster &cluster)
 
 Level::Level(void) : PropertyObject("level", CLUSTER_LEVEL_CONTROL) {}
 
-void Level::convert(const Cluster &cluster)
+void Level::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0000);
 
@@ -111,7 +111,7 @@ void Level::convert(const Cluster &cluster)
 
 ColorTemperature::ColorTemperature(void) : PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
 
-void ColorTemperature::convert(const Cluster &cluster)
+void ColorTemperature::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0007);
     qint16 value;
@@ -125,7 +125,7 @@ void ColorTemperature::convert(const Cluster &cluster)
 
 Illuminance::Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
 
-void Illuminance::convert(const Cluster &cluster)
+void Illuminance::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0000);
     qint16 value;
@@ -139,7 +139,7 @@ void Illuminance::convert(const Cluster &cluster)
 
 Temperature::Temperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT) {}
 
-void Temperature::convert(const Cluster &cluster)
+void Temperature::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0000);
     qint16 value;
@@ -153,7 +153,7 @@ void Temperature::convert(const Cluster &cluster)
 
 Humidity::Humidity(void) : PropertyObject("humidity", CLUSTER_RELATIVE_HUMIDITY) {}
 
-void Humidity::convert(const Cluster &cluster)
+void Humidity::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0000);
     qint16 value;
@@ -167,7 +167,7 @@ void Humidity::convert(const Cluster &cluster)
 
 Occupancy::Occupancy(void) : PropertyObject("occupied", CLUSTER_OCCUPANCY_SENSING) {}
 
-void Occupancy::convert(const Cluster &cluster)
+void Occupancy::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0000);
 
@@ -179,7 +179,7 @@ void Occupancy::convert(const Cluster &cluster)
 
 CubeAction::CubeAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
 
-void CubeAction::convert(const Cluster &cluster)
+void CubeAction::parse(const Cluster &cluster)
 {
     Attribute attribute = cluster->attribute(0x0055);
     qint16 value;
@@ -204,4 +204,66 @@ void CubeAction::convert(const Cluster &cluster)
         m_value = "flip";
     else if (value >= 64)
         m_value = "drop";
+}
+
+
+SwitchAction::SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
+
+void SwitchAction::parse(const Cluster &cluster)
+{
+    if (!cluster->commandReceived())
+    {
+        m_value = QVariant();
+        return;
+    }
+
+    switch (cluster->commandId())
+    {
+        case 0x00: m_value = "on"; break;
+        case 0x01: m_value = "off"; break;
+        case 0x02: m_value = "toggle"; break;
+    }
+}
+
+SwitchActionLUMI::SwitchActionLUMI(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
+
+void SwitchActionLUMI::parse(const Cluster &cluster) // TODO: switch real commands
+{
+    if (!cluster->commandReceived())
+    {
+        m_value = QVariant();
+        return;
+    }
+
+    m_value = cluster->commandId();
+}
+
+SwitchActionPTVO::SwitchActionPTVO(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
+
+void SwitchActionPTVO::parse(const Cluster &cluster) // TODO: check this
+{
+    Attribute attribute = cluster->attribute(0x0055);
+
+    if (attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
+        return;
+
+    m_value = attribute->data().at(0) ? "on" : "off";
+}
+
+LevelAction::LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL) {}
+
+void LevelAction::parse(const Cluster &cluster)
+{
+    if (!cluster->commandReceived())
+    {
+        m_value = QVariant();
+        return;
+    }
+
+    switch (cluster->commandId())
+    {
+        case 0x01: m_value = "moveDown"; break;
+        case 0x05: m_value = "moveUp"; break;
+        case 0x07: m_value = "moveStop"; break;
+    }
 }
