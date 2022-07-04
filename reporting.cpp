@@ -3,6 +3,9 @@
 
 using namespace Reportings;
 
+BatteryVoltage::BatteryVoltage(quint8 endPointId) :
+    ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0020, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10, endPointId) {}
+
 BatteryPercentage::BatteryPercentage(quint8 endPointId) :
     ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0021, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10, endPointId) {}
 

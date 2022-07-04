@@ -35,6 +35,16 @@ protected:
 
 namespace Reportings
 {
+    class BatteryVoltage : public ReportingObject
+    {
+
+    public:
+
+        BatteryVoltage(quint8 endPointId = 1);
+        virtual ~BatteryVoltage(void) {}
+
+    };
+
     class BatteryPercentage : public ReportingObject
     {
 

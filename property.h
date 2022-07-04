@@ -72,6 +72,50 @@ protected:
 
 namespace Properties
 {
+    class BatteryVoltage : public PropertyObject
+    {
+
+    public:
+
+        BatteryVoltage(void);
+        virtual ~BatteryVoltage(void) {}
+        void convert(const Cluster &cluster) override;
+
+    };
+
+    class BatteryPercentage : public PropertyObject
+    {
+
+    public:
+
+        BatteryPercentage(void);
+        virtual ~BatteryPercentage(void) {}
+        void convert(const Cluster &cluster) override;
+
+    };
+
+    class BatteryIKEA : public PropertyObject
+    {
+
+    public:
+
+        BatteryIKEA(void);
+        virtual ~BatteryIKEA(void) {}
+        void convert(const Cluster &cluster) override;
+
+    };
+
+    class BatteryLUMI : public PropertyObject
+    {
+
+    public:
+
+        BatteryLUMI(void);
+        virtual ~BatteryLUMI(void) {}
+        void convert(const Cluster &cluster) override;
+
+    };
+
     class Status : public PropertyObject
     {
 

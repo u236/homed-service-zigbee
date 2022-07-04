@@ -16,13 +16,20 @@ void DeviceObject::setProperties(void)
     {
         if (m_model == "TH01")
         {
-            m_properties = {Property(new Properties::Temperature), Property(new Properties::Humidity)};
-            m_reportings = {Reporting(new Reportings::Temperature), Reporting(new Reportings::Humidity)};
+            m_properties = {Property(new Properties::BatteryPercentage), Property(new Properties::Temperature), Property(new Properties::Humidity)};
+            m_reportings = {Reporting(new Reportings::BatteryPercentage), Reporting(new Reportings::Temperature), Reporting(new Reportings::Humidity)};
             return;
         }
     }
     else if (m_vendor == "IKEA of Sweden")
     {
+        if (m_model == "TRADFRI on/off switch")
+        {
+            m_properties = {Property(new Properties::BatteryIKEA)}; // TODO: add other properties
+            m_reportings = {Reporting(new Reportings::BatteryPercentage)};
+            return;
+        }
+
         if (m_model == "TRADFRI bulb E14 WS 470lm")
         {
             m_actions = {Action(new Actions::Status), Action(new Actions::Level), Action(new Actions::ColorTemperature)};
@@ -43,13 +50,13 @@ void DeviceObject::setProperties(void)
     {
         if (m_model == "lumi.sens" || m_model == "lumi.sensor_ht")
         {
-            m_properties = {Property(new Properties::Temperature), Property(new Properties::Humidity)};
+            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::Temperature), Property(new Properties::Humidity)};
             return;
         }
 
         if (m_model == "lumi.sensor_motion")
         {
-            m_properties = {Property(new Properties::Occupancy)};
+            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::Occupancy)};
             return;
         }
     }
@@ -57,8 +64,8 @@ void DeviceObject::setProperties(void)
     {
         if (m_model == "lumi.sen_ill.mgl01")
         {
-            m_properties = {Property(new Properties::Illuminance)};
-            m_reportings = {Reporting(new Reportings::Illuminance)};
+            m_properties = {Property(new Properties::BatteryVoltage), Property(new Properties::Illuminance)};
+            m_reportings = {Reporting(new Reportings::BatteryVoltage), Reporting(new Reportings::Illuminance)};
             return;
         }
     }
