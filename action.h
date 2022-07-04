@@ -27,7 +27,8 @@ class ActionObject
 
 public:
 
-    ActionObject(const QString &name, quint16 clusterId, quint8 endPointId) : m_name(name), m_clusterId(clusterId), m_endPointId(endPointId), m_transactionId(0) {}
+    ActionObject(const QString &name, quint16 clusterId, quint8 endPointId) :
+        m_name(name), m_clusterId(clusterId), m_endPointId(endPointId), m_transactionId(0) {}
 
     inline QString name(void) { return m_name; }
     inline quint8 endPointId(void) { return m_endPointId; }
@@ -50,7 +51,7 @@ namespace Actions
 
     public:
 
-        Status(quint8 endPointId);
+        Status(quint8 endPointId = 1);
         virtual ~Status(void) {}
         QByteArray request(const QVariant &data) override;
 
@@ -61,7 +62,7 @@ namespace Actions
 
     public:
 
-        Level(quint8 endPointId);
+        Level(quint8 endPointId = 1);
         virtual ~Level(void) {}
         QByteArray request(const QVariant &data) override;
 
@@ -72,7 +73,7 @@ namespace Actions
 
     public:
 
-        ColorTemperature(quint8 endPointId);
+        ColorTemperature(quint8 endPointId = 1);
         virtual ~ColorTemperature(void) {}
         QByteArray request(const QVariant &data) override;
 

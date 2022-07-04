@@ -8,10 +8,12 @@
 #define FC_SERVER_TO_CLIENT                         0x08
 #define FC_DISABLE_DEFAULT_RESPONSE                 0x10
 
-#define CMD_GLOBAL_READ_ATTRIBUTES_RESPONSE         0x01
-#define CMD_GLOBAL_CONFIGURE_REPORTING_RESPONSE     0x07
-#define CMD_GLOBAL_REPORT_ATTRIBUTES                0x0A
-#define CMD_GLOBAL_DEFAULT_RESPONSE                 0x0B
+#define CMD_READ_ATTRIBUTES                         0x00
+#define CMD_READ_ATTRIBUTES_RESPONSE                0x01
+#define CMD_CONFIGURE_REPORTING                     0x06
+#define CMD_CONFIGURE_REPORTING_RESPONSE            0x07
+#define CMD_REPORT_ATTRIBUTES                       0x0A
+#define CMD_DEFAULT_RESPONSE                        0x0B
 
 #define ATTRIBUTE_BASIC_VENDOR                      0x0004
 #define ATTRIBUTE_BASIC_MODEL                       0x0005
@@ -76,6 +78,16 @@ struct zclHeaderStruct
     quint8 frameControl;
     quint8 transactionId;
     quint8 commandId;
+};
+
+struct configureReportingStruct
+{
+    quint8  direction;
+    quint16 attributeId;
+    quint8  dataType;
+    quint16 minInterval;
+    quint16 maxInterval;
+    quint16 valueChange;
 };
 
 #pragma pack(pop)

@@ -5,6 +5,7 @@
 #include <QSharedPointer>
 #include "action.h"
 #include "property.h"
+#include "reporting.h"
 #include "zstack.h"
 
 class EndPointObject;
@@ -18,7 +19,8 @@ class EndPointObject
 
 public:
 
-    EndPointObject(Device device, quint16 profileId = 0, quint16 deviceId = 0) : m_device(device), m_profileId(profileId), m_deviceId(deviceId), m_dataUpdated(false) {}
+    EndPointObject(Device device, quint16 profileId = 0, quint16 deviceId = 0) :
+        m_device(device), m_profileId(profileId), m_deviceId(deviceId), m_dataUpdated(false) {}
 
     inline Device device(void) { return m_device; }
 
@@ -52,7 +54,8 @@ class DeviceObject
 
 public:
 
-    DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) : m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_interviewFinished(false), m_linkQuality(0), m_lastSeen(0) {}
+    DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
+        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_interviewFinished(false), m_linkQuality(0), m_lastSeen(0) {}
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
@@ -88,6 +91,7 @@ public:
 
     inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Property> &properties(void) { return m_properties; }
+    inline QList <Reporting> &reportings(void) { return m_reportings; }
 
     void setProperties(void);
 
@@ -108,6 +112,7 @@ private:
 
     QList <Action> m_actions;
     QList <Property> m_properties;
+    QList <Reporting> m_reportings;
 
 };
 

@@ -134,6 +134,47 @@ void ZStack::activeEndPointsRequest(quint16 networkAddress)
     sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)));
 }
 
+bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndPointId, const QByteArray &dstIeeeAddress, quint8 dstEndPointId, quint16 clusterId)
+{
+    bindRequestStruct request;
+    quint64 src, dst;
+    QEventLoop loop;
+    QTimer timer;
+
+    memcpy(&src, srcIeeeAddress.constData(), sizeof(src));
+    memcpy(&dst, dstIeeeAddress.constData(), sizeof(dst));
+
+    request.networkAddress = qToLittleEndian(networkAddress);
+    request.srcIeeeAddress = qToBigEndian(src);
+    request.srcEndPointId = srcEndPointId;
+    request.clusterId = qToLittleEndian(clusterId);
+    request.dstAddressMode = BIND_ADDRESS_64_BIT;
+    request.dstIeeeAddress = qToBigEndian(dst);
+    request.dstEndPointId = dstEndPointId;
+
+    connect(this, &ZStack::bindResponse, &loop, &QEventLoop::quit);
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    m_bindAddress = networkAddress;
+
+    if (!sendRequest(ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    {
+        logWarning << "Bind request failed";
+        return false;
+    }
+
+    timer.setSingleShot(true);
+    timer.start(ADAPTER_REQUEST_TIMEOUT);
+    loop.exec();
+
+    return timer.isActive() && m_bindRequestSuccess;
+}
+
+bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endPointId, quint16 clusterId)
+{
+    return bindRequest(networkAddress, ieeeAaddress, endPointId, m_ieeeAddress, 1, clusterId);
+}
+
 bool ZStack::dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clusterId, const QByteArray &data)
 {
     dataRequestStruct request;
@@ -150,18 +191,21 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clus
     request.length = static_cast <quint8> (data.length());
 
     connect(this, &ZStack::dataConfirm, &loop, &QEventLoop::quit);
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
 
-    if(!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
         logWarning << "Data request failed";
         return false;
     }
 
-    timer.singleShot(ADAPTER_REQUEST_TIMEOUT, &loop, &QEventLoop::quit);
+    timer.setSingleShot(true);
+    timer.start(ADAPTER_REQUEST_TIMEOUT);
     loop.exec();
+
     m_transactionId++;
 
-    return timer.isActive() && m_requestSuccess;
+    return timer.isActive() && m_dataRequestSuccess;
 }
 
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
@@ -191,7 +235,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
             if (static_cast <quint8> (data.at(2)) == m_transactionId)
             {
-                m_requestSuccess = data.at(0) ? false : true;
+                m_dataRequestSuccess = data.at(0) ? false : true;
                 emit dataConfirm();
             }
 
@@ -250,6 +294,21 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
             if (!message->status)
                 emit activeEndPointsReceived(qFromLittleEndian(message->srcAddress), data.mid(sizeof(activeEndPointsResponseStruct), message->count));
+
+            break;
+        }
+
+        case ZDO_BIND_RSP:
+        {
+            quint16 networkAddress;
+
+            memcpy(&networkAddress, data.constData(), sizeof(networkAddress));
+
+            if (qFromLittleEndian(networkAddress) == m_bindAddress)
+            {
+                m_bindRequestSuccess = data.at(2) ? false : true;
+                emit bindResponse();
+            }
 
             break;
         }

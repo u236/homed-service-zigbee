@@ -53,7 +53,8 @@ class PropertyObject
 
 public:
 
-    PropertyObject(const QString &name, quint16 clusterId) : m_clusterId(clusterId), m_name(name) {}
+    PropertyObject(const QString &name, quint16 clusterId) :
+        m_clusterId(clusterId), m_name(name) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }

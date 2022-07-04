@@ -19,11 +19,11 @@
 #define AF_SKIP_ROUTING                             0x80
 #define AF_DEFAULT_RADIUS                           0x0F
 
-//#define BIND_ADDRESS_NOT_PRESENT                    0x00
-//#define BIND_GROUP_ADDRESS                          0x01
-//#define BIND_ADDRESS_16_BIT                         0x02
-//#define BIND_ADDRESS_64_BIT                         0x03
-//#define BIND_BROADCAST                              0xFF
+#define BIND_ADDRESS_NOT_PRESENT                    0x00
+#define BIND_GROUP_ADDRESS                          0x01
+#define BIND_ADDRESS_16_BIT                         0x02
+#define BIND_ADDRESS_64_BIT                         0x03
+#define BIND_BROADCAST                              0xFF
 
 #define SYS_OSAL_NV_ITEM_INIT                       0x2107
 #define SYS_OSAL_NV_READ                            0x2108
@@ -152,6 +152,17 @@ struct activeEndPointsResponseStruct
     quint8  count;
 };
 
+struct bindRequestStruct
+{
+    quint16 networkAddress;
+    quint64 srcIeeeAddress;
+    quint8  srcEndPointId;
+    quint16 clusterId;
+    quint8  dstAddressMode;
+    quint64 dstIeeeAddress;
+    quint8  dstEndPointId;
+};
+
 struct dataRequestStruct
 {
     quint16 networkAddress;
@@ -248,6 +259,8 @@ public:
     void simpleDescriptorRequest(quint16 networkAddress, quint8 endPointId);
     void activeEndPointsRequest(quint16 networkAddress);
 
+    bool bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndPointId, const QByteArray &dstIeeeAddress, quint8 dstEndPointId, quint16 clusterId);
+    bool bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endPointId, quint16 clusterId);
     bool dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clusterId, const QByteArray &data);
 
 private:
@@ -263,7 +276,9 @@ private:
 
     quint8 m_status, m_transactionId;
     QByteArray m_ieeeAddress;
-    bool m_requestSuccess;
+
+    quint16 m_bindAddress;
+    bool m_bindRequestSuccess, m_dataRequestSuccess;
 
     quint16 m_replyCommand;
     QByteArray m_replyData;
@@ -281,6 +296,7 @@ private slots:
 
 signals:
 
+    void bindResponse(void);
     void dataConfirm(void);
 
     void coordinatorReady(const QByteArray &ieeeAddress);

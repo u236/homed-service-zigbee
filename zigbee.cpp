@@ -32,7 +32,7 @@ void ZigBee::init(void)
         file.close();
     }
 
-    m_timer->start(STORE_DEVICES_INTERVAL);
+    m_timer->setSingleShot(true);
     m_adapter->init();
 }
 
@@ -240,11 +240,47 @@ void ZigBee::interviewDevice(const Device &device)
         }
     }
 
-    logInfo << "Device" << device->name() << "interview finished, vendor is" << device->vendor() << "and model is" << device->model();;
-
-    device->setInterviewFinished();
+    logInfo << "Device" << device->name() << "vendor is" << device->vendor() << "and model is" << device->model();
     device->setProperties();
 
+    for (quint8 i = 0; i < static_cast <quint8> (device->reportings().count()); i++)
+    {
+        Reporting reporting = device->reportings().value(i);
+        zclHeaderStruct header;
+        configureReportingStruct payload;
+        size_t length = sizeof(payload);
+
+        if (!m_adapter->bindRequest(device->networkAddress(), device->ieeeAddress(), reporting->endPointId(), reporting->clusterId()))
+        {
+            logWarning << "Device" << device->name() << "cluster" << QString::asprintf("0x%04X", reporting->clusterId()) << "binding failed";
+            continue;
+        }
+
+        header.frameControl = 0x00;
+        header.transactionId = m_transactionId++;
+        header.commandId = CMD_CONFIGURE_REPORTING;
+
+        payload.direction = 0x00;
+        payload.attributeId = qToLittleEndian(reporting->attributeId());
+        payload.dataType = reporting->dataType();
+        payload.minInterval = qToLittleEndian(reporting->minInterval());
+        payload.maxInterval = qToLittleEndian(reporting->maxInterval());
+        payload.valueChange = qToLittleEndian(reporting->valueChange());
+
+        if (payload.dataType == DATA_TYPE_BOOLEAN || payload.dataType == DATA_TYPE_8BIT_UNSIGNED || payload.dataType == DATA_TYPE_8BIT_SIGNED)
+            length -= 1;
+
+        if (!m_adapter->dataRequest(device->networkAddress(), reporting->endPointId(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header)).append(reinterpret_cast <char*> (&payload), length)))
+        {
+            logWarning << "Device" << device->name() << reporting->name() << "reporting configuration failed";
+            continue;
+        }
+
+        logInfo << "Device" << device->name() << reporting->name() << "reporting configured successfully";
+    }
+
+    logInfo << "Device" << device->name() << "interview finished";
+    device->setInterviewFinished();
     storeStatus();
 }
 
@@ -254,8 +290,8 @@ void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clu
     QByteArray payload;
 
     header.frameControl = 0x00;
-    header.transactionId = m_transactionId;
-    header.commandId = 0x00;
+    header.transactionId = m_transactionId++;
+    header.commandId = CMD_READ_ATTRIBUTES;
 
     for (quint8 i = 0; i < static_cast <quint8> (attributes.length()); i++)
     {
@@ -331,17 +367,20 @@ void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, 
 
     switch (commandId)
     {
-        case CMD_GLOBAL_READ_ATTRIBUTES_RESPONSE:
-        case CMD_GLOBAL_REPORT_ATTRIBUTES:
+        case CMD_CONFIGURE_REPORTING_RESPONSE:
+        case CMD_DEFAULT_RESPONSE:
+            break;
+
+        case CMD_READ_ATTRIBUTES_RESPONSE:
+        case CMD_REPORT_ATTRIBUTES:
         {
             while (payload.length())
             {
                 quint8 dataType, offset, size = 0;
                 quint16 attributeId;
 
-                if (commandId == CMD_GLOBAL_READ_ATTRIBUTES_RESPONSE)
+                if (commandId == CMD_READ_ATTRIBUTES_RESPONSE)
                 {
-                    // TODO: check this
                     if (payload.at(2))
                         break;
 
@@ -478,6 +517,8 @@ void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress
 
     if (it != m_devices.end())
         m_devices.erase(it);
+
+    storeStatus();
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType)
@@ -505,11 +546,15 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturer
 void ZigBee::activeEndPointsReceived(quint16 networkAddress, const QByteArray data)
 {
     Device device = findDevice(networkAddress);
+    QStringList list;
 
     if (device.isNull())
         return;
 
-    logInfo << "Device" << device->name() << "active endPoints received:" << data.toHex('|');
+    for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+        list.append(QString::number(static_cast <quint8> (data.at(i))));
+
+    logInfo << "Device" << device->name() << "active endPoints received:" << list.join(", ");
 
     for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
         if (device->endPoints().find(static_cast <quint8> (data.at(i))) == device->endPoints().end())
@@ -596,6 +641,8 @@ void ZigBee::storeStatus(void)
 {
     QFile file(m_databaseFile);
     QJsonObject json;
+
+    m_timer->start(STORE_DEVICES_INTERVAL);
 
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {

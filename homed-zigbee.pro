@@ -5,6 +5,7 @@ HEADERS += \
     controller.h \
     device.h \
     property.h \
+    reporting.h \
     zigbee.h \
     zstack.h
 
@@ -13,6 +14,7 @@ SOURCES += \
     controller.cpp \
     device.cpp \
     property.cpp \
+    reporting.cpp \
     zigbee.cpp \
     zstack.cpp
 
