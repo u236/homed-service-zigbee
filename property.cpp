@@ -177,7 +177,7 @@ void Occupancy::parse(const Cluster &cluster)
     m_value = attribute->data().at(0) ? true : false;
 }
 
-CubeAction::CubeAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
+CubeAction::CubeAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
 
 void CubeAction::parse(const Cluster &cluster)
 {
@@ -206,17 +206,10 @@ void CubeAction::parse(const Cluster &cluster)
         m_value = "drop";
 }
 
-
-SwitchAction::SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
+SwitchAction::SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
 
 void SwitchAction::parse(const Cluster &cluster)
 {
-    if (!cluster->commandReceived())
-    {
-        m_value = QVariant();
-        return;
-    }
-
     switch (cluster->commandId())
     {
         case 0x00: m_value = "on"; break;
@@ -225,20 +218,14 @@ void SwitchAction::parse(const Cluster &cluster)
     }
 }
 
-SwitchActionLUMI::SwitchActionLUMI(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
+SwitchActionLUMI::SwitchActionLUMI(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
 
 void SwitchActionLUMI::parse(const Cluster &cluster) // TODO: switch real commands
 {
-    if (!cluster->commandReceived())
-    {
-        m_value = QVariant();
-        return;
-    }
-
     m_value = cluster->commandId();
 }
 
-SwitchActionPTVO::SwitchActionPTVO(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
+SwitchActionPTVO::SwitchActionPTVO(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
 
 void SwitchActionPTVO::parse(const Cluster &cluster) // TODO: check this
 {
@@ -250,16 +237,10 @@ void SwitchActionPTVO::parse(const Cluster &cluster) // TODO: check this
     m_value = attribute->data().at(0) ? "on" : "off";
 }
 
-LevelAction::LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL) {}
+LevelAction::LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
 
 void LevelAction::parse(const Cluster &cluster)
 {
-    if (!cluster->commandReceived())
-    {
-        m_value = QVariant();
-        return;
-    }
-
     switch (cluster->commandId())
     {
         case 0x01: m_value = "moveDown"; break;

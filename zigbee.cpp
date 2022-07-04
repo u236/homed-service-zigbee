@@ -372,19 +372,30 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
 
             m_adapter->dataRequest(endPoint->device()->networkAddress(), endPoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(0x98));
         }
+
+        return;
     }
-    else
+
+    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->properties().count()); i++)
     {
-        Cluster cluster = endPoint->cluster(clusterId);
+        Property property = endPoint->device()->properties().value(i);
 
-        cluster->setCommandId(commandId);
-        cluster->setCommandData(payload);
-        cluster->setCommandReceived();
+        if (property->clusterId() == clusterId)
+        {
+            Cluster cluster = endPoint->cluster(clusterId);
 
-        // TODO: remove log
-        logInfo << "Cluster specific command" << QString::asprintf("0x%02X", commandId) << "received from device" << endPoint->device()->ieeeAddress().toHex(':') << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.toHex(':');
-        endPoint->setDataUpdated();
+            cluster->setCommandId(commandId);
+            cluster->setCommandData(payload);
+
+            property->parse(cluster);
+            endPoint->setDataUpdated();
+        }
     }
+
+    if (endPoint->dataUpdated())
+        return;
+
+    logWarning << "No property found for device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId);
 }
 
 void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -654,10 +665,10 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 
     device->updateLastSeen();
 
     if (endPoint->dataUpdated())
+    {
+        endPoint->setDataUpdated(false);
         emit endPointUpdated(endPoint);
-
-    endPoint->cluster(clusterId)->setCommandReceived(false);
-    endPoint->setDataUpdated(false);
+    }
 }
 
 void ZigBee::storeStatus(void)

@@ -47,16 +47,12 @@ public:
     inline QByteArray commandData(void) { return m_commandData; }
     inline void setCommandData(const QByteArray &value) { m_commandData = value; }
 
-    inline bool commandReceived(void) { return m_commandReceived; }
-    inline void setCommandReceived(bool value = true) { m_commandReceived = value; }
-
     Attribute attribute(quint16 attributeId);
 
 private:
 
     quint8 m_commandId;
     QByteArray m_commandData;
-    bool m_commandReceived;
 
     QMap <quint16, Attribute> m_attributes;
 
@@ -67,12 +63,15 @@ class PropertyObject
 
 public:
 
-    PropertyObject(const QString &name, quint16 clusterId) :
-        m_clusterId(clusterId), m_name(name) {}
+    PropertyObject(const QString &name, quint16 clusterId, bool invalidable = false) :
+        m_clusterId(clusterId), m_name(name), m_invalidable(invalidable) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
     inline QVariant value(void) { return m_value; }
+
+    inline bool invalidable(void) { return m_invalidable; }
+    inline void invalidate(void) { m_value = QVariant(); }
 
     virtual void parse(const Cluster &cluster) = 0;
 
@@ -81,6 +80,7 @@ protected:
     quint16 m_clusterId;
     QString m_name;
     QVariant m_value;
+    bool m_invalidable;
 
 };
 

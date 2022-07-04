@@ -44,6 +44,9 @@ void Controller::endPointUpdated(const EndPoint &endPoint)
             continue;
 
         json.insert(property->name(), QJsonValue::fromVariant(property->value()));
+
+        if (property->invalidable())
+            property->invalidate();
     }
 
     if (json.isEmpty())
