@@ -24,7 +24,7 @@ void BatteryVoltage::parse(const Cluster &cluster, quint16 attributeId)
     if (attributeId != 0x0020 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
         return;
 
-    m_value = static_cast <double> (attribute->data().at(0)) * 0.1;
+    m_value = static_cast <quint8> (attribute->data().at(0)) * 0.1;
 }
 
 BatteryVoltageLUMI::BatteryVoltageLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
@@ -65,7 +65,7 @@ void BatteryPercentage::parse(const Cluster &cluster, quint16 attributeId)
     if (attributeId != 0x0021 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
         return;
 
-    m_value = static_cast <double> (attribute->data().at(0)) / 2;
+    m_value = static_cast <quint8> (attribute->data().at(0)) / 2.0;
 }
 
 BatteryPercentageIKEA::BatteryPercentageIKEA(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
@@ -77,7 +77,7 @@ void BatteryPercentageIKEA::parse(const Cluster &cluster, quint16 attributeId)
     if (attributeId != 0x0021 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
         return;
 
-    m_value = static_cast <double> (attribute->data().at(0));
+    m_value = static_cast <quint8> (attribute->data().at(0));
 }
 
 Status::Status(void) : PropertyObject("status", CLUSTER_ON_OFF) {}
@@ -143,7 +143,7 @@ void Temperature::parse(const Cluster &cluster, quint16 attributeId)
         return;
 
     memcpy(&value, attribute->data().constData(), sizeof(value));
-    m_value = static_cast <double> (qFromLittleEndian(value)) / 100;
+    m_value = qFromLittleEndian(value) / 100.0;
 }
 
 Humidity::Humidity(void) : PropertyObject("humidity", CLUSTER_RELATIVE_HUMIDITY) {}
@@ -157,7 +157,7 @@ void Humidity::parse(const Cluster &cluster, quint16 attributeId)
         return;
 
     memcpy(&value, attribute->data().constData(), sizeof(value));
-    m_value = static_cast <double> (qFromLittleEndian(value)) / 100;
+    m_value = qFromLittleEndian(value) / 100.0;
 }
 
 Occupancy::Occupancy(void) : PropertyObject("occupied", CLUSTER_OCCUPANCY_SENSING) {}

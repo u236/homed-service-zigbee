@@ -27,6 +27,7 @@ void DeviceObject::setProperties(void)
         if (m_model == "Button")
         {
             m_properties = {Property(new Properties::BatteryPercentage), Property(new Properties::SwitchActionPTVO)};
+            m_reportings = {Reporting(new Reportings::BatteryPercentage)};
             return;
         }
 
@@ -105,5 +106,5 @@ void DeviceObject::setProperties(void)
         }
     }
 
-    logWarning << "Unrecognized device" << name() << "vendor" << m_vendor << "and model" << m_model;
+    logWarning << "Unrecognized device" << name() << "vendor and model";
 }
