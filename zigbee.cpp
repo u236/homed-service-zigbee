@@ -542,8 +542,8 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
     else
         it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
 
-    interviewDevice(it.value());
     it.value()->updateLastSeen();
+    interviewDevice(it.value());
 }
 
 void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
@@ -576,8 +576,8 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturer
         // m_zigbee->lqiRequest(device->network());
     }
 
-    interviewDevice(device);
     device->updateLastSeen();
+    interviewDevice(device);
 }
 
 void ZigBee::activeEndPointsReceived(quint16 networkAddress, const QByteArray data)
@@ -597,8 +597,8 @@ void ZigBee::activeEndPointsReceived(quint16 networkAddress, const QByteArray da
         if (device->endPoints().find(static_cast <quint8> (data.at(i))) == device->endPoints().end())
             device->endPoints().insert(static_cast <quint8> (data.at(i)), EndPoint(new EndPointObject(data.at(i), device)));
 
-    interviewDevice(device);
     device->updateLastSeen();
+    interviewDevice(device);
 }
 
 void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId, quint16 profileId, quint16 deviceId, const QList<quint16> &inClusters, const QList<quint16> &outClusters)
@@ -622,8 +622,8 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId,
 
     logInfo << "Device" << device->name() << "endPoint" << endPointId << "simple descriptor received";
 
-    interviewDevice(device);
     device->updateLastSeen();
+    interviewDevice(device);
 }
 
 void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
