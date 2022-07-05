@@ -347,7 +347,7 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
             attribute->setDataType(dataType);
             attribute->setData(data);
 
-            property->parse(cluster);
+            property->parse(cluster, attributeId);
             endPoint->setDataUpdated();
         }
     }
@@ -536,8 +536,7 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
     if (it != m_devices.end())
     {
         it.value()->setNetworkAddress(networkAddress);
-
-        logInfo << "here we are";
+        it.value()->setInterviewFinished(false);
     }
     else
         it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
@@ -690,6 +689,5 @@ void ZigBee::storeStatus(void)
     file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
     file.close();
 
-    logInfo << "Status stored successfully";
     emit statusStored(json);
 }

@@ -220,6 +220,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
     switch (command)
     {
         case ZDO_MGMT_PERMIT_JOIN_RSP:
+        case ZDO_SRC_RTG_IND:
         case ZDO_TC_DEV_IND:
             break;
 

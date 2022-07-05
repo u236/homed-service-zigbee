@@ -80,7 +80,7 @@ public:
     inline void setModel(const QString &value) { m_model = value; }
 
     inline bool interviewFinished(void) { return m_interviewFinished; }
-    inline void setInterviewFinished(void) { m_interviewFinished = true; }
+    inline void setInterviewFinished(bool value = true) { m_interviewFinished = value; }
 
     inline qint64 lastSeen(void) { return m_lastSeen; }
     inline void setLastSeen(qint64 value) { m_lastSeen = value; }
@@ -105,8 +105,8 @@ private:
     quint16 m_manufacturerCode;
     LogicalType m_logicalType;
     QString m_name, m_vendor, m_model;
-
     bool m_interviewFinished;
+
     qint64 m_lastSeen;
     quint8 m_linkQuality;
 

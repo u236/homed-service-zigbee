@@ -22,11 +22,26 @@ void DeviceObject::setProperties(void)
             return;
         }
     }
+    else if (m_vendor == "HOMEd")
+    {
+        if (m_model == "Button")
+        {
+            m_properties = {Property(new Properties::BatteryPercentage), Property(new Properties::SwitchActionPTVO)};
+            return;
+        }
+
+        if (m_model == "LC Outlet") // TODO: check firmware reporting settings
+        {
+            m_actions = {Action(new Actions::Status)};
+            m_properties = {Property(new Properties::Status)};
+            return;
+        }
+    }
     else if (m_vendor == "IKEA of Sweden")
     {
         if (m_model == "TRADFRI on/off switch")
         {
-            m_properties = {Property(new Properties::BatteryIKEA), Property(new Properties::SwitchAction), Property(new Properties::LevelAction)};
+            m_properties = {Property(new Properties::BatteryPercentageIKEA), Property(new Properties::SwitchAction), Property(new Properties::LevelAction)};
             m_reportings = {Reporting(new Reportings::BatteryPercentage)};
             return;
         }
@@ -58,25 +73,25 @@ void DeviceObject::setProperties(void)
 
         if (m_model == "lumi.sensor_cube")
         {
-            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::CubeAction)};
+            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::CubeAction)};
             return;
         }
 
         if (m_model == "lumi.sensor_ht" || m_model == "lumi.sens")
         {
-            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::Temperature), Property(new Properties::Humidity)};
+            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::Temperature), Property(new Properties::Humidity)};
             return;
         }
 
         if (m_model == "lumi.sensor_motion")
         {
-            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::Occupancy)};
+            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::Occupancy)};
             return;
         }
 
         if (m_model == "lumi.sensor_switch")
         {
-            m_properties = {Property(new Properties::BatteryLUMI), Property(new Properties::SwitchActionLUMI)};
+            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::SwitchActionLUMI)};
             return;
         }
     }

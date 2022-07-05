@@ -15,6 +15,16 @@
 #define CMD_REPORT_ATTRIBUTES                       0x0A
 #define CMD_DEFAULT_RESPONSE                        0x0B
 
+#define DATA_TYPE_BOOLEAN                           0x10
+#define DATA_TYPE_8BIT_BITMAP                       0x18
+#define DATA_TYPE_8BIT_UNSIGNED                     0x20
+#define DATA_TYPE_16BIT_UNSIGNED                    0x21
+#define DATA_TYPE_8BIT_SIGNED                       0x28
+#define DATA_TYPE_16BIT_SIGNED                      0x29
+#define DATA_TYPE_SINGLE_PRECISION                  0x39
+#define DATA_TYPE_STRING                            0x42
+#define DATA_TYPE_STRUCTURE                         0x4C
+
 #define ATTRIBUTE_BASIC_VENDOR                      0x0004
 #define ATTRIBUTE_BASIC_MODEL                       0x0005
 
@@ -54,16 +64,6 @@
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_DIAGNOSTICS                         0x0B05
 #define CLUSTER_TOUCHLINK                           0x1000
-
-#define DATA_TYPE_BOOLEAN                           0x10
-#define DATA_TYPE_8BIT_BITMAP                       0x18
-#define DATA_TYPE_8BIT_UNSIGNED                     0x20
-#define DATA_TYPE_16BIT_UNSIGNED                    0x21
-#define DATA_TYPE_8BIT_SIGNED                       0x28
-#define DATA_TYPE_16BIT_SIGNED                      0x29
-#define DATA_TYPE_SINGLE_PRECISION                  0x39
-#define DATA_TYPE_STRING                            0x42
-#define DATA_TYPE_STRUCTURE                         0x4C
 
 #include <QJsonArray>
 #include <QJsonDocument>
