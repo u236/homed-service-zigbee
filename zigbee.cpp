@@ -40,6 +40,7 @@ void ZigBee::setPermitJoin(bool enabled)
 {
     m_permitJoin = enabled;
     m_adapter->setPermitJoin(m_permitJoin);
+    storeStatus();
 }
 
 void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData)

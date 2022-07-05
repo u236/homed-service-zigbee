@@ -209,8 +209,8 @@ void SwitchAction::parse(const Cluster &cluster, quint16 attributeId)
 
     switch (cluster->commandId())
     {
-        case 0x00: m_value = "on"; break;
-        case 0x01: m_value = "off"; break;
+        case 0x00: m_value = "off"; break;
+        case 0x01: m_value = "on"; break;
         case 0x02: m_value = "toggle"; break;
     }
 }

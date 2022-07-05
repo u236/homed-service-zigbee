@@ -10,7 +10,10 @@ Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this))
 void Controller::mqttConnected(void)
 {
     logInfo << "MQTT connected";
+
+    mqttSubscribe("homed/command/zigbee");
     mqttSubscribe("homed/td/zigbee/#");
+
     m_zigbee->init();
 }
 
@@ -18,7 +21,14 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 {
     QJsonObject json = QJsonDocument::fromJson(message).object();
 
-    if (topic.name().startsWith("homed/td/zigbee/"))
+    if (topic.name() == "homed/command/zigbee" && json.contains("action"))
+    {
+        QString action = json.value("action").toString();
+
+        if (action == "setPermitJoin" && json.contains("enabled"))
+            m_zigbee->setPermitJoin(json.value("enabled").toBool());
+    }
+    else if (topic.name().startsWith("homed/td/zigbee/"))
     {
         QByteArray ieeeAddress = QByteArray::fromHex(topic.name().split('/').last().toLocal8Bit());
 
