@@ -296,9 +296,6 @@ private slots:
 
 signals:
 
-    void bindResponse(void);
-    void dataConfirm(void);
-
     void coordinatorReady(const QByteArray &ieeeAddress);
     void endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
     void endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
@@ -306,6 +303,8 @@ signals:
     void activeEndPointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void messageReveived(quint16 networkAddress, quint8 endPointId, quint16 cluster, quint8 linkQuality, const QByteArray &data);
+
+    void bindResponse(void);
 
 };
 
