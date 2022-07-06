@@ -5,6 +5,8 @@ Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this))
 {
     connect(m_zigbee, &ZigBee::endPointUpdated, this, &Controller::endPointUpdated);
     connect(m_zigbee, &ZigBee::statusStored, this, &Controller::statusStored);
+
+    m_zigbee->init();
 }
 
 void Controller::mqttConnected(void)
@@ -13,8 +15,6 @@ void Controller::mqttConnected(void)
 
     mqttSubscribe("homed/command/zigbee");
     mqttSubscribe("homed/td/zigbee/#");
-
-    m_zigbee->init();
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)

@@ -317,14 +317,14 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
             if (!message->status)
             {
-                if (message->index + message->count < message->total)
-                    lqiRequest(qFromLittleEndian(message->networkAddress), message->index + message->count);
-
                 for (quint8 i = 0; i < message->count; i++)
                 {
-                    const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (data.constData() + i * sizeof(neighborRecordStruct));
+                    const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (data.constData() + sizeof(lqiResponseStruct) + i * sizeof(neighborRecordStruct));
                     emit neighborRecordReceived(qFromLittleEndian(message->networkAddress), qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(message->index | i));
                 }
+
+                if (message->index + message->count < message->total)
+                    lqiRequest(qFromLittleEndian(message->networkAddress), message->index + message->count);
             }
 
             break;

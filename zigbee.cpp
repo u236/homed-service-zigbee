@@ -664,9 +664,9 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId,
     interviewDevice(device);
 }
 
-void ZigBee::neighborRecordReceived(quint16 network, quint16 neighbor, quint8 linkQuality, bool first)
+void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first)
 {
-    Device device = findDevice(network);
+    Device device = findDevice(networkAddress);
 
     if (device.isNull())
         return;
@@ -677,7 +677,10 @@ void ZigBee::neighborRecordReceived(quint16 network, quint16 neighbor, quint8 li
         device->neighbors().clear();
     }
 
-    device->neighbors().insert(neighbor, linkQuality);
+    if (findDevice(neighborAddress).isNull())
+        return;
+
+    device->neighbors().insert(neighborAddress, linkQuality);
     device->updateLastSeen();
 }
 

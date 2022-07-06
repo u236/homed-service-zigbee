@@ -1,7 +1,7 @@
 #ifndef ZIGBEE_H
 #define ZIGBEE_H
 
-#define UPDATE_NEIGHBORS_INTERVAL                   1800000
+#define UPDATE_NEIGHBORS_INTERVAL                   300000
 #define STORE_STATUS_INTERVAL                       60000
 
 #define FC_CLUSTER_SPECIFIC                         0x01
