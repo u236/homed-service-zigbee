@@ -186,7 +186,7 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clus
     request.srcEndPointId = 0x01;
     request.clusterId = qToLittleEndian(clusterId);
     request.transactionId = m_transactionId;
-    request.options = AF_ACK_REQUEST | AF_DISCV_ROUTE;
+    request.options = AF_DISCV_ROUTE;
     request.radius = AF_DEFAULT_RADIUS;
     request.length = static_cast <quint8> (data.length());
 
