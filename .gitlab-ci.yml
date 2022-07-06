@@ -6,16 +6,29 @@ Build Binary:
   artifacts:
     paths:
     - "homed-zigbee"
+  except:
+    - branches
+  only:
+    - tags
 
 Deploy Package:
   stage: deploy
   variables:
-    FILE_NAME: homed-zigbee_3.0.0_armhf.deb
+    PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_armhf.deb
   script:
   - "mkdir -p package/usr/local/bin"
   - "cp homed-zigbee package/usr/local/bin"
   - "md5deep -lr package/ | grep -v DEBIAN | sed \"s+package/++g\" | sort -k2 > package/DEBIAN/md5sums"
-  - "sed -i \"s+^Version:.*+Version: 3.0.0+g\" package/DEBIAN/control"
+  - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" package/DEBIAN/control"
   - "chmod +x package/DEBIAN/postinst package/DEBIAN/prerm"
   - "fakeroot dpkg-deb --build package"
-  - "mv package.deb ${FILE_NAME}"
+  - "mv package.deb ${PACKAGE_FILE}"
+  - "reprepro -b /var/lib/apt -C main includedeb debian ${PACKAGE_FILE}"
+  artifacts:
+    paths:
+    - ${PACKAGE_FILE}
+    expire_in: never
+  except:
+    - branches
+  only:
+    - tags
