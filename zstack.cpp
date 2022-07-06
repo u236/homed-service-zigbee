@@ -23,7 +23,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : QObject(parent), m_port(new
     m_debug = config->value("zigbee/debug", false).toBool();
     m_rts = config->value("zigbee/rts", false).toBool();
 
-    m_nvValues.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "01030507090B0D0F00020406080A0C0D").toString().toUtf8()));
+    m_nvValues.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
     m_nvValues.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
     m_nvValues.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId)));
     m_nvValues.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&chanList), sizeof(chanList)));

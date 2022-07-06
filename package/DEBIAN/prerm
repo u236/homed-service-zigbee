@@ -1,0 +1,6 @@
+#!/bin/bash
+
+systemctl stop homed-zigbee.service
+systemctl disable homed-zigbee.service
+
+exit 0

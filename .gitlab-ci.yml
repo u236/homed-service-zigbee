@@ -1,5 +1,21 @@
-Build Service:
+Build Binary:
   stage: build
   script:
   - "/opt/arm-qt5.15.4/bin/qmake homed-zigbee.pro"
   - "make -j8"
+  artifacts:
+    paths:
+    - "homed-zigbee"
+
+Deploy Package:
+  stage: deploy
+  variables:
+    FILE_NAME: homed-zigbee_3.0.0_armhf.deb
+  script:
+  - "mkdir -p package/usr/local/bin"
+  - "cp homed-zigbee package/usr/local/bin"
+  - "md5deep -lr package/ | grep -v DEBIAN | sed \"s+package/++g\" | sort -k2 > package/DEBIAN/md5sums"
+  - "sed -i \"s+^Version:.*+Version: 3.0.0+g\" package/DEBIAN/control"
+  - "chmod +x package/DEBIAN/postinst package/DEBIAN/prerm"
+  - "fakeroot dpkg-deb --build package"
+  - "mv package.deb ${FILE_NAME}"

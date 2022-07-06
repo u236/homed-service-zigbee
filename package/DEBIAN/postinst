@@ -1,0 +1,7 @@
+#!/bin/bash
+
+systemctl daemon-reload
+systemctl enable homed-zigbee.service
+systemctl start homed-zigbee.service
+
+exit 0

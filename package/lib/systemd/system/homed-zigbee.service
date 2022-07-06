@@ -1,0 +1,10 @@
+[Unit]
+Description=HOMEd ZigBee Service
+
+[Service]
+ExecStart=/usr/local/bin/homed-zigbee
+KillSignal=SIGTERM
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
