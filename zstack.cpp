@@ -134,6 +134,16 @@ void ZStack::activeEndPointsRequest(quint16 networkAddress)
     sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)));
 }
 
+void ZStack::lqiRequest(quint16 networkAddress, quint8 index)
+{
+    lqiRequestStruct request;
+
+    request.networkAddress = qToLittleEndian(networkAddress);
+    request.index = index;
+
+    sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)));
+}
+
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndPointId, const QByteArray &dstIeeeAddress, quint8 dstEndPointId, quint16 clusterId)
 {
     bindRequestStruct request;
@@ -296,6 +306,25 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
             {
                 m_bindRequestSuccess = data.at(2) ? false : true;
                 emit bindResponse();
+            }
+
+            break;
+        }
+
+        case ZDO_MGMT_LQI_RSP:
+        {
+            const lqiResponseStruct *message = reinterpret_cast <const lqiResponseStruct*> (data.constData());
+
+            if (!message->status)
+            {
+                if (message->index + message->count < message->total)
+                    lqiRequest(qFromLittleEndian(message->networkAddress), message->index + message->count);
+
+                for (quint8 i = 0; i < message->count; i++)
+                {
+                    const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (data.constData() + i * sizeof(neighborRecordStruct));
+                    emit neighborRecordReceived(qFromLittleEndian(message->networkAddress), qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(message->index | i));
+                }
             }
 
             break;

@@ -152,6 +152,32 @@ struct activeEndPointsResponseStruct
     quint8  count;
 };
 
+struct lqiRequestStruct
+{
+    quint16 networkAddress;
+    quint8  index;
+};
+
+struct lqiResponseStruct
+{
+    quint16 networkAddress;
+    quint8  status;
+    quint8  total;
+    quint8  index;
+    quint8  count;
+};
+
+struct neighborRecordStruct
+{
+    quint64 extendedPanId;
+    quint64 ieeeAddress;
+    quint16 networkAddress;
+    quint8  options;
+    quint8  permitJoining;
+    quint8  depth;
+    quint8  linkQuality;
+};
+
 struct bindRequestStruct
 {
     quint16 networkAddress;
@@ -258,6 +284,7 @@ public:
     void nodeDescriptorRequest(quint16 networkAddress);
     void simpleDescriptorRequest(quint16 networkAddress, quint8 endPointId);
     void activeEndPointsRequest(quint16 networkAddress);
+    void lqiRequest(quint16 networkAddress, quint8 index);
 
     bool bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndPointId, const QByteArray &dstIeeeAddress, quint8 dstEndPointId, quint16 clusterId);
     bool bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endPointId, quint16 clusterId);
@@ -302,6 +329,7 @@ signals:
     void nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType);
     void activeEndPointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
+    void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
     void messageReveived(quint16 networkAddress, quint8 endPointId, quint16 cluster, quint8 linkQuality, const QByteArray &data);
 
     void bindResponse(void);
