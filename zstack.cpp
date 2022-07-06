@@ -166,6 +166,7 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddres
     connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
 
     m_bindAddress = networkAddress;
+    m_bindRequestSuccess = false;
 
     if (!sendRequest(ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
     {
@@ -177,7 +178,7 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddres
     timer.start(ADAPTER_REQUEST_TIMEOUT);
     loop.exec();
 
-    return timer.isActive() && m_bindRequestSuccess;
+    return m_bindRequestSuccess;
 }
 
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endPointId, quint16 clusterId)
@@ -198,10 +199,27 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clus
     request.radius = AF_DEFAULT_RADIUS;
     request.length = static_cast <quint8> (data.length());
 
+    m_dataConfirmReceived = false;
+    m_dataRequestSuccess = false;
+
     if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
         logWarning << "Data request failed";
         return false;
+    }
+
+    if (!m_dataConfirmReceived)
+    {
+        QEventLoop loop;
+        QTimer timer;
+
+        connect(this, &ZStack::dataConfirm, &loop, &QEventLoop::quit);
+        connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+        timer.setSingleShot(true);
+        timer.start(ADAPTER_REQUEST_TIMEOUT);
+
+        loop.exec();
     }
 
     m_transactionId++;
@@ -233,11 +251,16 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         }
 
         case AF_DATA_CONFIRM:
-
+        {
             if (static_cast <quint8> (data.at(2)) == m_transactionId)
+            {
+                m_dataConfirmReceived = true;
                 m_dataRequestSuccess = data.at(0) ? false : true;
+                emit dataConfirm();
+            }
 
             break;
+        }
 
         case AF_INCOMING_MSG:
         {

@@ -253,7 +253,7 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->interviewFinished())
         return;
 
-    if (!device->manufacturerCode())
+    if (!device->nodeDescriptorReceived())
     {
         m_adapter->nodeDescriptorRequest(device->networkAddress());
         return;
@@ -609,11 +609,9 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturer
     logInfo << "Device" << device->name() << "node descriptor received, manufacturer code:" << QString::asprintf("0x%04X", device->manufacturerCode());
 
     if (device->logicalType() == LogicalType::Router)
-    {
         logInfo << "Device" << device->name() << "is router";
-        // m_zigbee->lqiRequest(device->network());
-    }
 
+    device->setNodeDescriptorReceived();
     device->updateLastSeen();
     interviewDevice(device);
 }

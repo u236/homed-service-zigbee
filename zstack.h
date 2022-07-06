@@ -305,7 +305,7 @@ private:
     QByteArray m_ieeeAddress;
 
     quint16 m_bindAddress;
-    bool m_bindRequestSuccess, m_dataRequestSuccess;
+    bool m_bindRequestSuccess, m_dataConfirmReceived, m_dataRequestSuccess;
 
     quint16 m_replyCommand;
     QByteArray m_replyData;
@@ -333,6 +333,7 @@ signals:
     void messageReveived(quint16 networkAddress, quint8 endPointId, quint16 cluster, quint8 linkQuality, const QByteArray &data);
 
     void bindResponse(void);
+    void dataConfirm(void);
 
 };
 

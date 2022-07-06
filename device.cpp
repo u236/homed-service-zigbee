@@ -72,7 +72,7 @@ void DeviceObject::setProperties(void)
             return;
         }
 
-        if (m_model == "lumi.sensor_cube")
+        if (m_model == "lumi.sensor_cube" || m_model == "lumi.sensor_cube.aqgl01") // TODO: check this
         {
             m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::CubeAction)};
             return;
@@ -81,6 +81,12 @@ void DeviceObject::setProperties(void)
         if (m_model == "lumi.sensor_ht" || m_model == "lumi.sens")
         {
             m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::Temperature), Property(new Properties::Humidity)};
+            return;
+        }
+
+        if (m_model == "lumi.sensor_magnet")
+        {
+            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::Status)};
             return;
         }
 

@@ -79,6 +79,9 @@ public:
     inline QString model(void) { return m_model; }
     inline void setModel(const QString &value) { m_model = value; }
 
+    inline bool nodeDescriptorReceived(void) { return m_nodeDescriptorReceived; }
+    inline void setNodeDescriptorReceived(void) { m_nodeDescriptorReceived = true; }
+
     inline bool interviewFinished(void) { return m_interviewFinished; }
     inline void setInterviewFinished(bool value = true) { m_interviewFinished = value; }
 
@@ -106,7 +109,7 @@ private:
     quint16 m_manufacturerCode;
     LogicalType m_logicalType;
     QString m_name, m_vendor, m_model;
-    bool m_interviewFinished;
+    bool m_nodeDescriptorReceived, m_interviewFinished;
 
     qint64 m_lastSeen;
     quint8 m_linkQuality;
