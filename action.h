@@ -68,6 +68,17 @@ namespace Actions
 
     };
 
+    class LevelAction : public ActionObject
+    {
+
+    public:
+
+        LevelAction(quint8 endPointId = 1);
+        virtual ~LevelAction(void) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
     class ColorTemperature : public ActionObject
     {
 
