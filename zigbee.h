@@ -108,11 +108,12 @@ public:
 private:
 
     ZStack *m_adapter;
-    QTimer *m_neighborsTimer, *m_statusTimer;
+    QTimer *m_ledTimer, *m_neighborsTimer, *m_statusTimer;
 
     QMap <QByteArray, Device> m_devices;
 
     QString m_databaseFile;
+    qint16 m_ledPin;
     quint8 m_transactionId;
     bool m_permitJoin;
 
@@ -144,6 +145,7 @@ private slots:
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
     void messageReveived(quint16 networkAddress, quint8 endPointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
+    void disableLed(void);
     void updateNeighbors(void);
     void storeStatus(void);
 

@@ -1,11 +1,16 @@
 #include <QtEndian>
 #include <QFile>
+#include "gpio.h"
 #include "logger.h"
 #include "zigbee.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_ledTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
     m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
+    m_ledPin = static_cast <qint16> (config->value("gpio/led", -1).toInt());
+
+    GPIO::setDirection(m_ledPin, GPIO::Output);
+    GPIO::setStatus(m_ledPin, false);
 
     connect(m_adapter, &ZStack::coordinatorReady, this, &ZigBee::coordinatorReady);
     connect(m_adapter, &ZStack::endDeviceJoined, this, &ZigBee::endDeviceJoined);
@@ -16,8 +21,13 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
 
+    connect(m_ledTimer, &QTimer::timeout, this, &ZigBee::disableLed);
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
     connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
+
+    m_ledTimer->setSingleShot(true);
+    m_neighborsTimer->setSingleShot(true);
+    m_statusTimer->setSingleShot(true);
 }
 
 void ZigBee::init(void)
@@ -33,9 +43,6 @@ void ZigBee::init(void)
 
         file.close();
     }
-
-    m_neighborsTimer->setSingleShot(true);
-    m_statusTimer->setSingleShot(true);
 
     m_adapter->init();
 }
@@ -61,6 +68,9 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
         if (action->name() == actionName)
         {
             QByteArray data = action->request(actionData);
+
+            m_ledTimer->start(50);
+            GPIO::setStatus(m_ledPin, true);
 
             if (data.isEmpty() || m_adapter->dataRequest(it.value()->networkAddress(), action->endPointId(), action->clusterId(), data))
                 continue;
@@ -570,6 +580,9 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
 {
     auto it = m_devices.find(ieeeAddress);
 
+    m_ledTimer->start(500);
+    GPIO::setStatus(m_ledPin, true);
+
     logInfo << "Device" << ieeeAddress.toHex(':') << "with address" << QString::asprintf("0x%04X", networkAddress) << "joined network, capabilities:" << QString::asprintf("0x%02X", capabilities);
 
     if (it != m_devices.end())
@@ -587,6 +600,9 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
 void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
 {
     auto it = m_devices.find(ieeeAddress);
+
+    m_ledTimer->start(500);
+    GPIO::setStatus(m_ledPin, true);
 
     logInfo << "Device" << ieeeAddress.toHex(':') << "with address" << QString::asprintf("0x%04X", networkAddress) << "left network";
 
@@ -697,6 +713,9 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 
     if (endPoint.isNull())
         return;
 
+    m_ledTimer->start(50);
+    GPIO::setStatus(m_ledPin, true);
+
     header.frameControl = static_cast <quint8> (data.at(0));
 
     if (header.frameControl & FC_MANUFACTURER_SPECIFIC)
@@ -725,6 +744,11 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 
         endPoint->setDataUpdated(false);
         emit endPointUpdated(endPoint);
     }
+}
+
+void ZigBee::disableLed(void)
+{
+    GPIO::setStatus(m_ledPin, false);
 }
 
 void ZigBee::updateNeighbors(void)
