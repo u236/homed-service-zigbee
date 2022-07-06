@@ -89,11 +89,12 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
 
-    inline QMap <quint8, EndPoint> &endPoints(void) { return m_endPoints; }
-
     inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Property> &properties(void) { return m_properties; }
     inline QList <Reporting> &reportings(void) { return m_reportings; }
+
+    inline QMap <quint8, EndPoint> &endPoints(void) { return m_endPoints; }
+    inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
     void setProperties(void);
 
@@ -110,11 +111,12 @@ private:
     qint64 m_lastSeen;
     quint8 m_linkQuality;
 
-    QMap <quint8, EndPoint> m_endPoints;
-
     QList <Action> m_actions;
     QList <Property> m_properties;
     QList <Reporting> m_reportings;
+
+    QMap <quint8, EndPoint> m_endPoints;
+    QMap <quint16, quint8> m_neighbors;
 
 };
 

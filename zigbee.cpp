@@ -3,7 +3,7 @@
 #include "logger.h"
 #include "zigbee.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_timer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
     m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
 
@@ -13,9 +13,11 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     connect(m_adapter, &ZStack::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
     connect(m_adapter, &ZStack::activeEndPointsReceived, this, &ZigBee::activeEndPointsReceived);
     connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
+    connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
 
-    connect(m_timer, &QTimer::timeout, this, &ZigBee::storeStatus);
+    connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
+    connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
 }
 
 void ZigBee::init(void)
@@ -32,7 +34,9 @@ void ZigBee::init(void)
         file.close();
     }
 
-    m_timer->setSingleShot(true);
+    m_neighborsTimer->setSingleShot(true);
+    m_statusTimer->setSingleShot(true);
+
     m_adapter->init();
 }
 
@@ -87,6 +91,7 @@ void ZigBee::unserializeDevices(const QJsonArray &array)
             device->setLastSeen(json.value("lastSeen").toInt());
 
             unserializeEndPoints(device, json.value("endPoints").toArray());
+            unserializeNeighbors(device, json.value("neighbors").toArray());
 
             if (device->interviewFinished())
                 device->setProperties();
@@ -122,6 +127,17 @@ void ZigBee::unserializeEndPoints(const Device &device, const QJsonArray &array)
     }
 }
 
+void ZigBee::unserializeNeighbors(const Device &device, const QJsonArray &array)
+{
+    for (auto it = array.begin(); it != array.end(); it++)
+    {
+        QJsonObject json = it->toObject();
+
+        if (json.contains("networkAddress") && json.contains("linkQuality"))
+            device->neighbors().insert(static_cast <quint16> (json.value("networkAddress").toInt()), static_cast <quint8> (json.value("linkQuality").toInt()));
+    }
+}
+
 QJsonArray ZigBee::serializeDevices(void)
 {
     QJsonArray array;
@@ -154,6 +170,9 @@ QJsonArray ZigBee::serializeDevices(void)
 
         if (!it.value()->endPoints().isEmpty())
             json.insert("endPoints", serializeEndPoints(it.value()));
+
+        if (!it.value()->neighbors().isEmpty())
+            json.insert("neighbors", serializeNeighbors(it.value()));
 
         array.append(json);
     }
@@ -196,6 +215,23 @@ QJsonArray ZigBee::serializeEndPoints(const Device &device)
 
             json.insert("outClusters", outClustersArray);
         }
+
+        array.append(json);
+    }
+
+    return array;
+}
+
+QJsonArray ZigBee::serializeNeighbors(const Device &device)
+{
+    QJsonArray array;
+
+    for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
+    {
+        QJsonObject json;
+
+        json.insert("networkAddress", it.key());
+        json.insert("linkQuality", it.value());
 
         array.append(json);
     }
@@ -525,6 +561,8 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     m_devices.insert(ieeeAddress, device);
     m_adapter->setPermitJoin(m_permitJoin);
+
+    m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
     storeStatus();
 }
 
@@ -626,6 +664,23 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId,
     interviewDevice(device);
 }
 
+void ZigBee::neighborRecordReceived(quint16 network, quint16 neighbor, quint8 linkQuality, bool first)
+{
+    Device device = findDevice(network);
+
+    if (device.isNull())
+        return;
+
+    if (first)
+    {
+        logInfo << "Device" << device->name() << "neighbors list received";
+        device->neighbors().clear();
+    }
+
+    device->neighbors().insert(neighbor, linkQuality);
+    device->updateLastSeen();
+}
+
 void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
 {
     Device device = findDevice(networkAddress);
@@ -671,12 +726,21 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 
     }
 }
 
+void ZigBee::updateNeighbors(void)
+{
+    for (auto it = m_devices.begin(); it != m_devices.end(); it++)
+        if (it.value()->logicalType() != LogicalType::EndDevice)
+            m_adapter->lqiRequest(it.value()->networkAddress());
+
+    m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+}
+
 void ZigBee::storeStatus(void)
 {
     QFile file(m_databaseFile);
     QJsonObject json;
 
-    m_timer->start(STORE_DEVICES_INTERVAL);
+    m_statusTimer->start(STORE_STATUS_INTERVAL);
 
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
@@ -684,8 +748,8 @@ void ZigBee::storeStatus(void)
         return;
     }
 
-    json.insert("devices", serializeDevices());
     json.insert("permitJoin", m_permitJoin);
+    json.insert("devices", serializeDevices());
 
     file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
     file.close();

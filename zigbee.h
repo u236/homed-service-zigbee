@@ -1,7 +1,8 @@
 #ifndef ZIGBEE_H
 #define ZIGBEE_H
 
-#define STORE_DEVICES_INTERVAL                      60000
+#define UPDATE_NEIGHBORS_INTERVAL                   1800000
+#define STORE_STATUS_INTERVAL                       60000
 
 #define FC_CLUSTER_SPECIFIC                         0x01
 #define FC_MANUFACTURER_SPECIFIC                    0x04
@@ -107,7 +108,7 @@ public:
 private:
 
     ZStack *m_adapter;
-    QTimer *m_timer;
+    QTimer *m_neighborsTimer, *m_statusTimer;
 
     QMap <QByteArray, Device> m_devices;
 
@@ -116,10 +117,12 @@ private:
     bool m_permitJoin;
 
     void unserializeDevices(const QJsonArray &devicesArray);
-    QJsonArray serializeDevices(void);
+    void unserializeEndPoints(const Device &device, const QJsonArray &array);
+    void unserializeNeighbors(const Device &device, const QJsonArray &array);
 
-    void unserializeEndPoints(const Device &device, const QJsonArray &endPointsArray);
+    QJsonArray serializeDevices(void);
     QJsonArray serializeEndPoints(const Device &device);
+    QJsonArray serializeNeighbors(const Device &device);
 
     Device findDevice(quint16 networkAddress);
     void interviewDevice(const Device &device);
@@ -138,8 +141,10 @@ private slots:
     void nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType);
     void activeEndPointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
+    void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
     void messageReveived(quint16 networkAddress, quint8 endPointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
+    void updateNeighbors(void);
     void storeStatus(void);
 
 signals:

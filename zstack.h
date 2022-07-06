@@ -284,7 +284,7 @@ public:
     void nodeDescriptorRequest(quint16 networkAddress);
     void simpleDescriptorRequest(quint16 networkAddress, quint8 endPointId);
     void activeEndPointsRequest(quint16 networkAddress);
-    void lqiRequest(quint16 networkAddress, quint8 index);
+    void lqiRequest(quint16 networkAddress, quint8 index = 0);
 
     bool bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndPointId, const QByteArray &dstIeeeAddress, quint8 dstEndPointId, quint16 clusterId);
     bool bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endPointId, quint16 clusterId);
