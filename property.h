@@ -152,6 +152,28 @@ namespace Properties
 
     };
 
+    class AnalogCO2 : public PropertyObject
+    {
+
+    public:
+
+        AnalogCO2(void);
+        virtual ~AnalogCO2(void) {}
+        void parse(const Cluster &cluster, quint16 attributeId) override;
+
+    };
+
+    class AnalogTemperature: public PropertyObject
+    {
+
+    public:
+
+        AnalogTemperature(void);
+        virtual ~AnalogTemperature(void) {}
+        void parse(const Cluster &cluster, quint16 attributeId) override;
+
+    };
+
     class ColorTemperature : public PropertyObject
     {
 

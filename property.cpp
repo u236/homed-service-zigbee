@@ -104,6 +104,44 @@ void Level::parse(const Cluster &cluster, quint16 attributeId)
     m_value = static_cast <quint8> (attribute->data().at(0));
 }
 
+AnalogCO2::AnalogCO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
+
+void AnalogCO2::parse(const Cluster &cluster, quint16 attributeId)
+{
+    Attribute attribute = cluster->attribute(attributeId);
+    float value;
+
+    if (attributeId != 0x001C || attribute->dataType() != DATA_TYPE_STRING || QString(attribute->data()) != "ppm")
+        return;
+
+    attribute = cluster->attribute(0x0055);
+
+    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION)
+        return;
+
+    memcpy(&value, attribute->data().constData(), sizeof(value));
+    m_value = static_cast <double> (value);
+}
+
+AnalogTemperature::AnalogTemperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
+
+void AnalogTemperature::parse(const Cluster &cluster, quint16 attributeId)
+{
+    Attribute attribute = cluster->attribute(attributeId);
+    float value;
+
+    if (attributeId != 0x001C || attribute->dataType() != DATA_TYPE_STRING || QString(attribute->data()) != "C")
+        return;
+
+    attribute = cluster->attribute(0x0055);
+
+    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION)
+        return;
+
+    memcpy(&value, attribute->data().constData(), sizeof(value));
+    m_value = static_cast <double> (value);
+}
+
 ColorTemperature::ColorTemperature(void) : PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
 
 void ColorTemperature::parse(const Cluster &cluster, quint16 attributeId)

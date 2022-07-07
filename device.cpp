@@ -27,7 +27,12 @@ void DeviceObject::setProperties(void)
         if (m_model == "Button")
         {
             m_properties = {Property(new Properties::BatteryPercentage), Property(new Properties::SwitchActionPTVO)};
-            m_reportings = {Reporting(new Reportings::BatteryPercentage)};
+            return;
+        }
+
+        if (m_model == "CO2 Sensor")
+        {
+            m_properties = {Property(new Properties::AnalogCO2), Property(new Properties::AnalogTemperature)};
             return;
         }
 
