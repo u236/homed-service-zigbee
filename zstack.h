@@ -39,7 +39,6 @@
 #define ZDO_MGMT_PERMIT_JOIN_REQ                    0x2536
 #define ZDO_STARTUP_FROM_APP                        0x2540
 #define UTIL_GET_DEVICE_INFO                        0x2700
-#define APP_CNF_BDB_START_COMMISSIONING             0x2F05
 #define APP_CNF_BDB_SET_CHANNEL                     0x2F08
 
 #define SYS_RESET_IND                               0x4180

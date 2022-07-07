@@ -40,19 +40,13 @@
 
 #define CLUSTER_BASIC                               0x0000
 #define CLUSTER_POWER_CONFIGURATION                 0x0001
-#define CLUSTER_TEMPERATURE_CONFIGURATION           0x0002
 #define CLUSTER_IDENTIFY                            0x0003
-#define CLUSTER_GROUPS                              0x0004
-#define CLUSTER_SCENES                              0x0005
 #define CLUSTER_ON_OFF                              0x0006
 #define CLUSTER_LEVEL_CONTROL                       0x0008
-#define CLUSTER_ALARMS                              0x0009
 #define CLUSTER_TIME                                0x000A
 #define CLUSTER_ANALOG_INPUT                        0x000C
 #define CLUSTER_MULTISTATE_INPUT                    0x0012
-#define CLUSTER_MULTISTATE_VALUE                    0x0014
 #define CLUSTER_OTA_UPGRADE                         0x0019
-#define CLUSTER_POLL_CONTROL                        0x0020
 #define CLUSTER_COLOR_CONTROL                       0x0300
 #define CLUSTER_ILLUMINANCE_MEASUREMENT             0x0400
 #define CLUSTER_TEMPERATURE_MEASUREMENT             0x0402
@@ -63,7 +57,6 @@
 #define CLUSTER_IAS_WD                              0x0502
 #define CLUSTER_SMART_ENERGY_METERING               0x0702
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
-#define CLUSTER_DIAGNOSTICS                         0x0B05
 #define CLUSTER_TOUCHLINK                           0x1000
 
 #include <QJsonArray>
