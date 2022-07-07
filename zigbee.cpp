@@ -753,6 +753,8 @@ void ZigBee::disableLed(void)
 
 void ZigBee::updateNeighbors(void)
 {
+    logInfo << "Updating devices neighbors...";
+
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
         if (it.value()->logicalType() != LogicalType::EndDevice)
             m_adapter->lqiRequest(it.value()->networkAddress());
