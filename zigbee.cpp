@@ -320,7 +320,7 @@ void ZigBee::interviewDevice(const Device &device)
         if (payload.dataType == DATA_TYPE_BOOLEAN || payload.dataType == DATA_TYPE_8BIT_UNSIGNED || payload.dataType == DATA_TYPE_8BIT_SIGNED)
             length -= 1;
 
-        if (!m_adapter->dataRequest(device->networkAddress(), reporting->endPointId(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header)).append(reinterpret_cast <char*> (&payload), length)))
+        if (!m_adapter->dataRequest(device->networkAddress(), reporting->endPointId(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), length)))
         {
             logWarning << "Device" << device->name() << reporting->name() << "reporting configuration failed";
             continue;

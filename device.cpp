@@ -113,5 +113,5 @@ void DeviceObject::setProperties(void)
         }
     }
 
-    logWarning << "Unrecognized device" << name() << "vendor and model";
+    logWarning << "Unrecognized device" << name() << "vendor" << m_vendor << "and model" << m_model;
 }
