@@ -97,6 +97,7 @@ public:
     void init(void);
     void setPermitJoin(bool enabled);
     void deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData);
+    void setDeviceName(const QByteArray &ieeeAddress, const QString &name);
 
 private:
 

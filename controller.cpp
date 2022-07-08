@@ -14,6 +14,7 @@ void Controller::mqttConnected(void)
     logInfo << "MQTT connected";
 
     mqttSubscribe("homed/command/zigbee");
+    mqttSubscribe("homed/config/zigbee");
     mqttSubscribe("homed/td/zigbee/#");
 }
 
@@ -27,6 +28,20 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
         if (action == "setPermitJoin" && json.contains("enabled"))
             m_zigbee->setPermitJoin(json.value("enabled").toBool());
+    }
+    else if (topic.name() == "homed/config/zigbee" && json.contains("devices"))
+    {
+        QJsonArray array = json.value("devices").toArray();
+
+        logInfo << "Configuration message received";
+
+        for (auto it = array.begin(); it != array.end(); it++)
+        {
+            QJsonObject item = it->toObject();
+
+            if (item.contains("deviceAddress") && item.contains("deviceName"))
+                m_zigbee->setDeviceName(QByteArray::fromHex(item.value("deviceAddress").toString().toUtf8()), item.value("deviceName").toString());
+        }
     }
     else if (topic.name().startsWith("homed/td/zigbee/"))
     {

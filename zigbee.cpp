@@ -80,6 +80,16 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
     }
 }
 
+void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
+{
+    auto it = m_devices.find(ieeeAddress);
+
+    if (it == m_devices.end())
+        return;
+
+    it.value()->setName(name);
+}
+
 void ZigBee::unserializeDevices(const QJsonArray &array)
 {
     for (auto it = array.begin(); it != array.end(); it++)
