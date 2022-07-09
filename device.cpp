@@ -47,7 +47,7 @@ void DeviceObject::setProperties(void)
     {
         if (m_model == "TRADFRI on/off switch")
         {
-            m_properties = {Property(new Properties::BatteryPercentageIKEA), Property(new Properties::SwitchAction), Property(new Properties::LevelAction)};
+            m_properties = {Property(new Properties::BatteryPercentageIKEA), Property(new Properties::IdentifyAction), Property(new Properties::SwitchAction), Property(new Properties::LevelAction)};
             m_reportings = {Reporting(new Reportings::BatteryPercentage)};
             return;
         }

@@ -253,6 +253,18 @@ void CubeRotation::parse(const Cluster &cluster, quint16 attributeId)
     m_value = value < 0 ? "rotateLeft" : "rotateRight";
 }
 
+IdentifyAction::IdentifyAction(void) : PropertyObject("action", CLUSTER_IDENTIFY, true) {}
+
+void IdentifyAction::parse(const Cluster &cluster, quint16 attributeId)
+{
+    Q_UNUSED(attributeId)
+
+    if (cluster->commandId() != 0x01)
+        return;
+
+    m_value = "identify";
+}
+
 SwitchAction::SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
 
 void SwitchAction::parse(const Cluster &cluster, quint16 attributeId)
@@ -268,8 +280,6 @@ void SwitchAction::parse(const Cluster &cluster, quint16 attributeId)
 }
 
 SwitchActionLUMI::SwitchActionLUMI(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
-
-#include "logger.h"
 
 void SwitchActionLUMI::parse(const Cluster &cluster, quint16 attributeId)
 {

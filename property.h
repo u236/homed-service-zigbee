@@ -251,6 +251,17 @@ namespace Properties
 
     };
 
+    class IdentifyAction : public PropertyObject
+    {
+
+    public:
+
+        IdentifyAction(void);
+        virtual ~IdentifyAction(void) {}
+        void parse(const Cluster &cluster, quint16 attributeId) override;
+
+    };
+
     class SwitchAction : public PropertyObject
     {
 
