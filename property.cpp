@@ -116,7 +116,7 @@ void AnalogCO2::parse(const Cluster &cluster, quint16 attributeId)
 
     attribute = cluster->attribute(0x0055);
 
-    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION)
+    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION || attribute->data().length() != 4)
         return;
 
     memcpy(&value, attribute->data().constData(), sizeof(value));
@@ -135,7 +135,7 @@ void AnalogTemperature::parse(const Cluster &cluster, quint16 attributeId)
 
     attribute = cluster->attribute(0x0055);
 
-    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION)
+    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION || attribute->data().length() != 4)
         return;
 
     memcpy(&value, attribute->data().constData(), sizeof(value));
@@ -237,6 +237,20 @@ void CubeAction::parse(const Cluster &cluster, quint16 attributeId)
         m_value = "flip";
     else if (value >= 64)
         m_value = "drop";
+}
+
+CubeRotation::CubeRotation(void) : PropertyObject("action", CLUSTER_ANALOG_INPUT, true) {}
+
+void CubeRotation::parse(const Cluster &cluster, quint16 attributeId)
+{
+    Attribute attribute = cluster->attribute(attributeId);
+    float value;
+
+    if (attributeId != 0x0055 || attribute->dataType() != DATA_TYPE_SINGLE_PRECISION || attribute->data().length() != 4)
+        return;
+
+    memcpy(&value, attribute->data().constData(), sizeof(value));
+    m_value = value < 0 ? "rotateLeft" : "rotateRight";
 }
 
 SwitchAction::SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}

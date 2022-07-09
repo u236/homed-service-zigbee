@@ -240,6 +240,17 @@ namespace Properties
 
     };
 
+    class CubeRotation : public PropertyObject
+    {
+
+    public:
+
+        CubeRotation(void);
+        virtual ~CubeRotation(void) {}
+        void parse(const Cluster &cluster, quint16 attributeId) override;
+
+    };
+
     class SwitchAction : public PropertyObject
     {
 

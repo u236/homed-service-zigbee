@@ -80,7 +80,7 @@ void DeviceObject::setProperties(void)
 
         if (m_model == "lumi.sensor_cube" || m_model == "lumi.sensor_cube.aqgl01") // TODO: check this
         {
-            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::CubeAction)};
+            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::CubeAction), Property(new Properties::CubeRotation)};
             return;
         }
 
