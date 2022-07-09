@@ -67,7 +67,7 @@ void Controller::endPointUpdated(const EndPoint &endPoint)
 {
     QJsonObject json;
 
-    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->properties().count()); i++)
+    for (int i = 0; i < endPoint->device()->properties().count(); i++)
     {
         Property property = endPoint->device()->properties().value(i);
 

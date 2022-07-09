@@ -62,7 +62,7 @@ void ZStack::registerEndPoint(quint8 endPointId, quint16 profileId, quint16 devi
 
     data.append(static_cast <char> (inClusters.count()));
 
-    for (quint8 i = 0; i < static_cast <quint8> (inClusters.count()); i++)
+    for (int i = 0; i < inClusters.count(); i++)
     {
         quint16 clusterId = inClusters.value(i);
         data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
@@ -70,7 +70,7 @@ void ZStack::registerEndPoint(quint8 endPointId, quint16 profileId, quint16 devi
 
     data.append(static_cast <char> (outClusters.count()));
 
-    for (quint8 i = 0; i < static_cast <quint8> (outClusters.count()); i++)
+    for (int i = 0; i < outClusters.count(); i++)
     {
         quint16 clusterId = outClusters.value(i);
         data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
@@ -410,7 +410,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     packet.append(reinterpret_cast <char*> (&command), sizeof(command));
     packet.append(data);
 
-    for (quint8 i = 1; i < packet.length(); i++)
+    for (int i = 1; i < packet.length(); i++)
         fcs ^= packet[i];
 
     m_port->write(packet.append(fcs));

@@ -61,7 +61,7 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
     if (it == m_devices.end())
         return;
 
-    for (quint8 i = 0; i < static_cast <quint8> (it.value()->actions().count()); i++)
+    for (int i = 0; i < it.value()->actions().count(); i++)
     {
         Action action = it.value()->actions().value(i);
 
@@ -220,7 +220,7 @@ QJsonArray ZigBee::serializeEndPoints(const Device &device)
         {
             QJsonArray inClustersArray;
 
-            for (quint8 i = 0; i < static_cast <quint8> (it.value()->inClusters().count()); i++)
+            for (int i = 0; i < it.value()->inClusters().count(); i++)
                 inClustersArray.append(it.value()->inClusters().value(i));
 
             json.insert("inClusters", inClustersArray);
@@ -230,7 +230,7 @@ QJsonArray ZigBee::serializeEndPoints(const Device &device)
         {
             QJsonArray outClustersArray;
 
-            for (quint8 i = 0; i < static_cast <quint8> (it.value()->outClusters().count()); i++)
+            for (int i = 0; i < it.value()->outClusters().count(); i++)
                 outClustersArray.append(it.value()->outClusters().value(i));
 
             json.insert("outClusters", outClustersArray);
@@ -303,7 +303,7 @@ void ZigBee::interviewDevice(const Device &device)
     logInfo << "Device" << device->name() << "vendor is" << device->vendor() << "and model is" << device->model();
     device->setProperties();
 
-    for (quint8 i = 0; i < static_cast <quint8> (device->reportings().count()); i++)
+    for (int i = 0; i < device->reportings().count(); i++)
     {
         Reporting reporting = device->reportings().value(i);
         zclHeaderStruct header;
@@ -353,7 +353,7 @@ void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clu
     header.transactionId = m_transactionId++;
     header.commandId = CMD_READ_ATTRIBUTES;
 
-    for (quint8 i = 0; i < static_cast <quint8> (attributes.length()); i++)
+    for (int i = 0; i < attributes.length(); i++)
     {
         quint16 attributeId = qToLittleEndian(attributes.value(i));
         payload.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
@@ -392,7 +392,7 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
     if (!endPoint->device()->interviewFinished())
         return;
 
-    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->properties().count()); i++)
+    for (int i = 0; i < endPoint->device()->properties().count(); i++)
     {
         Property property = endPoint->device()->properties().value(i);
 
@@ -433,7 +433,7 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
         return;
     }
 
-    for (quint8 i = 0; i < static_cast <quint8> (endPoint->device()->properties().count()); i++)
+    for (int i = 0; i < endPoint->device()->properties().count(); i++)
     {
         Property property = endPoint->device()->properties().value(i);
 
@@ -655,12 +655,12 @@ void ZigBee::activeEndPointsReceived(quint16 networkAddress, const QByteArray da
     if (device.isNull())
         return;
 
-    for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+    for (int i = 0; i < data.length(); i++)
         list.append(QString::number(static_cast <quint8> (data.at(i))));
 
     logInfo << "Device" << device->name() << "active endPoints received:" << list.join(", ");
 
-    for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+    for (int i = 0; i < data.length(); i++)
         if (device->endPoints().find(static_cast <quint8> (data.at(i))) == device->endPoints().end())
             device->endPoints().insert(static_cast <quint8> (data.at(i)), EndPoint(new EndPointObject(data.at(i), device)));
 
