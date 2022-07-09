@@ -3,6 +3,7 @@
 
 Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this))
 {
+    connect(m_zigbee, &ZigBee::endDeviceEvent, this, &Controller::endDeviceEvent);
     connect(m_zigbee, &ZigBee::endPointUpdated, this, &Controller::endPointUpdated);
     connect(m_zigbee, &ZigBee::statusStored, this, &Controller::statusStored);
 
@@ -55,6 +56,11 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
             m_zigbee->deviceAction(ieeeAddress, it.key(), it.value().toVariant());
         }
     }
+}
+
+void Controller::endDeviceEvent(bool join)
+{
+    mqttPublish("homed/td/display", {{"notification", QString("ZIGBEE DEVICE %1").arg(join ? "JOINED": "LEAVED")}});
 }
 
 void Controller::endPointUpdated(const EndPoint &endPoint)

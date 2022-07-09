@@ -23,8 +23,10 @@ private slots:
     void mqttConnected(void) override;
     void mqttReceived(const QByteArray &message, const QMqttTopicName &topic) override;
 
+    void endDeviceEvent(bool join = true);
     void endPointUpdated(const EndPoint &endPoint);
     void statusStored(const QJsonObject &json);
+
 };
 
 #endif

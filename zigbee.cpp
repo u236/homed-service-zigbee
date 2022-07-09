@@ -605,6 +605,8 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
 
     it.value()->updateLastSeen();
     interviewDevice(it.value());
+
+    emit(endDeviceEvent());
 }
 
 void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
@@ -621,6 +623,8 @@ void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress
 
     m_devices.erase(it);
     storeStatus();
+
+    emit(endDeviceEvent(false));
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType)
