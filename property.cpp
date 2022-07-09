@@ -161,13 +161,13 @@ Illuminance::Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINAN
 void Illuminance::parse(const Cluster &cluster, quint16 attributeId)
 {
     Attribute attribute = cluster->attribute(attributeId);
-    qint16 value;
+    quint16 value;
 
     if (attributeId != 0x0000 || attribute->dataType() != DATA_TYPE_16BIT_UNSIGNED || attribute->data().length() != 2)
         return;
 
     memcpy(&value, attribute->data().constData(), sizeof(value));
-    m_value = static_cast <quint32> (value ? pow(10, (value - 1) / 10000.0) : 0);
+    m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
 }
 
 Temperature::Temperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT) {}
