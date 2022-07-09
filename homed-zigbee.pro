@@ -1,4 +1,5 @@
 include(../homed-common/homed-common.pri)
+include(../homed-common/homed-gpio.pri)
 
 HEADERS += \
     action.h \
