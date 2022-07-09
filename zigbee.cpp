@@ -336,7 +336,7 @@ void ZigBee::interviewDevice(const Device &device)
             continue;
         }
 
-        logInfo << "Device" << device->name() << reporting->name() << "reporting configured successfully";
+        logInfo << "Device" << device->name() << "reporting for" << reporting->name() << "configured successfully";
     }
 
     logInfo << "Device" << device->name() << "interview finished";
@@ -590,11 +590,6 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
 {
     auto it = m_devices.find(ieeeAddress);
 
-    m_ledTimer->start(500);
-    GPIO::setStatus(m_ledPin, true);
-
-    logInfo << "Device" << ieeeAddress.toHex(':') << "with address" << QString::asprintf("0x%04X", networkAddress) << "joined network, capabilities:" << QString::asprintf("0x%02X", capabilities);
-
     if (it != m_devices.end())
     {
         it.value()->setNetworkAddress(networkAddress);
@@ -602,6 +597,11 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
     }
     else
         it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
+
+    m_ledTimer->start(500);
+    GPIO::setStatus(m_ledPin, true);
+
+    logInfo << "Device" << it.value()->name() << "with address" << QString::asprintf("0x%04X", networkAddress) << "joined network, capabilities:" << QString::asprintf("0x%02X", capabilities);
 
     it.value()->updateLastSeen();
     interviewDevice(it.value());
@@ -611,14 +611,15 @@ void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress
 {
     auto it = m_devices.find(ieeeAddress);
 
+    if (it == m_devices.end())
+        return;
+
     m_ledTimer->start(500);
     GPIO::setStatus(m_ledPin, true);
 
-    logInfo << "Device" << ieeeAddress.toHex(':') << "with address" << QString::asprintf("0x%04X", networkAddress) << "left network";
+    logInfo << "Device" << it.value()->name() << "with address" << QString::asprintf("0x%04X", networkAddress) << "left network";
 
-    if (it != m_devices.end())
-        m_devices.erase(it);
-
+    m_devices.erase(it);
     storeStatus();
 }
 
