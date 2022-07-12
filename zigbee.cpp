@@ -369,7 +369,7 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
 {
     if (clusterId == CLUSTER_BASIC && (attributeId == ATTRIBUTE_BASIC_VENDOR || attributeId == ATTRIBUTE_BASIC_MODEL))
     {
-        if (dataType != DATA_TYPE_STRING)
+        if (endPoint->device()->interviewFinished() || dataType != DATA_TYPE_STRING)
             return;
 
         switch (attributeId)
