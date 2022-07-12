@@ -198,7 +198,7 @@ void Humidity::parse(const Cluster &cluster, quint16 attributeId)
     m_value = qFromLittleEndian(value) / 100.0;
 }
 
-Occupancy::Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING) {}
+Occupancy::Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING, true) {}
 
 void Occupancy::parse(const Cluster &cluster, quint16 attributeId)
 {
