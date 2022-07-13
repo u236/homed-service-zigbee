@@ -197,7 +197,7 @@ void Humidity::parseAttribte(quint16 attributeId, quint8 dataType, const QByteAr
     m_value = qFromLittleEndian(value) / 100.0;
 }
 
-Occupancy::Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING) {}
+Occupancy::Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING, true) {}
 
 void Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
