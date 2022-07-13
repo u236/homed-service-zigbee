@@ -37,8 +37,6 @@ public:
     inline QList <quint16> &inClusters(void) { return m_inClusters; }
     inline QList <quint16> &outClusters(void) { return m_outClusters; }
 
-    Cluster cluster(quint16 clusterId);
-
 private:
 
     quint8 m_id;
@@ -47,7 +45,6 @@ private:
     bool m_dataUpdated;
 
     QList <quint16> m_inClusters, m_outClusters;
-    QMap <quint16, Cluster> m_clusters;
 
 };
 

@@ -398,13 +398,7 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
 
         if (property->clusterId() == clusterId)
         {
-            Cluster cluster = endPoint->cluster(clusterId);
-            Attribute attribute = cluster->attribute(attributeId);
-
-            attribute->setDataType(dataType);
-            attribute->setData(data);
-
-            property->parse(cluster, attributeId);
+            property->parseAttribte(attributeId, dataType, data);
             endPoint->setDataUpdated();
         }
     }
@@ -439,12 +433,7 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
 
         if (property->clusterId() == clusterId)
         {
-            Cluster cluster = endPoint->cluster(clusterId);
-
-            cluster->setCommandId(commandId);
-            cluster->setCommandData(payload);
-
-            property->parse(cluster);
+            property->parseCommand(commandId, payload);
             endPoint->setDataUpdated();
         }
     }

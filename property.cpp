@@ -3,224 +3,220 @@
 #include "property.h"
 #include "zigbee.h"
 
-Attribute ClusterObject::attribute(quint16 attributeId)
-{
-    auto it = m_attributes.find(attributeId);
-
-    if (it == m_attributes.end())
-        it = m_attributes.insert(attributeId, Attribute(new AttributeObject));
-
-    return it.value();
-}
-
 using namespace Properties;
 
 BatteryVoltage::BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
-void BatteryVoltage::parse(const Cluster &cluster, quint16 attributeId)
+void BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if (attributeId != 0x0020 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
+    if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = static_cast <quint8> (attribute->data().at(0)) * 0.1;
+    m_value = static_cast <quint8> (data.at(0)) * 0.1;
 }
 
 BatteryVoltageLUMI::BatteryVoltageLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
 
-void BatteryVoltageLUMI::parse(const Cluster &cluster, quint16 attributeId)
+void BatteryVoltageLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-    quint16 value;
-
     switch (attributeId)
     {
         case 0xFF01:
+        {
+            quint16 value;
 
-            if (attribute->dataType() != DATA_TYPE_STRING || attribute->data().length() < 4)
+            if (dataType != DATA_TYPE_STRING || data.length() < 4)
                 break;
 
-            memcpy(&value, attribute->data().constData() + 2, sizeof(value));
+            memcpy(&value, data.constData() + 2, sizeof(value));
             m_value = qFromLittleEndian(value) / 1000.0;
             break;
+        }
 
         case 0xFF02:
+        {
+            quint16 value;
 
-            if (attribute->dataType() != DATA_TYPE_STRUCTURE || attribute->data().length() < 7)
+            if (dataType != DATA_TYPE_STRUCTURE || data.length() < 7)
                 break;
 
-            memcpy(&value, attribute->data().constData() + 5, sizeof(value));
+            memcpy(&value, data.constData() + 5, sizeof(value));
             m_value = qFromLittleEndian(value) / 1000.0;
             break;
+        }
     }
 }
 
 BatteryPercentage::BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
-void BatteryPercentage::parse(const Cluster &cluster, quint16 attributeId)
+void BatteryPercentage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if (attributeId != 0x0021 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
+    if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = static_cast <quint8> (attribute->data().at(0)) / 2.0;
+    m_value = static_cast <quint8> (data.at(0)) / 2.0;
 }
 
 BatteryPercentageIKEA::BatteryPercentageIKEA(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
-void BatteryPercentageIKEA::parse(const Cluster &cluster, quint16 attributeId)
+void BatteryPercentageIKEA::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if (attributeId != 0x0021 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
+    if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = static_cast <quint8> (attribute->data().at(0));
+    m_value = static_cast <quint8> (data.at(0));
 }
 
 Status::Status(void) : PropertyObject("status", CLUSTER_ON_OFF) {}
 
-void Status::parse(const Cluster &cluster, quint16 attributeId)
+void Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if (attributeId != 0x0000 || attribute->dataType() != DATA_TYPE_BOOLEAN || attribute->data().length() != 1)
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
         return;
 
-    m_value = attribute->data().at(0) ? "on" : "off";
+    m_value = data.at(0) ? "on" : "off";
 }
 
 Level::Level(void) : PropertyObject("level", CLUSTER_LEVEL_CONTROL) {}
 
-void Level::parse(const Cluster &cluster, quint16 attributeId)
+void Level::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if (attributeId != 0x0000 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = static_cast <quint8> (attribute->data().at(0));
+    m_value = static_cast <quint8> (data.at(0));
 }
 
 AnalogCO2::AnalogCO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
 
-void AnalogCO2::parse(const Cluster &cluster, quint16 attributeId)
+void AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-    float value;
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value;
 
-    if (attributeId != 0x001C || attribute->dataType() != DATA_TYPE_STRING || QString(attribute->data()) != "ppm")
-        return;
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
 
-    attribute = cluster->attribute(0x0055);
+            memcpy(&value, data.constData(), sizeof(value));
+            m_buffer = value;
+            break;
+        }
 
-    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION || attribute->data().length() != 4)
-        return;
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_STRING || QString(data) != "ppm")
+                return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
-    m_value = static_cast <double> (value);
+            m_value = m_buffer;
+            break;
+        }
+    }
 }
 
 AnalogTemperature::AnalogTemperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
 
-void AnalogTemperature::parse(const Cluster &cluster, quint16 attributeId)
+void AnalogTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-    float value;
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value;
 
-    if (attributeId != 0x001C || attribute->dataType() != DATA_TYPE_STRING || QString(attribute->data()) != "C")
-        return;
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
 
-    attribute = cluster->attribute(0x0055);
+            memcpy(&value, data.constData(), sizeof(value));
+            m_buffer = value;
+            break;
+        }
 
-    if (attribute->dataType() != DATA_TYPE_SINGLE_PRECISION || attribute->data().length() != 4)
-        return;
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_STRING || QString(data) != "C")
+                return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
-    m_value = static_cast <double> (value);
+            m_value = m_buffer;
+            break;
+        }
+    }
 }
 
 ColorTemperature::ColorTemperature(void) : PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
 
-void ColorTemperature::parse(const Cluster &cluster, quint16 attributeId)
+void ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
     qint16 value;
 
-    if (attributeId != 0x0007 || attribute->dataType() != DATA_TYPE_16BIT_UNSIGNED || attribute->data().length() != 2)
+    if (attributeId != 0x0007 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
+    memcpy(&value, data.constData(), sizeof(value));
     m_value = qFromLittleEndian(value);
 }
 
 Illuminance::Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
 
-void Illuminance::parse(const Cluster &cluster, quint16 attributeId)
+void Illuminance::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
     quint16 value;
 
-    if (attributeId != 0x0000 || attribute->dataType() != DATA_TYPE_16BIT_UNSIGNED || attribute->data().length() != 2)
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
+    memcpy(&value, data.constData(), sizeof(value));
     m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
 }
 
 Temperature::Temperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT) {}
 
-void Temperature::parse(const Cluster &cluster, quint16 attributeId)
+void Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
     qint16 value;
 
-    if (attributeId != 0x0000 || attribute->dataType() != DATA_TYPE_16BIT_SIGNED || attribute->data().length() != 2)
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_SIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
+    memcpy(&value, data.constData(), sizeof(value));
     m_value = qFromLittleEndian(value) / 100.0;
 }
 
 Humidity::Humidity(void) : PropertyObject("humidity", CLUSTER_RELATIVE_HUMIDITY) {}
 
-void Humidity::parse(const Cluster &cluster, quint16 attributeId)
+void Humidity::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
     qint16 value;
 
-    if (attributeId != 0x0000 || attribute->dataType() != DATA_TYPE_16BIT_UNSIGNED || attribute->data().length() != 2)
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
+    memcpy(&value, data.constData(), sizeof(value));
     m_value = qFromLittleEndian(value) / 100.0;
 }
 
 Occupancy::Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING) {}
 
-void Occupancy::parse(const Cluster &cluster, quint16 attributeId)
+void Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if (attributeId != 0x0000 || attribute->dataType() != DATA_TYPE_8BIT_BITMAP || attribute->data().length() != 1)
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_8BIT_BITMAP || data.length() != 1)
         return;
 
-    m_value = attribute->data().at(0) ? true : false;
+    m_value = data.at(0) ? true : false;
 }
 
-CubeAction::CubeAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
+CubeMovement::CubeMovement(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
 
-void CubeAction::parse(const Cluster &cluster, quint16 attributeId)
+void CubeMovement::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
     qint16 value;
 
-    if (attributeId != 0x0055 || attribute->dataType() != DATA_TYPE_16BIT_UNSIGNED || attribute->data().length() != 2)
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
+    memcpy(&value, data.constData(), sizeof(value));
     value = qFromLittleEndian(value);
 
     if (!value)
@@ -241,25 +237,24 @@ void CubeAction::parse(const Cluster &cluster, quint16 attributeId)
 
 CubeRotation::CubeRotation(void) : PropertyObject("action", CLUSTER_ANALOG_INPUT, true) {}
 
-void CubeRotation::parse(const Cluster &cluster, quint16 attributeId)
+void CubeRotation::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
     float value;
 
-    if (attributeId != 0x0055 || attribute->dataType() != DATA_TYPE_SINGLE_PRECISION || attribute->data().length() != 4)
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
         return;
 
-    memcpy(&value, attribute->data().constData(), sizeof(value));
+    memcpy(&value, data.constData(), sizeof(value));
     m_value = value < 0 ? "rotateLeft" : "rotateRight";
 }
 
 IdentifyAction::IdentifyAction(void) : PropertyObject("action", CLUSTER_IDENTIFY, true) {}
 
-void IdentifyAction::parse(const Cluster &cluster, quint16 attributeId)
+void IdentifyAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
-    Q_UNUSED(attributeId)
+    Q_UNUSED(payload)
 
-    if (cluster->commandId() != 0x01)
+    if (commandId != 0x01)
         return;
 
     m_value = "identify";
@@ -267,11 +262,11 @@ void IdentifyAction::parse(const Cluster &cluster, quint16 attributeId)
 
 SwitchAction::SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
 
-void SwitchAction::parse(const Cluster &cluster, quint16 attributeId)
+void SwitchAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
-    Q_UNUSED(attributeId)
+    Q_UNUSED(payload)
 
-    switch (cluster->commandId())
+    switch (commandId)
     {
         case 0x00: m_value = "off"; break;
         case 0x01: m_value = "on"; break;
@@ -281,14 +276,12 @@ void SwitchAction::parse(const Cluster &cluster, quint16 attributeId)
 
 SwitchActionLUMI::SwitchActionLUMI(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
 
-void SwitchActionLUMI::parse(const Cluster &cluster, quint16 attributeId)
+void SwitchActionLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if ((attributeId != 0x0000 && attributeId != 0x8000) || (attribute->dataType() != DATA_TYPE_BOOLEAN && attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED) || attribute->data().length() != 1)
+    if ((attributeId != 0x0000 && attributeId != 0x8000) || (dataType != DATA_TYPE_BOOLEAN && dataType != DATA_TYPE_8BIT_UNSIGNED) || data.length() != 1)
         return;
 
-    switch (static_cast <quint8> (attribute->data().at(0)))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "on"; break;
         case 0x01: m_value = "off"; break;
@@ -301,23 +294,21 @@ void SwitchActionLUMI::parse(const Cluster &cluster, quint16 attributeId)
 
 SwitchActionPTVO::SwitchActionPTVO(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
 
-void SwitchActionPTVO::parse(const Cluster &cluster, quint16 attributeId)
+void SwitchActionPTVO::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Attribute attribute = cluster->attribute(attributeId);
-
-    if (attributeId != 0x0055 || attribute->dataType() != DATA_TYPE_8BIT_UNSIGNED || attribute->data().length() != 1)
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = attribute->data().at(0) ? "on" : "off";
+    m_value = data.at(0) ? "on" : "off";
 }
 
 LevelAction::LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
 
-void LevelAction::parse(const Cluster &cluster, quint16 attributeId)
+void LevelAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
-    Q_UNUSED(attributeId)
+    Q_UNUSED(payload)
 
-    switch (cluster->commandId())
+    switch (commandId)
     {
         case 0x01: m_value = "moveDown"; break;
         case 0x05: m_value = "moveUp"; break;

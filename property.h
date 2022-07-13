@@ -5,58 +5,8 @@
 #include <QSharedPointer>
 #include <QVariant>
 
-class AttributeObject;
-typedef QSharedPointer <AttributeObject> Attribute;
-
-class ClusterObject;
-typedef QSharedPointer <ClusterObject> Cluster;
-
 class PropertyObject;
 typedef QSharedPointer <PropertyObject> Property;
-
-class AttributeObject
-{
-
-public:
-
-    AttributeObject(void) : m_dataType(0) {}
-
-    inline quint8 dataType(void) { return m_dataType; }
-    inline void setDataType(quint8 value) { m_dataType = value; }
-
-    inline QByteArray data(void) { return m_data; }
-    inline void setData(const QByteArray &value) { m_data = value; }
-
-private:
-
-    quint8 m_dataType;
-    QByteArray m_data;
-
-};
-
-class ClusterObject
-{
-
-public:
-
-    ClusterObject(void) {}
-
-    inline quint8 commandId(void) { return m_commandId; }
-    inline void setCommandId(quint8 value) { m_commandId = value; }
-
-    inline QByteArray commandData(void) { return m_commandData; }
-    inline void setCommandData(const QByteArray &value) { m_commandData = value; }
-
-    Attribute attribute(quint16 attributeId);
-
-private:
-
-    quint8 m_commandId;
-    QByteArray m_commandData;
-
-    QMap <quint16, Attribute> m_attributes;
-
-};
 
 class PropertyObject
 {
@@ -73,9 +23,12 @@ public:
     inline bool invalidable(void) { return m_invalidable; }
     inline void invalidate(void) { m_value = QVariant(); }
 
-    virtual void parse(const Cluster &cluster, quint16 attributeId = 0) = 0;
+    virtual void parseAttribte(quint16, quint8, const QByteArray &) {};
+    virtual void parseCommand(quint8, const QByteArray &) {};
 
 protected:
+
+    QVariant m_buffer;
 
     quint16 m_clusterId;
     QString m_name;
@@ -93,7 +46,7 @@ namespace Properties
 
         BatteryVoltage(void);
         virtual ~BatteryVoltage(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -104,7 +57,7 @@ namespace Properties
 
         BatteryVoltageLUMI(void);
         virtual ~BatteryVoltageLUMI(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -115,7 +68,7 @@ namespace Properties
 
         BatteryPercentage(void);
         virtual ~BatteryPercentage(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -126,7 +79,7 @@ namespace Properties
 
         BatteryPercentageIKEA(void);
         virtual ~BatteryPercentageIKEA(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -137,7 +90,7 @@ namespace Properties
 
         Status(void);
         virtual ~Status(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -148,7 +101,7 @@ namespace Properties
 
         Level(void);
         virtual ~Level(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -159,7 +112,7 @@ namespace Properties
 
         AnalogCO2(void);
         virtual ~AnalogCO2(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -170,7 +123,7 @@ namespace Properties
 
         AnalogTemperature(void);
         virtual ~AnalogTemperature(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -181,7 +134,7 @@ namespace Properties
 
         ColorTemperature(void);
         virtual ~ColorTemperature(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -192,7 +145,7 @@ namespace Properties
 
         Illuminance(void);
         virtual ~Illuminance(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -203,7 +156,7 @@ namespace Properties
 
         Temperature(void);
         virtual ~Temperature(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -214,7 +167,7 @@ namespace Properties
 
         Humidity(void);
         virtual ~Humidity(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -225,18 +178,18 @@ namespace Properties
 
         Occupancy(void);
         virtual ~Occupancy(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
-    class CubeAction : public PropertyObject
+    class CubeMovement : public PropertyObject
     {
 
     public:
 
-        CubeAction(void);
-        virtual ~CubeAction(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        CubeMovement(void);
+        virtual ~CubeMovement(void) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -247,7 +200,7 @@ namespace Properties
 
         CubeRotation(void);
         virtual ~CubeRotation(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -258,7 +211,7 @@ namespace Properties
 
         IdentifyAction(void);
         virtual ~IdentifyAction(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -269,7 +222,7 @@ namespace Properties
 
         SwitchAction(void);
         virtual ~SwitchAction(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -280,7 +233,7 @@ namespace Properties
 
         SwitchActionLUMI(void);
         virtual ~SwitchActionLUMI(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -291,7 +244,7 @@ namespace Properties
 
         SwitchActionPTVO(void);
         virtual ~SwitchActionPTVO(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -302,7 +255,7 @@ namespace Properties
 
         LevelAction(void);
         virtual ~LevelAction(void) {}
-        void parse(const Cluster &cluster, quint16 attributeId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 }

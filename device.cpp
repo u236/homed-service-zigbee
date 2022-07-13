@@ -1,16 +1,6 @@
 #include "device.h"
 #include "logger.h"
 
-Cluster EndPointObject::cluster(quint16 clusterId)
-{
-    auto it = m_clusters.find(clusterId);
-
-    if (it == m_clusters.end())
-        it = m_clusters.insert(clusterId, Cluster(new ClusterObject));
-
-    return it.value();
-}
-
 void DeviceObject::setProperties(void)
 {
     if (m_vendor == "eWeLink")
@@ -80,7 +70,7 @@ void DeviceObject::setProperties(void)
 
         if (m_model == "lumi.sensor_cube" || m_model == "lumi.sensor_cube.aqgl01") // TODO: check this
         {
-            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::CubeAction), Property(new Properties::CubeRotation)};
+            m_properties = {Property(new Properties::BatteryVoltageLUMI), Property(new Properties::CubeMovement), Property(new Properties::CubeRotation)};
             return;
         }
 
