@@ -23,12 +23,10 @@ public:
     inline bool invalidable(void) { return m_invalidable; }
     inline void invalidate(void) { m_value = QVariant(); }
 
-    virtual void parseAttribte(quint16, quint8, const QByteArray &) {};
-    virtual void parseCommand(quint8, const QByteArray &) {};
+    virtual void parseAttribte(quint16, quint8, const QByteArray &) {}
+    virtual void parseCommand(quint8, const QByteArray &) {}
 
 protected:
-
-    QVariant m_buffer;
 
     quint16 m_clusterId;
     QString m_name;
@@ -114,6 +112,10 @@ namespace Properties
         virtual ~AnalogCO2(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
+    private:
+
+        QVariant m_buffer;
+
     };
 
     class AnalogTemperature: public PropertyObject
@@ -124,6 +126,10 @@ namespace Properties
         AnalogTemperature(void);
         virtual ~AnalogTemperature(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QVariant m_buffer;
 
     };
 

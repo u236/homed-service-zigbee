@@ -306,7 +306,6 @@ void ZigBee::interviewDevice(const Device &device)
     for (int i = 0; i < device->reportings().count(); i++)
     {
         const Reporting &reporting = device->reportings().at(i);
-
         zclHeaderStruct header;
         configureReportingStruct payload;
         size_t length = sizeof(payload);
