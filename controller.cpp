@@ -69,7 +69,7 @@ void Controller::endPointUpdated(const EndPoint &endPoint)
 
     for (int i = 0; i < endPoint->device()->properties().count(); i++)
     {
-        Property property = endPoint->device()->properties().value(i);
+        const Property &property = endPoint->device()->properties().at(i);
 
         if (!property->value().isValid())
             continue;

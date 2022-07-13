@@ -64,7 +64,7 @@ void ZStack::registerEndPoint(quint8 endPointId, quint16 profileId, quint16 devi
 
     for (int i = 0; i < inClusters.count(); i++)
     {
-        quint16 clusterId = inClusters.value(i);
+        quint16 clusterId = inClusters.at(i);
         data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
     }
 
@@ -72,7 +72,7 @@ void ZStack::registerEndPoint(quint8 endPointId, quint16 profileId, quint16 devi
 
     for (int i = 0; i < outClusters.count(); i++)
     {
-        quint16 clusterId = outClusters.value(i);
+        quint16 clusterId = outClusters.at(i);
         data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
     }
 

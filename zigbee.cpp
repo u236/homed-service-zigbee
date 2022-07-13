@@ -63,7 +63,7 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
 
     for (int i = 0; i < it.value()->actions().count(); i++)
     {
-        Action action = it.value()->actions().value(i);
+        const Action &action = it.value()->actions().at(i);
 
         if (action->name() == actionName)
         {
@@ -221,7 +221,7 @@ QJsonArray ZigBee::serializeEndPoints(const Device &device)
             QJsonArray inClustersArray;
 
             for (int i = 0; i < it.value()->inClusters().count(); i++)
-                inClustersArray.append(it.value()->inClusters().value(i));
+                inClustersArray.append(it.value()->inClusters().at(i));
 
             json.insert("inClusters", inClustersArray);
         }
@@ -231,7 +231,7 @@ QJsonArray ZigBee::serializeEndPoints(const Device &device)
             QJsonArray outClustersArray;
 
             for (int i = 0; i < it.value()->outClusters().count(); i++)
-                outClustersArray.append(it.value()->outClusters().value(i));
+                outClustersArray.append(it.value()->outClusters().at(i));
 
             json.insert("outClusters", outClustersArray);
         }
@@ -305,7 +305,8 @@ void ZigBee::interviewDevice(const Device &device)
 
     for (int i = 0; i < device->reportings().count(); i++)
     {
-        Reporting reporting = device->reportings().value(i);
+        const Reporting &reporting = device->reportings().at(i);
+
         zclHeaderStruct header;
         configureReportingStruct payload;
         size_t length = sizeof(payload);
@@ -353,9 +354,9 @@ void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clu
     header.transactionId = m_transactionId++;
     header.commandId = CMD_READ_ATTRIBUTES;
 
-    for (int i = 0; i < attributes.length(); i++)
+    for (int i = 0; i < attributes.count(); i++)
     {
-        quint16 attributeId = qToLittleEndian(attributes.value(i));
+        quint16 attributeId = qToLittleEndian(attributes.at(i));
         payload.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
     }
 
@@ -394,7 +395,7 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
 
     for (int i = 0; i < endPoint->device()->properties().count(); i++)
     {
-        Property property = endPoint->device()->properties().value(i);
+        const Property &property = endPoint->device()->properties().at(i);
 
         if (property->clusterId() == clusterId)
         {
@@ -429,7 +430,7 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
 
     for (int i = 0; i < endPoint->device()->properties().count(); i++)
     {
-        Property property = endPoint->device()->properties().value(i);
+        const Property &property = endPoint->device()->properties().at(i);
 
         if (property->clusterId() == clusterId)
         {
@@ -445,7 +446,7 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
 }
 
 void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
-{   
+{
     Q_UNUSED(transactionId)
 
     switch (commandId)
@@ -542,6 +543,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     }
 
     device->setLogicalType(LogicalType::Coordinator);
+    device->setName("HOMEd Coordinator");
     device->setInterviewFinished();
 
     device->endPoints().insert(0x01, EndPoint(new EndPointObject(0x01, device, PROFILE_HA,   0x0005)));
@@ -595,7 +597,7 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
     it.value()->updateLastSeen();
     interviewDevice(it.value());
 
-    emit(endDeviceEvent());
+    emit endDeviceEvent();
 }
 
 void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
@@ -613,7 +615,7 @@ void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress
     m_devices.erase(it);
     storeStatus();
 
-    emit(endDeviceEvent(false));
+    emit endDeviceEvent(false);
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType)
