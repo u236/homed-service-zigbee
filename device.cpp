@@ -44,7 +44,7 @@ void DeviceObject::setProperties(void)
 
         if (m_model == "TRADFRI bulb E14 WS 470lm")
         {
-            m_actions = {Action(new Actions::Status), Action(new Actions::Level), Action(new Actions::LevelAction), Action(new Actions::ColorTemperature)};
+            m_actions = {Action(new Actions::Status), Action(new Actions::Level), Action(new Actions::ColorTemperature)};
             m_properties = {Property(new Properties::Status), Property(new Properties::Level), Property(new Properties::ColorTemperature)};
             m_reportings = {Reporting(new Reportings::Status), Reporting(new Reportings::Level), Reporting(new Reportings::ColorTemperature)};
             return;
@@ -52,7 +52,7 @@ void DeviceObject::setProperties(void)
 
         if (m_model == "TRADFRIbulbE14WWclear250lm" || m_model == "TRADFRIbulbE27WWclear250lm" || m_model == "TRADFRI bulb E27 W opal 1000lm")
         {
-            m_actions = {Action(new Actions::Status), Action(new Actions::Level), Action(new Actions::LevelAction)};
+            m_actions = {Action(new Actions::Status), Action(new Actions::Level)};
             m_properties = {Property(new Properties::Status), Property(new Properties::Level)};
             m_reportings = {Reporting(new Reportings::Status), Reporting(new Reportings::Level)};
             return;
