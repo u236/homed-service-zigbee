@@ -14,8 +14,8 @@ void Controller::mqttConnected(void)
 {
     logInfo << "MQTT connected";
 
-    mqttSubscribe("homed/command/zigbee");
     mqttSubscribe("homed/config/zigbee");
+    mqttSubscribe("homed/command/zigbee");
     mqttSubscribe("homed/td/zigbee/#");
 }
 
@@ -23,14 +23,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 {
     QJsonObject json = QJsonDocument::fromJson(message).object();
 
-    if (topic.name() == "homed/command/zigbee" && json.contains("action"))
-    {
-        QString action = json.value("action").toString();
-
-        if (action == "setPermitJoin" && json.contains("enabled"))
-            m_zigbee->setPermitJoin(json.value("enabled").toBool());
-    }
-    else if (topic.name() == "homed/config/zigbee" && json.contains("devices"))
+    if (topic.name() == "homed/config/zigbee" && json.contains("devices"))
     {
         QJsonArray array = json.value("devices").toArray();
 
@@ -43,6 +36,13 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
             if (item.contains("deviceAddress") && item.contains("deviceName"))
                 m_zigbee->setDeviceName(QByteArray::fromHex(item.value("deviceAddress").toString().toUtf8()), item.value("deviceName").toString());
         }
+    }
+    else if (topic.name() == "homed/command/zigbee" && json.contains("action"))
+    {
+        QString action = json.value("action").toString();
+
+        if (action == "setPermitJoin" && json.contains("enabled"))
+            m_zigbee->setPermitJoin(json.value("enabled").toBool());
     }
     else if (topic.name().startsWith("homed/td/zigbee/"))
     {
