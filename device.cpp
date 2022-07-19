@@ -102,7 +102,7 @@ void DeviceObject::setProperties(void)
     {
         if (m_model == "lumi.sen_ill.mgl01")
         {
-            m_properties = {Property(new Properties::BatteryVoltage), Property(new Properties::Illuminance)};
+            m_properties = {Property(new Properties::BatteryVoltage), Property(new Properties::IdentifyAction), Property(new Properties::Illuminance)};
             m_reportings = {Reporting(new Reportings::BatteryVoltage), Reporting(new Reportings::Illuminance)};
             return;
         }
