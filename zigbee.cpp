@@ -164,11 +164,7 @@ QJsonArray ZigBee::serializeDevices(void)
 
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
     {
-        QJsonObject json;
-
-        json.insert("ieeeAddress", QString(it.value()->ieeeAddress().toHex(':')));
-        json.insert("networkAddress", it.value()->networkAddress());
-        json.insert("logicalType", static_cast <quint8> (it.value()->logicalType()));
+        QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}, {"logicalType", static_cast <quint8> (it.value()->logicalType())}};
 
         if (it.value()->manufacturerCode())
             json.insert("manufacturerCode", it.value()->manufacturerCode());
@@ -206,9 +202,7 @@ QJsonArray ZigBee::serializeEndPoints(const Device &device)
 
     for (auto it = device->endPoints().begin(); it != device->endPoints().end(); it++)
     {
-        QJsonObject json;
-
-        json.insert("endPointId", it.key());
+        QJsonObject json = {{"endPointId", it.key()}};
 
         if (it.value()->profileId())
             json.insert("profileId", it.value()->profileId());
@@ -248,11 +242,7 @@ QJsonArray ZigBee::serializeNeighbors(const Device &device)
 
     for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
     {
-        QJsonObject json;
-
-        json.insert("networkAddress", it.key());
-        json.insert("linkQuality", it.value());
-
+        QJsonObject json = {{"networkAddress", it.key()}, {"linkQuality", it.value()}};
         array.append(json);
     }
 
@@ -770,7 +760,7 @@ void ZigBee::updateNeighbors(void)
 void ZigBee::storeStatus(void)
 {
     QFile file(m_databaseFile);
-    QJsonObject json;
+    QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}};
 
     m_statusTimer->start(STORE_STATUS_INTERVAL);
 
@@ -779,9 +769,6 @@ void ZigBee::storeStatus(void)
         logWarning << "Can't store status";
         return;
     }
-
-    json.insert("permitJoin", m_permitJoin);
-    json.insert("devices", serializeDevices());
 
     file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
     file.close();
