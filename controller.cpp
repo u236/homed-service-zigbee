@@ -47,7 +47,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     else if (topic.name().startsWith("homed/td/zigbee/"))
     {
         QStringList list = topic.name().split('/');
-        QByteArray ieeeAddress = QByteArray::fromHex(list.at(3).toUtf8());
+        QByteArray ieeeAddress = QByteArray::fromHex(list.value(3).toUtf8());
 
         for (auto it = json.begin(); it != json.end(); it++)
         {
