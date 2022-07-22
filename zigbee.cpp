@@ -643,7 +643,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturer
 void ZigBee::activeEndPointsReceived(quint16 networkAddress, const QByteArray data)
 {
     Device device = findDevice(networkAddress);
-    QStringList list;
+    QList <QString> list;
 
     if (device.isNull())
         return;
