@@ -42,11 +42,12 @@ QByteArray Level::request(const QVariant &data)
 
         case QVariant::List:
         {
+            QList <QVariant> list = data.toList();
             levelStruct payload;
 
             header.commandId = 0x00;
-            payload.level = static_cast <quint8> (data.toList().value(0).toInt());
-            payload.time = qToLittleEndian(static_cast <quint16> (data.toList().value(1).toInt()));
+            payload.level = static_cast <quint8> (list.value(0).toInt());
+            payload.time = qToLittleEndian(static_cast <quint16> (list.value(1).toInt()));
 
             return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
@@ -95,10 +96,11 @@ QByteArray ColorTemperature::request(const QVariant &data)
 
         case QVariant::List:
         {
+            QList <QVariant> list = data.toList();
             colorTemperatureStruct payload;
 
-            payload.temperature = qToLittleEndian(static_cast <quint16> (data.toList().value(0).toInt()));
-            payload.time = qToLittleEndian(static_cast <quint16> (data.toList().value(1).toInt()));
+            payload.temperature = qToLittleEndian(static_cast <quint16> (list.value(0).toInt()));
+            payload.time = qToLittleEndian(static_cast <quint16> (list.value(1).toInt()));
 
             return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
@@ -107,3 +109,33 @@ QByteArray ColorTemperature::request(const QVariant &data)
             return QByteArray();
     }
 }
+
+ColorXY::ColorXY(quint8 endPointId) : ActionObject("colorXY", CLUSTER_COLOR_CONTROL, endPointId) {}
+
+QByteArray ColorXY::request(const QVariant &data)
+{
+    zclHeaderStruct header;
+
+    header.frameControl = FC_CLUSTER_SPECIFIC;
+    header.transactionId = m_transactionId++;
+    header.commandId = 0x07;
+
+    switch (data.type())
+    {
+        case QVariant::List:
+        {
+            QList <QVariant> list = data.toList();
+            colorXYStruct payload;
+
+            payload.colorX = qToLittleEndian(static_cast <quint16> (list.value(0).toDouble() * 0xFFFF));
+            payload.colorY = qToLittleEndian(static_cast <quint16> (list.value(1).toDouble() * 0xFFFF));
+            payload.time = qToLittleEndian(static_cast <quint16> (list.value(2).toInt()));
+
+            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+        }
+
+        default:
+            return QByteArray();
+    }
+}
+

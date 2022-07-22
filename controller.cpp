@@ -43,6 +43,8 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
         if (action == "setPermitJoin" && json.contains("enabled"))
             m_zigbee->setPermitJoin(json.value("enabled").toBool());
+        else if (action == "removeDevice" && json.contains("deviceAddress"))
+            m_zigbee->removeDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()));
     }
     else if (topic.name().startsWith("homed/td/zigbee/"))
     {

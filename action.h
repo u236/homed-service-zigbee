@@ -17,6 +17,13 @@ struct colorTemperatureStruct
     quint16 time;
 };
 
+struct colorXYStruct
+{
+    quint16 colorX;
+    quint16 colorY;
+    quint16 time;
+};
+
 #pragma pack(pop)
 
 class ActionObject;
@@ -75,6 +82,17 @@ namespace Actions
 
         ColorTemperature(quint8 endPointId = 1);
         virtual ~ColorTemperature(void) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class ColorXY : public ActionObject
+    {
+
+    public:
+
+        ColorXY(quint8 endPointId = 1);
+        virtual ~ColorXY(void) {}
         QByteArray request(const QVariant &data) override;
 
     };

@@ -54,6 +54,29 @@ void ZigBee::setPermitJoin(bool enabled)
     storeStatus();
 }
 
+void ZigBee::removeDevice(const QByteArray &ieeeAddress)
+{
+    auto it = m_devices.find(ieeeAddress);
+
+    if (it == m_devices.end())
+        return;
+
+    logInfo << "Device" << it.value()->name() << "removed";
+
+    m_devices.erase(it);
+    storeStatus();
+}
+
+void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
+{
+    auto it = m_devices.find(ieeeAddress);
+
+    if (it == m_devices.end())
+        return;
+
+    it.value()->setName(name);
+}
+
 void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData)
 {
     auto it = m_devices.find(ieeeAddress);
@@ -78,16 +101,6 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
             logWarning << "Device" << it.value()->name() << actionName << "action failed";
         }
     }
-}
-
-void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
-{
-    auto it = m_devices.find(ieeeAddress);
-
-    if (it == m_devices.end())
-        return;
-
-    it.value()->setName(name);
 }
 
 void ZigBee::unserializeDevices(const QJsonArray &array)
