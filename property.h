@@ -144,6 +144,21 @@ namespace Properties
 
     };
 
+    class ColorHS : public PropertyObject
+    {
+
+    public:
+
+        ColorHS(void);
+        virtual ~ColorHS(void) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QVariant m_colorH, m_colorS;
+
+    };
+
     class ColorXY : public PropertyObject
     {
 

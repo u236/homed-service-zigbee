@@ -110,6 +110,36 @@ QByteArray ColorTemperature::request(const QVariant &data)
     }
 }
 
+ColorHS::ColorHS(quint8 endPointId) : ActionObject("colorHS", CLUSTER_COLOR_CONTROL, endPointId) {}
+
+QByteArray ColorHS::request(const QVariant &data)
+{
+    zclHeaderStruct header;
+
+    header.frameControl = FC_CLUSTER_SPECIFIC;
+    header.transactionId = m_transactionId++;
+    header.commandId = 0x06;
+
+    switch (data.type())
+    {
+        case QVariant::List:
+        {
+            colorHSStruct payload;
+            QList <QVariant> list = data.toList();
+            quint16 colorH = static_cast <quint8> (list.value(0).toInt()), colorS = static_cast <quint8> (list.value(1).toInt());
+
+            payload.colorH = colorH < 0xFE ? colorH : 0xFE;
+            payload.colorS = colorS < 0xFE ? colorS : 0xFE;
+            payload.time = qToLittleEndian(static_cast <quint16> (list.value(2).toInt()));
+
+            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+        }
+
+        default:
+            return QByteArray();
+    }
+}
+
 ColorXY::ColorXY(quint8 endPointId) : ActionObject("colorXY", CLUSTER_COLOR_CONTROL, endPointId) {}
 
 QByteArray ColorXY::request(const QVariant &data)

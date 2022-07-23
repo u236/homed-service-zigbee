@@ -158,6 +158,35 @@ void ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const
     m_value = qFromLittleEndian(value);
 }
 
+ColorHS::ColorHS(void) : PropertyObject("colorHS", CLUSTER_COLOR_CONTROL) {}
+
+void ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0000:
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                return;
+
+            m_colorH = static_cast <quint8> (data.at(0));
+            break;
+
+        case 0x0001:
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                return;
+
+            m_colorS = static_cast <quint8> (data.at(0));
+            break;
+    }
+
+    if (!m_colorH.isValid() || !m_colorS.isValid())
+        return;
+
+    m_value = QList <QVariant> {m_colorH, m_colorS};
+}
+
 ColorXY::ColorXY(void) : PropertyObject("colorXY", CLUSTER_COLOR_CONTROL) {}
 
 void ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
