@@ -144,6 +144,21 @@ namespace Properties
 
     };
 
+    class ColorXY : public PropertyObject
+    {
+
+    public:
+
+        ColorXY(void);
+        virtual ~ColorXY(void) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QVariant m_colorX, m_colorY;
+
+    };
+
     class Illuminance : public PropertyObject
     {
 

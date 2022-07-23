@@ -158,6 +158,39 @@ void ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const
     m_value = qFromLittleEndian(value);
 }
 
+ColorXY::ColorXY(void) : PropertyObject("colorXY", CLUSTER_COLOR_CONTROL) {}
+
+void ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    qint16 value;
+
+    switch (attributeId)
+    {
+        case 0x0003:
+
+            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+                return;
+
+            memcpy(&value, data.constData(), sizeof(value));
+            m_colorX = qFromLittleEndian(value);
+            break;
+
+        case 0x0004:
+
+            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+                return;
+
+            memcpy(&value, data.constData(), sizeof(value));
+            m_colorY = qFromLittleEndian(value);
+            break;
+    }
+
+    if (!m_colorX.isValid() || !m_colorY.isValid())
+        return;
+
+    m_value = QList <QVariant> {m_colorX, m_colorY};
+}
+
 Illuminance::Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
 
 void Illuminance::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

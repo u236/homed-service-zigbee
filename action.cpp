@@ -8,8 +8,8 @@ Actions::Status::Status(quint8 endPointId) : ActionObject("status", CLUSTER_ON_O
 
 QByteArray Status::request(const QVariant &data)
 {
-    QString status = data.toString();
     zclHeaderStruct header;
+    QString status = data.toString();
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
     header.transactionId = m_transactionId++;
@@ -42,8 +42,8 @@ QByteArray Level::request(const QVariant &data)
 
         case QVariant::List:
         {
-            QList <QVariant> list = data.toList();
             levelStruct payload;
+            QList <QVariant> list = data.toList();
 
             header.commandId = 0x00;
             payload.level = static_cast <quint8> (list.value(0).toInt());
@@ -96,8 +96,8 @@ QByteArray ColorTemperature::request(const QVariant &data)
 
         case QVariant::List:
         {
-            QList <QVariant> list = data.toList();
             colorTemperatureStruct payload;
+            QList <QVariant> list = data.toList();
 
             payload.temperature = qToLittleEndian(static_cast <quint16> (list.value(0).toInt()));
             payload.time = qToLittleEndian(static_cast <quint16> (list.value(1).toInt()));
@@ -124,11 +124,12 @@ QByteArray ColorXY::request(const QVariant &data)
     {
         case QVariant::List:
         {
-            QList <QVariant> list = data.toList();
             colorXYStruct payload;
+            QList <QVariant> list = data.toList();
+            quint16 colorX = static_cast <quint16> (list.value(0).toDouble() * 0xFFFF), colorY = static_cast <quint16> (list.value(1).toDouble() * 0xFFFF);
 
-            payload.colorX = qToLittleEndian(static_cast <quint16> (list.value(0).toDouble() * 0xFFFF));
-            payload.colorY = qToLittleEndian(static_cast <quint16> (list.value(1).toDouble() * 0xFFFF));
+            payload.colorX = qToLittleEndian(colorX < 0xFEFF ? colorX : 0xFEFF);
+            payload.colorY = qToLittleEndian(colorY < 0xFEFF ? colorY : 0xFEFF);
             payload.time = qToLittleEndian(static_cast <quint16> (list.value(2).toInt()));
 
             return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));

@@ -12,6 +12,15 @@ void DeviceObject::setProperties(void)
             return;
         }
     }
+    else if (m_vendor == "HaiPaiTech")
+    {
+        if (m_model == "vivi ZLight") // TODO: add polling?
+        {
+            m_actions = {Action(new Actions::Status(11)), Action(new Actions::Level(11)), Action(new Actions::ColorXY(11))};
+            m_properties = {Property(new Properties::Status), Property(new Properties::Level), Property(new Properties::ColorXY)};
+            return;
+        }
+    }
     else if (m_vendor == "HOMEd")
     {
         if (m_model == "Button")
@@ -26,7 +35,7 @@ void DeviceObject::setProperties(void)
             return;
         }
 
-        if (m_model == "LC Outlet") // TODO: check firmware reporting settings
+        if (m_model == "LC Outlet")
         {
             m_actions = {Action(new Actions::Status)};
             m_properties = {Property(new Properties::Status)};
