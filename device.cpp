@@ -14,10 +14,12 @@ void DeviceObject::setProperties(void)
     }
     else if (m_vendor == "HaiPaiTech")
     {
-        if (m_model == "vivi ZLight") // TODO: add polling?
+        if (m_model == "vivi ZLight")
         {
-            m_actions = {Action(new Actions::Status(11)), Action(new Actions::Level(11)), Action(new Actions::ColorHS(11)), Action(new Actions::ColorXY(11))};
-            m_properties = {Property(new Properties::Status), Property(new Properties::Level), Property(new Properties::ColorHS), Property(new Properties::ColorXY)};
+            m_actions = {Action(new Actions::Status(11)), Action(new Actions::Level(11)), Action(new Actions::ColorHS(11))};
+            m_properties = {Property(new Properties::Status), Property(new Properties::Level), Property(new Properties::ColorHS)};
+            m_polls = {Poll(new Polls::Status(11)), Poll(new Polls::Level(11)), Poll(new Polls::ColorHS(11))};
+
             return;
         }
     }

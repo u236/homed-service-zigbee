@@ -5,6 +5,7 @@ HEADERS += \
     action.h \
     controller.h \
     device.h \
+    poll.h \
     property.h \
     reporting.h \
     zcl.h \

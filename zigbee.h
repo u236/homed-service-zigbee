@@ -39,7 +39,7 @@ public:
 private:
 
     ZStack *m_adapter;
-    QTimer *m_ledTimer, *m_neighborsTimer, *m_statusTimer;
+    QTimer *m_ledTimer, *m_neighborsTimer, *m_pollTimer, *m_statusTimer;
 
     QMap <QByteArray, Device> m_devices;
 
@@ -79,6 +79,7 @@ private slots:
 
     void disableLed(void);
     void updateNeighbors(void);
+    void pollAttributes(void);
     void storeStatus(void);
 
 signals:
