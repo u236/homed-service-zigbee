@@ -92,9 +92,9 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
 
-    inline QList <Action> &actions(void) { return m_actions; }
-    inline QList <Property> &properties(void) { return m_properties; }
-    inline QList <Reporting> &reportings(void) { return m_reportings; }
+    inline QList <Action> actions(void) { return m_actions; }
+    inline QList <Property> properties(void) { return m_properties; }
+    inline QList <Reporting> reportings(void) { return m_reportings; }
 
     inline QMap <quint8, EndPoint> &endPoints(void) { return m_endPoints; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }

@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QSharedPointer>
 #include <QVariant>
+#include "zcl.h"
 
 class PropertyObject;
 typedef QSharedPointer <PropertyObject> Property;
@@ -42,7 +43,9 @@ namespace Properties
 
     public:
 
-        BatteryVoltage(void);
+        BatteryVoltage(void) :
+            PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+
         virtual ~BatteryVoltage(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -53,7 +56,9 @@ namespace Properties
 
     public:
 
-        BatteryVoltageLUMI(void);
+        BatteryVoltageLUMI(void) :
+            PropertyObject("battery", CLUSTER_BASIC) {}
+
         virtual ~BatteryVoltageLUMI(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -64,7 +69,9 @@ namespace Properties
 
     public:
 
-        BatteryPercentage(void);
+        BatteryPercentage(void) :
+            PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+
         virtual ~BatteryPercentage(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -75,7 +82,9 @@ namespace Properties
 
     public:
 
-        BatteryPercentageIKEA(void);
+        BatteryPercentageIKEA(void) :
+            PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+
         virtual ~BatteryPercentageIKEA(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -86,7 +95,9 @@ namespace Properties
 
     public:
 
-        Status(void);
+        Status(void) :
+             PropertyObject("status", CLUSTER_ON_OFF) {}
+
         virtual ~Status(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -97,7 +108,9 @@ namespace Properties
 
     public:
 
-        Level(void);
+        Level(void) :
+            PropertyObject("level", CLUSTER_LEVEL_CONTROL) {}
+
         virtual ~Level(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -108,7 +121,9 @@ namespace Properties
 
     public:
 
-        AnalogCO2(void);
+        AnalogCO2(void) :
+            PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
+
         virtual ~AnalogCO2(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -123,7 +138,9 @@ namespace Properties
 
     public:
 
-        AnalogTemperature(void);
+        AnalogTemperature(void) :
+            PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
+
         virtual ~AnalogTemperature(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -133,23 +150,14 @@ namespace Properties
 
     };
 
-    class ColorTemperature : public PropertyObject
-    {
-
-    public:
-
-        ColorTemperature(void);
-        virtual ~ColorTemperature(void) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
     class ColorHS : public PropertyObject
     {
 
     public:
 
-        ColorHS(void);
+        ColorHS(void) :
+            PropertyObject("colorHS", CLUSTER_COLOR_CONTROL) {};
+
         virtual ~ColorHS(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -164,7 +172,9 @@ namespace Properties
 
     public:
 
-        ColorXY(void);
+        ColorXY(void) :
+            PropertyObject("colorXY", CLUSTER_COLOR_CONTROL) {}
+
         virtual ~ColorXY(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -174,12 +184,27 @@ namespace Properties
 
     };
 
+    class ColorTemperature : public PropertyObject
+    {
+
+    public:
+
+        ColorTemperature(void) :
+            PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
+
+        virtual ~ColorTemperature(void) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class Illuminance : public PropertyObject
     {
 
     public:
 
-        Illuminance(void);
+        Illuminance(void) :
+            PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
+
         virtual ~Illuminance(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -190,7 +215,9 @@ namespace Properties
 
     public:
 
-        Temperature(void);
+        Temperature(void) :
+            PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+
         virtual ~Temperature(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -201,7 +228,9 @@ namespace Properties
 
     public:
 
-        Humidity(void);
+        Humidity(void) :
+            PropertyObject("humidity", CLUSTER_RELATIVE_HUMIDITY) {}
+
         virtual ~Humidity(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -212,7 +241,9 @@ namespace Properties
 
     public:
 
-        Occupancy(void);
+        Occupancy(void) :
+            PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING, true) {}
+
         virtual ~Occupancy(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -223,7 +254,9 @@ namespace Properties
 
     public:
 
-        CubeMovement(void);
+        CubeMovement(void) :
+            PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
+
         virtual ~CubeMovement(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -234,7 +267,9 @@ namespace Properties
 
     public:
 
-        CubeRotation(void);
+        CubeRotation(void) :
+            PropertyObject("action", CLUSTER_ANALOG_INPUT, true) {}
+
         virtual ~CubeRotation(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -245,7 +280,9 @@ namespace Properties
 
     public:
 
-        IdentifyAction(void);
+        IdentifyAction(void) :
+            PropertyObject("action", CLUSTER_IDENTIFY, true) {}
+
         virtual ~IdentifyAction(void) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
@@ -256,7 +293,9 @@ namespace Properties
 
     public:
 
-        SwitchAction(void);
+        SwitchAction(void) :
+            PropertyObject("action", CLUSTER_ON_OFF, true) {}
+
         virtual ~SwitchAction(void) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
@@ -267,7 +306,9 @@ namespace Properties
 
     public:
 
-        SwitchActionLUMI(void);
+        SwitchActionLUMI(void) :
+            PropertyObject("action", CLUSTER_ON_OFF, true) {}
+
         virtual ~SwitchActionLUMI(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -278,7 +319,9 @@ namespace Properties
 
     public:
 
-        SwitchActionPTVO(void);
+        SwitchActionPTVO(void) :
+            PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
+
         virtual ~SwitchActionPTVO(void) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
@@ -289,7 +332,9 @@ namespace Properties
 
     public:
 
-        LevelAction(void);
+        LevelAction(void) :
+            PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
+
         virtual ~LevelAction(void) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 

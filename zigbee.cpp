@@ -2,6 +2,7 @@
 #include <QFile>
 #include "gpio.h"
 #include "logger.h"
+#include "zcl.h"
 #include "zigbee.h"
 
 ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_ledTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)

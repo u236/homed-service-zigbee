@@ -1,11 +1,8 @@
 #include <math.h>
 #include <QtEndian>
 #include "property.h"
-#include "zigbee.h"
 
 using namespace Properties;
-
-BatteryVoltage::BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
 void BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -14,8 +11,6 @@ void BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const Q
 
     m_value = static_cast <quint8> (data.at(0)) * 0.1;
 }
-
-BatteryVoltageLUMI::BatteryVoltageLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
 
 void BatteryVoltageLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -47,8 +42,6 @@ void BatteryVoltageLUMI::parseAttribte(quint16 attributeId, quint8 dataType, con
     }
 }
 
-BatteryPercentage::BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
-
 void BatteryPercentage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
@@ -56,8 +49,6 @@ void BatteryPercentage::parseAttribte(quint16 attributeId, quint8 dataType, cons
 
     m_value = static_cast <quint8> (data.at(0)) / 2.0;
 }
-
-BatteryPercentageIKEA::BatteryPercentageIKEA(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
 
 void BatteryPercentageIKEA::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -67,8 +58,6 @@ void BatteryPercentageIKEA::parseAttribte(quint16 attributeId, quint8 dataType, 
     m_value = static_cast <quint8> (data.at(0));
 }
 
-Status::Status(void) : PropertyObject("status", CLUSTER_ON_OFF) {}
-
 void Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
@@ -77,8 +66,6 @@ void Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArra
     m_value = data.at(0) ? "on" : "off";
 }
 
-Level::Level(void) : PropertyObject("level", CLUSTER_LEVEL_CONTROL) {}
-
 void Level::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0000 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
@@ -86,8 +73,6 @@ void Level::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray
 
     m_value = static_cast <quint8> (data.at(0));
 }
-
-AnalogCO2::AnalogCO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
 
 void AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -116,8 +101,6 @@ void AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteA
     }
 }
 
-AnalogTemperature::AnalogTemperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
-
 void AnalogTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
@@ -145,21 +128,6 @@ void AnalogTemperature::parseAttribte(quint16 attributeId, quint8 dataType, cons
     }
 }
 
-ColorTemperature::ColorTemperature(void) : PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
-
-void ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    qint16 value;
-
-    if (attributeId != 0x0007 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
-        return;
-
-    memcpy(&value, data.constData(), sizeof(value));
-    m_value = qFromLittleEndian(value);
-}
-
-ColorHS::ColorHS(void) : PropertyObject("colorHS", CLUSTER_COLOR_CONTROL) {}
-
 void ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
@@ -186,8 +154,6 @@ void ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArr
 
     m_value = QList <QVariant> {m_colorH, m_colorS};
 }
-
-ColorXY::ColorXY(void) : PropertyObject("colorXY", CLUSTER_COLOR_CONTROL) {}
 
 void ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -220,7 +186,16 @@ void ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArr
     m_value = QList <QVariant> {m_colorX, m_colorY};
 }
 
-Illuminance::Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
+void ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    qint16 value;
+
+    if (attributeId != 0x0007 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+        return;
+
+    memcpy(&value, data.constData(), sizeof(value));
+    m_value = qFromLittleEndian(value);
+}
 
 void Illuminance::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -233,8 +208,6 @@ void Illuminance::parseAttribte(quint16 attributeId, quint8 dataType, const QByt
     m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
 }
 
-Temperature::Temperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT) {}
-
 void Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     qint16 value;
@@ -245,8 +218,6 @@ void Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByt
     memcpy(&value, data.constData(), sizeof(value));
     m_value = qFromLittleEndian(value) / 100.0;
 }
-
-Humidity::Humidity(void) : PropertyObject("humidity", CLUSTER_RELATIVE_HUMIDITY) {}
 
 void Humidity::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -259,8 +230,6 @@ void Humidity::parseAttribte(quint16 attributeId, quint8 dataType, const QByteAr
     m_value = qFromLittleEndian(value) / 100.0;
 }
 
-Occupancy::Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING, true) {}
-
 void Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0000 || dataType != DATA_TYPE_8BIT_BITMAP || data.length() != 1)
@@ -268,8 +237,6 @@ void Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteA
 
     m_value = data.at(0) ? true : false;
 }
-
-CubeMovement::CubeMovement(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
 
 void CubeMovement::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -297,8 +264,6 @@ void CubeMovement::parseAttribte(quint16 attributeId, quint8 dataType, const QBy
         m_value = "drop";
 }
 
-CubeRotation::CubeRotation(void) : PropertyObject("action", CLUSTER_ANALOG_INPUT, true) {}
-
 void CubeRotation::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     float value;
@@ -310,8 +275,6 @@ void CubeRotation::parseAttribte(quint16 attributeId, quint8 dataType, const QBy
     m_value = value < 0 ? "rotateLeft" : "rotateRight";
 }
 
-IdentifyAction::IdentifyAction(void) : PropertyObject("action", CLUSTER_IDENTIFY, true) {}
-
 void IdentifyAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     Q_UNUSED(payload)
@@ -321,8 +284,6 @@ void IdentifyAction::parseCommand(quint8 commandId, const QByteArray &payload)
 
     m_value = "identify";
 }
-
-SwitchAction::SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
 
 void SwitchAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
@@ -335,8 +296,6 @@ void SwitchAction::parseCommand(quint8 commandId, const QByteArray &payload)
         case 0x02: m_value = "toggle"; break;
     }
 }
-
-SwitchActionLUMI::SwitchActionLUMI(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
 
 void SwitchActionLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -354,8 +313,6 @@ void SwitchActionLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const
     }
 }
 
-SwitchActionPTVO::SwitchActionPTVO(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
-
 void SwitchActionPTVO::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0055 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
@@ -363,8 +320,6 @@ void SwitchActionPTVO::parseAttribte(quint16 attributeId, quint8 dataType, const
 
     m_value = data.at(0) ? "on" : "off";
 }
-
-LevelAction::LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
 
 void LevelAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {

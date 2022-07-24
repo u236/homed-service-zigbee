@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION     "3.0.10"
+#define SERVICE_VERSION     "3.0.11"
 
 #include "homed.h"
 #include "zigbee.h"
