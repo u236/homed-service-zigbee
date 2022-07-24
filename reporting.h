@@ -85,6 +85,46 @@ namespace Reportings
 
     };
 
+    class ColorHue : public ReportingObject
+    {
+
+    public:
+
+        ColorHue(quint8 endPointId = 1);
+        virtual ~ColorHue(void) {}
+
+    };
+
+    class ColorSaturation : public ReportingObject
+    {
+
+    public:
+
+        ColorSaturation(quint8 endPointId = 1);
+        virtual ~ColorSaturation(void) {}
+
+    };
+
+    class ColorX : public ReportingObject
+    {
+
+    public:
+
+        ColorX(quint8 endPointId = 1);
+        virtual ~ColorX(void) {}
+
+    };
+
+    class ColorY : public ReportingObject
+    {
+
+    public:
+
+        ColorY(quint8 endPointId = 1);
+        virtual ~ColorY(void) {}
+
+    };
+
     class Illuminance : public ReportingObject
     {
 

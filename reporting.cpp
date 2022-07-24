@@ -18,6 +18,18 @@ Level::Level(quint8 endPointId) :
 ColorTemperature::ColorTemperature(quint8 endPointId) :
     ReportingObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0007, DATA_TYPE_16BIT_UNSIGNED, 0, 600, 0, endPointId) {}
 
+ColorHue::ColorHue(quint8 endPointId) :
+    ReportingObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0000, DATA_TYPE_8BIT_UNSIGNED, 0, 600, 0, endPointId) {}
+
+ColorSaturation::ColorSaturation(quint8 endPointId) :
+    ReportingObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0001, DATA_TYPE_8BIT_UNSIGNED, 0, 600, 0, endPointId) {}
+
+ColorX::ColorX(quint8 endPointId) :
+    ReportingObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0003, DATA_TYPE_16BIT_UNSIGNED, 0, 600, 0, endPointId) {}
+
+ColorY::ColorY(quint8 endPointId) :
+    ReportingObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0004, DATA_TYPE_16BIT_UNSIGNED, 0, 600, 0, endPointId) {}
+
 Illuminance::Illuminance(quint8 endPointId) :
     ReportingObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10, endPointId) {}
 
