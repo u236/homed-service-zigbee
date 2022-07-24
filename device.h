@@ -54,7 +54,7 @@ class DeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_interviewFinished(false), m_lastSeen(0), m_linkQuality(0) {}
+        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
@@ -82,6 +82,9 @@ public:
     inline bool interviewFinished(void) { return m_interviewFinished; }
     inline void setInterviewFinished(bool value = true) { m_interviewFinished = value; }
 
+    inline qint64 joinTime(void) { return m_joinTime; }
+    inline void updateJoinTime(void) { m_joinTime = QDateTime::currentMSecsSinceEpoch(); }
+
     inline qint64 lastSeen(void) { return m_lastSeen; }
     inline void setLastSeen(qint64 value) { m_lastSeen = value; }
     inline void updateLastSeen(void) { m_lastSeen = QDateTime::currentSecsSinceEpoch(); }
@@ -108,7 +111,7 @@ private:
     QString m_name, m_vendor, m_model;
     bool m_nodeDescriptorReceived, m_interviewFinished;
 
-    qint64 m_lastSeen;
+    qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
 
     QList <Action> m_actions;

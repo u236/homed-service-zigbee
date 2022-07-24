@@ -3,6 +3,7 @@
 
 #define UPDATE_NEIGHBORS_INTERVAL                   300000
 #define STORE_STATUS_INTERVAL                       60000
+#define DEVICE_REJOIN_INTERVAL                      10000
 
 #define FC_CLUSTER_SPECIFIC                         0x01
 #define FC_MANUFACTURER_SPECIFIC                    0x04

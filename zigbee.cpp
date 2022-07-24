@@ -586,6 +586,10 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
     if (it != m_devices.end())
     {
         it.value()->setNetworkAddress(networkAddress);
+
+        if (QDateTime::currentMSecsSinceEpoch() < it.value()->joinTime() + DEVICE_REJOIN_INTERVAL)
+            return;
+
         it.value()->setInterviewFinished(false);
     }
     else
@@ -596,6 +600,7 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
 
     logInfo << "Device" << it.value()->name() << "with address" << QString::asprintf("0x%04X", networkAddress) << "joined network, capabilities:" << QString::asprintf("0x%02X", capabilities);
 
+    it.value()->updateJoinTime();
     it.value()->updateLastSeen();
     interviewDevice(it.value());
 
