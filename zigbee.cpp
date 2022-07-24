@@ -305,7 +305,15 @@ void ZigBee::interviewDevice(const Device &device)
 
     logInfo << "Device" << device->name() << "vendor is" << device->vendor() << "and model is" << device->model();
     device->setProperties();
+    configureReportings(device);
 
+    logInfo << "Device" << device->name() << "interview finished";
+    device->setInterviewFinished();
+    storeStatus();
+}
+
+void ZigBee::configureReportings(const Device &device)
+{
     for (int i = 0; i < device->reportings().count(); i++)
     {
         const Reporting &reporting = device->reportings().at(i);
@@ -341,10 +349,6 @@ void ZigBee::interviewDevice(const Device &device)
 
         logInfo << "Device" << device->name() << "reporting for" << reporting->name() << "configured successfully";
     }
-
-    logInfo << "Device" << device->name() << "interview finished";
-    device->setInterviewFinished();
-    storeStatus();
 }
 
 void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clusterId, QList <quint16> attributes)
@@ -429,6 +433,9 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
 
         return;
     }
+
+    if (!endPoint->device()->interviewFinished())
+        return;
 
     for (int i = 0; i < endPoint->device()->properties().count(); i++)
     {
@@ -582,6 +589,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities)
 {
     auto it = m_devices.find(ieeeAddress);
+    bool check = false;
 
     if (it != m_devices.end())
     {
@@ -590,7 +598,7 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
         if (QDateTime::currentMSecsSinceEpoch() < it.value()->joinTime() + DEVICE_REJOIN_INTERVAL)
             return;
 
-        it.value()->setInterviewFinished(false);
+        check = true;
     }
     else
         it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
@@ -602,8 +610,14 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
 
     it.value()->updateJoinTime();
     it.value()->updateLastSeen();
-    interviewDevice(it.value());
 
+    if (check)
+    {
+        configureReportings(it.value());
+        return;
+    }
+
+    interviewDevice(it.value());
     emit endDeviceEvent();
 }
 
