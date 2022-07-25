@@ -44,9 +44,6 @@
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_TOUCHLINK                           0x1000
 
-#define ATTRIBUTE_BASIC_VENDOR                      0x0004
-#define ATTRIBUTE_BASIC_MODEL                       0x0005
-
 #include <QtGlobal>
 
 #pragma pack(push, 1)

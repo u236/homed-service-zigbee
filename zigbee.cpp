@@ -301,7 +301,7 @@ void ZigBee::interviewDevice(const Device &device)
 
         if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->vendor().isEmpty() || device->model().isEmpty()))
         {
-            readAttributes(device, it.key(), CLUSTER_BASIC, {ATTRIBUTE_BASIC_VENDOR, ATTRIBUTE_BASIC_MODEL});
+            readAttributes(device, it.key(), CLUSTER_BASIC, {0x0004, 0x0005});
             return;
         }
     }
@@ -377,18 +377,18 @@ void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clu
 
 void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (clusterId == CLUSTER_BASIC && (attributeId == ATTRIBUTE_BASIC_VENDOR || attributeId == ATTRIBUTE_BASIC_MODEL))
+    if (clusterId == CLUSTER_BASIC && (attributeId == 0x0004 || attributeId == 0x0005))
     {
         if (endPoint->device()->interviewFinished() || dataType != DATA_TYPE_STRING)
             return;
 
         switch (attributeId)
         {
-            case ATTRIBUTE_BASIC_VENDOR:
+            case 0x0004:
                 endPoint->device()->setVendor(QString(data).trimmed());
                 break;
 
-            case ATTRIBUTE_BASIC_MODEL:
+            case 0x0005:
                 endPoint->device()->setModel(QString(data).trimmed());
                 break;
         }

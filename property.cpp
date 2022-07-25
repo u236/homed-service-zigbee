@@ -299,7 +299,7 @@ void SwitchAction::parseCommand(quint8 commandId, const QByteArray &payload)
 
 void SwitchActionLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if ((attributeId != 0x0000 && attributeId != 0x8000) || (dataType != DATA_TYPE_BOOLEAN && dataType != DATA_TYPE_8BIT_UNSIGNED) || data.length() != 1)
+    if (((attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN) && (attributeId != 0x8000 || dataType != DATA_TYPE_8BIT_UNSIGNED)) || data.length() != 1)
         return;
 
     switch (static_cast <quint8> (data.at(0)))
