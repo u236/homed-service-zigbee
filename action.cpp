@@ -1,6 +1,15 @@
 #include <QtEndian>
 #include "action.h"
 
+void ActionObject::registerMetaTypes(void)
+{
+    qRegisterMetaType <Actions::Status>             ("statusAction");
+    qRegisterMetaType <Actions::Level>              ("levelAction");
+    qRegisterMetaType <Actions::ColorHS>            ("colorHSAction");
+    qRegisterMetaType <Actions::ColorXY>            ("colorXYAction");
+    qRegisterMetaType <Actions::ColorTemperature>   ("colorTemperatureAction");
+}
+
 using namespace Actions;
 
 QByteArray Status::request(const QVariant &data)

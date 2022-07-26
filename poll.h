@@ -12,19 +12,24 @@ class PollObject
 
 public:
 
-    PollObject(const QString &name, quint8 endPointId, quint16 clusterId, QList <quint16> attributes) :
-        m_name(name), m_endPointId(endPointId), m_clusterId(clusterId), m_attributes(attributes) {}
+    PollObject(const QString &name, quint16 clusterId, QList <quint16> attributes) :
+        m_name(name), m_clusterId(clusterId), m_endPointId(1), m_attributes(attributes) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
-    inline quint8 endPointId(void) { return m_endPointId; }
     inline QList <quint16> &attributes(void) { return m_attributes; }
+
+    inline quint8 endPointId(void) { return m_endPointId; }
+    inline void setEndPointId(quint8 value) { m_endPointId = value; }
+
+    static void registerMetaTypes(void);
 
 protected:
 
     QString m_name;
-    quint8 m_endPointId;
     quint16 m_clusterId;
+    quint8 m_endPointId;
+
     QList <quint16> m_attributes;
 
 };
@@ -36,10 +41,7 @@ namespace Polls
 
     public:
 
-        Status(quint8 endPointId = 1) :
-            PollObject("status", endPointId, CLUSTER_ON_OFF, {0x0000}) {}
-
-        virtual ~Status(void) {}
+        Status(void) : PollObject("status", CLUSTER_ON_OFF, {0x0000}) {}
 
     };
 
@@ -48,10 +50,7 @@ namespace Polls
 
     public:
 
-        Level(quint8 endPointId = 1) :
-            PollObject("level", endPointId, CLUSTER_LEVEL_CONTROL, {0x0000}) {}
-
-        virtual ~Level(void) {}
+        Level(void) : PollObject("level", CLUSTER_LEVEL_CONTROL, {0x0000}) {}
 
     };
 
@@ -60,10 +59,7 @@ namespace Polls
 
     public:
 
-        ColorHS(quint8 endPointId = 1) :
-            PollObject("colorHS", endPointId, CLUSTER_COLOR_CONTROL, {0x0000, 0x0001}) {}
-
-        virtual ~ColorHS(void) {}
+        ColorHS(void) : PollObject("colorHS", CLUSTER_COLOR_CONTROL, {0x0000, 0x0001}) {}
 
     };
 
@@ -72,10 +68,7 @@ namespace Polls
 
     public:
 
-        ColorXY(quint8 endPointId = 1) :
-            PollObject("colorXY", endPointId, CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
-
-        virtual ~ColorXY(void) {}
+        ColorXY(void) : PollObject("colorXY", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
 
     };
 
@@ -84,12 +77,15 @@ namespace Polls
 
     public:
 
-        ColorTemperature(quint8 endPointId = 1) :
-            PollObject("colorTemperature", endPointId, CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
-
-        virtual ~ColorTemperature(void) {}
+        ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
 
     };
 }
+
+Q_DECLARE_METATYPE(Polls::Status)
+Q_DECLARE_METATYPE(Polls::Level)
+Q_DECLARE_METATYPE(Polls::ColorHS)
+Q_DECLARE_METATYPE(Polls::ColorXY)
+Q_DECLARE_METATYPE(Polls::ColorTemperature)
 
 #endif

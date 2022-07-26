@@ -15,8 +15,9 @@ HEADERS += \
 SOURCES += \
     action.cpp \
     controller.cpp \
-    device.cpp \
+    poll.cpp \
     property.cpp \
+    reporting.cpp \
     zigbee.cpp \
     zstack.cpp
 

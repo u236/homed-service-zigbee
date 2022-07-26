@@ -101,8 +101,6 @@ public:
     inline QMap <quint8, EndPoint> &endPoints(void) { return m_endPoints; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
-    void setProperties(void);
-
 private:
 
     QByteArray m_ieeeAddress;

@@ -43,7 +43,7 @@ private:
 
     QMap <QByteArray, Device> m_devices;
 
-    QString m_databaseFile;
+    QString m_databaseFile, m_libraryFile;
     qint16 m_ledPin;
     quint8 m_transactionId;
     bool m_permitJoin;
@@ -57,7 +57,9 @@ private:
     QJsonArray serializeNeighbors(const Device &device);
 
     Device findDevice(quint16 networkAddress);
+
     void interviewDevice(const Device &device);
+    void setupDevice(const Device &device);
     void configureReportings(const Device &device);
 
     void readAttributes(const Device &device, quint8 endPointId, quint16 clusterId, QList <quint16> attributes);

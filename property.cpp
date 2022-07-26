@@ -2,6 +2,32 @@
 #include <QtEndian>
 #include "property.h"
 
+void PropertyObject::registerMetaTypes(void)
+{
+    qRegisterMetaType <Properties::BatteryVoltage>         ("batteryVoltageProperty");
+    qRegisterMetaType <Properties::BatteryVoltageLUMI>     ("batteryVoltageLUMIProperty");
+    qRegisterMetaType <Properties::BatteryPercentage>      ("batteryPercentageProperty");
+    qRegisterMetaType <Properties::BatteryPercentageIKEA>  ("batteryPercentageIKEAProperty");
+    qRegisterMetaType <Properties::Status>                 ("statusProperty");
+    qRegisterMetaType <Properties::Level>                  ("levelProperty");
+    qRegisterMetaType <Properties::AnalogCO2>              ("analogCO2Property");
+    qRegisterMetaType <Properties::AnalogTemperature>      ("analogTemperatureProperty");
+    qRegisterMetaType <Properties::ColorHS>                ("colorHSProperty");
+    qRegisterMetaType <Properties::ColorXY>                ("colorXYProperty");
+    qRegisterMetaType <Properties::ColorTemperature>       ("colorTemperatureProperty");
+    qRegisterMetaType <Properties::Illuminance>            ("illuminanceProperty");
+    qRegisterMetaType <Properties::Temperature>            ("temperatureProperty");
+    qRegisterMetaType <Properties::Humidity>               ("humidityProperty");
+    qRegisterMetaType <Properties::Occupancy>              ("occupancyProperty");
+    qRegisterMetaType <Properties::CubeMovement>           ("cubeMovementProperty");
+    qRegisterMetaType <Properties::CubeRotation>           ("cubeRotationProperty");
+    qRegisterMetaType <Properties::IdentifyAction>         ("identifyActionProperty");
+    qRegisterMetaType <Properties::SwitchAction>           ("switchActionProperty");
+    qRegisterMetaType <Properties::SwitchActionLUMI>       ("switchActionLUMIProperty");
+    qRegisterMetaType <Properties::SwitchActionPTVO>       ("switchActionPTVOProperty");
+    qRegisterMetaType <Properties::LevelAction>            ("levelActionProperty");
+}
+
 using namespace Properties;
 
 void BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

@@ -12,11 +12,12 @@ class ReportingObject
 
 public:
 
-    ReportingObject(const QString &name, quint8 endPointId, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint16 valueChange = 0) :
-        m_name(name), m_endPointId(endPointId), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_minInterval(minInterval), m_maxInteval(maxInterval), m_valueChange(valueChange) {}
+    ReportingObject(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint16 valueChange = 0) :
+        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_minInterval(minInterval), m_maxInteval(maxInterval), m_valueChange(valueChange), m_endPointId(1) {}
+
+    virtual ~ReportingObject(void) {}
 
     inline QString name(void) { return m_name; }
-    inline quint8 endPointId(void) {return m_endPointId; }
     inline quint16 clusterId(void) {return m_clusterId; }
     inline quint16 attributeId(void) {return m_attributeId; }
     inline quint8 dataType(void) {return m_dataType; }
@@ -24,13 +25,18 @@ public:
     inline quint16 maxInterval(void) {return m_maxInteval; }
     inline quint16 valueChange(void) {return m_valueChange; }
 
+    inline quint8 endPointId(void) { return m_endPointId; }
+    inline void setEndPointId(quint8 value) { m_endPointId = value; }
+
+    static void registerMetaTypes(void);
+
 protected:
 
     QString m_name;
-    quint8 m_endPointId;
     quint16 m_clusterId, m_attributeId;
     quint8 m_dataType;
     quint16 m_minInterval, m_maxInteval, m_valueChange;
+    quint8 m_endPointId;
 
 };
 
@@ -41,10 +47,7 @@ namespace Reportings
 
     public:
 
-        BatteryVoltage(quint8 endPointId = 1) :
-            ReportingObject("battery", endPointId, CLUSTER_POWER_CONFIGURATION, 0x0020, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10) {}
-
-        virtual ~BatteryVoltage(void) {}
+        BatteryVoltage(void) : ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0020, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10) {}
 
     };
 
@@ -53,10 +56,7 @@ namespace Reportings
 
     public:
 
-        BatteryPercentage(quint8 endPointId = 1) :
-            ReportingObject("battery", endPointId, CLUSTER_POWER_CONFIGURATION, 0x0021, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10) {}
-
-        virtual ~BatteryPercentage(void) {}
+        BatteryPercentage(void) : ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0021, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10) {}
 
     };
 
@@ -65,10 +65,7 @@ namespace Reportings
 
     public:
 
-        Status(quint8 endPointId = 1) :
-            ReportingObject("status", endPointId, CLUSTER_ON_OFF, 0x0000, DATA_TYPE_BOOLEAN, 0, 600) {}
-
-        virtual ~Status(void) {}
+        Status(void) : ReportingObject("status", CLUSTER_ON_OFF, 0x0000, DATA_TYPE_BOOLEAN, 0, 600) {}
 
     };
 
@@ -77,10 +74,7 @@ namespace Reportings
 
     public:
 
-        Level(quint8 endPointId = 1) :
-            ReportingObject("level", endPointId, CLUSTER_LEVEL_CONTROL, 0x0000, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
-
-        virtual ~Level(void) {}
+        Level(void) :  ReportingObject("level", CLUSTER_LEVEL_CONTROL, 0x0000, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
 
     };
 
@@ -89,10 +83,7 @@ namespace Reportings
 
     public:
 
-        ColorHue(quint8 endPointId = 1) :
-            ReportingObject("colorHue", endPointId, CLUSTER_COLOR_CONTROL, 0x0000, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
-
-        virtual ~ColorHue(void) {}
+        ColorHue(void) : ReportingObject("colorHue", CLUSTER_COLOR_CONTROL, 0x0000, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
 
     };
 
@@ -101,10 +92,7 @@ namespace Reportings
 
     public:
 
-        ColorSaturation(quint8 endPointId = 1) :
-            ReportingObject("colorSaturation", endPointId, CLUSTER_COLOR_CONTROL, 0x0001, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
-
-        virtual ~ColorSaturation(void) {}
+        ColorSaturation(void) : ReportingObject("colorSaturation", CLUSTER_COLOR_CONTROL, 0x0001, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
 
     };
 
@@ -113,10 +101,7 @@ namespace Reportings
 
     public:
 
-        ColorX(quint8 endPointId = 1) :
-            ReportingObject("colorX", endPointId, CLUSTER_COLOR_CONTROL, 0x0003, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
-
-        virtual ~ColorX(void) {}
+        ColorX(void) : ReportingObject("colorX", CLUSTER_COLOR_CONTROL, 0x0003, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
 
     };
 
@@ -125,10 +110,7 @@ namespace Reportings
 
     public:
 
-        ColorY(quint8 endPointId = 1) :
-            ReportingObject("colorY", endPointId, CLUSTER_COLOR_CONTROL, 0x0004, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
-
-        virtual ~ColorY(void) {}
+        ColorY(void) : ReportingObject("colorY", CLUSTER_COLOR_CONTROL, 0x0004, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
 
     };
 
@@ -137,10 +119,7 @@ namespace Reportings
 
     public:
 
-        ColorTemperature(quint8 endPointId = 1) :
-            ReportingObject("colorTemperature", endPointId, CLUSTER_COLOR_CONTROL, 0x0007, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
-
-        virtual ~ColorTemperature(void) {}
+        ColorTemperature(void) : ReportingObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0007, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
 
     };
 
@@ -149,10 +128,7 @@ namespace Reportings
 
     public:
 
-        Illuminance(quint8 endPointId = 1) :
-            ReportingObject("illuminance", endPointId, CLUSTER_ILLUMINANCE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10) {}
-
-        virtual ~Illuminance(void) {}
+        Illuminance(void) : ReportingObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10) {}
 
     };
 
@@ -161,10 +137,7 @@ namespace Reportings
 
     public:
 
-        Temperature(quint8 endPointId = 1) :
-            ReportingObject("temperature", endPointId, CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_SIGNED, 30, 600, 10) {}
-
-        virtual ~Temperature(void) {}
+        Temperature(void) : ReportingObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_SIGNED, 30, 600, 10) {}
 
     };
 
@@ -173,12 +146,22 @@ namespace Reportings
 
     public:
 
-        Humidity(quint8 endPointId = 1) :
-            ReportingObject("humidity", endPointId, CLUSTER_RELATIVE_HUMIDITY, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10) {}
-
-        virtual ~Humidity(void) {}
+        Humidity(void) : ReportingObject("humidity", CLUSTER_RELATIVE_HUMIDITY, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10) {}
 
     };
 }
+
+Q_DECLARE_METATYPE(Reportings::BatteryVoltage)
+Q_DECLARE_METATYPE(Reportings::BatteryPercentage)
+Q_DECLARE_METATYPE(Reportings::Status)
+Q_DECLARE_METATYPE(Reportings::Level)
+Q_DECLARE_METATYPE(Reportings::ColorHue)
+Q_DECLARE_METATYPE(Reportings::ColorSaturation)
+Q_DECLARE_METATYPE(Reportings::ColorX)
+Q_DECLARE_METATYPE(Reportings::ColorY)
+Q_DECLARE_METATYPE(Reportings::ColorTemperature)
+Q_DECLARE_METATYPE(Reportings::Illuminance)
+Q_DECLARE_METATYPE(Reportings::Temperature)
+Q_DECLARE_METATYPE(Reportings::Humidity)
 
 #endif

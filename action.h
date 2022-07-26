@@ -43,20 +43,25 @@ class ActionObject
 
 public:
 
-    ActionObject(const QString &name, quint8 endPointId, quint16 clusterId) :
-        m_name(name), m_endPointId(endPointId), m_clusterId(clusterId), m_transactionId(0) {}
+    ActionObject(const QString &name, quint16 clusterId) :
+        m_name(name), m_clusterId(clusterId), m_endPointId(1), m_transactionId(0) {}
+
+    virtual ~ActionObject(void) {}
+    virtual QByteArray request(const QVariant &data) = 0;
 
     inline QString name(void) { return m_name; }
-    inline quint8 endPointId(void) { return m_endPointId; }
     inline quint16 clusterId(void) { return m_clusterId; }
 
-    virtual QByteArray request(const QVariant &data) = 0;
+    inline quint8 endPointId(void) { return m_endPointId; }
+    inline void setEndPointId(quint8 value) { m_endPointId = value; }
+
+    static void registerMetaTypes(void);
 
 protected:
 
     QString m_name;
-    quint8 m_endPointId;
     quint16 m_clusterId;
+    quint8 m_endPointId;
     quint8 m_transactionId;
 
 };
@@ -68,10 +73,7 @@ namespace Actions
 
     public:
 
-        Status(quint8 endPointId = 1) :
-            ActionObject("status", endPointId, CLUSTER_ON_OFF) {}
-
-        virtual ~Status(void) {}
+        Status(void) : ActionObject("status", CLUSTER_ON_OFF) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -81,10 +83,7 @@ namespace Actions
 
     public:
 
-        Level(quint8 endPointId = 1) :
-            ActionObject("level", endPointId, CLUSTER_LEVEL_CONTROL) {}
-
-        virtual ~Level(void) {}
+        Level(void) : ActionObject("level", CLUSTER_LEVEL_CONTROL) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -94,10 +93,7 @@ namespace Actions
 
     public:
 
-        ColorHS(quint8 endPointId = 1) :
-            ActionObject("colorHS", endPointId, CLUSTER_COLOR_CONTROL) {}
-
-        virtual ~ColorHS(void) {}
+        ColorHS(void) : ActionObject("colorHS", CLUSTER_COLOR_CONTROL) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -107,10 +103,7 @@ namespace Actions
 
     public:
 
-        ColorXY(quint8 endPointId = 1) :
-            ActionObject("colorXY", endPointId, CLUSTER_COLOR_CONTROL) {}
-
-        virtual ~ColorXY(void) {}
+        ColorXY(void) : ActionObject("colorXY", CLUSTER_COLOR_CONTROL) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -120,13 +113,16 @@ namespace Actions
 
     public:
 
-        ColorTemperature(quint8 endPointId = 1) :
-            ActionObject("colorTemperature", endPointId, CLUSTER_COLOR_CONTROL) {}
-
-        virtual ~ColorTemperature(void) {}
+        ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
         QByteArray request(const QVariant &data) override;
 
     };
 }
+
+Q_DECLARE_METATYPE(Actions::Status)
+Q_DECLARE_METATYPE(Actions::Level)
+Q_DECLARE_METATYPE(Actions::ColorHS)
+Q_DECLARE_METATYPE(Actions::ColorXY)
+Q_DECLARE_METATYPE(Actions::ColorTemperature)
 
 #endif

@@ -1,0 +1,98 @@
+{
+  "eWeLink":
+  [
+    {
+      "model": "TH01",
+      "properties": ["batteryPercentage", "temperature", "humidity"],
+      "reportings": ["batteryPercentage", "temperature", "humidity"]
+    }
+  ],
+
+  "HaiPaiTech":
+  [ 
+    {
+      "model": "vivi ZLight",
+      "endPointId": 11,
+      "actions": ["status", "level", "colorHS"],
+      "polls": ["status", "level", "colorHS"],
+      "properties": ["status", "level", "colorHS"]
+    }
+  ],
+
+  "HOMEd":
+  [
+    {
+      "model": "Button",
+      "properties": ["batteryPercentage", "switchActionPTVO"]
+    },
+    {
+      "model": "CO2 Sensor",
+      "properties": ["analogCO2", "analogTemperature"]
+    },
+    {
+      "model": "LC Outlet",
+      "actions": ["status"],
+      "properties": ["status"]
+    }
+  ],
+
+  "IKEA of Sweden":
+  [
+    {
+      "model": "TRADFRI on/off switch",
+      "properties": ["batteryPercentageIKEA", "identifyAction", "switchAction", "levelAction"],
+      "reportings": ["batteryPercentage"]
+    },
+    {
+      "model": "TRADFRI bulb E14 WS 470lm",
+      "actions": ["status", "level", "colorTemperature"],
+      "properties": ["status", "level", "colorTemperature"],
+      "reportings": ["status", "level", "colorTemperature"]
+    },
+    {
+      "model": ["TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm", "TRADFRI bulb E27 W opal 1000lm"],
+      "actions": ["status", "level"],
+      "properties": ["status", "level"],
+      "reportings": ["status", "level"]
+    }
+  ],
+
+  "LUMI":
+  [
+    {
+      "model": "lumi.plug.maeu01",
+      "actions": ["status"],
+      "properties": ["status"],
+      "reportings": ["status"]
+    },
+    {
+      "model": ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
+      "properties": ["batteryVoltageLUMI", "cubeMovement", "cubeRotation"]
+    },
+    {
+      "model": ["lumi.sensor_ht", "lumi.sens"],
+      "properties": ["batteryVoltageLUMI", "temperature", "humidity"]
+    },
+    {
+      "model": "lumi.sensor_magnet",
+      "properties": ["batteryVoltageLUMI", "status"]
+    },
+    {
+      "model": "lumi.sensor_motion",
+      "properties": ["batteryVoltageLUMI", "occupancy"]
+    },
+    {
+      "model": "lumi.sensor_switch",
+      "properties": ["batteryVoltageLUMI", "switchActionLUMI"]
+    }
+  ],
+
+  "XIAOMI":
+  [
+    {
+      "model": "lumi.sen_ill.mgl01",
+      "properties": ["batteryVoltageLUMI", "identifyAction", "illuminance"],
+      "reportings": ["batteryVoltage", "illuminance"]
+    }
+  ]
+}

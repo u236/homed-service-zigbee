@@ -7,7 +7,13 @@
 
 ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_ledTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_pollTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
+    ActionObject::registerMetaTypes();
+    PollObject::registerMetaTypes();
+    PropertyObject::registerMetaTypes();
+    ReportingObject::registerMetaTypes();
+
     m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
+    m_libraryFile = config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
     m_ledPin = static_cast <qint16> (config->value("gpio/led", -1).toInt());
 
     GPIO::setDirection(m_ledPin, GPIO::Output);
@@ -108,6 +114,8 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
 
 void ZigBee::unserializeDevices(const QJsonArray &array)
 {
+    logInfo << "Loading devices...";
+
     for (auto it = array.begin(); it != array.end(); it++)
     {
         QJsonObject json = it->toObject();
@@ -130,11 +138,16 @@ void ZigBee::unserializeDevices(const QJsonArray &array)
             unserializeNeighbors(device, json.value("neighbors").toArray());
 
             if (device->interviewFinished())
-                device->setProperties();
+                setupDevice(device);
 
             m_devices.insert(device->ieeeAddress(), device);
         }
     }
+
+    if (m_devices.isEmpty())
+        return;
+
+    logInfo << "Loaded" << m_devices.count() << "devices";
 }
 
 void ZigBee::unserializeEndPoints(const Device &device, const QJsonArray &array)
@@ -307,12 +320,124 @@ void ZigBee::interviewDevice(const Device &device)
     }
 
     logInfo << "Device" << device->name() << "vendor is" << device->vendor() << "and model is" << device->model();
-    device->setProperties();
+    setupDevice(device);
     configureReportings(device);
 
     logInfo << "Device" << device->name() << "interview finished";
     device->setInterviewFinished();
     storeStatus();
+}
+
+void ZigBee::setupDevice(const Device &device)
+{
+    QFile file(m_libraryFile);
+    QJsonObject json;
+    QJsonArray array;
+
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        logWarning << "Can't open library file, devices not loaded";
+        return;
+    }
+
+    array = QJsonDocument::fromJson(file.readAll()).object().value(device->vendor()).toArray();
+    file.close();
+
+    if (array.isEmpty())
+    {
+        logWarning << "Device" << device->name() << "vendor" << device->vendor() << "unrecognized";
+        return;
+    }
+
+    for (auto it = array.begin(); it != array.end(); it++)
+    {
+        QJsonObject item = it->toObject();
+        QJsonValue model = item.value("model");
+
+        if ((model.type() == QJsonValue::String && model.toString() == device->model()) || (model.type() == QJsonValue::Array && model.toArray().contains(device->model())))
+        {
+            json = QJsonObject(item);
+            break;
+        }
+    }
+
+    if (!json.isEmpty())
+    {
+        QJsonArray actionsArray = json.value("actions").toArray(), pollsArray = json.value("polls").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray();
+        quint8 endPointId = static_cast <quint8> (json.value("endPointId").toInt());
+
+        for (auto it = actionsArray.begin(); it != actionsArray.end(); it++)
+        {
+            int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
+
+            if (type)
+            {
+                Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
+
+                if (endPointId)
+                    action->setEndPointId(endPointId);
+
+                device->actions().append(action);
+                continue;
+            }
+
+            logWarning << "Device" << device->name() << "action" << it->toString() << "unrecognized";
+        }
+
+        for (auto it = pollsArray.begin(); it != pollsArray.end(); it++)
+        {
+            int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
+
+            if (type)
+            {
+                Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
+
+                if (endPointId)
+                    poll->setEndPointId(endPointId);
+
+                device->polls().append(poll);
+                continue;
+            }
+
+            logWarning << "Device" << device->name() << "poll" << it->toString() << "unrecognized";
+        }
+
+        for (auto it = propertiesArray.begin(); it != propertiesArray.end(); it++)
+        {
+            int type = QMetaType::type(QString(it->toString()).append("Property").toUtf8());
+
+            if (type)
+            {
+                Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
+                device->properties().append(property);
+                continue;
+            }
+
+            logWarning << "Device" << device->name() << "property" << it->toString() << "unrecognized";
+        }
+
+        for (auto it = reportingsArray.begin(); it != reportingsArray.end(); it++)
+        {
+            int type = QMetaType::type(QString(it->toString()).append("Reporting").toUtf8());
+
+            if (type)
+            {
+                Reporting reporting(reinterpret_cast <ReportingObject*> (QMetaType::create(type)));
+
+                if (endPointId)
+                    reporting->setEndPointId(endPointId);
+
+                device->reportings().append(reporting);
+                continue;
+            }
+
+            logWarning << "Device" << device->name() << "reporting" << it->toString() << "unrecognized";
+        }
+
+        return;
+    }
+
+    logWarning << "Device" << device->name() << "model" << device->model() << "unrecognized";
 }
 
 void ZigBee::configureReportings(const Device &device)
@@ -816,7 +941,7 @@ void ZigBee::storeStatus(void)
 
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
-        logWarning << "Can't store status";
+        logWarning << "Can't open database file, status not saved";
         return;
     }
 
