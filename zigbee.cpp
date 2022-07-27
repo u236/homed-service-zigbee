@@ -63,17 +63,17 @@ void ZigBee::setPermitJoin(bool enabled)
     storeStatus();
 }
 
-void ZigBee::removeDevice(const QByteArray &ieeeAddress)
+void ZigBee::configureDevice(const QByteArray &ieeeAddress)
 {
     auto it = m_devices.find(ieeeAddress);
 
     if (it == m_devices.end())
         return;
 
-    logInfo << "Device" << it.value()->name() << "removed";
+    setupDevice(it.value());
+    configureReportings(it.value());
 
-    m_devices.erase(it);
-    storeStatus();
+    logInfo << "Device" << it.value()->name() << "configuration updated";
 }
 
 void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
@@ -110,6 +110,21 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
             logWarning << "Device" << it.value()->name() << actionName << "action failed";
         }
     }
+}
+
+void ZigBee::removeDevice(const QByteArray &ieeeAddress)
+{
+    QString name;
+    auto it = m_devices.find(ieeeAddress);
+
+    if (it == m_devices.end())
+        return;
+
+    name = it.value()->name();
+    m_devices.erase(it);
+    storeStatus();
+
+    logInfo << "Device" << name << "removed";
 }
 
 void ZigBee::unserializeDevices(const QJsonArray &array)
@@ -365,6 +380,11 @@ void ZigBee::setupDevice(const Device &device)
     {
         QJsonArray actionsArray = json.value("actions").toArray(), pollsArray = json.value("polls").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray();
         quint8 endPointId = static_cast <quint8> (json.value("endPointId").toInt());
+
+        device->actions().clear();
+        device->polls().clear();
+        device->properties().clear();
+        device->reportings().clear();
 
         for (auto it = actionsArray.begin(); it != actionsArray.end(); it++)
         {
@@ -631,8 +651,36 @@ void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, 
                         size = 2;
                         break;
 
+                    case DATA_TYPE_24BIT_UNSIGNED:
+                    case DATA_TYPE_24BIT_SIGNED:
+                        size = 3;
+                        break;
+
+                    case DATA_TYPE_32BIT_UNSIGNED:
+                    case DATA_TYPE_32BIT_SIGNED:
                     case DATA_TYPE_SINGLE_PRECISION:
                         size = 4;
+                        break;
+
+                    case DATA_TYPE_40BIT_UNSIGNED:
+                    case DATA_TYPE_40BIT_SIGNED:
+                        size = 5;
+                        break;
+
+                    case DATA_TYPE_48BIT_UNSIGNED:
+                    case DATA_TYPE_48BIT_SIGNED:
+                        size = 6;
+                        break;
+
+                    case DATA_TYPE_56BIT_UNSIGNED:
+                    case DATA_TYPE_56BIT_SIGNED:
+                        size = 7;
+                        break;
+
+                    case DATA_TYPE_64BIT_UNSIGNED:
+                    case DATA_TYPE_64BIT_SIGNED:
+                    case DATA_TYPE_DOUBLE_PRECISION:
+                        size = 8;
                         break;
 
                     case DATA_TYPE_STRING:
@@ -718,19 +766,14 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities)
 {
     auto it = m_devices.find(ieeeAddress);
-    bool check = false;
 
-    if (it != m_devices.end())
-    {
+    if (it == m_devices.end())
+        it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
+    else
         it.value()->setNetworkAddress(networkAddress);
 
-        if (QDateTime::currentMSecsSinceEpoch() < it.value()->joinTime() + DEVICE_REJOIN_INTERVAL)
-            return;
-
-        check = true;
-    }
-    else
-        it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
+    if (QDateTime::currentMSecsSinceEpoch() < it.value()->joinTime() + DEVICE_REJOIN_INTERVAL)
+        return;
 
     m_ledTimer->start(500);
     GPIO::setStatus(m_ledPin, true);
@@ -740,7 +783,7 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
     it.value()->updateJoinTime();
     it.value()->updateLastSeen();
 
-    if (check)
+    if (it.value()->interviewFinished())
     {
         configureReportings(it.value());
         return;

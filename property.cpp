@@ -19,6 +19,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Temperature>            ("temperatureProperty");
     qRegisterMetaType <Properties::Humidity>               ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>              ("occupancyProperty");
+    qRegisterMetaType <Properties::Energy>                 ("energyProperty");
+    qRegisterMetaType <Properties::Power>                  ("powerProperty");
     qRegisterMetaType <Properties::CubeMovement>           ("cubeMovementProperty");
     qRegisterMetaType <Properties::CubeRotation>           ("cubeRotationProperty");
     qRegisterMetaType <Properties::IdentifyAction>         ("identifyActionProperty");
@@ -44,7 +46,7 @@ void BatteryVoltageLUMI::parseAttribte(quint16 attributeId, quint8 dataType, con
     {
         case 0xFF01:
         {
-            quint16 value;
+            quint16 value = 0;
 
             if (dataType != DATA_TYPE_STRING || data.length() < 4)
                 break;
@@ -56,7 +58,7 @@ void BatteryVoltageLUMI::parseAttribte(quint16 attributeId, quint8 dataType, con
 
         case 0xFF02:
         {
-            quint16 value;
+            quint16 value = 0;
 
             if (dataType != DATA_TYPE_STRUCTURE || data.length() < 7)
                 break;
@@ -106,12 +108,12 @@ void AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteA
     {
         case 0x0055:
         {
-            float value;
+            float value = 0;
 
             if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
                 return;
 
-            memcpy(&value, data.constData(), sizeof(value));
+            memcpy(&value, data.constData(), data.length());
             m_buffer = value;
             break;
         }
@@ -133,12 +135,12 @@ void AnalogTemperature::parseAttribte(quint16 attributeId, quint8 dataType, cons
     {
         case 0x0055:
         {
-            float value;
+            float value = 0;
 
             if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
                 return;
 
-            memcpy(&value, data.constData(), sizeof(value));
+            memcpy(&value, data.constData(), data.length());
             m_buffer = value;
             break;
         }
@@ -183,27 +185,31 @@ void ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArr
 
 void ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    qint16 value;
-
     switch (attributeId)
     {
         case 0x0003:
+        {
+            quint16 value = 0;
 
             if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
                 return;
 
-            memcpy(&value, data.constData(), sizeof(value));
+            memcpy(&value, data.constData(), data.length());
             m_colorX = qFromLittleEndian(value);
             break;
+        }
 
         case 0x0004:
+        {
+            quint16 value = 0;
 
             if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
                 return;
 
-            memcpy(&value, data.constData(), sizeof(value));
+            memcpy(&value, data.constData(), data.length());
             m_colorY = qFromLittleEndian(value);
             break;
+        }
     }
 
     if (!m_colorX.isValid() || !m_colorY.isValid())
@@ -214,45 +220,45 @@ void ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArr
 
 void ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    qint16 value;
+    qint16 value = 0;
 
     if (attributeId != 0x0007 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, data.constData(), sizeof(value));
+    memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value);
 }
 
 void Illuminance::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    quint16 value;
+    quint16 value = 0;
 
     if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, data.constData(), sizeof(value));
+    memcpy(&value, data.constData(), data.length());
     m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
 }
 
 void Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    qint16 value;
+    qint16 value = 0;
 
     if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_SIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, data.constData(), sizeof(value));
+    memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / 100.0;
 }
 
 void Humidity::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    qint16 value;
+    qint16 value = 0;
 
     if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, data.constData(), sizeof(value));
+    memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / 100.0;
 }
 
@@ -264,14 +270,112 @@ void Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteA
     m_value = data.at(0) ? true : false;
 }
 
+void Energy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0000:
+        {
+            qint64 value = 0;
+
+            if (dataType != DATA_TYPE_48BIT_UNSIGNED || data.length() != 6 || !m_multiplier || !m_divider)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_value = qFromLittleEndian(value);
+
+            if (m_multiplier > 1)
+                m_value = m_value.toDouble() * m_multiplier;
+
+            if (m_divider > 1)
+                m_value = m_value.toDouble() / m_divider;
+
+            break;
+        }
+
+        case 0x0301:
+        {
+            quint32 value = 0;
+
+            if (dataType != DATA_TYPE_24BIT_UNSIGNED || data.length() != 3)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_multiplier = qFromLittleEndian(value);
+            break;
+        }
+
+        case 0x0302:
+        {
+            quint32 value = 0;
+
+            if (dataType != DATA_TYPE_24BIT_UNSIGNED || data.length() != 3)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_divider = qFromLittleEndian(value);
+            break;
+        }
+    }
+}
+
+void Power::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x050B:
+        {
+            qint16 value = 0;
+
+            if (dataType != DATA_TYPE_16BIT_SIGNED || data.length() != 2 || !m_multiplier || !m_divider)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_value = qFromLittleEndian(value);
+
+            if (m_multiplier > 1)
+                m_value = m_value.toDouble() * m_multiplier;
+
+            if (m_divider > 1)
+                m_value = m_value.toDouble() / m_divider;
+
+            break;
+        }
+
+        case 0x0604:
+        {
+            quint16 value = 0;
+
+            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_multiplier = qFromLittleEndian(value);
+            break;
+        }
+
+        case 0x0605:
+        {
+            quint16 value = 0;
+
+            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_divider = qFromLittleEndian(value);
+            break;
+        }
+    }
+}
+
 void CubeMovement::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    qint16 value;
+    qint16 value = 0;
 
     if (attributeId != 0x0055 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
         return;
 
-    memcpy(&value, data.constData(), sizeof(value));
+    memcpy(&value, data.constData(), data.length());
     value = qFromLittleEndian(value);
 
     if (!value)
@@ -292,12 +396,12 @@ void CubeMovement::parseAttribte(quint16 attributeId, quint8 dataType, const QBy
 
 void CubeRotation::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    float value;
+    float value = 0;
 
     if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
         return;
 
-    memcpy(&value, data.constData(), sizeof(value));
+    memcpy(&value, data.constData(), data.length());
     m_value = value < 0 ? "rotateLeft" : "rotateRight";
 }
 

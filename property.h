@@ -207,6 +207,34 @@ namespace Properties
 
     };
 
+    class Energy : public PropertyObject
+    {
+
+    public:
+
+        Energy(void) : PropertyObject("energy", CLUSTER_SMART_ENERGY_METERING), m_multiplier(0), m_divider(0) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        quint32 m_multiplier, m_divider;
+
+    };
+
+    class Power : public PropertyObject
+    {
+
+    public:
+
+        Power(void) : PropertyObject("power", CLUSTER_ELECTRICAL_MEASUREMENT), m_multiplier(0), m_divider(0) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        quint16 m_multiplier, m_divider;
+
+    };
+
     class CubeMovement : public PropertyObject
     {
 
@@ -277,28 +305,5 @@ namespace Properties
 
     };
 }
-
-Q_DECLARE_METATYPE(Properties::BatteryVoltage)
-Q_DECLARE_METATYPE(Properties::BatteryVoltageLUMI)
-Q_DECLARE_METATYPE(Properties::BatteryPercentage)
-Q_DECLARE_METATYPE(Properties::BatteryPercentageIKEA)
-Q_DECLARE_METATYPE(Properties::Status)
-Q_DECLARE_METATYPE(Properties::Level)
-Q_DECLARE_METATYPE(Properties::AnalogCO2)
-Q_DECLARE_METATYPE(Properties::AnalogTemperature)
-Q_DECLARE_METATYPE(Properties::ColorHS)
-Q_DECLARE_METATYPE(Properties::ColorXY)
-Q_DECLARE_METATYPE(Properties::ColorTemperature)
-Q_DECLARE_METATYPE(Properties::Illuminance)
-Q_DECLARE_METATYPE(Properties::Temperature)
-Q_DECLARE_METATYPE(Properties::Humidity)
-Q_DECLARE_METATYPE(Properties::Occupancy)
-Q_DECLARE_METATYPE(Properties::CubeMovement)
-Q_DECLARE_METATYPE(Properties::CubeRotation)
-Q_DECLARE_METATYPE(Properties::IdentifyAction)
-Q_DECLARE_METATYPE(Properties::SwitchAction)
-Q_DECLARE_METATYPE(Properties::SwitchActionLUMI)
-Q_DECLARE_METATYPE(Properties::SwitchActionPTVO)
-Q_DECLARE_METATYPE(Properties::LevelAction)
 
 #endif

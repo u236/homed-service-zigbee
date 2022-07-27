@@ -17,9 +17,22 @@
 #define DATA_TYPE_8BIT_BITMAP                       0x18
 #define DATA_TYPE_8BIT_UNSIGNED                     0x20
 #define DATA_TYPE_16BIT_UNSIGNED                    0x21
+#define DATA_TYPE_24BIT_UNSIGNED                    0x22
+#define DATA_TYPE_32BIT_UNSIGNED                    0x23
+#define DATA_TYPE_40BIT_UNSIGNED                    0x24
+#define DATA_TYPE_48BIT_UNSIGNED                    0x25
+#define DATA_TYPE_56BIT_UNSIGNED                    0x26
+#define DATA_TYPE_64BIT_UNSIGNED                    0x27
 #define DATA_TYPE_8BIT_SIGNED                       0x28
 #define DATA_TYPE_16BIT_SIGNED                      0x29
+#define DATA_TYPE_24BIT_SIGNED                      0x2A
+#define DATA_TYPE_32BIT_SIGNED                      0x2B
+#define DATA_TYPE_40BIT_SIGNED                      0x2C
+#define DATA_TYPE_48BIT_SIGNED                      0x2D
+#define DATA_TYPE_56BIT_SIGNED                      0x2E
+#define DATA_TYPE_64BIT_SIGNED                      0x2F
 #define DATA_TYPE_SINGLE_PRECISION                  0x39
+#define DATA_TYPE_DOUBLE_PRECISION                  0x3A
 #define DATA_TYPE_STRING                            0x42
 #define DATA_TYPE_STRUCTURE                         0x4C
 

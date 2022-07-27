@@ -80,12 +80,24 @@ namespace Polls
         ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
 
     };
-}
 
-Q_DECLARE_METATYPE(Polls::Status)
-Q_DECLARE_METATYPE(Polls::Level)
-Q_DECLARE_METATYPE(Polls::ColorHS)
-Q_DECLARE_METATYPE(Polls::ColorXY)
-Q_DECLARE_METATYPE(Polls::ColorTemperature)
+    class Energy : public PollObject
+    {
+
+    public:
+
+        Energy(void) : PollObject("energy", CLUSTER_SMART_ENERGY_METERING, {0x0301, 0x0302, 0x0000}) {}
+
+    };
+
+    class Power : public PollObject
+    {
+
+    public:
+
+        Power(void) : PollObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, {0x0604, 0x0605, 0x050B}) {}
+
+    };
+}
 
 #endif
