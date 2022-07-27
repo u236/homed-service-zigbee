@@ -2,7 +2,6 @@
 #define ZIGBEE_H
 
 #define UPDATE_NEIGHBORS_INTERVAL       300000
-#define POLL_ATTRIBUTES_INTERVAL        10000
 #define STORE_STATUS_INTERVAL           60000
 #define DEVICE_REJOIN_INTERVAL          10000
 
@@ -40,7 +39,7 @@ public:
 private:
 
     ZStack *m_adapter;
-    QTimer *m_ledTimer, *m_neighborsTimer, *m_pollTimer, *m_statusTimer;
+    QTimer *m_neighborsTimer, *m_statusTimer, *m_ledTimer;
 
     QMap <QByteArray, Device> m_devices;
 
@@ -80,10 +79,10 @@ private slots:
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
     void messageReveived(quint16 networkAddress, quint8 endPointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
-    void disableLed(void);
-    void updateNeighbors(void);
     void pollAttributes(void);
+    void updateNeighbors(void);
     void storeStatus(void);
+    void disableLed(void);
 
 signals:
 

@@ -49,13 +49,16 @@ private:
 
 };
 
-class DeviceObject
+class DeviceObject : public QObject
 {
+    Q_OBJECT
 
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+
+    inline QTimer *timer(void) { return m_timer; }
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
@@ -102,6 +105,8 @@ public:
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
 private:
+
+    QTimer *m_timer;
 
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;

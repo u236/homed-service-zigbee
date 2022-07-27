@@ -53,6 +53,7 @@
 #define ZDO_STATE_CHANGE_IND                        0x45C0
 #define ZDO_END_DEVICE_ANNCE_IND                    0x45C1
 #define ZDO_SRC_RTG_IND                             0x45C4
+#define ZDO_CONCENTRATOR_IND                        0x45C8
 #define ZDO_LEAVE_IND                               0x45C9
 #define ZDO_TC_DEV_IND                              0x45CA
 #define APP_CNF_BDB_COMMISSIONING_NOTIFICATION      0x4F80
@@ -277,6 +278,8 @@ public:
 
     ZStack(QSettings *config, QObject *parent);
 
+    inline quint8 dataRequestStatus(void) { return m_dataRequestStatus; }
+
     void init(void);
     void registerEndPoint(quint8 endPointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void setPermitJoin(bool enabled);
@@ -304,7 +307,10 @@ private:
     QByteArray m_ieeeAddress;
 
     quint16 m_bindAddress;
-    bool m_bindRequestSuccess, m_dataConfirmReceived, m_dataRequestSuccess;
+    bool m_bindRequestSuccess;
+
+    quint8 m_dataRequestStatus;
+    bool m_dataRequestSuccess, m_dataConfirmReceived;
 
     quint16 m_replyCommand;
     QByteArray m_replyData;

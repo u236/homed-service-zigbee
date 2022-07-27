@@ -239,6 +239,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
     {
         case ZDO_MGMT_PERMIT_JOIN_RSP:
         case ZDO_SRC_RTG_IND:
+        case ZDO_CONCENTRATOR_IND:
         case ZDO_TC_DEV_IND:
             break;
 
@@ -254,8 +255,9 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         {
             if (static_cast <quint8> (data.at(2)) == m_transactionId)
             {
+                m_dataRequestStatus = data.at(0);
+                m_dataRequestSuccess = m_dataRequestStatus ? false : true;
                 m_dataConfirmReceived = true;
-                m_dataRequestSuccess = data.at(0) ? false : true;
                 emit dataConfirm();
             }
 

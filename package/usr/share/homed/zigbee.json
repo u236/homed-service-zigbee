@@ -9,10 +9,11 @@
   ],
 
   "HaiPaiTech":
-  [ 
+  [
     {
       "model": "vivi ZLight",
       "endPointId": 11,
+      "pollInterval": 10,
       "actions": ["status", "level", "colorHS"],
       "polls": ["status", "level", "colorHS"],
       "properties": ["status", "level", "colorHS"]
@@ -61,9 +62,10 @@
   [
     {
       "model": "lumi.plug.maeu01",
+      "pollInterval": 15,
       "actions": ["status"],
-      "properties": ["status"],
-      "reportings": ["status"]
+      "polls": ["status", "power", "energy"],
+      "properties": ["status", "power", "energy"]
     },
     {
       "model": ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
@@ -91,7 +93,7 @@
   [
     {
       "model": "lumi.sen_ill.mgl01",
-      "properties": ["batteryVoltageLUMI", "identifyAction", "illuminance"],
+      "properties": ["batteryVoltage", "identifyAction", "illuminance"],
       "reportings": ["batteryVoltage", "illuminance"]
     }
   ]

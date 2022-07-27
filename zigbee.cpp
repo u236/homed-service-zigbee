@@ -5,7 +5,7 @@
 #include "zcl.h"
 #include "zigbee.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_ledTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_pollTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -28,15 +28,13 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
 
-    connect(m_ledTimer, &QTimer::timeout, this, &ZigBee::disableLed);
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
-    connect(m_pollTimer, &QTimer::timeout, this, &ZigBee::pollAttributes);
     connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
+    connect(m_ledTimer, &QTimer::timeout, this, &ZigBee::disableLed);
 
-    m_ledTimer->setSingleShot(true);
     m_neighborsTimer->setSingleShot(true);
-    m_pollTimer->setSingleShot(true);
     m_statusTimer->setSingleShot(true);
+    m_ledTimer->setSingleShot(true);
 }
 
 void ZigBee::init(void)
@@ -379,7 +377,11 @@ void ZigBee::setupDevice(const Device &device)
     if (!json.isEmpty())
     {
         QJsonArray actionsArray = json.value("actions").toArray(), pollsArray = json.value("polls").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray();
+        quint32 pollInterval = static_cast <quint8> (json.value("pollInterval").toInt()) * 1000;
         quint8 endPointId = static_cast <quint8> (json.value("endPointId").toInt());
+
+        disconnect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
+        device->timer()->stop();
 
         device->actions().clear();
         device->polls().clear();
@@ -452,6 +454,12 @@ void ZigBee::setupDevice(const Device &device)
             }
 
             logWarning << "Device" << device->name() << "reporting" << it->toString() << "unrecognized";
+        }
+
+        if (pollInterval && !device->polls().isEmpty())
+        {
+            connect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
+            device->timer()->start(pollInterval);
         }
 
         return;
@@ -759,7 +767,6 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     m_adapter->setPermitJoin(m_permitJoin);
 
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
-    m_pollTimer->start(POLL_ATTRIBUTES_INTERVAL);
     storeStatus();
 }
 
@@ -945,9 +952,18 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endPointId, quint16 
     }
 }
 
-void ZigBee::disableLed(void)
+void ZigBee::pollAttributes(void)
 {
-    GPIO::setStatus(m_ledPin, false);
+    auto it = m_devices.find(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
+
+    if (it == m_devices.end())
+        return;
+
+    for (int i = 0; i < it.value()->polls().count(); i++)
+    {
+        Poll poll = it.value()->polls().at(i);
+        readAttributes(it.value(), poll->endPointId(), poll->clusterId(), poll->attributes());
+    }
 }
 
 void ZigBee::updateNeighbors(void)
@@ -959,20 +975,6 @@ void ZigBee::updateNeighbors(void)
             m_adapter->lqiRequest(it.value()->networkAddress());
 
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
-}
-
-void ZigBee::pollAttributes()
-{
-    for (auto it = m_devices.begin(); it != m_devices.end(); it++)
-    {
-        for (int i = 0; i < it.value()->polls().count(); i++)
-        {
-            Poll poll = it.value()->polls().at(i);
-            readAttributes(it.value(), poll->endPointId(), poll->clusterId(), poll->attributes());
-        }
-    }
-
-    m_pollTimer->start(POLL_ATTRIBUTES_INTERVAL);
 }
 
 void ZigBee::storeStatus(void)
@@ -992,4 +994,9 @@ void ZigBee::storeStatus(void)
     file.close();
 
     emit statusStored(json);
+}
+
+void ZigBee::disableLed(void)
+{
+    GPIO::setStatus(m_ledPin, false);
 }
