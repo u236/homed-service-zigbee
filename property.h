@@ -37,30 +37,12 @@ protected:
     QVariant m_value;
     bool m_invalidable;
 
+    quint8 percentage(double min, double max, double value);
+
 };
 
 namespace Properties
 {
-    class BatteryVoltage : public PropertyObject
-    {
-
-    public:
-
-        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class BatteryVoltageLUMI : public PropertyObject
-    {
-
-    public:
-
-        BatteryVoltageLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
     class BatteryPercentage : public PropertyObject
     {
 
@@ -77,6 +59,26 @@ namespace Properties
     public:
 
         BatteryPercentageIKEA(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class BatteryVoltage : public PropertyObject
+    {
+
+    public:
+
+        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class BatteryVoltageLUMI : public PropertyObject
+    {
+
+    public:
+
+        BatteryVoltageLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

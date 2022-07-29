@@ -30,45 +30,18 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::LevelAction>            ("levelActionProperty");
 }
 
+quint8 PropertyObject::percentage(double min, double max, double value)
+{
+    if (value < min)
+        value = min;
+
+    if (value > max)
+        value = max;
+
+    return static_cast <quint8> ((value - min) / (max - min) * 100);
+}
+
 using namespace Properties;
-
-void BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-        return;
-
-    m_value = static_cast <quint8> (data.at(0)) * 0.1;
-}
-
-void BatteryVoltageLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0xFF01:
-        {
-            quint16 value = 0;
-
-            if (dataType != DATA_TYPE_STRING || data.length() < 4)
-                break;
-
-            memcpy(&value, data.constData() + 2, sizeof(value));
-            m_value = qFromLittleEndian(value) / 1000.0;
-            break;
-        }
-
-        case 0xFF02:
-        {
-            quint16 value = 0;
-
-            if (dataType != DATA_TYPE_STRUCTURE || data.length() < 7)
-                break;
-
-            memcpy(&value, data.constData() + 5, sizeof(value));
-            m_value = qFromLittleEndian(value) / 1000.0;
-            break;
-        }
-    }
-}
 
 void BatteryPercentage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
@@ -84,6 +57,44 @@ void BatteryPercentageIKEA::parseAttribte(quint16 attributeId, quint8 dataType, 
         return;
 
     m_value = static_cast <quint8> (data.at(0));
+}
+
+void BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+        return;
+
+    m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
+}
+
+void BatteryVoltageLUMI::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0xFF01:
+        {
+            quint16 value = 0;
+
+            if (dataType != DATA_TYPE_STRING || data.length() < 4)
+                break;
+
+            memcpy(&value, data.constData() + 2, sizeof(value));
+            m_value = percentage(2850, 3200, qFromLittleEndian(value));
+            break;
+        }
+
+        case 0xFF02:
+        {
+            quint16 value = 0;
+
+            if (dataType != DATA_TYPE_STRUCTURE || data.length() < 7)
+                break;
+
+            memcpy(&value, data.constData() + 5, sizeof(value));
+            m_value = percentage(2850, 3200, qFromLittleEndian(value));
+            break;
+        }
+    }
 }
 
 void Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
