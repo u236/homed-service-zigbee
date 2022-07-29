@@ -105,7 +105,7 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
             if (data.isEmpty() || m_adapter->dataRequest(it.value()->networkAddress(), action->endPointId(), action->clusterId(), data))
                 continue;
 
-            logWarning << "Device" << it.value()->name() << actionName << "action failed";
+            logWarning << "Device" << it.value()->name() << actionName << "action failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
         }
     }
 }
@@ -499,7 +499,7 @@ void ZigBee::configureReportings(const Device &device)
 
         if (!m_adapter->dataRequest(device->networkAddress(), reporting->endPointId(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), length)))
         {
-            logWarning << "Device" << device->name() << reporting->name() << "reporting configuration failed";
+            logWarning << "Device" << device->name() << reporting->name() << "reporting configuration failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
             continue;
         }
 
@@ -525,7 +525,7 @@ void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clu
     if (m_adapter->dataRequest(device->networkAddress(), endPointId, clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload)))
         return;
 
-    logWarning << "Device" << device->name() << "read attributes request failed";
+    logWarning << "Device" << device->name() << "read attributes request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
 }
 
 void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
