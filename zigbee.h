@@ -46,7 +46,7 @@ private:
     QString m_databaseFile, m_libraryFile;
     qint16 m_ledPin;
     quint8 m_transactionId;
-    bool m_permitJoin;
+    bool m_coordinatorReady, m_permitJoin;
 
     void unserializeDevices(const QJsonArray &devicesArray);
     void unserializeEndPoints(const Device &device, const QJsonArray &array);

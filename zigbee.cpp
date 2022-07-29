@@ -5,7 +5,7 @@
 #include "zcl.h"
 #include "zigbee.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_coordinatorReady(false), m_permitJoin(true)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -56,6 +56,9 @@ void ZigBee::init(void)
 
 void ZigBee::setPermitJoin(bool enabled)
 {
+    if (!m_coordinatorReady)
+        return;
+
     m_permitJoin = enabled;
     m_adapter->setPermitJoin(m_permitJoin);
     storeStatus();
@@ -65,7 +68,7 @@ void ZigBee::configureDevice(const QByteArray &ieeeAddress)
 {
     auto it = m_devices.find(ieeeAddress);
 
-    if (it == m_devices.end())
+    if (!m_coordinatorReady || it == m_devices.end())
         return;
 
     setupDevice(it.value());
@@ -88,7 +91,7 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
 {
     auto it = m_devices.find(ieeeAddress);
 
-    if (it == m_devices.end())
+    if (!m_coordinatorReady || it == m_devices.end())
         return;
 
     for (int i = 0; i < it.value()->actions().count(); i++)
@@ -764,6 +767,8 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
         m_adapter->registerEndPoint(it.key(), it.value()->profileId(), it.value()->deviceId(), it.value()->inClusters(), it.value()->outClusters());
 
     m_devices.insert(ieeeAddress, device);
+
+    m_coordinatorReady = true;
     m_adapter->setPermitJoin(m_permitJoin);
 
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
@@ -956,7 +961,7 @@ void ZigBee::pollAttributes(void)
 {
     auto it = m_devices.find(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
 
-    if (it == m_devices.end())
+    if (!m_coordinatorReady || it == m_devices.end())
         return;
 
     for (int i = 0; i < it.value()->polls().count(); i++)
@@ -968,6 +973,9 @@ void ZigBee::pollAttributes(void)
 
 void ZigBee::updateNeighbors(void)
 {
+    if (!m_coordinatorReady)
+        return;
+
     logInfo << "Updating devices neighbors...";
 
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
