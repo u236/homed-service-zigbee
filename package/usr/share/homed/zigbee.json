@@ -13,7 +13,7 @@
     {
       "model": "vivi ZLight",
       "endPointId": 11,
-      "pollInterval": 10,
+      "pollInterval": 60,
       "actions": ["status", "level", "colorHS"],
       "polls": ["status", "level", "colorHS"],
       "properties": ["status", "level", "colorHS"]

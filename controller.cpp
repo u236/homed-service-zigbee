@@ -39,12 +39,13 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     }
     else if (topic.name() == "homed/command/zigbee" && json.contains("action"))
     {
-        QList <QString> list = {"setPermitJoin", "removeDevice"};
+        QList <QString> list = {"setPermitJoin", "configureDevice", "removeDevice"};
 
         switch (list.indexOf(json.value("action").toString()))
         {
             case 0:  m_zigbee->setPermitJoin(json.value("enabled").toBool()); break;
-            case 1: m_zigbee->removeDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
+            case 1: m_zigbee->configureDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
+            case 2: m_zigbee->removeDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
         }
     }
     else if (topic.name().startsWith("homed/td/zigbee/"))
