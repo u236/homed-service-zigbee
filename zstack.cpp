@@ -431,6 +431,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     startTimer();
     loop.exec();
 
+    QThread::msleep(ADAPTER_THROTTLE_DELAY);
     return m_replyCommand == qFromBigEndian(command);
 }
 
