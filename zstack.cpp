@@ -506,7 +506,7 @@ bool ZStack::startCoordinator(void)
         return true;
     }
 
-    if (!sendRequest(UTIL_GET_DEVICE_INFO, QByteArray(1, ZSTACK_TX_POWER)))
+    if (!sendRequest(UTIL_GET_DEVICE_INFO))
         return false;
 
     deviceInfo = reinterpret_cast <deviceInfoResponseStruct*> (m_replyData.data());

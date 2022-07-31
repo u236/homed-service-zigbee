@@ -533,34 +533,36 @@ void ZigBee::readAttributes(const Device &device, quint8 endPointId, quint16 clu
 
 void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
+    Device device = endPoint->device();
+
     if (clusterId == CLUSTER_BASIC && (attributeId == 0x0004 || attributeId == 0x0005))
     {
-        if (endPoint->device()->interviewFinished() || dataType != DATA_TYPE_STRING)
+        if (device->interviewFinished() || dataType != DATA_TYPE_STRING)
             return;
 
         switch (attributeId)
         {
             case 0x0004:
-                endPoint->device()->setVendor(QString(data).trimmed());
+                device->setVendor(QString(data).trimmed());
                 break;
 
             case 0x0005:
-                endPoint->device()->setModel(QString(data).trimmed());
+                device->setModel(QString(data).trimmed());
                 break;
         }
 
-        if (!endPoint->device()->vendor().isEmpty() && !endPoint->device()->model().isEmpty())
-            interviewDevice(endPoint->device());
+        if (!device->vendor().isEmpty() && !device->model().isEmpty())
+            interviewDevice(device);
 
         return;
     }
 
-    if (!endPoint->device()->interviewFinished())
+    if (!device->interviewFinished())
         return;
 
-    for (int i = 0; i < endPoint->device()->properties().count(); i++)
+    for (int i = 0; i < device->properties().count(); i++)
     {
-        const Property &property = endPoint->device()->properties().at(i);
+        const Property &property = device->properties().at(i);
 
         if (property->clusterId() == clusterId)
         {
@@ -572,11 +574,13 @@ void ZigBee::parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16
     if (endPoint->dataUpdated())
         return;
 
-    logWarning << "No property found for device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId);
+    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId);
 }
 
 void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
 {
+    Device device = endPoint->device();
+
     if (clusterId == CLUSTER_OTA_UPGRADE)
     {
         if (commandId == 0x01)
@@ -587,18 +591,18 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
             header.transactionId = transactionId;
             header.commandId = 0x02;
 
-            m_adapter->dataRequest(endPoint->device()->networkAddress(), endPoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(0x98));
+            m_adapter->dataRequest(device->networkAddress(), endPoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(0x98));
         }
 
         return;
     }
 
-    if (!endPoint->device()->interviewFinished())
+    if (!device->interviewFinished())
         return;
 
-    for (int i = 0; i < endPoint->device()->properties().count(); i++)
+    for (int i = 0; i < device->properties().count(); i++)
     {
-        const Property &property = endPoint->device()->properties().at(i);
+        const Property &property = device->properties().at(i);
 
         if (property->clusterId() == clusterId)
         {
@@ -610,7 +614,7 @@ void ZigBee::clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId,
     if (endPoint->dataUpdated())
         return;
 
-    logWarning << "No property found for device" << endPoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId);
+    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId);
 }
 
 void ZigBee::globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
