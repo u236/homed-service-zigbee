@@ -5,6 +5,7 @@
 #define ADAPTER_THROTTLE_DELAY                      20
 #define ADAPTER_REQUEST_TIMEOUT                     10000
 #define ADAPTER_CHANNEL_LIST                        0x07FFF800
+#define ADAPTER_CONFIGURATION_MARKER                0xAA
 
 #define ZSTACK_PACKET_START                         0xFE
 #define ZSTACK_COORDINATOR_STARTED                  0x09
@@ -230,6 +231,13 @@ struct nvReadReplyStruct
     quint8  length;
 };
 
+struct nvInitRequestStruct
+{
+    quint16 id;
+    quint16 itemLength;
+    quint8  dataLength;
+};
+
 struct nvWriteRequestStruct
 {
     quint16 id;
@@ -302,7 +310,7 @@ private:
 
     qint16 m_bootPin, m_resetPin;
     quint8 m_channel;
-    bool m_debug, m_rts;
+    bool m_reset, m_debug, m_rts;
 
     quint8 m_status, m_transactionId;
     QByteArray m_ieeeAddress;
@@ -320,6 +328,7 @@ private:
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
 
     void resetAdapter(void);
+    bool writeNvValue(quint16 id, const QByteArray &data);
     bool startCoordinator(void);
 
 private slots:

@@ -5,7 +5,7 @@
 #include "logger.h"
 #include "zstack.h"
 
-ZStack::ZStack(QSettings *config, QObject *parent) : QObject(parent), m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_status(0), m_transactionId(0)
+ZStack::ZStack(QSettings *config, QObject *parent) : QObject(parent), m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_reset(false), m_status(0), m_transactionId(0)
 {
     quint16 panId = qToLittleEndian(config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16));
     quint32 chanList = qToBigEndian(ADAPTER_CHANNEL_LIST);
@@ -29,6 +29,8 @@ ZStack::ZStack(QSettings *config, QObject *parent) : QObject(parent), m_port(new
     m_nvValues.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&chanList), sizeof(chanList)));
     m_nvValues.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
     m_nvValues.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
+    m_nvValues.insert(ZCD_NV_USER, QByteArray(1, ADAPTER_CONFIGURATION_MARKER));
+
 
     GPIO::setDirection(m_bootPin, GPIO::Output);
     GPIO::setDirection(m_resetPin, GPIO::Output);
@@ -453,6 +455,17 @@ void ZStack::resetAdapter(void)
     }
 }
 
+bool ZStack::writeNvValue(quint16 id, const QByteArray &data)
+{
+    nvWriteRequestStruct writeRequest;
+
+    writeRequest.id = qToLittleEndian(id);
+    writeRequest.offset = 0;
+    writeRequest.length = static_cast <quint8> (data.length());
+
+    return sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&writeRequest), sizeof(writeRequest)).append(data));
+}
+
 bool ZStack::startCoordinator(void)
 {
     deviceInfoResponseStruct *deviceInfo;
@@ -462,7 +475,45 @@ bool ZStack::startCoordinator(void)
 
     logInfo << "Adapter reset detected, starting coordinator...";
 
-    // TODO: check settings marker
+    if (!m_reset)
+    {
+        nvReadRequestStruct readRequest;
+        nvReadReplyStruct *readReply;
+        QByteArray data;
+
+        readRequest.id = qToLittleEndian <qint16> (ZCD_NV_USER);
+        readRequest.offset = 0;
+
+        if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
+            return false;
+
+        readReply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
+        data = m_replyData.mid(sizeof(nvReadReplyStruct));
+
+        if (readReply->status || data != m_nvValues.value(ZCD_NV_USER))
+        {
+            logWarning << "Adapter configuration marker mismatch";
+
+            writeNvValue(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
+            resetAdapter();
+            m_reset = true;
+
+            return true;
+        }
+    }
+    else
+    {
+        nvInitRequestStruct request;
+
+        request.id = qToLittleEndian <quint16> (ZCD_NV_USER);
+        request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvValues.value(ZCD_NV_USER).length()));
+        request.dataLength = 0;
+
+        if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
+            return false;
+
+        m_reset = false;
+    }
 
     for (auto it = m_nvValues.begin(); it != m_nvValues.end(); it++)
     {
@@ -487,13 +538,7 @@ bool ZStack::startCoordinator(void)
 
         if (data != it.value())
         {
-            nvWriteRequestStruct writeRequest;
-
-            writeRequest.id = qToLittleEndian(it.key());
-            writeRequest.offset = 0;
-            writeRequest.length = static_cast <quint8> (it.value().length());
-
-            if (!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&writeRequest), sizeof(writeRequest)).append(it.value())))
+            if (!writeNvValue(it.key(), it.value()))
                 return false;
 
             reset = true;
