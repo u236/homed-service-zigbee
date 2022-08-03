@@ -115,18 +115,16 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
 
 void ZigBee::removeDevice(const QByteArray &ieeeAddress)
 {
-    QString name;
     auto it = m_devices.find(ieeeAddress);
 
     if (it == m_devices.end())
         return;
 
-    name = it.value()->name();
+    logInfo << "Device" << it.value()->name() << "removed";
+    m_adapter->removeAssociation(ieeeAddress);
+
     m_devices.erase(it);
     storeStatus();
-
-    logInfo << "Device" << name << "removed";
-    m_adapter->removeAssociation(ieeeAddress);
 }
 
 void ZigBee::unserializeDevices(const QJsonArray &array)
@@ -575,12 +573,15 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     if (endpoint->dataUpdated())
         return;
 
-    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId);
+    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId) << "with data type" << QString::asprintf("0x%02X", dataType) << "and data" << data.toHex(':');
 }
 
 void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
 {
     Device device = endpoint->device();
+
+    if (!device->interviewFinished())
+        return;
 
     if (clusterId == CLUSTER_OTA_UPGRADE)
     {
@@ -598,9 +599,6 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         return;
     }
 
-    if (!device->interviewFinished())
-        return;
-
     for (int i = 0; i < device->properties().count(); i++)
     {
         const Property &property = device->properties().at(i);
@@ -615,7 +613,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     if (endpoint->dataUpdated())
         return;
 
-    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId);
+    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId) << "with payload" << payload.toHex(':');
 }
 
 void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -821,6 +819,7 @@ void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress
     GPIO::setStatus(m_ledPin, true);
 
     logInfo << "Device" << it.value()->name() << "with address" << QString::asprintf("0x%04X", networkAddress) << "left network";
+    m_adapter->removeAssociation(ieeeAddress);
 
     m_devices.erase(it);
     storeStatus();
