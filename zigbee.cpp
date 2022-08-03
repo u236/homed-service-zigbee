@@ -126,6 +126,7 @@ void ZigBee::removeDevice(const QByteArray &ieeeAddress)
     storeStatus();
 
     logInfo << "Device" << name << "removed";
+    m_adapter->removeAssociation(ieeeAddress);
 }
 
 void ZigBee::unserializeDevices(const QJsonArray &array)

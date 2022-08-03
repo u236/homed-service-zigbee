@@ -228,6 +228,21 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endPointId, quint16 clus
     return m_dataRequestSuccess;
 }
 
+bool ZStack::removeAssociation(const QByteArray &ieeeAddress)
+{
+    quint64 request;
+
+    memcpy(&request, ieeeAddress.constData(), sizeof(request));
+    request = qToBigEndian(request);
+
+    if (!sendRequest(UTIL_REMOVE_ASSOCIATION, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    {
+        logWarning << "Remove association request failed";
+        return false;
+    }
+
+    return true;
+}
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
 {
     if (command & 0x2000)
