@@ -959,6 +959,20 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         endpoint->setDataUpdated(false);
         emit endpointUpdated(endpoint);
     }
+
+    if (!(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    {
+        defaultResponseStruct response;
+
+        header.frameControl &= FC_MANUFACTURER_SPECIFIC;
+        header.frameControl |= FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
+        header.commandId = CMD_DEFAULT_RESPONSE;
+
+        response.commandId = header.commandId;
+        response.status = 0x00;
+
+        m_adapter->dataRequest(device->networkAddress(), endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
+    }
 }
 
 void ZigBee::pollAttributes(void)

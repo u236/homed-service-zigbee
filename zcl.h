@@ -63,9 +63,15 @@
 
 struct zclHeaderStruct
 {
-    quint8 frameControl;
-    quint8 transactionId;
-    quint8 commandId;
+    quint8  frameControl;
+    quint8  transactionId;
+    quint8  commandId;
+};
+
+struct defaultResponseStruct
+{
+    quint8  commandId;
+    quint8  status;
 };
 
 struct configureReportingStruct
