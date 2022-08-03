@@ -56,6 +56,7 @@
 #define CLUSTER_SMART_ENERGY_METERING               0x0702
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_TOUCHLINK                           0x1000
+#define CLUSTER_TUYA                                0xEF00
 
 #include <QtGlobal>
 
@@ -82,6 +83,16 @@ struct configureReportingStruct
     quint16 minInterval;
     quint16 maxInterval;
     quint16 valueChange;
+};
+
+struct tuyaHeaderStruct
+{
+    quint8  status;
+    quint8  transactionId;
+    quint8  dataPoint;
+    quint8  dataType;
+    quint8  function;
+    quint8  length;
 };
 
 #pragma pack(pop)

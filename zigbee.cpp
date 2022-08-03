@@ -533,6 +533,7 @@ void ZigBee::readAttributes(const Device &device, quint8 endpointId, quint16 clu
 void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     Device device = endpoint->device();
+    bool check = false;
 
     if (clusterId == CLUSTER_BASIC && (attributeId == 0x0004 || attributeId == 0x0005))
     {
@@ -565,20 +566,26 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
         if (property->clusterId() == clusterId)
         {
+            QVariant value = property->value();
+
             property->parseAttribte(attributeId, dataType, data);
+            check = true;
+
+            if (property->value() == value)
+                continue;
+
             endpoint->setDataUpdated();
         }
     }
 
-    if (endpoint->dataUpdated())
-        return;
-
-    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId) << "with data type" << QString::asprintf("0x%02X", dataType) << "and data" << data.toHex(':');
+    if (!check)
+        logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId) << "with data type" << QString::asprintf("0x%02X", dataType) << "and data" << data.toHex(':');
 }
 
 void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
 {
     Device device = endpoint->device();
+    bool check = false;
 
     if (!device->interviewFinished())
         return;
@@ -605,15 +612,20 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
         if (property->clusterId() == clusterId)
         {
+            QVariant value = property->value();
+
             property->parseCommand(commandId, payload);
+            check = true;
+
+            if (property->value() == value)
+                continue;
+
             endpoint->setDataUpdated();
         }
     }
 
-    if (endpoint->dataUpdated())
-        return;
-
-    logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId) << "with payload" << payload.toHex(':');
+    if (!check)
+        logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId) << "with payload" << payload.toHex(':');
 }
 
 void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -622,6 +634,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
     switch (commandId)
     {
+        case CMD_READ_ATTRIBUTES: // TODO: tyua sensor reading time cluster
         case CMD_CONFIGURE_REPORTING_RESPONSE:
         case CMD_DEFAULT_RESPONSE:
             break;

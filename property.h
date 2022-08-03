@@ -53,32 +53,12 @@ namespace Properties
 
     };
 
-    class BatteryPercentageIKEA : public PropertyObject
-    {
-
-    public:
-
-        BatteryPercentageIKEA(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
     class BatteryVoltage : public PropertyObject
     {
 
     public:
 
         BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class BatteryVoltageLUMI : public PropertyObject
-    {
-
-    public:
-
-        BatteryVoltageLUMI(void) : PropertyObject("battery", CLUSTER_BASIC) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
@@ -237,26 +217,6 @@ namespace Properties
 
     };
 
-    class CubeMovement : public PropertyObject
-    {
-
-    public:
-
-        CubeMovement(void) :  PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class CubeRotation : public PropertyObject
-    {
-
-    public:
-
-        CubeRotation(void) : PropertyObject("action", CLUSTER_ANALOG_INPUT, true) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
     class IdentifyAction : public PropertyObject
     {
 
@@ -277,32 +237,114 @@ namespace Properties
 
     };
 
-    class SwitchActionLUMI : public PropertyObject
-    {
-
-    public:
-
-        SwitchActionLUMI(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class SwitchActionPTVO : public PropertyObject
-    {
-
-    public:
-
-        SwitchActionPTVO(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
     class LevelAction : public PropertyObject
     {
 
     public:
 
         LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
+}
+
+namespace PropertiesIKEA
+{
+    class BatteryPercentage : public PropertyObject
+    {
+
+    public:
+
+        BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
+namespace PropertiesPTVO
+{
+    class SwitchAction : public PropertyObject
+    {
+
+    public:
+
+        SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
+namespace PropertiesLUMI
+{
+    class BatteryVoltage : public PropertyObject
+    {
+
+    public:
+
+        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_BASIC) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class SwitchAction : public PropertyObject
+    {
+
+    public:
+
+        SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class CubeRotation : public PropertyObject
+    {
+
+    public:
+
+        CubeRotation(void) : PropertyObject("action", CLUSTER_ANALOG_INPUT, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class CubeMovement : public PropertyObject
+    {
+
+    public:
+
+        CubeMovement(void) :  PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
+namespace PropertiesTUYA
+{
+    class Dummy : public PropertyObject
+    {
+
+    public:
+
+        Dummy(void) : PropertyObject("dummy", CLUSTER_BASIC) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class Occupancy : public PropertyObject
+    {
+
+    public:
+
+        Occupancy(void) : PropertyObject("occupancy", CLUSTER_TUYA) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
+
+    class Illuminance : public PropertyObject
+    {
+
+    public:
+
+        Illuminance(void) : PropertyObject("illuminance", CLUSTER_TUYA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };

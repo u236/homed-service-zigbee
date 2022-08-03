@@ -24,7 +24,7 @@
   [
     {
       "model": "Button",
-      "properties": ["batteryPercentage", "switchActionPTVO"]
+      "properties": ["batteryPercentage", "ptvoSwitchAction"]
     },
     {
       "model": "CO2 Sensor",
@@ -41,7 +41,7 @@
   [
     {
       "model": "TRADFRI on/off switch",
-      "properties": ["batteryPercentageIKEA", "identifyAction", "switchAction", "levelAction"],
+      "properties": ["ikeaBatteryPercentage", "identifyAction", "switchAction", "levelAction"],
       "reportings": ["batteryPercentage"]
     },
     {
@@ -69,23 +69,23 @@
     },
     {
       "model": ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "properties": ["batteryVoltageLUMI", "cubeMovement", "cubeRotation"]
+      "properties": ["lumiBatteryVoltage", "lumiCubeMovement", "lumiCubeRotation"]
     },
     {
       "model": ["lumi.sensor_ht", "lumi.sens"],
-      "properties": ["batteryVoltageLUMI", "temperature", "humidity"]
+      "properties": ["lumiBatteryVoltage", "temperature", "humidity"]
     },
     {
       "model": "lumi.sensor_magnet",
-      "properties": ["batteryVoltageLUMI", "status"]
+      "properties": ["lumiBatteryVoltage", "status"]
     },
     {
       "model": "lumi.sensor_motion",
-      "properties": ["batteryVoltageLUMI", "occupancy"]
+      "properties": ["lumiBatteryVoltage", "occupancy"]
     },
     {
       "model": "lumi.sensor_switch",
-      "properties": ["batteryVoltageLUMI", "switchActionLUMI"]
+      "properties": ["lumiBatteryVoltage", "lumiSwitchAction"]
     }
   ],
 
@@ -95,6 +95,14 @@
       "model": "lumi.sen_ill.mgl01",
       "properties": ["batteryVoltage", "identifyAction", "illuminance"],
       "reportings": ["batteryVoltage", "illuminance"]
+    }
+  ],
+
+  "_TZE200_ztc6ggyl":
+  [
+    {
+      "model": "TS0601",
+      "properties": ["tuyaDummy", "tuyaOccupancy", "tuyaIlluminance"]
     }
   ]
 }
