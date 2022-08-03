@@ -78,13 +78,13 @@ void ZStack::registerEndPoint(quint8 endPointId, quint16 profileId, quint16 devi
         data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
     }
 
-    if (!sendRequest(AF_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    if (sendRequest(AF_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) && !m_replyData.at(0))
     {
-        logWarning << "EndPoint" << QString::asprintf("0x%02X", endPointId) << "registration error";
+        logInfo << "EndPoint" << QString::asprintf("0x%02X", endPointId) << "registered successfully";
         return;
     }
 
-    logInfo << "EndPoint" << QString::asprintf("0x%02X", endPointId) << "registered successfully";
+    logWarning << "EndPoint" << QString::asprintf("0x%02X", endPointId) << "register requet failed";
 }
 
 void ZStack::setPermitJoin(bool enabled)
@@ -96,13 +96,13 @@ void ZStack::setPermitJoin(bool enabled)
     request.duration = enabled ? 0xFF : 0;
     request.significance = 0;
 
-    if (!sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    if (sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
     {
-        logWarning << "Set permit join error";
+        logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
         return;
     }
 
-    logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
+    logWarning << "Set permit join request failed";
 }
 
 void ZStack::nodeDescriptorRequest(quint16 networkAddress)
@@ -112,7 +112,10 @@ void ZStack::nodeDescriptorRequest(quint16 networkAddress)
     request.dstAddress = qToLittleEndian(networkAddress);
     request.networkAddress = qToLittleEndian(networkAddress);
 
-    sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)));
+    if (sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        return;
+
+    logWarning << "Node descriptor request filed";
 }
 
 void ZStack::simpleDescriptorRequest(quint16 networkAddress, quint8 endPointId)
@@ -123,7 +126,10 @@ void ZStack::simpleDescriptorRequest(quint16 networkAddress, quint8 endPointId)
     request.networkAddress = qToLittleEndian(networkAddress);
     request.endPointId = endPointId;
 
-    sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)));
+    if (sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        return;
+
+    logWarning << "Simple descriptor request filed";
 }
 
 void ZStack::activeEndPointsRequest(quint16 networkAddress)
@@ -133,7 +139,10 @@ void ZStack::activeEndPointsRequest(quint16 networkAddress)
     request.dstAddress = qToLittleEndian(networkAddress);
     request.networkAddress = qToLittleEndian(networkAddress);
 
-    sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)));
+    if (sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        return;
+
+    logWarning << "Active endpoints request filed";
 }
 
 void ZStack::lqiRequest(quint16 networkAddress, quint8 index)
@@ -143,7 +152,10 @@ void ZStack::lqiRequest(quint16 networkAddress, quint8 index)
     request.networkAddress = qToLittleEndian(networkAddress);
     request.index = index;
 
-    sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)));
+    if (sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        return;
+
+    logWarning << "LQI request filed";
 }
 
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndPointId, const QByteArray &dstIeeeAddress, quint8 dstEndPointId, quint16 clusterId)
@@ -243,6 +255,7 @@ bool ZStack::removeAssociation(const QByteArray &ieeeAddress)
 
     return true;
 }
+
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
 {
     if (command & 0x2000)
@@ -478,7 +491,13 @@ bool ZStack::writeNvValue(quint16 id, const QByteArray &data)
     writeRequest.offset = 0;
     writeRequest.length = static_cast <quint8> (data.length());
 
-    return sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&writeRequest), sizeof(writeRequest)).append(data));
+    if(!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&writeRequest), sizeof(writeRequest)).append(data)) || m_replyData.at(0))
+    {
+        logWarning << "NV value" << QString::asprintf("0x%04X", id) << "wtite request failed";
+        return false;
+    }
+
+    return true;
 }
 
 bool ZStack::startCoordinator(void)
@@ -500,7 +519,10 @@ bool ZStack::startCoordinator(void)
         readRequest.offset = 0;
 
         if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
+        {
+            logWarning << "NV value" << QString::asprintf("0x%04X", ZCD_NV_USER) << "read request failed";
             return false;
+        }
 
         readReply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
         data = m_replyData.mid(sizeof(nvReadReplyStruct));
@@ -524,8 +546,11 @@ bool ZStack::startCoordinator(void)
         request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvValues.value(ZCD_NV_USER).length()));
         request.dataLength = 0;
 
-        if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
+        if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || (m_replyData.at(0) && m_replyData.at(0) != 0x09))
+        {
+            logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "init request failed";
             return false;
+        }
 
         m_reset = false;
     }
@@ -540,18 +565,15 @@ bool ZStack::startCoordinator(void)
         readRequest.offset = 0;
 
         if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
+        {
+            logWarning << "NV value" << QString::asprintf("0x%04X", it.key()) << "read request failed";
             return false;
+        }
 
         readReply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
         data = m_replyData.mid(sizeof(nvReadReplyStruct));
 
-        if (readReply->status || readReply->length != it.value().length())
-        {
-            logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "read error";
-            return false;
-        }
-
-        if (data != it.value())
+        if (readReply->status || data != it.value())
         {
             if (!writeNvValue(it.key(), it.value()))
                 return false;
@@ -567,29 +589,47 @@ bool ZStack::startCoordinator(void)
         return true;
     }
 
-    if (!sendRequest(UTIL_GET_DEVICE_INFO))
+    if (!sendRequest(UTIL_GET_DEVICE_INFO) || m_replyData.at(0))
+    {
+        logWarning << "Device information request failed";
         return false;
+    }
 
     deviceInfo = reinterpret_cast <deviceInfoResponseStruct*> (m_replyData.data());
     ieeeAddress = qFromBigEndian(deviceInfo->ieeeAddress);
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
-    if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, ZSTACK_TX_POWER)))
+    if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, ZSTACK_TX_POWER)) || m_replyData.at(0))
+    {
+        logWarning << "Set TX power request failed";
         return false;
+    }
 
     channelRequest.isPrimary = 0x01;
     channelRequest.channel = qToLittleEndian <quint32> (1 << m_channel);
 
-    if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))))
+    if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))) || m_replyData.at(0))
+    {
+        logWarning << "Set primary channel request failed";
         return false;
+    }
 
     channelRequest.isPrimary = 0x00;
     channelRequest.channel = 0x00;
 
-    if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))))
+    if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))) || m_replyData.at(0))
+    {
+        logWarning << "Set secondary channel request failed";
         return false;
+    }
 
-    return sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) && !m_replyData.at(0);
+    if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0))
+    {
+        logWarning << "Strartup request failed";
+        return false;
+    }
+
+    return true;
 }
 
 void ZStack::startTimer(void)
