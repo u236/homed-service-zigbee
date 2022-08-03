@@ -49,11 +49,11 @@ private:
     bool m_coordinatorReady, m_permitJoin;
 
     void unserializeDevices(const QJsonArray &devicesArray);
-    void unserializeEndPoints(const Device &device, const QJsonArray &array);
+    void unserializeEndpoints(const Device &device, const QJsonArray &array);
     void unserializeNeighbors(const Device &device, const QJsonArray &array);
 
     QJsonArray serializeDevices(void);
-    QJsonArray serializeEndPoints(const Device &device);
+    QJsonArray serializeEndpoints(const Device &device);
     QJsonArray serializeNeighbors(const Device &device);
 
     Device findDevice(quint16 networkAddress);
@@ -62,11 +62,11 @@ private:
     void setupDevice(const Device &device);
     void configureReportings(const Device &device);
 
-    void readAttributes(const Device &device, quint8 endPointId, quint16 clusterId, QList <quint16> attributes);
-    void parseAttribute(const EndPoint &endPoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data);
+    void readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes);
+    void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data);
 
-    void clusterCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload);
-    void globalCommandReceived(const EndPoint &endPoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload);
+    void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload);
+    void globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload);
 
 private slots:
 
@@ -74,10 +74,10 @@ private slots:
     void endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
     void endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
     void nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType);
-    void activeEndPointsReceived(quint16 networkAddress, const QByteArray data);
-    void simpleDescriptorReceived(quint16 networkAddress, quint8 endPointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
+    void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
+    void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
-    void messageReveived(quint16 networkAddress, quint8 endPointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
     void pollAttributes(void);
     void updateNeighbors(void);
@@ -87,7 +87,7 @@ private slots:
 signals:
 
     void endDeviceEvent(bool join = true);
-    void endPointUpdated(const EndPoint &endPoint);
+    void endpointUpdated(const Endpoint &endpoint);
     void statusStored(const QJsonObject &json);
 
 };

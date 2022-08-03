@@ -13,14 +13,14 @@ class PollObject
 public:
 
     PollObject(const QString &name, quint16 clusterId, QList <quint16> attributes) :
-        m_name(name), m_clusterId(clusterId), m_endPointId(1), m_attributes(attributes) {}
+        m_name(name), m_clusterId(clusterId), m_endpointId(1), m_attributes(attributes) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
     inline QList <quint16> &attributes(void) { return m_attributes; }
 
-    inline quint8 endPointId(void) { return m_endPointId; }
-    inline void setEndPointId(quint8 value) { m_endPointId = value; }
+    inline quint8 endpointId(void) { return m_endpointId; }
+    inline void setEndpointId(quint8 value) { m_endpointId = value; }
 
     static void registerMetaTypes(void);
 
@@ -28,7 +28,7 @@ protected:
 
     QString m_name;
     quint16 m_clusterId;
-    quint8 m_endPointId;
+    quint8 m_endpointId;
 
     QList <quint16> m_attributes;
 

@@ -4,7 +4,7 @@
 Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this))
 {
     connect(m_zigbee, &ZigBee::endDeviceEvent, this, &Controller::endDeviceEvent);
-    connect(m_zigbee, &ZigBee::endPointUpdated, this, &Controller::endPointUpdated);
+    connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
     connect(m_zigbee, &ZigBee::statusStored, this, &Controller::statusStored);
 
     m_zigbee->init();
@@ -68,13 +68,13 @@ void Controller::endDeviceEvent(bool join)
     mqttPublish("homed/td/display", {{"notification", QString("ZIGBEE DEVICE %1").arg(join ? "JOINED": "LEAVED")}});
 }
 
-void Controller::endPointUpdated(const EndPoint &endPoint)
+void Controller::endpointUpdated(const Endpoint &endpoint)
 {
     QJsonObject json;
 
-    for (int i = 0; i < endPoint->device()->properties().count(); i++)
+    for (int i = 0; i < endpoint->device()->properties().count(); i++)
     {
-        const Property &property = endPoint->device()->properties().at(i);
+        const Property &property = endpoint->device()->properties().at(i);
 
         if (!property->value().isValid())
             continue;
@@ -88,8 +88,8 @@ void Controller::endPointUpdated(const EndPoint &endPoint)
     if (json.isEmpty())
         return;
 
-    json.insert("linkQuality", endPoint->device()->linkQuality());
-    mqttPublish(QString("homed/fd/zigbee/").append(endPoint->device()->ieeeAddress().toHex(':')), json);
+    json.insert("linkQuality", endpoint->device()->linkQuality());
+    mqttPublish(QString("homed/fd/zigbee/").append(endpoint->device()->ieeeAddress().toHex(':')), json);
 }
 
 void Controller::statusStored(const QJsonObject &json)

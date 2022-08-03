@@ -9,18 +9,18 @@
 #include "reporting.h"
 #include "zstack.h"
 
-class EndPointObject;
-typedef QSharedPointer <EndPointObject> EndPoint;
+class EndpointObject;
+typedef QSharedPointer <EndpointObject> Endpoint;
 
 class DeviceObject;
 typedef QSharedPointer <DeviceObject> Device;
 
-class EndPointObject
+class EndpointObject
 {
 
 public:
 
-    EndPointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
+    EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
         m_id(id), m_device(device), m_profileId(profileId), m_deviceId(deviceId), m_dataUpdated(false) {}
 
     inline quint8 id(void) {return m_id; }
@@ -101,7 +101,7 @@ public:
     inline QList <Reporting> &reportings(void) { return m_reportings; }
     inline QList <Poll> &polls(void) { return m_polls; }
 
-    inline QMap <quint8, EndPoint> &endPoints(void) { return m_endPoints; }
+    inline QMap <quint8, Endpoint> &endpoints(void) { return m_endpoints; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
 private:
@@ -124,7 +124,7 @@ private:
     QList <Reporting> m_reportings;
     QList <Poll> m_polls;
 
-    QMap <quint8, EndPoint> m_endPoints;
+    QMap <quint8, Endpoint> m_endpoints;
     QMap <quint16, quint8> m_neighbors;
 
 };

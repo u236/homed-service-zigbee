@@ -13,7 +13,7 @@ class ReportingObject
 public:
 
     ReportingObject(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint16 valueChange = 0) :
-        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_minInterval(minInterval), m_maxInteval(maxInterval), m_valueChange(valueChange), m_endPointId(1) {}
+        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_minInterval(minInterval), m_maxInteval(maxInterval), m_valueChange(valueChange), m_endpointId(1) {}
 
     virtual ~ReportingObject(void) {}
 
@@ -25,8 +25,8 @@ public:
     inline quint16 maxInterval(void) {return m_maxInteval; }
     inline quint16 valueChange(void) {return m_valueChange; }
 
-    inline quint8 endPointId(void) { return m_endPointId; }
-    inline void setEndPointId(quint8 value) { m_endPointId = value; }
+    inline quint8 endpointId(void) { return m_endpointId; }
+    inline void setEndpointId(quint8 value) { m_endpointId = value; }
 
     static void registerMetaTypes(void);
 
@@ -36,7 +36,7 @@ protected:
     quint16 m_clusterId, m_attributeId;
     quint8 m_dataType;
     quint16 m_minInterval, m_maxInteval, m_valueChange;
-    quint8 m_endPointId;
+    quint8 m_endpointId;
 
 };
 
