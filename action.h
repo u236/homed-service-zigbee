@@ -119,10 +119,4 @@ namespace Actions
     };
 }
 
-Q_DECLARE_METATYPE(Actions::Status)
-Q_DECLARE_METATYPE(Actions::Level)
-Q_DECLARE_METATYPE(Actions::ColorHS)
-Q_DECLARE_METATYPE(Actions::ColorXY)
-Q_DECLARE_METATYPE(Actions::ColorTemperature)
-
 #endif

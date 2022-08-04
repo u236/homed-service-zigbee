@@ -977,8 +977,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     {
         defaultResponseStruct response;
 
-        header.frameControl &= FC_MANUFACTURER_SPECIFIC;
-        header.frameControl |= FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
+        header.frameControl = FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
         header.commandId = CMD_DEFAULT_RESPONSE;
 
         response.commandId = header.commandId;

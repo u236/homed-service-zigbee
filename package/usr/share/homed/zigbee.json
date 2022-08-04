@@ -64,8 +64,9 @@
       "model": "lumi.plug.maeu01",
       "pollInterval": 15,
       "actions": ["status"],
-      "polls": ["status", "power", "energy"],
-      "properties": ["status", "power", "energy", "lumiDummy"]
+      "polls": ["power", "energy"],
+      "properties": ["status", "power", "energy", "lumiDummy"],
+      "reportings": ["status"]
     },
     {
       "model": ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],

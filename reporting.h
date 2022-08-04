@@ -149,19 +149,24 @@ namespace Reportings
         Humidity(void) : ReportingObject("humidity", CLUSTER_RELATIVE_HUMIDITY, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10) {}
 
     };
-}
 
-Q_DECLARE_METATYPE(Reportings::BatteryVoltage)
-Q_DECLARE_METATYPE(Reportings::BatteryPercentage)
-Q_DECLARE_METATYPE(Reportings::Status)
-Q_DECLARE_METATYPE(Reportings::Level)
-Q_DECLARE_METATYPE(Reportings::ColorHue)
-Q_DECLARE_METATYPE(Reportings::ColorSaturation)
-Q_DECLARE_METATYPE(Reportings::ColorX)
-Q_DECLARE_METATYPE(Reportings::ColorY)
-Q_DECLARE_METATYPE(Reportings::ColorTemperature)
-Q_DECLARE_METATYPE(Reportings::Illuminance)
-Q_DECLARE_METATYPE(Reportings::Temperature)
-Q_DECLARE_METATYPE(Reportings::Humidity)
+    class Energy : public ReportingObject
+    {
+
+    public:
+
+        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+
+    };
+
+    class Power : public ReportingObject
+    {
+
+    public:
+
+        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600, 1) {}
+
+    };
+}
 
 #endif
