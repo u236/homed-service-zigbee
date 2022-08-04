@@ -27,6 +27,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIKEA::BatteryPercentage>  ("ikeaBatteryPercentageProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>       ("ptvoSwitchActionProperty");
 
+    qRegisterMetaType <PropertiesLUMI::Dummy>              ("lumiDummyProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>     ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>       ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>       ("lumiCubeMovementProperty");
@@ -98,7 +99,7 @@ void Properties::AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, 
 
         case 0x001C:
         {
-            if (dataType != DATA_TYPE_STRING || QString(data) != "ppm")
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
                 return;
 
             m_value = m_buffer;
@@ -125,7 +126,7 @@ void Properties::AnalogTemperature::parseAttribte(quint16 attributeId, quint8 da
 
         case 0x001C:
         {
-            if (dataType != DATA_TYPE_STRING || QString(data) != "C")
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "C")
                 return;
 
             m_value = m_buffer;
@@ -396,6 +397,13 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
     m_value = data.at(0) ? "on" : "off";
 }
 
+void PropertiesLUMI::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) // just ignore cluster 0xFCC0 attribute reports
+{
+    Q_UNUSED(attributeId)
+    Q_UNUSED(dataType)
+    Q_UNUSED(data)
+}
+
 void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
@@ -404,7 +412,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
         {
             quint16 value = 0;
 
-            if (dataType != DATA_TYPE_STRING || data.length() < 4)
+            if (dataType != DATA_TYPE_CHARACTER_STRING || data.length() < 4)
                 break;
 
             memcpy(&value, data.constData() + 2, sizeof(value));
@@ -479,7 +487,7 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dat
         m_value = "drop";
 }
 
-void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) // just ignore basic cluster attribute reports
+void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) // just ignore cluster 0x0000 attribute reports
 {
     Q_UNUSED(attributeId)
     Q_UNUSED(dataType)

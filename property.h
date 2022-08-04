@@ -276,6 +276,16 @@ namespace PropertiesPTVO
 
 namespace PropertiesLUMI
 {
+    class Dummy : public PropertyObject
+    {
+
+    public:
+
+        Dummy(void) : PropertyObject("dummy", CLUSTER_LUMI) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class BatteryVoltage : public PropertyObject
     {
 

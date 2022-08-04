@@ -537,7 +537,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
     if (clusterId == CLUSTER_BASIC && (attributeId == 0x0004 || attributeId == 0x0005))
     {
-        if (device->interviewFinished() || dataType != DATA_TYPE_STRING)
+        if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
             return;
 
         switch (attributeId)
@@ -710,17 +710,17 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                         size = 8;
                         break;
 
-                    case DATA_TYPE_STRING:
+                    case DATA_TYPE_OCTET_STRING:
+                    case DATA_TYPE_CHARACTER_STRING:
                         size = static_cast <quint8> (payload.at(offset++));
                         break;
 
-                        // TODO: check this
                     case DATA_TYPE_STRUCTURE:
-                        size = static_cast <quint8> (payload.length() - 3);
+                        size = static_cast <quint8> (payload.length() - 3); // TODO: check this
                         break;
 
                     default:
-                        logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << endpoint->device()->name();
+                        logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << endpoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.mid(offset).toHex(':');
                         break;
                 }
 

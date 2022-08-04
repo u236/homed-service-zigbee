@@ -65,7 +65,7 @@
       "pollInterval": 15,
       "actions": ["status"],
       "polls": ["status", "power", "energy"],
-      "properties": ["status", "power", "energy"]
+      "properties": ["status", "power", "energy", "lumiDummy"]
     },
     {
       "model": ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],

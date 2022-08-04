@@ -33,7 +33,8 @@
 #define DATA_TYPE_64BIT_SIGNED                      0x2F
 #define DATA_TYPE_SINGLE_PRECISION                  0x39
 #define DATA_TYPE_DOUBLE_PRECISION                  0x3A
-#define DATA_TYPE_STRING                            0x42
+#define DATA_TYPE_OCTET_STRING                      0x41
+#define DATA_TYPE_CHARACTER_STRING                  0x42
 #define DATA_TYPE_STRUCTURE                         0x4C
 
 #define CLUSTER_BASIC                               0x0000
@@ -56,7 +57,9 @@
 #define CLUSTER_SMART_ENERGY_METERING               0x0702
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_TOUCHLINK                           0x1000
+
 #define CLUSTER_TUYA                                0xEF00
+#define CLUSTER_LUMI                                0xFCC0
 
 #include <QtGlobal>
 
