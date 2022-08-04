@@ -412,7 +412,19 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case APP_CNF_BDB_COMMISSIONING_NOTIFICATION:
         {
             if (!data.at(2) && m_status == ZSTACK_COORDINATOR_STARTED)
+            {
+                if (m_reset)
+                {
+                    QThread::msleep(5000);
+
+                    m_reset = false;
+                    resetAdapter();
+
+                    return;
+                }
+
                 emit coordinatorReady(m_ieeeAddress);
+            }
 
             break;
         }
@@ -505,89 +517,6 @@ bool ZStack::startCoordinator(void)
     deviceInfoResponseStruct *deviceInfo;
     setChannelRequestStruct channelRequest;
     quint64 ieeeAddress;
-    bool reset = false;
-
-    logInfo << "Adapter reset detected, starting coordinator...";
-
-    if (!m_reset)
-    {
-        nvReadRequestStruct readRequest;
-        nvReadReplyStruct *readReply;
-        QByteArray data;
-
-        readRequest.id = qToLittleEndian <qint16> (ZCD_NV_USER);
-        readRequest.offset = 0;
-
-        if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
-        {
-            logWarning << "NV value" << QString::asprintf("0x%04X", ZCD_NV_USER) << "read request failed";
-            return false;
-        }
-
-        readReply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
-        data = m_replyData.mid(sizeof(nvReadReplyStruct));
-
-        if (readReply->status || data != m_nvValues.value(ZCD_NV_USER))
-        {
-            logWarning << "Adapter configuration marker mismatch";
-
-            writeNvValue(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
-            resetAdapter();
-            m_reset = true;
-
-            return true;
-        }
-    }
-    else
-    {
-        nvInitRequestStruct request;
-
-        request.id = qToLittleEndian <quint16> (ZCD_NV_USER);
-        request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvValues.value(ZCD_NV_USER).length()));
-        request.dataLength = 0;
-
-        if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || (m_replyData.at(0) && m_replyData.at(0) != 0x09))
-        {
-            logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "init request failed";
-            return false;
-        }
-
-        m_reset = false;
-    }
-
-    for (auto it = m_nvValues.begin(); it != m_nvValues.end(); it++)
-    {
-        nvReadRequestStruct readRequest;
-        nvReadReplyStruct *readReply;
-        QByteArray data;
-
-        readRequest.id = qToLittleEndian <qint16> (it.key());
-        readRequest.offset = 0;
-
-        if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
-        {
-            logWarning << "NV value" << QString::asprintf("0x%04X", it.key()) << "read request failed";
-            return false;
-        }
-
-        readReply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
-        data = m_replyData.mid(sizeof(nvReadReplyStruct));
-
-        if (readReply->status || data != it.value())
-        {
-            if (!writeNvValue(it.key(), it.value()))
-                return false;
-
-            reset = true;
-        }
-    }
-
-    if (reset)
-    {
-        logInfo << "Adapter configuration changed, resetting...";
-        resetAdapter();
-        return true;
-    }
 
     if (!sendRequest(UTIL_GET_DEVICE_INFO) || m_replyData.at(0))
     {
@@ -598,6 +527,73 @@ bool ZStack::startCoordinator(void)
     deviceInfo = reinterpret_cast <deviceInfoResponseStruct*> (m_replyData.data());
     ieeeAddress = qFromBigEndian(deviceInfo->ieeeAddress);
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
+
+    if (!m_reset)
+    {
+        bool check = false;
+
+        for (auto it = m_nvValues.begin(); it != m_nvValues.end(); it++)
+        {
+            nvReadRequestStruct readRequest;
+            nvReadReplyStruct *readReply;
+            QByteArray data;
+
+            readRequest.id = qToLittleEndian <qint16> (it.key());
+            readRequest.offset = 0;
+
+            if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
+            {
+                logWarning << "NV value" << QString::asprintf("0x%04X", it.key()) << "read request failed";
+                return false;
+            }
+
+            readReply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
+            data = m_replyData.mid(sizeof(nvReadReplyStruct));
+
+            if (readReply->status || data != it.value())
+            {
+                if (it.key() == ZCD_NV_USER)
+                {
+                    logWarning << "Adapter configuration marker mismatch, resetting...";
+
+                    writeNvValue(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
+                    m_reset = true;
+                    resetAdapter();
+
+                    return true;
+                }
+
+                if (!writeNvValue(it.key(), it.value()))
+                    return false;
+
+                check = true;
+            }
+        }
+
+        if (check)
+        {
+            logInfo << "Adapter configuration updated, resetting...";
+            resetAdapter();
+            return true;
+        }
+    }
+    else
+    {
+        nvInitRequestStruct request;
+
+        request.id = qToLittleEndian <quint16> (ZCD_NV_USER);
+        request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvValues.value(ZCD_NV_USER).length()));
+        request.dataLength = static_cast <quint8> (m_nvValues.value(ZCD_NV_USER).length());
+
+        if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(m_nvValues.value(ZCD_NV_USER))) || (m_replyData.at(0) && m_replyData.at(0) != 0x09))
+        {
+            logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "init request failed";
+            return false;
+        }
+
+        if (!m_replyData.at(0))
+            writeNvValue(ZCD_NV_USER, m_nvValues.value(ZCD_NV_USER));
+    }
 
     if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, ZSTACK_TX_POWER)) || m_replyData.at(0))
     {

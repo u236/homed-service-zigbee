@@ -5,7 +5,7 @@
 #define ADAPTER_THROTTLE_DELAY                      20
 #define ADAPTER_REQUEST_TIMEOUT                     10000
 #define ADAPTER_CHANNEL_LIST                        0x07FFF800
-#define ADAPTER_CONFIGURATION_MARKER                0xAA
+#define ADAPTER_CONFIGURATION_MARKER                0x42
 
 #define ZSTACK_PACKET_START                         0xFE
 #define ZSTACK_COORDINATOR_STARTED                  0x09
