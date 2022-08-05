@@ -41,7 +41,6 @@
 #define ZDO_MGMT_PERMIT_JOIN_REQ                    0x2536
 #define ZDO_STARTUP_FROM_APP                        0x2540
 #define UTIL_GET_DEVICE_INFO                        0x2700
-#define UTIL_REMOVE_ASSOCIATION                     0x2763
 #define APP_CNF_BDB_SET_CHANNEL                     0x2F08
 
 #define SYS_RESET_IND                               0x4180
@@ -53,6 +52,7 @@
 #define ZDO_BIND_RSP                                0x45A1
 #define ZDO_MGMT_LQI_RSP                            0x45B1
 #define ZDO_MGMT_PERMIT_JOIN_RSP                    0x45B6
+#define ZDO_MGMT_NWK_UPDATE_RSP                     0x45B8
 #define ZDO_STATE_CHANGE_IND                        0x45C0
 #define ZDO_END_DEVICE_ANNCE_IND                    0x45C1
 #define ZDO_SRC_RTG_IND                             0x45C4
@@ -301,8 +301,6 @@ public:
     bool bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndpointId, const QByteArray &dstIeeeAddress, quint8 dstEndpointId, quint16 clusterId);
     bool bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endpointId, quint16 clusterId);
     bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
-
-    bool removeAssociation(const QByteArray &ieeeAddress);
 
 private:
 

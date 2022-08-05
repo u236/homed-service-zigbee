@@ -121,7 +121,6 @@ void ZigBee::removeDevice(const QByteArray &ieeeAddress)
         return;
 
     logInfo << "Device" << it.value()->name() << "removed";
-    m_adapter->removeAssociation(ieeeAddress);
 
     m_devices.erase(it);
     storeStatus();
@@ -832,7 +831,6 @@ void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress
     GPIO::setStatus(m_ledPin, true);
 
     logInfo << "Device" << it.value()->name() << "with address" << QString::asprintf("0x%04X", networkAddress) << "left network";
-    m_adapter->removeAssociation(ieeeAddress);
 
     m_devices.erase(it);
     storeStatus();
