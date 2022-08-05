@@ -1,5 +1,6 @@
 #include <QtEndian>
 #include <QFile>
+#include <QRandomGenerator>
 #include "gpio.h"
 #include "logger.h"
 #include "zcl.h"
@@ -26,7 +27,9 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
     connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
     connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
+
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
+    connect(m_adapter, &ZStack::messageReveivedExt, this, &ZigBee::messageReveivedExt);
 
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
     connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
@@ -124,6 +127,82 @@ void ZigBee::removeDevice(const QByteArray &ieeeAddress)
 
     m_devices.erase(it);
     storeStatus();
+}
+
+void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
+{
+    zclHeaderStruct header;
+    quint32 payload = QRandomGenerator::global()->generate();
+
+    header.frameControl = FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE;
+    header.transactionId = m_transactionId++;
+    header.commandId = 0x00;
+
+    if (!m_adapter->setInterPanEndpointId(0x0C) || !m_adapter->setInterPanChannel(channel))
+    {
+        m_adapter->resetInterPan();
+        return;
+    }
+
+    if (!m_adapter->dataRequestExt(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
+    {
+        logWarning << "TouchLink scan request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        m_adapter->resetInterPan();
+        return;
+    }
+
+    header.commandId = 0x07;
+
+    if (!m_adapter->dataRequestExt(ieeeAddress, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
+    {
+        logWarning << "TouchLink reset request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        m_adapter->resetInterPan();
+        return;
+    }
+
+    logInfo << "TouchLink reset finished successfully";
+    m_adapter->resetInterPan();
+}
+
+void ZigBee::touchLinkScan(void)
+{
+    zclHeaderStruct header;
+    touchLinkScanStruct payload;
+
+    header.frameControl = FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE;
+    header.transactionId = m_transactionId++;
+    header.commandId = 0x00;
+
+    payload.transactionId = QRandomGenerator::global()->generate();
+    payload.zigBeeInformation = 0x04;
+    payload.touchLinkInformation = 0x12;
+
+    logInfo << "TouchLink scan started...";
+
+    if (!m_adapter->setInterPanEndpointId(0x0C))
+    {
+        m_adapter->resetInterPan();
+        return;
+    }
+
+    for (m_interPanChannel = 11; m_interPanChannel <= 26; m_interPanChannel++)
+    {
+        if (!m_adapter->setInterPanChannel(m_interPanChannel))
+        {
+            m_adapter->resetInterPan();
+            return;
+        }
+
+        if (!m_adapter->dataRequestExt(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
+        {
+            logWarning << "TouchLink scan request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+            m_adapter->resetInterPan();
+            return;
+        }
+    }
+
+    logInfo << "TouchLink scan finished successfully";
+    m_adapter->resetInterPan();
 }
 
 void ZigBee::unserializeDevices(const QJsonArray &array)
@@ -983,6 +1062,22 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 
         m_adapter->dataRequest(device->networkAddress(), endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
     }
+}
+
+void ZigBee::messageReveivedExt(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
+{
+    Q_UNUSED(endpointId)
+    Q_UNUSED(linkQuality)
+
+    const zclHeaderStruct *header = reinterpret_cast <const zclHeaderStruct*> (data.constData());
+
+    if (clusterId == CLUSTER_TOUCHLINK && header->commandId == 0x01)
+    {
+        logInfo << "TouchLink scan response received from device" << ieeeAddress.toHex(':') << "at channel" << m_interPanChannel;
+        return;
+    }
+
+    logWarning << "Unrecognized extended message received from" << ieeeAddress.toHex(':') << "endpoint" << QString::asprintf("0x%02X", endpointId) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << data.toHex(':');
 }
 
 void ZigBee::pollAttributes(void)

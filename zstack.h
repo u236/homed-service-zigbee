@@ -33,6 +33,8 @@
 #define SYS_SET_TX_POWER                            0x2114
 #define AF_REGISTER                                 0x2400
 #define AF_DATA_REQUEST                             0x2401
+#define AF_DATA_REQUEST_EXT                         0x2402
+#define AF_INTER_PAN_CTL                            0x2410
 #define ZDO_NODE_DESC_REQ                           0x2502
 #define ZDO_SIMPLE_DESC_REQ                         0x2504
 #define ZDO_ACTIVE_EP_REQ                           0x2505
@@ -46,6 +48,7 @@
 #define SYS_RESET_IND                               0x4180
 #define AF_DATA_CONFIRM                             0x4480
 #define AF_INCOMING_MSG                             0x4481
+#define AF_INCOMING_MSG_EXT                         0x4482
 #define ZDO_NODE_DESC_RSP                           0x4582
 #define ZDO_SIMPLE_DESC_RSP                         0x4584
 #define ZDO_ACTIVE_EP_RSP                           0x4585
@@ -204,6 +207,20 @@ struct dataRequestStruct
     quint8  length;
 };
 
+struct dataRequestExtStruct
+{
+    quint8  dstAddressMode;
+    quint64 dstAddress;
+    quint8  dstEndpointId;
+    quint16 dstPanId;
+    quint8  srcEndpointId;
+    quint16 clusterId;
+    quint8  transactionId;
+    quint8  options;
+    quint8  radius;
+    quint16 length;
+};
+
 struct deviceInfoResponseStruct
 {
     quint8  status;
@@ -261,6 +278,23 @@ struct incomingMessageStruct
     quint8  length;
 };
 
+struct incomingMessageExtStruct
+{
+    quint16 groupId;
+    quint16 clusterId;
+    quint8  srcAddressMode;
+    quint64 srcAddress;
+    quint8  srcEndpointId;
+    quint16 srcPanId;
+    quint8  dstEndpointId;
+    quint8  broadcast;
+    quint8  linkQuality;
+    quint8  security;
+    quint32 timestamp;
+    quint8  transactionId;
+    quint16 length;
+};
+
 struct endDeviceAnnounceStruct
 {
     quint16 srcAddress;
@@ -300,7 +334,15 @@ public:
 
     bool bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndpointId, const QByteArray &dstIeeeAddress, quint8 dstEndpointId, quint16 clusterId);
     bool bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endpointId, quint16 clusterId);
+
     bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
+    bool dataRequestExt(const QByteArray &address, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data);
+    bool dataRequestExt(quint16 networkAddress, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data);
+
+    bool setInterPanEndpointId(quint8 endpointId);
+    bool setInterPanChannel(quint8 channel);
+
+    void resetInterPan(void);
 
 private:
 
@@ -346,7 +388,9 @@ signals:
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
-    void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 cluster, quint8 linkQuality, const QByteArray &data);
+
+    void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void messageReveivedExt(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
     void bindResponse(void);
     void dataConfirm(void);

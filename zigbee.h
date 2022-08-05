@@ -36,6 +36,9 @@ public:
     void deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData);
     void removeDevice(const QByteArray &ieeeAddress);
 
+    void touchLinkReset(const QByteArray &ieeeAddress, quint8 channel);
+    void touchLinkScan(void);
+
 private:
 
     ZStack *m_adapter;
@@ -45,7 +48,7 @@ private:
 
     QString m_databaseFile, m_libraryFile;
     qint16 m_ledPin;
-    quint8 m_transactionId;
+    quint8 m_transactionId, m_interPanChannel;
     bool m_coordinatorReady, m_permitJoin;
 
     void unserializeDevices(const QJsonArray &devicesArray);
@@ -77,7 +80,9 @@ private slots:
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
+
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void messageReveivedExt(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
     void pollAttributes(void);
     void updateNeighbors(void);

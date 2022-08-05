@@ -88,6 +88,13 @@ struct configureReportingStruct
     quint16 valueChange;
 };
 
+struct touchLinkScanStruct
+{
+    quint32 transactionId;
+    quint8  zigBeeInformation;
+    quint8  touchLinkInformation;
+};
+
 struct tuyaHeaderStruct
 {
     quint8  status;

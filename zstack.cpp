@@ -240,6 +240,99 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     return m_dataRequestSuccess;
 }
 
+bool ZStack::dataRequestExt(const QByteArray &dstAddress, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
+{
+    dataRequestExtStruct request;
+
+    switch (dstAddress.length())
+    {
+        case 2: request.dstAddressMode = 0x02; break;
+        case 8: request.dstAddressMode = 0x03; break;
+        default: return false;
+    }
+
+    memset(&request.dstAddress, 0, sizeof(request.dstAddress));
+    memcpy(&request.dstAddress, dstAddress.constData(), dstAddress.length());
+
+    if (request.dstAddressMode == 0x03)
+        request.dstAddress = qToBigEndian(request.dstAddress);
+
+    request.dstEndpointId = dstEndPointId;
+    request.dstPanId = qToLittleEndian(dstPanId);
+    request.srcEndpointId = srcEndpointId;
+    request.clusterId = qToLittleEndian(clusterId);
+    request.transactionId = m_transactionId;
+    request.options = 0x00;
+    request.radius = AF_DEFAULT_RADIUS * 2;
+    request.length = qToLittleEndian(static_cast <quint16> (data.length()));
+
+    m_dataConfirmReceived = false;
+    m_dataRequestSuccess = false;
+
+    if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    {
+        logWarning << "Data request failed";
+        return false;
+    }
+
+    if (!m_dataConfirmReceived)
+    {
+        QEventLoop loop;
+        QTimer timer;
+
+        connect(this, &ZStack::dataConfirm, &loop, &QEventLoop::quit);
+        connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+        timer.setSingleShot(true);
+        timer.start(ADAPTER_REQUEST_TIMEOUT);
+
+        loop.exec();
+    }
+
+    m_transactionId++;
+    return m_dataRequestSuccess;
+}
+
+bool ZStack::dataRequestExt(quint16 networkAddress, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
+{
+    networkAddress = qToLittleEndian(networkAddress);
+    return dataRequestExt(QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndPointId, dstPanId, srcEndpointId, clusterId, data);
+}
+
+bool ZStack::setInterPanEndpointId(quint8 endpointId)
+{
+    quint8 request[2] = {0x02, endpointId};
+
+    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    {
+        logWarning << "Set Inter-PAN endpointId" << QString::asprintf("0x%02X", endpointId) << "request failed";
+        return false;
+    }
+
+    return true;
+}
+
+bool ZStack::setInterPanChannel(quint8 channel)
+{
+    quint8 request[2] = {0x01, channel};
+
+    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    {
+        logWarning << "Set Inter-PAN channel" << channel << "request failed";
+        return false;
+    }
+
+    return true;
+}
+
+void ZStack::resetInterPan(void)
+{
+    if (sendRequest(AF_INTER_PAN_CTL, QByteArray(1, 0x00)) || m_replyData.at(0))
+        return;
+
+    logWarning << "Reset Inter-PAN request failed";
+}
+
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
 {
     if (command & 0x2000)
@@ -283,6 +376,21 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         {
             const incomingMessageStruct *message = reinterpret_cast <const incomingMessageStruct*> (data.constData());
             emit messageReveived(qFromLittleEndian(message->srcAddress), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(incomingMessageStruct), message->length));
+            break;
+        }
+
+        case AF_INCOMING_MSG_EXT:
+        {
+            const incomingMessageExtStruct *message = reinterpret_cast <const incomingMessageExtStruct*> (data.constData());
+            quint64 srcAddress = qFromBigEndian(message->srcAddress);
+
+            if (message->srcAddressMode != 0x03)
+            {
+                logWarning << "Unsupporned extended message address mode" << QString::asprintf("0x%02X", message->srcAddressMode);
+                return;
+            }
+
+            emit messageReveivedExt(QByteArray(reinterpret_cast <char*> (&srcAddress), sizeof(srcAddress)), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(incomingMessageExtStruct), message->length));
             break;
         }
 
