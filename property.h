@@ -37,7 +37,8 @@ protected:
     QVariant m_value;
     bool m_invalidable;
 
-    quint8 percentage(double min, double max, double value);
+    QVariant tuyaValue(const QByteArray &payload);
+    quint8 toPercentage(double min, double max, double value);
 
 };
 

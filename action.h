@@ -119,4 +119,56 @@ namespace Actions
     };
 }
 
+namespace ActionsTUYA
+{
+    class Request
+    {
+
+    protected:
+
+        QByteArray makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data);
+
+    };
+
+    class Sensitivity : public Request, public ActionObject
+    {
+
+    public:
+
+        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class RangeMin :  public Request, public ActionObject
+    {
+
+    public:
+
+        RangeMin(void) : ActionObject("rangeMin", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class RangeMax :  public Request, public ActionObject
+    {
+
+    public:
+
+        RangeMax(void) : ActionObject("rangeMax", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class DetectionDelay : public Request, public ActionObject
+    {
+
+    public:
+
+        DetectionDelay(void) : ActionObject("detectionDelay", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+}
+
 #endif

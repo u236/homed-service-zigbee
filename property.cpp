@@ -5,39 +5,67 @@
 
 void PropertyObject::registerMetaTypes(void)
 {
-    qRegisterMetaType <Properties::BatteryVoltage>         ("batteryVoltageProperty");
-    qRegisterMetaType <Properties::BatteryPercentage>      ("batteryPercentageProperty");
-    qRegisterMetaType <Properties::Status>                 ("statusProperty");
-    qRegisterMetaType <Properties::Level>                  ("levelProperty");
-    qRegisterMetaType <Properties::AnalogCO2>              ("analogCO2Property");
-    qRegisterMetaType <Properties::AnalogTemperature>      ("analogTemperatureProperty");
-    qRegisterMetaType <Properties::ColorHS>                ("colorHSProperty");
-    qRegisterMetaType <Properties::ColorXY>                ("colorXYProperty");
-    qRegisterMetaType <Properties::ColorTemperature>       ("colorTemperatureProperty");
-    qRegisterMetaType <Properties::Illuminance>            ("illuminanceProperty");
-    qRegisterMetaType <Properties::Temperature>            ("temperatureProperty");
-    qRegisterMetaType <Properties::Humidity>               ("humidityProperty");
-    qRegisterMetaType <Properties::Occupancy>              ("occupancyProperty");
-    qRegisterMetaType <Properties::Energy>                 ("energyProperty");
-    qRegisterMetaType <Properties::Power>                  ("powerProperty");
-    qRegisterMetaType <Properties::IdentifyAction>         ("identifyActionProperty");
-    qRegisterMetaType <Properties::SwitchAction>           ("switchActionProperty");
-    qRegisterMetaType <Properties::LevelAction>            ("levelActionProperty");
+    qRegisterMetaType <Properties::BatteryVoltage>          ("batteryVoltageProperty");
+    qRegisterMetaType <Properties::BatteryPercentage>       ("batteryPercentageProperty");
+    qRegisterMetaType <Properties::Status>                  ("statusProperty");
+    qRegisterMetaType <Properties::Level>                   ("levelProperty");
+    qRegisterMetaType <Properties::AnalogCO2>               ("analogCO2Property");
+    qRegisterMetaType <Properties::AnalogTemperature>       ("analogTemperatureProperty");
+    qRegisterMetaType <Properties::ColorHS>                 ("colorHSProperty");
+    qRegisterMetaType <Properties::ColorXY>                 ("colorXYProperty");
+    qRegisterMetaType <Properties::ColorTemperature>        ("colorTemperatureProperty");
+    qRegisterMetaType <Properties::Illuminance>             ("illuminanceProperty");
+    qRegisterMetaType <Properties::Temperature>             ("temperatureProperty");
+    qRegisterMetaType <Properties::Humidity>                ("humidityProperty");
+    qRegisterMetaType <Properties::Occupancy>               ("occupancyProperty");
+    qRegisterMetaType <Properties::Energy>                  ("energyProperty");
+    qRegisterMetaType <Properties::Power>                   ("powerProperty");
+    qRegisterMetaType <Properties::IdentifyAction>          ("identifyActionProperty");
+    qRegisterMetaType <Properties::SwitchAction>            ("switchActionProperty");
+    qRegisterMetaType <Properties::LevelAction>             ("levelActionProperty");
 
-    qRegisterMetaType <PropertiesIKEA::BatteryPercentage>  ("ikeaBatteryPercentageProperty");
-    qRegisterMetaType <PropertiesPTVO::SwitchAction>       ("ptvoSwitchActionProperty");
+    qRegisterMetaType <PropertiesIKEA::BatteryPercentage>   ("ikeaBatteryPercentageProperty");
+    qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesLUMI::Dummy>              ("lumiDummyProperty");
-    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>     ("lumiBatteryVoltageProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeRotation>       ("lumiCubeRotationProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeMovement>       ("lumiCubeMovementProperty");
-    qRegisterMetaType <PropertiesLUMI::SwitchAction>       ("lumiSwitchActionProperty");
+    qRegisterMetaType <PropertiesLUMI::Dummy>               ("lumiDummyProperty");
+    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
+    qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesTUYA::Dummy>              ("tuyaDummyProperty");
-    qRegisterMetaType <PropertiesTUYA::PresenseSensor>     ("tuyaPresenseSensorProperty");
+    qRegisterMetaType <PropertiesTUYA::Dummy>               ("tuyaDummyProperty");
+    qRegisterMetaType <PropertiesTUYA::PresenseSensor>      ("tuyaPresenseSensorProperty");
 }
 
-quint8 PropertyObject::percentage(double min, double max, double value)
+QVariant PropertyObject::tuyaValue(const QByteArray &payload)
+{
+    const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
+
+    switch (header->dataType)
+    {
+        case 0x02:
+
+            if (header->length == 4)
+            {
+                quint32 value;
+                memcpy(&value, payload.constData() + sizeof(tuyaHeaderStruct), header->length);
+                return qFromBigEndian(value);
+            }
+
+            break;
+
+        case 0x04:
+
+            if (header->length == 1)
+                return payload.at(sizeof(tuyaHeaderStruct)) ? true : false;
+
+            break;
+    }
+
+    return QVariant();
+}
+
+quint8 PropertyObject::toPercentage(double min, double max, double value)
 {
     if (value < min)
         value = min;
@@ -61,7 +89,7 @@ void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataT
     if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
+    m_value = toPercentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
 }
 
 void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -415,7 +443,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
                 break;
 
             memcpy(&value, data.constData() + 2, sizeof(value));
-            m_value = percentage(2850, 3200, qFromLittleEndian(value));
+            m_value = toPercentage(2850, 3200, qFromLittleEndian(value));
             break;
         }
 
@@ -427,7 +455,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
                 break;
 
             memcpy(&value, data.constData() + 5, sizeof(value));
-            m_value = percentage(2850, 3200, qFromLittleEndian(value));
+            m_value = toPercentage(2850, 3200, qFromLittleEndian(value));
             break;
         }
     }
@@ -497,32 +525,41 @@ void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, 
 void PropertiesTUYA::PresenseSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
+    QVariant data;
 
     if (commandId != 0x02)
+        return;
+
+    data = tuyaValue(payload);
+
+    if (!data.isValid())
         return;
 
     switch (header->dataPoint)
     {
         case 0x01:
-        {
-            if (header->dataType != 0x04 || header->length != 1)
-                return;
-
-            m_map.insert("occupancy", payload.at(sizeof(tuyaHeaderStruct)) ? true : false);
+            m_map.insert("occupancy", data.toBool());
             break;
-        }
+
+        case 0x02:
+            m_map.insert("sensitivity", data.toInt());
+            break;
+
+        case 0x03:
+            m_map.insert("rangeMin", data.toDouble() / 100);
+            break;
+
+        case 0x04:
+            m_map.insert("rangeMax", data.toDouble() / 100);
+            break;
+
+        case 0x65:
+            m_map.insert("detectionDelay", data.toInt());
+            break;
 
         case 0x68:
-        {
-            quint32 value;
-
-            if (header->dataType != 0x02 || header->length != 4)
-                return;
-
-            memcpy(&value, payload.constData() + sizeof(tuyaHeaderStruct), header->length);
-            m_map.insert("illuminance", qFromBigEndian(value));
+            m_map.insert("illuminance", data.toInt());
             break;
-        }
     }
 
     if (m_map.isEmpty())

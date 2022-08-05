@@ -103,6 +103,7 @@
   [
     {
       "model": "TS0601",
+      "actions": ["tuyaSensitivity", "tuyaRangeMin", "tuyaRangeMax", "tuyaDetectionDelay"],
       "properties": ["tuyaDummy", "tuyaPresenseSensor"]
     }
   ]

@@ -1,18 +1,22 @@
 #include <QtEndian>
 #include "action.h"
+#include "logger.h"
 
 void ActionObject::registerMetaTypes(void)
 {
-    qRegisterMetaType <Actions::Status>             ("statusAction");
-    qRegisterMetaType <Actions::Level>              ("levelAction");
-    qRegisterMetaType <Actions::ColorHS>            ("colorHSAction");
-    qRegisterMetaType <Actions::ColorXY>            ("colorXYAction");
-    qRegisterMetaType <Actions::ColorTemperature>   ("colorTemperatureAction");
+    qRegisterMetaType <Actions::Status>                 ("statusAction");
+    qRegisterMetaType <Actions::Level>                  ("levelAction");
+    qRegisterMetaType <Actions::ColorHS>                ("colorHSAction");
+    qRegisterMetaType <Actions::ColorXY>                ("colorXYAction");
+    qRegisterMetaType <Actions::ColorTemperature>       ("colorTemperatureAction");
+
+    qRegisterMetaType <ActionsTUYA::Sensitivity>        ("tuyaSensitivityAction");
+    qRegisterMetaType <ActionsTUYA::RangeMin>           ("tuyaRangeMinAction");
+    qRegisterMetaType <ActionsTUYA::RangeMax>           ("tuyaRangeMaxAction");
+    qRegisterMetaType <ActionsTUYA::DetectionDelay>     ("tuyaDetectionDelayAction");
 }
 
-using namespace Actions;
-
-QByteArray Status::request(const QVariant &data)
+QByteArray Actions::Status::request(const QVariant &data)
 {
     zclHeaderStruct header;
     QString status = data.toString();
@@ -24,7 +28,7 @@ QByteArray Status::request(const QVariant &data)
     return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
 }
 
-QByteArray Level::request(const QVariant &data)
+QByteArray Actions::Level::request(const QVariant &data)
 {
     zclHeaderStruct header;
 
@@ -76,7 +80,7 @@ QByteArray Level::request(const QVariant &data)
     }
 }
 
-QByteArray ColorHS::request(const QVariant &data)
+QByteArray Actions::ColorHS::request(const QVariant &data)
 {
     zclHeaderStruct header;
 
@@ -104,7 +108,7 @@ QByteArray ColorHS::request(const QVariant &data)
     }
 }
 
-QByteArray ColorXY::request(const QVariant &data)
+QByteArray Actions::ColorXY::request(const QVariant &data)
 {
     zclHeaderStruct header;
 
@@ -132,7 +136,7 @@ QByteArray ColorXY::request(const QVariant &data)
     }
 }
 
-QByteArray ColorTemperature::request(const QVariant &data)
+QByteArray Actions::ColorTemperature::request(const QVariant &data)
 {
     zclHeaderStruct header;
 
@@ -166,4 +170,73 @@ QByteArray ColorTemperature::request(const QVariant &data)
         default:
             return QByteArray();
     }
+}
+
+QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *payload)
+{
+    zclHeaderStruct zclHeared;
+    tuyaHeaderStruct tuyaHeader;
+
+    zclHeared.frameControl = FC_CLUSTER_SPECIFIC;
+    zclHeared.transactionId = transactionId;
+    zclHeared.commandId = 0x00;
+
+    tuyaHeader.status = 0x00;
+    tuyaHeader.transactionId = transactionId;
+    tuyaHeader.dataPoint = dataPoint;
+    tuyaHeader.dataType = dataType;
+    tuyaHeader.function = 0x00;
+
+    switch (tuyaHeader.dataType)
+    {
+        case 0x02: tuyaHeader.length = 4; break;
+        case 0x04: tuyaHeader.length = 1; break;
+        default: return QByteArray();
+    }
+
+    return QByteArray(reinterpret_cast <char*> (&zclHeared), sizeof(zclHeared)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (payload), tuyaHeader.length);
+}
+
+QByteArray ActionsTUYA::Sensitivity::request(const QVariant &data)
+{
+    quint32 value = static_cast <quint32> (data.toInt());
+
+    if (value > 9)
+        return QByteArray();
+
+    value = qToBigEndian(value);
+    return makeRequest(m_transactionId++, 0x02, 0x02, &value);
+}
+
+QByteArray ActionsTUYA::RangeMin::request(const QVariant &data)
+{
+    quint32 value = static_cast <quint32> (data.toDouble() * 100);
+
+    if (value > 950)
+        return QByteArray();
+
+    value = qToBigEndian(value);
+    return makeRequest(m_transactionId++, 0x03, 0x02, &value);
+}
+
+QByteArray ActionsTUYA::RangeMax::request(const QVariant &data)
+{
+    quint32 value = static_cast <quint32> (data.toDouble() * 100);
+
+    if (value > 950)
+        return QByteArray();
+
+    value = qToBigEndian(value);
+    return makeRequest(m_transactionId++, 0x04, 0x02, &value);
+}
+
+QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
+{
+    quint32 value = static_cast <quint32> (data.toDouble() * 100);
+
+    if (value < 1 || value > 10)
+        return QByteArray();
+
+    value = qToBigEndian(value);
+    return makeRequest(m_transactionId++, 0x65, 0x02, &value);
 }
