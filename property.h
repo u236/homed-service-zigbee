@@ -339,23 +339,17 @@ namespace PropertiesTUYA
 
     };
 
-    class Occupancy : public PropertyObject
+    class PresenseSensor : public PropertyObject
     {
 
     public:
 
-        Occupancy(void) : PropertyObject("occupancy", CLUSTER_TUYA) {}
+        PresenseSensor(void) : PropertyObject("tuya", CLUSTER_TUYA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
-    };
+    private:
 
-    class Illuminance : public PropertyObject
-    {
-
-    public:
-
-        Illuminance(void) : PropertyObject("illuminance", CLUSTER_TUYA) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        QMap <QString, QVariant> m_map;
 
     };
 }

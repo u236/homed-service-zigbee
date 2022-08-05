@@ -34,8 +34,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::SwitchAction>       ("lumiSwitchActionProperty");
 
     qRegisterMetaType <PropertiesTUYA::Dummy>              ("tuyaDummyProperty");
-    qRegisterMetaType <PropertiesTUYA::Occupancy>          ("tuyaOccupancyProperty");
-    qRegisterMetaType <PropertiesTUYA::Illuminance>        ("tuyaIlluminanceProperty");
+    qRegisterMetaType <PropertiesTUYA::PresenseSensor>     ("tuyaPresenseSensorProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
@@ -494,24 +493,40 @@ void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, 
     Q_UNUSED(data)
 }
 
-void PropertiesTUYA::Occupancy::parseCommand(quint8 commandId, const QByteArray &payload)
+
+void PropertiesTUYA::PresenseSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
 
-    if (commandId != 0x02 || header->dataPoint != 0x01 || header->dataType != 0x04 || header->length != 1)
+    if (commandId != 0x02)
         return;
 
-    m_value = payload.at(sizeof(tuyaHeaderStruct)) ? true : false;
-}
+    switch (header->dataPoint)
+    {
+        case 0x01:
+        {
+            if (header->dataType != 0x04 || header->length != 1)
+                return;
 
-void PropertiesTUYA::Illuminance::parseCommand(quint8 commandId, const QByteArray &payload)
-{
-    const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
-    quint32 value;
+            m_map.insert("occupancy", payload.at(sizeof(tuyaHeaderStruct)) ? true : false);
+            break;
+        }
 
-    if (commandId != 0x02 || header->dataPoint != 0x68 || header->dataType != 0x02 || header->length != 4)
+        case 0x68:
+        {
+            quint32 value;
+
+            if (header->dataType != 0x02 || header->length != 4)
+                return;
+
+            memcpy(&value, payload.constData() + sizeof(tuyaHeaderStruct), header->length);
+            m_map.insert("illuminance", qFromBigEndian(value));
+            break;
+        }
+    }
+
+    if (m_map.isEmpty())
         return;
 
-    memcpy(&value, payload.constData() + sizeof(tuyaHeaderStruct), header->length);
-    m_value = qFromBigEndian(value);
+    m_value = m_map;
 }

@@ -79,7 +79,14 @@ void Controller::endpointUpdated(const Endpoint &endpoint)
         if (!property->value().isValid())
             continue;
 
-        json.insert(property->name(), QJsonValue::fromVariant(property->value()));
+        if (property->value().type() == QVariant::Map)
+        {
+            QMap <QString, QVariant> map = json.toVariantMap();
+            map.insert(property->value().toMap());
+            json = QJsonObject::fromVariantMap(map);
+        }
+        else
+            json.insert(property->name(), QJsonValue::fromVariant(property->value()));
 
         if (property->invalidable())
             property->invalidate();

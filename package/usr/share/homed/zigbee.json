@@ -103,7 +103,7 @@
   [
     {
       "model": "TS0601",
-      "properties": ["tuyaDummy", "tuyaOccupancy", "tuyaIlluminance"]
+      "properties": ["tuyaDummy", "tuyaPresenseSensor"]
     }
   ]
 }
