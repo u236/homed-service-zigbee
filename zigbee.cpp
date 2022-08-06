@@ -873,27 +873,25 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
 {
     auto it = m_devices.find(ieeeAddress);
 
-    if (it == m_devices.end())
-        it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
-    else
-        it.value()->setNetworkAddress(networkAddress);
+    if (it != m_devices.end())
+    {
+        if (QDateTime::currentMSecsSinceEpoch() < it.value()->joinTime() + DEVICE_REJOIN_INTERVAL)
+            return;
 
-    if (QDateTime::currentMSecsSinceEpoch() < it.value()->joinTime() + DEVICE_REJOIN_INTERVAL)
-        return;
+        logInfo << "Device" << it.value()->name() << "rejoined network";
+        it.value()->setNetworkAddress(networkAddress);
+    }
+    else
+    {
+        logInfo << "Device" << ieeeAddress.toHex(':') << "joined network with address:" << QString::asprintf("0x%04X", networkAddress) << "and capabilities:" << QString::asprintf("0x%02X", capabilities);
+        it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
+    }
 
     m_ledTimer->start(500);
     GPIO::setStatus(m_ledPin, true);
 
-    logInfo << "Device" << it.value()->name() << "with address" << QString::asprintf("0x%04X", networkAddress) << "joined network, capabilities:" << QString::asprintf("0x%02X", capabilities);
-
     it.value()->updateJoinTime();
     it.value()->updateLastSeen();
-
-    if (it.value()->interviewFinished())
-    {
-        configureReportings(it.value());
-        return;
-    }
 
     interviewDevice(it.value());
     emit endDeviceEvent();

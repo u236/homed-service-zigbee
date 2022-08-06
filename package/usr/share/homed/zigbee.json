@@ -94,7 +94,7 @@
   [
     {
       "model": "lumi.sen_ill.mgl01",
-      "properties": ["batteryVoltage", "identifyAction", "illuminance"],
+      "properties": ["batteryVoltage", "identifyAction", "illuminance", "lumiDummy"],
       "reportings": ["batteryVoltage", "illuminance"]
     }
   ],
