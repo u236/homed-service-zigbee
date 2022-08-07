@@ -31,7 +31,6 @@ ZStack::ZStack(QSettings *config, QObject *parent) : QObject(parent), m_port(new
     m_nvValues.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
     m_nvValues.insert(ZCD_NV_USER, QByteArray(1, ADAPTER_CONFIGURATION_MARKER));
 
-
     GPIO::setDirection(m_bootPin, GPIO::Output);
     GPIO::setDirection(m_resetPin, GPIO::Output);
 

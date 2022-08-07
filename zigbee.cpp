@@ -6,7 +6,7 @@
 #include "zcl.h"
 #include "zigbee.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_coordinatorReady(false), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_coordinatorReady(false), m_permitJoin(true)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -32,10 +32,10 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     connect(m_adapter, &ZStack::messageReveivedExt, this, &ZigBee::messageReveivedExt);
 
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
+    connect(m_queuesTimer, &QTimer::timeout, this, &ZigBee::handleQueues);
     connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
     connect(m_ledTimer, &QTimer::timeout, this, &ZigBee::disableLed);
 
-    m_neighborsTimer->setSingleShot(true);
     m_statusTimer->setSingleShot(true);
     m_ledTimer->setSingleShot(true);
 }
@@ -108,10 +108,10 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
             m_ledTimer->start(50);
             GPIO::setStatus(m_ledPin, true);
 
-            if (data.isEmpty() || m_adapter->dataRequest(it.value()->networkAddress(), action->endpointId(), action->clusterId(), data))
+            if (data.isEmpty())
                 continue;
 
-            logWarning << "Device" << it.value()->name() << actionName << "action failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+            enqueueDataRequest(it.value(), action->endpointId(), action->clusterId(), data, QString("%1 action").arg(action->name()));
         }
     }
 }
@@ -207,8 +207,6 @@ void ZigBee::touchLinkScan(void)
 
 void ZigBee::unserializeDevices(const QJsonArray &array)
 {
-    logInfo << "Loading devices...";
-
     for (auto it = array.begin(); it != array.end(); it++)
     {
         QJsonObject json = it->toObject();
@@ -557,12 +555,6 @@ void ZigBee::configureReportings(const Device &device)
         configureReportingStruct payload;
         size_t length = sizeof(payload);
 
-        if (!m_adapter->bindRequest(device->networkAddress(), device->ieeeAddress(), reporting->endpointId(), reporting->clusterId()))
-        {
-            logWarning << "Device" << device->name() << "cluster" << QString::asprintf("0x%04X", reporting->clusterId()) << "binding failed";
-            continue;
-        }
-
         header.frameControl = 0x00;
         header.transactionId = m_transactionId++;
         header.commandId = CMD_CONFIGURE_REPORTING;
@@ -577,13 +569,8 @@ void ZigBee::configureReportings(const Device &device)
         if (payload.dataType == DATA_TYPE_BOOLEAN || payload.dataType == DATA_TYPE_8BIT_UNSIGNED || payload.dataType == DATA_TYPE_8BIT_SIGNED)
             length -= 1;
 
-        if (!m_adapter->dataRequest(device->networkAddress(), reporting->endpointId(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), length)))
-        {
-            logWarning << "Device" << device->name() << reporting->name() << "reporting configuration failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
-            continue;
-        }
-
-        logInfo << "Device" << device->name() << "reporting for" << reporting->name() << "configured successfully";
+        enqueueBindRequest(device, reporting->endpointId(), reporting->clusterId());
+        enqueueDataRequest(device, reporting->endpointId(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), length), QString("%1 reporting configuration").arg(reporting->name()));
     }
 }
 
@@ -602,10 +589,7 @@ void ZigBee::readAttributes(const Device &device, quint8 endpointId, quint16 clu
         payload.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
     }
 
-    if (m_adapter->dataRequest(device->networkAddress(), endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload)))
-        return;
-
-    logWarning << "Device" << device->name() << "read attributes request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+    enqueueDataRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload));
 }
 
 void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -678,7 +662,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             header.transactionId = transactionId;
             header.commandId = 0x02;
 
-            m_adapter->dataRequest(device->networkAddress(), endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(0x98));
+            enqueueDataRequest(device, endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(0x98));
         }
 
         return;
@@ -865,7 +849,9 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     m_coordinatorReady = true;
     m_adapter->setPermitJoin(m_permitJoin);
 
+    m_queuesTimer->start(HANDLE_QUEUES_INTERVAL);
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+
     storeStatus();
 }
 
@@ -1058,7 +1044,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         response.commandId = header.commandId;
         response.status = 0x00;
 
-        m_adapter->dataRequest(device->networkAddress(), endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
+        enqueueDataRequest(device, endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
     }
 }
 
@@ -1094,16 +1080,47 @@ void ZigBee::pollAttributes(void)
 
 void ZigBee::updateNeighbors(void)
 {
-    if (!m_coordinatorReady)
-        return;
-
-    logInfo << "Updating devices neighbors...";
-
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
-        if (it.value()->logicalType() != LogicalType::EndDevice)
-            m_adapter->lqiRequest(it.value()->networkAddress());
+    {
+        if (it.value()->logicalType() == LogicalType::EndDevice)
+            continue;
 
-    m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+        m_neighborsQueue.enqueue(it.value());
+    }
+}
+
+void ZigBee::handleQueues(void)
+{
+    while (!m_bindQueue.isEmpty())
+    {
+        BindRequest request = m_bindQueue.dequeue();
+
+        if (m_adapter->bindRequest(request->device()->networkAddress(), request->device()->ieeeAddress(), request->endpointId(), request->clusterId()))
+            continue;
+
+        logWarning << "Device" << request->device()->name() << "cluster" << QString::asprintf("0x%04X", request->clusterId()) << "binding failed";
+    }
+
+    while (!m_dataQueue.isEmpty())
+    {
+        DataRequest request = m_dataQueue.dequeue();
+
+        if (m_adapter->dataRequest(request->device()->networkAddress(), request->endpointId(), request->clusterId(), request->data()))
+        {
+            if (!request->name().isEmpty())
+                logInfo << "Device" << request->device()->name() << request->name().toUtf8().constData() << "finished successfully";
+
+            continue;
+        }
+
+        logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+    }
+
+    if (!m_neighborsQueue.isEmpty())
+    {
+        Device device = m_neighborsQueue.dequeue();
+        m_adapter->lqiRequest(device->networkAddress());
+    }
 }
 
 void ZigBee::storeStatus(void)

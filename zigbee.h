@@ -1,6 +1,7 @@
 #ifndef ZIGBEE_H
 #define ZIGBEE_H
 
+#define HANDLE_QUEUES_INTERVAL          1
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define STORE_STATUS_INTERVAL           60000
 #define DEVICE_REJOIN_INTERVAL          10000
@@ -17,8 +18,59 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QQueue>
 #include "device.h"
 #include "zstack.h"
+
+class BindRequestObject;
+typedef QSharedPointer <BindRequestObject> BindRequest;
+
+class DataRequestObject;
+typedef QSharedPointer <DataRequestObject> DataRequest;
+
+class BindRequestObject
+{
+
+public:
+
+    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId) :
+        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId) {}
+
+    inline Device device(void) {return m_device; }
+    inline quint8 endpointId(void) {return m_endpointId; }
+    inline quint16 clusterId(void) {return m_clusterId; }
+
+private:
+
+    Device m_device;
+    quint8 m_endpointId;
+    quint16 m_clusterId;
+
+};
+
+class DataRequestObject
+{
+
+public:
+
+    DataRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name) :
+        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_data(data), m_name(name) {}
+
+    inline Device device(void) {return m_device; }
+    inline quint8 endpointId(void) {return m_endpointId; }
+    inline quint16 clusterId(void) {return m_clusterId; }
+    inline QByteArray data(void) {return m_data; }
+    inline QString name(void) {return m_name; }
+
+private:
+
+    Device m_device;
+    quint8 m_endpointId;
+    quint16 m_clusterId;
+    QByteArray m_data;
+    QString m_name;
+
+};
 
 class ZigBee : public QObject
 {
@@ -42,14 +94,21 @@ public:
 private:
 
     ZStack *m_adapter;
-    QTimer *m_neighborsTimer, *m_statusTimer, *m_ledTimer;
-
-    QMap <QByteArray, Device> m_devices;
+    QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusTimer, *m_ledTimer;
 
     QString m_databaseFile, m_libraryFile;
     qint16 m_ledPin;
     quint8 m_transactionId, m_interPanChannel;
     bool m_coordinatorReady, m_permitJoin;
+
+    QMap <QByteArray, Device> m_devices;
+
+    QQueue <BindRequest> m_bindQueue;
+    QQueue <DataRequest> m_dataQueue;
+    QQueue <Device> m_neighborsQueue;
+
+    inline void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId) { m_bindQueue.enqueue(BindRequest(new BindRequestObject(device, endpointId, clusterId))); }
+    inline void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString()) { m_dataQueue.enqueue(DataRequest(new DataRequestObject(device, endpointId, clusterId, data, name))); }
 
     void unserializeDevices(const QJsonArray &devicesArray);
     void unserializeEndpoints(const Device &device, const QJsonArray &array);
@@ -86,6 +145,7 @@ private slots:
 
     void pollAttributes(void);
     void updateNeighbors(void);
+    void handleQueues(void);
     void storeStatus(void);
     void disableLed(void);
 
