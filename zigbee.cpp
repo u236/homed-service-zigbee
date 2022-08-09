@@ -27,7 +27,6 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
     connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
     connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
-
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
     connect(m_adapter, &ZStack::messageReveivedExt, this, &ZigBee::messageReveivedExt);
 

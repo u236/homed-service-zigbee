@@ -521,7 +521,6 @@ void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, 
     Q_UNUSED(data)
 }
 
-
 void PropertiesTUYA::PresenseSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
