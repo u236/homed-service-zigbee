@@ -15,6 +15,13 @@
 
 #define DATA_TYPE_BOOLEAN                           0x10
 #define DATA_TYPE_8BIT_BITMAP                       0x18
+#define DATA_TYPE_16BIT_BITMAP                      0x19
+#define DATA_TYPE_24BIT_BITMAP                      0x1A
+#define DATA_TYPE_32BIT_BITMAP                      0x1B
+#define DATA_TYPE_40BIT_BITMAP                      0x1C
+#define DATA_TYPE_48BIT_BITMAP                      0x1D
+#define DATA_TYPE_56BIT_BITMAP                      0x1E
+#define DATA_TYPE_64BIT_BITMAP                      0x1F
 #define DATA_TYPE_8BIT_UNSIGNED                     0x20
 #define DATA_TYPE_16BIT_UNSIGNED                    0x21
 #define DATA_TYPE_24BIT_UNSIGNED                    0x22

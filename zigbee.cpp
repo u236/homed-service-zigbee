@@ -734,37 +734,44 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                         size = 1;
                         break;
 
+                    case DATA_TYPE_16BIT_BITMAP:
                     case DATA_TYPE_16BIT_UNSIGNED:
                     case DATA_TYPE_16BIT_SIGNED:
                         size = 2;
                         break;
 
+                    case DATA_TYPE_24BIT_BITMAP:
                     case DATA_TYPE_24BIT_UNSIGNED:
                     case DATA_TYPE_24BIT_SIGNED:
                         size = 3;
                         break;
 
+                    case DATA_TYPE_32BIT_BITMAP:
                     case DATA_TYPE_32BIT_UNSIGNED:
                     case DATA_TYPE_32BIT_SIGNED:
                     case DATA_TYPE_SINGLE_PRECISION:
                         size = 4;
                         break;
 
+                    case DATA_TYPE_40BIT_BITMAP:
                     case DATA_TYPE_40BIT_UNSIGNED:
                     case DATA_TYPE_40BIT_SIGNED:
                         size = 5;
                         break;
 
+                    case DATA_TYPE_48BIT_BITMAP:
                     case DATA_TYPE_48BIT_UNSIGNED:
                     case DATA_TYPE_48BIT_SIGNED:
                         size = 6;
                         break;
 
+                    case DATA_TYPE_56BIT_BITMAP:
                     case DATA_TYPE_56BIT_UNSIGNED:
                     case DATA_TYPE_56BIT_SIGNED:
                         size = 7;
                         break;
 
+                    case DATA_TYPE_64BIT_BITMAP:
                     case DATA_TYPE_64BIT_UNSIGNED:
                     case DATA_TYPE_64BIT_SIGNED:
                     case DATA_TYPE_DOUBLE_PRECISION:

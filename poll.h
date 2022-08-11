@@ -77,7 +77,7 @@ namespace Polls
 
     public:
 
-        ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
+        ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, {0x0007}) {}
 
     };
 
