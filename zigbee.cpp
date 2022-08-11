@@ -70,7 +70,7 @@ void ZigBee::configureDevice(const QByteArray &ieeeAddress)
 {
     auto it = m_devices.find(ieeeAddress);
 
-    if (!m_coordinatorReady || it == m_devices.end())
+    if (it == m_devices.end())
         return;
 
     setupDevice(it.value());
@@ -93,7 +93,7 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionNa
 {
     auto it = m_devices.find(ieeeAddress);
 
-    if (!m_coordinatorReady || it == m_devices.end())
+    if (it == m_devices.end())
         return;
 
     for (int i = 0; i < it.value()->actions().count(); i++)
@@ -453,17 +453,17 @@ void ZigBee::setupDevice(const Device &device)
 
     if (!json.isEmpty())
     {
-        QJsonArray actionsArray = json.value("actions").toArray(), pollsArray = json.value("polls").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray();
-        quint32 pollInterval = static_cast <quint8> (json.value("pollInterval").toInt()) * 1000;
+        QJsonArray actionsArray = json.value("actions").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray(), pollsArray = json.value("polls").toArray();
+        quint32 pollInterval = static_cast <quint8> (json.value("pollInterval").toInt());
         quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
 
         disconnect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
         device->timer()->stop();
 
         device->actions().clear();
-        device->polls().clear();
         device->properties().clear();
         device->reportings().clear();
+        device->polls().clear();
 
         for (auto it = actionsArray.begin(); it != actionsArray.end(); it++)
         {
@@ -481,24 +481,6 @@ void ZigBee::setupDevice(const Device &device)
             }
 
             logWarning << "Device" << device->name() << "action" << it->toString() << "unrecognized";
-        }
-
-        for (auto it = pollsArray.begin(); it != pollsArray.end(); it++)
-        {
-            int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
-
-            if (type)
-            {
-                Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
-
-                if (endpointId)
-                    poll->setEndpointId(endpointId);
-
-                device->polls().append(poll);
-                continue;
-            }
-
-            logWarning << "Device" << device->name() << "poll" << it->toString() << "unrecognized";
         }
 
         for (auto it = propertiesArray.begin(); it != propertiesArray.end(); it++)
@@ -533,10 +515,29 @@ void ZigBee::setupDevice(const Device &device)
             logWarning << "Device" << device->name() << "reporting" << it->toString() << "unrecognized";
         }
 
+        for (auto it = pollsArray.begin(); it != pollsArray.end(); it++)
+        {
+            int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
+
+            if (type)
+            {
+                Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
+
+                if (endpointId)
+                    poll->setEndpointId(endpointId);
+
+                device->polls().append(poll);
+                continue;
+            }
+
+            logWarning << "Device" << device->name() << "poll" << it->toString() << "unrecognized";
+        }
+
         if (pollInterval && !device->polls().isEmpty())
         {
+            logInfo << "Device" << device->name() << "poll interval:" << pollInterval << "seconds";
             connect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-            device->timer()->start(pollInterval);
+            device->timer()->start(pollInterval * 1000);
         }
 
         return;
@@ -1074,7 +1075,7 @@ void ZigBee::pollAttributes(void)
 {
     auto it = m_devices.find(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
 
-    if (!m_coordinatorReady || it == m_devices.end())
+    if (it == m_devices.end())
         return;
 
     for (int i = 0; i < it.value()->polls().count(); i++)
@@ -1088,7 +1089,7 @@ void ZigBee::updateNeighbors(void)
 {
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
     {
-        if (it.value()->logicalType() == LogicalType::EndDevice)
+        if (it.value()->logicalType() == LogicalType::EndDevice || m_neighborsQueue.contains(it.value()))
             continue;
 
         m_neighborsQueue.enqueue(it.value());
@@ -1097,6 +1098,9 @@ void ZigBee::updateNeighbors(void)
 
 void ZigBee::handleQueues(void)
 {
+    if (!m_coordinatorReady)
+        return;
+
     while (!m_bindQueue.isEmpty())
     {
         BindRequest request = m_bindQueue.dequeue();

@@ -155,7 +155,7 @@ namespace Reportings
 
     public:
 
-        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 0) {}
 
     };
 
@@ -164,7 +164,7 @@ namespace Reportings
 
     public:
 
-        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600, 1) {}
+        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600, 0) {}
 
     };
 }
