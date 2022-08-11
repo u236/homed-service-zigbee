@@ -639,8 +639,8 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         {
             if (device->model() == "TS0601") // vendor is model for devices based on Tuya TS0601
             {
-                device->model() = device->vendor();
-                device->vendor() = "TUYA";
+                device->setModel(device->vendor());
+                device->setVendor("TUYA");
             }
 
             interviewDevice(device);

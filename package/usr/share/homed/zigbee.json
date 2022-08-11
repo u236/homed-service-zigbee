@@ -2,109 +2,109 @@
   "eWeLink":
   [
     {
-      "model": "TH01",
-      "properties": ["batteryPercentage", "temperature", "humidity"],
-      "reportings": ["batteryPercentage", "temperature", "humidity"]
+      "model":          "TH01",
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"]
     }
   ],
 
   "HaiPaiTech":
   [
     {
-      "model": "vivi ZLight",
-      "endpointId": 11,
-      "pollInterval": 60,
-      "actions": ["status", "level", "colorHS"],
-      "polls": ["status", "level", "colorHS"],
-      "properties": ["status", "level", "colorHS"]
+      "model":          "vivi ZLight",
+      "endpointId":     11,
+      "pollInterval":   60,
+      "actions":        ["status", "level", "colorHS"],
+      "properties":     ["status", "level", "colorHS"],
+      "polls":          ["status", "level", "colorHS"]
     }
   ],
 
   "HOMEd":
   [
     {
-      "model": "Button",
-      "properties": ["batteryPercentage", "ptvoSwitchAction"]
+      "model":          "Button",
+      "properties":     ["batteryPercentage", "ptvoSwitchAction"]
     },
     {
-      "model": "CO2 Sensor",
-      "properties": ["analogCO2", "analogTemperature"]
+      "model":          "CO2 Sensor",
+      "properties":     ["analogCO2", "analogTemperature"]
     },
     {
-      "model": "LC Outlet",
-      "actions": ["status"],
-      "properties": ["status"]
+      "model":          "LC Outlet",
+      "actions":        ["status"],
+      "properties":     ["status"]
     }
   ],
 
   "IKEA of Sweden":
   [
     {
-      "model": "TRADFRI on/off switch",
-      "properties": ["ikeaBatteryPercentage", "identifyAction", "switchAction", "levelAction"],
-      "reportings": ["batteryPercentage"]
+      "model":          "TRADFRI on/off switch",
+      "properties":     ["ikeaBatteryPercentage", "identifyAction", "switchAction", "levelAction"],
+      "reportings":     ["batteryPercentage"]
     },
     {
-      "model": "TRADFRI bulb E14 WS 470lm",
-      "actions": ["status", "level", "colorTemperature"],
-      "properties": ["status", "level", "colorTemperature"],
-      "reportings": ["status", "level", "colorTemperature"]
+      "model":          "TRADFRI bulb E14 WS 470lm",
+      "actions":        ["status", "level", "colorTemperature"],
+      "properties":     ["status", "level", "colorTemperature"],
+      "reportings":     ["status", "level", "colorTemperature"]
     },
     {
-      "model": ["TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm", "TRADFRI bulb E27 W opal 1000lm"],
-      "actions": ["status", "level"],
-      "properties": ["status", "level"],
-      "reportings": ["status", "level"]
+      "model":          ["TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm", "TRADFRI bulb E27 W opal 1000lm"],
+      "actions":        ["status", "level"],
+      "properties":     ["status", "level"],
+      "reportings":     ["status", "level"]
     }
   ],
 
   "LUMI":
   [
     {
-      "model": "lumi.plug.maeu01",
-      "pollInterval": 15,
-      "actions": ["status"],
-      "polls": ["power", "energy"],
-      "properties": ["status", "power", "energy", "lumiDummy"],
-      "reportings": ["status"]
+      "model":          "lumi.plug.maeu01",
+      "pollInterval":   15,
+      "actions":        ["status"],
+      "properties":     ["status", "power", "energy", "lumiDummy"],
+      "reportings":     ["status"],
+      "polls":          ["power", "energy"]
     },
     {
-      "model": ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "properties": ["lumiBatteryVoltage", "lumiCubeMovement", "lumiCubeRotation"]
+      "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
+      "properties":     ["lumiBatteryVoltage", "lumiCubeMovement", "lumiCubeRotation"]
     },
     {
-      "model": ["lumi.sensor_ht", "lumi.sens"],
-      "properties": ["lumiBatteryVoltage", "temperature", "humidity"]
+      "model":          ["lumi.sensor_ht", "lumi.sens"],
+      "properties":     ["lumiBatteryVoltage", "temperature", "humidity"]
     },
     {
-      "model": "lumi.sensor_magnet",
-      "properties": ["lumiBatteryVoltage", "status"]
+      "model":          "lumi.sensor_magnet",
+      "properties":     ["lumiBatteryVoltage", "status"]
     },
     {
-      "model": "lumi.sensor_motion",
-      "properties": ["lumiBatteryVoltage", "occupancy"]
+      "model":          "lumi.sensor_motion",
+      "properties":     ["lumiBatteryVoltage", "occupancy"]
     },
     {
-      "model": "lumi.sensor_switch",
-      "properties": ["lumiBatteryVoltage", "lumiSwitchAction"]
+      "model":          "lumi.sensor_switch",
+      "properties":     ["lumiBatteryVoltage", "lumiSwitchAction"]
     }
   ],
 
   "XIAOMI":
   [
     {
-      "model": "lumi.sen_ill.mgl01",
-      "properties": ["batteryVoltage", "identifyAction", "illuminance", "lumiDummy"],
-      "reportings": ["batteryVoltage", "illuminance"]
+      "model":          "lumi.sen_ill.mgl01",
+      "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiDummy"],
+      "reportings":     ["batteryVoltage", "illuminance"]
     }
   ],
 
-  "_TZE200_ztc6ggyl":
+  "TUYA":
   [
     {
-      "model": "TS0601",
-      "actions": ["tuyaSensitivity", "tuyaRangeMin", "tuyaRangeMax", "tuyaDetectionDelay"],
-      "properties": ["tuyaDummy", "tuyaPresenseSensor"]
+      "model":          ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
+      "actions":        ["tuyaSensitivity", "tuyaRangeMin", "tuyaRangeMax", "tuyaDetectionDelay"],
+      "properties":     ["tuyaDummy", "tuyaPresenseSensor"]
     }
   ]
 }
