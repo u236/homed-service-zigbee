@@ -9,8 +9,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::BatteryPercentage>       ("batteryPercentageProperty");
     qRegisterMetaType <Properties::Status>                  ("statusProperty");
     qRegisterMetaType <Properties::Level>                   ("levelProperty");
-    qRegisterMetaType <Properties::AnalogCO2>               ("analogCO2Property");
-    qRegisterMetaType <Properties::AnalogTemperature>       ("analogTemperatureProperty");
     qRegisterMetaType <Properties::ColorHS>                 ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                 ("colorXYProperty");
     qRegisterMetaType <Properties::ColorTemperature>        ("colorTemperatureProperty");
@@ -25,10 +23,14 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::LevelAction>             ("levelActionProperty");
 
     qRegisterMetaType <PropertiesIKEA::BatteryPercentage>   ("ikeaBatteryPercentageProperty");
+
+    qRegisterMetaType <PropertiesPTVO::AnalogCO2>           ("ptvoAnalogCO2Property");
+    qRegisterMetaType <PropertiesPTVO::AnalogTemperature>   ("ptvoAnalogTemperatureProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Dummy>               ("lumiDummyProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
+    qRegisterMetaType <PropertiesLUMI::AnalogPower>         ("lumiAnalogPowerProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
@@ -106,60 +108,6 @@ void Properties::Level::parseAttribte(quint16 attributeId, quint8 dataType, cons
         return;
 
     m_value = static_cast <quint8> (data.at(0));
-}
-
-void Properties::AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0x0055:
-        {
-            float value = 0;
-
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_buffer = value;
-            break;
-        }
-
-        case 0x001C:
-        {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
-                return;
-
-            m_value = m_buffer;
-            break;
-        }
-    }
-}
-
-void Properties::AnalogTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0x0055:
-        {
-            float value = 0;
-
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_buffer = value;
-            break;
-        }
-
-        case 0x001C:
-        {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "C")
-                return;
-
-            m_value = m_buffer;
-            break;
-        }
-    }
 }
 
 void Properties::ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -416,6 +364,60 @@ void PropertiesIKEA::BatteryPercentage::parseAttribte(quint16 attributeId, quint
     m_value = static_cast <quint8> (data.at(0));
 }
 
+void PropertiesPTVO::AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value = 0;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_buffer = value;
+            break;
+        }
+
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
+                return;
+
+            m_value = m_buffer;
+            break;
+        }
+    }
+}
+
+void PropertiesPTVO::AnalogTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value = 0;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_buffer = value;
+            break;
+        }
+
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "C")
+                return;
+
+            m_value = m_buffer;
+            break;
+        }
+    }
+}
+
 void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0055 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
@@ -459,6 +461,17 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
             break;
         }
     }
+}
+
+void PropertiesLUMI::AnalogPower::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = static_cast <double> (round(value * 100)) / 100;
 }
 
 void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
