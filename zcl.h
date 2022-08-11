@@ -95,6 +95,80 @@ struct configureReportingStruct
     quint16 valueChange;
 };
 
+struct otaFileHeaderStruct
+{
+    quint32 fileIdentifier;
+    quint16 headerVersion;
+    quint16 headerLength;
+    quint16 headerFieldControl;
+    quint16 manufacturerCode;
+    quint16 imageType;
+    quint32 fileVersion;
+    quint16 stackVersion;
+    quint8  headerString[32];
+    quint32 imageSize;
+};
+
+struct otaImageNotifyStruct
+{
+    quint8  type;
+    quint8  jitter;
+};
+
+struct otaNextImageRequestStruct
+{
+    quint8  fieldControl;
+    quint16 manufacturerCode;
+    quint16 imageType;
+    quint32 fileVersion;
+};
+
+struct otaNextImageResponseStruct
+{
+    quint8  status;
+    quint16 manufacturerCode;
+    quint16 imageType;
+    quint32 fileVersion;
+    quint32 imageSize;
+};
+
+struct otaImageBlockRequestStruct
+{
+    quint8  fieldControl;
+    quint16 manufacturerCode;
+    quint16 imageType;
+    quint32 fileVersion;
+    quint32 fileOffset;
+    quint8  dataSizeMax;
+};
+
+struct otaImageBlockResponseStruct
+{
+    quint8  status;
+    quint16 manufacturerCode;
+    quint16 imageType;
+    quint32 fileVersion;
+    quint32 fileOffset;
+    quint8  dataSize;
+};
+
+struct otaUpgradeEndRequestStruct
+{
+    quint8  status;
+    quint16 manufacturerCode;
+    quint16 imageType;
+    quint32 fileVersion;
+};
+
+struct otaUpgradeEndResponseStruct
+{
+    quint16 manufacturerCode;
+    quint16 imageType;
+    quint32 fileVersion;
+    quint32 currentTime;
+    quint32 upgradeTime;
+};
+
 struct touchLinkScanStruct
 {
     quint32 transactionId;

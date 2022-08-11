@@ -128,6 +128,27 @@ void ZigBee::removeDevice(const QByteArray &ieeeAddress)
     storeStatus();
 }
 
+void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, const QString &fileName, quint8 endPointId)
+{
+    auto it = m_devices.find(ieeeAddress);
+    zclHeaderStruct header;
+    otaImageNotifyStruct payload;
+
+    if (it == m_devices.end() || fileName.isEmpty() || !QFile::exists(fileName))
+        return;
+
+    m_otaUpgradeFile = fileName;
+
+    header.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT;
+    header.transactionId = m_transactionId++;
+    header.commandId = 0x00;
+
+    payload.type = 0x00;
+    payload.jitter = 0x64; // TODO: check this
+
+    enqueueDataRequest(it.value(), endPointId ? endPointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+}
+
 void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 {
     zclHeaderStruct header;
@@ -684,16 +705,112 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
     if (clusterId == CLUSTER_OTA_UPGRADE)
     {
-        if (commandId == 0x01)
+        QFile file(m_otaUpgradeFile);
+        otaFileHeaderStruct fileHeader;
+        zclHeaderStruct zclHeader;
+
+        memset(&fileHeader, 0, sizeof(fileHeader));
+
+        if (file.open(QFile::ReadOnly))
+            memcpy(&fileHeader, file.read(sizeof(fileHeader)).constData(), sizeof(fileHeader));
+
+        zclHeader.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
+        zclHeader.transactionId = transactionId;
+
+        switch (commandId)
         {
-            zclHeaderStruct header;
+            case 0x01:
+            {
+                const otaNextImageRequestStruct *request = reinterpret_cast <const otaNextImageRequestStruct*> (payload.constData());
+                otaNextImageResponseStruct response;
 
-            header.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT;
-            header.transactionId = transactionId;
-            header.commandId = 0x02;
+                if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType)
+                {
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    break;
+                }
 
-            enqueueDataRequest(device, endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(0x98));
+                if (request->fileVersion == fileHeader.fileVersion)
+                {
+                    logInfo << "Device" << device->name() << "OTA upgrade not started, version match:" << QString::asprintf("0x%08X", qFromLittleEndian(request->fileVersion)).toUtf8().constData();
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    break;
+                }
+
+                logInfo << "Device" << device->name() << "OTA upgrade started...";
+
+                response.status = 0x00;
+                response.manufacturerCode = fileHeader.manufacturerCode;
+                response.imageType = fileHeader.imageType;
+                response.fileVersion = fileHeader.fileVersion;
+                response.imageSize = fileHeader.imageSize;
+
+                zclHeader.commandId = 0x02;
+                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                break;
+            }
+
+            case 0x03:
+            {
+                const otaImageBlockRequestStruct *request = reinterpret_cast <const otaImageBlockRequestStruct*> (payload.constData());
+                otaImageBlockResponseStruct response;
+                QByteArray data;
+
+                if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType ||request->fileVersion != fileHeader.fileVersion)
+                {
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    break;
+                }
+
+                file.seek(qFromLittleEndian(request->fileOffset));
+                data = file.read(request->dataSizeMax);
+
+                // TODO: use percentage here?
+                logInfo << "Device" << device->name() << "OTA upgrade writing" << data.length() << "bytes with offset" << QString::asprintf("0x%04X", qFromLittleEndian(request->fileOffset));
+
+                response.status = 0x00;
+                response.manufacturerCode = request->manufacturerCode;
+                response.imageType = request->imageType;
+                response.fileVersion = request->fileVersion;
+                response.fileOffset = request->fileOffset;
+                response.dataSize = static_cast <quint8> (data.length());
+
+                zclHeader.commandId = 0x05;
+                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)).append(data));
+                break;
+            }
+            case 0x06:
+            {
+                const otaUpgradeEndRequestStruct *request = reinterpret_cast <const otaUpgradeEndRequestStruct*> (payload.constData());
+                otaUpgradeEndResponseStruct response;
+
+                if (!file.isOpen() || request->status || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType || request->fileVersion != fileHeader.fileVersion)
+                {
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    break;
+                }
+
+                logInfo << "Device" << device->name() << "OTA upgrade finished successfully";
+                m_otaUpgradeFile = QString();
+
+                response.manufacturerCode = request->manufacturerCode;
+                response.imageType = request->imageType;
+                response.fileVersion = request->fileVersion;
+                response.currentTime = 0;
+                response.upgradeTime = 0;
+
+                zclHeader.commandId = 0x07;
+                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                break;
+            }
+
+            default:
+                logWarning << "Unrecognized OTA command" << QString::asprintf("0x%02X", commandId) << "received from device" << device->name() << "with payload:" << payload.toHex(':');
+                break;
         }
+
+        if (file.isOpen())
+            file.close();
 
         return;
     }

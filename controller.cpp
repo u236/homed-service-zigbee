@@ -39,15 +39,16 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     }
     else if (topic.name() == "homed/command/zigbee" && json.contains("action"))
     {
-        QList <QString> list = {"setPermitJoin", "configureDevice", "removeDevice", "touchLinkReset", "touchLinkScan"};
+        QList <QString> list = {"setPermitJoin", "configureDevice", "removeDevice", "otaUpgrade", "touchLinkReset", "touchLinkScan"};
 
         switch (list.indexOf(json.value("action").toString()))
         {
             case 0: m_zigbee->setPermitJoin(json.value("enabled").toBool()); break;
             case 1: m_zigbee->configureDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
             case 2: m_zigbee->removeDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
-            case 3: m_zigbee->touchLinkReset(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), static_cast <quint8> (json.value("channel").toInt())); break;
-            case 4: m_zigbee->touchLinkScan(); break;
+            case 3: m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), json.value("fileName").toString(), static_cast <quint8> (json.value("endPointId").toInt())); break;
+            case 4: m_zigbee->touchLinkReset(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), static_cast <quint8> (json.value("channel").toInt())); break;
+            case 5: m_zigbee->touchLinkScan(); break;
         }
     }
     else if (topic.name().startsWith("homed/td/zigbee/"))
