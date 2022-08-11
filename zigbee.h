@@ -40,6 +40,8 @@ public:
     inline quint8 endpointId(void) {return m_endpointId; }
     inline quint16 clusterId(void) {return m_clusterId; }
 
+    inline bool operator == (BindRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId(); }
+
 private:
 
     Device m_device;
@@ -61,6 +63,8 @@ public:
     inline quint16 clusterId(void) {return m_clusterId; }
     inline QByteArray data(void) {return m_data; }
     inline QString name(void) {return m_name; }
+
+    inline bool operator == (DataRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId() && m_data == other.data(); }
 
 private:
 
@@ -107,9 +111,6 @@ private:
     QQueue <DataRequest> m_dataQueue;
     QQueue <Device> m_neighborsQueue;
 
-    inline void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId) { m_bindQueue.enqueue(BindRequest(new BindRequestObject(device, endpointId, clusterId))); }
-    inline void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString()) { m_dataQueue.enqueue(DataRequest(new DataRequestObject(device, endpointId, clusterId, data, name))); }
-
     void unserializeDevices(const QJsonArray &devicesArray);
     void unserializeEndpoints(const Device &device, const QJsonArray &array);
     void unserializeNeighbors(const Device &device, const QJsonArray &array);
@@ -119,6 +120,9 @@ private:
     QJsonArray serializeNeighbors(const Device &device);
 
     Device findDevice(quint16 networkAddress);
+
+    void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId);
+    void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
 
     void interviewDevice(const Device &device);
     void setupDevice(const Device &device);

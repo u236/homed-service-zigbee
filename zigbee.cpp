@@ -377,6 +377,28 @@ Device ZigBee::findDevice(quint16 networkAddress)
     return Device();
 }
 
+void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId)
+{
+    BindRequest request(new BindRequestObject(device, endpointId, clusterId));
+
+    for (int i = 0; i < m_bindQueue.length(); i++)
+        if (*m_bindQueue.at(i).data() == *request.data())
+            return;
+
+    m_bindQueue.enqueue(request);
+}
+
+void ZigBee::enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name)
+{
+    DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name));
+
+    for (int i = 0; i < m_dataQueue.length(); i++)
+        if (*m_dataQueue.at(i).data() == *request.data())
+            return;
+
+    m_dataQueue.enqueue(request);
+}
+
 void ZigBee::interviewDevice(const Device &device)
 {
     if (device->interviewFinished())
