@@ -277,13 +277,17 @@ namespace PropertiesPTVO
 
 namespace PropertiesLUMI
 {
-    class Dummy : public PropertyObject
+    class Data : public PropertyObject
     {
 
     public:
 
-        Dummy(void) : PropertyObject("dummy", CLUSTER_LUMI) {}
+        Data(void) : PropertyObject("data", CLUSTER_LUMI) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QMap <QString, QVariant> m_map;
 
     };
 

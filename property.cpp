@@ -28,7 +28,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::AnalogTemperature>   ("ptvoAnalogTemperatureProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesLUMI::Dummy>               ("lumiDummyProperty");
+    qRegisterMetaType <PropertiesLUMI::Data>                ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::AnalogPower>         ("lumiAnalogPowerProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
@@ -426,11 +426,64 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
     m_value = data.at(0) ? "on" : "off";
 }
 
-void PropertiesLUMI::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) // just ignore cluster 0xFCC0 attribute reports
+void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    Q_UNUSED(attributeId)
-    Q_UNUSED(dataType)
-    Q_UNUSED(data)
+    if (attributeId != 0x00F7 || dataType != DATA_TYPE_OCTET_STRING)
+        return;
+
+    for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+    {
+        quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
+
+        if (!size)
+            break;
+
+        switch (data.at(i))
+        {
+            case 149:
+            {
+                float value;
+
+                if (itemType != DATA_TYPE_SINGLE_PRECISION)
+                    break;
+
+                memcpy(&value, data.mid(offset, size), size);
+                m_map.insert("energy", static_cast <double> (round(value * 100)) / 100);
+                break;
+            }
+
+            case 150:
+            {
+                float value;
+
+                if (itemType != DATA_TYPE_SINGLE_PRECISION)
+                    break;
+
+                memcpy(&value, data.mid(offset, size), size);
+                m_map.insert("voltage", static_cast <double> (round(value)) / 10);
+                break;
+            }
+
+            case 152:
+            {
+                float value;
+
+                if (itemType != DATA_TYPE_SINGLE_PRECISION)
+                    break;
+
+                memcpy(&value, data.mid(offset, size), size);
+                m_map.insert("power", static_cast <double> (round(value * 100)) / 100);
+                break;
+            }
+        }
+
+        i += size + 1;
+    }
+
+    if (m_map.isEmpty())
+        return;
+
+    m_value = m_map;
 }
 
 void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -537,40 +590,40 @@ void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, 
 void PropertiesTUYA::PresenseSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
-    QVariant data;
+    QVariant value;
 
     if (commandId != 0x02)
         return;
 
-    data = tuyaValue(payload);
+    value = tuyaValue(payload);
 
-    if (!data.isValid())
+    if (!value.isValid())
         return;
 
     switch (header->dataPoint)
     {
         case 0x01:
-            m_map.insert("occupancy", data.toBool());
+            m_map.insert("occupancy", value.toBool());
             break;
 
         case 0x02:
-            m_map.insert("sensitivity", data.toInt());
+            m_map.insert("sensitivity", value.toInt());
             break;
 
         case 0x03:
-            m_map.insert("rangeMin", data.toDouble() / 100);
+            m_map.insert("rangeMin", value.toDouble() / 100);
             break;
 
         case 0x04:
-            m_map.insert("rangeMax", data.toDouble() / 100);
+            m_map.insert("rangeMax", value.toDouble() / 100);
             break;
 
         case 0x65:
-            m_map.insert("detectionDelay", data.toInt());
+            m_map.insert("detectionDelay", value.toInt());
             break;
 
         case 0x68:
-            m_map.insert("illuminance", data.toInt());
+            m_map.insert("illuminance", value.toInt());
             break;
     }
 

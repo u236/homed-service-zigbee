@@ -28,7 +28,7 @@
     },
     {
       "model":          "CO2 Sensor",
-      "properties":     ["analogCO2", "analogTemperature"]
+      "properties":     ["ptvoAnalogCO2", "ptvoAnalogTemperature"]
     },
     {
       "model":          "LC Outlet",
@@ -62,11 +62,9 @@
   [
     {
       "model":          "lumi.plug.maeu01",
-      "pollInterval":   15,
       "actions":        ["status"],
-      "properties":     ["status", "power", "energy", "lumiDummy"],
-      "reportings":     ["status"],
-      "polls":          ["power", "energy"]
+      "properties":     ["status", "lumiData", "lumiAnalogPower"],
+      "reportings":     ["status"]
     },
     {
       "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
@@ -94,7 +92,7 @@
   [
     {
       "model":          "lumi.sen_ill.mgl01",
-      "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiDummy"],
+      "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
       "reportings":     ["batteryVoltage", "illuminance"]
     }
   ],

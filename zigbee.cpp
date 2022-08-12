@@ -872,77 +872,15 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
                 memcpy(&attributeId, payload.constData(), sizeof(attributeId));
                 attributeId = qFromLittleEndian(attributeId);
+                size = zclDataSize(dataType, payload, &offset);
 
-                switch (dataType)
+                if (!size)
                 {
-                    case DATA_TYPE_BOOLEAN:
-                    case DATA_TYPE_8BIT_BITMAP:
-                    case DATA_TYPE_8BIT_UNSIGNED:
-                    case DATA_TYPE_8BIT_SIGNED:
-                        size = 1;
-                        break;
-
-                    case DATA_TYPE_16BIT_BITMAP:
-                    case DATA_TYPE_16BIT_UNSIGNED:
-                    case DATA_TYPE_16BIT_SIGNED:
-                        size = 2;
-                        break;
-
-                    case DATA_TYPE_24BIT_BITMAP:
-                    case DATA_TYPE_24BIT_UNSIGNED:
-                    case DATA_TYPE_24BIT_SIGNED:
-                        size = 3;
-                        break;
-
-                    case DATA_TYPE_32BIT_BITMAP:
-                    case DATA_TYPE_32BIT_UNSIGNED:
-                    case DATA_TYPE_32BIT_SIGNED:
-                    case DATA_TYPE_SINGLE_PRECISION:
-                        size = 4;
-                        break;
-
-                    case DATA_TYPE_40BIT_BITMAP:
-                    case DATA_TYPE_40BIT_UNSIGNED:
-                    case DATA_TYPE_40BIT_SIGNED:
-                        size = 5;
-                        break;
-
-                    case DATA_TYPE_48BIT_BITMAP:
-                    case DATA_TYPE_48BIT_UNSIGNED:
-                    case DATA_TYPE_48BIT_SIGNED:
-                        size = 6;
-                        break;
-
-                    case DATA_TYPE_56BIT_BITMAP:
-                    case DATA_TYPE_56BIT_UNSIGNED:
-                    case DATA_TYPE_56BIT_SIGNED:
-                        size = 7;
-                        break;
-
-                    case DATA_TYPE_64BIT_BITMAP:
-                    case DATA_TYPE_64BIT_UNSIGNED:
-                    case DATA_TYPE_64BIT_SIGNED:
-                    case DATA_TYPE_DOUBLE_PRECISION:
-                        size = 8;
-                        break;
-
-                    case DATA_TYPE_OCTET_STRING:
-                    case DATA_TYPE_CHARACTER_STRING:
-                        size = static_cast <quint8> (payload.at(offset++));
-                        break;
-
-                    case DATA_TYPE_STRUCTURE:
-                        size = static_cast <quint8> (payload.length() - 3); // TODO: check this
-                        break;
-
-                    default:
-                        logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << endpoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.mid(offset).toHex(':');
-                        break;
+                    logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << endpoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.mid(offset).toHex(':');
+                    return;
                 }
 
-                if (size && payload.length() >= offset + size)
-                    parseAttribute(endpoint, clusterId, attributeId, dataType, payload.mid(offset, size));
-
+                parseAttribute(endpoint, clusterId, attributeId, dataType, payload.mid(offset, size));
                 payload.remove(0, offset + size);
             }
 

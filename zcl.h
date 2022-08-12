@@ -68,7 +68,7 @@
 #define CLUSTER_TUYA                                0xEF00
 #define CLUSTER_LUMI                                0xFCC0
 
-#include <QtGlobal>
+#include <QByteArray>
 
 #pragma pack(push, 1)
 
@@ -187,5 +187,7 @@ struct tuyaHeaderStruct
 };
 
 #pragma pack(pop)
+
+quint8 zclDataSize(quint8 dataType, const QByteArray data, quint8 *offset);
 
 #endif

@@ -18,6 +18,7 @@ SOURCES += \
     poll.cpp \
     property.cpp \
     reporting.cpp \
+    zcl.cpp \
     zigbee.cpp \
     zstack.cpp
 
