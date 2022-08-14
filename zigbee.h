@@ -92,9 +92,7 @@ public:
     void deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData);
     void removeDevice(const QByteArray &ieeeAddress);
     void otaUpgrade(const QByteArray &ieeeAddress, const QString &fileName, quint8 endPointId);
-
-    void touchLinkReset(const QByteArray &ieeeAddress, quint8 channel);
-    void touchLinkScan(void);
+    void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
 
 private:
 
@@ -134,6 +132,9 @@ private:
 
     void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload);
     void globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload);
+
+    void touchLinkReset(const QByteArray &ieeeAddress, quint8 channel);
+    void touchLinkScan(void);
 
 private slots:
 
