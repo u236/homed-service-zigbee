@@ -6,7 +6,7 @@
 #include "zcl.h"
 #include "zigbee.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_coordinatorReady(false), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -21,15 +21,6 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     GPIO::setStatus(m_ledPin, false);
 
     connect(m_adapter, &ZStack::coordinatorReady, this, &ZigBee::coordinatorReady);
-    connect(m_adapter, &ZStack::endDeviceJoined, this, &ZigBee::endDeviceJoined);
-    connect(m_adapter, &ZStack::endDeviceLeft, this, &ZigBee::endDeviceLeft);
-    connect(m_adapter, &ZStack::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
-    connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
-    connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
-    connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
-    connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
-    connect(m_adapter, &ZStack::messageReveivedExt, this, &ZigBee::messageReveivedExt);
-
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
     connect(m_queuesTimer, &QTimer::timeout, this, &ZigBee::handleQueues);
     connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
@@ -58,9 +49,6 @@ void ZigBee::init(void)
 
 void ZigBee::setPermitJoin(bool enabled)
 {
-    if (!m_coordinatorReady)
-        return;
-
     m_permitJoin = enabled;
     m_adapter->setPermitJoin(m_permitJoin);
     storeStatus();
@@ -899,6 +887,15 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     logInfo << "Coordinator ready, address" << ieeeAddress.toHex(':');
 
+    connect(m_adapter, &ZStack::endDeviceJoined, this, &ZigBee::endDeviceJoined);
+    connect(m_adapter, &ZStack::endDeviceLeft, this, &ZigBee::endDeviceLeft);
+    connect(m_adapter, &ZStack::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
+    connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
+    connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
+    connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
+    connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
+    connect(m_adapter, &ZStack::messageReveivedExt, this, &ZigBee::messageReveivedExt);
+
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
     {
         if (it.key() == ieeeAddress || it.value()->logicalType() == LogicalType::Coordinator)
@@ -937,8 +934,6 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
         m_adapter->registerEndpoint(it.key(), it.value()->profileId(), it.value()->deviceId(), it.value()->inClusters(), it.value()->outClusters());
 
     m_devices.insert(ieeeAddress, device);
-
-    m_coordinatorReady = true;
     m_adapter->setPermitJoin(m_permitJoin);
 
     m_queuesTimer->start(HANDLE_QUEUES_INTERVAL);
@@ -1183,9 +1178,6 @@ void ZigBee::updateNeighbors(void)
 
 void ZigBee::handleQueues(void)
 {
-    if (!m_coordinatorReady)
-        return;
-
     while (!m_bindQueue.isEmpty())
     {
         BindRequest request = m_bindQueue.dequeue();

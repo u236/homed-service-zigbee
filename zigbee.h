@@ -104,7 +104,7 @@ private:
     QString m_databaseFile, m_libraryFile, m_otaUpgradeFile;
     qint16 m_ledPin;
     quint8 m_transactionId, m_interPanChannel;
-    bool m_coordinatorReady, m_permitJoin;
+    bool m_permitJoin;
 
     QMap <QByteArray, Device> m_devices;
 
