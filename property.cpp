@@ -149,7 +149,7 @@ void Properties::ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, co
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            m_colorX = qFromLittleEndian(value);
+            m_colorX = static_cast <double> (qFromLittleEndian(value)) / 0xFFFF;
             break;
         }
 
@@ -161,7 +161,7 @@ void Properties::ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, co
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            m_colorY = qFromLittleEndian(value);
+            m_colorY = static_cast <double> (qFromLittleEndian(value)) / 0xFFFF;
             break;
         }
     }
