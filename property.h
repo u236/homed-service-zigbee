@@ -236,6 +236,16 @@ namespace PropertiesIKEA
 
 namespace PropertiesPTVO
 {
+    class AnalogLevel : public PropertyObject
+    {
+
+    public:
+
+        AnalogLevel(void) : PropertyObject("level", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class AnalogCO2 : public PropertyObject
     {
 

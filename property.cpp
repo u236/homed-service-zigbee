@@ -24,6 +24,7 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesIKEA::BatteryPercentage>   ("ikeaBatteryPercentageProperty");
 
+    qRegisterMetaType <PropertiesPTVO::AnalogLevel>         ("ptvoAnalogLevelProperty");
     qRegisterMetaType <PropertiesPTVO::AnalogCO2>           ("ptvoAnalogCO2Property");
     qRegisterMetaType <PropertiesPTVO::AnalogTemperature>   ("ptvoAnalogTemperatureProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
@@ -362,6 +363,18 @@ void PropertiesIKEA::BatteryPercentage::parseAttribte(quint16 attributeId, quint
         return;
 
     m_value = static_cast <quint8> (data.at(0));
+}
+
+
+void PropertiesPTVO::AnalogLevel::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = value;
 }
 
 void PropertiesPTVO::AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
