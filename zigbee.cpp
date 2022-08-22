@@ -639,7 +639,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
         memset(&fileHeader, 0, sizeof(fileHeader));
 
-        if (file.open(QFile::ReadOnly))
+        if (file.exists() && file.open(QFile::ReadOnly))
             memcpy(&fileHeader, file.read(sizeof(fileHeader)).constData(), sizeof(fileHeader));
 
         zclHeader.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
@@ -651,6 +651,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             {
                 const otaNextImageRequestStruct *request = reinterpret_cast <const otaNextImageRequestStruct*> (payload.constData());
                 otaNextImageResponseStruct response;
+
+                zclHeader.commandId = 0x02;
 
                 if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType)
                 {
@@ -673,7 +675,6 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 response.fileVersion = fileHeader.fileVersion;
                 response.imageSize = fileHeader.imageSize;
 
-                zclHeader.commandId = 0x02;
                 enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)));
                 break;
             }
@@ -683,6 +684,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 const otaImageBlockRequestStruct *request = reinterpret_cast <const otaImageBlockRequestStruct*> (payload.constData());
                 otaImageBlockResponseStruct response;
                 QByteArray data;
+
+                zclHeader.commandId = 0x05;
 
                 if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType ||request->fileVersion != fileHeader.fileVersion)
                 {
@@ -703,7 +706,6 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 response.fileOffset = request->fileOffset;
                 response.dataSize = static_cast <quint8> (data.length());
 
-                zclHeader.commandId = 0x05;
                 enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)).append(data));
                 break;
             }
@@ -712,14 +714,16 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 const otaUpgradeEndRequestStruct *request = reinterpret_cast <const otaUpgradeEndRequestStruct*> (payload.constData());
                 otaUpgradeEndResponseStruct response;
 
-                if (!file.isOpen() || request->status || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType || request->fileVersion != fileHeader.fileVersion)
+                zclHeader.commandId = 0x07;
+                m_otaUpgradeFile.clear();
+
+                if (request->status)
                 {
-                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    logWarning << "Device" << device->name() << "OTA upgrade failed, status:" << QString::asprintf("%02X", request->status);;
                     break;
                 }
 
                 logInfo << "Device" << device->name() << "OTA upgrade finished successfully";
-                m_otaUpgradeFile = QString();
 
                 response.manufacturerCode = request->manufacturerCode;
                 response.imageType = request->imageType;
@@ -727,7 +731,6 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 response.currentTime = 0;
                 response.upgradeTime = 0;
 
-                zclHeader.commandId = 0x07;
                 enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)));
                 break;
             }
@@ -888,7 +891,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 {
     Device device(new DeviceObject(ieeeAddress));
 
-    logInfo << "Coordinator ready, address" << ieeeAddress.toHex(':');
+    logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
 
     connect(m_adapter, &ZStack::endDeviceJoined, this, &ZigBee::endDeviceJoined);
     connect(m_adapter, &ZStack::endDeviceLeft, this, &ZigBee::endDeviceLeft);
