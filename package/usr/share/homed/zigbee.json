@@ -28,7 +28,7 @@
     },
     {
       "model":          "CO2 Sensor",
-      "properties":     ["ptvoAnalogCO2", "ptvoAnalogTemperature"]
+      "properties":     ["ptvoAnalogCO2", "ptvoAnalogTemperature", "ptvoSwitchAction"]
     },
     {
       "model":          "LC Outlet",
@@ -38,7 +38,7 @@
     {
       "model":          "RGB Led",
       "actions":        ["status", "level", "colorXY"],
-      "properties":     ["status", "colorXY", "ptvoAnalogLevel"]
+      "properties":     ["status", "level", "ptvoSwitchAction"]
     }
   ],
 
