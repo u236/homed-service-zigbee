@@ -43,7 +43,7 @@ QByteArray Actions::Level::request(const QVariant &data)
 
             header.commandId = 0x00;
             payload.level = static_cast <quint8> (data.toInt());
-            payload.time = qToLittleEndian <quint16> (5);
+            payload.time = 0;
 
             return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
@@ -151,7 +151,7 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
             colorTemperatureStruct payload;
 
             payload.temperature = qToLittleEndian(static_cast <quint16> (data.toInt()));
-            payload.time = qToLittleEndian <quint16> (5);
+            payload.time = 0;
 
             return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }

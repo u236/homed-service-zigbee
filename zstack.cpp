@@ -565,7 +565,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     startTimer();
     loop.exec();
 
-    QThread::msleep(ADAPTER_THROTTLE_DELAY);
+    QThread::msleep(ADAPTER_THROTTLE_DELAY); // TODO: check this is needed
     return m_replyCommand == qFromBigEndian(command);
 }
 
@@ -624,13 +624,14 @@ bool ZStack::startCoordinator(void)
     {
         bool check = false;
 
+        // TODO: add config option to check values match
         for (auto it = m_nvValues.begin(); it != m_nvValues.end(); it++)
         {
             nvReadRequestStruct readRequest;
             nvReadReplyStruct *readReply;
             QByteArray data;
 
-            readRequest.id = qToLittleEndian <qint16> (it.key());
+            readRequest.id = qToLittleEndian <quint16> (it.key());
             readRequest.offset = 0;
 
             if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
