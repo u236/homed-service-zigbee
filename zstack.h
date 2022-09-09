@@ -346,14 +346,14 @@ public:
 
 private:
 
-    QMap <quint16, QByteArray> m_nvValues;
+    QMap <quint16, QByteArray> m_nvItems;
 
     QSerialPort *m_port;
     QTimer *m_timer;
 
     qint16 m_bootPin, m_resetPin;
     quint8 m_channel;
-    bool m_reset, m_debug, m_rts;
+    bool m_reset, m_write, m_debug, m_rts;
 
     quint8 m_status, m_transactionId;
     QByteArray m_ieeeAddress;
@@ -371,7 +371,7 @@ private:
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
 
     void resetAdapter(void);
-    bool writeNvValue(quint16 id, const QByteArray &data);
+    bool writeNvItem(quint16 id, const QByteArray &data);
     bool startCoordinator(void);
 
 private slots:

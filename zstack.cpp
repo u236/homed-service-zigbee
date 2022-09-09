@@ -18,18 +18,19 @@ ZStack::ZStack(QSettings *config, QObject *parent) : QObject(parent), m_port(new
 
     m_bootPin = static_cast <qint16> (config->value("gpio/boot", -1).toInt());
     m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
-
     m_channel = static_cast <quint8>  (config->value("zigbee/channel", 11).toInt());
+
+    m_write = config->value("zigbee/write", false).toBool();
     m_debug = config->value("zigbee/debug", false).toBool();
     m_rts = config->value("zigbee/rts", false).toBool();
 
-    m_nvValues.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
-    m_nvValues.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
-    m_nvValues.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId)));
-    m_nvValues.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&chanList), sizeof(chanList)));
-    m_nvValues.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
-    m_nvValues.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
-    m_nvValues.insert(ZCD_NV_USER, QByteArray(1, ADAPTER_CONFIGURATION_MARKER));
+    m_nvItems.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
+    m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
+    m_nvItems.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId)));
+    m_nvItems.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&chanList), sizeof(chanList)));
+    m_nvItems.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
+    m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
+    m_nvItems.insert(ZCD_NV_USER, QByteArray(1, ADAPTER_CONFIGURATION_MARKER));
 
     GPIO::setDirection(m_bootPin, GPIO::Output);
     GPIO::setDirection(m_resetPin, GPIO::Output);
@@ -587,7 +588,7 @@ void ZStack::resetAdapter(void)
     }
 }
 
-bool ZStack::writeNvValue(quint16 id, const QByteArray &data)
+bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 {
     nvWriteRequestStruct writeRequest;
 
@@ -597,7 +598,7 @@ bool ZStack::writeNvValue(quint16 id, const QByteArray &data)
 
     if(!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&writeRequest), sizeof(writeRequest)).append(data)) || m_replyData.at(0))
     {
-        logWarning << "NV value" << QString::asprintf("0x%04X", id) << "wtite request failed";
+        logWarning << "NV item" << QString::asprintf("0x%04X", id) << "wtite request failed";
         return false;
     }
 
@@ -624,8 +625,7 @@ bool ZStack::startCoordinator(void)
     {
         bool check = false;
 
-        // TODO: add config option to check values match
-        for (auto it = m_nvValues.begin(); it != m_nvValues.end(); it++)
+        for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {
             nvReadRequestStruct readRequest;
             nvReadReplyStruct *readReply;
@@ -636,7 +636,7 @@ bool ZStack::startCoordinator(void)
 
             if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
             {
-                logWarning << "NV value" << QString::asprintf("0x%04X", it.key()) << "read request failed";
+                logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "read request failed";
                 return false;
             }
 
@@ -645,20 +645,27 @@ bool ZStack::startCoordinator(void)
 
             if (readReply->status || data != it.value())
             {
+                if (!m_write)
+                {
+                    logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "value" << data.toHex(':') << "does not match configuration value" << it.value().toHex(':');
+                    return false;
+                }
+
                 if (it.key() == ZCD_NV_USER)
                 {
                     logWarning << "Adapter configuration marker mismatch, resetting...";
 
-                    writeNvValue(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
+                    writeNvItem(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
                     m_reset = true;
                     resetAdapter();
 
                     return true;
                 }
 
-                if (!writeNvValue(it.key(), it.value()))
+                if (!writeNvItem(it.key(), it.value()))
                     return false;
 
+                logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "value changed from" << data.toHex(':') << "to" << it.value().toHex(':');
                 check = true;
             }
         }
@@ -675,17 +682,17 @@ bool ZStack::startCoordinator(void)
         nvInitRequestStruct request;
 
         request.id = qToLittleEndian <quint16> (ZCD_NV_USER);
-        request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvValues.value(ZCD_NV_USER).length()));
-        request.dataLength = static_cast <quint8> (m_nvValues.value(ZCD_NV_USER).length());
+        request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvItems.value(ZCD_NV_USER).length()));
+        request.dataLength = static_cast <quint8> (m_nvItems.value(ZCD_NV_USER).length());
 
-        if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(m_nvValues.value(ZCD_NV_USER))) || (m_replyData.at(0) && m_replyData.at(0) != 0x09))
+        if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(m_nvItems.value(ZCD_NV_USER))) || (m_replyData.at(0) && m_replyData.at(0) != 0x09))
         {
             logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "init request failed";
             return false;
         }
 
         if (!m_replyData.at(0))
-            writeNvValue(ZCD_NV_USER, m_nvValues.value(ZCD_NV_USER));
+            writeNvItem(ZCD_NV_USER, m_nvItems.value(ZCD_NV_USER));
     }
 
     if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, ZSTACK_TX_POWER)) || m_replyData.at(0))
