@@ -79,12 +79,6 @@ struct zclHeaderStruct
     quint8  commandId;
 };
 
-struct defaultResponseStruct
-{
-    quint8  commandId;
-    quint8  status;
-};
-
 struct configureReportingStruct
 {
     quint8  direction;
@@ -93,6 +87,12 @@ struct configureReportingStruct
     quint16 minInterval;
     quint16 maxInterval;
     quint16 valueChange;
+};
+
+struct defaultResponseStruct
+{
+    quint8  commandId;
+    quint8  status;
 };
 
 struct otaFileHeaderStruct

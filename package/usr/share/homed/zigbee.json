@@ -36,9 +36,9 @@
       "properties":     ["status"]
     },
     {
-      "model":          "RGB Led",
+      "model":          "RGB Strip",
       "actions":        ["status", "level", "colorXY"],
-      "properties":     ["status", "level", "ptvoSwitchAction"]
+      "properties":     ["status", "level"]
     }
   ],
 

@@ -392,8 +392,8 @@ void ZigBee::interviewDevice(const Device &device)
 void ZigBee::setupDevice(const Device &device)
 {
     QFile file(m_libraryFile);
-    QJsonObject json;
     QJsonArray array;
+    bool check = false;
 
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
@@ -410,109 +410,106 @@ void ZigBee::setupDevice(const Device &device)
         return;
     }
 
+    disconnect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
+    device->timer()->stop();
+
+    device->actions().clear();
+    device->properties().clear();
+    device->reportings().clear();
+    device->polls().clear();
+
     for (auto it = array.begin(); it != array.end(); it++)
     {
-        QJsonObject item = it->toObject();
-        QJsonValue model = item.value("model");
+        QJsonObject json = it->toObject();
+        QJsonValue model = json.value("model");
 
         if ((model.type() == QJsonValue::String && model.toString() == device->model()) || (model.type() == QJsonValue::Array && model.toArray().contains(device->model())))
         {
-            json = QJsonObject(item);
-            break;
+            QJsonArray actionsArray = json.value("actions").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray(), pollsArray = json.value("polls").toArray();
+            quint32 pollInterval = static_cast <quint8> (json.value("pollInterval").toInt());
+            quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
+
+            for (auto it = actionsArray.begin(); it != actionsArray.end(); it++)
+            {
+                int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
+
+                if (type)
+                {
+                    Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
+
+                    if (endpointId)
+                        action->setEndpointId(endpointId);
+
+                    device->actions().append(action);
+                    continue;
+                }
+
+                logWarning << "Device" << device->name() << "action" << it->toString() << "unrecognized";
+            }
+
+            for (auto it = propertiesArray.begin(); it != propertiesArray.end(); it++)
+            {
+                int type = QMetaType::type(QString(it->toString()).append("Property").toUtf8());
+
+                if (type)
+                {
+                    Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
+                    device->properties().append(property);
+                    continue;
+                }
+
+                logWarning << "Device" << device->name() << "property" << it->toString() << "unrecognized";
+            }
+
+            for (auto it = reportingsArray.begin(); it != reportingsArray.end(); it++)
+            {
+                int type = QMetaType::type(QString(it->toString()).append("Reporting").toUtf8());
+
+                if (type)
+                {
+                    Reporting reporting(reinterpret_cast <ReportingObject*> (QMetaType::create(type)));
+
+                    if (endpointId)
+                        reporting->setEndpointId(endpointId);
+
+                    device->reportings().append(reporting);
+                    continue;
+                }
+
+                logWarning << "Device" << device->name() << "reporting" << it->toString() << "unrecognized";
+            }
+
+            for (auto it = pollsArray.begin(); it != pollsArray.end(); it++)
+            {
+                int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
+
+                if (type)
+                {
+                    Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
+
+                    if (endpointId)
+                        poll->setEndpointId(endpointId);
+
+                    device->polls().append(poll);
+                    continue;
+                }
+
+                logWarning << "Device" << device->name() << "poll" << it->toString() << "unrecognized";
+            }
+
+            if (pollInterval && !device->polls().isEmpty())
+            {
+                logInfo << "Device" << device->name() << "poll interval:" << pollInterval << "seconds";
+                connect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
+                device->timer()->start(pollInterval * 1000);
+            }
+
+            check = true;
         }
     }
 
-    if (!json.isEmpty())
-    {
-        QJsonArray actionsArray = json.value("actions").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray(), pollsArray = json.value("polls").toArray();
-        quint32 pollInterval = static_cast <quint8> (json.value("pollInterval").toInt());
-        quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
-
-        disconnect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-        device->timer()->stop();
-
-        device->actions().clear();
-        device->properties().clear();
-        device->reportings().clear();
-        device->polls().clear();
-
-        for (auto it = actionsArray.begin(); it != actionsArray.end(); it++)
-        {
-            int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
-
-            if (type)
-            {
-                Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
-
-                if (endpointId)
-                    action->setEndpointId(endpointId);
-
-                device->actions().append(action);
-                continue;
-            }
-
-            logWarning << "Device" << device->name() << "action" << it->toString() << "unrecognized";
-        }
-
-        for (auto it = propertiesArray.begin(); it != propertiesArray.end(); it++)
-        {
-            int type = QMetaType::type(QString(it->toString()).append("Property").toUtf8());
-
-            if (type)
-            {
-                Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
-                device->properties().append(property);
-                continue;
-            }
-
-            logWarning << "Device" << device->name() << "property" << it->toString() << "unrecognized";
-        }
-
-        for (auto it = reportingsArray.begin(); it != reportingsArray.end(); it++)
-        {
-            int type = QMetaType::type(QString(it->toString()).append("Reporting").toUtf8());
-
-            if (type)
-            {
-                Reporting reporting(reinterpret_cast <ReportingObject*> (QMetaType::create(type)));
-
-                if (endpointId)
-                    reporting->setEndpointId(endpointId);
-
-                device->reportings().append(reporting);
-                continue;
-            }
-
-            logWarning << "Device" << device->name() << "reporting" << it->toString() << "unrecognized";
-        }
-
-        for (auto it = pollsArray.begin(); it != pollsArray.end(); it++)
-        {
-            int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
-
-            if (type)
-            {
-                Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
-
-                if (endpointId)
-                    poll->setEndpointId(endpointId);
-
-                device->polls().append(poll);
-                continue;
-            }
-
-            logWarning << "Device" << device->name() << "poll" << it->toString() << "unrecognized";
-        }
-
-        if (pollInterval && !device->polls().isEmpty())
-        {
-            logInfo << "Device" << device->name() << "poll interval:" << pollInterval << "seconds";
-            connect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-            device->timer()->start(pollInterval * 1000);
-        }
-
+    if (check)
         return;
-    }
 
     logWarning << "Device" << device->name() << "model" << device->model() << "unrecognized";
 }
