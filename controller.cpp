@@ -46,7 +46,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
             case 0: m_zigbee->setPermitJoin(json.value("enabled").toBool()); break;
             case 1: m_zigbee->configureDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
             case 2: m_zigbee->removeDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
-            case 3: m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), json.value("fileName").toString(), static_cast <quint8> (json.value("endPointId").toInt())); break;
+            case 3: m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), static_cast <quint8> (json.value("endPointId").toInt()), json.value("fileName").toString()); break;
             case 4: m_zigbee->touchLinkRequest(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), static_cast <quint8> (json.value("channel").toInt()), true); break;
             case 5: m_zigbee->touchLinkRequest(); break;
         }
@@ -55,13 +55,14 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     {
         QList <QString> list = topic.name().split('/');
         QByteArray ieeeAddress = QByteArray::fromHex(list.value(3).toUtf8());
+        quint8 endpointId = static_cast <quint8> (list.value(4).toInt());
 
         for (auto it = json.begin(); it != json.end(); it++)
         {
             if (!it.value().toVariant().isValid())
                 continue;
 
-            m_zigbee->deviceAction(ieeeAddress, it.key(), it.value().toVariant());
+            m_zigbee->deviceAction(ieeeAddress, endpointId, it.key(), it.value().toVariant());
         }
     }
 }
@@ -75,9 +76,9 @@ void Controller::endpointUpdated(const Endpoint &endpoint)
 {
     QJsonObject json;
 
-    for (int i = 0; i < endpoint->device()->properties().count(); i++)
+    for (int i = 0; i < endpoint->properties().count(); i++)
     {
-        const Property &property = endpoint->device()->properties().at(i);
+        const Property &property = endpoint->properties().at(i);
 
         if (!property->value().isValid())
             continue;

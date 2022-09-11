@@ -77,32 +77,6 @@ void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
     it.value()->setName(name);
 }
 
-void ZigBee::deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData)
-{
-    auto it = m_devices.find(ieeeAddress);
-
-    if (it == m_devices.end())
-        return;
-
-    for (int i = 0; i < it.value()->actions().count(); i++)
-    {
-        const Action &action = it.value()->actions().at(i);
-
-        if (action->name() == actionName)
-        {
-            QByteArray data = action->request(actionData);
-
-            m_ledTimer->start(50);
-            GPIO::setStatus(m_ledPin, true);
-
-            if (data.isEmpty())
-                continue;
-
-            enqueueDataRequest(it.value(), action->endpointId(), action->clusterId(), data, QString("%1 action").arg(action->name()));
-        }
-    }
-}
-
 void ZigBee::removeDevice(const QByteArray &ieeeAddress)
 {
     auto it = m_devices.find(ieeeAddress);
@@ -116,7 +90,7 @@ void ZigBee::removeDevice(const QByteArray &ieeeAddress)
     storeStatus();
 }
 
-void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, const QString &fileName, quint8 endPointId)
+void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endPointId, const QString &fileName)
 {
     auto it = m_devices.find(ieeeAddress);
     zclHeaderStruct header;
@@ -135,6 +109,36 @@ void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, const QString &fileName, 
     payload.jitter = 0x64; // TODO: check this
 
     enqueueDataRequest(it.value(), endPointId ? endPointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+}
+
+void ZigBee::deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData)
+{
+    Device device = m_devices.value(ieeeAddress);
+
+    if (device.isNull())
+        return;
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        if (endpointId && it.value()->id() != endpointId)
+            continue;
+
+        for (int i = 0; i < it.value()->actions().count(); i++)
+        {
+            const Action &action = it.value()->actions().at(i);
+
+            if (action->name() == actionName)
+            {
+                QByteArray data = action->request(actionData);
+
+                if (data.isEmpty())
+                    continue;
+
+                enqueueDataRequest(device, it.value()->id(), action->clusterId(), data, QString("%1 action").arg(action->name()));
+                break;
+            }
+        }
+    }
 }
 
 void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
@@ -410,13 +414,16 @@ void ZigBee::setupDevice(const Device &device)
         return;
     }
 
-    disconnect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-    device->timer()->stop();
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        disconnect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
+        it.value()->timer()->stop();
 
-    device->actions().clear();
-    device->properties().clear();
-    device->reportings().clear();
-    device->polls().clear();
+        it.value()->actions().clear();
+        it.value()->properties().clear();
+        it.value()->reportings().clear();
+        it.value()->polls().clear();
+    }
 
     for (auto it = array.begin(); it != array.end(); it++)
     {
@@ -425,9 +432,12 @@ void ZigBee::setupDevice(const Device &device)
 
         if ((model.type() == QJsonValue::String && model.toString() == device->model()) || (model.type() == QJsonValue::Array && model.toArray().contains(device->model())))
         {
+            Endpoint endpoint = device->endpoints().value(json.contains("endpointId") ? static_cast <quint8> (json.value("endpointId").toInt()) : 1);
             QJsonArray actionsArray = json.value("actions").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray(), pollsArray = json.value("polls").toArray();
-            quint32 pollInterval = static_cast <quint8> (json.value("pollInterval").toInt());
-            quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
+            quint32 pollInterval = static_cast <quint32> (json.value("pollInterval").toInt());
+
+            if (endpoint.isNull())
+                continue;
 
             for (auto it = actionsArray.begin(); it != actionsArray.end(); it++)
             {
@@ -436,11 +446,7 @@ void ZigBee::setupDevice(const Device &device)
                 if (type)
                 {
                     Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
-
-                    if (endpointId)
-                        action->setEndpointId(endpointId);
-
-                    device->actions().append(action);
+                    endpoint->actions().append(action);
                     continue;
                 }
 
@@ -454,7 +460,7 @@ void ZigBee::setupDevice(const Device &device)
                 if (type)
                 {
                     Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
-                    device->properties().append(property);
+                    endpoint->properties().append(property);
                     continue;
                 }
 
@@ -468,11 +474,7 @@ void ZigBee::setupDevice(const Device &device)
                 if (type)
                 {
                     Reporting reporting(reinterpret_cast <ReportingObject*> (QMetaType::create(type)));
-
-                    if (endpointId)
-                        reporting->setEndpointId(endpointId);
-
-                    device->reportings().append(reporting);
+                    endpoint->reportings().append(reporting);
                     continue;
                 }
 
@@ -486,22 +488,17 @@ void ZigBee::setupDevice(const Device &device)
                 if (type)
                 {
                     Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
-
-                    if (endpointId)
-                        poll->setEndpointId(endpointId);
-
-                    device->polls().append(poll);
+                    endpoint->polls().append(poll);
                     continue;
                 }
 
                 logWarning << "Device" << device->name() << "poll" << it->toString() << "unrecognized";
             }
 
-            if (pollInterval && !device->polls().isEmpty())
+            if (pollInterval && !endpoint->polls().isEmpty())
             {
-                logInfo << "Device" << device->name() << "poll interval:" << pollInterval << "seconds";
-                connect(device->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-                device->timer()->start(pollInterval * 1000);
+                connect(endpoint->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
+                endpoint->timer()->start(pollInterval * 1000);
             }
 
             check = true;
@@ -516,29 +513,32 @@ void ZigBee::setupDevice(const Device &device)
 
 void ZigBee::configureReportings(const Device &device)
 {
-    for (int i = 0; i < device->reportings().count(); i++)
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        const Reporting &reporting = device->reportings().at(i);
-        zclHeaderStruct header;
-        configureReportingStruct payload;
-        size_t length = sizeof(payload);
+        for (int i = 0; i < it.value()->reportings().count(); i++)
+        {
+            const Reporting &reporting = it.value()->reportings().at(i);
+            zclHeaderStruct header;
+            configureReportingStruct payload;
+            size_t length = sizeof(payload);
 
-        header.frameControl = 0x00;
-        header.transactionId = m_transactionId++;
-        header.commandId = CMD_CONFIGURE_REPORTING;
+            header.frameControl = 0x00;
+            header.transactionId = m_transactionId++;
+            header.commandId = CMD_CONFIGURE_REPORTING;
 
-        payload.direction = 0x00;
-        payload.attributeId = qToLittleEndian(reporting->attributeId());
-        payload.dataType = reporting->dataType();
-        payload.minInterval = qToLittleEndian(reporting->minInterval());
-        payload.maxInterval = qToLittleEndian(reporting->maxInterval());
-        payload.valueChange = qToLittleEndian(reporting->valueChange());
+            payload.direction = 0x00;
+            payload.attributeId = qToLittleEndian(reporting->attributeId());
+            payload.dataType = reporting->dataType();
+            payload.minInterval = qToLittleEndian(reporting->minInterval());
+            payload.maxInterval = qToLittleEndian(reporting->maxInterval());
+            payload.valueChange = qToLittleEndian(reporting->valueChange());
 
-        if (payload.dataType == DATA_TYPE_BOOLEAN || payload.dataType == DATA_TYPE_8BIT_UNSIGNED || payload.dataType == DATA_TYPE_8BIT_SIGNED)
-            length -= 1;
+            if (payload.dataType == DATA_TYPE_BOOLEAN || payload.dataType == DATA_TYPE_8BIT_UNSIGNED || payload.dataType == DATA_TYPE_8BIT_SIGNED)
+                length -= 1;
 
-        enqueueBindRequest(device, reporting->endpointId(), reporting->clusterId());
-        enqueueDataRequest(device, reporting->endpointId(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), length), QString("%1 reporting configuration").arg(reporting->name()));
+            enqueueBindRequest(device, it.value()->id(), reporting->clusterId());
+            enqueueDataRequest(device, it.value()->id(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), length), QString("%1 reporting configuration").arg(reporting->name()));
+        }
     }
 }
 
@@ -598,9 +598,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     if (!device->interviewFinished())
         return;
 
-    for (int i = 0; i < device->properties().count(); i++)
+    for (int i = 0; i < endpoint->properties().count(); i++)
     {
-        const Property &property = device->properties().at(i);
+        const Property &property = endpoint->properties().at(i);
 
         if (property->clusterId() == clusterId)
         {
@@ -743,9 +743,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         return;
     }
 
-    for (int i = 0; i < device->properties().count(); i++)
+    for (int i = 0; i < endpoint->properties().count(); i++)
     {
-        const Property &property = device->properties().at(i);
+        const Property &property = endpoint->properties().at(i);
 
         if (property->clusterId() == clusterId)
         {
@@ -1156,15 +1156,12 @@ void ZigBee::messageReveivedExt(const QByteArray &ieeeAddress, quint8 endpointId
 
 void ZigBee::pollAttributes(void)
 {
-    auto it = m_devices.find(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
 
-    if (it == m_devices.end())
-        return;
-
-    for (int i = 0; i < it.value()->polls().count(); i++)
+    for (int i = 0; i < endpoint->polls().count(); i++)
     {
-        Poll poll = it.value()->polls().at(i);
-        readAttributes(it.value(), poll->endpointId(), poll->clusterId(), poll->attributes());
+        Poll poll = endpoint->polls().at(i);
+        readAttributes(endpoint->device(), endpoint->id(), poll->clusterId(), poll->attributes());
     }
 }
 

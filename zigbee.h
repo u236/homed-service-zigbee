@@ -89,9 +89,9 @@ public:
 
     void configureDevice(const QByteArray &ieeeAddress);
     void setDeviceName(const QByteArray &ieeeAddress, const QString &name);
-    void deviceAction(const QByteArray &ieeeAddress, const QString &actionName, const QVariant &actionData);
     void removeDevice(const QByteArray &ieeeAddress);
-    void otaUpgrade(const QByteArray &ieeeAddress, const QString &fileName, quint8 endPointId);
+    void otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName);
+    void deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData);
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
 
 private:

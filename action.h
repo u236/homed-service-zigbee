@@ -44,7 +44,7 @@ class ActionObject
 public:
 
     ActionObject(const QString &name, quint16 clusterId) :
-        m_name(name), m_clusterId(clusterId), m_endpointId(1), m_transactionId(0) {}
+        m_name(name), m_clusterId(clusterId), m_transactionId(0) {}
 
     virtual ~ActionObject(void) {}
     virtual QByteArray request(const QVariant &data) = 0;
@@ -52,16 +52,12 @@ public:
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
 
-    inline quint8 endpointId(void) { return m_endpointId; }
-    inline void setEndpointId(quint8 value) { m_endpointId = value; }
-
     static void registerMetaTypes(void);
 
 protected:
 
     QString m_name;
     quint16 m_clusterId;
-    quint8 m_endpointId;
     quint8 m_transactionId;
 
 };
