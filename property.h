@@ -89,7 +89,7 @@ namespace Properties
 
     public:
 
-        ColorHS(void) : PropertyObject("colorHS", CLUSTER_COLOR_CONTROL) {};
+        ColorHS(void) : PropertyObject("colorHS", CLUSTER_COLOR_CONTROL) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -236,12 +236,12 @@ namespace PropertiesIKEA
 
 namespace PropertiesPTVO
 {
-    class AnalogCO2 : public PropertyObject
+    class CO2 : public PropertyObject
     {
 
     public:
 
-        AnalogCO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
+        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -250,17 +250,27 @@ namespace PropertiesPTVO
 
     };
 
-    class AnalogTemperature: public PropertyObject
+    class Temperature: public PropertyObject
     {
 
     public:
 
-        AnalogTemperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
+        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
 
         QVariant m_buffer;
+
+    };
+
+    class Pattern: public PropertyObject
+    {
+
+    public:
+
+        Pattern(void) : PropertyObject("pattern", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -291,12 +301,12 @@ namespace PropertiesLUMI
 
     };
 
-    class AnalogPower : public PropertyObject
+    class Power : public PropertyObject
     {
 
     public:
 
-        AnalogPower(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT) {}
+        Power(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

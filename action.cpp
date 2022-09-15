@@ -10,6 +10,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorXY>                ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>       ("colorTemperatureAction");
 
+    qRegisterMetaType <ActionsPTVO::Pattern>            ("ptvoPatternAction");
+
     qRegisterMetaType <ActionsTUYA::Sensitivity>        ("tuyaSensitivityAction");
     qRegisterMetaType <ActionsTUYA::RangeMin>           ("tuyaRangeMinAction");
     qRegisterMetaType <ActionsTUYA::RangeMax>           ("tuyaRangeMaxAction");
@@ -172,14 +174,30 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
     }
 }
 
+QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
+{
+    zclHeaderStruct header;
+    writeArrtibutesStruct payload;
+    float value = data.toFloat();
+
+    header.frameControl = 0x00;
+    header.transactionId = m_transactionId++;
+    header.commandId = CMD_WRITE_ATTRIBUTES;
+
+    payload.attributeId = qToLittleEndian <quint16> (0x0055);
+    payload.dataType = DATA_TYPE_SINGLE_PRECISION;
+
+    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (&value), sizeof(value));
+}
+
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *payload)
 {
-    zclHeaderStruct zclHeared;
+    zclHeaderStruct zclHeader;
     tuyaHeaderStruct tuyaHeader;
 
-    zclHeared.frameControl = FC_CLUSTER_SPECIFIC;
-    zclHeared.transactionId = transactionId;
-    zclHeared.commandId = 0x00;
+    zclHeader.frameControl = FC_CLUSTER_SPECIFIC;
+    zclHeader.transactionId = transactionId;
+    zclHeader.commandId = 0x00;
 
     tuyaHeader.status = 0x00;
     tuyaHeader.transactionId = transactionId;
@@ -194,7 +212,7 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
         default: return QByteArray();
     }
 
-    return QByteArray(reinterpret_cast <char*> (&zclHeared), sizeof(zclHeared)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (payload), tuyaHeader.length);
+    return QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (payload), tuyaHeader.length);
 }
 
 QByteArray ActionsTUYA::Sensitivity::request(const QVariant &data)

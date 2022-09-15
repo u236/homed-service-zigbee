@@ -24,13 +24,14 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesIKEA::BatteryPercentage>   ("ikeaBatteryPercentageProperty");
 
-    qRegisterMetaType <PropertiesPTVO::AnalogCO2>           ("ptvoAnalogCO2Property");
-    qRegisterMetaType <PropertiesPTVO::AnalogTemperature>   ("ptvoAnalogTemperatureProperty");
+    qRegisterMetaType <PropertiesPTVO::CO2>                 ("ptvoCO2Property");
+    qRegisterMetaType <PropertiesPTVO::Temperature>         ("ptvoTemperatureProperty");
+    qRegisterMetaType <PropertiesPTVO::Pattern>             ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
-    qRegisterMetaType <PropertiesLUMI::AnalogPower>         ("lumiAnalogPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::Power>               ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
@@ -364,7 +365,7 @@ void PropertiesIKEA::BatteryPercentage::parseAttribte(quint16 attributeId, quint
     m_value = static_cast <quint8> (data.at(0));
 }
 
-void PropertiesPTVO::AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -391,7 +392,7 @@ void PropertiesPTVO::AnalogCO2::parseAttribte(quint16 attributeId, quint8 dataTy
     }
 }
 
-void PropertiesPTVO::AnalogTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -416,6 +417,17 @@ void PropertiesPTVO::AnalogTemperature::parseAttribte(quint16 attributeId, quint
             break;
         }
     }
+}
+
+void PropertiesPTVO::Pattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = static_cast <quint8> (value);
 }
 
 void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -516,7 +528,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
     }
 }
 
-void PropertiesLUMI::AnalogPower::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     float value = 0;
 

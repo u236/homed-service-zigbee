@@ -8,6 +8,7 @@
 
 #define CMD_READ_ATTRIBUTES                         0x00
 #define CMD_READ_ATTRIBUTES_RESPONSE                0x01
+#define CMD_WRITE_ATTRIBUTES                        0x02
 #define CMD_CONFIGURE_REPORTING                     0x06
 #define CMD_CONFIGURE_REPORTING_RESPONSE            0x07
 #define CMD_REPORT_ATTRIBUTES                       0x0A
@@ -77,6 +78,12 @@ struct zclHeaderStruct
     quint8  frameControl;
     quint8  transactionId;
     quint8  commandId;
+};
+
+struct writeArrtibutesStruct
+{
+    quint16 attributeId;
+    quint8  dataType;
 };
 
 struct configureReportingStruct

@@ -115,6 +115,19 @@ namespace Actions
     };
 }
 
+namespace ActionsPTVO
+{
+    class Pattern : public ActionObject
+    {
+
+    public:
+
+        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+}
+
 namespace ActionsTUYA
 {
     class Request
