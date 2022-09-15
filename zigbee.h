@@ -123,8 +123,10 @@ private:
     void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId);
     void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
 
-    void interviewDevice(const Device &device);
     void setupDevice(const Device &device);
+    void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
+
+    void interviewDevice(const Device &device);
     void configureReportings(const Device &device);
 
     void readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes);
