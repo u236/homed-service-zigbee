@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION     "3.0.24"
+#define SERVICE_VERSION     "3.0.25"
 
 #include "homed.h"
 #include "zigbee.h"
@@ -24,7 +24,7 @@ private slots:
     void mqttReceived(const QByteArray &message, const QMqttTopicName &topic) override;
 
     void deviceEvent(bool join = true);
-    void endpointUpdated(const Endpoint &endpoint);
+    void endpointUpdated(const Device &device, quint8 endpointId);
     void statusStored(const QJsonObject &json);
 
 };

@@ -70,7 +70,7 @@ class DeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
@@ -98,6 +98,9 @@ public:
     inline bool interviewFinished(void) { return m_interviewFinished; }
     inline void setInterviewFinished(void) { m_interviewFinished = true; }
 
+    inline bool multipleEndpoints(void) { return m_multipleEndpoints; }
+    inline void setMultipleEndpoints(bool value) { m_multipleEndpoints = value; }
+
     inline qint64 joinTime(void) { return m_joinTime; }
     inline void updateJoinTime(void) { m_joinTime = QDateTime::currentMSecsSinceEpoch(); }
 
@@ -119,7 +122,7 @@ private:
     quint16 m_manufacturerCode;
     LogicalType m_logicalType;
     QString m_name, m_vendor, m_model;
-    bool m_nodeDescriptorReceived, m_interviewFinished;
+    bool m_nodeDescriptorReceived, m_interviewFinished, m_multipleEndpoints;
 
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;

@@ -404,6 +404,7 @@ void ZigBee::setupDevice(const Device &device)
                 setupEndpoint(endpoint, json);
             }
 
+            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array ? true : false);
             check = true;
         }
     }
@@ -1133,7 +1134,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     if (endpoint->dataUpdated())
     {
         endpoint->setDataUpdated(false);
-        emit endpointUpdated(endpoint);
+        emit endpointUpdated(device, endpoint->id());
     }
 
     if (!(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))

@@ -160,7 +160,7 @@ private slots:
 signals:
 
     void deviceEvent(bool join = true);
-    void endpointUpdated(const Endpoint &endpoint);
+    void endpointUpdated(const Device &device, quint8 endpointId);
     void statusStored(const QJsonObject &json);
 
 };
