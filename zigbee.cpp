@@ -450,7 +450,7 @@ void ZigBee::setupDevice(const Device &device)
                     continue;
                 }
 
-                logWarning << "Device" << device->name() << "action" << it->toString() << "unrecognized";
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "action" << it->toString() << "unrecognized";
             }
 
             for (auto it = propertiesArray.begin(); it != propertiesArray.end(); it++)
@@ -464,7 +464,7 @@ void ZigBee::setupDevice(const Device &device)
                     continue;
                 }
 
-                logWarning << "Device" << device->name() << "property" << it->toString() << "unrecognized";
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "property" << it->toString() << "unrecognized";
             }
 
             for (auto it = reportingsArray.begin(); it != reportingsArray.end(); it++)
@@ -478,7 +478,7 @@ void ZigBee::setupDevice(const Device &device)
                     continue;
                 }
 
-                logWarning << "Device" << device->name() << "reporting" << it->toString() << "unrecognized";
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "reporting" << it->toString() << "unrecognized";
             }
 
             for (auto it = pollsArray.begin(); it != pollsArray.end(); it++)
@@ -492,7 +492,7 @@ void ZigBee::setupDevice(const Device &device)
                     continue;
                 }
 
-                logWarning << "Device" << device->name() << "poll" << it->toString() << "unrecognized";
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "poll" << it->toString() << "unrecognized";
             }
 
             if (pollInterval && !endpoint->polls().isEmpty())
@@ -617,7 +617,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     }
 
     if (!check)
-        logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId) << "with data type" << QString::asprintf("0x%02X", dataType) << "and data" << data.toHex(':');
+        logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId) << "with data type" << QString::asprintf("0x%02X", dataType) << "and data" << data.toHex(':');
 }
 
 void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
@@ -762,7 +762,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     }
 
     if (!check)
-        logWarning << "No property found for device" << device->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId) << "with payload" << payload.toHex(':');
+        logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId) << "with payload" << payload.toHex(':');
 }
 
 void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -804,7 +804,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
                 if (!size)
                 {
-                    logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << endpoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.mid(offset).toHex(':');
+                    logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.mid(offset).toHex(':');
                     return;
                 }
 
@@ -816,7 +816,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
         }
 
         default:
-            logWarning << "Unrecognized command" << QString::asprintf("0x%02X", commandId) << "received from device" << endpoint->device()->name() << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.toHex(':');
+            logWarning << "Unrecognized command" << QString::asprintf("0x%02X", commandId) << "received from device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.toHex(':');
             break;
     }
 }
@@ -1020,7 +1020,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
         return;
 
     for (int i = 0; i < data.length(); i++)
-        list.append(QString::number(static_cast <quint8> (data.at(i))));
+        list.append(QString::asprintf("0x%02X", data.at(i)));
 
     logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");
 
@@ -1051,7 +1051,7 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId,
     endpoint->inClusters() = inClusters;
     endpoint->outClusters() = outClusters;
 
-    logInfo << "Device" << device->name() << "endpoint" << endpointId << "simple descriptor received";
+    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "simple descriptor received";
 
     device->updateLastSeen();
     interviewDevice(device);
@@ -1185,7 +1185,7 @@ void ZigBee::handleQueues(void)
         if (m_adapter->bindRequest(request->device()->networkAddress(), request->device()->ieeeAddress(), request->endpointId(), request->clusterId()))
             continue;
 
-        logWarning << "Device" << request->device()->name() << "cluster" << QString::asprintf("0x%04X", request->clusterId()) << "binding failed";
+        logWarning << "Device" << request->device()->name() << "endpoint" << QString::asprintf("0x%02X", request->endpointId()) << "cluster" << QString::asprintf("0x%04X", request->clusterId()) << "binding failed";
     }
 
     while (!m_dataQueue.isEmpty())
