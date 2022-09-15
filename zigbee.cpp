@@ -624,7 +624,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
             if (property->value() == value)
                 continue;
 
-            endpoint->setDataUpdated();
+            endpoint->setDataUpdated(true);
         }
     }
 
@@ -769,7 +769,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             if (property->value() == value)
                 continue;
 
-            endpoint->setDataUpdated();
+            endpoint->setDataUpdated(true);
         }
     }
 
@@ -902,8 +902,8 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
 
-    connect(m_adapter, &ZStack::endDeviceJoined, this, &ZigBee::endDeviceJoined);
-    connect(m_adapter, &ZStack::endDeviceLeft, this, &ZigBee::endDeviceLeft);
+    connect(m_adapter, &ZStack::deviceJoined, this, &ZigBee::deviceJoined);
+    connect(m_adapter, &ZStack::deviceLeft, this, &ZigBee::deviceLeft);
     connect(m_adapter, &ZStack::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
     connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
     connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
@@ -957,7 +957,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     storeStatus();
 }
 
-void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities)
+void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities)
 {
     auto it = m_devices.find(ieeeAddress);
 
@@ -982,10 +982,10 @@ void ZigBee::endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddre
     it.value()->updateLastSeen();
 
     interviewDevice(it.value());
-    emit endDeviceEvent();
+    emit deviceEvent();
 }
 
-void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
+void ZigBee::deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
 {
     auto it = m_devices.find(ieeeAddress);
 
@@ -1000,7 +1000,7 @@ void ZigBee::endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress
     m_devices.erase(it);
     storeStatus();
 
-    emit endDeviceEvent(false);
+    emit deviceEvent(false);
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType)

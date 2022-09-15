@@ -36,7 +36,7 @@ public:
     inline void setDeviceId(quint16 value) { m_deviceId = value; }
 
     inline bool dataUpdated(void) { return m_dataUpdated; }
-    inline void setDataUpdated(bool value = true) { m_dataUpdated = value; }
+    inline void setDataUpdated(bool value) { m_dataUpdated = value; }
 
     inline QList <quint16> &inClusters(void) { return m_inClusters; }
     inline QList <quint16> &outClusters(void) { return m_outClusters; }
@@ -96,7 +96,7 @@ public:
     inline void setNodeDescriptorReceived(void) { m_nodeDescriptorReceived = true; }
 
     inline bool interviewFinished(void) { return m_interviewFinished; }
-    inline void setInterviewFinished(bool value = true) { m_interviewFinished = value; }
+    inline void setInterviewFinished(void) { m_interviewFinished = true; }
 
     inline qint64 joinTime(void) { return m_joinTime; }
     inline void updateJoinTime(void) { m_joinTime = QDateTime::currentMSecsSinceEpoch(); }

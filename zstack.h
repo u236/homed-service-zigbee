@@ -295,7 +295,7 @@ struct incomingMessageExtStruct
     quint16 length;
 };
 
-struct endDeviceAnnounceStruct
+struct deviceAnnounceStruct
 {
     quint16 srcAddress;
     quint16 networkAddress;
@@ -303,7 +303,7 @@ struct endDeviceAnnounceStruct
     quint8  capabilities;
 };
 
-struct endDeviceLeaveStruct
+struct deviceLeaveStruct
 {
     quint16 networkAddress;
     quint64 ieeeAddress;
@@ -382,8 +382,8 @@ private slots:
 signals:
 
     void coordinatorReady(const QByteArray &ieeeAddress);
-    void endDeviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
-    void endDeviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
+    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
+    void deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
     void nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType);
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);

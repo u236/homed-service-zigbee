@@ -488,17 +488,17 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_END_DEVICE_ANNCE_IND:
         {
-            const endDeviceAnnounceStruct *message = reinterpret_cast <const endDeviceAnnounceStruct*> (data.constData());
+            const deviceAnnounceStruct *message = reinterpret_cast <const deviceAnnounceStruct*> (data.constData());
             quint64 ieeeAddress = qFromBigEndian(message->ieeeAddress);
-            emit endDeviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress), message->capabilities);
+            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress), message->capabilities);
             break;
         }
 
         case ZDO_LEAVE_IND:
         {
-            const endDeviceLeaveStruct *message = reinterpret_cast <const endDeviceLeaveStruct*> (data.constData());
+            const deviceLeaveStruct *message = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
             quint64 ieeeAddress = qFromBigEndian(message->ieeeAddress);
-            emit endDeviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
+            emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
             break;
         }
 
