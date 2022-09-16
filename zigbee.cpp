@@ -190,7 +190,7 @@ void ZigBee::unserializeDevices(const QJsonArray &array)
     if (m_devices.isEmpty())
         return;
 
-    logInfo << "Loaded" << m_devices.count() << "devices";
+    logInfo << m_devices.count() << "devices loaded";
 }
 
 void ZigBee::unserializeEndpoints(const Device &device, const QJsonArray &array)
@@ -396,7 +396,7 @@ void ZigBee::setupDevice(const Device &device)
 
             for (int i = 0; i < list.count(); i++)
             {
-                Endpoint endpoint = device->endpoints().value(static_cast <quint8> (list.at(i).toInt()));
+                const Endpoint &endpoint = device->endpoints().value(static_cast <quint8> (list.at(i).toInt()));
 
                 if (endpoint.isNull())
                     continue;
@@ -404,7 +404,7 @@ void ZigBee::setupDevice(const Device &device)
                 setupEndpoint(endpoint, json);
             }
 
-            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array ? true : false);
+            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
             check = true;
         }
     }
@@ -1173,7 +1173,7 @@ void ZigBee::pollAttributes(void)
 
     for (int i = 0; i < endpoint->polls().count(); i++)
     {
-        Poll poll = endpoint->polls().at(i);
+        const Poll &poll = endpoint->polls().at(i);
         readAttributes(endpoint->device(), endpoint->id(), poll->clusterId(), poll->attributes());
     }
 }

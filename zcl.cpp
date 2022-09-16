@@ -1,6 +1,6 @@
 #include "zcl.h"
 
-quint8 zclDataSize(quint8 dataType, const QByteArray data, quint8 *offset)
+quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
 {
     switch (dataType)
     {

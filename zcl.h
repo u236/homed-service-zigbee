@@ -195,6 +195,6 @@ struct tuyaHeaderStruct
 
 #pragma pack(pop)
 
-quint8 zclDataSize(quint8 dataType, const QByteArray data, quint8 *offset);
+quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset);
 
 #endif
