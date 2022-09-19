@@ -168,6 +168,16 @@ namespace ActionsLUMI
         QByteArray request(const QVariant &data) override;
 
     };
+
+    class ResetPresence : public Request, public ActionObject
+    {
+
+    public:
+
+        ResetPresence(void) : ActionObject("resetPresence", CLUSTER_LUMI) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
 }
 
 namespace ActionsTUYA

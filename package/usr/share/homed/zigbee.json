@@ -74,7 +74,7 @@
   [
     {
       "model":          "lumi.motion.ac01",
-      "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance"],
+      "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance", "lumiResetPresence"],
       "properties":     ["lumiData"]
     }
   ],
@@ -122,7 +122,7 @@
   [
     {
       "model":          ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
-      "actions":        ["tuyaSensitivity", "tuyaRangeMin", "tuyaRangeMax", "tuyaDetectionDelay"],
+      "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
       "properties":     ["tuyaDummy", "tuyaPresenseSensor"]
     }
   ]

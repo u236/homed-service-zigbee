@@ -14,6 +14,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::Sensitivity>        ("lumiSensitivityAction");
     qRegisterMetaType <ActionsLUMI::Mode>               ("lumiModeAction");
     qRegisterMetaType <ActionsLUMI::Distance>           ("lumiDistanceAction");
+    qRegisterMetaType <ActionsLUMI::ResetPresence>      ("lumiResetPresenceAction");
 
     qRegisterMetaType <ActionsTUYA::Sensitivity>        ("tuyaSensitivityAction");
     qRegisterMetaType <ActionsTUYA::DistanceMin>        ("tuyaDistanceMinAction");
@@ -247,6 +248,13 @@ QByteArray ActionsLUMI::Distance::request(const QVariant &data)
         return QByteArray();
 
     return makeRequest(m_transactionId++, 0x0146, DATA_TYPE_8BIT_UNSIGNED, &value);
+}
+
+QByteArray ActionsLUMI::ResetPresence::request(const QVariant &data)
+{
+    Q_UNUSED(data)
+    quint8 value = 1; // TODO: check this
+    return makeRequest(m_transactionId++, 0x0157, DATA_TYPE_8BIT_UNSIGNED, &value);
 }
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)

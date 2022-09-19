@@ -517,6 +517,7 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
                 return;
 
             m_map.insert("event", list.value(data.at(0), "unknown"));
+            m_map.insert("occupancy", data.at(0) != 0x01);
             break;
         }
 
