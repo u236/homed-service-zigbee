@@ -1,6 +1,5 @@
 #include <QtEndian>
 #include "action.h"
-#include "logger.h"
 
 void ActionObject::registerMetaTypes(void)
 {
@@ -11,6 +10,10 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorTemperature>       ("colorTemperatureAction");
 
     qRegisterMetaType <ActionsPTVO::Pattern>            ("ptvoPatternAction");
+
+    qRegisterMetaType <ActionsLUMI::Sensitivity>        ("lumiSensitivityAction");
+    qRegisterMetaType <ActionsLUMI::Mode>               ("lumiModeAction");
+    qRegisterMetaType <ActionsLUMI::Distance>           ("lumiDistanceAction");
 
     qRegisterMetaType <ActionsTUYA::Sensitivity>        ("tuyaSensitivityAction");
     qRegisterMetaType <ActionsTUYA::RangeMin>           ("tuyaRangeMinAction");
@@ -190,7 +193,63 @@ QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
     return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (&value), sizeof(value));
 }
 
-QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *payload)
+QByteArray ActionsLUMI::Request::makeRequest(quint8 transactionId, quint16 attributeId, quint8 dataType, void *data)
+{
+    zclHeaderStruct header;
+    writeArrtibutesStruct payload;
+    size_t length;
+
+    header.frameControl = 0x00;
+    header.transactionId = transactionId;
+    header.commandId = CMD_WRITE_ATTRIBUTES;
+
+    payload.attributeId = qToLittleEndian <quint16> (attributeId);
+    payload.dataType = dataType;
+
+    switch (payload.dataType)
+    {
+        case DATA_TYPE_8BIT_UNSIGNED: length = 1; break;
+        default: return QByteArray();
+    }
+
+    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (data), length);
+}
+
+QByteArray ActionsLUMI::Sensitivity::request(const QVariant &data)
+{
+    QList <QString> list = {"low", "medium", "high"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    value += 1;
+    return makeRequest(m_transactionId++, 0x010C, DATA_TYPE_8BIT_UNSIGNED, &value);
+}
+
+QByteArray ActionsLUMI::Mode::request(const QVariant &data)
+{
+    QList <QString> list = {"undirected", "directed"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return makeRequest(m_transactionId++, 0x0144, DATA_TYPE_8BIT_UNSIGNED, &value);
+}
+
+QByteArray ActionsLUMI::Distance::request(const QVariant &data)
+{
+    QList <QString> list = {"far", "middle", "near"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return makeRequest(m_transactionId++, 0x0146, DATA_TYPE_8BIT_UNSIGNED, &value);
+}
+
+QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)
 {
     zclHeaderStruct zclHeader;
     tuyaHeaderStruct tuyaHeader;
@@ -212,7 +271,7 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
         default: return QByteArray();
     }
 
-    return QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (payload), tuyaHeader.length);
+    return QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (data), tuyaHeader.length);
 }
 
 QByteArray ActionsTUYA::Sensitivity::request(const QVariant &data)

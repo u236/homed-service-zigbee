@@ -128,6 +128,48 @@ namespace ActionsPTVO
     };
 }
 
+namespace ActionsLUMI
+{
+    class Request
+    {
+
+    protected:
+
+        QByteArray makeRequest(quint8 transactionId, quint16 attributeId, quint8 dataType, void *data);
+
+    };
+
+    class Sensitivity : public Request, public ActionObject
+    {
+
+    public:
+
+        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_LUMI) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class Mode : public Request, public ActionObject
+    {
+
+    public:
+
+        Mode(void) : ActionObject("mode", CLUSTER_LUMI) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class Distance : public Request, public ActionObject
+    {
+
+    public:
+
+        Distance(void) : ActionObject("distance", CLUSTER_LUMI) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+}
+
 namespace ActionsTUYA
 {
     class Request

@@ -1,7 +1,6 @@
 #include <math.h>
 #include <QtEndian>
 #include "property.h"
-#include "logger.h"
 
 void PropertyObject::registerMetaTypes(void)
 {
@@ -440,56 +439,108 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
 
 void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (attributeId != 0x00F7 || dataType != DATA_TYPE_OCTET_STRING)
-        return;
-
-    for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+    switch (attributeId)
     {
-        quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
-
-        if (!size)
-            break;
-
-        switch (data.at(i))
+        case 0x00F7:
         {
-            case 149:
-            {
-                float value;
+            if (dataType != DATA_TYPE_OCTET_STRING)
+                return;
 
-                if (itemType != DATA_TYPE_SINGLE_PRECISION)
+            for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+            {
+                quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
+
+                if (!size)
                     break;
 
-                memcpy(&value, data.mid(offset, size), size);
-                m_map.insert("energy", static_cast <double> (round(value * 100)) / 100);
-                break;
+                switch (data.at(i))
+                {
+                    case 149:
+                    {
+                        float value;
+
+                        if (itemType != DATA_TYPE_SINGLE_PRECISION)
+                            break;
+
+                        memcpy(&value, data.mid(offset, size), size);
+                        m_map.insert("energy", static_cast <double> (round(value * 100)) / 100);
+                        break;
+                    }
+
+                    case 150:
+                    {
+                        float value;
+
+                        if (itemType != DATA_TYPE_SINGLE_PRECISION)
+                            break;
+
+                        memcpy(&value, data.mid(offset, size), size);
+                        m_map.insert("voltage", static_cast <double> (round(value)) / 10);
+                        break;
+                    }
+
+                    case 152:
+                    {
+                        float value;
+
+                        if (itemType != DATA_TYPE_SINGLE_PRECISION)
+                            break;
+
+                        memcpy(&value, data.mid(offset, size), size);
+                        m_map.insert("power", static_cast <double> (round(value * 100)) / 100);
+                        break;
+                    }
+                }
+
+                i += size + 1;
             }
 
-            case 150:
-            {
-                float value;
-
-                if (itemType != DATA_TYPE_SINGLE_PRECISION)
-                    break;
-
-                memcpy(&value, data.mid(offset, size), size);
-                m_map.insert("voltage", static_cast <double> (round(value)) / 10);
-                break;
-            }
-
-            case 152:
-            {
-                float value;
-
-                if (itemType != DATA_TYPE_SINGLE_PRECISION)
-                    break;
-
-                memcpy(&value, data.mid(offset, size), size);
-                m_map.insert("power", static_cast <double> (round(value * 100)) / 100);
-                break;
-            }
+            break;
         }
 
-        i += size + 1;
+        case 0x010C:
+        {
+            QList <QString> list = {"low", "medium", "high"};
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                return;
+
+            m_map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
+            break;
+        }
+
+        case 0x0143:
+        {
+            QList <QString> list = {"enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"};
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                return;
+
+            m_map.insert("event", list.value(data.at(0), "unknown"));
+            break;
+        }
+
+        case 0x0144:
+        {
+            QList <QString> list = {"undirected", "directed"};
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                return;
+
+            m_map.insert("mode", list.value(data.at(0), "unknown"));
+            break;
+        }
+
+        case 0x0146:
+        {
+            QList <QString> list = {"far", "middle", "near"};
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                return;
+
+            m_map.insert("distance", list.value(data.at(0), "unknown"));
+            break;
+        }
     }
 
     if (m_map.isEmpty())
