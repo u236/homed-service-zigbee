@@ -191,22 +191,22 @@ namespace ActionsTUYA
 
     };
 
-    class RangeMin :  public Request, public ActionObject
+    class DistanceMin :  public Request, public ActionObject
     {
 
     public:
 
-        RangeMin(void) : ActionObject("rangeMin", CLUSTER_TUYA) {}
+        DistanceMin(void) : ActionObject("distanceMin", CLUSTER_TUYA) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class RangeMax :  public Request, public ActionObject
+    class DistanceMax :  public Request, public ActionObject
     {
 
     public:
 
-        RangeMax(void) : ActionObject("rangeMax", CLUSTER_TUYA) {}
+        DistanceMax(void) : ActionObject("distanceMax", CLUSTER_TUYA) {}
         QByteArray request(const QVariant &data) override;
 
     };

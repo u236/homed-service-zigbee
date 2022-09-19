@@ -16,8 +16,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::Distance>           ("lumiDistanceAction");
 
     qRegisterMetaType <ActionsTUYA::Sensitivity>        ("tuyaSensitivityAction");
-    qRegisterMetaType <ActionsTUYA::RangeMin>           ("tuyaRangeMinAction");
-    qRegisterMetaType <ActionsTUYA::RangeMax>           ("tuyaRangeMaxAction");
+    qRegisterMetaType <ActionsTUYA::DistanceMin>        ("tuyaDistanceMinAction");
+    qRegisterMetaType <ActionsTUYA::DistanceMax>        ("tuyaDistanceMaxAction");
     qRegisterMetaType <ActionsTUYA::DetectionDelay>     ("tuyaDetectionDelayAction");
 }
 
@@ -285,7 +285,7 @@ QByteArray ActionsTUYA::Sensitivity::request(const QVariant &data)
     return makeRequest(m_transactionId++, 0x02, 0x02, &value);
 }
 
-QByteArray ActionsTUYA::RangeMin::request(const QVariant &data)
+QByteArray ActionsTUYA::DistanceMin::request(const QVariant &data)
 {
     quint32 value = static_cast <quint32> (data.toDouble() * 100);
 
@@ -296,7 +296,7 @@ QByteArray ActionsTUYA::RangeMin::request(const QVariant &data)
     return makeRequest(m_transactionId++, 0x03, 0x02, &value);
 }
 
-QByteArray ActionsTUYA::RangeMax::request(const QVariant &data)
+QByteArray ActionsTUYA::DistanceMax::request(const QVariant &data)
 {
     quint32 value = static_cast <quint32> (data.toDouble() * 100);
 

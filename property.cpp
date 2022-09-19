@@ -674,11 +674,11 @@ void PropertiesTUYA::PresenseSensor::parseCommand(quint8 commandId, const QByteA
             break;
 
         case 0x03:
-            m_map.insert("rangeMin", value.toDouble() / 100);
+            m_map.insert("distanceMin", value.toDouble() / 100);
             break;
 
         case 0x04:
-            m_map.insert("rangeMax", value.toDouble() / 100);
+            m_map.insert("distanceMax", value.toDouble() / 100);
             break;
 
         case 0x65:
