@@ -472,6 +472,15 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
             break;
         }
 
+        case 0x0064:
+        {
+            if (dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+                break;
+
+            m_map.insert("status", data.at(0) ? "on" : "off");
+            break;
+        }
+
         case 0x0065:
         case 0x0142:
         {
