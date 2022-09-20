@@ -464,6 +464,27 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
 
                 switch (data.at(i))
                 {
+                    case 3:
+                    {
+                        if (itemType != DATA_TYPE_8BIT_SIGNED)
+                            break;
+
+                        m_map.insert("temperature", static_cast <qint8> (data.at(offset)));
+                        break;
+                    }
+
+                    case 5:
+                    {
+                        quint16 value;
+
+                        if (itemType != DATA_TYPE_16BIT_UNSIGNED)
+                            break;
+
+                        memcpy(&value, data.mid(offset, size), size);
+                        m_map.insert("outageCount", qFromLittleEndian(value) - 1);
+                        break;
+                    }
+
                     case 149:
                     {
                         float value;
@@ -526,7 +547,7 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
                 return;
 
             m_map.insert("event", list.value(data.at(0), "unknown"));
-            m_map.insert("occupancy", data.at(0) != 0x01);
+            m_map.insert("occupancy", data.at(0) != 0x01 ? true : false);
             break;
         }
 
