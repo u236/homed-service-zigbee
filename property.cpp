@@ -453,10 +453,14 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
     {
         case 0x0003:
         {
-            if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
-                break;
+            if (m_model != "lumi.sen_ill.mgl01")
+            {
+                if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
+                    break;
 
-            m_map.insert("temperature", static_cast <qint8> (data.at(0)));
+                m_map.insert("temperature", static_cast <qint8> (data.at(0)));
+            }
+
             break;
         }
 
@@ -474,10 +478,24 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
 
         case 0x0064:
         {
-            if (dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
-                break;
+            if (m_model == "lumi.sen_ill.mgl01")
+            {
+                quint32 value;
 
-            m_map.insert("status", data.at(0) ? "on" : "off");
+                if (dataType != DATA_TYPE_32BIT_UNSIGNED || data.length() != 4)
+                    break;
+
+                memcpy(&value, data.constData(), data.length());
+                m_map.insert("illuminance", qFromLittleEndian(value));
+            }
+            else
+            {
+                if (dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+                    break;
+
+                m_map.insert("status", data.at(0) ? "on" : "off");
+            }
+
             break;
         }
 
