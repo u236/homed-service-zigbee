@@ -476,10 +476,19 @@ void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
         logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "poll" << it->toString() << "unrecognized";
     }
 
-    if (pollInterval && !endpoint->polls().isEmpty())
+    if (!endpoint->polls().isEmpty())
     {
-        connect(endpoint->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-        endpoint->timer()->start(pollInterval * 1000);
+        if (pollInterval)
+        {
+            connect(endpoint->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
+            endpoint->timer()->start(pollInterval * 1000);
+        }
+
+        for (int i = 0; i < endpoint->polls().count(); i++)
+        {
+            const Poll &poll = endpoint->polls().at(i);
+            readAttributes(endpoint->device(), endpoint->id(), poll->clusterId(), poll->attributes());
+        }
     }
 }
 

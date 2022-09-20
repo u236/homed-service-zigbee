@@ -9,4 +9,6 @@ void PollObject::registerMetaTypes(void)
     qRegisterMetaType <Polls::ColorTemperature>     ("colorTemperaturePoll");
     qRegisterMetaType <Polls::Energy>               ("energyPoll");
     qRegisterMetaType <Polls::Power>                ("powerPoll");
+
+    qRegisterMetaType <PollsLUMI::PresenceSensor>   ("lumiPresenceSensorPoll");
 }

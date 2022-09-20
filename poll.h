@@ -96,4 +96,16 @@ namespace Polls
     };
 }
 
+namespace PollsLUMI
+{
+    class PresenceSensor : public PollObject
+    {
+
+    public:
+
+        PresenceSensor(void) : PollObject("presenceSensor", CLUSTER_LUMI, {0x010C, 0x0144, 0x146}) {}
+
+    };
+}
+
 #endif

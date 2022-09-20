@@ -75,7 +75,8 @@
     {
       "model":          "lumi.motion.ac01",
       "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance", "lumiResetPresence"],
-      "properties":     ["lumiData"]
+      "properties":     ["lumiData"],
+      "polls":          ["lumiPresenceSensor"]
     }
   ],
 
