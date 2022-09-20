@@ -37,7 +37,6 @@ protected:
     QVariant m_value;
     bool m_invalidable;
 
-    QVariant tuyaValue(const QByteArray &payload);
     quint8 percentage(double min, double max, double value);
 
 };
@@ -308,6 +307,7 @@ namespace PropertiesLUMI
     private:
 
         QMap <QString, QVariant> m_map;
+        void parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data);
 
     };
 

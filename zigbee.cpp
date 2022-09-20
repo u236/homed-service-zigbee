@@ -794,6 +794,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
     switch (commandId)
     {
         case CMD_READ_ATTRIBUTES: // TODO: tyua sensor reading time cluster
+        case CMD_WRITE_ATTRIBUTES_RESPONSE:
         case CMD_CONFIGURE_REPORTING_RESPONSE:
         case CMD_DEFAULT_RESPONSE:
             break;

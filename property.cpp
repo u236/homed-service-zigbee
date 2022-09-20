@@ -40,34 +40,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
 }
 
-QVariant PropertyObject::tuyaValue(const QByteArray &payload)
-{
-    const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
-
-    switch (header->dataType)
-    {
-        case 0x02:
-
-            if (header->length == 4)
-            {
-                quint32 value;
-                memcpy(&value, payload.constData() + sizeof(tuyaHeaderStruct), header->length);
-                return qFromBigEndian(value);
-            }
-
-            break;
-
-        case 0x04:
-
-            if (header->length == 1)
-                return payload.at(sizeof(tuyaHeaderStruct)) ? true : false;
-
-            break;
-    }
-
-    return QVariant();
-}
-
 quint8 PropertyObject::percentage(double min, double max, double value)
 {
     if (value < min)
@@ -448,136 +420,171 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
 
 void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    switch (attributeId)
+    if (attributeId ==0x00F7 )
     {
-        case 0x00F7:
+
+        if (dataType != DATA_TYPE_OCTET_STRING)
+            return;
+
+        for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
         {
-            if (dataType != DATA_TYPE_OCTET_STRING)
-                return;
+            quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
 
-            for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
-            {
-                quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
+            if (!size)
+                break;
 
-                if (!size)
-                    break;
-
-                switch (data.at(i))
-                {
-                    case 3:
-                    {
-                        if (itemType != DATA_TYPE_8BIT_SIGNED)
-                            break;
-
-                        m_map.insert("temperature", static_cast <qint8> (data.at(offset)));
-                        break;
-                    }
-
-                    case 5:
-                    {
-                        quint16 value;
-
-                        if (itemType != DATA_TYPE_16BIT_UNSIGNED)
-                            break;
-
-                        memcpy(&value, data.mid(offset, size), size);
-                        m_map.insert("outageCount", qFromLittleEndian(value) - 1);
-                        break;
-                    }
-
-                    case 149:
-                    {
-                        float value;
-
-                        if (itemType != DATA_TYPE_SINGLE_PRECISION)
-                            break;
-
-                        memcpy(&value, data.mid(offset, size), size);
-                        m_map.insert("energy", static_cast <double> (round(value * 100)) / 100);
-                        break;
-                    }
-
-                    case 150:
-                    {
-                        float value;
-
-                        if (itemType != DATA_TYPE_SINGLE_PRECISION)
-                            break;
-
-                        memcpy(&value, data.mid(offset, size), size);
-                        m_map.insert("voltage", static_cast <double> (round(value)) / 10);
-                        break;
-                    }
-
-                    case 152:
-                    {
-                        float value;
-
-                        if (itemType != DATA_TYPE_SINGLE_PRECISION)
-                            break;
-
-                        memcpy(&value, data.mid(offset, size), size);
-                        m_map.insert("power", static_cast <double> (round(value * 100)) / 100);
-                        break;
-                    }
-                }
-
-                i += size + 1;
-            }
-
-            break;
-        }
-
-        case 0x010C:
-        {
-            QList <QString> list = {"low", "medium", "high"};
-
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                return;
-
-            m_map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
-            break;
-        }
-
-        case 0x0143:
-        {
-            QList <QString> list = {"enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"};
-
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                return;
-
-            m_map.insert("event", list.value(data.at(0), "unknown"));
-            m_map.insert("occupancy", data.at(0) != 0x01 ? true : false);
-            break;
-        }
-
-        case 0x0144:
-        {
-            QList <QString> list = {"undirected", "directed"};
-
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                return;
-
-            m_map.insert("mode", list.value(data.at(0), "unknown"));
-            break;
-        }
-
-        case 0x0146:
-        {
-            QList <QString> list = {"far", "middle", "near"};
-
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                return;
-
-            m_map.insert("distance", list.value(data.at(0), "unknown"));
-            break;
+            parseData(data.at(i), itemType, data.mid(offset, size));
+            i += size + 1;
         }
     }
+
+    else
+        parseData(attributeId, dataType, data);
 
     if (m_map.isEmpty())
         return;
 
     m_value = m_map;
+}
+
+void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data)
+{
+    // TODO: add device model check for some cases
+
+    switch (dataPoint)
+    {
+        case 0x0003:
+        {
+            if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
+                break;
+
+            m_map.insert("temperature", static_cast <qint8> (data.at(0)));
+            break;
+        }
+
+        case 0x0005:
+        {
+            quint16 value;
+
+            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            m_map.insert("outageCount", qFromLittleEndian(value) - 1);
+            break;
+        }
+
+        case 0x0065:
+        case 0x0142:
+        {
+            if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
+                break;
+
+            m_map.insert("occupancy", data.at(0) ? true : false);
+            break;
+        }
+
+        case 0x0066:
+        case 0x010C:
+        case 0x0143:
+        {
+            // TODO: add device version check
+
+            if (dataPoint == 0x0066 || dataPoint == 0x010C)
+            {
+                QList <QString> list = {"low", "medium", "high"};
+
+                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                    break;
+
+                m_map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
+            }
+            else
+            {
+                QList <QString> list = {"enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"};
+
+                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                    break;
+
+                m_map.insert("event", list.value(data.at(0), "unknown"));
+                m_map.insert("occupancy", data.at(0) != 0x01 ? true : false);
+            }
+
+            break;
+        }
+
+        case 0x0067:
+        case 0x0144:
+        {
+            QList <QString> list = {"undirected", "directed"};
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                break;
+
+            m_map.insert("mode", list.value(data.at(0), "unknown"));
+            break;
+        }
+
+        case 0x0069:
+        case 0x0146:
+        {
+            QList <QString> list = {"far", "middle", "near"};
+
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                break;
+
+            m_map.insert("distance", list.value(data.at(0), "unknown"));
+            break;
+        }
+
+        case 0x0095:
+        {
+            float value;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            m_map.insert("energy", static_cast <double> (round(value * 100)) / 100);
+            break;
+        }
+
+        case 0x0096:
+        {
+            float value;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                break;
+
+            memcpy(&value, data.constData(),  data.length());
+            m_map.insert("voltage", static_cast <double> (round(value)) / 10);
+            break;
+        }
+
+        case 0x0097:
+        {
+            float value;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                break;
+
+            memcpy(&value, data.constData(),  data.length());
+            m_map.insert("current", static_cast <double> (round(value)) / 1000);
+            break;
+        }
+
+        case 0x0098:
+        {
+            float value;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            m_map.insert("power", static_cast <double> (round(value * 100)) / 100);
+            break;
+        }
+    }
 }
 
 void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -684,41 +691,43 @@ void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, 
 void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
-    QVariant value;
+    QVariant data;
 
     if (commandId != 0x02)
         return;
 
-    value = tuyaValue(payload);
+    switch (header->dataType)
+    {
+        case 0x02:
 
-    if (!value.isValid())
+            if (header->length == 4)
+            {
+                quint32 value;
+                memcpy(&value, payload.constData() + sizeof(tuyaHeaderStruct), header->length);
+                data = qFromBigEndian(value);
+            }
+
+            break;
+
+        case 0x04:
+
+            if (header->length == 1)
+                data = payload.at(sizeof(tuyaHeaderStruct)) ? true : false;
+
+            break;
+    }
+
+    if (!data.isValid())
         return;
 
     switch (header->dataPoint)
     {
-        case 0x01:
-            m_map.insert("occupancy", value.toBool());
-            break;
-
-        case 0x02:
-            m_map.insert("sensitivity", value.toInt());
-            break;
-
-        case 0x03:
-            m_map.insert("distanceMin", value.toDouble() / 100);
-            break;
-
-        case 0x04:
-            m_map.insert("distanceMax", value.toDouble() / 100);
-            break;
-
-        case 0x65:
-            m_map.insert("detectionDelay", value.toInt());
-            break;
-
-        case 0x68:
-            m_map.insert("illuminance", value.toInt());
-            break;
+        case 0x01: m_map.insert("occupancy", data.toBool()); break;
+        case 0x02: m_map.insert("sensitivity", data.toInt()); break;
+        case 0x03: m_map.insert("distanceMin", data.toDouble() / 100); break;
+        case 0x04: m_map.insert("distanceMax", data.toDouble() / 100); break;
+        case 0x65: m_map.insert("detectionDelay", data.toInt()); break;
+        case 0x68: m_map.insert("illuminance", data.toInt()); break;
     }
 
     if (m_map.isEmpty())
