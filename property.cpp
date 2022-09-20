@@ -25,6 +25,7 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesPTVO::CO2>                 ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>         ("ptvoTemperatureProperty");
+    qRegisterMetaType <PropertiesPTVO::ChangePattern>       ("ptvoChangePatternProperty");
     qRegisterMetaType <PropertiesPTVO::Pattern>             ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
@@ -36,7 +37,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
 
     qRegisterMetaType <PropertiesTUYA::Dummy>               ("tuyaDummyProperty");
-    qRegisterMetaType <PropertiesTUYA::PresenseSensor>      ("tuyaPresenseSensorProperty");
+    qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
 }
 
 QVariant PropertyObject::tuyaValue(const QByteArray &payload)
@@ -67,7 +68,7 @@ QVariant PropertyObject::tuyaValue(const QByteArray &payload)
     return QVariant();
 }
 
-quint8 PropertyObject::toPercentage(double min, double max, double value)
+quint8 PropertyObject::percentage(double min, double max, double value)
 {
     if (value < min)
         value = min;
@@ -91,7 +92,7 @@ void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataT
     if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = toPercentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
+    m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
 }
 
 void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -418,6 +419,14 @@ void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 data
     }
 }
 
+void PropertiesPTVO::ChangePattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+        return;
+
+    m_value = data.at(0) ? "on" : "off";
+}
+
 void PropertiesPTVO::Pattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     float value = 0;
@@ -562,7 +571,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
                 break;
 
             memcpy(&value, data.constData() + 2, sizeof(value));
-            m_value = toPercentage(2850, 3200, qFromLittleEndian(value));
+            m_value = percentage(2850, 3200, qFromLittleEndian(value));
             break;
         }
 
@@ -574,7 +583,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
                 break;
 
             memcpy(&value, data.constData() + 5, sizeof(value));
-            m_value = toPercentage(2850, 3200, qFromLittleEndian(value));
+            m_value = percentage(2850, 3200, qFromLittleEndian(value));
             break;
         }
     }
@@ -651,7 +660,7 @@ void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, 
     Q_UNUSED(data)
 }
 
-void PropertiesTUYA::PresenseSensor::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
     QVariant value;

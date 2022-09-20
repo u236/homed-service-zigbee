@@ -38,7 +38,7 @@ protected:
     bool m_invalidable;
 
     QVariant tuyaValue(const QByteArray &payload);
-    quint8 toPercentage(double min, double max, double value);
+    quint8 percentage(double min, double max, double value);
 
 };
 
@@ -264,6 +264,16 @@ namespace PropertiesPTVO
 
     };
 
+    class ChangePattern : public PropertyObject
+    {
+
+    public:
+
+        ChangePattern(void) : PropertyObject("changePattern", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class Pattern: public PropertyObject
     {
 
@@ -364,12 +374,12 @@ namespace PropertiesTUYA
 
     };
 
-    class PresenseSensor : public PropertyObject
+    class PresenceSensor : public PropertyObject
     {
 
     public:
 
-        PresenseSensor(void) : PropertyObject("tuya", CLUSTER_TUYA) {}
+        PresenceSensor(void) : PropertyObject("tuya", CLUSTER_TUYA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     private:

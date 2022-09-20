@@ -117,6 +117,16 @@ namespace Actions
 
 namespace ActionsPTVO
 {
+    class ChangePattern : public ActionObject
+    {
+
+    public:
+
+        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
     class Pattern : public ActionObject
     {
 

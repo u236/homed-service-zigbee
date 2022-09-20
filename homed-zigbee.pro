@@ -26,3 +26,8 @@ DISTFILES += \
     package/usr/share/homed/zigbee.json
 
 QT += serialport
+
+deploy.files = $${DISTFILES}
+deploy.path = /usr/share/homed
+
+INSTALLS += deploy
