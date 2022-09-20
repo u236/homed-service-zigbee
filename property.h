@@ -28,6 +28,9 @@ public:
     inline bool invalidable(void) { return m_invalidable; }
     inline void invalidate(void) { m_value = QVariant(); }
 
+    inline void setVersion(quint8 value) { m_version = value; }
+    inline void setModel(const QString &value) { m_model = value; }
+
     static void registerMetaTypes(void);
 
 protected:
@@ -36,6 +39,9 @@ protected:
     quint16 m_clusterId;
     QVariant m_value;
     bool m_invalidable;
+
+    quint8 m_version;
+    QString m_model;
 
     quint8 percentage(double min, double max, double value);
 

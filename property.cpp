@@ -420,7 +420,7 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
 
 void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (attributeId ==0x00F7 )
+    if (attributeId == 0x00F7)
     {
 
         if (dataType != DATA_TYPE_OCTET_STRING)
@@ -449,8 +449,6 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
 
 void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data)
 {
-    // TODO: add device model check for some cases
-
     switch (dataPoint)
     {
         case 0x0003:
@@ -477,10 +475,14 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0065:
         case 0x0142:
         {
-            if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
-                break;
+            if (m_model == "lumi.motion.ac01")
+            {
+                if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
+                    break;
 
-            m_map.insert("occupancy", data.at(0) ? true : false);
+                m_map.insert("occupancy", data.at(0) ? true : false);
+            }
+
             break;
         }
 
@@ -488,26 +490,22 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x010C:
         case 0x0143:
         {
-            // TODO: add device version check
-
-            if (dataPoint == 0x0066 || dataPoint == 0x010C)
+            if (m_model == "lumi.motion.ac01")
             {
-                QList <QString> list = {"low", "medium", "high"};
-
                 if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                     break;
 
-                m_map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
-            }
-            else
-            {
-                QList <QString> list = {"enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"};
-
-                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                    break;
-
-                m_map.insert("event", list.value(data.at(0), "unknown"));
-                m_map.insert("occupancy", data.at(0) != 0x01 ? true : false);
+                if (dataPoint != 0x0066 ? dataPoint == 0x010C : m_version < 50)
+                {
+                    QList <QString> list = {"low", "medium", "high"};
+                    m_map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
+                }
+                else
+                {
+                    QList <QString> list = {"enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"};
+                    m_map.insert("event", list.value(data.at(0), "unknown"));
+                    m_map.insert("occupancy", data.at(0) != 0x01 ? true : false);
+                }
             }
 
             break;
@@ -516,24 +514,32 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0067:
         case 0x0144:
         {
-            QList <QString> list = {"undirected", "directed"};
+            if (m_model == "lumi.motion.ac01")
+            {
+                QList <QString> list = {"undirected", "directed"};
 
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                break;
+                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                    break;
 
-            m_map.insert("mode", list.value(data.at(0), "unknown"));
+                m_map.insert("mode", list.value(data.at(0), "unknown"));
+            }
+
             break;
         }
 
         case 0x0069:
         case 0x0146:
         {
-            QList <QString> list = {"far", "middle", "near"};
+            if (m_model == "lumi.motion.ac01")
+            {
+                QList <QString> list = {"far", "middle", "near"};
 
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                break;
+                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                    break;
 
-            m_map.insert("distance", list.value(data.at(0), "unknown"));
+                m_map.insert("distance", list.value(data.at(0), "unknown"));
+            }
+
             break;
         }
 

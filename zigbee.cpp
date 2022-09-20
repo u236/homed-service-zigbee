@@ -445,6 +445,8 @@ void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
+            property->setVersion(endpoint->device()->version());
+            property->setModel(endpoint->device()->model());
             endpoint->properties().append(property);
             continue;
         }
