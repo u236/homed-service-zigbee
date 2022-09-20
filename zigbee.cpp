@@ -169,9 +169,10 @@ void ZigBee::unserializeDevices(const QJsonArray &array)
 
             device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
             device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
-            device->setName(json.value("name").toString());
+            device->setVersion(static_cast <quint8> (json.value("version").toInt()));
             device->setVendor(json.value("vendor").toString());
             device->setModel(json.value("model").toString());
+            device->setName(json.value("name").toString());
             device->setLastSeen(json.value("lastSeen").toInt());
 
             unserializeEndpoints(device, json.value("endpoints").toArray());
@@ -241,14 +242,17 @@ QJsonArray ZigBee::serializeDevices(void)
         if (it.value()->manufacturerCode())
             json.insert("manufacturerCode", it.value()->manufacturerCode());
 
-        if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
-            json.insert("name", it.value()->name());
+        if (!it.value()->version())
+            json.insert("version", it.value()->version());
 
         if (!it.value()->vendor().isEmpty())
             json.insert("vendor", it.value()->vendor());
 
         if (!it.value()->model().isEmpty())
             json.insert("model", it.value()->model());
+
+        if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
+            json.insert("name", it.value()->name());
 
         if (it.value()->logicalType() != LogicalType::Coordinator)
             json.insert("ineterviewFinished", it.value()->interviewFinished());
@@ -519,7 +523,7 @@ void ZigBee::interviewDevice(const Device &device)
 
         if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->vendor().isEmpty() || device->model().isEmpty()))
         {
-            readAttributes(device, it.key(), CLUSTER_BASIC, {0x0004, 0x0005});
+            readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005});
             return;
         }
     }
@@ -587,18 +591,31 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     Device device = endpoint->device();
     bool check = false;
 
-    if (clusterId == CLUSTER_BASIC && (attributeId == 0x0004 || attributeId == 0x0005))
+    if (clusterId == CLUSTER_BASIC && (attributeId == 0x0001 || attributeId == 0x0004 || attributeId == 0x0005))
     {
-        if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
-            return;
-
         switch (attributeId)
         {
+            case 0x0001:
+
+                if (dataType != DATA_TYPE_8BIT_UNSIGNED)
+                    return;
+
+                device->setVersion(static_cast <quint8> (data.at(0)));
+                break;
+
             case 0x0004:
+
+                if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
+                    return;
+
                 device->setVendor(QString(data).trimmed());
                 break;
 
             case 0x0005:
+
+                if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
+                    return;
+
                 device->setModel(QString(data).trimmed());
                 break;
         }

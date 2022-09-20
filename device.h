@@ -70,7 +70,7 @@ class DeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_version(0), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
@@ -83,14 +83,17 @@ public:
     inline LogicalType logicalType(void) { return m_logicalType; }
     inline void setLogicalType(LogicalType value) { m_logicalType = value; }
 
-    inline QString name(void) { return m_name.isEmpty() ? m_ieeeAddress.toHex(':') : m_name; }
-    inline void setName(const QString &value) { m_name = value; }
+    inline quint8 version(void) { return m_version; }
+    inline void setVersion(quint8 value) { m_version = value; }
 
     inline QString vendor(void) { return m_vendor; }
     inline void setVendor(const QString &value) { m_vendor = value; }
 
     inline QString model(void) { return m_model; }
     inline void setModel(const QString &value) { m_model = value; }
+
+    inline QString name(void) { return m_name.isEmpty() ? m_ieeeAddress.toHex(':') : m_name; }
+    inline void setName(const QString &value) { m_name = value; }
 
     inline bool nodeDescriptorReceived(void) { return m_nodeDescriptorReceived; }
     inline void setNodeDescriptorReceived(void) { m_nodeDescriptorReceived = true; }
@@ -121,7 +124,9 @@ private:
 
     quint16 m_manufacturerCode;
     LogicalType m_logicalType;
-    QString m_name, m_vendor, m_model;
+    quint8 m_version;
+    QString m_vendor, m_model, m_name;
+
     bool m_nodeDescriptorReceived, m_interviewFinished, m_multipleEndpoints;
 
     qint64 m_joinTime, m_lastSeen;
