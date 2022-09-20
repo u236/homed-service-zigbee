@@ -90,7 +90,18 @@
     },
     {
       "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "properties":     ["lumiBatteryVoltage", "lumiCubeMovement", "lumiCubeRotation"]
+      "endpointId":     1,
+      "properties":     ["lumiBatteryVoltage"]
+    },
+    {
+      "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
+      "endpointId":     2,
+      "properties":     ["lumiCubeMovement"]
+    },
+    {
+      "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
+      "endpointId":     3,
+      "properties":     ["lumiCubeRotation"]
     },
     {
       "model":          ["lumi.sensor_ht", "lumi.sens"],
