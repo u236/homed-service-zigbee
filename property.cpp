@@ -4,40 +4,39 @@
 
 void PropertyObject::registerMetaTypes(void)
 {
-    qRegisterMetaType <Properties::BatteryVoltage>          ("batteryVoltageProperty");
-    qRegisterMetaType <Properties::BatteryPercentage>       ("batteryPercentageProperty");
-    qRegisterMetaType <Properties::Status>                  ("statusProperty");
-    qRegisterMetaType <Properties::Level>                   ("levelProperty");
-    qRegisterMetaType <Properties::ColorHS>                 ("colorHSProperty");
-    qRegisterMetaType <Properties::ColorXY>                 ("colorXYProperty");
-    qRegisterMetaType <Properties::ColorTemperature>        ("colorTemperatureProperty");
-    qRegisterMetaType <Properties::Illuminance>             ("illuminanceProperty");
-    qRegisterMetaType <Properties::Temperature>             ("temperatureProperty");
-    qRegisterMetaType <Properties::Humidity>                ("humidityProperty");
-    qRegisterMetaType <Properties::Occupancy>               ("occupancyProperty");
-    qRegisterMetaType <Properties::Energy>                  ("energyProperty");
-    qRegisterMetaType <Properties::Power>                   ("powerProperty");
-    qRegisterMetaType <Properties::IdentifyAction>          ("identifyActionProperty");
-    qRegisterMetaType <Properties::SwitchAction>            ("switchActionProperty");
-    qRegisterMetaType <Properties::LevelAction>             ("levelActionProperty");
+    qRegisterMetaType <Properties::BatteryVoltage>      ("batteryVoltageProperty");
+    qRegisterMetaType <Properties::BatteryPercentage>   ("batteryPercentageProperty");
+    qRegisterMetaType <Properties::BatteryUndivided>    ("batteryUndividedProperty");
+    qRegisterMetaType <Properties::Status>              ("statusProperty");
+    qRegisterMetaType <Properties::Level>               ("levelProperty");
+    qRegisterMetaType <Properties::ColorHS>             ("colorHSProperty");
+    qRegisterMetaType <Properties::ColorXY>             ("colorXYProperty");
+    qRegisterMetaType <Properties::ColorTemperature>    ("colorTemperatureProperty");
+    qRegisterMetaType <Properties::Illuminance>         ("illuminanceProperty");
+    qRegisterMetaType <Properties::Temperature>         ("temperatureProperty");
+    qRegisterMetaType <Properties::Humidity>            ("humidityProperty");
+    qRegisterMetaType <Properties::Occupancy>           ("occupancyProperty");
+    qRegisterMetaType <Properties::Energy>              ("energyProperty");
+    qRegisterMetaType <Properties::Power>               ("powerProperty");
+    qRegisterMetaType <Properties::IdentifyAction>      ("identifyActionProperty");
+    qRegisterMetaType <Properties::SwitchAction>        ("switchActionProperty");
+    qRegisterMetaType <Properties::LevelAction>         ("levelActionProperty");
 
-    qRegisterMetaType <PropertiesIKEA::BatteryPercentage>   ("ikeaBatteryPercentageProperty");
+    qRegisterMetaType <PropertiesPTVO::CO2>             ("ptvoCO2Property");
+    qRegisterMetaType <PropertiesPTVO::Temperature>     ("ptvoTemperatureProperty");
+    qRegisterMetaType <PropertiesPTVO::ChangePattern>   ("ptvoChangePatternProperty");
+    qRegisterMetaType <PropertiesPTVO::Pattern>         ("ptvoPatternProperty");
+    qRegisterMetaType <PropertiesPTVO::SwitchAction>    ("ptvoSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesPTVO::CO2>                 ("ptvoCO2Property");
-    qRegisterMetaType <PropertiesPTVO::Temperature>         ("ptvoTemperatureProperty");
-    qRegisterMetaType <PropertiesPTVO::ChangePattern>       ("ptvoChangePatternProperty");
-    qRegisterMetaType <PropertiesPTVO::Pattern>             ("ptvoPatternProperty");
-    qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
+    qRegisterMetaType <PropertiesLUMI::Data>            ("lumiDataProperty");
+    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>  ("lumiBatteryVoltageProperty");
+    qRegisterMetaType <PropertiesLUMI::Power>           ("lumiPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeRotation>    ("lumiCubeRotationProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeMovement>    ("lumiCubeMovementProperty");
+    qRegisterMetaType <PropertiesLUMI::SwitchAction>    ("lumiSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesLUMI::Data>                ("lumiDataProperty");
-    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
-    qRegisterMetaType <PropertiesLUMI::Power>               ("lumiPowerProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
-    qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
-
-    qRegisterMetaType <PropertiesTUYA::Dummy>               ("tuyaDummyProperty");
-    qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
+    qRegisterMetaType <PropertiesTUYA::Dummy>           ("tuyaDummyProperty");
+    qRegisterMetaType <PropertiesTUYA::PresenceSensor>  ("tuyaPresenceSensorProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
@@ -51,6 +50,14 @@ quint8 PropertyObject::percentage(double min, double max, double value)
     return static_cast <quint8> ((value - min) / (max - min) * 100);
 }
 
+void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+        return;
+
+    m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
+}
+
 void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
@@ -59,12 +66,12 @@ void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, quint8 da
     m_value = static_cast <quint8> (data.at(0)) / 2.0;
 }
 
-void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::BatteryUndivided::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
+    m_value = static_cast <quint8> (data.at(0));
 }
 
 void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -327,14 +334,6 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
         case 0x05: m_value = "moveUp"; break;
         case 0x07: m_value = "moveStop"; break;
     }
-}
-
-void PropertiesIKEA::BatteryPercentage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-        return;
-
-    m_value = static_cast <quint8> (data.at(0));
 }
 
 void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

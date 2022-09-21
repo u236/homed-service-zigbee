@@ -2,7 +2,7 @@
   "eWeLink":
   [
     {
-      "model":          "TH01",
+      "models":         ["TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"]
     }
@@ -11,11 +11,11 @@
   "HaiPaiTech":
   [
     {
-      "model":          "vivi ZLight",
-      "endpointId":     11,
+      "models":         ["vivi ZLight"],
       "actions":        ["status", "level", "colorHS"],
       "properties":     ["status", "level", "colorHS"],
       "polls":          ["status", "level", "colorHS"],
+      "endpointId":     11,
       "pollInterval":   60
     }
   ],
@@ -23,47 +23,47 @@
   "HOMEd":
   [
     {
-      "model":          "Button",
+      "models":         ["Button"],
       "properties":     ["batteryPercentage", "ptvoSwitchAction"]
     },
     {
-      "model":          "CO2 Sensor",
+      "models":         ["CO2 Sensor"],
       "properties":     ["ptvoCO2", "ptvoTemperature", "ptvoSwitchAction"]
     },
     {
-      "model":          "LC Outlet",
+      "models":         ["LC Outlet"],
       "actions":        ["status"],
       "properties":     ["status"]
     },
     {
-      "model":          "RGB Strip",
-      "endpointId":     1,
+      "models":         ["RGB Strip"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
-      "properties":     ["status", "level"]
+      "properties":     ["status", "level"],
+      "endpointId":     1
     },
     {
-      "model":          "RGB Strip",
-      "endpointId":     2,
+      "models":         ["RGB Strip"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
-      "properties":     ["ptvoChangePattern", "ptvoPattern"]
+      "properties":     ["ptvoChangePattern", "ptvoPattern"],
+      "endpointId":     2
     }
   ],
 
   "IKEA of Sweden":
   [
     {
-      "model":          "TRADFRI on/off switch",
-      "properties":     ["ikeaBatteryPercentage", "identifyAction", "switchAction", "levelAction"],
+      "models":         ["TRADFRI on/off switch"],
+      "properties":     ["batteryUndivided", "identifyAction", "switchAction", "levelAction"],
       "reportings":     ["batteryPercentage"]
     },
     {
-      "model":          "TRADFRI bulb E14 WS 470lm",
+      "models":         ["TRADFRI bulb E14 WS 470lm"],
       "actions":        ["status", "level", "colorTemperature"],
       "properties":     ["status", "level", "colorTemperature"],
       "reportings":     ["status", "level", "colorTemperature"]
     },
     {
-      "model":          ["TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm", "TRADFRI bulb E27 W opal 1000lm"],
+      "models":         ["TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm", "TRADFRI bulb E27 W opal 1000lm"],
       "actions":        ["status", "level"],
       "properties":     ["status", "level"],
       "reportings":     ["status", "level"]
@@ -73,7 +73,7 @@
   "aqara":
   [
     {
-      "model":          "lumi.motion.ac01",
+      "models":         ["lumi.motion.ac01"],
       "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance", "lumiResetPresence"],
       "properties":     ["lumiData"],
       "polls":          ["lumiPresenceSensor"]
@@ -83,48 +83,48 @@
   "LUMI":
   [
     {
-      "model":          "lumi.plug.maeu01",
+      "models":         ["lumi.plug.maeu01"],
       "actions":        ["status"],
       "properties":     ["status", "lumiData", "lumiPower"],
       "reportings":     ["status"]
     },
     {
-      "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "endpointId":     1,
-      "properties":     ["lumiBatteryVoltage"]
-    },
-    {
-      "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "endpointId":     2,
-      "properties":     ["lumiCubeMovement"]
-    },
-    {
-      "model":          ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "endpointId":     3,
-      "properties":     ["lumiCubeRotation"]
-    },
-    {
-      "model":          ["lumi.sensor_ht", "lumi.sens"],
+      "models":         ["lumi.sensor_ht", "lumi.sens"],
       "properties":     ["lumiBatteryVoltage", "temperature", "humidity"]
     },
     {
-      "model":          "lumi.sensor_magnet",
+      "models":         ["lumi.sensor_magnet"],
       "properties":     ["lumiBatteryVoltage", "status"]
     },
     {
-      "model":          "lumi.sensor_motion",
+      "models":         ["lumi.sensor_motion"],
       "properties":     ["lumiBatteryVoltage", "occupancy"]
     },
     {
-      "model":          "lumi.sensor_switch",
+      "models":         ["lumi.sensor_switch"],
       "properties":     ["lumiBatteryVoltage", "lumiSwitchAction"]
+    },
+    {
+      "models":         ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
+      "properties":     ["lumiBatteryVoltage"],
+      "endpointId":     1
+    },
+    {
+      "models":         ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
+      "properties":     ["lumiCubeMovement"],
+      "endpointId":     2
+    },
+    {
+      "models":         ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
+      "properties":     ["lumiCubeRotation"],
+      "endpointId":     3
     }
   ],
 
   "XIAOMI":
   [
     {
-      "model":          "lumi.sen_ill.mgl01",
+      "models":         ["lumi.sen_ill.mgl01"],
       "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
       "reportings":     ["batteryVoltage", "illuminance"]
     }
@@ -133,7 +133,7 @@
   "TUYA":
   [
     {
-      "model":          ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
+      "models":         ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
       "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
       "properties":     ["tuyaDummy", "tuyaPresenceSensor"]
     }

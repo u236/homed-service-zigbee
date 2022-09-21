@@ -49,6 +49,16 @@ protected:
 
 namespace Properties
 {
+    class BatteryVoltage : public PropertyObject
+    {
+
+    public:
+
+        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class BatteryPercentage : public PropertyObject
     {
 
@@ -59,12 +69,12 @@ namespace Properties
 
     };
 
-    class BatteryVoltage : public PropertyObject
+    class BatteryUndivided : public PropertyObject
     {
 
     public:
 
-        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+        BatteryUndivided(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
@@ -222,19 +232,6 @@ namespace Properties
 
         LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
-
-    };
-}
-
-namespace PropertiesIKEA
-{
-    class BatteryPercentage : public PropertyObject
-    {
-
-    public:
-
-        BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 }

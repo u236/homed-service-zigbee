@@ -110,9 +110,9 @@ private:
     QQueue <DataRequest> m_dataQueue;
     QQueue <Device> m_neighborsQueue;
 
-    void unserializeDevices(const QJsonArray &devicesArray);
-    void unserializeEndpoints(const Device &device, const QJsonArray &array);
-    void unserializeNeighbors(const Device &device, const QJsonArray &array);
+    void unserializeDevices(const QJsonArray &devices);
+    void unserializeEndpoints(const Device &device, const QJsonArray &endpoints);
+    void unserializeNeighbors(const Device &device, const QJsonArray &neighbors);
 
     QJsonArray serializeDevices(void);
     QJsonArray serializeEndpoints(const Device &device);

@@ -157,9 +157,9 @@ void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, boo
     }
 }
 
-void ZigBee::unserializeDevices(const QJsonArray &array)
+void ZigBee::unserializeDevices(const QJsonArray &devices)
 {
-    for (auto it = array.begin(); it != array.end(); it++)
+    for (auto it = devices.begin(); it != devices.end(); it++)
     {
         QJsonObject json = it->toObject();
 
@@ -194,9 +194,9 @@ void ZigBee::unserializeDevices(const QJsonArray &array)
     logInfo << m_devices.count() << "devices loaded";
 }
 
-void ZigBee::unserializeEndpoints(const Device &device, const QJsonArray &array)
+void ZigBee::unserializeEndpoints(const Device &device, const QJsonArray &endpoints)
 {
-    for (auto it = array.begin(); it != array.end(); it++)
+    for (auto it = endpoints.begin(); it != endpoints.end(); it++)
     {
         QJsonObject json = it->toObject();
 
@@ -204,15 +204,15 @@ void ZigBee::unserializeEndpoints(const Device &device, const QJsonArray &array)
         {
             quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
             Endpoint endpoint(new EndpointObject(endpointId, device));
-            QJsonArray inClustersArray = json.value("inClusters").toArray(), outClustersArray = json.value("outClusters").toArray();
+            QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray();
 
             endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
             endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
 
-            for (const QJsonValue &clusterId : inClustersArray)
+            for (const QJsonValue &clusterId : inClusters)
                 endpoint->inClusters().append(static_cast <quint16> (clusterId.toInt()));
 
-            for (const QJsonValue &clusterId : outClustersArray)
+            for (const QJsonValue &clusterId : outClusters)
                 endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
 
             device->endpoints().insert(endpointId, endpoint);
@@ -220,9 +220,9 @@ void ZigBee::unserializeEndpoints(const Device &device, const QJsonArray &array)
     }
 }
 
-void ZigBee::unserializeNeighbors(const Device &device, const QJsonArray &array)
+void ZigBee::unserializeNeighbors(const Device &device, const QJsonArray &neighbors)
 {
-    for (auto it = array.begin(); it != array.end(); it++)
+    for (auto it = neighbors.begin(); it != neighbors.end(); it++)
     {
         QJsonObject json = it->toObject();
 
@@ -288,22 +288,22 @@ QJsonArray ZigBee::serializeEndpoints(const Device &device)
 
         if (!it.value()->inClusters().isEmpty())
         {
-            QJsonArray inClustersArray;
+            QJsonArray inClusters;
 
             for (int i = 0; i < it.value()->inClusters().count(); i++)
-                inClustersArray.append(it.value()->inClusters().at(i));
+                inClusters.append(it.value()->inClusters().at(i));
 
-            json.insert("inClusters", inClustersArray);
+            json.insert("inClusters", inClusters);
         }
 
         if (!it.value()->outClusters().isEmpty())
         {
-            QJsonArray outClustersArray;
+            QJsonArray outClusters;
 
             for (int i = 0; i < it.value()->outClusters().count(); i++)
-                outClustersArray.append(it.value()->outClusters().at(i));
+                outClusters.append(it.value()->outClusters().at(i));
 
-            json.insert("outClusters", outClustersArray);
+            json.insert("outClusters", outClusters);
         }
 
         array.append(json);
@@ -391,9 +391,9 @@ void ZigBee::setupDevice(const Device &device)
     for (auto it = array.begin(); it != array.end(); it++)
     {
         QJsonObject json = it->toObject();
-        QJsonValue model = json.value("model");
+        QJsonArray array = json.value("models").toArray();
 
-        if ((model.type() == QJsonValue::String && model.toString() == device->model()) || (model.type() == QJsonValue::Array && model.toArray().contains(device->model())))
+        if (array.contains(device->model()))
         {
             QJsonValue endpoinId = json.value("endpointId");
             QList <QVariant> list = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
@@ -421,10 +421,10 @@ void ZigBee::setupDevice(const Device &device)
 
 void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
 {
-    QJsonArray actionsArray = json.value("actions").toArray(), propertiesArray = json.value("properties").toArray(), reportingsArray = json.value("reportings").toArray(), pollsArray = json.value("polls").toArray();
+    QJsonArray actions = json.value("actions").toArray(), properties = json.value("properties").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
     quint32 pollInterval = static_cast <quint32> (json.value("pollInterval").toInt());
 
-    for (auto it = actionsArray.begin(); it != actionsArray.end(); it++)
+    for (auto it = actions.begin(); it != actions.end(); it++)
     {
         int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
 
@@ -438,7 +438,7 @@ void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
         logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "action" << it->toString() << "unrecognized";
     }
 
-    for (auto it = propertiesArray.begin(); it != propertiesArray.end(); it++)
+    for (auto it = properties.begin(); it != properties.end(); it++)
     {
         int type = QMetaType::type(QString(it->toString()).append("Property").toUtf8());
 
@@ -454,7 +454,7 @@ void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
         logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "property" << it->toString() << "unrecognized";
     }
 
-    for (auto it = reportingsArray.begin(); it != reportingsArray.end(); it++)
+    for (auto it = reportings.begin(); it != reportings.end(); it++)
     {
         int type = QMetaType::type(QString(it->toString()).append("Reporting").toUtf8());
 
@@ -468,7 +468,7 @@ void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
         logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "reporting" << it->toString() << "unrecognized";
     }
 
-    for (auto it = pollsArray.begin(); it != pollsArray.end(); it++)
+    for (auto it = polls.begin(); it != polls.end(); it++)
     {
         int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
 
