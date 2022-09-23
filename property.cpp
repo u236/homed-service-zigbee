@@ -31,12 +31,12 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Data>            ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>  ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>           ("lumiPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::SwitchAction>    ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>    ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>    ("lumiCubeMovementProperty");
-    qRegisterMetaType <PropertiesLUMI::SwitchAction>    ("lumiSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesTUYA::Dummy>           ("tuyaDummyProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>  ("tuyaPresenceSensorProperty");
+    qRegisterMetaType <PropertiesTUYA::Dummy>           ("tuyaDummyProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
@@ -713,13 +713,6 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dat
         m_value = "drop";
 }
 
-void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) // just ignore cluster 0x0000 attribute reports
-{
-    Q_UNUSED(attributeId)
-    Q_UNUSED(dataType)
-    Q_UNUSED(data)
-}
-
 void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
@@ -766,4 +759,11 @@ void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteA
         return;
 
     m_value = m_map;
+}
+
+void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) // just ignore cluster 0x0000 attribute reports
+{
+    Q_UNUSED(attributeId)
+    Q_UNUSED(dataType)
+    Q_UNUSED(data)
 }

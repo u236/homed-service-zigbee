@@ -97,8 +97,8 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
             else
                 json.insert(property->name(), QJsonValue::fromVariant(property->value()));
 
-            if (property->invalidable())
-                property->invalidate();
+            if (property->singleShot())
+                property->clear();
         }
     }
 

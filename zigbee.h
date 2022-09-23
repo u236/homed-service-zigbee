@@ -99,7 +99,7 @@ private:
     ZStack *m_adapter;
     QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusTimer, *m_ledTimer;
 
-    QString m_databaseFile, m_libraryFile, m_otaUpgradeFile;
+    QString m_libraryFile, m_databaseFile, m_otaUpgradeFile;
     qint16 m_ledPin;
     quint8 m_transactionId, m_interPanChannel;
     bool m_permitJoin;

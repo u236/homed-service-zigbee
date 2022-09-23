@@ -14,8 +14,8 @@ class PropertyObject
 
 public:
 
-    PropertyObject(const QString &name, quint16 clusterId, bool invalidable = false) :
-        m_name(name), m_clusterId(clusterId), m_invalidable(invalidable) {}
+    PropertyObject(const QString &name, quint16 clusterId, bool singleShot = false) :
+        m_name(name), m_clusterId(clusterId), m_singleShot(singleShot) {}
 
     virtual ~PropertyObject(void) {}
     virtual void parseAttribte(quint16, quint8, const QByteArray &) {}
@@ -25,8 +25,8 @@ public:
     inline quint16 clusterId(void) { return m_clusterId; }
     inline QVariant value(void) { return m_value; }
 
-    inline bool invalidable(void) { return m_invalidable; }
-    inline void invalidate(void) { m_value = QVariant(); }
+    inline bool singleShot(void) { return m_singleShot; }
+    inline void clear(void) { m_value = QVariant(); }
 
     inline void setVersion(quint8 value) { m_version = value; }
     inline void setModel(const QString &value) { m_model = value; }
@@ -38,7 +38,7 @@ protected:
     QString m_name;
     quint16 m_clusterId;
     QVariant m_value;
-    bool m_invalidable;
+    bool m_singleShot;
 
     quint8 m_version;
     QString m_model;
@@ -304,7 +304,7 @@ namespace PropertiesLUMI
 
     public:
 
-        Data(void) : PropertyObject("data", CLUSTER_LUMI) {}
+        Data(void) : PropertyObject(QString(), CLUSTER_LUMI) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -367,27 +367,27 @@ namespace PropertiesLUMI
 
 namespace PropertiesTUYA
 {
-    class Dummy : public PropertyObject
-    {
-
-    public:
-
-        Dummy(void) : PropertyObject("dummy", CLUSTER_BASIC) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
     class PresenceSensor : public PropertyObject
     {
 
     public:
 
-        PresenceSensor(void) : PropertyObject("tuya", CLUSTER_TUYA) {}
+        PresenceSensor(void) : PropertyObject(QString(), CLUSTER_TUYA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     private:
 
         QMap <QString, QVariant> m_map;
+
+    };
+
+    class Dummy : public PropertyObject
+    {
+
+    public:
+
+        Dummy(void) : PropertyObject(QString(), CLUSTER_BASIC) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 }

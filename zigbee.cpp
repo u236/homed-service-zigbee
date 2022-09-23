@@ -13,8 +13,8 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(
     PropertyObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
 
-    m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
     m_libraryFile = config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
+    m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
     m_ledPin = static_cast <qint16> (config->value("gpio/led", -1).toInt());
 
     GPIO::setDirection(m_ledPin, GPIO::Output);
