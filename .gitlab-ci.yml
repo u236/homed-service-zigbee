@@ -1,7 +1,8 @@
 Build Binary:
   stage: build
   script:
-  - "/opt/arm-qt5.15.4/bin/qmake homed-zigbee.pro"
+  - "export PATH=\"$PATH:/opt/gcc-arm-linux-gnueabihf/bin\""
+  - "/opt/qt5.15.4-armhf-static/bin/qmake homed-zigbee.pro"
   - "make -j8"
   artifacts:
     paths:

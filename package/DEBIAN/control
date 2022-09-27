@@ -2,7 +2,6 @@ Package: homed-zigbee
 Version:
 Architecture: armhf
 Maintainer: u236
-Depends: homed-qt5-libs
 Section: misc
 Priority: standard
 Description: HOMEd ZigBee Service
