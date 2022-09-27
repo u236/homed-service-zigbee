@@ -39,6 +39,7 @@
       "models":         ["RGB Strip"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "properties":     ["status", "level"],
+      "reportings":     ["status"],
       "endpointId":     1
     },
     {

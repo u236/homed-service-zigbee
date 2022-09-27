@@ -87,11 +87,14 @@ public:
     void init(void);
     void setPermitJoin(bool enabled);
 
-    void configureDevice(const QByteArray &ieeeAddress);
+    void otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName);
     void setDeviceName(const QByteArray &ieeeAddress, const QString &name);
     void removeDevice(const QByteArray &ieeeAddress);
-    void otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName);
+
+    void updateDevice(const QByteArray &ieeeAddress, bool reportings);
+    void updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
     void deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData);
+
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
 
 private:
@@ -127,7 +130,7 @@ private:
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
 
     void interviewDevice(const Device &device);
-    void configureReportings(const Device &device);
+    void configureReporting(const Endpoint &endpoint, const Reporting &reporting);
 
     void readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes);
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data);

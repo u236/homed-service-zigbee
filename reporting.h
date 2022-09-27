@@ -13,17 +13,23 @@ class ReportingObject
 public:
 
     ReportingObject(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint16 valueChange = 0) :
-        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_minInterval(minInterval), m_maxInteval(maxInterval), m_valueChange(valueChange) {}
+        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_minInterval(minInterval), m_maxInterval(maxInterval), m_valueChange(valueChange) {}
 
     virtual ~ReportingObject(void) {}
 
     inline QString name(void) { return m_name; }
-    inline quint16 clusterId(void) {return m_clusterId; }
-    inline quint16 attributeId(void) {return m_attributeId; }
-    inline quint8 dataType(void) {return m_dataType; }
-    inline quint16 minInterval(void) {return m_minInterval; }
-    inline quint16 maxInterval(void) {return m_maxInteval; }
-    inline quint16 valueChange(void) {return m_valueChange; }
+    inline quint16 clusterId(void) { return m_clusterId; }
+    inline quint16 attributeId(void) { return m_attributeId; }
+    inline quint8 dataType(void) { return m_dataType; }
+
+    inline quint16 minInterval(void) { return m_minInterval; }
+    inline void setMinInterval(quint16 value) { m_minInterval = value; }
+
+    inline quint16 maxInterval(void) { return m_maxInterval; }
+    inline void setMaxInterval(quint16 value) { m_maxInterval = value; }
+
+    inline quint16 valueChange(void) { return m_valueChange; }
+    inline void setValueChange(quint16 value) { m_valueChange = value; }
 
     static void registerMetaTypes(void);
 
@@ -32,7 +38,7 @@ protected:
     QString m_name;
     quint16 m_clusterId, m_attributeId;
     quint8 m_dataType;
-    quint16 m_minInterval, m_maxInteval, m_valueChange;
+    quint16 m_minInterval, m_maxInterval, m_valueChange;
 
 };
 
