@@ -329,7 +329,7 @@ QByteArray ActionsTUYA::DistanceMax::request(const QVariant &data)
 
 QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
 {
-    quint32 value = static_cast <quint32> (data.toDouble() * 100);
+    quint32 value = static_cast <quint32> (data.toInt());
 
     if (value < 1 || value > 10)
         return QByteArray();

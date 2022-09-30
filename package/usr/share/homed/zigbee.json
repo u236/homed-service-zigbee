@@ -2,6 +2,7 @@
   "eWeLink":
   [
     {
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02",
       "modelNames":     ["TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"]
@@ -53,27 +54,31 @@
   "IKEA of Sweden":
   [
     {
-      "modelNames":     ["TRADFRI on/off switch"],
-      "properties":     ["batteryUndivided", "identifyAction", "switchAction", "levelAction"],
-      "reportings":     ["batteryPercentage"]
-    },
-    {
+      "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
       "modelNames":     ["TRADFRI bulb E14 WS 470lm"],
       "actions":        ["status", "level", "colorTemperature"],
       "properties":     ["status", "level", "colorTemperature"],
       "reportings":     ["status", "level", "colorTemperature"]
     },
     {
+      "description":    "TRADFRI Dimmable Bulb",
       "modelNames":     ["TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
       "actions":        ["status", "level"],
       "properties":     ["status", "level"],
       "reportings":     ["status", "level"]
+    },
+    {
+      "description":    "TRADFRI Wireless Dimmer E1743",
+      "modelNames":     ["TRADFRI on/off switch"],
+      "properties":     ["batteryUndivided", "identifyAction", "switchAction", "levelAction"],
+      "reportings":     ["batteryPercentage"]
     }
   ],
 
   "aqara":
   [
     {
+      "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
       "modelNames":     ["lumi.motion.ac01"],
       "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance", "lumiResetPresence"],
       "properties":     ["lumiData"],
@@ -84,28 +89,34 @@
   "LUMI":
   [
     {
+      "description":    "Aqara 10A Smart Plug SP-EUC01",
       "modelNames":     ["lumi.plug.maeu01"],
       "actions":        ["status"],
       "properties":     ["status", "lumiData", "lumiPower"],
       "reportings":     ["status"]
     },
     {
+      "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
       "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
       "properties":     ["lumiBatteryVoltage", "temperature", "humidity"]
     },
     {
+      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
       "properties":     ["lumiBatteryVoltage", "status"]
     },
     {
+      "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
       "properties":     ["lumiBatteryVoltage", "occupancy"]
     },
     {
+      "description":    "Xiaomi Wireless Switch WXKG01LM",
       "modelNames":     ["lumi.sensor_switch"],
       "properties":     ["lumiBatteryVoltage", "lumiSwitchAction"]
     },
     {
+      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBatteryVoltage"],
       "endpointId":     1
@@ -125,6 +136,7 @@
   "XIAOMI":
   [
     {
+      "description":    "Xiaomi Light Detection Sensor GZCGQ01LM",
       "modelNames":     ["lumi.sen_ill.mgl01"],
       "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
       "reportings":     ["batteryVoltage", "illuminance"]
@@ -134,6 +146,7 @@
   "TUYA":
   [
     {
+      "description":    "TUYA TS0601 Human Presence Detector",
       "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
       "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
       "properties":     ["tuyaDummy", "tuyaPresenceSensor"]
