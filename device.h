@@ -70,15 +70,12 @@ class DeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_manufacturerCode(0), m_logicalType(LogicalType::EndDevice), m_version(0), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_version(0), m_manufacturerCode(0), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
     inline quint16 networkAddress(void) { return m_networkAddress; }
     inline void setNetworkAddress(quint16 value) { m_networkAddress = value; }
-
-    inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
-    inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
 
     inline LogicalType logicalType(void) { return m_logicalType; }
     inline void setLogicalType(LogicalType value) { m_logicalType = value; }
@@ -86,11 +83,14 @@ public:
     inline quint8 version(void) { return m_version; }
     inline void setVersion(quint8 value) { m_version = value; }
 
-    inline QString vendor(void) { return m_vendor; }
-    inline void setVendor(const QString &value) { m_vendor = value; }
+    inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
+    inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
 
-    inline QString model(void) { return m_model; }
-    inline void setModel(const QString &value) { m_model = value; }
+    inline QString manufacturerName(void) { return m_manufacturerName; }
+    inline void setManufacturerName(const QString &value) { m_manufacturerName = value; }
+
+    inline QString modelName(void) { return m_modelName; }
+    inline void setModelName(const QString &value) { m_modelName = value; }
 
     inline QString name(void) { return m_name.isEmpty() ? m_ieeeAddress.toHex(':') : m_name; }
     inline void setName(const QString &value) { m_name = value; }
@@ -122,10 +122,10 @@ private:
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;
 
-    quint16 m_manufacturerCode;
     LogicalType m_logicalType;
     quint8 m_version;
-    QString m_vendor, m_model, m_name;
+    quint16 m_manufacturerCode;
+    QString m_manufacturerName, m_modelName, m_name;
 
     bool m_nodeDescriptorReceived, m_interviewFinished, m_multipleEndpoints;
 

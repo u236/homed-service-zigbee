@@ -209,11 +209,11 @@ void ZigBee::unserializeDevices(const QJsonArray &devices)
         {
             Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt())));
 
-            device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
             device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
             device->setVersion(static_cast <quint8> (json.value("version").toInt()));
-            device->setVendor(json.value("vendor").toString());
-            device->setModel(json.value("model").toString());
+            device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
+            device->setManufacturerName(json.value("manufacturerName").toString());
+            device->setModelName(json.value("modelName").toString());
             device->setName(json.value("name").toString());
             device->setLastSeen(json.value("lastSeen").toInt());
 
@@ -281,17 +281,17 @@ QJsonArray ZigBee::serializeDevices(void)
     {
         QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}, {"logicalType", static_cast <quint8> (it.value()->logicalType())}};
 
-        if (it.value()->manufacturerCode())
-            json.insert("manufacturerCode", it.value()->manufacturerCode());
-
         if (!it.value()->version())
             json.insert("version", it.value()->version());
 
-        if (!it.value()->vendor().isEmpty())
-            json.insert("vendor", it.value()->vendor());
+        if (it.value()->manufacturerCode())
+            json.insert("manufacturerCode", it.value()->manufacturerCode());
 
-        if (!it.value()->model().isEmpty())
-            json.insert("model", it.value()->model());
+        if (!it.value()->manufacturerName().isEmpty())
+            json.insert("manufacturerName", it.value()->manufacturerName());
+
+        if (!it.value()->modelName().isEmpty())
+            json.insert("modelName", it.value()->modelName());
 
         if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
             json.insert("name", it.value()->name());
@@ -410,12 +410,12 @@ void ZigBee::setupDevice(const Device &device)
         return;
     }
 
-    array = QJsonDocument::fromJson(file.readAll()).object().value(device->vendor()).toArray();
+    array = QJsonDocument::fromJson(file.readAll()).object().value(device->manufacturerName()).toArray();
     file.close();
 
     if (array.isEmpty())
     {
-        logWarning << "Device" << device->name() << "vendor" << device->vendor() << "unrecognized";
+        logWarning << "Device" << device->name() << "manufacturer name " << device->manufacturerName() << "unrecognized";
         return;
     }
 
@@ -433,9 +433,9 @@ void ZigBee::setupDevice(const Device &device)
     for (auto it = array.begin(); it != array.end(); it++)
     {
         QJsonObject json = it->toObject();
-        QJsonArray array = json.value("models").toArray();
+        QJsonArray array = json.value("modelNames").toArray();
 
-        if (array.contains(device->model()))
+        if (array.contains(device->modelName()))
         {
             QJsonValue endpoinId = json.value("endpointId");
             QList <QVariant> list = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
@@ -458,7 +458,7 @@ void ZigBee::setupDevice(const Device &device)
     if (check)
         return;
 
-    logWarning << "Device" << device->name() << "model" << device->model() << "unrecognized";
+    logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
 }
 
 void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
@@ -488,7 +488,7 @@ void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
             property->setVersion(endpoint->device()->version());
-            property->setModel(endpoint->device()->model());
+            property->setModel(endpoint->device()->modelName());
             endpoint->properties().append(property);
             continue;
         }
@@ -565,14 +565,14 @@ void ZigBee::interviewDevice(const Device &device)
             return;
         }
 
-        if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->vendor().isEmpty() || device->model().isEmpty()))
+        if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->manufacturerName().isEmpty() || device->modelName().isEmpty()))
         {
             readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005});
             return;
         }
     }
 
-    logInfo << "Device" << device->name() << "vendor is" << device->vendor() << "and model is" << device->model();
+    logInfo << "Device" << device->name() << "manufacturer name is" << device->manufacturerName() << "and model name is" << device->modelName();
     setupDevice(device);
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -648,7 +648,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
                     return;
 
-                device->setVendor(QString(data).trimmed());
+                device->setManufacturerName(QString(data).trimmed());
                 break;
 
             case 0x0005:
@@ -656,16 +656,16 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
                     return;
 
-                device->setModel(QString(data).trimmed());
+                device->setModelName(QString(data).trimmed());
                 break;
         }
 
-        if (!device->vendor().isEmpty() && !device->model().isEmpty())
+        if (!device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
         {
-            if (device->model() == "TS0601") // vendor is model for devices based on Tuya TS0601
+            if (device->modelName() == "TS0601") // vendor is model for devices based on Tuya TS0601
             {
-                device->setModel(device->vendor());
-                device->setVendor("TUYA");
+                device->setModelName(device->manufacturerName());
+                device->setManufacturerName("TUYA");
             }
 
             interviewDevice(device);
@@ -1071,20 +1071,20 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
     emit deviceEvent(false);
 }
 
-void ZigBee::nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType)
+void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode)
 {
     Device device = findDevice(networkAddress);
 
     if (device.isNull())
         return;
 
-    device->setManufacturerCode(manufacturerCode);
     device->setLogicalType(logicalType);
-
-    logInfo << "Device" << device->name() << "node descriptor received, manufacturer code:" << QString::asprintf("0x%04X", device->manufacturerCode());
+    device->setManufacturerCode(manufacturerCode);
 
     if (device->logicalType() == LogicalType::Router)
         logInfo << "Device" << device->name() << "is router";
+
+    logInfo << "Device" << device->name() << "node descriptor received, manufacturer code:" << QString::asprintf("0x%04X", device->manufacturerCode());
 
     device->setNodeDescriptorReceived();
     device->updateLastSeen();

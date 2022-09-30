@@ -399,7 +399,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
             const nodeDescriptorResponseStruct *message = reinterpret_cast <const nodeDescriptorResponseStruct*> (data.constData());
 
             if (!message->status)
-                emit nodeDescriptorReceived(qFromLittleEndian(message->srcAddress), qFromLittleEndian(message->manufacturerCode), static_cast <LogicalType> (message->logicalType & 0x03));
+                emit nodeDescriptorReceived(qFromLittleEndian(message->srcAddress), static_cast <LogicalType> (message->logicalType & 0x03), qFromLittleEndian(message->manufacturerCode));
 
             break;
         }

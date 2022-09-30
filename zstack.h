@@ -384,7 +384,7 @@ signals:
     void coordinatorReady(const QByteArray &ieeeAddress);
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
     void deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
-    void nodeDescriptorReceived(quint16 networkAddress, quint16 manufacturerCode, LogicalType logicalType);
+    void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
