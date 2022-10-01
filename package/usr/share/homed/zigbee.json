@@ -12,7 +12,7 @@
   "HaiPaiTech":
   [
     {
-      "description":    "LifeControl Smart Bulb MCLH-02",
+      "description":    "Life Control Smart Bulb MCLH-02",
       "modelNames":     ["vivi ZLight"],
       "actions":        ["status", "level", "colorHS", "colorXY"],
       "properties":     ["status", "level", "colorHS", "colorXY"],
@@ -154,7 +154,7 @@
   "TexasInstruments":
   [
     {
-      "description":    "LifeControl 10A Smart Plug MCLH-03",
+      "description":    "Life Control 10A Smart Plug MCLH-03",
       "modelNames":     ["RICI01"],
       "actions":        ["status"],
       "properties":     ["status"],
