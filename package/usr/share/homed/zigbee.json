@@ -12,10 +12,11 @@
   "HaiPaiTech":
   [
     {
+      "description":    "LifeControl Smart Bulb MCLH-02",
       "modelNames":     ["vivi ZLight"],
-      "actions":        ["status", "level", "colorHS"],
-      "properties":     ["status", "level", "colorHS"],
-      "polls":          ["status", "level", "colorHS"],
+      "actions":        ["status", "level", "colorHS", "colorXY"],
+      "properties":     ["status", "level", "colorHS", "colorXY"],
+      "polls":          ["status", "level", "colorHS", "colorXY"],
       "endpointId":     11,
       "pollInterval":   60
     }
@@ -24,19 +25,23 @@
   "HOMEd":
   [
     {
+      "description":    "PTVO Firmware Based Button",
       "modelNames":     ["Button"],
       "properties":     ["batteryPercentage", "ptvoSwitchAction"]
     },
     {
+      "description":    "PTVO Firmware Based CO2 Sensor",
       "modelNames":     ["CO2 Sensor"],
       "properties":     ["ptvoCO2", "ptvoTemperature", "ptvoSwitchAction"]
     },
     {
+      "description":    "PTVO Firmware Based Smart Plug",
       "modelNames":     ["LC Outlet"],
       "actions":        ["status"],
       "properties":     ["status"]
     },
     {
+      "description":    "PTVO Firmware Based RGB Led Controller (endpoint 1)",
       "modelNames":     ["RGB Strip"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "properties":     ["status", "level"],
@@ -44,6 +49,7 @@
       "endpointId":     1
     },
     {
+      "description":    "PTVO Firmware Based RGB Led Controller (endpoint 2)",
       "modelNames":     ["RGB Strip"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
@@ -116,17 +122,19 @@
       "properties":     ["lumiBatteryVoltage", "lumiSwitchAction"]
     },
     {
-      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
+      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM (endpoint 1)",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBatteryVoltage"],
       "endpointId":     1
     },
     {
+      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM (endpoint 2)",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiCubeMovement"],
       "endpointId":     2
     },
     {
+      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM (endpoint 3)",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiCubeRotation"],
       "endpointId":     3
@@ -140,6 +148,17 @@
       "modelNames":     ["lumi.sen_ill.mgl01"],
       "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
       "reportings":     ["batteryVoltage", "illuminance"]
+    }
+  ],
+
+  "TexasInstruments":
+  [
+    {
+      "description":    "LifeControl 10A Smart Plug MCLH-03",
+      "modelNames":     ["RICI01"],
+      "actions":        ["status"],
+      "properties":     ["status"],
+      "reportings":     ["status"]
     }
   ],
 
