@@ -95,11 +95,18 @@
   "LUMI":
   [
     {
-      "description":    "Aqara 10A Smart Plug SP-EUC01",
+      "description":    "Aqara 10A Smart Plug SP-EUC01 (endpoint 1)",
       "modelNames":     ["lumi.plug.maeu01"],
       "actions":        ["status"],
-      "properties":     ["status", "lumiData", "lumiPower"],
-      "reportings":     ["status"]
+      "properties":     ["status", "lumiData"],
+      "reportings":     ["status"],
+      "endpointId":     1
+    },
+    {
+      "description":    "Aqara 10A Smart Plug SP-EUC01 (endpoint 21)",
+      "modelNames":     ["lumi.plug.maeu01"],
+      "properties":     ["lumiPower"],
+      "endpointId":     21
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
