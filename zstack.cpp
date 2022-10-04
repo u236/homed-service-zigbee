@@ -158,23 +158,23 @@ void ZStack::lqiRequest(quint16 networkAddress, quint8 index)
     logWarning << "LQI request filed";
 }
 
-bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndpointId, const QByteArray &dstIeeeAddress, quint8 dstEndpointId, quint16 clusterId)
+bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
     bindRequestStruct request;
     quint64 src, dst;
     QEventLoop loop;
     QTimer timer;
 
-    memcpy(&src, srcIeeeAddress.constData(), sizeof(src));
-    memcpy(&dst, dstIeeeAddress.constData(), sizeof(dst));
+    memcpy(&src, srcAddress.constData(), sizeof(src));
+    memcpy(&dst, dstAddress.isEmpty() ? m_ieeeAddress.constData() : dstAddress.constData(), sizeof(dst));
 
     request.networkAddress = qToLittleEndian(networkAddress);
-    request.srcIeeeAddress = qToBigEndian(src);
+    request.srcAddress = qToBigEndian(src);
     request.srcEndpointId = srcEndpointId;
     request.clusterId = qToLittleEndian(clusterId);
-    request.dstAddressMode = BIND_ADDRESS_64_BIT;
-    request.dstIeeeAddress = qToBigEndian(dst);
-    request.dstEndpointId = dstEndpointId;
+    request.dstAddressMode = ADDRESS_MODE_64_BIT;
+    request.dstAddress = qToBigEndian(dst);
+    request.dstEndpointId = dstEndpointId ? dstEndpointId : 1;
 
     connect(this, &ZStack::bindResponse, &loop, &QEventLoop::quit);
     connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
@@ -182,9 +182,9 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddres
     m_bindAddress = networkAddress;
     m_bindRequestSuccess = false;
 
-    if (!sendRequest(ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
     {
-        logWarning << "Bind request failed";
+        logWarning << (unbind ? "Unbind" : "Bind") << "request failed";
         return false;
     }
 
@@ -193,11 +193,6 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddres
     loop.exec();
 
     return m_bindRequestSuccess;
-}
-
-bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endpointId, quint16 clusterId)
-{
-    return bindRequest(networkAddress, ieeeAaddress, endpointId, m_ieeeAddress, 1, clusterId);
 }
 
 bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data)
@@ -240,24 +235,24 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     return m_dataRequestSuccess;
 }
 
-bool ZStack::dataRequestExt(const QByteArray &dstAddress, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
+bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
 {
-    dataRequestExtStruct request;
+    extendedDataRequestStruct request;
 
-    switch (dstAddress.length())
+    switch (address.length())
     {
-        case 2: request.dstAddressMode = 0x02; break;
-        case 8: request.dstAddressMode = 0x03; break;
+        case 2: request.dstAddressMode = ADDRESS_MODE_16_BIT; break;
+        case 8: request.dstAddressMode = ADDRESS_MODE_64_BIT; break;
         default: return false;
     }
 
     memset(&request.dstAddress, 0, sizeof(request.dstAddress));
-    memcpy(&request.dstAddress, dstAddress.constData(), dstAddress.length());
+    memcpy(&request.dstAddress, address.constData(), address.length());
 
     if (request.dstAddressMode == 0x03)
         request.dstAddress = qToBigEndian(request.dstAddress);
 
-    request.dstEndpointId = dstEndPointId;
+    request.dstEndpointId = dstEndpointId;
     request.dstPanId = qToLittleEndian(dstPanId);
     request.srcEndpointId = srcEndpointId;
     request.clusterId = qToLittleEndian(clusterId);
@@ -293,10 +288,10 @@ bool ZStack::dataRequestExt(const QByteArray &dstAddress, quint8 dstEndPointId, 
     return m_dataRequestSuccess;
 }
 
-bool ZStack::dataRequestExt(quint16 networkAddress, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
+bool ZStack::extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
 {
     networkAddress = qToLittleEndian(networkAddress);
-    return dataRequestExt(QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndPointId, dstPanId, srcEndpointId, clusterId, data);
+    return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data);
 }
 
 bool ZStack::setInterPanEndpointId(quint8 endpointId)
@@ -381,7 +376,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case AF_INCOMING_MSG_EXT:
         {
-            const incomingMessageExtStruct *message = reinterpret_cast <const incomingMessageExtStruct*> (data.constData());
+            const extendedIncomingMessageStruct *message = reinterpret_cast <const extendedIncomingMessageStruct*> (data.constData());
             quint64 srcAddress = qFromBigEndian(message->srcAddress);
 
             if (message->srcAddressMode != 0x03)
@@ -390,7 +385,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
                 return;
             }
 
-            emit messageReveivedExt(QByteArray(reinterpret_cast <char*> (&srcAddress), sizeof(srcAddress)), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(incomingMessageExtStruct), message->length));
+            emit extendedMessageReveived(QByteArray(reinterpret_cast <char*> (&srcAddress), sizeof(srcAddress)), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(extendedIncomingMessageStruct), message->length));
             break;
         }
 
@@ -445,6 +440,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         }
 
         case ZDO_BIND_RSP:
+        case ZDO_UNBIND_RSP:
         {
             quint16 networkAddress;
 

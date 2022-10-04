@@ -54,7 +54,7 @@ void ZigBee::setPermitJoin(bool enabled)
     storeStatus();
 }
 
-void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endPointId, const QString &fileName)
+void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName)
 {
     auto it = m_devices.find(ieeeAddress);
     zclHeaderStruct header;
@@ -72,7 +72,7 @@ void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endPointId, const 
     payload.type = 0x00;
     payload.jitter = 0x64; // TODO: check this
 
-    enqueueDataRequest(it.value(), endPointId ? endPointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
 }
 
 void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
@@ -151,6 +151,16 @@ void ZigBee::updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, c
             configureReporting(it.value(), reporting);
         }
     }
+}
+
+void ZigBee::deviceBinding(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
+{
+    Device device = m_devices.value(ieeeAddress);
+
+    if (device.isNull())
+        return;
+
+    enqueueBindRequest(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind);
 }
 
 void ZigBee::deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData)
@@ -376,9 +386,9 @@ Device ZigBee::findDevice(quint16 networkAddress)
     return Device();
 }
 
-void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId)
+void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
-    BindRequest request(new BindRequestObject(device, endpointId, clusterId));
+    BindRequest request(new BindRequestObject(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind));
 
     for (int i = 0; i < m_bindQueue.length(); i++)
         if (*m_bindQueue.at(i).data() == *request.data())
@@ -917,7 +927,7 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
     if (!m_adapter->setInterPanChannel(channel))
         return;
 
-    if (!m_adapter->dataRequestExt(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
+    if (!m_adapter->extendedDataRequest(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
     {
         logWarning << "TouchLink scan request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
         return;
@@ -925,7 +935,7 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 
     header.commandId = 0x07;
 
-    if (!m_adapter->dataRequestExt(ieeeAddress, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload.transactionId)))))
+    if (!m_adapter->extendedDataRequest(ieeeAddress, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload.transactionId)))))
     {
         logWarning << "TouchLink reset request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
         return;
@@ -954,7 +964,7 @@ void ZigBee::touchLinkScan(void)
         if (!m_adapter->setInterPanChannel(m_interPanChannel))
             return;
 
-        if (!m_adapter->dataRequestExt(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
+        if (!m_adapter->extendedDataRequest(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
         {
             logWarning << "TouchLink scan request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
             return;
@@ -977,7 +987,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
     connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
-    connect(m_adapter, &ZStack::messageReveivedExt, this, &ZigBee::messageReveivedExt);
+    connect(m_adapter, &ZStack::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
 
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
     {
@@ -1218,7 +1228,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     }
 }
 
-void ZigBee::messageReveivedExt(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
+void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
 {
     Q_UNUSED(endpointId)
     Q_UNUSED(linkQuality)
@@ -1262,10 +1272,15 @@ void ZigBee::handleQueues(void)
     {
         BindRequest request = m_bindQueue.dequeue();
 
-        if (m_adapter->bindRequest(request->device()->networkAddress(), request->device()->ieeeAddress(), request->endpointId(), request->clusterId()))
-            continue;
+        if (m_adapter->bindRequest(request->device()->networkAddress(), request->device()->ieeeAddress(), request->endpointId(), request->clusterId(), request->dstAddress(), request->dstEndpointId(), request->unbind()))
+        {
+            if (!request->dstAddress().isEmpty())
+                logInfo << "Device" << request->device()->name() << (request->unbind() ? "unbinding" : "binding") << "finished succesfully";
 
-        logWarning << "Device" << request->device()->name() << "endpoint" << QString::asprintf("0x%02X", request->endpointId()) << "cluster" << QString::asprintf("0x%04X", request->clusterId()) << "binding failed";
+            continue;
+        }
+
+        logWarning << "Device" << request->device()->name() << "endpoint" << QString::asprintf("0x%02X", request->endpointId()) << "cluster" << QString::asprintf("0x%04X", request->clusterId()) << (request->unbind() ? "unbinding" : "binding") << "failed";
     }
 
     while (!m_dataQueue.isEmpty())

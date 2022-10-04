@@ -33,23 +33,25 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
         {
             QJsonObject item = it->toObject();
 
-            if (item.contains("deviceAddress") && item.contains("deviceName"))
-                m_zigbee->setDeviceName(QByteArray::fromHex(item.value("deviceAddress").toString().toUtf8()), item.value("deviceName").toString());
+            if (item.contains("ieeeAddress") && item.contains("deviceName"))
+                m_zigbee->setDeviceName(QByteArray::fromHex(item.value("ieeeAddress").toString().toUtf8()), item.value("deviceName").toString());
         }
     }
     else if (topic.name() == "homed/command/zigbee" && json.contains("action"))
     {
-        QList <QString> list = {"setPermitJoin", "otaUpgrade", "removeDevice", "updateDevice", "updateReporting", "touchLinkReset", "touchLinkScan"};
+        QList <QString> list = {"setPermitJoin", "otaUpgrade", "removeDevice", "updateDevice", "updateReporting", "bindDevice", "unbindDevice", "touchLinkReset", "touchLinkScan"};
 
         switch (list.indexOf(json.value("action").toString()))
         {
             case 0: m_zigbee->setPermitJoin(json.value("enabled").toBool()); break;
-            case 1: m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString()); break;
-            case 2: m_zigbee->removeDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8())); break;
-            case 3: m_zigbee->updateDevice(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), json.value("reportings").toBool()); break;
-            case 4: m_zigbee->updateReporting(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("reporting").toString(), static_cast <quint16> (json.value("minInterval").toInt()), static_cast <quint16> (json.value("maxInterval").toInt()), static_cast <quint16> (json.value("valueChange").toInt())); break;
-            case 5: m_zigbee->touchLinkRequest(QByteArray::fromHex(json.value("deviceAddress").toString().toUtf8()), static_cast <quint8> (json.value("channel").toInt()), true); break;
-            case 6: m_zigbee->touchLinkRequest(); break;
+            case 1: m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString()); break;
+            case 2: m_zigbee->removeDevice(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8())); break;
+            case 3: m_zigbee->updateDevice(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), json.value("reportings").toBool()); break;
+            case 4: m_zigbee->updateReporting(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("reporting").toString(), static_cast <quint16> (json.value("minInterval").toInt()), static_cast <quint16> (json.value("maxInterval").toInt()), static_cast <quint16> (json.value("valueChange").toInt())); break;
+            case 5: m_zigbee->deviceBinding(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("clusterId").toInt()), QByteArray::fromHex(json.value("dstAddress").toString().toUtf8()), static_cast <quint8> (json.value("dstEndpointId").toInt())); break;
+            case 6: m_zigbee->deviceBinding(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("clusterId").toInt()), QByteArray::fromHex(json.value("dstAddress").toString().toUtf8()), static_cast <quint8> (json.value("dstEndpointId").toInt()), true); break;
+            case 7: m_zigbee->touchLinkRequest(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("channel").toInt()), true); break;
+            case 8: m_zigbee->touchLinkRequest(); break;
         }
     }
     else if (topic.name().startsWith("homed/td/zigbee/"))

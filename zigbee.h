@@ -33,20 +33,26 @@ class BindRequestObject
 
 public:
 
-    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId) :
-        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId) {}
+    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind) :
+        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_dstAddress(dstAddress), m_dstEndpointId(dstEndpointId), m_unbind(unbind) {}
 
-    inline Device device(void) {return m_device; }
-    inline quint8 endpointId(void) {return m_endpointId; }
-    inline quint16 clusterId(void) {return m_clusterId; }
+    inline Device device(void) { return m_device; }
+    inline quint8 endpointId(void) { return m_endpointId; }
+    inline quint16 clusterId(void) { return m_clusterId; }
+    inline QByteArray dstAddress(void) { return m_dstAddress; }
+    inline quint8 dstEndpointId(void) { return m_dstEndpointId; }
+    inline bool unbind(void) { return m_unbind; }
 
-    inline bool operator == (BindRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId(); }
+    inline bool operator == (BindRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId() && m_dstAddress == other.dstAddress() && m_dstEndpointId == other.dstEndpointId() && m_unbind == other.unbind(); }
 
 private:
 
     Device m_device;
     quint8 m_endpointId;
     quint16 m_clusterId;
+    QByteArray m_dstAddress;
+    quint8 m_dstEndpointId;
+    bool m_unbind;
 
 };
 
@@ -58,11 +64,11 @@ public:
     DataRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name) :
         m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_data(data), m_name(name) {}
 
-    inline Device device(void) {return m_device; }
-    inline quint8 endpointId(void) {return m_endpointId; }
-    inline quint16 clusterId(void) {return m_clusterId; }
-    inline QByteArray data(void) {return m_data; }
-    inline QString name(void) {return m_name; }
+    inline Device device(void) { return m_device; }
+    inline quint8 endpointId(void) { return m_endpointId; }
+    inline quint16 clusterId(void) { return m_clusterId; }
+    inline QByteArray data(void) { return m_data; }
+    inline QString name(void) { return m_name; }
 
     inline bool operator == (DataRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId() && m_data == other.data(); }
 
@@ -93,6 +99,8 @@ public:
 
     void updateDevice(const QByteArray &ieeeAddress, bool reportings);
     void updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
+
+    void deviceBinding(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
     void deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData);
 
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
@@ -123,7 +131,7 @@ private:
 
     Device findDevice(quint16 networkAddress);
 
-    void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId);
+    void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
     void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
 
     void setupDevice(const Device &device);
@@ -150,9 +158,8 @@ private slots:
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
-
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
-    void messageReveivedExt(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
     void pollAttributes(void);
     void updateNeighbors(void);

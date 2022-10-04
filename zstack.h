@@ -21,11 +21,11 @@
 #define AF_SKIP_ROUTING                             0x80
 #define AF_DEFAULT_RADIUS                           0x0F
 
-#define BIND_ADDRESS_NOT_PRESENT                    0x00
-#define BIND_GROUP_ADDRESS                          0x01
-#define BIND_ADDRESS_16_BIT                         0x02
-#define BIND_ADDRESS_64_BIT                         0x03
-#define BIND_BROADCAST                              0xFF
+#define ADDRESS_MODE_NOT_PRESENT                    0x00
+#define ADDRESS_MODE_GROUP                          0x01
+#define ADDRESS_MODE_16_BIT                         0x02
+#define ADDRESS_MODE_64_BIT                         0x03
+#define ADDRESS_MODE_BROADCAST                      0xFF
 
 #define SYS_OSAL_NV_ITEM_INIT                       0x2107
 #define SYS_OSAL_NV_READ                            0x2108
@@ -39,6 +39,7 @@
 #define ZDO_SIMPLE_DESC_REQ                         0x2504
 #define ZDO_ACTIVE_EP_REQ                           0x2505
 #define ZDO_BIND_REQ                                0x2521
+#define ZDO_UNBIND_REQ                              0x2522
 #define ZDO_MGMT_LQI_REQ                            0x2531
 #define ZDO_MGMT_PERMIT_JOIN_REQ                    0x2536
 #define ZDO_STARTUP_FROM_APP                        0x2540
@@ -53,6 +54,7 @@
 #define ZDO_SIMPLE_DESC_RSP                         0x4584
 #define ZDO_ACTIVE_EP_RSP                           0x4585
 #define ZDO_BIND_RSP                                0x45A1
+#define ZDO_UNBIND_RSP                              0x45A2
 #define ZDO_MGMT_LQI_RSP                            0x45B1
 #define ZDO_MGMT_PERMIT_JOIN_RSP                    0x45B6
 #define ZDO_MGMT_NWK_UPDATE_RSP                     0x45B8
@@ -187,11 +189,11 @@ struct neighborRecordStruct
 struct bindRequestStruct
 {
     quint16 networkAddress;
-    quint64 srcIeeeAddress;
+    quint64 srcAddress;
     quint8  srcEndpointId;
     quint16 clusterId;
     quint8  dstAddressMode;
-    quint64 dstIeeeAddress;
+    quint64 dstAddress;
     quint8  dstEndpointId;
 };
 
@@ -207,7 +209,7 @@ struct dataRequestStruct
     quint8  length;
 };
 
-struct dataRequestExtStruct
+struct extendedDataRequestStruct
 {
     quint8  dstAddressMode;
     quint64 dstAddress;
@@ -278,7 +280,7 @@ struct incomingMessageStruct
     quint8  length;
 };
 
-struct incomingMessageExtStruct
+struct extendedIncomingMessageStruct
 {
     quint16 groupId;
     quint16 clusterId;
@@ -332,12 +334,11 @@ public:
     void activeEndpointsRequest(quint16 networkAddress);
     void lqiRequest(quint16 networkAddress, quint8 index = 0);
 
-    bool bindRequest(quint16 networkAddress, const QByteArray &srcIeeeAddress, quint8 srcEndpointId, const QByteArray &dstIeeeAddress, quint8 dstEndpointId, quint16 clusterId);
-    bool bindRequest(quint16 networkAddress, const QByteArray &ieeeAaddress, quint8 endpointId, quint16 clusterId);
-
+    bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
     bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
-    bool dataRequestExt(const QByteArray &address, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data);
-    bool dataRequestExt(quint16 networkAddress, quint8 dstEndPointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data);
+
+    bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data);
+    bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data);
 
     bool setInterPanEndpointId(quint8 endpointId);
     bool setInterPanChannel(quint8 channel);
@@ -389,7 +390,7 @@ signals:
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
-    void messageReveivedExt(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
     void bindResponse(void);
     void dataConfirm(void);
