@@ -18,12 +18,15 @@ public:
     enum class Command
     {
         setPermitJoin,
-        otaUpgrade,
         removeDevice,
         updateDevice,
         updateReporting,
         bindDevice,
         unbindDevice,
+        addGroup,
+        removeGroup,
+        removeAllGroups,
+        otaUpgrade,
         touchLinkReset,
         touchLinkScan
     };

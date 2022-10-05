@@ -15,6 +15,12 @@
 #define CMD_REPORT_ATTRIBUTES                       0x0A
 #define CMD_DEFAULT_RESPONSE                        0x0B
 
+#define STATUS_SUCCESS                              0x00
+#define STATUS_INSUFFICIENT_SPACE                   0x89
+#define STATUS_DUPLICATE_EXISTS                     0x8A
+#define STATUS_NOT_FOUND                            0x8B
+#define STATUS_NO_IMAGE_AVAILABLE                   0x98
+
 #define DATA_TYPE_BOOLEAN                           0x10
 #define DATA_TYPE_8BIT_BITMAP                       0x18
 #define DATA_TYPE_16BIT_BITMAP                      0x19
@@ -49,6 +55,7 @@
 #define CLUSTER_BASIC                               0x0000
 #define CLUSTER_POWER_CONFIGURATION                 0x0001
 #define CLUSTER_IDENTIFY                            0x0003
+#define CLUSTER_GROUPS                              0x0004
 #define CLUSTER_ON_OFF                              0x0006
 #define CLUSTER_LEVEL_CONTROL                       0x0008
 #define CLUSTER_TIME                                0x000A
@@ -101,6 +108,12 @@ struct defaultResponseStruct
 {
     quint8  commandId;
     quint8  status;
+};
+
+struct groupControlResponseStruct
+{
+    quint8  status;
+    quint16 grpoupId;
 };
 
 struct otaFileHeaderStruct

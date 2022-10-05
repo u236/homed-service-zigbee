@@ -46,10 +46,6 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->setPermitJoin(json.value("enabled").toBool());
                 break;
 
-            case Command::otaUpgrade:
-                m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString());
-                break;
-
             case Command::removeDevice:
                 m_zigbee->removeDevice(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()));
                 break;
@@ -64,15 +60,28 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
             case Command::bindDevice:
             case Command::unbindDevice:
-                m_zigbee->deviceBinding(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("clusterId").toInt()), QByteArray::fromHex(json.value("dstAddress").toString().toUtf8()), static_cast <quint8> (json.value("dstEndpointId").toInt()), command == Command::unbindDevice);
+                m_zigbee->bindingControl(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("clusterId").toInt()), QByteArray::fromHex(json.value("dstAddress").toString().toUtf8()), static_cast <quint8> (json.value("dstEndpointId").toInt()), command == Command::unbindDevice);
                 break;
 
-            case Command::touchLinkReset:
-                m_zigbee->touchLinkRequest(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("channel").toInt()), true);
+            case Command::addGroup:
+            case Command::removeGroup:
+                m_zigbee->groupControl(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("groupId").toInt()), command == Command::removeGroup);
+                break;
+
+            case Command::removeAllGroups:
+                m_zigbee->removeAllGroups(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()));
+                break;
+
+            case Command::otaUpgrade:
+                m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString());
                 break;
 
             case Command::touchLinkScan:
                 m_zigbee->touchLinkRequest();
+                break;
+
+            case Command::touchLinkReset:
+                m_zigbee->touchLinkRequest(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("channel").toInt()), true);
                 break;
         }
     }

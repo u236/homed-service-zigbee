@@ -93,17 +93,19 @@ public:
     void init(void);
     void setPermitJoin(bool enabled);
 
-    void otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName);
     void setDeviceName(const QByteArray &ieeeAddress, const QString &name);
     void removeDevice(const QByteArray &ieeeAddress);
 
     void updateDevice(const QByteArray &ieeeAddress, bool reportings);
     void updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
 
-    void deviceBinding(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
-    void deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData);
+    void bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind);
+    void groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 groupId, bool remove);
+    void removeAllGroups(const QByteArray &ieeeAddress, quint8 endpointId);
+    void otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName);
 
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
+    void deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData);
 
 private:
 

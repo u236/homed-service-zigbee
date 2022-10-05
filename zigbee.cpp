@@ -54,27 +54,6 @@ void ZigBee::setPermitJoin(bool enabled)
     storeStatus();
 }
 
-void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName)
-{
-    auto it = m_devices.find(ieeeAddress);
-    zclHeaderStruct header;
-    otaImageNotifyStruct payload;
-
-    if (it == m_devices.end() || fileName.isEmpty() || !QFile::exists(fileName))
-        return;
-
-    m_otaUpgradeFile = fileName;
-
-    header.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT;
-    header.transactionId = m_transactionId++;
-    header.commandId = 0x00;
-
-    payload.type = 0x00;
-    payload.jitter = 0x64; // TODO: check this
-
-    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
-}
-
 void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
 {
     auto it = m_devices.find(ieeeAddress);
@@ -153,14 +132,82 @@ void ZigBee::updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, c
     }
 }
 
-void ZigBee::deviceBinding(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
+void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
-    Device device = m_devices.value(ieeeAddress);
+    auto it = m_devices.find(ieeeAddress);
 
-    if (device.isNull())
+    if (it == m_devices.end())
         return;
 
-    enqueueBindRequest(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind);
+    enqueueBindRequest(it.value(), endpointId, clusterId, dstAddress, dstEndpointId, unbind);
+}
+
+void ZigBee::groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 groupId, bool remove)
+{
+    auto it = m_devices.find(ieeeAddress);
+    zclHeaderStruct header;
+
+    if (it == m_devices.end())
+        return;
+
+    header.frameControl = FC_CLUSTER_SPECIFIC;
+    header.transactionId = m_transactionId++;
+    header.commandId = remove ? 0x03 : 0x00;
+
+    groupId = qFromLittleEndian(groupId);
+    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
+}
+
+void ZigBee::removeAllGroups(const QByteArray &ieeeAddress, quint8 endpointId)
+{
+    auto it = m_devices.find(ieeeAddress);
+    zclHeaderStruct header;
+
+    if (it == m_devices.end())
+        return;
+
+    header.frameControl = FC_CLUSTER_SPECIFIC;
+    header.transactionId = m_transactionId++;
+    header.commandId = 0x04;
+
+    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)), QString("remove all groups request"));
+}
+
+void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName)
+{
+    auto it = m_devices.find(ieeeAddress);
+    zclHeaderStruct header;
+    otaImageNotifyStruct payload;
+
+    if (it == m_devices.end() || fileName.isEmpty() || !QFile::exists(fileName))
+        return;
+
+    m_otaUpgradeFile = fileName;
+
+    header.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT;
+    header.transactionId = m_transactionId++;
+    header.commandId = 0x00;
+
+    payload.type = 0x00;
+    payload.jitter = 0x64; // TODO: check this
+
+    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+}
+
+void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
+{
+    if (m_adapter->setInterPanEndpointId(0x0C))
+    {
+        m_queuesTimer->stop();
+
+        if (reset)
+            touchLinkReset(ieeeAddress, channel);
+        else
+            touchLinkScan();
+
+        m_adapter->resetInterPan();
+        m_queuesTimer->start();
+    }
 }
 
 void ZigBee::deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData)
@@ -190,22 +237,6 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, cons
                 break;
             }
         }
-    }
-}
-
-void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
-{
-    if (m_adapter->setInterPanEndpointId(0x0C))
-    {
-        m_queuesTimer->stop();
-
-        if (reset)
-            touchLinkReset(ieeeAddress, channel);
-        else
-            touchLinkScan();
-
-        m_adapter->resetInterPan();
-        m_queuesTimer->start();
     }
 }
 
@@ -717,6 +748,49 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     if (!device->interviewFinished())
         return;
 
+    if (clusterId == CLUSTER_GROUPS)
+    {
+        switch (commandId)
+        {
+            case 0x00:
+            case 0x03:
+            {
+                const groupControlResponseStruct *response = reinterpret_cast <const groupControlResponseStruct*> (payload.constData());
+
+                switch (response->status)
+                {
+                    case STATUS_SUCCESS:
+                        logInfo << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "group" << qFromLittleEndian(response->grpoupId) << "successfully" << (commandId ? "removed" : "added");
+                        break;
+
+                    case STATUS_INSUFFICIENT_SPACE:
+                        logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "group" << qFromLittleEndian(response->grpoupId) << "not added, no free space available";
+                        break;
+
+                    case STATUS_DUPLICATE_EXISTS:
+                        logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "group" << qFromLittleEndian(response->grpoupId) << "already exists";
+                        break;
+
+                    case STATUS_NOT_FOUND:
+                        logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "group" << qFromLittleEndian(response->grpoupId) << "not found";
+                        break;
+
+                    default:
+                        logWarning << "Device" << endpoint->device()->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "group" << qFromLittleEndian(response->grpoupId) << (commandId ? "remove" : "add") << "command status" << QString::asprintf("0x%02X", response->status) << "unrecognized";
+                        break;
+                }
+
+                break;
+            }
+
+            default:
+                logWarning << "Unrecognized group control command" << QString::asprintf("0x%02X", commandId) << "received from device" << device->name() << "with payload:" << payload.toHex(':');
+                break;
+        }
+
+        return;
+    }
+
     if (clusterId == CLUSTER_OTA_UPGRADE)
     {
         QFile file(m_otaUpgradeFile);
@@ -742,14 +816,14 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
                 if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType)
                 {
-                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(STATUS_NO_IMAGE_AVAILABLE));
                     break;
                 }
 
                 if (request->fileVersion == fileHeader.fileVersion)
                 {
                     logInfo << "Device" << device->name() << "OTA upgrade not started, version match:" << QString::asprintf("0x%08X", qFromLittleEndian(request->fileVersion)).toUtf8().constData();
-                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(STATUS_NO_IMAGE_AVAILABLE));
                     break;
                 }
 
@@ -775,7 +849,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
                 if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType ||request->fileVersion != fileHeader.fileVersion)
                 {
-                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(0x98));
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(STATUS_NO_IMAGE_AVAILABLE));
                     break;
                 }
 
@@ -822,7 +896,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             }
 
             default:
-                logWarning << "Unrecognized OTA command" << QString::asprintf("0x%02X", commandId) << "received from device" << device->name() << "with payload:" << payload.toHex(':');
+                logWarning << "Unrecognized OTA upgrade command" << QString::asprintf("0x%02X", commandId) << "received from device" << device->name() << "with payload:" << payload.toHex(':');
                 break;
         }
 
