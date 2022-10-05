@@ -99,7 +99,7 @@ public:
     void updateDevice(const QByteArray &ieeeAddress, bool reportings);
     void updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
 
-    void bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind);
+    void bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind);
     void groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 groupId, bool remove);
     void removeAllGroups(const QByteArray &ieeeAddress, quint8 endpointId);
     void otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName);

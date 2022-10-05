@@ -165,6 +165,9 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     QEventLoop loop;
     QTimer timer;
 
+    if (!dstAddress.isEmpty() && dstAddress.length() != 2 && dstAddress.length() != 8)
+        return false;
+
     memcpy(&src, srcAddress.constData(), sizeof(src));
     memcpy(&dst, dstAddress.isEmpty() ? m_ieeeAddress.constData() : dstAddress.constData(), sizeof(dst));
 
@@ -172,9 +175,10 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     request.srcAddress = qToBigEndian(src);
     request.srcEndpointId = srcEndpointId;
     request.clusterId = qToLittleEndian(clusterId);
-    request.dstAddressMode = ADDRESS_MODE_64_BIT;
-    request.dstAddress = qToBigEndian(dst);
-    request.dstEndpointId = dstEndpointId ? dstEndpointId : 1;
+    request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
+
+    if (request.dstAddressMode == ADDRESS_MODE_64_BIT)
+        dst = qToBigEndian(dst);
 
     connect(this, &ZStack::bindResponse, &loop, &QEventLoop::quit);
     connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
@@ -182,7 +186,7 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     m_bindAddress = networkAddress;
     m_bindRequestSuccess = false;
 
-    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1))) || m_replyData.at(0))
     {
         logWarning << (unbind ? "Unbind" : "Bind") << "request failed";
         return false;

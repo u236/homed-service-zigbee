@@ -193,8 +193,6 @@ struct bindRequestStruct
     quint8  srcEndpointId;
     quint16 clusterId;
     quint8  dstAddressMode;
-    quint64 dstAddress;
-    quint8  dstEndpointId;
 };
 
 struct dataRequestStruct

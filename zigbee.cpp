@@ -132,14 +132,31 @@ void ZigBee::updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, c
     }
 }
 
-void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
+void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind)
 {
     auto it = m_devices.find(ieeeAddress);
 
     if (it == m_devices.end())
         return;
 
-    enqueueBindRequest(it.value(), endpointId, clusterId, dstAddress, dstEndpointId, unbind);
+    switch (dstAddress.type())
+    {
+        case QVariant::LongLong:
+        {
+            quint16 value = qToLittleEndian(static_cast <quint16> (dstAddress.toInt()));
+            enqueueBindRequest(it.value(), endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
+            break;
+        }
+
+        case QVariant::String:
+        {
+            enqueueBindRequest(it.value(), endpointId, clusterId, QByteArray::fromHex(dstAddress.toString().toUtf8()), dstEndpointId, unbind);
+            break;
+        }
+
+        default:
+            break;
+    }
 }
 
 void ZigBee::groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 groupId, bool remove)
