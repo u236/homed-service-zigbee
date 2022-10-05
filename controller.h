@@ -3,6 +3,7 @@
 
 #define SERVICE_VERSION     "3.0.31"
 
+#include <QMetaEnum>
 #include "homed.h"
 #include "zigbee.h"
 
@@ -14,9 +15,25 @@ public:
 
     Controller(void);
 
+    enum class Command
+    {
+        setPermitJoin,
+        otaUpgrade,
+        removeDevice,
+        updateDevice,
+        updateReporting,
+        bindDevice,
+        unbindDevice,
+        touchLinkReset,
+        touchLinkScan
+    };
+
+    Q_ENUM(Command)
+
 private:
 
     ZigBee *m_zigbee;
+    QMetaEnum m_commands;
 
 private slots:
 
