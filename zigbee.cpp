@@ -240,6 +240,22 @@ void ZigBee::deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, cons
     }
 }
 
+void ZigBee::groupAction(quint16 groupId, const QString &actionName, const QVariant &actionData)
+{
+    int type = QMetaType::type(QString(actionName).append("Action").toUtf8());
+
+    if (type)
+    {
+        Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
+        QByteArray data = action->request(actionData);
+
+        if (data.isEmpty())
+            return;
+
+        m_adapter->extendedDataRequest(groupId, 0xFF, 0x0000, 0x01, action->clusterId(), data, true);
+    }
+}
+
 void ZigBee::unserializeDevices(const QJsonArray &devices)
 {
     for (auto it = devices.begin(); it != devices.end(); it++)

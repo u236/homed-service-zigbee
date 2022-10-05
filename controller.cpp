@@ -88,15 +88,31 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     else if (topic.name().startsWith("homed/td/zigbee/"))
     {
         QList <QString> list = topic.name().split('/');
-        QByteArray ieeeAddress = QByteArray::fromHex(list.value(3).toUtf8());
-        quint8 endpointId = static_cast <quint8> (list.value(4).toInt());
 
-        for (auto it = json.begin(); it != json.end(); it++)
+        if (list.value(3) != "group")
         {
-            if (!it.value().toVariant().isValid())
-                continue;
+            QByteArray ieeeAddress = QByteArray::fromHex(list.value(3).toUtf8());
+            quint8 endpointId = static_cast <quint8> (list.value(4).toInt());
 
-            m_zigbee->deviceAction(ieeeAddress, endpointId, it.key(), it.value().toVariant());
+            for (auto it = json.begin(); it != json.end(); it++)
+            {
+                if (!it.value().toVariant().isValid())
+                    continue;
+
+                m_zigbee->deviceAction(ieeeAddress, endpointId, it.key(), it.value().toVariant());
+            }
+        }
+        else
+        {
+            quint16 groupId = static_cast <quint16> (list.value(4).toInt());
+
+            for (auto it = json.begin(); it != json.end(); it++)
+            {
+                if (!it.value().toVariant().isValid())
+                    continue;
+
+                m_zigbee->groupAction(groupId, it.key(), it.value().toVariant());
+            }
         }
     }
 }

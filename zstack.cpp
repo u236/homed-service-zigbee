@@ -235,13 +235,13 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     return m_dataRequestSuccess;
 }
 
-bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
+bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
 {
     extendedDataRequestStruct request;
 
     switch (address.length())
     {
-        case 2: request.dstAddressMode = ADDRESS_MODE_16_BIT; break;
+        case 2: request.dstAddressMode = group ? ADDRESS_MODE_GROUP : ADDRESS_MODE_16_BIT; break;
         case 8: request.dstAddressMode = ADDRESS_MODE_64_BIT; break;
         default: return false;
     }
@@ -249,7 +249,7 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     memset(&request.dstAddress, 0, sizeof(request.dstAddress));
     memcpy(&request.dstAddress, address.constData(), address.length());
 
-    if (request.dstAddressMode == 0x03)
+    if (request.dstAddressMode == ADDRESS_MODE_64_BIT)
         request.dstAddress = qToBigEndian(request.dstAddress);
 
     request.dstEndpointId = dstEndpointId;
@@ -258,7 +258,7 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     request.clusterId = qToLittleEndian(clusterId);
     request.transactionId = m_transactionId;
     request.options = 0x00;
-    request.radius = AF_DEFAULT_RADIUS * 2;
+    request.radius = dstPanId ? AF_DEFAULT_RADIUS * 2 : AF_DEFAULT_RADIUS;
     request.length = qToLittleEndian(static_cast <quint16> (data.length()));
 
     m_dataConfirmReceived = false;
@@ -288,10 +288,10 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     return m_dataRequestSuccess;
 }
 
-bool ZStack::extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data)
+bool ZStack::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
 {
-    networkAddress = qToLittleEndian(networkAddress);
-    return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data);
+    address = qToLittleEndian(address);
+    return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
 }
 
 bool ZStack::setInterPanEndpointId(quint8 endpointId)

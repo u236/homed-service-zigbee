@@ -105,7 +105,9 @@ public:
     void otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName);
 
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
+
     void deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData);
+    void groupAction(quint16 groupId, const QString &actionName, const QVariant &actionData);
 
 private:
 
