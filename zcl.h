@@ -101,7 +101,7 @@ struct configureReportingStruct
     quint8  dataType;
     quint16 minInterval;
     quint16 maxInterval;
-    quint16 valueChange;
+    quint64 valueChange;
 };
 
 struct defaultResponseStruct
@@ -209,6 +209,7 @@ struct tuyaHeaderStruct
 
 #pragma pack(pop)
 
+quint8 zclDataSize(quint8 dataType);
 quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset);
 
 #endif

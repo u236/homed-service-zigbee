@@ -12,6 +12,9 @@ class PollObject
 
 public:
 
+    PollObject(const QString &name, quint16 clusterId, quint16 attributeId) :
+        m_name(name), m_clusterId(clusterId), m_attributes({attributeId}) {}
+
     PollObject(const QString &name, quint16 clusterId, QList <quint16> attributes) :
         m_name(name), m_clusterId(clusterId), m_attributes(attributes) {}
 
@@ -37,7 +40,7 @@ namespace Polls
 
     public:
 
-        Status(void) : PollObject("status", CLUSTER_ON_OFF, {0x0000}) {}
+        Status(void) : PollObject("status", CLUSTER_ON_OFF, 0x0000) {}
 
     };
 
@@ -46,7 +49,7 @@ namespace Polls
 
     public:
 
-        Level(void) : PollObject("level", CLUSTER_LEVEL_CONTROL, {0x0000}) {}
+        Level(void) : PollObject("level", CLUSTER_LEVEL_CONTROL, 0x0000) {}
 
     };
 
@@ -73,7 +76,7 @@ namespace Polls
 
     public:
 
-        ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, {0x0007}) {}
+        ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0007) {}
 
     };
 

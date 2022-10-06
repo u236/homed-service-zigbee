@@ -661,25 +661,28 @@ void ZigBee::interviewDevice(const Device &device)
 void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)
 {
     zclHeaderStruct header;
-    configureReportingStruct payload;
-    size_t length = sizeof(payload);
+    QByteArray payload;
 
     header.frameControl = 0x00;
     header.transactionId = m_transactionId++;
     header.commandId = CMD_CONFIGURE_REPORTING;
 
-    payload.direction = 0x00;
-    payload.attributeId = qToLittleEndian(reporting->attributeId());
-    payload.dataType = reporting->dataType();
-    payload.minInterval = qToLittleEndian(reporting->minInterval());
-    payload.maxInterval = qToLittleEndian(reporting->maxInterval());
-    payload.valueChange = qToLittleEndian(reporting->valueChange());
+    for (int i = 0; i < reporting->attributes().count(); i++)
+    {
+        configureReportingStruct item;
 
-    if (payload.dataType == DATA_TYPE_BOOLEAN || payload.dataType == DATA_TYPE_8BIT_UNSIGNED || payload.dataType == DATA_TYPE_8BIT_SIGNED)
-        length -= 1;
+        item.direction = 0x00;
+        item.attributeId = qToLittleEndian(reporting->attributes().at(i));
+        item.dataType = reporting->dataType();
+        item.minInterval = qToLittleEndian(reporting->minInterval());
+        item.maxInterval = qToLittleEndian(reporting->maxInterval());
+        item.valueChange = qToLittleEndian(reporting->valueChange());
+
+        payload.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
+    }
 
     enqueueBindRequest(endpoint->device(), endpoint->id(), reporting->clusterId());
-    enqueueDataRequest(endpoint->device(), endpoint->id(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), length), QString("%1 reporting configuration").arg(reporting->name()));
+    enqueueDataRequest(endpoint->device(), endpoint->id(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload), QString("%1 reporting configuration").arg(reporting->name()));
 }
 
 void ZigBee::readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes)

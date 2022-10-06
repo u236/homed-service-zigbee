@@ -1,5 +1,47 @@
 #include "zcl.h"
 
+quint8 zclDataSize(quint8 dataType)
+{
+    switch (dataType)
+    {
+        case DATA_TYPE_8BIT_UNSIGNED:
+        case DATA_TYPE_8BIT_SIGNED:
+            return 1;
+
+        case DATA_TYPE_16BIT_UNSIGNED:
+        case DATA_TYPE_16BIT_SIGNED:
+            return 2;
+
+        case DATA_TYPE_24BIT_UNSIGNED:
+        case DATA_TYPE_24BIT_SIGNED:
+            return 3;
+
+        case DATA_TYPE_32BIT_UNSIGNED:
+        case DATA_TYPE_32BIT_SIGNED:
+        case DATA_TYPE_SINGLE_PRECISION:
+            return 4;
+
+        case DATA_TYPE_40BIT_UNSIGNED:
+        case DATA_TYPE_40BIT_SIGNED:
+            return 5;
+
+        case DATA_TYPE_48BIT_UNSIGNED:
+        case DATA_TYPE_48BIT_SIGNED:
+            return 6;
+
+        case DATA_TYPE_56BIT_UNSIGNED:
+        case DATA_TYPE_56BIT_SIGNED:
+            return 7;
+
+        case DATA_TYPE_64BIT_UNSIGNED:
+        case DATA_TYPE_64BIT_SIGNED:
+        case DATA_TYPE_DOUBLE_PRECISION:
+            return 8;
+    }
+
+    return 0;
+}
+
 quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
 {
     switch (dataType)

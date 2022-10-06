@@ -6,10 +6,8 @@ void ReportingObject::registerMetaTypes(void)
     qRegisterMetaType <Reportings::BatteryPercentage>   ("batteryPercentageReporting");
     qRegisterMetaType <Reportings::Status>              ("statusReporting");
     qRegisterMetaType <Reportings::Level>               ("levelReporting");
-    qRegisterMetaType <Reportings::ColorHue>            ("colorHueReporting");
-    qRegisterMetaType <Reportings::ColorSaturation>     ("colorSaturationReporting");
-    qRegisterMetaType <Reportings::ColorX>              ("colorXReporting");
-    qRegisterMetaType <Reportings::ColorY>              ("colorYReporting");
+    qRegisterMetaType <Reportings::ColorHS>             ("colorHSReporting");
+    qRegisterMetaType <Reportings::ColorXY>             ("colorXYReporting");
     qRegisterMetaType <Reportings::ColorTemperature>    ("colorTemperatureReporting");
     qRegisterMetaType <Reportings::Illuminance>         ("illuminanceReporting");
     qRegisterMetaType <Reportings::Temperature>         ("temperatureReporting");
