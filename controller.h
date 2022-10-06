@@ -27,8 +27,8 @@ public:
         removeGroup,
         removeAllGroups,
         otaUpgrade,
-        touchLinkReset,
-        touchLinkScan
+        touchLinkScan,
+        touchLinkReset
     };
 
     Q_ENUM(Command)
