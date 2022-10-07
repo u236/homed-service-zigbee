@@ -76,15 +76,8 @@
 #define ZCD_NV_USER                                 0x0060
 
 #include <QSerialPort>
-#include <QSettings>
 #include <QTimer>
-
-enum class LogicalType
-{
-    Coordinator,
-    Router,
-    EndDevice
-};
+#include "adapter.h"
 
 #pragma pack(push, 1)
 
@@ -314,7 +307,7 @@ struct deviceLeaveStruct
 
 #pragma pack(pop)
 
-class ZStack : public QObject
+class ZStack : public Adapter
 {
     Q_OBJECT
 
@@ -322,26 +315,25 @@ public:
 
     ZStack(QSettings *config, QObject *parent);
 
-    inline quint8 dataRequestStatus(void) { return m_dataRequestStatus; }
+    void init(void) override;
+    void registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters) override;
+    void setPermitJoin(bool enabled) override;
+    void nodeDescriptorRequest(quint16 networkAddress) override;
+    void simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
+    void activeEndpointsRequest(quint16 networkAddress) override;
+    void lqiRequest(quint16 networkAddress, quint8 index = 0) override;
 
-    void init(void);
-    void registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
-    void setPermitJoin(bool enabled);
-    void nodeDescriptorRequest(quint16 networkAddress);
-    void simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId);
-    void activeEndpointsRequest(quint16 networkAddress);
-    void lqiRequest(quint16 networkAddress, quint8 index = 0);
+    bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false) override;
+    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data) override;
 
-    bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
-    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
+    bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+    bool extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
 
-    bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false);
-    bool extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false);
+    quint8 dataRequestStatus(void) override;
 
-    bool setInterPanEndpointId(quint8 endpointId);
-    bool setInterPanChannel(quint8 channel);
-
-    void resetInterPan(void);
+    bool setInterPanEndpointId(quint8 endpointId) override;
+    bool setInterPanChannel(quint8 channel) override;
+    void resetInterPan(void) override;
 
 private:
 
@@ -379,16 +371,6 @@ private slots:
     void receiveData(void);
 
 signals:
-
-    void coordinatorReady(const QByteArray &ieeeAddress);
-    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
-    void deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
-    void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
-    void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
-    void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
-    void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
-    void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
-    void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
     void bindResponse(void);
     void dataConfirm(void);

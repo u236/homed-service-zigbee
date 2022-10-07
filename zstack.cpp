@@ -5,10 +5,12 @@
 #include "logger.h"
 #include "zstack.h"
 
-ZStack::ZStack(QSettings *config, QObject *parent) : QObject(parent), m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_reset(false), m_status(0), m_transactionId(0)
+ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_reset(false), m_status(0), m_transactionId(0)
 {
     quint16 panId = qToLittleEndian(config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16));
     quint32 chanList = qToBigEndian(ADAPTER_CHANNEL_LIST);
+
+    setParent(parent);
 
     m_port->setPortName(config->value("zigbee/port", "/dev/ttyS0").toString());
     m_port->setBaudRate(QSerialPort::Baud115200);
@@ -296,6 +298,11 @@ bool ZStack::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 
 {
     address = qToLittleEndian(address);
     return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
+}
+
+quint8 ZStack::dataRequestStatus(void)
+{
+    return m_dataRequestStatus;
 }
 
 bool ZStack::setInterPanEndpointId(quint8 endpointId)

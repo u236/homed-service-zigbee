@@ -111,7 +111,7 @@ public:
 
 private:
 
-    ZStack *m_adapter;
+    Adapter *m_adapter;
     QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusTimer, *m_ledTimer;
 
     QString m_libraryFile, m_databaseFile, m_otaUpgradeFile;

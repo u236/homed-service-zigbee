@@ -3,6 +3,7 @@ include(../homed-common/homed-gpio.pri)
 
 HEADERS += \
     action.h \
+    adapter.h \
     controller.h \
     device.h \
     poll.h \
