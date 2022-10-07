@@ -8,7 +8,7 @@
 ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_reset(false), m_status(0), m_transactionId(0)
 {
     quint16 panId = qToLittleEndian(config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16));
-    quint32 chanList = qToBigEndian(ADAPTER_CHANNEL_LIST);
+    quint32 chanList = qToLittleEndian(qFromBigEndian(ADAPTER_CHANNEL_LIST));
 
     setParent(parent);
 
@@ -174,13 +174,13 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     memcpy(&dst, dstAddress.isEmpty() ? m_ieeeAddress.constData() : dstAddress.constData(), sizeof(dst));
 
     request.networkAddress = qToLittleEndian(networkAddress);
-    request.srcAddress = qToBigEndian(src);
+    request.srcAddress = qToLittleEndian(qFromBigEndian(src));
     request.srcEndpointId = srcEndpointId;
     request.clusterId = qToLittleEndian(clusterId);
     request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
 
     if (request.dstAddressMode == ADDRESS_MODE_64_BIT)
-        dst = qToBigEndian(dst);
+        dst = qToLittleEndian(qFromBigEndian(dst));
 
     connect(this, &ZStack::bindResponse, &loop, &QEventLoop::quit);
     connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
@@ -256,7 +256,7 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     memcpy(&request.dstAddress, address.constData(), address.length());
 
     if (request.dstAddressMode == ADDRESS_MODE_64_BIT)
-        request.dstAddress = qToBigEndian(request.dstAddress);
+        request.dstAddress = qToLittleEndian(qFromBigEndian(request.dstAddress));
 
     request.dstEndpointId = dstEndpointId;
     request.dstPanId = qToLittleEndian(dstPanId);
@@ -388,7 +388,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case AF_INCOMING_MSG_EXT:
         {
             const extendedIncomingMessageStruct *message = reinterpret_cast <const extendedIncomingMessageStruct*> (data.constData());
-            quint64 srcAddress = qFromBigEndian(message->srcAddress);
+            quint64 srcAddress = qToBigEndian(qFromLittleEndian(message->srcAddress));
 
             if (message->srcAddressMode != 0x03)
             {
@@ -496,7 +496,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case ZDO_END_DEVICE_ANNCE_IND:
         {
             const deviceAnnounceStruct *message = reinterpret_cast <const deviceAnnounceStruct*> (data.constData());
-            quint64 ieeeAddress = qFromBigEndian(message->ieeeAddress);
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
             emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress), message->capabilities);
             break;
         }
@@ -504,7 +504,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case ZDO_LEAVE_IND:
         {
             const deviceLeaveStruct *message = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
-            quint64 ieeeAddress = qFromBigEndian(message->ieeeAddress);
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
             emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
             break;
         }
@@ -625,7 +625,7 @@ bool ZStack::startCoordinator(void)
     }
 
     deviceInfo = reinterpret_cast <deviceInfoResponseStruct*> (m_replyData.data());
-    ieeeAddress = qFromBigEndian(deviceInfo->ieeeAddress);
+    ieeeAddress = qToBigEndian(qFromLittleEndian(deviceInfo->ieeeAddress));
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
     if (!m_reset)
