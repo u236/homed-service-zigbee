@@ -7,8 +7,8 @@
 
 ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_reset(false), m_status(0), m_transactionId(0)
 {
-    quint16 panId = qToLittleEndian(config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16));
-    quint32 chanList = qToLittleEndian(qFromBigEndian(ADAPTER_CHANNEL_LIST));
+    quint16 panId = qToLittleEndian(static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16)));
+    quint32 chanList = qToLittleEndian(qFromBigEndian(static_cast <quint32> (ADAPTER_CHANNEL_LIST)));
 
     setParent(parent);
 
