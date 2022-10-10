@@ -1,24 +1,35 @@
-Build Binary:
+Build Linux ARM Binary:
   stage: build
   script:
   - "export PATH=\"$PATH:/opt/gcc-arm-linux-gnueabihf/bin\""
-  - "/opt/qt5.15.4-armhf-static/bin/qmake homed-zigbee.pro"
+  - "/opt/qt-armhf-5.15.4-static/bin/qmake homed-zigbee.pro"
   - "make -j8"
+  - "cp homed-zigbee homed-zigbee-armhf"
   artifacts:
     paths:
-    - "homed-zigbee"
-  except:
-    - branches
-  only:
-    - tags
+    - "homed-zigbee-armhf"
+    expire_in: 1 day
 
-Deploy Package:
+Build OpenWRT MIPS Binary:
+  stage: build
+  script:
+  - "export PATH=\"$PATH:/opt/gcc-mips-openwrt-linux/bin\""
+  - "export STAGING_DIR=\"/opt/gcc-mips-openwrt-linux\""
+  - "/opt/qt-mips-5.15.4-static/bin/qmake homed-zigbee.pro"
+  - "make -j8"
+  - "cp homed-zigbee homed-zigbee-mips"
+  artifacts:
+    paths:
+    - "homed-zigbee-mips"
+    expire_in: 1 day
+
+Deploy Linux ARM Package:
   stage: deploy
   variables:
     PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_armhf.deb
   script:
   - "mkdir -p package/usr/local/bin"
-  - "cp homed-zigbee package/usr/local/bin"
+  - "cp homed-zigbee-armhf package/usr/local/bin/homed-zigbee"
   - "md5deep -lr package/ | grep -v DEBIAN | sed \"s+package/++g\" | sort -k2 > package/DEBIAN/md5sums"
   - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" package/DEBIAN/control"
   - "chmod +x package/DEBIAN/postinst package/DEBIAN/prerm"
