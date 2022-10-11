@@ -46,6 +46,7 @@
 #define UTIL_GET_DEVICE_INFO                        0x2700
 #define APP_CNF_BDB_SET_CHANNEL                     0x2F08
 
+#define SYS_RESET_REQ                               0x4100
 #define SYS_RESET_IND                               0x4180
 #define AF_DATA_CONFIRM                             0x4480
 #define AF_INCOMING_MSG                             0x4481
@@ -344,7 +345,8 @@ private:
 
     qint16 m_bootPin, m_resetPin;
     quint8 m_channel;
-    bool m_reset, m_write, m_debug, m_rts;
+    bool m_factory, m_write, m_debug;
+    QString m_reset;
 
     quint8 m_status, m_transactionId;
     QByteArray m_ieeeAddress;

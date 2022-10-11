@@ -6,12 +6,22 @@
 #include "zcl.h"
 #include "zigbee.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_adapter(new ZStack(config, this)), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
+    QList <QString> list = {"znp"};
+    QString adapterType = config->value("zigbee/adapter", "znp").toString();
+
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
     PropertyObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
+
+    switch (list.indexOf(adapterType))
+    {
+        case 0: m_adapter = new ZStack(config, this); break;
+        default: logWarning << "Unrecognized adapter type" << adapterType; return;
+    }
+
 
     m_libraryFile = config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
     m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();

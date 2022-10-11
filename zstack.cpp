@@ -5,14 +5,14 @@
 #include "logger.h"
 #include "zstack.h"
 
-ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_reset(false), m_status(0), m_transactionId(0)
+ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_factory(false), m_status(0), m_transactionId(0)
 {
     quint16 panId = qToLittleEndian(static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16)));
     quint32 chanList = qToLittleEndian(qFromBigEndian(static_cast <quint32> (ADAPTER_CHANNEL_LIST)));
 
     setParent(parent);
 
-    m_port->setPortName(config->value("zigbee/port", "/dev/ttyS0").toString());
+    m_port->setPortName(config->value("zigbee/port", "/dev/ttyUSB0").toString());
     m_port->setBaudRate(QSerialPort::Baud115200);
     m_port->setDataBits(QSerialPort::Data8);
     m_port->setParity(QSerialPort::NoParity);
@@ -24,7 +24,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this
 
     m_write = config->value("zigbee/write", false).toBool();
     m_debug = config->value("zigbee/debug", false).toBool();
-    m_rts = config->value("zigbee/rts", false).toBool();
+    m_reset = config->value("zigbee/reset").toString();
 
     m_nvItems.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
     m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
@@ -49,7 +49,7 @@ void ZStack::init(void)
         return;
     }
 
-    logInfo << "Reseting adapter...";
+    logInfo << "Resetting adapter...";
     resetAdapter();
 }
 
@@ -513,11 +513,11 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         {
             if (!data.at(2) && m_status == ZSTACK_COORDINATOR_STARTED)
             {
-                if (m_reset)
+                if (m_factory)
                 {
                     QThread::msleep(5000);
 
-                    m_reset = false;
+                    m_factory = false;
                     resetAdapter();
 
                     return;
@@ -579,19 +579,27 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
 
 void ZStack::resetAdapter(void)
 {
-    if (m_rts)
+    QList <QString> list = {"soft", "gpio"};
+
+    switch (list.indexOf(m_reset))
     {
-        m_port->setDataTerminalReady(false);
-        m_port->setRequestToSend(true);
-        QThread::msleep(ADAPTER_RESET_DELAY);
-        m_port->setRequestToSend(false);
-    }
-    else
-    {
-        GPIO::setStatus(m_bootPin, true);
-        GPIO::setStatus(m_resetPin, false);
-        QThread::msleep(ADAPTER_RESET_DELAY);
-        GPIO::setStatus(m_resetPin, true);
+        case 0:
+            sendRequest(SYS_RESET_REQ, QByteArray(1, 0x01));
+            break;
+
+        case 1:
+            GPIO::setStatus(m_bootPin, true);
+            GPIO::setStatus(m_resetPin, false);
+            QThread::msleep(ADAPTER_RESET_DELAY);
+            GPIO::setStatus(m_resetPin, true);
+            break;
+
+        default:
+            m_port->setDataTerminalReady(false);
+            m_port->setRequestToSend(true);
+            QThread::msleep(ADAPTER_RESET_DELAY);
+            m_port->setRequestToSend(false);
+            break;
     }
 }
 
@@ -628,7 +636,7 @@ bool ZStack::startCoordinator(void)
     ieeeAddress = qToBigEndian(qFromLittleEndian(deviceInfo->ieeeAddress));
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
-    if (!m_reset)
+    if (!m_factory)
     {
         bool check = false;
 
@@ -654,7 +662,7 @@ bool ZStack::startCoordinator(void)
             {
                 if (!m_write)
                 {
-                    logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "value" << data.toHex(':') << "does not match configuration value" << it.value().toHex(':');
+                    logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "value" << data.toHex(':') << "does not match configuration value" << it.value().toHex(':');
                     return false;
                 }
 
@@ -663,7 +671,7 @@ bool ZStack::startCoordinator(void)
                     logWarning << "Adapter configuration marker mismatch, resetting...";
 
                     writeNvItem(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
-                    m_reset = true;
+                    m_factory = true;
                     resetAdapter();
 
                     return true;
@@ -672,7 +680,7 @@ bool ZStack::startCoordinator(void)
                 if (!writeNvItem(it.key(), it.value()))
                     return false;
 
-                logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_USER) << "value changed from" << data.toHex(':') << "to" << it.value().toHex(':');
+                logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "value changed from" << data.toHex(':') << "to" << it.value().toHex(':');
                 check = true;
             }
         }
