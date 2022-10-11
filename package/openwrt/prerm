@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/etc/init.d/homed-zigbee stop
+/etc/init.d/homed-zigbee disable
+
+exit 0
