@@ -626,6 +626,14 @@ bool ZStack::startCoordinator(void)
     setChannelRequestStruct channelRequest;
     quint64 ieeeAddress;
 
+    if (!sendRequest(SYS_VERSION) || (m_replyData.at(1) != 0x01 && m_replyData.at(1) != 0x02))
+    {
+        logWarning << "Adapter firmware unrecognized, assumed as Z-Stack 1.2 (unsupported)";
+        return false;
+    }
+
+    logInfo << "Adapter firmware is" << (m_replyData.at(1) != 0x01 ? "Z-Stack 3.x.0" : "Z-Stack 3.0.x");
+
     if (!sendRequest(UTIL_GET_DEVICE_INFO) || m_replyData.at(0))
     {
         logWarning << "Device information request failed";

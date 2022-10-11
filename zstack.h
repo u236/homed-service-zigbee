@@ -27,6 +27,7 @@
 #define ADDRESS_MODE_64_BIT                         0x03
 #define ADDRESS_MODE_BROADCAST                      0xFF
 
+#define SYS_VERSION                                 0x2102
 #define SYS_OSAL_NV_ITEM_INIT                       0x2107
 #define SYS_OSAL_NV_READ                            0x2108
 #define SYS_OSAL_NV_WRITE                           0x2109
