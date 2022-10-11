@@ -8,7 +8,8 @@ PROG=/usr/bin/homed-zigbee
 
 start_service() {
 	procd_open_instance
-	procd_set_param command "$PROG"
+	procd_set_param command $PROG
+	procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-20} ${respawn_retry:-3}
 	procd_close_instance
 }
 
