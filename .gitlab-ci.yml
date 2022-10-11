@@ -9,6 +9,10 @@ Build Linux ARM Binary:
     paths:
     - "homed-zigbee-armhf"
     expire_in: 1 day
+  except:
+    - branches
+  only:
+    - tags
 
 Build OpenWRT MIPS Binary:
   stage: build
@@ -22,6 +26,10 @@ Build OpenWRT MIPS Binary:
     paths:
     - "homed-zigbee-mips"
     expire_in: 1 day
+  except:
+    - branches
+  only:
+    - tags
 
 Deploy Linux ARM Package:
   stage: deploy
