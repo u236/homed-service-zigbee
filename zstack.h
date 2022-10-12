@@ -3,9 +3,8 @@
 
 #define ADAPTER_RESET_DELAY                         100
 #define ADAPTER_CLEAR_DELAY                         4000
-#define ADAPTER_THROTTLE_DELAY                      20
+#define ADAPTER_THROTTLE_DELAY                      10
 #define ADAPTER_REQUEST_TIMEOUT                     10000
-#define ADAPTER_CHANNEL_LIST                        0x07FFF800
 #define ADAPTER_CONFIGURATION_MARKER                0x42
 
 #define ZSTACK_PACKET_START                         0xFE
@@ -44,6 +43,8 @@
 #define ZDO_MGMT_LQI_REQ                            0x2531
 #define ZDO_MGMT_PERMIT_JOIN_REQ                    0x2536
 #define ZDO_STARTUP_FROM_APP                        0x2540
+#define ZB_READ_CONFIGURATION                       0x2604
+#define ZB_WRITE_CONFIGURATION                      0x2605
 #define UTIL_GET_DEVICE_INFO                        0x2700
 #define APP_CNF_BDB_SET_CHANNEL                     0x2F08
 
@@ -69,13 +70,14 @@
 #define APP_CNF_BDB_COMMISSIONING_NOTIFICATION      0x4F80
 
 #define ZCD_NV_STARTUP_OPTION                       0x0003
+#define ZCD_NV_MARKER                               0x0060
 #define ZCD_NV_PRECFGKEY                            0x0062
 #define ZCD_NV_PRECFGKEYS_ENABLE                    0x0063
 #define ZCD_NV_PANID                                0x0083
 #define ZCD_NV_CHANLIST                             0x0084
 #define ZCD_NV_LOGICAL_TYPE                         0x0087
 #define ZCD_NV_ZDO_DIRECT_CB                        0x008F
-#define ZCD_NV_MARKER                               0x0060
+#define ZCD_NV_TCLK_TABLE                           0x0101
 
 #include <QSerialPort>
 #include <QTimer>
@@ -258,6 +260,19 @@ struct nvWriteRequestStruct
     quint8  length;
 };
 
+struct readConfigurationReplyStruct
+{
+    quint8  status;
+    quint8  id;
+    quint8  length;
+};
+
+struct writeConfigurationRequestStruct
+{
+    quint8  id;
+    quint8  length;
+};
+
 struct incomingMessageStruct
 {
     quint16 groupId;
@@ -309,6 +324,13 @@ struct deviceLeaveStruct
 
 #pragma pack(pop)
 
+enum class ZStackVersion
+{
+    ZStack3x0,
+    ZStack30x,
+    ZStack12x
+};
+
 class ZStack : public Adapter
 {
     Q_OBJECT
@@ -346,11 +368,13 @@ private:
 
     qint16 m_bootPin, m_resetPin;
     quint8 m_channel;
-    bool m_clear, m_write, m_debug;
+
+    bool m_write, m_debug, m_clear;
     QString m_reset;
 
-    quint8 m_status, m_transactionId;
+    ZStackVersion m_version;
     QByteArray m_ieeeAddress;
+    quint8 m_status, m_transactionId;
 
     quint16 m_bindAddress;
     bool m_bindRequestSuccess;
@@ -361,11 +385,14 @@ private:
     quint16 m_replyCommand;
     QByteArray m_replyData;
 
-    void parsePacket(quint16 command, const QByteArray &data);
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
+    void parsePacket(quint16 command, const QByteArray &data);
 
     bool writeNvItem(quint16 id, const QByteArray &data);
+    bool writeConfiguration(quint16 id, const QByteArray &data);
+
     bool startCoordinator(void);
+    void coordinatorStarted(void);
 
 private slots:
 

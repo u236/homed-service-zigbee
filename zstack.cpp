@@ -8,9 +8,15 @@
 ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_clear(false), m_status(0), m_transactionId(0)
 {
     quint16 panId = qToLittleEndian(static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16)));
-    quint32 chanList = qToLittleEndian(qFromBigEndian(static_cast <quint32> (ADAPTER_CHANNEL_LIST)));
+    quint32 channelList;
 
-    setParent(parent);
+    m_channel = static_cast <quint8>  (config->value("zigbee/channel").toInt());
+
+    if (m_channel < 11 || m_channel > 26)
+        m_channel = 11;
+
+    logInfo << "Using channel" << m_channel;
+    channelList = qToLittleEndian <quint32> (1 << m_channel);
 
     m_port->setPortName(config->value("zigbee/port", "/dev/ttyUSB0").toString());
     m_port->setBaudRate(QSerialPort::Baud115200);
@@ -20,7 +26,6 @@ ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this
 
     m_bootPin = static_cast <qint16> (config->value("gpio/boot", -1).toInt());
     m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
-    m_channel = static_cast <quint8>  (config->value("zigbee/channel", 11).toInt());
 
     m_write = config->value("zigbee/write", false).toBool();
     m_debug = config->value("zigbee/debug", false).toBool();
@@ -29,7 +34,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this
     m_nvItems.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
     m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
     m_nvItems.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId)));
-    m_nvItems.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&chanList), sizeof(chanList)));
+    m_nvItems.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
     m_nvItems.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
     m_nvItems.insert(ZCD_NV_MARKER, QByteArray(1, ADAPTER_CONFIGURATION_MARKER));
@@ -39,6 +44,8 @@ ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this
 
     connect(m_port, &QSerialPort::readyRead, this, &ZStack::startTimer);
     connect(m_timer, &QTimer::timeout, this, &ZStack::receiveData);
+
+    setParent(parent);
 }
 
 void ZStack::reset(void)
@@ -259,7 +266,6 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
 
         timer.setSingleShot(true);
         timer.start(ADAPTER_REQUEST_TIMEOUT);
-
         loop.exec();
     }
 
@@ -312,7 +318,6 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
 
         timer.setSingleShot(true);
         timer.start(ADAPTER_REQUEST_TIMEOUT);
-
         loop.exec();
     }
 
@@ -363,6 +368,48 @@ void ZStack::resetInterPan(void)
         return;
 
     logWarning << "Reset Inter-PAN request failed";
+}
+
+bool ZStack::sendRequest(quint16 command, const QByteArray &data)
+{
+    QByteArray packet;
+    QEventLoop loop;
+    char fcs = 0;
+
+    if (!m_port->isOpen())
+    {
+        logWarning << "Port" << m_port->portName() << "is not open";
+        reset();
+        return false;
+    }
+
+    command = qToBigEndian(command);
+
+    packet.append(ZSTACK_PACKET_START);
+    packet.append(static_cast <char> (data.length()));
+    packet.append(reinterpret_cast <char*> (&command), sizeof(command));
+    packet.append(data);
+
+    for (int i = 1; i < packet.length(); i++)
+        fcs ^= packet[i];
+
+    m_port->write(packet.append(fcs));
+
+    if (m_debug)
+        logInfo << "Packet sent" << packet.toHex(':');
+
+    if (!m_port->waitForReadyRead(ADAPTER_REQUEST_TIMEOUT))
+    {
+        logWarning << "Request timed out";
+        reset();
+        return false;
+    }
+
+    connect(m_timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+    startTimer();
+    loop.exec();
+
+    return m_replyCommand == qFromBigEndian(command);
 }
 
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
@@ -516,6 +563,9 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
             if (data.length() == 1)
                 m_status = static_cast <quint8> (data.at(0));
 
+            if (m_version == ZStackVersion::ZStack12x && m_status == ZSTACK_COORDINATOR_STARTED)
+                coordinatorStarted();
+
             break;
         }
 
@@ -538,20 +588,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case APP_CNF_BDB_COMMISSIONING_NOTIFICATION:
         {
             if (!data.at(2) && m_status == ZSTACK_COORDINATOR_STARTED)
-            {
-                if (m_clear)
-                {
-                    QThread::msleep(ADAPTER_CLEAR_DELAY);
-
-                    logInfo << "Adapter configuration cleared";
-                    m_clear = false;
-                    reset();
-
-                    return;
-                }
-
-                emit coordinatorReady(m_ieeeAddress);
-            }
+                coordinatorStarted();
 
             break;
         }
@@ -562,58 +599,31 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
     }
 }
 
-bool ZStack::sendRequest(quint16 command, const QByteArray &data)
-{
-    QByteArray packet;
-    QEventLoop loop;
-    char fcs = 0;
-
-    if (!m_port->isOpen())
-    {
-        logWarning << "Port" << m_port->portName() << "is not open";
-        reset();
-        return false;
-    }
-
-    command = qToBigEndian(command);
-
-    packet.append(ZSTACK_PACKET_START);
-    packet.append(static_cast <char> (data.length()));
-    packet.append(reinterpret_cast <char*> (&command), sizeof(command));
-    packet.append(data);
-
-    for (int i = 1; i < packet.length(); i++)
-        fcs ^= packet[i];
-
-    m_port->write(packet.append(fcs));
-
-    if (m_debug)
-        logInfo << "Packet sent" << packet.toHex(':');
-
-    if (!m_port->waitForReadyRead(ADAPTER_REQUEST_TIMEOUT))
-    {
-        logWarning << "Request timed out";
-        reset();
-        return false;
-    }
-
-    connect(m_timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    startTimer();
-    loop.exec();
-
-    QThread::msleep(ADAPTER_THROTTLE_DELAY); // TODO: check this is needed
-    return m_replyCommand == qFromBigEndian(command);
-}
-
 bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 {
-    nvWriteRequestStruct writeRequest;
+    nvWriteRequestStruct request;
 
-    writeRequest.id = qToLittleEndian(id);
-    writeRequest.offset = 0;
-    writeRequest.length = static_cast <quint8> (data.length());
+    request.id = qToLittleEndian(id);
+    request.offset = 0;
+    request.length = static_cast <quint8> (data.length());
 
-    if(!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&writeRequest), sizeof(writeRequest)).append(data)) || m_replyData.at(0))
+    if(!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    {
+        logWarning << "NV item" << QString::asprintf("0x%04X", id) << "wtite request failed";
+        return false;
+    }
+
+    return true;
+}
+
+bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
+{
+    writeConfigurationRequestStruct request;
+
+    request.id = id;
+    request.length = static_cast <quint8> (data.length());
+
+    if(!sendRequest(ZB_WRITE_CONFIGURATION, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
         logWarning << "NV item" << QString::asprintf("0x%04X", id) << "wtite request failed";
         return false;
@@ -627,13 +637,29 @@ bool ZStack::startCoordinator(void)
     deviceInfoResponseStruct *deviceInfo;
     quint64 ieeeAddress;
 
-    if (!sendRequest(SYS_VERSION) || (m_replyData.at(1) != 0x01 && m_replyData.at(1) != 0x02))
+    if (!sendRequest(SYS_VERSION))
     {
-        logWarning << "Adapter firmware unrecognized, assumed as Z-Stack 1.2 (unsupported)";
+        logWarning << "Adapter version request failed";
         return false;
     }
 
-    logInfo << "Adapter detected, firmware:" << (m_replyData.at(1) != 0x01 ? "Z-Stack 3.x.0" : "Z-Stack 3.0.x");
+    switch (m_replyData.at(1))
+    {
+        case 0x01:
+            logInfo << "Z-Stack 3.x.0 adapter detected";
+            m_version = ZStackVersion::ZStack3x0;
+            break;
+
+        case 0x02:
+            logInfo << "Z-Stack 3.0.x adapter detected";
+            m_version = ZStackVersion::ZStack30x;
+            break;
+
+        default:
+            logInfo << "Z-Stack 1.2.x adapter detected";
+            m_version = ZStackVersion::ZStack12x;
+            break;
+    }
 
     if (!sendRequest(UTIL_GET_DEVICE_INFO) || m_replyData.at(0))
     {
@@ -647,46 +673,70 @@ bool ZStack::startCoordinator(void)
 
     if (!m_clear)
     {
-        setChannelRequestStruct channelRequest;
         bool check = false;
 
-        channelRequest.isPrimary = 0x01;
-        channelRequest.channel = qToLittleEndian <quint32> (1 << m_channel);
-
-        if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))) || m_replyData.at(0))
+        if (m_version != ZStackVersion::ZStack12x)
         {
-            logWarning << "Set primary channel request failed";
-            return false;
-        }
+            setChannelRequestStruct channelRequest;
 
-        channelRequest.isPrimary = 0x00;
-        channelRequest.channel = 0x00;
+            channelRequest.isPrimary = 0x01;
+            channelRequest.channel = qToLittleEndian <quint32> (1 << m_channel);
 
-        if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))) || m_replyData.at(0))
-        {
-            logWarning << "Set secondary channel request failed";
-            return false;
+            if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))) || m_replyData.at(0))
+            {
+                logWarning << "Set primary channel request failed" << m_replyData.toHex(':');
+                return false;
+            }
+
+            channelRequest.isPrimary = 0x00;
+            channelRequest.channel = 0x00;
+
+            if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))) || m_replyData.at(0))
+            {
+                logWarning << "Set secondary channel request failed";
+                return false;
+            }
         }
 
         for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {
-            nvReadRequestStruct readRequest;
-            nvReadReplyStruct *readReply;
             QByteArray data;
+            quint8 status;
 
-            readRequest.id = qToLittleEndian <quint16> (it.key());
-            readRequest.offset = 0;
-
-            if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&readRequest), sizeof(readRequest))))
+            if (m_version != ZStackVersion::ZStack12x || it.key() != ZCD_NV_PRECFGKEY)
             {
-                logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "read request failed";
-                return false;
+                nvReadRequestStruct request;
+                nvReadReplyStruct *reply;
+
+                request.id = qToLittleEndian <quint16> (it.key());
+                request.offset = 0;
+
+                if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
+                {
+                    logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "read request failed";
+                    return false;
+                }
+
+                reply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
+                data = m_replyData.mid(sizeof(nvReadReplyStruct));
+                status = reply->status;
+            }
+            else
+            {
+                readConfigurationReplyStruct *reply;
+
+                if (!sendRequest(ZB_READ_CONFIGURATION, QByteArray(1, static_cast <char> (it.key()))))
+                {
+                    logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "read request failed";
+                    return false;
+                }
+
+                reply = reinterpret_cast <readConfigurationReplyStruct*> (m_replyData.data());
+                data = m_replyData.mid(sizeof(readConfigurationReplyStruct));
+                status = reply->status;
             }
 
-            readReply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
-            data = m_replyData.mid(sizeof(nvReadReplyStruct));
-
-            if (readReply->status || data != it.value())
+            if (status || data != it.value())
             {
                 if (!m_write)
                 {
@@ -705,8 +755,16 @@ bool ZStack::startCoordinator(void)
                     return true;
                 }
 
-                if (!writeNvItem(it.key(), it.value()))
-                    return false;
+                if (m_version != ZStackVersion::ZStack12x || it.key() != ZCD_NV_PRECFGKEY)
+                {
+                    if (!writeNvItem(it.key(), it.value()))
+                        return false;
+                }
+                else
+                {
+                    if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e636530390000000000000000")))
+                        return false;
+                }
 
                 logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "value changed from" << data.toHex(':') << "to" << it.value().toHex(':');
                 check = true;
@@ -738,7 +796,7 @@ bool ZStack::startCoordinator(void)
             writeNvItem(ZCD_NV_MARKER, m_nvItems.value(ZCD_NV_MARKER));
     }
 
-    if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0))
+    if ((!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02) && m_version != ZStackVersion::ZStack12x)
     {
         logWarning << "Strartup request failed";
         return false;
@@ -747,9 +805,25 @@ bool ZStack::startCoordinator(void)
     return true;
 }
 
+void ZStack::coordinatorStarted(void)
+{
+    if (m_clear)
+    {
+        QThread::msleep(ADAPTER_CLEAR_DELAY);
+
+        logInfo << "Adapter configuration cleared";
+        m_clear = false;
+        reset();
+
+        return;
+    }
+
+    emit coordinatorReady(m_ieeeAddress);
+}
+
 void ZStack::startTimer(void)
 {
-    m_timer->start(10);
+    m_timer->start(ADAPTER_THROTTLE_DELAY);
 }
 
 void ZStack::receiveData(void)
