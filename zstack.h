@@ -1,7 +1,8 @@
 #ifndef ZSTACK_H
 #define ZSTACK_H
 
-#define ADAPTER_RESET_DELAY                         10
+#define ADAPTER_RESET_DELAY                         100
+#define ADAPTER_CLEAR_DELAY                         4000
 #define ADAPTER_THROTTLE_DELAY                      20
 #define ADAPTER_REQUEST_TIMEOUT                     10000
 #define ADAPTER_CHANNEL_LIST                        0x07FFF800
@@ -31,7 +32,6 @@
 #define SYS_OSAL_NV_ITEM_INIT                       0x2107
 #define SYS_OSAL_NV_READ                            0x2108
 #define SYS_OSAL_NV_WRITE                           0x2109
-#define SYS_SET_TX_POWER                            0x2114
 #define AF_REGISTER                                 0x2400
 #define AF_DATA_REQUEST                             0x2401
 #define AF_DATA_REQUEST_EXT                         0x2402
@@ -75,7 +75,7 @@
 #define ZCD_NV_CHANLIST                             0x0084
 #define ZCD_NV_LOGICAL_TYPE                         0x0087
 #define ZCD_NV_ZDO_DIRECT_CB                        0x008F
-#define ZCD_NV_USER                                 0x0060
+#define ZCD_NV_MARKER                               0x0060
 
 #include <QSerialPort>
 #include <QTimer>
@@ -317,7 +317,7 @@ public:
 
     ZStack(QSettings *config, QObject *parent);
 
-    void init(void) override;
+    void reset(void) override;
     void registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters) override;
     void setPermitJoin(bool enabled) override;
     void nodeDescriptorRequest(quint16 networkAddress) override;
@@ -346,7 +346,7 @@ private:
 
     qint16 m_bootPin, m_resetPin;
     quint8 m_channel;
-    bool m_factory, m_write, m_debug;
+    bool m_clear, m_write, m_debug;
     QString m_reset;
 
     quint8 m_status, m_transactionId;
@@ -364,7 +364,6 @@ private:
     void parsePacket(quint16 command, const QByteArray &data);
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
 
-    void resetAdapter(void);
     bool writeNvItem(quint16 id, const QByteArray &data);
     bool startCoordinator(void);
 

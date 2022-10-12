@@ -18,7 +18,7 @@ public:
 
     virtual ~Adapter(void) {}
 
-    virtual void init(void) = 0;
+    virtual void reset(void) = 0;
     virtual void registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters) = 0;
     virtual void setPermitJoin(bool enabled) = 0;
     virtual void nodeDescriptorRequest(quint16 networkAddress) = 0;

@@ -22,7 +22,6 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_neighbor
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
 
-
     m_libraryFile = config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
     m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
     m_ledPin = static_cast <qint16> (config->value("gpio/led", -1).toInt());
@@ -54,7 +53,7 @@ void ZigBee::init(void)
         file.close();
     }
 
-    m_adapter->init();
+    m_adapter->reset();
 }
 
 void ZigBee::setPermitJoin(bool enabled)
