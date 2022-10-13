@@ -357,15 +357,14 @@ public:
 
 private:
 
-    quint8 m_channel;
     qint16 m_bootPin, m_resetPin;
-
     QString m_reset;
-    bool m_debug, m_write, m_clear;
 
     ZStackVersion m_version;
-    QByteArray m_ieeeAddress;
+    QByteArray m_ieeeAddress; // TODO: refactor this
+
     quint8 m_status, m_transactionId;
+    bool m_clear;
 
     quint16 m_bindAddress;
     bool m_bindRequestSuccess;

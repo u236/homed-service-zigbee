@@ -1,11 +1,21 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
-#define ADAPTER_REQUEST_TIMEOUT                     10000
-#define ADAPTER_RECEIVE_TIMEOUT                     5
+#define ADAPTER_REQUEST_TIMEOUT         10000
+#define ADAPTER_RECEIVE_TIMEOUT         5
+
+#define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
+#define PROFILE_HA                      0x0104 // Home Automation
+#define PROFILE_CBA                     0x0105 // Commercial Building Automation
+#define PROFILE_TA                      0x0107 // Telecom Applications
+#define PROFILE_PHHC                    0x0108 // Personal Home & Hospital Care
+#define PROFILE_AMI                     0x0109 // Advanced Metering Initiative
+#define PROFILE_HUE                     0xA1E0 // Philips HUE
+#define PROFILE_ZLL                     0xC05E // ZigBee Light Link
 
 #include <QSerialPort>
 #include <QSettings>
+#include <QSharedPointer>
 #include <QTimer>
 
 enum class LogicalType
@@ -13,6 +23,34 @@ enum class LogicalType
     Coordinator,
     Router,
     EndDevice
+};
+
+class EndpointDataObject;
+typedef QSharedPointer <EndpointDataObject> EndpointData;
+
+class EndpointDataObject : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    EndpointDataObject(quint16 profileId = 0, quint16 deviceId = 0) :
+        QObject(nullptr), m_profileId(profileId), m_deviceId(deviceId) {}
+
+    inline quint16 profileId(void) { return m_profileId; }
+    inline void setProfileId(quint16 value) { m_profileId = value; }
+
+    inline quint16 deviceId(void) { return m_deviceId; }
+    inline void setDeviceId(quint16 value) { m_deviceId = value; }
+
+    inline QList <quint16> &inClusters(void) { return m_inClusters; }
+    inline QList <quint16> &outClusters(void) { return m_outClusters; }
+
+private:
+
+    quint16 m_profileId, m_deviceId;
+    QList <quint16> m_inClusters, m_outClusters;
+
 };
 
 class Adapter : public QObject
@@ -48,9 +86,15 @@ protected:
 
     QSerialPort *m_port;
     QTimer *m_timer;
-    QByteArray m_receiveBuffer;
 
-    bool sendData(const QByteArray &data);
+    quint16 m_panId;
+    quint8 m_channel;
+    bool m_debug, m_write;
+
+    QMap <quint8, EndpointData> m_endpointsData;
+
+    bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
+    bool transmitData(const QByteArray &data, bool receive = true);
 
 private slots:
 
@@ -60,7 +104,7 @@ private slots:
 signals:
 
     void coordinatorReady(const QByteArray &ieeeAddress);
-    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
+    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities); // TODO: remove capabilities
     void deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
     void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);

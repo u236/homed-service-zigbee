@@ -2,8 +2,8 @@
 #define DEVICE_H
 
 #include <QDateTime>
-#include <QSharedPointer>
 #include "action.h"
+#include "adapter.h"
 #include "poll.h"
 #include "property.h"
 #include "reporting.h"
@@ -15,31 +15,21 @@ typedef QSharedPointer <EndpointObject> Endpoint;
 class DeviceObject;
 typedef QSharedPointer <DeviceObject> Device;
 
-class EndpointObject : public QObject
+class EndpointObject : public EndpointDataObject // TODO: refactor this
 {
-    Q_OBJECT
 
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-         QObject(nullptr), m_timer(new QTimer(this)), m_id(id), m_device(device), m_profileId(profileId), m_deviceId(deviceId), m_dataUpdated(false) {}
+         EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_dataUpdated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
 
     inline quint8 id(void) {return m_id; }
     inline Device device(void) { return m_device; }
 
-    inline quint16 profileId(void) { return m_profileId; }
-    inline void setProfileId(quint16 value) { m_profileId = value; }
-
-    inline quint16 deviceId(void) { return m_deviceId; }
-    inline void setDeviceId(quint16 value) { m_deviceId = value; }
-
     inline bool dataUpdated(void) { return m_dataUpdated; }
     inline void setDataUpdated(bool value) { m_dataUpdated = value; }
-
-    inline QList <quint16> &inClusters(void) { return m_inClusters; }
-    inline QList <quint16> &outClusters(void) { return m_outClusters; }
 
     inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Property> &properties(void) { return m_properties; }
@@ -52,10 +42,7 @@ private:
 
     quint8 m_id;
     Device m_device;
-    quint16 m_profileId, m_deviceId;
     bool m_dataUpdated;
-
-    QList <quint16> m_inClusters, m_outClusters;
 
     QList <Action> m_actions;
     QList <Property> m_properties;

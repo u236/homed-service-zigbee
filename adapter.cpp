@@ -1,3 +1,4 @@
+#include <QtEndian>
 #include <QEventLoop>
 #include "logger.h"
 #include "adapter.h"
@@ -10,16 +11,40 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_port(n
     m_port->setParity(QSerialPort::NoParity);
     m_port->setStopBits(QSerialPort::OneStop);
 
+    m_panId = qToLittleEndian(static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16)));
+    m_channel = static_cast <quint8>  (config->value("zigbee/channel").toInt());
+
+    m_debug = config->value("zigbee/debug", false).toBool();
+    m_write = config->value("zigbee/write", false).toBool();
+
+    if (m_channel < 11 || m_channel > 26)
+        m_channel = 11;
+
+    logInfo << "Using channel" << m_channel;
+
     connect(m_port, &QSerialPort::readyRead, this, &Adapter::readyRead);
     connect(m_timer, &QTimer::timeout, this, &Adapter::receiveData);
 
     m_timer->setSingleShot(true);
 }
 
-bool Adapter::sendData(const QByteArray &data)
+bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
 {
     QEventLoop loop;
+    QTimer timer;
 
+    connect(sender, signal, &loop, SLOT(quit()));
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    timer.setSingleShot(true);
+    timer.start(tiomeout);
+    loop.exec();
+
+    return timer.isActive();
+}
+
+bool Adapter::transmitData(const QByteArray &data, bool receive)
+{
     if (!m_port->isOpen())
     {
         logWarning << "Port" << m_port->portName() << "is not open";
@@ -27,25 +52,28 @@ bool Adapter::sendData(const QByteArray &data)
         return false;
     }
 
-    m_receiveBuffer.clear();
     m_port->write(data);
 
-    if (!m_port->waitForReadyRead(ADAPTER_REQUEST_TIMEOUT))
+    if (receive)
     {
-        logWarning << "Request timed out";
-        reset();
-        return false;
-    }
+        QEventLoop loop;
 
-    connect(m_timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    readyRead();
-    loop.exec();
+        if (!m_port->waitForReadyRead(ADAPTER_REQUEST_TIMEOUT))
+        {
+            logWarning << "Request timed out";
+            reset();
+            return false;
+        }
+
+        connect(m_timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+        m_timer->start(ADAPTER_RECEIVE_TIMEOUT);
+        loop.exec();
+    }
 
     return true;
 }
 
 void Adapter::readyRead(void)
 {
-    m_receiveBuffer.append(m_port->readAll());
     m_timer->start(ADAPTER_RECEIVE_TIMEOUT);
 }

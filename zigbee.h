@@ -6,20 +6,10 @@
 #define STORE_STATUS_INTERVAL           60000
 #define DEVICE_REJOIN_INTERVAL          10000
 
-#define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
-#define PROFILE_HA                      0x0104 // Home Automation
-#define PROFILE_CBA                     0x0105 // Commercial Building Automation
-#define PROFILE_TA                      0x0107 // Telecom Applications
-#define PROFILE_PHHC                    0x0108 // Personal Home & Hospital Care
-#define PROFILE_AMI                     0x0109 // Advanced Metering Initiative
-#define PROFILE_HUE                     0xA1E0 // Philips HUE
-#define PROFILE_ZLL                     0xC05E // ZigBee Light Link
-
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QQueue>
-#include "adapter.h"
 #include "device.h"
 
 class BindRequestObject;

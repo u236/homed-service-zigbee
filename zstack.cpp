@@ -5,28 +5,20 @@
 #include "logger.h"
 #include "zstack.h"
 
-ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_clear(false), m_status(0), m_transactionId(0)
+ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_status(0), m_transactionId(0), m_clear(false)
 {
-    quint16 panId = qToLittleEndian(static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16)));
-    quint32 channelList;
+    quint32 channelList = qToLittleEndian <quint32> (1 << m_channel);
 
-    m_channel = static_cast <quint8>  (config->value("zigbee/channel").toInt());
     m_bootPin = static_cast <qint16> (config->value("gpio/boot", -1).toInt());
     m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
-
     m_reset = config->value("zigbee/reset").toString();
-    m_debug = config->value("zigbee/debug", false).toBool();
-    m_write = config->value("zigbee/write", false).toBool();
 
-    if (m_channel < 11 || m_channel > 26)
-        m_channel = 11;
-
-    logInfo << "Using channel" << m_channel;
-    channelList = qToLittleEndian <quint32> (1 << m_channel);
-
+    // TODO: refactor?
     m_nvItems.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
     m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
-    m_nvItems.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId)));
+    //
+
+    m_nvItems.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId)));
     m_nvItems.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
     m_nvItems.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
@@ -49,6 +41,7 @@ void ZStack::reset(void)
     }
 
     logInfo << "Resetting adapter...";
+    m_port->flush();
 
     switch (list.indexOf(m_reset))
     {
@@ -89,7 +82,7 @@ void ZStack::registerEndpoint(quint8 endpointId, quint16 profileId, quint16 devi
 
     for (int i = 0; i < inClusters.count(); i++)
     {
-        quint16 clusterId = inClusters.at(i);
+        quint16 clusterId = qToLittleEndian(inClusters.at(i));
         data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
     }
 
@@ -97,7 +90,7 @@ void ZStack::registerEndpoint(quint8 endpointId, quint16 profileId, quint16 devi
 
     for (int i = 0; i < outClusters.count(); i++)
     {
-        quint16 clusterId = outClusters.at(i);
+        quint16 clusterId = qToLittleEndian(outClusters.at(i));
         data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
     }
 
@@ -107,7 +100,7 @@ void ZStack::registerEndpoint(quint8 endpointId, quint16 profileId, quint16 devi
         return;
     }
 
-    logWarning << "Endpoint" << QString::asprintf("0x%02X", endpointId) << "register requet failed";
+    logWarning << "Endpoint" << QString::asprintf("0x%02X", endpointId) << "register request failed";
 }
 
 void ZStack::setPermitJoin(bool enabled)
@@ -373,7 +366,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     for (int i = 1; i < request.length(); i++)
         fcs ^= request[i];
 
-    if (!sendData(request.append(fcs)))
+    if (!transmitData(request.append(fcs)))
         return false;
 
     return m_replyCommand == qFromBigEndian(command);
@@ -729,7 +722,7 @@ bool ZStack::startCoordinator(void)
                 }
                 else
                 {
-                    if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e636530390000000000000000")))
+                    if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E636530390000000000000000")))
                         return false;
                 }
 
@@ -793,12 +786,14 @@ void ZStack::coordinatorStarted(void)
 
 void ZStack::receiveData(void)
 {
-    while (!m_receiveBuffer.isEmpty())
+    QByteArray buffer = m_port->readAll();
+
+    while (!buffer.isEmpty())
     {
-        quint8 *packet = reinterpret_cast <quint8*> (m_receiveBuffer.data()), length = packet[1], fcs = 0;
+        quint8 *packet = reinterpret_cast <quint8*> (buffer.data()), length = packet[1], fcs = 0;
         quint16 command;
 
-        if (m_receiveBuffer.length() < 5 || m_receiveBuffer.length() < length + 5 || packet[0] != ZSTACK_PACKET_START)
+        if (buffer.length() < 5 || buffer.length() < length + 5 || packet[0] != ZSTACK_PACKET_START)
             return;
 
         for (quint8 i = 1; i < length + 4; i++)
@@ -806,15 +801,15 @@ void ZStack::receiveData(void)
 
         if (fcs != packet[length + 4])
         {
-            logWarning << "Packet" << m_receiveBuffer.left(length + 5).toHex(':') << "FCS mismatch";
+            logWarning << "Packet" << buffer.left(length + 5).toHex(':') << "FCS mismatch";
             return;
         }
 
         if (m_debug)
-            logInfo << "Packet received:" << m_receiveBuffer.left(length + 5).toHex(':');
+            logInfo << "Packet received:" << buffer.left(length + 5).toHex(':');
 
-        memcpy(&command, m_receiveBuffer.constData() + 2, sizeof(command));
+        memcpy(&command, buffer.constData() + 2, sizeof(command));
         parsePacket(qFromBigEndian(command), QByteArray(reinterpret_cast <char*> (packet + 4), length));
-        m_receiveBuffer.remove(0, length + 5);
+        buffer.remove(0, length + 5);
     }
 }
