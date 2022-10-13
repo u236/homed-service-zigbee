@@ -360,21 +360,20 @@ void ZStack::resetInterPan(void)
 
 bool ZStack::sendRequest(quint16 command, const QByteArray &data)
 {
-    QByteArray packet;
-    QEventLoop loop;
+    QByteArray request;
     char fcs = 0;
 
     command = qToBigEndian(command);
 
-    packet.append(ZSTACK_PACKET_START);
-    packet.append(static_cast <char> (data.length()));
-    packet.append(reinterpret_cast <char*> (&command), sizeof(command));
-    packet.append(data);
+    request.append(ZSTACK_PACKET_START);
+    request.append(static_cast <char> (data.length()));
+    request.append(reinterpret_cast <char*> (&command), sizeof(command));
+    request.append(data);
 
-    for (int i = 1; i < packet.length(); i++)
-        fcs ^= packet[i];
+    for (int i = 1; i < request.length(); i++)
+        fcs ^= request[i];
 
-    if (!sendData(packet.append(fcs)))
+    if (!sendData(request.append(fcs)))
         return false;
 
     return m_replyCommand == qFromBigEndian(command);

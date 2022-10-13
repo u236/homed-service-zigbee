@@ -19,8 +19,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QQueue>
+#include "adapter.h"
 #include "device.h"
-#include "zstack.h"
 
 class BindRequestObject;
 typedef QSharedPointer <BindRequestObject> BindRequest;

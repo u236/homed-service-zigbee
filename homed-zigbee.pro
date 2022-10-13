@@ -6,6 +6,7 @@ HEADERS += \
     adapter.h \
     controller.h \
     device.h \
+    ezsp.h \
     poll.h \
     property.h \
     reporting.h \
@@ -17,6 +18,7 @@ SOURCES += \
     action.cpp \
     adapter.cpp \
     controller.cpp \
+    ezsp.cpp \
     poll.cpp \
     property.cpp \
     reporting.cpp \

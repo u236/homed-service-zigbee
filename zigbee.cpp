@@ -1,14 +1,16 @@
 #include <QtEndian>
 #include <QFile>
 #include <QRandomGenerator>
+#include "ezsp.h"
 #include "gpio.h"
 #include "logger.h"
 #include "zcl.h"
 #include "zigbee.h"
+#include "zstack.h"
 
 ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
-    QList <QString> list = {"znp"};
+    QList <QString> list = {"ezsp", "znp"};
     QString adapterType = config->value("zigbee/adapter", "znp").toString();
 
     ActionObject::registerMetaTypes();
@@ -18,7 +20,8 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_neighbor
 
     switch (list.indexOf(adapterType))
     {
-        case 0: m_adapter = new ZStack(config, this); break;
+        case 0: m_adapter = new EZSP(config, this); break;
+        case 1: m_adapter = new ZStack(config, this); break;
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
 
