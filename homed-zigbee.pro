@@ -15,6 +15,7 @@ HEADERS += \
 
 SOURCES += \
     action.cpp \
+    adapter.cpp \
     controller.cpp \
     poll.cpp \
     property.cpp \

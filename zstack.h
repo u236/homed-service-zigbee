@@ -3,8 +3,6 @@
 
 #define ADAPTER_RESET_DELAY                         100
 #define ADAPTER_CLEAR_DELAY                         4000
-#define ADAPTER_THROTTLE_DELAY                      10
-#define ADAPTER_REQUEST_TIMEOUT                     10000
 #define ADAPTER_CONFIGURATION_MARKER                0x42
 
 #define ZSTACK_PACKET_START                         0xFE
@@ -79,8 +77,6 @@
 #define ZCD_NV_ZDO_DIRECT_CB                        0x008F
 #define ZCD_NV_TCLK_TABLE                           0x0101
 
-#include <QSerialPort>
-#include <QTimer>
 #include "adapter.h"
 
 #pragma pack(push, 1)
@@ -361,16 +357,11 @@ public:
 
 private:
 
-    QMap <quint16, QByteArray> m_nvItems;
-
-    QSerialPort *m_port;
-    QTimer *m_timer;
-
-    qint16 m_bootPin, m_resetPin;
     quint8 m_channel;
+    qint16 m_bootPin, m_resetPin;
 
-    bool m_write, m_debug, m_clear;
     QString m_reset;
+    bool m_debug, m_write, m_clear;
 
     ZStackVersion m_version;
     QByteArray m_ieeeAddress;
@@ -385,6 +376,8 @@ private:
     quint16 m_replyCommand;
     QByteArray m_replyData;
 
+    QMap <quint16, QByteArray> m_nvItems;
+
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
     void parsePacket(quint16 command, const QByteArray &data);
 
@@ -396,8 +389,7 @@ private:
 
 private slots:
 
-    void startTimer(void);
-    void receiveData(void);
+    void receiveData(void) override;
 
 signals:
 

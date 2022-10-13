@@ -1,7 +1,12 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
+#define ADAPTER_REQUEST_TIMEOUT                     10000
+#define ADAPTER_RECEIVE_TIMEOUT                     5
+
+#include <QSerialPort>
 #include <QSettings>
+#include <QTimer>
 
 enum class LogicalType
 {
@@ -16,6 +21,7 @@ class Adapter : public QObject
 
 public:
 
+    Adapter(QSettings *config, QObject *parent);
     virtual ~Adapter(void) {}
 
     virtual void reset(void) = 0;
@@ -37,6 +43,19 @@ public:
     virtual bool setInterPanEndpointId(quint8 endpointId) = 0;
     virtual bool setInterPanChannel(quint8 channel) = 0;
     virtual void resetInterPan(void) = 0;
+
+protected:
+
+    QSerialPort *m_port;
+    QTimer *m_timer;
+    QByteArray m_receiveBuffer;
+
+    bool sendData(const QByteArray &data);
+
+private slots:
+
+    void readyRead(void);
+    virtual void receiveData(void) = 0;
 
 signals:
 

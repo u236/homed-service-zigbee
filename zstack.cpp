@@ -5,31 +5,24 @@
 #include "logger.h"
 #include "zstack.h"
 
-ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this)), m_timer(new QTimer(this)), m_clear(false), m_status(0), m_transactionId(0)
+ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_clear(false), m_status(0), m_transactionId(0)
 {
     quint16 panId = qToLittleEndian(static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16)));
     quint32 channelList;
 
     m_channel = static_cast <quint8>  (config->value("zigbee/channel").toInt());
+    m_bootPin = static_cast <qint16> (config->value("gpio/boot", -1).toInt());
+    m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
+
+    m_reset = config->value("zigbee/reset").toString();
+    m_debug = config->value("zigbee/debug", false).toBool();
+    m_write = config->value("zigbee/write", false).toBool();
 
     if (m_channel < 11 || m_channel > 26)
         m_channel = 11;
 
     logInfo << "Using channel" << m_channel;
     channelList = qToLittleEndian <quint32> (1 << m_channel);
-
-    m_port->setPortName(config->value("zigbee/port", "/dev/ttyUSB0").toString());
-    m_port->setBaudRate(QSerialPort::Baud115200);
-    m_port->setDataBits(QSerialPort::Data8);
-    m_port->setParity(QSerialPort::NoParity);
-    m_port->setStopBits(QSerialPort::OneStop);
-
-    m_bootPin = static_cast <qint16> (config->value("gpio/boot", -1).toInt());
-    m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
-
-    m_write = config->value("zigbee/write", false).toBool();
-    m_debug = config->value("zigbee/debug", false).toBool();
-    m_reset = config->value("zigbee/reset").toString();
 
     m_nvItems.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
     m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
@@ -41,11 +34,6 @@ ZStack::ZStack(QSettings *config, QObject *parent) : m_port(new QSerialPort(this
 
     GPIO::setDirection(m_bootPin, GPIO::Output);
     GPIO::setDirection(m_resetPin, GPIO::Output);
-
-    connect(m_port, &QSerialPort::readyRead, this, &ZStack::startTimer);
-    connect(m_timer, &QTimer::timeout, this, &ZStack::receiveData);
-
-    setParent(parent);
 }
 
 void ZStack::reset(void)
@@ -376,13 +364,6 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     QEventLoop loop;
     char fcs = 0;
 
-    if (!m_port->isOpen())
-    {
-        logWarning << "Port" << m_port->portName() << "is not open";
-        reset();
-        return false;
-    }
-
     command = qToBigEndian(command);
 
     packet.append(ZSTACK_PACKET_START);
@@ -393,21 +374,8 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     for (int i = 1; i < packet.length(); i++)
         fcs ^= packet[i];
 
-    m_port->write(packet.append(fcs));
-
-    if (m_debug)
-        logInfo << "Packet sent" << packet.toHex(':');
-
-    if (!m_port->waitForReadyRead(ADAPTER_REQUEST_TIMEOUT))
-    {
-        logWarning << "Request timed out";
-        reset();
+    if (!sendData(packet.append(fcs)))
         return false;
-    }
-
-    connect(m_timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    startTimer();
-    loop.exec();
 
     return m_replyCommand == qFromBigEndian(command);
 }
@@ -796,8 +764,11 @@ bool ZStack::startCoordinator(void)
             writeNvItem(ZCD_NV_MARKER, m_nvItems.value(ZCD_NV_MARKER));
     }
 
-    if ((!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02) && m_version != ZStackVersion::ZStack12x)
+    if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02)
     {
+        if (m_version == ZStackVersion::ZStack12x && m_status == ZSTACK_COORDINATOR_STARTED)
+            return true;
+
         logWarning << "Strartup request failed";
         return false;
     }
@@ -821,21 +792,14 @@ void ZStack::coordinatorStarted(void)
     emit coordinatorReady(m_ieeeAddress);
 }
 
-void ZStack::startTimer(void)
-{
-    m_timer->start(ADAPTER_THROTTLE_DELAY);
-}
-
 void ZStack::receiveData(void)
 {
-    QByteArray data = m_port->readAll();
-
-    while (!data.isEmpty())
+    while (!m_receiveBuffer.isEmpty())
     {
-        quint8 *packet = reinterpret_cast <quint8*> (data.data()), length = packet[1], fcs = 0;
+        quint8 *packet = reinterpret_cast <quint8*> (m_receiveBuffer.data()), length = packet[1], fcs = 0;
         quint16 command;
 
-        if (data.length() < 5 || data.length() < length + 5 || packet[0] != ZSTACK_PACKET_START)
+        if (m_receiveBuffer.length() < 5 || m_receiveBuffer.length() < length + 5 || packet[0] != ZSTACK_PACKET_START)
             return;
 
         for (quint8 i = 1; i < length + 4; i++)
@@ -843,15 +807,15 @@ void ZStack::receiveData(void)
 
         if (fcs != packet[length + 4])
         {
-            logWarning << "Packet" << data.left(length + 5).toHex(':') << "FCS mismatch";
+            logWarning << "Packet" << m_receiveBuffer.left(length + 5).toHex(':') << "FCS mismatch";
             return;
         }
 
         if (m_debug)
-            logInfo << "Packet received:" << data.left(length + 5).toHex(':');
+            logInfo << "Packet received:" << m_receiveBuffer.left(length + 5).toHex(':');
 
-        memcpy(&command, data.constData() + 2, sizeof(command));
+        memcpy(&command, m_receiveBuffer.constData() + 2, sizeof(command));
         parsePacket(qFromBigEndian(command), QByteArray(reinterpret_cast <char*> (packet + 4), length));
-        data.remove(0, length + 5);
+        m_receiveBuffer.remove(0, length + 5);
     }
 }
