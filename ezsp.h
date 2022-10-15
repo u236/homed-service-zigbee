@@ -25,6 +25,8 @@
 #define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
 #define FRAME_SET_INITIAL_SECURITY_STATE                        0x0068
 #define FRAME_CLEAR_TRANSIENT_LINK_KEYS                         0x006B
+#define FRAME_FIND_KEY_TABLE_ENTRY                              0x0075
+#define FRAME_ERASE_KEY_TABLE_ENTRY                             0x0076
 #define FRAME_SET_VALUE                                         0x00AB
 #define FRAME_ADD_TRANSIENT_LINK_KEY                            0x00AF
 #define FRAME_CLEAR_KEY_TABLE                                   0x00B1
@@ -83,6 +85,7 @@
 #define EMBER_JOINED_NETWORK_NO_PARENT                          0x03
 #define EMBER_LEAVING_NETWORK                                   0x04
 
+#define EMBER_STANDARD_SECURITY_UNSECURED_JOIN                  0x01
 #define EMBER_DEVICE_LEFT                                       0x02
 //
 

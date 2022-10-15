@@ -34,7 +34,7 @@ static uint16_t CRC16_Calc(uint8_t *data, uint16_t length)
     return crc;
 }
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_sequence(0), m_ackNumber(0), m_version(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0)
 {
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090A0B0C0D0E0F").toString().remove("0x").toUtf8());
@@ -69,6 +69,9 @@ void EZSP::reset(void)
         logWarning << "Can't open port" << m_port->portName();
         return;
     }
+
+    m_sequence = 0;
+    m_ackNumber = 0;
 
     logInfo << "Resetting adapter...";
     sendRequest(ASH_CONTROL_RST);
@@ -297,14 +300,19 @@ void EZSP::parsePacket(const QByteArray &payload)
             const trustCenterJoinStruct *message = reinterpret_cast <const trustCenterJoinStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
 
-            // TODO: check status and decision
-            if (message->status != EMBER_DEVICE_LEFT)
+            if (message->status == EMBER_DEVICE_LEFT)
             {
-                emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
+                emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
                 break;
             }
 
-            emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
+            if (message->status == EMBER_STANDARD_SECURITY_UNSECURED_JOIN)
+            {
+                sendFrame(FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
+                sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
+            }
+
+            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
             break;
         }
 
@@ -615,7 +623,11 @@ void EZSP::receiveData(void)
                     case 0x3A: data.append(0x1A); break;
                     case 0x5D: data.append(0x7D); break;
                     case 0x5E: data.append(0x7E); break;
-                    default: logWarning << "Packet" << buffer.toHex(':') << "unstaffing failed at position" << i; return;
+
+                    default:
+                        logWarning << "Packet" << buffer.toHex(':') << "unstaffing failed at position" << i;
+                        reset();
+                        return;
                 }
             }
             else
@@ -627,6 +639,7 @@ void EZSP::receiveData(void)
         if (crc != qToBigEndian(CRC16_Calc(reinterpret_cast <quint8*> (data.data()), data.length() - 2)))
         {
             logWarning << "Packet" << buffer.toHex(':') << "CRC mismatch";
+            reset();
             return;
         }
 
