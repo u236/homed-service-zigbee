@@ -214,16 +214,6 @@ struct extendedDataRequestStruct
     quint16 length;
 };
 
-struct deviceInfoResponseStruct
-{
-    quint8  status;
-    quint64 ieeeAddress;
-    quint16 networkAddress;
-    quint8  deviceType;
-    quint8  deviceState;
-    quint8  assocCount;
-};
-
 struct setChannelRequestStruct
 {
     quint8  isPrimary;
@@ -336,7 +326,6 @@ public:
     ZStack(QSettings *config, QObject *parent);
 
     void reset(void) override;
-    void registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters) override;
     void setPermitJoin(bool enabled) override;
     void nodeDescriptorRequest(quint16 networkAddress) override;
     void simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
@@ -361,7 +350,7 @@ private:
     QString m_reset;
 
     ZStackVersion m_version;
-    QByteArray m_ieeeAddress; // TODO: refactor this
+    quint64 m_ieeeAddress;
 
     quint8 m_status, m_transactionId;
     bool m_clear;

@@ -146,7 +146,7 @@ private:
 private slots:
 
     void coordinatorReady(const QByteArray &ieeeAddress);
-    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities);
+    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);
     void deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
     void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);

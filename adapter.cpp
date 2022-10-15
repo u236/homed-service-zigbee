@@ -22,6 +22,10 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_port(n
 
     logInfo << "Using channel" << m_channel;
 
+    m_endpointsData.insert(0x01, EndpointData(new EndpointDataObject(PROFILE_HA,  0x0005)));
+    m_endpointsData.insert(0x0C, EndpointData(new EndpointDataObject(PROFILE_ZLL, 0x0005)));
+    m_endpointsData.insert(0xF2, EndpointData(new EndpointDataObject(PROFILE_HUE, 0x0005)));
+
     connect(m_port, &QSerialPort::readyRead, this, &Adapter::readyRead);
     connect(m_timer, &QTimer::timeout, this, &Adapter::receiveData);
 

@@ -178,7 +178,6 @@ public:
     EZSP(QSettings *config, QObject *parent);
 
     void reset(void) override;
-    void registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters) override;
     void setPermitJoin(bool enabled) override;
     void nodeDescriptorRequest(quint16 networkAddress) override;
     void simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;

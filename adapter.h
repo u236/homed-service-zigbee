@@ -63,7 +63,6 @@ public:
     virtual ~Adapter(void) {}
 
     virtual void reset(void) = 0;
-    virtual void registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters) = 0;
     virtual void setPermitJoin(bool enabled) = 0;
     virtual void nodeDescriptorRequest(quint16 networkAddress) = 0;
     virtual void simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) = 0;
@@ -104,7 +103,7 @@ private slots:
 signals:
 
     void coordinatorReady(const QByteArray &ieeeAddress);
-    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities); // TODO: remove capabilities
+    void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);
     void deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress);
     void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);

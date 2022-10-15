@@ -15,7 +15,7 @@ typedef QSharedPointer <EndpointObject> Endpoint;
 class DeviceObject;
 typedef QSharedPointer <DeviceObject> Device;
 
-class EndpointObject : public EndpointDataObject // TODO: refactor this
+class EndpointObject : public EndpointDataObject
 {
 
 public:

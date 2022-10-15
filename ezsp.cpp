@@ -58,13 +58,6 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_sequ
     m_values.insert(VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE, QByteArray::fromHex("5200"));
     m_values.insert(VALUE_CCA_THRESHOLD, QByteArray(1, 0x00));
     m_values.insert(VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, QByteArray(1, 0x03));
-
-    m_endpointsData.insert(0x01, EndpointData(new EndpointDataObject(PROFILE_HA, 0x0005)));
-    m_endpointsData.insert(0xF2, EndpointData(new EndpointDataObject(PROFILE_HUE, 0x0005)));
-
-    m_endpointsData.value(0x01)->inClusters() = {0x0000, 0x0003, 0x0006, 0x000A, 0x0019, 0x001A, 0x0300};
-    m_endpointsData.value(0x01)->outClusters() = {0x0000, 0x0003, 0x0004, 0x0005, 0x0006, 0x0008, 0x0020, 0x0300, 0x0400, 0x0402, 0x0405, 0x0406, 0x0500, 0x0B01, 0x0B03, 0x0B04, 0x0702, 0x1000, 0xFC01, 0xFC02};
-    m_endpointsData.value(0xF2)->outClusters() = {0x0021};
 }
 
 void EZSP::reset(void)
@@ -78,18 +71,7 @@ void EZSP::reset(void)
     }
 
     logInfo << "Resetting adapter...";
-    m_port->flush();
-
     sendRequest(ASH_CONTROL_RST);
-}
-
-void EZSP::registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList<quint16> &inClusters, const QList<quint16> &outClusters)
-{
-    Q_UNUSED(endpointId)
-    Q_UNUSED(profileId)
-    Q_UNUSED(deviceId)
-    Q_UNUSED(inClusters)
-    Q_UNUSED(outClusters)
 }
 
 void EZSP::setPermitJoin(bool enabled)
@@ -284,7 +266,7 @@ void EZSP::parsePacket(const QByteArray &payload)
     if (header->sequence != m_sequence)
         return;
 
-    if (!(header->frameControlHigh & 0x01)) // no version bit
+    if (!(header->frameControlHigh & 0x01))
     {
         m_version = static_cast <quint8> (payload.at(3));
         m_replyStatus = true;
@@ -294,7 +276,7 @@ void EZSP::parsePacket(const QByteArray &payload)
     frameId = qFromLittleEndian(header->frameId);
     data = payload.mid(sizeof(ezspHeaderStruct));
 
-    if (!(header->frameControlLow & 0x18)) // not callback? 0x10 - async, 0x08 - sync
+    if (!(header->frameControlLow & 0x18))
     {
         m_replyStatus = frameId == m_frameId;
         m_replyData = data;
@@ -318,7 +300,7 @@ void EZSP::parsePacket(const QByteArray &payload)
             // TODO: check status and decision
             if (message->status != EMBER_DEVICE_LEFT)
             {
-                emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress), 0x00);
+                emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
                 break;
             }
 
@@ -455,6 +437,14 @@ bool EZSP::startCoordinator(void)
 
     logInfo << "EZSP" << QString::asprintf("v%d", m_version).toUtf8().constData() << "adapter detected";
 
+    if (!sendFrame(FRAME_GET_IEEE_ADDRESS) || m_replyData.length() != sizeof(m_ieeeAddress))
+    {
+        logWarning << "Adapter address request failed";
+        return false;
+    }
+
+    memcpy(&m_ieeeAddress, m_replyData.constData(), sizeof(m_ieeeAddress));
+
     for (auto it = m_config.begin(); it != m_config.end(); it++)
     {
         setConfigStruct data;
@@ -544,7 +534,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    if (!sendFrame(FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE, QByteArray(1, 0x01))) // Source route discovery mode: off:0, on:1, reschedule:2
+    if (!sendFrame(FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE, QByteArray(1, 0x01)))
     {
         logWarning << "Set source route discovery mode request failed";
         return false;
@@ -564,14 +554,6 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    if (!sendFrame(FRAME_GET_IEEE_ADDRESS) || m_replyData.length() != sizeof(m_ieeeAddress))
-    {
-        logWarning << "Adapter address request failed";
-        return false;
-    }
-
-    memcpy(&m_ieeeAddress, m_replyData.constData(), sizeof(m_ieeeAddress));
-
     if (!sendFrame(FRAME_GET_NETWORK_PARAMETERS))
     {
         logWarning << "Network parameters request failed";
@@ -580,9 +562,10 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&network, m_replyData.constData() + 2, sizeof(network));
 
-    // TODO: check network key?
     if (m_replyData.at(1) != 0x01 || network.extendedPanId != m_ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != EMBER_NETWORK_UP)
     {
+        // TODO: check network key
+
         if (!m_write)
         {
             logWarning << "Write protected";
@@ -596,7 +579,7 @@ bool EZSP::startCoordinator(void)
         }
     }
 
-    ieeeAddress = qToBigEndian(m_ieeeAddress);
+    ieeeAddress = qToBigEndian(qFromLittleEndian(m_ieeeAddress));
     emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
 
     return true;
@@ -622,7 +605,7 @@ void EZSP::receiveData(void)
 
         for(int i = 0; i < length; i++)
         {
-            if (buffer.at(i) == static_cast <char> (0x7D)) // TODO: macros?
+            if (buffer.at(i) == static_cast <char> (0x7D))
             {
                 switch (buffer.at(++i))
                 {

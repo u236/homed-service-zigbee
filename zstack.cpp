@@ -13,11 +13,8 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
     m_reset = config->value("zigbee/reset").toString();
 
-    // TODO: refactor?
     m_nvItems.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
     m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
-    //
-
     m_nvItems.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId)));
     m_nvItems.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
     m_nvItems.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
@@ -41,7 +38,6 @@ void ZStack::reset(void)
     }
 
     logInfo << "Resetting adapter...";
-    m_port->flush();
 
     switch (list.indexOf(m_reset))
     {
@@ -65,42 +61,6 @@ void ZStack::reset(void)
             m_port->setRequestToSend(false);
             break;
     }
-}
-
-void ZStack::registerEndpoint(quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters)
-{
-    registerEndpointRequestStruct request;
-    QByteArray data;
-
-    request.endpointId = endpointId;
-    request.profileId = qToLittleEndian(profileId);
-    request.deviceId = qToLittleEndian(deviceId);
-    request.version = 0;
-    request.latency = 0;
-
-    data.append(static_cast <char> (inClusters.count()));
-
-    for (int i = 0; i < inClusters.count(); i++)
-    {
-        quint16 clusterId = qToLittleEndian(inClusters.at(i));
-        data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
-    }
-
-    data.append(static_cast <char> (outClusters.count()));
-
-    for (int i = 0; i < outClusters.count(); i++)
-    {
-        quint16 clusterId = qToLittleEndian(outClusters.at(i));
-        data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
-    }
-
-    if (sendRequest(AF_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) && !m_replyData.at(0))
-    {
-        logInfo << "Endpoint" << QString::asprintf("0x%02X", endpointId) << "registered successfully";
-        return;
-    }
-
-    logWarning << "Endpoint" << QString::asprintf("0x%02X", endpointId) << "register request failed";
 }
 
 void ZStack::setPermitJoin(bool enabled)
@@ -177,24 +137,29 @@ void ZStack::lqiRequest(quint16 networkAddress, quint8 index)
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
     bindRequestStruct request;
-    quint64 src, dst;
+    quint64 src, dst = m_ieeeAddress;
     QEventLoop loop;
     QTimer timer;
 
-    if (!dstAddress.isEmpty() && dstAddress.length() != 2 && dstAddress.length() != 8)
-        return false;
-
     memcpy(&src, srcAddress.constData(), sizeof(src));
-    memcpy(&dst, dstAddress.isEmpty() ? m_ieeeAddress.constData() : dstAddress.constData(), sizeof(dst));
+
+    if (!dstAddress.isEmpty())
+    {
+        memcpy(&dst, dstAddress.constData(), sizeof(dst));
+
+        switch (dstAddress.length())
+        {
+            case 2:  break;
+            case 8:  dst = qToLittleEndian(qFromBigEndian(dst)); break;
+            default: return false;
+        }
+    }
 
     request.networkAddress = qToLittleEndian(networkAddress);
     request.srcAddress = qToLittleEndian(qFromBigEndian(src));
     request.srcEndpointId = srcEndpointId;
     request.clusterId = qToLittleEndian(clusterId);
     request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
-
-    if (request.dstAddressMode == ADDRESS_MODE_64_BIT)
-        dst = qToLittleEndian(qFromBigEndian(dst));
 
     connect(this, &ZStack::bindResponse, &loop, &QEventLoop::quit);
     connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
@@ -260,8 +225,8 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
 
     switch (address.length())
     {
-        case 2: request.dstAddressMode = group ? ADDRESS_MODE_GROUP : ADDRESS_MODE_16_BIT; break;
-        case 8: request.dstAddressMode = ADDRESS_MODE_64_BIT; break;
+        case 2:  request.dstAddressMode = group ? ADDRESS_MODE_GROUP : ADDRESS_MODE_16_BIT; break;
+        case 8:  request.dstAddressMode = ADDRESS_MODE_64_BIT; break;
         default: return false;
     }
 
@@ -533,7 +498,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         {
             const deviceAnnounceStruct *message = reinterpret_cast <const deviceAnnounceStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
-            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress), message->capabilities);
+            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
             break;
         }
 
@@ -594,9 +559,6 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 
 bool ZStack::startCoordinator(void)
 {
-    deviceInfoResponseStruct *deviceInfo;
-    quint64 ieeeAddress;
-
     if (!sendRequest(SYS_VERSION))
     {
         logWarning << "Adapter version request failed";
@@ -627,9 +589,7 @@ bool ZStack::startCoordinator(void)
         return false;
     }
 
-    deviceInfo = reinterpret_cast <deviceInfoResponseStruct*> (m_replyData.data());
-    ieeeAddress = qToBigEndian(qFromLittleEndian(deviceInfo->ieeeAddress));
-    m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
+    memcpy(&m_ieeeAddress, m_replyData.constData() + 1, sizeof(m_ieeeAddress));
 
     if (!m_clear)
     {
@@ -737,6 +697,42 @@ bool ZStack::startCoordinator(void)
             reset();
             return true;
         }
+
+        for (auto it = m_endpointsData.begin(); it != m_endpointsData.end(); it++)
+        {
+            registerEndpointRequestStruct request;
+            QByteArray data;
+
+            request.endpointId = it.key();
+            request.profileId = qToLittleEndian(it.value()->profileId());
+            request.deviceId = qToLittleEndian(it.value()->deviceId());
+            request.version = 0;
+            request.latency = 0;
+
+            data.append(static_cast <char> (it.value()->inClusters().count()));
+
+            for (int i = 0; i < it.value()->inClusters().count(); i++)
+            {
+                quint16 clusterId = qToLittleEndian(it.value()->inClusters().at(i));
+                data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
+            }
+
+            data.append(static_cast <char> (it.value()->outClusters().count()));
+
+            for (int i = 0; i < it.value()->outClusters().count(); i++)
+            {
+                quint16 clusterId = qToLittleEndian(it.value()->outClusters().at(i));
+                data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
+            }
+
+            if (!sendRequest(AF_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+            {
+                logWarning << "Endpoint" << QString::asprintf("0x%02X", it.key()) << "register request failed";
+                return false;
+            }
+
+            logInfo << "Endpoint" << QString::asprintf("0x%02X", it.key()) << "registered successfully";
+        }
     }
     else
     {
@@ -770,6 +766,8 @@ bool ZStack::startCoordinator(void)
 
 void ZStack::coordinatorStarted(void)
 {
+    quint64 ieeeAddress;
+
     if (m_clear)
     {
         QThread::msleep(ADAPTER_CLEAR_DELAY);
@@ -781,7 +779,8 @@ void ZStack::coordinatorStarted(void)
         return;
     }
 
-    emit coordinatorReady(m_ieeeAddress);
+    ieeeAddress = qToBigEndian(qFromLittleEndian(m_ieeeAddress));
+    emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
 }
 
 void ZStack::receiveData(void)

@@ -73,7 +73,7 @@ QByteArray Actions::Level::request(const QVariant &data)
 
             if (action != "moveStop")
             {
-                quint8 payload[2] = {static_cast <quint8> (action == "moveUp" ? 0x00 : 0x01), 0x55}; // TODO: check it
+                quint8 payload[2] = {static_cast <quint8> (action == "moveUp" ? 0x00 : 0x01), 0x55}; // TODO: check this
                 header.commandId = 0x01;
                 return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
             }

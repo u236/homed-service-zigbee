@@ -20,8 +20,8 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_neighbor
 
     switch (list.indexOf(adapterType))
     {
-        case 0: m_adapter = new EZSP(config, this); break;
-        case 1: m_adapter = new ZStack(config, this); break;
+        case 0:  m_adapter = new EZSP(config, this); break;
+        case 1:  m_adapter = new ZStack(config, this); break;
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
 
@@ -904,7 +904,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 file.seek(qFromLittleEndian(request->fileOffset));
                 data = file.read(request->dataSizeMax);
 
-                // TODO: use percentage here?
+                // TODO: use percentage here
                 logInfo << "Device" << device->name() << "OTA upgrade writing" << data.length() << "bytes with offset" << QString::asprintf("0x%04X", qFromLittleEndian(request->fileOffset));
 
                 response.status = 0x00;
@@ -1124,30 +1124,6 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     device->setName("HOMEd Coordinator");
     device->setInterviewFinished();
 
-    device->endpoints().insert(0x01, Endpoint(new EndpointObject(0x01, device, PROFILE_HA,   0x0005)));
-    device->endpoints().insert(0x02, Endpoint(new EndpointObject(0x01, device, PROFILE_IPM,  0x0005)));
-    device->endpoints().insert(0x03, Endpoint(new EndpointObject(0x03, device, PROFILE_HA,   0x0005)));
-    device->endpoints().insert(0x04, Endpoint(new EndpointObject(0x04, device, PROFILE_TA,   0x0005)));
-    device->endpoints().insert(0x05, Endpoint(new EndpointObject(0x05, device, PROFILE_PHHC, 0x0005)));
-    device->endpoints().insert(0x06, Endpoint(new EndpointObject(0x06, device, PROFILE_AMI,  0x0005)));
-    device->endpoints().insert(0x08, Endpoint(new EndpointObject(0x08, device, PROFILE_HA,   0x0005)));
-    device->endpoints().insert(0x0A, Endpoint(new EndpointObject(0x0A, device, PROFILE_HA,   0x0005)));
-    device->endpoints().insert(0x0B, Endpoint(new EndpointObject(0x0B, device, PROFILE_HA,   0x0400)));
-    device->endpoints().insert(0x0C, Endpoint(new EndpointObject(0x0C, device, PROFILE_ZLL,  0x0005)));
-    device->endpoints().insert(0x0D, Endpoint(new EndpointObject(0x0D, device, PROFILE_HA,   0x0005)));
-    device->endpoints().insert(0x2F, Endpoint(new EndpointObject(0x2F, device, PROFILE_HA,   0x0005)));
-    device->endpoints().insert(0x6E, Endpoint(new EndpointObject(0x6E, device, PROFILE_HA,   0x0005)));
-    device->endpoints().insert(0xF2, Endpoint(new EndpointObject(0xF2, device, PROFILE_HUE,  0x0005)));
-
-    device->endpoints().value(0x0B)->inClusters().append(CLUSTER_TIME);
-    device->endpoints().value(0x0B)->inClusters().append(CLUSTER_IAS_ACE);
-    device->endpoints().value(0x0B)->outClusters().append(CLUSTER_IAS_ZONE);
-    device->endpoints().value(0x0B)->outClusters().append(CLUSTER_IAS_WD);
-    device->endpoints().value(0x0D)->inClusters().append(CLUSTER_OTA_UPGRADE);
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        m_adapter->registerEndpoint(it.key(), it.value()->profileId(), it.value()->deviceId(), it.value()->inClusters(), it.value()->outClusters());
-
     m_devices.insert(ieeeAddress, device);
     m_adapter->setPermitJoin(m_permitJoin);
 
@@ -1157,7 +1133,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     storeStatus();
 }
 
-void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress, quint8 capabilities)
+void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
 {
     auto it = m_devices.find(ieeeAddress);
 
@@ -1171,7 +1147,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress,
     }
     else
     {
-        logInfo << "Device" << ieeeAddress.toHex(':') << "joined network with address" << QString::asprintf("0x%04X", networkAddress) << "and capabilities:" << QString::asprintf("0x%02X", capabilities);
+        logInfo << "Device" << ieeeAddress.toHex(':') << "joined network with address" << QString::asprintf("0x%04X", networkAddress);
         it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
     }
 
