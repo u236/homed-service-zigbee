@@ -331,7 +331,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     for (int i = 1; i < request.length(); i++)
         fcs ^= request[i];
 
-    if (!transmitData(request.append(fcs)))
+    if (!transmitData(request.append(fcs), true))
         return false;
 
     return m_replyCommand == qFromBigEndian(command);

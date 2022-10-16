@@ -32,7 +32,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_port(n
     m_timer->setSingleShot(true);
 }
 
-bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
+bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout) // TODO: use this in ZStack
 {
     QEventLoop loop;
     QTimer timer;

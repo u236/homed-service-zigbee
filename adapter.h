@@ -93,7 +93,7 @@ protected:
     QMap <quint8, EndpointData> m_endpointsData;
 
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
-    bool transmitData(const QByteArray &data, bool receive = true);
+    bool transmitData(const QByteArray &data, bool receive = false);
 
 private slots:
 

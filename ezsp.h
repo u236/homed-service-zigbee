@@ -20,6 +20,9 @@
 #define FRAME_TRUST_CENTER_JOIN_HANDLER                         0x0024
 #define FRAME_GET_IEEE_ADDRESS                                  0x0026
 #define FRAME_GET_NETWORK_PARAMETERS                            0x0028
+#define FRAME_SEND_UNICAST                                      0x0034
+#define FRAME_MESSAGE_SENT_HANDLER                              0x003F
+#define FRAME_INCOMING_MESSAGE_HANDLER                          0x0045
 #define FRAME_SET_CONFIG                                        0x0053
 #define FRAME_SET_POLICY                                        0x0055
 #define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
@@ -71,6 +74,12 @@
 #define CONCENTRATOR_HIGH_RAM                                   0xFFF9
 
 //
+
+#define APS_OPTION_RETRY                                        0x0040
+#define APS_OPTION_ENABLE_ROUTE_DISCOVERY                       0x0100
+
+//
+
 #define MTOR_MIN_TIME                                           10
 #define MTOR_MAX_TIME                                           90
 #define MTOR_ROUTE_ERROR_THRESHOLD                              4
@@ -87,6 +96,21 @@
 
 #define EMBER_STANDARD_SECURITY_UNSECURED_JOIN                  0x01
 #define EMBER_DEVICE_LEFT                                       0x02
+
+#define EMBER_OUTGOING_DIRECT                                   0x00
+
+//
+
+#define ZDO_DEVICE_ANNOUNCE                                     0x0013
+
+#define ZDO_NODE_DESCRIPTOR_REQUEST                             0x0002
+#define ZDO_SIMPLE_DESCRIPTOR_REQUEST                           0x0004
+#define ZDO_ACTIVE_ENDPOINTS_REQUEST                            0x0005
+
+#define ZDO_NODE_DESCRIPTOR_RESPONSE                            0x8002
+#define ZDO_SIMPLE_DESCRIPTOR_RESPONSE                          0x8004
+#define ZDO_ACTIVE_ENDPOINTS_RESPONSE                           0x8005
+
 //
 
 #include "adapter.h"
@@ -122,7 +146,7 @@ struct setConcentratorStruct
     quint8  maxHops;
 };
 
-struct trustCenterJoinStruct
+struct trustCenterJoinHandlerStruct
 {
     quint16 networkAddress;
     quint64 ieeeAddress;
@@ -141,6 +165,40 @@ struct networkParametersStruct
     quint16 networkManagerId;
     quint8  networkUpdateId;
     quint32 channelList;
+};
+
+
+struct sendUnicastStruct
+{
+    quint8  type;
+    quint16 networkAddress;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint8  tag;
+    quint8  length;
+};
+
+struct incomingMessageHandlerStruct
+{
+    quint8  type;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint8  linkQuality;
+    quint8  rssi;
+    quint16 networkAddress;
+    quint8  bindingIndex;
+    quint8  addressIndex;
+    quint8  length;
 };
 
 struct setConfigStruct
@@ -168,6 +226,67 @@ struct setValueStruct
 {
     quint8  id;
     quint8  length;
+};
+
+struct zdoDeviceAnnounceStruct
+{
+    quint8  transactionId;
+    quint16 networkAddress;
+    quint64 ieeeAddress;
+};
+
+struct zdoNodeDescriptorRequestStruct
+{
+    quint8  transactionId;
+    quint16 networtAddress;
+};
+
+struct zdoNodeDescriptorResponseStruct
+{
+    quint8  transactionId;
+    quint8  status;
+    quint16 networkAddress;
+    quint8  logicalType;
+    quint8  apsFlags;
+    quint8  capabilityFlags;
+    quint16 manufacturerCode;
+    quint8  maxBufferSize;
+    quint16 maxTransferSize;
+    quint16 maxOutTransferSize;
+    quint8  descriptorCapabilities;
+};
+
+struct zdoSimpleDescriptorRequestStruct
+{
+    quint8  transactionId;
+    quint16 networtAddress;
+    quint8  endpointId;
+};
+
+struct zdoSimpleDescriptorResponseStruct
+{
+    quint8  transactionId;
+    quint8  status;
+    quint16 networkAddress;
+    quint8  length;
+    quint8  endpointId;
+    quint16 profileId;
+    quint16 deviceId;
+    quint8  version;
+};
+
+struct zdoActiveEndpointsRequestStruct
+{
+    quint8  transactionId;
+    quint16 networtAddress;
+};
+
+struct zdoActiveEndpointsResponseStruct
+{
+    quint8  transactionId;
+    quint8  status;
+    quint16 networkAddress;
+    quint8  count;
 };
 
 #pragma pack(pop)
@@ -201,25 +320,21 @@ public:
 
 private:
 
-    QByteArray m_networkKey;
+    QByteArray m_networkKey, m_replyData;
 
-    quint8 m_sequence, m_ackNumber, m_version;
-    quint16 m_frameId;
-
-    quint8 m_stackStatus;
+    quint8 m_version, m_stackStatus, m_transactionId, m_sequenceId, m_acknowledgeId;
     quint64 m_ieeeAddress;
 
-    bool m_replyStatus;
-    QByteArray m_replyData;
-
     QMap <quint8, quint16> m_config;
-    QMap <quint8, quint8> m_policy;
+    QMap <quint8, quint16> m_policy;
     QMap <quint8, QByteArray> m_values;
 
     void randomize(QByteArray &data);
 
+    bool sendUnicast(quint16 networkAddress, quint16 profileId, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload);
     bool sendFrame(quint16 frameId, const QByteArray &data = QByteArray());
-    bool sendRequest(quint8 control, const QByteArray &payload = QByteArray());
+
+    void sendRequest(quint8 control, const QByteArray &payload = QByteArray());
     void parsePacket(const QByteArray &payload);
 
     bool startNetwork(void);
@@ -231,7 +346,9 @@ private slots:
 
 signals:
   
+    void replyReceved();
     void stackStatusReceived(void);
+    void messageSent(void);
 
 };
 

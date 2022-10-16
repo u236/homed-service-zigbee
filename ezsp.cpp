@@ -34,7 +34,7 @@ static uint16_t CRC16_Calc(uint8_t *data, uint16_t length)
     return crc;
 }
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0), m_transactionId(0)
 {
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090A0B0C0D0E0F").toString().remove("0x").toUtf8());
@@ -70,8 +70,8 @@ void EZSP::reset(void)
         return;
     }
 
-    m_sequence = 0;
-    m_ackNumber = 0;
+    m_sequenceId = 0;
+    m_acknowledgeId = 0;
 
     logInfo << "Resetting adapter...";
     sendRequest(ASH_CONTROL_RST);
@@ -93,23 +93,49 @@ void EZSP::setPermitJoin(bool enabled)
         return;
     }
 
+    sendFrame(0x0055, QByteArray::fromHex("00 03 00"));
+
     logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
 }
 
 void EZSP::nodeDescriptorRequest(quint16 networkAddress)
 {
-    Q_UNUSED(networkAddress)
+    zdoNodeDescriptorRequestStruct payload;
+
+    payload.transactionId = m_transactionId;
+    payload.networtAddress = qToLittleEndian(networkAddress);
+
+    if (sendUnicast(networkAddress, 0x0000, ZDO_NODE_DESCRIPTOR_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload))))
+        return;
+
+    logWarning << "Node descriptor request failed";
 }
 
 void EZSP::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
 {
-    Q_UNUSED(networkAddress)
-    Q_UNUSED(endpointId)
+    zdoSimpleDescriptorRequestStruct payload;
+
+    payload.transactionId = m_transactionId;
+    payload.networtAddress = qToLittleEndian(networkAddress);
+    payload.endpointId = endpointId;
+
+    if (sendUnicast(networkAddress, 0x0000, ZDO_SIMPLE_DESCRIPTOR_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload))))
+        return;
+
+    logWarning << "Simple descriptor request failed";
 }
 
 void EZSP::activeEndpointsRequest(quint16 networkAddress)
 {
-    Q_UNUSED(networkAddress)
+    zdoActiveEndpointsRequestStruct payload;
+
+    payload.transactionId = m_transactionId;
+    payload.networtAddress = qToLittleEndian(networkAddress);
+
+    if (sendUnicast(networkAddress, 0x0000, ZDO_ACTIVE_ENDPOINTS_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload))))
+        return;
+
+    logWarning << "Active endpoints request failed";
 }
 
 void EZSP::lqiRequest(quint16 networkAddress, quint8 index)
@@ -133,10 +159,11 @@ bool EZSP::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, qui
 
 bool EZSP::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data)
 {
-    Q_UNUSED(networkAddress)
-    Q_UNUSED(endpointId)
-    Q_UNUSED(clusterId)
-    Q_UNUSED(data)
+    if (!sendUnicast(networkAddress, PROFILE_HA, clusterId, 0x01, endpointId, data))
+    {
+        logWarning << "Data request failed";
+        return false;
+    }
 
     return true;
 }
@@ -199,40 +226,70 @@ void EZSP::randomize(QByteArray &payload)
     }
 }
 
+bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
+{
+    sendUnicastStruct request;
+
+    request.type = EMBER_OUTGOING_DIRECT;
+    request.networkAddress = qToLittleEndian(networkAddress);
+    request.profileId = qToLittleEndian(profileId);
+    request.clusterId = qToLittleEndian(clusterId);
+    request.srcEndpointId = srcEndPointId;
+    request.dstEndpointId = dstEndPointId;
+    request.options = qToLittleEndian(APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+    request.groupId = 0x0000;
+    request.sequence = m_transactionId;
+    request.tag = m_transactionId;
+    request.length = static_cast <quint8> (payload.length());
+
+    if (!sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) || m_replyData.at(0))
+    {
+        logWarning << "Send unicast message request failed";
+        return false;
+    }
+
+    m_transactionId++;
+    return true;
+}
+
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)
 {
     QByteArray payload;
-    quint8 control = (m_sequence & 0x07) << 4 | (m_ackNumber & 0x07);
+    quint8 control = (m_sequenceId & 0x07) << 4 | (m_acknowledgeId & 0x07);
 
-    m_sequence++;
-
-    m_frameId = frameId;
-    m_replyStatus = false;
+    m_sequenceId++;
 
     if (frameId)
     {
         ezspHeaderStruct header;
 
-        header.sequence = m_sequence;
+        header.sequence = m_sequenceId;
         header.frameControlLow = 0x00;
         header.frameControlHigh = 0x01;
         header.frameId = qToLittleEndian(frameId);
+
+        if (m_debug)
+            logInfo << "-->" << QString::asprintf("%02x", m_sequenceId) <<  QString::asprintf("%02X%02X", header.frameControlLow, header.frameControlHigh) << QString::asprintf("%04X", frameId) << data.toHex(':');
 
         payload.append(reinterpret_cast <char*> (&header), sizeof(header));
     }
     else
     {
-        payload.append(static_cast <char> (m_sequence));
+        if (m_debug)
+            logInfo << "-->" << "legacy version request";
+
+        payload.append(static_cast <char> (m_sequenceId));
         payload.append(2, 0x00);
     }
 
     payload.append(data);
     randomize(payload);
+    sendRequest(control, payload);
 
-    return sendRequest(control, payload) && m_replyStatus;
+    return waitForSignal(this, SIGNAL(replyReceved()), 3000);
 }
 
-bool EZSP::sendRequest(quint8 control, const QByteArray &payload)
+void EZSP::sendRequest(quint8 control, const QByteArray &payload)
 {
     QByteArray request, buffer;
     quint16 crc;
@@ -257,7 +314,7 @@ bool EZSP::sendRequest(quint8 control, const QByteArray &payload)
         }
     }
 
-    return transmitData(buffer.append(ASH_FLAG_BYTE), control & 0x80 ? false : true);
+    transmitData(buffer.append(ASH_FLAG_BYTE));
 }
 
 void EZSP::parsePacket(const QByteArray &payload)
@@ -266,23 +323,20 @@ void EZSP::parsePacket(const QByteArray &payload)
     quint16 frameId;
     QByteArray data;
 
-    if (header->sequence != m_sequence)
-        return;
-
-    if (!(header->frameControlHigh & 0x01))
-    {
-        m_version = static_cast <quint8> (payload.at(3));
-        m_replyStatus = true;
-        return;
-    }
-
     frameId = qFromLittleEndian(header->frameId);
     data = payload.mid(sizeof(ezspHeaderStruct));
 
-    if (!(header->frameControlLow & 0x18))
+    if (m_debug)
+        logInfo << "<--" << QString::asprintf("%02x", header->sequence) <<  QString::asprintf("%02X%02X", header->frameControlLow, header->frameControlHigh) << QString::asprintf("%04X", frameId) << data.toHex(':');
+
+    if (!(header->frameControlLow & 0x18) && header->sequence == m_sequenceId)
     {
-        m_replyStatus = frameId == m_frameId;
-        m_replyData = data;
+        if (!(header->frameControlHigh & 0x01))
+            m_version = static_cast <quint8> (payload.at(3));
+        else
+            m_replyData = data;
+
+        emit replyReceved();
         return;
     }
 
@@ -297,7 +351,7 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         case FRAME_TRUST_CENTER_JOIN_HANDLER:
         {
-            const trustCenterJoinStruct *message = reinterpret_cast <const trustCenterJoinStruct*> (data.constData());
+            const trustCenterJoinHandlerStruct *message = reinterpret_cast <const trustCenterJoinHandlerStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
 
             if (message->status == EMBER_DEVICE_LEFT)
@@ -309,10 +363,102 @@ void EZSP::parsePacket(const QByteArray &payload)
             if (message->status == EMBER_STANDARD_SECURITY_UNSECURED_JOIN)
             {
                 sendFrame(FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
+
+                if (m_replyData.at(0) == 0xFF)
+                    break;
+
                 sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
             }
 
-            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
+            break;
+        }
+
+        case FRAME_MESSAGE_SENT_HANDLER:
+        {
+            logInfo << "messageSent callback";
+            emit messageSent();
+            break;
+        }
+
+        case FRAME_INCOMING_MESSAGE_HANDLER:
+        {
+            const incomingMessageHandlerStruct *message = reinterpret_cast <const incomingMessageHandlerStruct*> (data.constData());
+            QByteArray payload = data.mid(sizeof(incomingMessageHandlerStruct));
+
+            if (message->profileId)
+            {
+                emit messageReveived(qFromLittleEndian(message->networkAddress), qFromLittleEndian(message->srcEndpointId), qFromLittleEndian(message->clusterId), message->linkQuality, payload);
+                break;
+            }
+
+            switch (qToLittleEndian(message->clusterId))
+            {
+                case ZDO_DEVICE_ANNOUNCE:
+                {
+                    const zdoDeviceAnnounceStruct *response = reinterpret_cast <const zdoDeviceAnnounceStruct*> (payload.constData());
+                    quint64 ieeeAddress;
+                    ieeeAddress = qToBigEndian(qFromLittleEndian(response->ieeeAddress));
+                    emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(response->networkAddress));
+                    break;
+                }
+
+                case ZDO_NODE_DESCRIPTOR_RESPONSE:
+                {
+                    const zdoNodeDescriptorResponseStruct *response = reinterpret_cast <const zdoNodeDescriptorResponseStruct*> (payload.constData());
+
+                    if (!response->status)
+                        emit nodeDescriptorReceived(qFromLittleEndian(response->networkAddress), static_cast <LogicalType> (response->logicalType & 0x03), qFromLittleEndian(response->manufacturerCode));
+
+                    break;
+                }
+
+                case ZDO_SIMPLE_DESCRIPTOR_RESPONSE:
+                {
+                    const zdoSimpleDescriptorResponseStruct *response = reinterpret_cast <const zdoSimpleDescriptorResponseStruct*> (payload.constData());
+
+                    if (!response->status)
+                    {
+                        QByteArray clusterData = payload.mid(sizeof(zdoSimpleDescriptorResponseStruct));
+                        QList <quint16> inClusters, outClusters;
+                        quint16 clusterId;
+
+                        for (quint8 i = 0; i < static_cast <quint8> (clusterData.at(0)); i++)
+                        {
+                            memcpy(&clusterId, clusterData.constData() + i * sizeof(clusterId) + 1, sizeof(clusterId));
+                            inClusters.append(qFromLittleEndian(clusterId));
+                        }
+
+                        clusterData.remove(0, clusterData.at(0) * sizeof(clusterId) + 1);
+
+                        for (quint8 i = 0; i < static_cast <quint8> (clusterData.at(0)); i++)
+                        {
+                            memcpy(&clusterId, clusterData.constData() + i * sizeof(clusterId) + 1, sizeof(clusterId));
+                            outClusters.append(qFromLittleEndian(clusterId));
+                        }
+
+                        emit simpleDescriptorReceived(qFromLittleEndian(response->networkAddress), response->endpointId, qFromLittleEndian(response->profileId), qFromLittleEndian(response->deviceId), inClusters, outClusters);
+                    }
+
+                    break;
+                }
+
+                case ZDO_ACTIVE_ENDPOINTS_RESPONSE:
+                {
+                    const zdoActiveEndpointsResponseStruct *response = reinterpret_cast <const zdoActiveEndpointsResponseStruct*> (payload.constData());
+
+                    if (!response->status)
+                        emit activeEndpointsReceived(qFromLittleEndian(response->networkAddress), payload.mid(sizeof(zdoActiveEndpointsResponseStruct), response->count));
+
+                    break;
+                }
+
+                default:
+                {
+                    logInfo << "ZDO message" << QString::asprintf("0x%04X", qToLittleEndian(message->clusterId)) << data.toHex(':');
+                    break;
+                }
+            }
+
             break;
         }
 
@@ -344,7 +490,7 @@ bool EZSP::startNetwork(void)
 
         if (!sendFrame(FRAME_LEAVE_NETWORK) || m_replyData.at(0))
         {
-            logWarning << "Leave network request failed" << m_replyStatus << m_replyData.toHex(':');
+            logWarning << "Leave network request failed";
             return false;
         }
 
@@ -455,12 +601,12 @@ bool EZSP::startCoordinator(void)
 
     for (auto it = m_config.begin(); it != m_config.end(); it++)
     {
-        setConfigStruct data;
+        setConfigStruct request;
 
-        data.id = it.key();
-        data.value = qToLittleEndian(it.value());
+        request.id = it.key();
+        request.value = qToLittleEndian(it.value());
 
-        if (!sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) || m_replyData.at(0))
+        if (!sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
         {
             logWarning << "Set config item" << QString::asprintf("0x%02X", it.key()) << "request failed";
             return false;
@@ -469,12 +615,12 @@ bool EZSP::startCoordinator(void)
 
     for (auto it = m_policy.begin(); it != m_policy.end(); it++)
     {
-        setPolicyStruct data;
+        setPolicyStruct request;
 
-        data.id = it.key();
-        data.decision = it.value();
+        request.id = it.key();
+        request.decision = qToLittleEndian(it.value());
 
-        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(1, 0x00)) || m_replyData.at(0))
+        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
         {
             logWarning << "Set policy item" << QString::asprintf("0x%02X", it.key()) << "request failed";
             return false;
@@ -483,12 +629,12 @@ bool EZSP::startCoordinator(void)
 
     for (auto it = m_values.begin(); it != m_values.end(); it++)
     {
-        setValueStruct data;
+        setValueStruct request;
 
-        data.id = it.key();
-        data.length = static_cast <quint8> (it.value().length());
+        request.id = it.key();
+        request.length = static_cast <quint8> (it.value().length());
 
-        if (!sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(it.value())) || m_replyData.at(0))
+        if (!sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(it.value())) || m_replyData.at(0))
         {
             logWarning << "Set value item" << QString::asprintf("0x%02X", it.key()) << "request failed";
             return false;
@@ -521,7 +667,7 @@ bool EZSP::startCoordinator(void)
 
         if (!sendFrame(FRAME_REGISTER_ENDPOINT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         {
-            logWarning << "Endpoint 0x01 register request failed" << m_replyStatus << m_replyData.toHex(':');
+            logWarning << "Endpoint" << QString::asprintf("0x%02X", it.key()) << "register request failed";
             return false;
         }
 
@@ -550,7 +696,7 @@ bool EZSP::startCoordinator(void)
 
     m_stackStatus = 0x00;
 
-    if (!sendFrame(FRAME_NETWORK_INIT, QByteArray(2, 0x00)))
+    if (!sendFrame(FRAME_NETWORK_INIT))
     {
         logWarning << "Network init request failed";
         return false;
@@ -650,10 +796,12 @@ void EZSP::receiveData(void)
         {
             QByteArray payload = data.mid(1, data.length() - 3);
 
+            m_acknowledgeId = ((control >> 4) + 1) & 0x07;
+            sendRequest(ASH_CONTROL_ACK | m_acknowledgeId);
+
             randomize(payload);
             parsePacket(payload);
 
-            sendRequest(ASH_CONTROL_ACK | (++m_ackNumber & 0x07));
             continue;
         }
 
@@ -664,6 +812,7 @@ void EZSP::receiveData(void)
 
             continue;
         }
+
 
         logInfo << "ASH" << data.toHex(':');
     }

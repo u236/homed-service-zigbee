@@ -115,7 +115,7 @@ struct nodeDescriptorResponseStruct
     quint16 manufacturerCode;
     quint8  maxBufferSize;
     quint16 maxTransferSize;
-    quint16 serverMask;
+    quint16 serverFlags;
     quint16 maxOutTransferSize;
     quint8  descriptorCapabilities;
 };
