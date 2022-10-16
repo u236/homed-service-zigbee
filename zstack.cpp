@@ -532,7 +532,7 @@ bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
     request.offset = 0;
     request.length = static_cast <quint8> (data.length());
 
-    if(!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    if (!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
         logWarning << "NV item" << QString::asprintf("0x%04X", id) << "wtite request failed";
         return false;
@@ -548,7 +548,7 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
     request.id = id;
     request.length = static_cast <quint8> (data.length());
 
-    if(!sendRequest(ZB_WRITE_CONFIGURATION, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    if (!sendRequest(ZB_WRITE_CONFIGURATION, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
         logWarning << "NV item" << QString::asprintf("0x%04X", id) << "wtite request failed";
         return false;

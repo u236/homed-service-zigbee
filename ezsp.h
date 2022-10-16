@@ -26,10 +26,12 @@
 #define FRAME_SET_CONFIG                                        0x0053
 #define FRAME_SET_POLICY                                        0x0055
 #define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
+#define FRAME_LOOKUP_IEEE_ADDRESS                               0x0061
 #define FRAME_SET_INITIAL_SECURITY_STATE                        0x0068
 #define FRAME_CLEAR_TRANSIENT_LINK_KEYS                         0x006B
 #define FRAME_FIND_KEY_TABLE_ENTRY                              0x0075
 #define FRAME_ERASE_KEY_TABLE_ENTRY                             0x0076
+#define SET_EXTENDED_TIMEOUT                                    0x007E
 #define FRAME_SET_VALUE                                         0x00AB
 #define FRAME_ADD_TRANSIENT_LINK_KEY                            0x00AF
 #define FRAME_CLEAR_KEY_TABLE                                   0x00B1
@@ -180,6 +182,22 @@ struct sendUnicastStruct
     quint16 groupId;
     quint8  sequence;
     quint8  tag;
+    quint8  length;
+};
+
+struct messageSentHandlerStruct
+{
+    quint8  type;
+    quint16 networkAddress;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint8  tag;
+    quint8  status;
     quint8  length;
 };
 
@@ -346,7 +364,7 @@ private slots:
 
 signals:
   
-    void replyReceved();
+    void replyReceived(void);
     void stackStatusReceived(void);
     void messageSent(void);
 

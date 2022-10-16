@@ -242,11 +242,31 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     request.tag = m_transactionId;
     request.length = static_cast <quint8> (payload.length());
 
+    if (!sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) || m_replyData.at(0))
+    {
+        logWarning << "Address lookup request failed";
+        return false;
+    }
+
+    if (!sendFrame(SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01)) || m_replyData.at(0))
+    {
+        logWarning << "Address lookup request failed";
+        return false;
+    }
+
     if (!sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) || m_replyData.at(0))
     {
         logWarning << "Send unicast message request failed";
         return false;
     }
+
+//    logInfo << "sent" << request.tag;
+
+//    if (!waitForSignal(this, SIGNAL(messageSent()), ADAPTER_REQUEST_TIMEOUT))
+//    {
+//        logWarning << "Message sent handler timed out";
+//        return false;
+//    }
 
     m_transactionId++;
     return true;
@@ -286,7 +306,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)
     randomize(payload);
     sendRequest(control, payload);
 
-    return waitForSignal(this, SIGNAL(replyReceved()), 3000);
+    return waitForSignal(this, SIGNAL(replyReceived()), 3000);
 }
 
 void EZSP::sendRequest(quint8 control, const QByteArray &payload)
@@ -300,7 +320,7 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
     crc = qToBigEndian(CRC16_Calc(reinterpret_cast <quint8*> (request.data()), request.length()));
     request.append(reinterpret_cast <char*> (&crc), sizeof(crc));
 
-    for(int i = 0; i < request.length(); i++)
+    for (int i = 0; i < request.length(); i++)
     {
         switch (request.at(i))
         {
@@ -336,7 +356,7 @@ void EZSP::parsePacket(const QByteArray &payload)
         else
             m_replyData = data;
 
-        emit replyReceved();
+        emit replyReceived();
         return;
     }
 
@@ -375,8 +395,14 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         case FRAME_MESSAGE_SENT_HANDLER:
         {
-            logInfo << "messageSent callback";
-            emit messageSent();
+//            const messageSentHandlerStruct *message = reinterpret_cast <const messageSentHandlerStruct*> (data.constData());
+
+//            if (message->tag == m_transactionId)
+//            {
+//                logInfo << "handler" << message->tag << message->status;
+//                emit messageSent();
+//            }
+
             break;
         }
 
@@ -749,15 +775,15 @@ void EZSP::receiveData(void)
         quint8 length, control;
         quint16 crc;
 
-        if (buffer.length() < 4 || !buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
-            return;
-
         if (buffer.startsWith(QByteArray::fromHex("1AC102")) || buffer.startsWith(QByteArray::fromHex("1AC202")))
             buffer.remove(0, 1);
 
+        if (buffer.length() < 4 || !buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
+            return;
+
         length = static_cast <quint8> (buffer.indexOf(ASH_FLAG_BYTE));
 
-        for(int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++)
         {
             if (buffer.at(i) == static_cast <char> (0x7D))
             {
@@ -781,16 +807,16 @@ void EZSP::receiveData(void)
         }
 
         memcpy(&crc, data.constData() + data.length() - 2, sizeof(crc));
+        buffer.remove(0, length + 1);
 
         if (crc != qToBigEndian(CRC16_Calc(reinterpret_cast <quint8*> (data.data()), data.length() - 2)))
         {
-            logWarning << "Packet" << buffer.toHex(':') << "CRC mismatch";
+            logWarning << "Packet" << data.toHex(':') << "CRC mismatch";
             reset();
             return;
         }
 
-        control = static_cast <quint8> (data.front());
-        buffer.remove(0, length + 1);
+        control = static_cast <quint8> (data.at(0));
 
         if (!(control & 0x80))
         {
@@ -808,7 +834,10 @@ void EZSP::receiveData(void)
         if (control == ASH_CONTROL_RSTACK)
         {
             if (!startCoordinator())
+            {
                 logWarning << "Coordinator startup failed";
+                reset();
+            }
 
             continue;
         }
