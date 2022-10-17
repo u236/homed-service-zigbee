@@ -1161,7 +1161,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
     emit deviceEvent();
 }
 
-void ZigBee::deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
+void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
 {
     auto it = m_devices.find(ieeeAddress);
 
@@ -1171,7 +1171,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress, quint16 networkAddress)
     m_ledTimer->start(500);
     GPIO::setStatus(m_ledPin, true);
 
-    logInfo << "Device" << it.value()->name() << "with address" << QString::asprintf("0x%04X", networkAddress) << "left network";
+    logInfo << "Device" << it.value()->name() << "left network";
 
     m_devices.erase(it);
     storeStatus();

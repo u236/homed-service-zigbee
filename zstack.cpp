@@ -506,7 +506,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         {
             const deviceLeaveStruct *message = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
-            emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
+            emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
             break;
         }
 

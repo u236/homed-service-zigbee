@@ -342,6 +342,7 @@ private:
 
     quint8 m_version, m_stackStatus, m_transactionId, m_sequenceId, m_acknowledgeId;
     quint64 m_ieeeAddress;
+    bool m_messageStatus;
 
     QMap <quint8, quint16> m_config;
     QMap <quint8, quint16> m_policy;

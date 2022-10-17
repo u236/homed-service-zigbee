@@ -79,9 +79,12 @@ void EZSP::reset(void)
 
 void EZSP::setPermitJoin(bool enabled)
 {
-    QByteArray data = QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E63653039");
+    setPolicyStruct policy;
 
-    if (enabled && (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, data) || m_replyData.at(0)))
+    policy.id = POLICY_TRUST_CENTER;
+    policy.decision = qToLittleEndian(m_policy.value(POLICY_TRUST_CENTER));
+
+    if (enabled && (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E63653039")) || m_replyData.at(0)))
     {
         logWarning << "Add transient key request failed";
         return;
@@ -93,7 +96,11 @@ void EZSP::setPermitJoin(bool enabled)
         return;
     }
 
-    sendFrame(0x0055, QByteArray::fromHex("00 03 00"));
+    if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
+    {
+        logWarning << "Set policy item" << QString::asprintf("0x%02X", POLICY_TRUST_CENTER) << "request failed";
+        return;
+    }
 
     logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
 }
@@ -248,7 +255,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
         return false;
     }
 
-    if (!sendFrame(SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01)) || m_replyData.at(0))
+    if (!sendFrame(SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01)))
     {
         logWarning << "Address lookup request failed";
         return false;
@@ -260,16 +267,14 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
         return false;
     }
 
-//    logInfo << "sent" << request.tag;
-
-//    if (!waitForSignal(this, SIGNAL(messageSent()), ADAPTER_REQUEST_TIMEOUT))
-//    {
-//        logWarning << "Message sent handler timed out";
-//        return false;
-//    }
+    if (!waitForSignal(this, SIGNAL(messageSent()), ADAPTER_REQUEST_TIMEOUT))
+    {
+        logWarning << "Message sent handler timed out";
+        return false;
+    }
 
     m_transactionId++;
-    return true;
+    return m_messageStatus;
 }
 
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)
@@ -376,7 +381,7 @@ void EZSP::parsePacket(const QByteArray &payload)
 
             if (message->status == EMBER_DEVICE_LEFT)
             {
-                emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
+                emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
                 break;
             }
 
@@ -384,7 +389,7 @@ void EZSP::parsePacket(const QByteArray &payload)
             {
                 sendFrame(FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
 
-                if (m_replyData.at(0) == 0xFF)
+                if (m_replyData.at(0) == static_cast <char> (0xFF))
                     break;
 
                 sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
@@ -395,13 +400,13 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         case FRAME_MESSAGE_SENT_HANDLER:
         {
-//            const messageSentHandlerStruct *message = reinterpret_cast <const messageSentHandlerStruct*> (data.constData());
+            const messageSentHandlerStruct *message = reinterpret_cast <const messageSentHandlerStruct*> (data.constData());
 
-//            if (message->tag == m_transactionId)
-//            {
-//                logInfo << "handler" << message->tag << message->status;
-//                emit messageSent();
-//            }
+            if (message->tag == m_transactionId)
+            {
+                m_messageStatus = !message->status;
+                emit messageSent();
+            }
 
             break;
         }
