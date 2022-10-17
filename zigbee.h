@@ -4,7 +4,7 @@
 #define HANDLE_QUEUES_INTERVAL          1
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define STORE_STATUS_INTERVAL           60000
-#define DEVICE_REJOIN_INTERVAL          10000
+#define DEVICE_INTERVIEW_TIMEOUT        20000
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -134,7 +134,7 @@ private:
     void interviewDevice(const Device &device);
     void configureReporting(const Endpoint &endpoint, const Reporting &reporting);
 
-    void readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes);
+    bool readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes, bool enqueue = true);
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data);
 
     void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload);
@@ -155,6 +155,7 @@ private slots:
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
+    void interviewTimeout(void);
     void pollAttributes(void);
     void updateNeighbors(void);
     void handleQueues(void);
@@ -163,7 +164,7 @@ private slots:
 
 signals:
 
-    void deviceEvent(bool join = true);
+    void joinEvent(bool joined);
     void endpointUpdated(const Device &device, quint8 endpointId);
     void statusStored(const QJsonObject &json);
 

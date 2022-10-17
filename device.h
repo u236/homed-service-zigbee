@@ -7,7 +7,6 @@
 #include "poll.h"
 #include "property.h"
 #include "reporting.h"
-#include "zstack.h"
 
 class EndpointObject;
 typedef QSharedPointer <EndpointObject> Endpoint;
@@ -51,14 +50,16 @@ private:
 
 };
 
-class DeviceObject
+class DeviceObject : public QObject
 {
+    Q_OBJECT
 
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_version(0), m_manufacturerCode(0), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_version(0), m_manufacturerCode(0), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_lastSeen(0), m_linkQuality(0) {}
 
+    inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
     inline quint16 networkAddress(void) { return m_networkAddress; }
@@ -91,9 +92,6 @@ public:
     inline bool multipleEndpoints(void) { return m_multipleEndpoints; }
     inline void setMultipleEndpoints(bool value) { m_multipleEndpoints = value; }
 
-    inline qint64 joinTime(void) { return m_joinTime; }
-    inline void updateJoinTime(void) { m_joinTime = QDateTime::currentMSecsSinceEpoch(); }
-
     inline qint64 lastSeen(void) { return m_lastSeen; }
     inline void setLastSeen(qint64 value) { m_lastSeen = value; }
     inline void updateLastSeen(void) { m_lastSeen = QDateTime::currentSecsSinceEpoch(); }
@@ -106,6 +104,8 @@ public:
 
 private:
 
+    QTimer *m_timer;
+
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;
 
@@ -116,7 +116,7 @@ private:
 
     bool m_nodeDescriptorReceived, m_interviewFinished, m_multipleEndpoints;
 
-    qint64 m_joinTime, m_lastSeen;
+    qint64 m_lastSeen;
     quint8 m_linkQuality;
 
     QMap <quint8, Endpoint> m_endpoints;

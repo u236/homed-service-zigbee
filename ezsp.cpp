@@ -105,20 +105,17 @@ void EZSP::setPermitJoin(bool enabled)
     logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
 }
 
-void EZSP::nodeDescriptorRequest(quint16 networkAddress)
+bool EZSP::nodeDescriptorRequest(quint16 networkAddress)
 {
     zdoNodeDescriptorRequestStruct payload;
 
     payload.transactionId = m_transactionId;
     payload.networtAddress = qToLittleEndian(networkAddress);
 
-    if (sendUnicast(networkAddress, 0x0000, ZDO_NODE_DESCRIPTOR_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload))))
-        return;
-
-    logWarning << "Node descriptor request failed";
+    return sendUnicast(networkAddress, 0x0000, ZDO_NODE_DESCRIPTOR_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)));
 }
 
-void EZSP::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
+bool EZSP::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
 {
     zdoSimpleDescriptorRequestStruct payload;
 
@@ -126,29 +123,25 @@ void EZSP::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
     payload.networtAddress = qToLittleEndian(networkAddress);
     payload.endpointId = endpointId;
 
-    if (sendUnicast(networkAddress, 0x0000, ZDO_SIMPLE_DESCRIPTOR_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload))))
-        return;
-
-    logWarning << "Simple descriptor request failed";
+    return sendUnicast(networkAddress, 0x0000, ZDO_SIMPLE_DESCRIPTOR_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)));
 }
 
-void EZSP::activeEndpointsRequest(quint16 networkAddress)
+bool EZSP::activeEndpointsRequest(quint16 networkAddress)
 {
     zdoActiveEndpointsRequestStruct payload;
 
     payload.transactionId = m_transactionId;
     payload.networtAddress = qToLittleEndian(networkAddress);
 
-    if (sendUnicast(networkAddress, 0x0000, ZDO_ACTIVE_ENDPOINTS_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload))))
-        return;
-
-    logWarning << "Active endpoints request failed";
+    return sendUnicast(networkAddress, 0x0000, ZDO_ACTIVE_ENDPOINTS_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)));
 }
 
-void EZSP::lqiRequest(quint16 networkAddress, quint8 index)
+bool EZSP::lqiRequest(quint16 networkAddress, quint8 index)
 {
     Q_UNUSED(networkAddress)
     Q_UNUSED(index)
+
+    return true;
 }
 
 bool EZSP::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
@@ -166,13 +159,7 @@ bool EZSP::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, qui
 
 bool EZSP::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data)
 {
-    if (!sendUnicast(networkAddress, PROFILE_HA, clusterId, 0x01, endpointId, data))
-    {
-        logWarning << "Data request failed";
-        return false;
-    }
-
-    return true;
+    return sendUnicast(networkAddress, PROFILE_HA, clusterId, 0x01, endpointId, data);
 }
 
 bool EZSP::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
@@ -199,11 +186,6 @@ bool EZSP::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 ds
     Q_UNUSED(group)
 
     return true;
-}
-
-quint8 EZSP::dataRequestStatus(void)
-{
-    return 0x00;
 }
 
 bool EZSP::setInterPanEndpointId(quint8 endpointId)
@@ -257,7 +239,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
 
     if (!sendFrame(SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01)))
     {
-        logWarning << "Address lookup request failed";
+        logWarning << "Set extended timeout request failed";
         return false;
     }
 
@@ -274,7 +256,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     }
 
     m_transactionId++;
-    return m_messageStatus;
+    return m_requestSuccess;
 }
 
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)
@@ -404,7 +386,8 @@ void EZSP::parsePacket(const QByteArray &payload)
 
             if (message->tag == m_transactionId)
             {
-                m_messageStatus = !message->status;
+                m_requestStatus = message->status;
+                m_requestSuccess = m_requestStatus ? false : true;
                 emit messageSent();
             }
 
@@ -495,7 +478,7 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         default:
         {
-            logInfo << "callback:" << QString::asprintf("0x%04X", frameId) << data.toHex(':');
+            // logInfo << "callback:" << QString::asprintf("0x%04X", frameId) << data.toHex(':');
             break;
         }
     }
@@ -521,7 +504,7 @@ bool EZSP::startNetwork(void)
 
         if (!sendFrame(FRAME_LEAVE_NETWORK) || m_replyData.at(0))
         {
-            logWarning << "Leave network request failed";
+            logWarning << "Leave existing network request failed";
             return false;
         }
 
@@ -749,7 +732,7 @@ bool EZSP::startCoordinator(void)
 
     if (m_replyData.at(1) != 0x01 || network.extendedPanId != m_ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != EMBER_NETWORK_UP)
     {
-        // TODO: check network key
+        // TODO: check network key?
 
         if (!m_write)
         {
@@ -846,7 +829,6 @@ void EZSP::receiveData(void)
 
             continue;
         }
-
 
         logInfo << "ASH" << data.toHex(':');
     }

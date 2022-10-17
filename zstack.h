@@ -327,10 +327,11 @@ public:
 
     void reset(void) override;
     void setPermitJoin(bool enabled) override;
-    void nodeDescriptorRequest(quint16 networkAddress) override;
-    void simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
-    void activeEndpointsRequest(quint16 networkAddress) override;
-    void lqiRequest(quint16 networkAddress, quint8 index = 0) override;
+
+    bool nodeDescriptorRequest(quint16 networkAddress) override;
+    bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
+    bool activeEndpointsRequest(quint16 networkAddress) override;
+    bool lqiRequest(quint16 networkAddress, quint8 index = 0) override;
 
     bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false) override;
     bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data) override;
@@ -338,11 +339,11 @@ public:
     bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
     bool extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
 
-    quint8 dataRequestStatus(void) override;
-
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPan(void) override;
+
+    inline quint8 dataRequestStatus(void) override { return m_dataRequestStatus; }
 
 private:
 
@@ -359,7 +360,7 @@ private:
     bool m_bindRequestSuccess;
 
     quint8 m_dataRequestStatus;
-    bool m_dataRequestSuccess, m_dataConfirmReceived;
+    bool m_dataRequestFinished, m_dataRequestSuccess;
 
     quint16 m_replyCommand;
     QByteArray m_replyData;

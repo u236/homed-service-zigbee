@@ -631,15 +631,27 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->interviewFinished())
         return;
 
+    device->timer()->start(DEVICE_INTERVIEW_TIMEOUT);
+
     if (!device->nodeDescriptorReceived())
     {
-        m_adapter->nodeDescriptorRequest(device->networkAddress());
+        if (!m_adapter->nodeDescriptorRequest(device->networkAddress()))
+        {
+            logWarning << "Device" << device->name() << "interview aborted (node descriptor request failed)";
+            device->timer()->stop();
+        }
+
         return;
     }
 
     if (device->endpoints().isEmpty())
     {
-        m_adapter->activeEndpointsRequest(device->networkAddress());
+        if (!m_adapter->activeEndpointsRequest(device->networkAddress()))
+        {
+            logWarning << "Device" << device->name() << "interview aborted (active endpoints request failed)";
+            device->timer()->stop();
+        }
+
         return;
     }
 
@@ -647,13 +659,23 @@ void ZigBee::interviewDevice(const Device &device)
     {
         if (!it.value()->profileId() && !it.value()->deviceId())
         {
-            m_adapter->simpleDescriptorRequest(device->networkAddress(), it.key());
+            if (!m_adapter->simpleDescriptorRequest(device->networkAddress(), it.key()))
+            {
+                logWarning << "Device" << device->name() << "interview aborted (endpoint" << QString::asprintf("0x%02X", it.key()) << "simple descriptor request failed)";
+                device->timer()->stop();
+            }
+
             return;
         }
 
         if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->manufacturerName().isEmpty() || device->modelName().isEmpty()))
         {
-            readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005});
+            if (!readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005}, false))
+            {
+                logWarning << "Device" << device->name() << "interview aborted (read basic cluster attributes request failed)";
+                device->timer()->stop();
+            }
+
             return;
         }
     }
@@ -666,7 +688,10 @@ void ZigBee::interviewDevice(const Device &device)
             configureReporting(it.value(), it.value()->reportings().at(i));
 
     logInfo << "Device" << device->name() << "interview finished";
+
+    device->timer()->stop();
     device->setInterviewFinished();
+
     storeStatus();
 }
 
@@ -697,7 +722,7 @@ void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
     enqueueDataRequest(endpoint->device(), endpoint->id(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload), QString("%1 reporting configuration").arg(reporting->name()));
 }
 
-void ZigBee::readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes)
+bool ZigBee::readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes, bool enqueue)
 {
     zclHeaderStruct header;
     QByteArray payload;
@@ -712,7 +737,13 @@ void ZigBee::readAttributes(const Device &device, quint8 endpointId, quint16 clu
         payload.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
     }
 
-    enqueueDataRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload));
+    if (enqueue)
+    {
+        enqueueDataRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload));
+        return true;
+    }
+
+    return m_adapter->dataRequest(device->networkAddress(), endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload));
 }
 
 void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -927,7 +958,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
                 if (request->status)
                 {
-                    logWarning << "Device" << device->name() << "OTA upgrade failed, status:" << QString::asprintf("%02X", request->status);;
+                    logWarning << "Device" << device->name() << "OTA upgrade failed, status code:" << QString::asprintf("%02X", request->status);;
                     break;
                 }
 
@@ -1051,7 +1082,7 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 
     if (!m_adapter->extendedDataRequest(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
     {
-        logWarning << "TouchLink scan request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        logWarning << "TouchLink scan request failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
         return;
     }
 
@@ -1059,7 +1090,7 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 
     if (!m_adapter->extendedDataRequest(ieeeAddress, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload.transactionId)))))
     {
-        logWarning << "TouchLink reset request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        logWarning << "TouchLink reset request failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
         return;
     }
 
@@ -1088,7 +1119,7 @@ void ZigBee::touchLinkScan(void)
 
         if (!m_adapter->extendedDataRequest(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
         {
-            logWarning << "TouchLink scan request failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+            logWarning << "TouchLink scan request failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
             return;
         }
     }
@@ -1139,7 +1170,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
 
     if (it != m_devices.end())
     {
-        if (QDateTime::currentMSecsSinceEpoch() < it.value()->joinTime() + DEVICE_REJOIN_INTERVAL)
+        if (it.value()->timer()->isActive())
             return;
 
         logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04X", networkAddress);
@@ -1154,11 +1185,12 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
     m_ledTimer->start(500);
     GPIO::setStatus(m_ledPin, true);
 
-    it.value()->updateJoinTime();
+    connect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout);
+    it.value()->timer()->setSingleShot(true);
     it.value()->updateLastSeen();
-
     interviewDevice(it.value());
-    emit deviceEvent();
+
+    emit joinEvent(true);
 }
 
 void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
@@ -1176,7 +1208,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     m_devices.erase(it);
     storeStatus();
 
-    emit deviceEvent(false);
+    emit joinEvent(false);
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode)
@@ -1342,6 +1374,12 @@ void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpo
     logWarning << "Unrecognized extended message received from" << ieeeAddress.toHex(':') << "endpoint" << QString::asprintf("0x%02X", endpointId) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << data.toHex(':');
 }
 
+void ZigBee::interviewTimeout(void)
+{
+    DeviceObject *device = reinterpret_cast <DeviceObject*> (sender()->parent());
+    logWarning << "Device" << device->name() << "interview timed out";
+}
+
 void ZigBee::pollAttributes(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
@@ -1393,7 +1431,7 @@ void ZigBee::handleQueues(void)
             continue;
         }
 
-        logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "failed, status:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
     }
 
     if (!m_neighborsQueue.isEmpty())

@@ -81,20 +81,17 @@ void ZStack::setPermitJoin(bool enabled)
     logWarning << "Set permit join request failed";
 }
 
-void ZStack::nodeDescriptorRequest(quint16 networkAddress)
+bool ZStack::nodeDescriptorRequest(quint16 networkAddress)
 {
     nodeDescriptorRequestStruct request;
 
     request.dstAddress = qToLittleEndian(networkAddress);
     request.networkAddress = qToLittleEndian(networkAddress);
 
-    if (sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
-        return;
-
-    logWarning << "Node descriptor request filed";
+    return sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
 }
 
-void ZStack::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
+bool ZStack::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
 {
     simpleDescriptorRequestStruct request;
 
@@ -102,36 +99,27 @@ void ZStack::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
     request.networkAddress = qToLittleEndian(networkAddress);
     request.endpointId = endpointId;
 
-    if (sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
-        return;
-
-    logWarning << "Simple descriptor request filed";
+    return sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
 }
 
-void ZStack::activeEndpointsRequest(quint16 networkAddress)
+bool ZStack::activeEndpointsRequest(quint16 networkAddress)
 {
     activeEndpointsRequestStruct request;
 
     request.dstAddress = qToLittleEndian(networkAddress);
     request.networkAddress = qToLittleEndian(networkAddress);
 
-    if (sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
-        return;
-
-    logWarning << "Active endpoints request filed";
+    return sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
 }
 
-void ZStack::lqiRequest(quint16 networkAddress, quint8 index)
+bool ZStack::lqiRequest(quint16 networkAddress, quint8 index)
 {
     lqiRequestStruct request;
 
     request.networkAddress = qToLittleEndian(networkAddress);
     request.index = index;
 
-    if (sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
-        return;
-
-    logWarning << "LQI request filed";
+    return sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
 }
 
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
@@ -193,16 +181,13 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     request.radius = AF_DEFAULT_RADIUS;
     request.length = static_cast <quint8> (data.length());
 
-    m_dataConfirmReceived = false;
+    m_dataRequestFinished = false;
     m_dataRequestSuccess = false;
 
     if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
-    {
-        logWarning << "Data request failed";
         return false;
-    }
 
-    if (!m_dataConfirmReceived)
+    if (!m_dataRequestFinished)
     {
         QEventLoop loop;
         QTimer timer;
@@ -245,16 +230,13 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     request.radius = dstPanId ? AF_DEFAULT_RADIUS * 2 : AF_DEFAULT_RADIUS;
     request.length = qToLittleEndian(static_cast <quint16> (data.length()));
 
-    m_dataConfirmReceived = false;
+    m_dataRequestFinished = false;
     m_dataRequestSuccess = false;
 
     if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
-    {
-        logWarning << "Data request failed";
         return false;
-    }
 
-    if (!m_dataConfirmReceived)
+    if (!m_dataRequestFinished)
     {
         QEventLoop loop;
         QTimer timer;
@@ -275,11 +257,6 @@ bool ZStack::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 
 {
     address = qToLittleEndian(address);
     return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
-}
-
-quint8 ZStack::dataRequestStatus(void)
-{
-    return m_dataRequestStatus;
 }
 
 bool ZStack::setInterPanEndpointId(quint8 endpointId)
@@ -368,8 +345,8 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
             if (static_cast <quint8> (data.at(2)) == m_transactionId)
             {
                 m_dataRequestStatus = data.at(0);
+                m_dataRequestFinished = true;
                 m_dataRequestSuccess = m_dataRequestStatus ? false : true;
-                m_dataConfirmReceived = true;
                 emit dataConfirm();
             }
 
