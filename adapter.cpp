@@ -70,7 +70,7 @@ bool Adapter::transmitData(const QByteArray &data, bool receive)
         }
 
         connect(m_timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-        m_timer->start(ADAPTER_RECEIVE_TIMEOUT);
+        m_timer->start(SERIAL_RECEIVE_TIMEOUT);
         loop.exec();
     }
 
@@ -79,5 +79,5 @@ bool Adapter::transmitData(const QByteArray &data, bool receive)
 
 void Adapter::readyRead(void)
 {
-    m_timer->start(ADAPTER_RECEIVE_TIMEOUT);
+    m_timer->start(SERIAL_RECEIVE_TIMEOUT);
 }

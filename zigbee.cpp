@@ -636,10 +636,7 @@ void ZigBee::interviewDevice(const Device &device)
     if (!device->nodeDescriptorReceived())
     {
         if (!m_adapter->nodeDescriptorRequest(device->networkAddress()))
-        {
-            logWarning << "Device" << device->name() << "interview aborted (node descriptor request failed)";
-            device->timer()->stop();
-        }
+            interviewError(device, "node descriptor request failed");
 
         return;
     }
@@ -647,10 +644,7 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->endpoints().isEmpty())
     {
         if (!m_adapter->activeEndpointsRequest(device->networkAddress()))
-        {
-            logWarning << "Device" << device->name() << "interview aborted (active endpoints request failed)";
-            device->timer()->stop();
-        }
+            interviewError(device, "active endpoints request failed");
 
         return;
     }
@@ -660,10 +654,7 @@ void ZigBee::interviewDevice(const Device &device)
         if (!it.value()->profileId() && !it.value()->deviceId())
         {
             if (!m_adapter->simpleDescriptorRequest(device->networkAddress(), it.key()))
-            {
-                logWarning << "Device" << device->name() << "interview aborted (endpoint" << QString::asprintf("0x%02X", it.key()) << "simple descriptor request failed)";
-                device->timer()->stop();
-            }
+                interviewError(device, QString::asprintf("endpoint 0x%02X simple descriptor request failed", it.key()));
 
             return;
         }
@@ -671,10 +662,7 @@ void ZigBee::interviewDevice(const Device &device)
         if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->manufacturerName().isEmpty() || device->modelName().isEmpty()))
         {
             if (!readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005}, false))
-            {
-                logWarning << "Device" << device->name() << "interview aborted (read basic cluster attributes request failed)";
-                device->timer()->stop();
-            }
+                interviewError(device, "read basic cluster attributes request failed");
 
             return;
         }
@@ -687,12 +675,20 @@ void ZigBee::interviewDevice(const Device &device)
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
 
-    logInfo << "Device" << device->name() << "interview finished";
-
     device->timer()->stop();
     device->setInterviewFinished();
 
+    logInfo << "Device" << device->name() << "interview finished";
     storeStatus();
+}
+
+void ZigBee::interviewError(const Device &device, const QString &reason)
+{
+    if (!device->timer()->isActive())
+        return;
+
+    logWarning << "Device" << device->name() << "interview aborted" << QString("(%1)").arg(reason);
+    device->timer()->stop();
 }
 
 void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)

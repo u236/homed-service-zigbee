@@ -162,7 +162,7 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     }
 
     timer.setSingleShot(true);
-    timer.start(ADAPTER_REQUEST_TIMEOUT);
+    timer.start(NETWORK_REQUEST_TIMEOUT);
     loop.exec();
 
     return m_bindRequestSuccess;
@@ -196,7 +196,7 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
         connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
 
         timer.setSingleShot(true);
-        timer.start(ADAPTER_REQUEST_TIMEOUT);
+        timer.start(NETWORK_REQUEST_TIMEOUT);
         loop.exec();
     }
 
@@ -245,7 +245,7 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
         connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
 
         timer.setSingleShot(true);
-        timer.start(ADAPTER_REQUEST_TIMEOUT);
+        timer.start(NETWORK_REQUEST_TIMEOUT);
         loop.exec();
     }
 

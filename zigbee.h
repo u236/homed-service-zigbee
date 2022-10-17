@@ -132,6 +132,8 @@ private:
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
 
     void interviewDevice(const Device &device);
+    void interviewError(const Device &device, const QString &reason);
+
     void configureReporting(const Endpoint &endpoint, const Reporting &reporting);
 
     bool readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes, bool enqueue = true);

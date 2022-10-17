@@ -34,7 +34,7 @@ static uint16_t CRC16_Calc(uint8_t *data, uint16_t length)
     return crc;
 }
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0), m_transactionId(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0)
 {
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090A0B0C0D0E0F").toString().remove("0x").toUtf8());
@@ -69,9 +69,6 @@ void EZSP::reset(void)
         logWarning << "Can't open port" << m_port->portName();
         return;
     }
-
-    m_sequenceId = 0;
-    m_acknowledgeId = 0;
 
     logInfo << "Resetting adapter...";
     sendRequest(ASH_CONTROL_RST);
@@ -109,7 +106,7 @@ bool EZSP::nodeDescriptorRequest(quint16 networkAddress)
 {
     zdoNodeDescriptorRequestStruct payload;
 
-    payload.transactionId = m_transactionId;
+    payload.sequenceId = m_sequenceId;
     payload.networtAddress = qToLittleEndian(networkAddress);
 
     return sendUnicast(networkAddress, 0x0000, ZDO_NODE_DESCRIPTOR_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)));
@@ -119,7 +116,7 @@ bool EZSP::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
 {
     zdoSimpleDescriptorRequestStruct payload;
 
-    payload.transactionId = m_transactionId;
+    payload.sequenceId = m_sequenceId;
     payload.networtAddress = qToLittleEndian(networkAddress);
     payload.endpointId = endpointId;
 
@@ -130,7 +127,7 @@ bool EZSP::activeEndpointsRequest(quint16 networkAddress)
 {
     zdoActiveEndpointsRequestStruct payload;
 
-    payload.transactionId = m_transactionId;
+    payload.sequenceId = m_sequenceId;
     payload.networtAddress = qToLittleEndian(networkAddress);
 
     return sendUnicast(networkAddress, 0x0000, ZDO_ACTIVE_ENDPOINTS_REQUEST, 0x00, 0x00, QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)));
@@ -227,8 +224,8 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     request.dstEndpointId = dstEndPointId;
     request.options = qToLittleEndian(APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
     request.groupId = 0x0000;
-    request.sequence = m_transactionId;
-    request.tag = m_transactionId;
+    request.sequence = m_sequenceId;
+    request.tag = m_sequenceId;
     request.length = static_cast <quint8> (payload.length());
 
     if (!sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) || m_replyData.at(0))
@@ -249,13 +246,11 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
         return false;
     }
 
-    if (!waitForSignal(this, SIGNAL(messageSent()), ADAPTER_REQUEST_TIMEOUT))
-    {
-        logWarning << "Message sent handler timed out";
-        return false;
-    }
+    m_requestId = static_cast <quint8> (m_replyData.at(1));
 
-    m_transactionId++;
+    if (!waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT))
+        return false;
+
     return m_requestSuccess;
 }
 
@@ -263,8 +258,6 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)
 {
     QByteArray payload;
     quint8 control = (m_sequenceId & 0x07) << 4 | (m_acknowledgeId & 0x07);
-
-    m_sequenceId++;
 
     if (frameId)
     {
@@ -283,7 +276,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)
     else
     {
         if (m_debug)
-            logInfo << "-->" << "legacy version request";
+            logInfo << "-->" << QString::asprintf("%02x", m_sequenceId) << "(legacy version request)";
 
         payload.append(static_cast <char> (m_sequenceId));
         payload.append(2, 0x00);
@@ -321,6 +314,7 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
         }
     }
 
+    m_replyData.clear();
     transmitData(buffer.append(ASH_FLAG_BYTE));
 }
 
@@ -343,6 +337,7 @@ void EZSP::parsePacket(const QByteArray &payload)
         else
             m_replyData = data;
 
+        m_sequenceId++;
         emit replyReceived();
         return;
     }
@@ -384,7 +379,7 @@ void EZSP::parsePacket(const QByteArray &payload)
         {
             const messageSentHandlerStruct *message = reinterpret_cast <const messageSentHandlerStruct*> (data.constData());
 
-            if (message->tag == m_transactionId)
+            if (message->sequence == m_requestId)
             {
                 m_requestStatus = message->status;
                 m_requestSuccess = m_requestStatus ? false : true;
@@ -821,6 +816,9 @@ void EZSP::receiveData(void)
 
         if (control == ASH_CONTROL_RSTACK)
         {
+            m_sequenceId = 0;
+            m_acknowledgeId = 0;
+
             if (!startCoordinator())
             {
                 logWarning << "Coordinator startup failed";

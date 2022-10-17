@@ -248,20 +248,20 @@ struct setValueStruct
 
 struct zdoDeviceAnnounceStruct
 {
-    quint8  transactionId;
+    quint8  sequenceId;
     quint16 networkAddress;
     quint64 ieeeAddress;
 };
 
 struct zdoNodeDescriptorRequestStruct
 {
-    quint8  transactionId;
+    quint8  sequenceId;
     quint16 networtAddress;
 };
 
 struct zdoNodeDescriptorResponseStruct
 {
-    quint8  transactionId;
+    quint8  sequenceId;
     quint8  status;
     quint16 networkAddress;
     quint8  logicalType;
@@ -276,14 +276,14 @@ struct zdoNodeDescriptorResponseStruct
 
 struct zdoSimpleDescriptorRequestStruct
 {
-    quint8  transactionId;
+    quint8  sequenceId;
     quint16 networtAddress;
     quint8  endpointId;
 };
 
 struct zdoSimpleDescriptorResponseStruct
 {
-    quint8  transactionId;
+    quint8  sequenceId;
     quint8  status;
     quint16 networkAddress;
     quint8  length;
@@ -295,13 +295,13 @@ struct zdoSimpleDescriptorResponseStruct
 
 struct zdoActiveEndpointsRequestStruct
 {
-    quint8  transactionId;
+    quint8  sequenceId;
     quint16 networtAddress;
 };
 
 struct zdoActiveEndpointsResponseStruct
 {
-    quint8  transactionId;
+    quint8  sequenceId;
     quint8  status;
     quint16 networkAddress;
     quint8  count;
@@ -341,10 +341,10 @@ private:
 
     QByteArray m_networkKey, m_replyData;
 
-    quint8 m_version, m_stackStatus, m_transactionId, m_sequenceId, m_acknowledgeId;
+    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId;
     quint64 m_ieeeAddress;
 
-    quint8 m_requestStatus;
+    quint8 m_requestId, m_requestStatus;
     bool m_requestSuccess;
 
     QMap <quint8, quint16> m_config;

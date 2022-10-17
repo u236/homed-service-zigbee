@@ -1,8 +1,9 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
-#define ADAPTER_REQUEST_TIMEOUT         10000
-#define ADAPTER_RECEIVE_TIMEOUT         5
+#define ADAPTER_REQUEST_TIMEOUT         1000
+#define NETWORK_REQUEST_TIMEOUT         10000
+#define SERIAL_RECEIVE_TIMEOUT          10
 
 #define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
 #define PROFILE_HA                      0x0104 // Home Automation
