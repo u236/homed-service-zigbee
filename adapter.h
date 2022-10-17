@@ -1,9 +1,11 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
+#define ADAPTER_RESET_DELAY             100
+#define SERIAL_RECEIVE_TIMEOUT          10
+
 #define ADAPTER_REQUEST_TIMEOUT         1000
 #define NETWORK_REQUEST_TIMEOUT         10000
-#define SERIAL_RECEIVE_TIMEOUT          10
 
 #define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
 #define PROFILE_HA                      0x0104 // Home Automation
@@ -87,6 +89,9 @@ protected:
 
     QSerialPort *m_port;
     QTimer *m_timer;
+
+    qint16 m_bootPin, m_resetPin;
+    QString m_reset;
 
     quint16 m_panId;
     quint8 m_channel;

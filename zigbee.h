@@ -4,7 +4,7 @@
 #define HANDLE_QUEUES_INTERVAL          1
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define STORE_STATUS_INTERVAL           60000
-#define DEVICE_INTERVIEW_TIMEOUT        20000
+#define DEVICE_INTERVIEW_TIMEOUT        15000
 
 #include <QJsonArray>
 #include <QJsonDocument>

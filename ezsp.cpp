@@ -1,7 +1,9 @@
 #include <QtEndian>
 #include <QEventLoop>
 #include <QRandomGenerator>
+#include <QThread>
 #include "ezsp.h"
+#include "gpio.h"
 #include "logger.h"
 
 static const uint16_t crcTable[256] =
@@ -23,16 +25,6 @@ static const uint16_t crcTable[256] =
     0xFD2E, 0xED0F, 0xDD6C, 0xCD4D, 0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9, 0x7C26, 0x6C07, 0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
     0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
-
-static uint16_t CRC16_Calc(uint8_t *data, uint16_t length)
-{
-    uint16_t crc = 0xFFFF;
-
-    while (length--)
-        crc = (uint16_t) (crc << 8) ^ crcTable[(crc >> 8) ^ *data++];
-
-    return crc;
-}
 
 EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0)
 {
@@ -62,6 +54,8 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
 
 void EZSP::reset(void)
 {
+    QList <QString> list = {"soft", "gpio"};
+
     m_port->close();
 
     if (!m_port->open(QIODevice::ReadWrite))
@@ -71,7 +65,27 @@ void EZSP::reset(void)
     }
 
     logInfo << "Resetting adapter...";
-    sendRequest(ASH_CONTROL_RST);
+
+    switch (list.indexOf(m_reset))
+    {
+        case 0:
+            sendRequest(ASH_CONTROL_RST);
+            break;
+
+        case 1:
+            GPIO::setStatus(m_bootPin, true);
+            GPIO::setStatus(m_resetPin, false);
+            QThread::msleep(ADAPTER_RESET_DELAY);
+            GPIO::setStatus(m_resetPin, true);
+            break;
+
+        default:
+            m_port->setDataTerminalReady(false);
+            m_port->setRequestToSend(true);
+            QThread::msleep(ADAPTER_RESET_DELAY);
+            m_port->setRequestToSend(false);
+            break;
+    }
 }
 
 void EZSP::setPermitJoin(bool enabled)
@@ -201,6 +215,16 @@ void EZSP::resetInterPan(void)
 {
 }
 
+quint16 EZSP::getCRC(char *data, quint32 length)
+{
+    quint16 crc = 0xFFFF;
+
+    while (length--)
+        crc = static_cast <quint16> (crc << 8) ^ crcTable[(crc >> 8) ^ *data++];
+
+    return crc;
+}
+
 void EZSP::randomize(QByteArray &payload)
 {
     quint8 *buffer = reinterpret_cast <quint8*> (payload.data()), byte = 0x42;
@@ -250,12 +274,12 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     return waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT) && m_requestSuccess;
 }
 
-bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)
+bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 {
     QByteArray payload;
     quint8 control = (m_sequenceId & 0x07) << 4 | (m_acknowledgeId & 0x07);
 
-    if (frameId)
+    if (!version)
     {
         ezspHeaderStruct header;
 
@@ -293,7 +317,7 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
     request.append(static_cast <quint8> (control));
     request.append(payload);
 
-    crc = qToBigEndian(CRC16_Calc(reinterpret_cast <quint8*> (request.data()), request.length()));
+    crc = qToBigEndian(getCRC(request.data(), request.length()));
     request.append(reinterpret_cast <char*> (&crc), sizeof(crc));
 
     for (int i = 0; i < request.length(); i++)
@@ -582,15 +606,21 @@ bool EZSP::startCoordinator(void)
     networkParametersStruct network;
     quint64 ieeeAddress;
 
-    if (!sendFrame(FRAME_VERSION, QByteArray(1, 0x08)))
+    if (!sendFrame(FRAME_VERSION, QByteArray(), true))
     {
-        logWarning << "Adapter version request failed";
+        logWarning << "Get adapter version request failed";
         return false;
     }
 
     if (m_version < 8)
     {
         logWarning << "Unsupported EZSP version" << m_version << "adapter detected";
+        return false;
+    }
+
+    if (!sendFrame(FRAME_VERSION, QByteArray(1, static_cast <char> (m_version))))
+    {
+        logWarning << "Set adapter version request failed";
         return false;
     }
 
@@ -788,7 +818,7 @@ void EZSP::receiveData(void)
         memcpy(&crc, data.constData() + data.length() - 2, sizeof(crc));
         buffer.remove(0, length + 1);
 
-        if (crc != qToBigEndian(CRC16_Calc(reinterpret_cast <quint8*> (data.data()), data.length() - 2)))
+        if (crc != qToBigEndian(getCRC(data.data(), data.length() - 2)))
         {
             logWarning << "Packet" << data.toHex(':') << "CRC mismatch";
             reset();
@@ -816,10 +846,7 @@ void EZSP::receiveData(void)
             m_acknowledgeId = 0;
 
             if (!startCoordinator())
-            {
                 logWarning << "Coordinator startup failed";
-                reset();
-            }
 
             continue;
         }

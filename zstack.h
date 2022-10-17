@@ -1,7 +1,6 @@
 #ifndef ZSTACK_H
 #define ZSTACK_H
 
-#define ADAPTER_RESET_DELAY                         100
 #define ADAPTER_CLEAR_DELAY                         4000
 #define ADAPTER_CONFIGURATION_MARKER                0x42
 
@@ -346,9 +345,6 @@ public:
     inline quint8 dataRequestStatus(void) override { return m_dataRequestStatus; }
 
 private:
-
-    qint16 m_bootPin, m_resetPin;
-    QString m_reset;
 
     ZStackVersion m_version;
     quint64 m_ieeeAddress;

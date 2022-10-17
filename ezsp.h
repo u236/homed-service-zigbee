@@ -351,10 +351,11 @@ private:
     QMap <quint8, quint16> m_policy;
     QMap <quint8, QByteArray> m_values;
 
+    quint16 getCRC(char *data, quint32 length);
     void randomize(QByteArray &data);
 
     bool sendUnicast(quint16 networkAddress, quint16 profileId, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload);
-    bool sendFrame(quint16 frameId, const QByteArray &data = QByteArray());
+    bool sendFrame(quint16 frameId, const QByteArray &data = QByteArray(), bool version = false);
 
     void sendRequest(quint8 control, const QByteArray &payload = QByteArray());
     void parsePacket(const QByteArray &payload);

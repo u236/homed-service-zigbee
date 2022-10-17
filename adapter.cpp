@@ -11,6 +11,10 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_port(n
     m_port->setParity(QSerialPort::NoParity);
     m_port->setStopBits(QSerialPort::OneStop);
 
+    m_bootPin = static_cast <qint16> (config->value("gpio/boot", -1).toInt());
+    m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
+    m_reset = config->value("zigbee/reset").toString();
+
     m_panId = qToLittleEndian(static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16)));
     m_channel = static_cast <quint8>  (config->value("zigbee/channel").toInt());
 
