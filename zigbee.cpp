@@ -636,7 +636,10 @@ void ZigBee::interviewDevice(const Device &device)
     if (!device->nodeDescriptorReceived())
     {
         if (!m_adapter->nodeDescriptorRequest(device->networkAddress()))
-            interviewError(device, "node descriptor request failed");
+        {
+            logWarning << "Device" << device->name() << "interview aborted (node descriptor request failed)";
+            device->timer()->stop();
+        }
 
         return;
     }
@@ -644,7 +647,10 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->endpoints().isEmpty())
     {
         if (!m_adapter->activeEndpointsRequest(device->networkAddress()))
-            interviewError(device, "active endpoints request failed");
+        {
+            logWarning << "Device" << device->name() << "interview aborted (active endpoints request failed)";
+            device->timer()->stop();
+        }
 
         return;
     }
@@ -654,7 +660,10 @@ void ZigBee::interviewDevice(const Device &device)
         if (!it.value()->profileId() && !it.value()->deviceId())
         {
             if (!m_adapter->simpleDescriptorRequest(device->networkAddress(), it.key()))
-                interviewError(device, QString::asprintf("endpoint 0x%02X simple descriptor request failed", it.key()));
+            {
+                logWarning << "Device" << device->name() << "interview aborted (endpoint" << QString::asprintf("0x%02X", it.key()) << "simple descriptor request failed)";
+                device->timer()->stop();
+            }
 
             return;
         }
@@ -662,7 +671,10 @@ void ZigBee::interviewDevice(const Device &device)
         if (it.value()->inClusters().contains(CLUSTER_BASIC) && (device->manufacturerName().isEmpty() || device->modelName().isEmpty()))
         {
             if (!readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005}, false))
-                interviewError(device, "read basic cluster attributes request failed");
+            {
+                logWarning << "Device" << device->name() << "interview aborted (read basic cluster attributes request failed)";
+                device->timer()->stop();
+            }
 
             return;
         }
@@ -680,15 +692,6 @@ void ZigBee::interviewDevice(const Device &device)
 
     logInfo << "Device" << device->name() << "interview finished";
     storeStatus();
-}
-
-void ZigBee::interviewError(const Device &device, const QString &reason)
-{
-    if (!device->timer()->isActive())
-        return;
-
-    logWarning << "Device" << device->name() << "interview aborted" << QString("(%1)").arg(reason);
-    device->timer()->stop();
 }
 
 void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)
@@ -784,7 +787,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 device->setManufacturerName("TUYA");
             }
 
-            interviewDevice(device);
+            m_interviewQueue.enqueue(device);
         }
 
         return;
@@ -1183,8 +1186,9 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
 
     connect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout);
     it.value()->timer()->setSingleShot(true);
+
+    m_interviewQueue.enqueue(it.value());
     it.value()->updateLastSeen();
-    interviewDevice(it.value());
 
     emit joinEvent(true);
 }
@@ -1224,7 +1228,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
 
     device->setNodeDescriptorReceived();
     device->updateLastSeen();
-    interviewDevice(device);
+    m_interviewQueue.enqueue(device);
 }
 
 void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray data)
@@ -1245,7 +1249,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
             device->endpoints().insert(static_cast <quint8> (data.at(i)), Endpoint(new EndpointObject(data.at(i), device)));
 
     device->updateLastSeen();
-    interviewDevice(device);
+    m_interviewQueue.enqueue(device);
 }
 
 void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList<quint16> &inClusters, const QList<quint16> &outClusters)
@@ -1270,7 +1274,7 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId,
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "simple descriptor received";
 
     device->updateLastSeen();
-    interviewDevice(device);
+    m_interviewQueue.enqueue(device);
 }
 
 void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first)
@@ -1429,6 +1433,9 @@ void ZigBee::handleQueues(void)
 
         logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
     }
+
+    if (!m_interviewQueue.isEmpty())
+        interviewDevice(m_interviewQueue.dequeue());
 
     if (!m_neighborsQueue.isEmpty())
     {

@@ -247,11 +247,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     }
 
     m_requestId = static_cast <quint8> (m_replyData.at(1));
-
-    if (!waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT))
-        return false;
-
-    return m_requestSuccess;
+    return waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT) && m_requestSuccess;
 }
 
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data)

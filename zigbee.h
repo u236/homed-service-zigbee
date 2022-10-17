@@ -113,7 +113,7 @@ private:
 
     QQueue <BindRequest> m_bindQueue;
     QQueue <DataRequest> m_dataQueue;
-    QQueue <Device> m_neighborsQueue;
+    QQueue <Device> m_interviewQueue, m_neighborsQueue;
 
     void unserializeDevices(const QJsonArray &devices);
     void unserializeEndpoints(const Device &device, const QJsonArray &endpoints);
@@ -132,8 +132,6 @@ private:
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
 
     void interviewDevice(const Device &device);
-    void interviewError(const Device &device, const QString &reason);
-
     void configureReporting(const Endpoint &endpoint, const Reporting &reporting);
 
     bool readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes, bool enqueue = true);
