@@ -8,13 +8,13 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
 {
     quint32 channelList = qToLittleEndian <quint32> (1 << m_channel);
 
-    m_nvItems.insert(ZCD_NV_PRECFGKEY, QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
+    m_nvItems.insert(ZCD_NV_MARKER,            QByteArray(1, ZSTACK_CONFIGURATION_MARKER));
+    m_nvItems.insert(ZCD_NV_PRECFGKEY,         QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
     m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
-    m_nvItems.insert(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId)));
-    m_nvItems.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
-    m_nvItems.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
-    m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
-    m_nvItems.insert(ZCD_NV_MARKER, QByteArray(1, ZSTACK_CONFIGURATION_MARKER));
+    m_nvItems.insert(ZCD_NV_PANID,             QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId)));
+    m_nvItems.insert(ZCD_NV_CHANLIST,          QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
+    m_nvItems.insert(ZCD_NV_LOGICAL_TYPE,      QByteArray(1, 0x00));
+    m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB,     QByteArray(1, 0x01));
 
     GPIO::setDirection(m_bootPin, GPIO::Output);
     GPIO::setDirection(m_resetPin, GPIO::Output);
@@ -78,64 +78,64 @@ void ZStack::setPermitJoin(bool enabled)
 
 bool ZStack::nodeDescriptorRequest(quint16 networkAddress)
 {
-    networkAddress = qToLittleEndian(networkAddress);
-    return sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress))) && !m_replyData.at(0);
+    quint16 data = qToLittleEndian(networkAddress);
+    return sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(reinterpret_cast <char*> (&data), sizeof(data))) && !m_replyData.at(0);
 }
 
 bool ZStack::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
 {
-    networkAddress = qToLittleEndian(networkAddress);
-    return sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(1, static_cast <char> (endpointId))) && !m_replyData.at(0);
+    quint16 data = qToLittleEndian(networkAddress);
+    return sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(reinterpret_cast <char*> (&data), sizeof(data)).append(1, static_cast <char> (endpointId))) && !m_replyData.at(0);
 }
 
 bool ZStack::activeEndpointsRequest(quint16 networkAddress)
 {
-    networkAddress = qToLittleEndian(networkAddress);
-    return sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress))) && !m_replyData.at(0);
+    quint16 data = qToLittleEndian(networkAddress);
+    return sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(reinterpret_cast <char*> (&data), sizeof(data))) && !m_replyData.at(0);
 }
 
 bool ZStack::lqiRequest(quint16 networkAddress, quint8 index)
 {
-    lqiRequestStruct request;
+    lqiRequestStruct data;
 
-    request.networkAddress = qToLittleEndian(networkAddress);
-    request.index = index;
+    data.networkAddress = qToLittleEndian(networkAddress);
+    data.index = index;
 
-    return sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
+    return sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) && !m_replyData.at(0);
 }
 
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
-    QByteArray payload = bindRequestPayload(srcAddress, srcEndpointId, clusterId, dstAddress, dstEndpointId);
+    QByteArray data = bindRequestPayload(srcAddress, srcEndpointId, clusterId, dstAddress, dstEndpointId);
 
-    if (payload.isEmpty())
+    if (data.isEmpty())
         return false;
 
     m_bindAddress = qToLittleEndian(networkAddress);
     m_bindRequestStatus = false;
 
-    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&m_bindAddress), sizeof(m_bindAddress)).append(payload)) || m_replyData.at(0))
+    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&m_bindAddress), sizeof(m_bindAddress)).append(data)) || m_replyData.at(0))
         return false;
 
     return waitForSignal(this, SIGNAL(bindResponse()), NETWORK_REQUEST_TIMEOUT) && m_bindRequestStatus;
 }
 
-bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data)
+bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload)
 {
-    dataRequestStruct request;
+    dataRequestStruct data;
 
-    request.networkAddress = qToLittleEndian(networkAddress);
-    request.dstEndpointId = endpointId;
-    request.srcEndpointId = 0x01;
-    request.clusterId = qToLittleEndian(clusterId);
-    request.transactionId = m_transactionId;
-    request.options = AF_DISCV_ROUTE;
-    request.radius = AF_DEFAULT_RADIUS;
-    request.length = static_cast <quint8> (data.length());
+    data.networkAddress = qToLittleEndian(networkAddress);
+    data.dstEndpointId = endpointId;
+    data.srcEndpointId = 0x01;
+    data.clusterId = qToLittleEndian(clusterId);
+    data.transactionId = m_transactionId;
+    data.options = AF_DISCV_ROUTE;
+    data.radius = AF_DEFAULT_RADIUS;
+    data.length = static_cast <quint8> (payload.length());
 
     m_dataRequestFinished = false;
 
-    if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) || m_replyData.at(0))
         return false;
 
     if (!m_dataRequestFinished && !waitForSignal(this, SIGNAL(dataConfirm()), NETWORK_REQUEST_TIMEOUT))
@@ -145,35 +145,35 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     return m_dataRequestStatus ? false : true;
 }
 
-bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
+bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
-    extendedDataRequestStruct request;
+    extendedDataRequestStruct data;
 
     switch (address.length())
     {
-        case 2:  request.dstAddressMode = group ? ADDRESS_MODE_GROUP : ADDRESS_MODE_16_BIT; break;
-        case 8:  request.dstAddressMode = ADDRESS_MODE_64_BIT; break;
+        case 2:  data.dstAddressMode = group ? ADDRESS_MODE_GROUP : ADDRESS_MODE_16_BIT; break;
+        case 8:  data.dstAddressMode = ADDRESS_MODE_64_BIT; break;
         default: return false;
     }
 
-    memset(&request.dstAddress, 0, sizeof(request.dstAddress));
-    memcpy(&request.dstAddress, address.constData(), address.length());
+    memset(&data.dstAddress, 0, sizeof(data.dstAddress));
+    memcpy(&data.dstAddress, address.constData(), address.length());
 
-    if (request.dstAddressMode == ADDRESS_MODE_64_BIT)
-        request.dstAddress = qToLittleEndian(qFromBigEndian(request.dstAddress));
+    if (data.dstAddressMode == ADDRESS_MODE_64_BIT)
+        data.dstAddress = qToLittleEndian(qFromBigEndian(data.dstAddress));
 
-    request.dstEndpointId = dstEndpointId;
-    request.dstPanId = qToLittleEndian(dstPanId);
-    request.srcEndpointId = srcEndpointId;
-    request.clusterId = qToLittleEndian(clusterId);
-    request.transactionId = m_transactionId;
-    request.options = 0x00;
-    request.radius = dstPanId ? AF_DEFAULT_RADIUS * 2 : AF_DEFAULT_RADIUS;
-    request.length = qToLittleEndian(static_cast <quint16> (data.length()));
+    data.dstEndpointId = dstEndpointId;
+    data.dstPanId = qToLittleEndian(dstPanId);
+    data.srcEndpointId = srcEndpointId;
+    data.clusterId = qToLittleEndian(clusterId);
+    data.transactionId = m_transactionId;
+    data.options = 0x00;
+    data.radius = dstPanId ? AF_DEFAULT_RADIUS * 2 : AF_DEFAULT_RADIUS;
+    data.length = qToLittleEndian <quint16> (payload.length());
 
     m_dataRequestFinished = false;
 
-    if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+    if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) || m_replyData.at(0))
         return false;
 
     if (!m_dataRequestFinished && !waitForSignal(this, SIGNAL(dataConfirm()), NETWORK_REQUEST_TIMEOUT))
@@ -191,9 +191,9 @@ bool ZStack::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 
 
 bool ZStack::setInterPanEndpointId(quint8 endpointId)
 {
-    quint8 request[2] = {0x02, endpointId};
+    quint8 data[2] = {0x02, endpointId};
 
-    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) || m_replyData.at(0))
     {
         logWarning << "Set Inter-PAN endpointId" << QString::asprintf("0x%02X", endpointId) << "request failed";
         return false;
@@ -204,9 +204,9 @@ bool ZStack::setInterPanEndpointId(quint8 endpointId)
 
 bool ZStack::setInterPanChannel(quint8 channel)
 {
-    quint8 request[2] = {0x01, channel};
+    quint8 data[2] = {0x01, channel};
 
-    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) || m_replyData.at(0))
     {
         logWarning << "Set Inter-PAN channel" << channel << "request failed";
         return false;

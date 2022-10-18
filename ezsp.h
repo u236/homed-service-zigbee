@@ -13,6 +13,7 @@
 #define FRAME_VERSION                                           0x0000
 #define FRAME_REGISTER_ENDPOINT                                 0x0002
 #define FRAME_SET_CONCENTRATOR                                  0x0010
+#define FRAME_SET_MANUFACTURER_CODE                             0x0015
 #define FRAME_NETWORK_INIT                                      0x0017
 #define FRAME_NETWORK_STATUS                                    0x0018
 #define FRAME_STACK_STATUS_HANDLER                              0x0019
@@ -215,12 +216,6 @@ struct setConfigStruct
     quint16 value;
 };
 
-struct setPolicyStruct
-{
-    quint8  id;
-    quint8  decision;
-};
-
 struct setInitialSecurityStateStruct
 {
     quint16 bitmask;
@@ -255,9 +250,9 @@ public:
     bool lqiRequest(quint16 networkAddress, quint8 index = 0) override;
 
     bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false) override;
-    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data) override;
+    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload) override;
 
-    bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+    bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
     bool extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
 
     bool setInterPanEndpointId(quint8 endpointId) override;
@@ -274,8 +269,7 @@ private:
     QByteArray m_replyData;
     bool m_replyStatus;
 
-    QMap <quint8, quint16> m_config;
-    QMap <quint8, quint16> m_policy;
+    QList <setConfigStruct> m_config, m_policy;
     QMap <quint8, QByteArray> m_values;
 
     quint16 getCRC(quint8 *data, quint32 length);

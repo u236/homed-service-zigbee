@@ -155,7 +155,7 @@ void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, qu
     {
         case QVariant::LongLong:
         {
-            quint16 value = qToLittleEndian(static_cast <quint16> (dstAddress.toInt()));
+            quint16 value = qToLittleEndian <quint16> (dstAddress.toInt());
             enqueueBindRequest(it.value(), endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
             break;
         }
