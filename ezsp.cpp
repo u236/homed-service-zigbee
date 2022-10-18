@@ -698,9 +698,9 @@ bool EZSP::startCoordinator(void)
     }
 
     concentrator.enabled = 0x01;
-    concentrator.type = qToLittleEndian(CONCENTRATOR_HIGH_RAM);
-    concentrator.minTime = qToLittleEndian(MTOR_MIN_TIME);
-    concentrator.maxTime = qToLittleEndian(MTOR_MAX_TIME);
+    concentrator.type = qToLittleEndian(static_cast <quint16> (CONCENTRATOR_HIGH_RAM));
+    concentrator.minTime = qToLittleEndian(static_cast <quint16> (MTOR_MIN_TIME));
+    concentrator.maxTime = qToLittleEndian(static_cast <quint16> (MTOR_MAX_TIME));
     concentrator.routeErrorThreshold = MTOR_ROUTE_ERROR_THRESHOLD;
     concentrator.deliveryFailureThreshold = MTOR_DELIVERY_FAILURE_THRESHOLD;
     concentrator.maxHops = 0;
