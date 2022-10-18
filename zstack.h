@@ -353,10 +353,10 @@ private:
     bool m_clear;
 
     quint16 m_bindAddress;
-    bool m_bindRequestSuccess;
+    bool m_bindRequestStatus;
 
     quint8 m_dataRequestStatus;
-    bool m_dataRequestFinished, m_dataRequestSuccess;
+    bool m_dataRequestFinished;
 
     quint16 m_replyCommand;
     QByteArray m_replyData;

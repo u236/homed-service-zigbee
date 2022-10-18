@@ -215,14 +215,14 @@ void EZSP::resetInterPan(void)
 {
 }
 
-quint16 EZSP::getCRC(char *data, quint32 length)
+quint16 EZSP::getCRC(quint8 *data, quint32 length)
 {
     quint16 crc = 0xFFFF;
 
     while (length--)
         crc = static_cast <quint16> (crc << 8) ^ crcTable[(crc >> 8) ^ *data++];
 
-    return crc;
+    return qToBigEndian(crc);
 }
 
 void EZSP::randomize(QByteArray &payload)
@@ -271,7 +271,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     }
 
     m_requestId = static_cast <quint8> (m_replyData.at(1));
-    return waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT) && m_requestSuccess;
+    return waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT) && !m_requestStatus;
 }
 
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
@@ -279,7 +279,15 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
     QByteArray payload;
     quint8 control = (m_sequenceId & 0x07) << 4 | (m_acknowledgeId & 0x07);
 
-    if (!version)
+    if (version)
+    {
+        if (m_debug)
+            logInfo << "-->" << QString::asprintf("%02x", m_sequenceId) << "(legacy version request)";
+
+        payload.append(static_cast <char> (m_sequenceId));
+        payload.append(2, 0x00);
+    }
+    else
     {
         ezspHeaderStruct header;
 
@@ -293,20 +301,23 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 
         payload.append(reinterpret_cast <char*> (&header), sizeof(header));
     }
-    else
-    {
-        if (m_debug)
-            logInfo << "-->" << QString::asprintf("%02x", m_sequenceId) << "(legacy version request)";
 
-        payload.append(static_cast <char> (m_sequenceId));
-        payload.append(2, 0x00);
+    randomize(payload.append(data));
+
+    for (quint8 i = 0; i < 3; i ++)
+    {
+        m_replyData.clear();
+        m_replyStatus = false;
+
+        sendRequest(control, payload);
+
+        if (waitForSignal(this, SIGNAL(replyReceived()), ADAPTER_REQUEST_TIMEOUT) && m_replyStatus)
+            return true;
+
+        control |= 0x08;
     }
 
-    payload.append(data);
-    randomize(payload);
-    sendRequest(control, payload);
-
-    return waitForSignal(this, SIGNAL(replyReceived()), 3000);
+    return false;
 }
 
 void EZSP::sendRequest(quint8 control, const QByteArray &payload)
@@ -317,7 +328,7 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
     request.append(static_cast <quint8> (control));
     request.append(payload);
 
-    crc = qToBigEndian(getCRC(request.data(), request.length()));
+    crc = getCRC(reinterpret_cast <quint8*> (request.data()), request.length());
     request.append(reinterpret_cast <char*> (&crc), sizeof(crc));
 
     for (int i = 0; i < request.length(); i++)
@@ -334,7 +345,6 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
         }
     }
 
-    m_replyData.clear();
     transmitData(buffer.append(ASH_FLAG_BYTE));
 }
 
@@ -358,6 +368,8 @@ void EZSP::parsePacket(const QByteArray &payload)
             m_replyData = data;
 
         m_sequenceId++;
+        m_replyStatus = true;
+
         emit replyReceived();
         return;
     }
@@ -402,7 +414,6 @@ void EZSP::parsePacket(const QByteArray &payload)
             if (message->sequence == m_requestId)
             {
                 m_requestStatus = message->status;
-                m_requestSuccess = m_requestStatus ? false : true;
                 emit messageSent();
             }
 
@@ -818,7 +829,7 @@ void EZSP::receiveData(void)
         memcpy(&crc, data.constData() + data.length() - 2, sizeof(crc));
         buffer.remove(0, length + 1);
 
-        if (crc != qToBigEndian(getCRC(data.data(), data.length() - 2)))
+        if (crc != getCRC(reinterpret_cast <quint8*> (data.data()), data.length() - 2))
         {
             logWarning << "Packet" << data.toHex(':') << "CRC mismatch";
             reset();
@@ -840,6 +851,20 @@ void EZSP::receiveData(void)
             continue;
         }
 
+        if ((control & 0xE0) == ASH_CONTROL_ACK)
+        {
+            m_replyStatus = true;
+            emit replyReceived();
+            continue;
+        }
+
+        if ((control & 0xE0) == ASH_CONTROL_NAK)
+        {
+            logWarning << "Received NAK frame";
+            emit replyReceived();
+            return;
+        }
+
         if (control == ASH_CONTROL_RSTACK)
         {
             m_sequenceId = 0;
@@ -848,9 +873,16 @@ void EZSP::receiveData(void)
             if (!startCoordinator())
                 logWarning << "Coordinator startup failed";
 
-            continue;
+            return;
         }
 
-        logInfo << "ASH" << data.toHex(':');
+        if (control == ASH_CONTROL_ERROR)
+        {
+            logWarning << "Received ERROR frame";
+            reset();
+            return;
+        }
+
+        logWarning << "Received unrecognized ASH frame:" << data.toHex(':');
     }
 }

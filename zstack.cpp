@@ -149,7 +149,7 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
 
     m_bindAddress = networkAddress;
-    m_bindRequestSuccess = false;
+    m_bindRequestStatus = false;
 
     if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1))) || m_replyData.at(0))
     {
@@ -161,7 +161,7 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     timer.start(NETWORK_REQUEST_TIMEOUT);
     loop.exec();
 
-    return m_bindRequestSuccess;
+    return m_bindRequestStatus;
 }
 
 bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data)
@@ -178,7 +178,6 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     request.length = static_cast <quint8> (data.length());
 
     m_dataRequestFinished = false;
-    m_dataRequestSuccess = false;
 
     if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         return false;
@@ -197,7 +196,7 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     }
 
     m_transactionId++;
-    return m_dataRequestSuccess;
+    return m_dataRequestStatus ? false : true;
 }
 
 bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
@@ -227,7 +226,6 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     request.length = qToLittleEndian(static_cast <quint16> (data.length()));
 
     m_dataRequestFinished = false;
-    m_dataRequestSuccess = false;
 
     if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         return false;
@@ -246,7 +244,7 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     }
 
     m_transactionId++;
-    return m_dataRequestSuccess;
+    return m_dataRequestStatus ? false : true;
 }
 
 bool ZStack::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
@@ -342,7 +340,6 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
             {
                 m_dataRequestStatus = data.at(0);
                 m_dataRequestFinished = true;
-                m_dataRequestSuccess = m_dataRequestStatus ? false : true;
                 emit dataConfirm();
             }
 
@@ -430,7 +427,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
             if (qFromLittleEndian(networkAddress) == m_bindAddress)
             {
-                m_bindRequestSuccess = data.at(2) ? false : true;
+                m_bindRequestStatus = data.at(2) ? false : true;
                 emit bindResponse();
             }
 

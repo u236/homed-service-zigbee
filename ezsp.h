@@ -7,6 +7,7 @@
 #define ASH_CONTROL_NAK                                         0xA0
 #define ASH_CONTROL_RST                                         0xC0
 #define ASH_CONTROL_RSTACK                                      0xC1
+#define ASH_CONTROL_ERROR                                       0xC2
 
 #define FRAME_VERSION                                           0x0000
 #define FRAME_REGISTER_ENDPOINT                                 0x0002
@@ -339,19 +340,19 @@ public:
 
 private:
 
-    QByteArray m_networkKey, m_replyData;
+    QByteArray m_networkKey;
 
-    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId;
+    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestId, m_requestStatus;
     quint64 m_ieeeAddress;
 
-    quint8 m_requestId, m_requestStatus;
-    bool m_requestSuccess;
+    QByteArray m_replyData;
+    bool m_replyStatus;
 
     QMap <quint8, quint16> m_config;
     QMap <quint8, quint16> m_policy;
     QMap <quint8, QByteArray> m_values;
 
-    quint16 getCRC(char *data, quint32 length);
+    quint16 getCRC(quint8 *data, quint32 length);
     void randomize(QByteArray &data);
 
     bool sendUnicast(quint16 networkAddress, quint16 profileId, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload);
