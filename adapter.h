@@ -3,8 +3,6 @@
 
 #define ADAPTER_RESET_DELAY             100
 #define SERIAL_RECEIVE_TIMEOUT          10
-
-#define ADAPTER_REQUEST_TIMEOUT         1000
 #define NETWORK_REQUEST_TIMEOUT         10000
 
 #define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
@@ -100,7 +98,7 @@ protected:
     QMap <quint8, EndpointData> m_endpointsData;
 
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
-    bool transmitData(const QByteArray &data, bool receive = false);
+    bool transmitData(const QByteArray &data, quint32 timeout = 0);
 
 private slots:
 

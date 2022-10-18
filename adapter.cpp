@@ -36,7 +36,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_port(n
     m_timer->setSingleShot(true);
 }
 
-bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout) // TODO: use this in ZStack
+bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
 {
     QEventLoop loop;
     QTimer timer;
@@ -51,7 +51,7 @@ bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiome
     return timer.isActive();
 }
 
-bool Adapter::transmitData(const QByteArray &data, bool receive)
+bool Adapter::transmitData(const QByteArray &data, quint32 timeout)
 {
     if (!m_port->isOpen())
     {
@@ -62,11 +62,11 @@ bool Adapter::transmitData(const QByteArray &data, bool receive)
 
     m_port->write(data);
 
-    if (receive)
+    if (timeout)
     {
         QEventLoop loop;
 
-        if (!m_port->waitForReadyRead(ADAPTER_REQUEST_TIMEOUT))
+        if (!m_port->waitForReadyRead(timeout))
         {
             logWarning << "Request timed out";
             reset();

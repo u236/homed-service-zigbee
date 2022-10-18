@@ -1,8 +1,9 @@
 #ifndef ZSTACK_H
 #define ZSTACK_H
 
-#define ADAPTER_CLEAR_DELAY                         4000
-#define ADAPTER_CONFIGURATION_MARKER                0x42
+#define ZSTACK_CONFIGURATION_MARKER                 0x42
+#define ZSTACK_CLEAR_DELAY                          4000
+#define ZSTACK_REQUEST_TIMEOUT                      5000
 
 #define ZSTACK_PACKET_START                         0xFE
 #define ZSTACK_COORDINATOR_STARTED                  0x09

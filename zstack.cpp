@@ -1,5 +1,4 @@
 #include <QtEndian>
-#include <QEventLoop>
 #include <QThread>
 #include "gpio.h"
 #include "logger.h"
@@ -15,7 +14,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_nvItems.insert(ZCD_NV_CHANLIST, QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
     m_nvItems.insert(ZCD_NV_LOGICAL_TYPE, QByteArray(1, 0x00));
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB, QByteArray(1, 0x01));
-    m_nvItems.insert(ZCD_NV_MARKER, QByteArray(1, ADAPTER_CONFIGURATION_MARKER));
+    m_nvItems.insert(ZCD_NV_MARKER, QByteArray(1, ZSTACK_CONFIGURATION_MARKER));
 
     GPIO::setDirection(m_bootPin, GPIO::Output);
     GPIO::setDirection(m_resetPin, GPIO::Output);
@@ -122,7 +121,6 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
 {
     bindRequestStruct request;
     quint64 src, dst = m_ieeeAddress;
-    QEventLoop loop;
     QTimer timer;
 
     memcpy(&src, srcAddress.constData(), sizeof(src));
@@ -145,9 +143,6 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     request.clusterId = qToLittleEndian(clusterId);
     request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
 
-    connect(this, &ZStack::bindResponse, &loop, &QEventLoop::quit);
-    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
     m_bindAddress = networkAddress;
     m_bindRequestStatus = false;
 
@@ -157,11 +152,7 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
         return false;
     }
 
-    timer.setSingleShot(true);
-    timer.start(NETWORK_REQUEST_TIMEOUT);
-    loop.exec();
-
-    return m_bindRequestStatus;
+    return waitForSignal(this, SIGNAL(bindResponse()), NETWORK_REQUEST_TIMEOUT) && m_bindRequestStatus;
 }
 
 bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data)
@@ -182,18 +173,8 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         return false;
 
-    if (!m_dataRequestFinished)
-    {
-        QEventLoop loop;
-        QTimer timer;
-
-        connect(this, &ZStack::dataConfirm, &loop, &QEventLoop::quit);
-        connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
-        timer.setSingleShot(true);
-        timer.start(NETWORK_REQUEST_TIMEOUT);
-        loop.exec();
-    }
+    if (!m_dataRequestFinished && !waitForSignal(this, SIGNAL(dataConfirm()), NETWORK_REQUEST_TIMEOUT))
+        return false;
 
     m_transactionId++;
     return m_dataRequestStatus ? false : true;
@@ -230,18 +211,8 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         return false;
 
-    if (!m_dataRequestFinished)
-    {
-        QEventLoop loop;
-        QTimer timer;
-
-        connect(this, &ZStack::dataConfirm, &loop, &QEventLoop::quit);
-        connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
-        timer.setSingleShot(true);
-        timer.start(NETWORK_REQUEST_TIMEOUT);
-        loop.exec();
-    }
+    if (!m_dataRequestFinished && !waitForSignal(this, SIGNAL(dataConfirm()), NETWORK_REQUEST_TIMEOUT))
+        return false;
 
     m_transactionId++;
     return m_dataRequestStatus ? false : true;
@@ -302,7 +273,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     for (int i = 1; i < request.length(); i++)
         fcs ^= request[i];
 
-    if (!transmitData(request.append(fcs), true))
+    if (!transmitData(request.append(fcs), ZSTACK_REQUEST_TIMEOUT))
         return false;
 
     return m_replyCommand == qFromBigEndian(command);
@@ -740,7 +711,7 @@ void ZStack::coordinatorStarted(void)
 
     if (m_clear)
     {
-        QThread::msleep(ADAPTER_CLEAR_DELAY);
+        QThread::msleep(ZSTACK_CLEAR_DELAY);
 
         logInfo << "Adapter configuration cleared";
         m_clear = false;

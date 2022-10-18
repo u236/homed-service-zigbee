@@ -1,5 +1,4 @@
 #include <QtEndian>
-#include <QEventLoop>
 #include <QRandomGenerator>
 #include <QThread>
 #include "ezsp.h"
@@ -311,7 +310,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 
         sendRequest(control, payload);
 
-        if (waitForSignal(this, SIGNAL(replyReceived()), ADAPTER_REQUEST_TIMEOUT) && m_replyStatus)
+        if (waitForSignal(this, SIGNAL(replyReceived()), ASH_REQUEST_TIMEOUT) && m_replyStatus)
             return true;
 
         control |= 0x08;
@@ -534,7 +533,7 @@ bool EZSP::startNetwork(void)
             return false;
         }
 
-        if (!m_replyData.at(0) && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+        if (!m_replyData.at(0) && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
         {
             logWarning << "Stack status handler timed out";
             return false;
@@ -748,7 +747,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    if (!m_replyData.at(0) && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+    if (!m_replyData.at(0) && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
     {
         logWarning << "Stack status handler timed out";
         return false;
