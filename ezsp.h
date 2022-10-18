@@ -105,18 +105,6 @@
 
 //
 
-#define ZDO_DEVICE_ANNOUNCE                                     0x0013
-
-#define ZDO_NODE_DESCRIPTOR_REQUEST                             0x0002
-#define ZDO_SIMPLE_DESCRIPTOR_REQUEST                           0x0004
-#define ZDO_ACTIVE_ENDPOINTS_REQUEST                            0x0005
-
-#define ZDO_NODE_DESCRIPTOR_RESPONSE                            0x8002
-#define ZDO_SIMPLE_DESCRIPTOR_RESPONSE                          0x8004
-#define ZDO_ACTIVE_ENDPOINTS_RESPONSE                           0x8005
-
-//
-
 #include "adapter.h"
 
 #pragma pack(push, 1)
@@ -248,67 +236,6 @@ struct setValueStruct
     quint8  length;
 };
 
-struct zdoDeviceAnnounceStruct
-{
-    quint8  sequenceId;
-    quint16 networkAddress;
-    quint64 ieeeAddress;
-};
-
-struct zdoNodeDescriptorRequestStruct
-{
-    quint8  sequenceId;
-    quint16 networtAddress;
-};
-
-struct zdoNodeDescriptorResponseStruct
-{
-    quint8  sequenceId;
-    quint8  status;
-    quint16 networkAddress;
-    quint8  logicalType;
-    quint8  apsFlags;
-    quint8  capabilityFlags;
-    quint16 manufacturerCode;
-    quint8  maxBufferSize;
-    quint16 maxTransferSize;
-    quint16 maxOutTransferSize;
-    quint8  descriptorCapabilities;
-};
-
-struct zdoSimpleDescriptorRequestStruct
-{
-    quint8  sequenceId;
-    quint16 networtAddress;
-    quint8  endpointId;
-};
-
-struct zdoSimpleDescriptorResponseStruct
-{
-    quint8  sequenceId;
-    quint8  status;
-    quint16 networkAddress;
-    quint8  length;
-    quint8  endpointId;
-    quint16 profileId;
-    quint16 deviceId;
-    quint8  version;
-};
-
-struct zdoActiveEndpointsRequestStruct
-{
-    quint8  sequenceId;
-    quint16 networtAddress;
-};
-
-struct zdoActiveEndpointsResponseStruct
-{
-    quint8  sequenceId;
-    quint8  status;
-    quint16 networkAddress;
-    quint8  count;
-};
-
 #pragma pack(pop)
 
 class EZSP : public Adapter
@@ -342,9 +269,7 @@ public:
 private:
 
     QByteArray m_networkKey;
-
     quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestId, m_requestStatus;
-    quint64 m_ieeeAddress;
 
     QByteArray m_replyData;
     bool m_replyStatus;

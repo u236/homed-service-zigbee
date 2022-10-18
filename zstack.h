@@ -19,12 +19,6 @@
 #define AF_SKIP_ROUTING                             0x80
 #define AF_DEFAULT_RADIUS                           0x0F
 
-#define ADDRESS_MODE_NOT_PRESENT                    0x00
-#define ADDRESS_MODE_GROUP                          0x01
-#define ADDRESS_MODE_16_BIT                         0x02
-#define ADDRESS_MODE_64_BIT                         0x03
-#define ADDRESS_MODE_BROADCAST                      0xFF
-
 #define SYS_VERSION                                 0x2102
 #define SYS_OSAL_NV_ITEM_INIT                       0x2107
 #define SYS_OSAL_NV_READ                            0x2108
@@ -98,61 +92,6 @@ struct permitJoinRequestStruct
     quint8  significance;
 };
 
-struct nodeDescriptorRequestStruct
-{
-    quint16 dstAddress;
-    quint16 networkAddress;
-};
-
-struct nodeDescriptorResponseStruct
-{
-    quint16 srcAddress;
-    quint8  status;
-    quint16 networkAddress;
-    quint8  logicalType;
-    quint8  apsFlags;
-    quint8  capabilityFlags;
-    quint16 manufacturerCode;
-    quint8  maxBufferSize;
-    quint16 maxTransferSize;
-    quint16 serverFlags;
-    quint16 maxOutTransferSize;
-    quint8  descriptorCapabilities;
-};
-
-struct simpleDescriptorRequestStruct
-{
-    quint16 dstAddress;
-    quint16 networkAddress;
-    quint8  endpointId;
-};
-
-struct simpleDescriptorResponseStruct
-{
-    quint16 srcAddress;
-    quint8  status;
-    quint16 networkAddress;
-    quint8  length;
-    quint8  endpointId;
-    quint16 profileId;
-    quint16 deviceId;
-    quint8  version;
-};
-
-struct activeEndpointsRequestStruct
-{
-    quint16 dstAddress;
-    quint16 networkAddress;
-};
-
-struct activeEndpointsResponseStruct
-{
-    quint16 srcAddress;
-    quint8  status;
-    quint16 networkAddress;
-    quint8  count;
-};
-
 struct lqiRequestStruct
 {
     quint16 networkAddress;
@@ -177,15 +116,6 @@ struct neighborRecordStruct
     quint8  permitJoining;
     quint8  depth;
     quint8  linkQuality;
-};
-
-struct bindRequestStruct
-{
-    quint16 networkAddress;
-    quint64 srcAddress;
-    quint8  srcEndpointId;
-    quint16 clusterId;
-    quint8  dstAddressMode;
 };
 
 struct dataRequestStruct
@@ -291,14 +221,6 @@ struct extendedIncomingMessageStruct
     quint16 length;
 };
 
-struct deviceAnnounceStruct
-{
-    quint16 srcAddress;
-    quint16 networkAddress;
-    quint64 ieeeAddress;
-    quint8  capabilities;
-};
-
 struct deviceLeaveStruct
 {
     quint16 networkAddress;
@@ -348,7 +270,6 @@ public:
 private:
 
     ZStackVersion m_version;
-    quint64 m_ieeeAddress;
 
     quint8 m_status, m_transactionId;
     bool m_clear;

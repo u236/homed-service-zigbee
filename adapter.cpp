@@ -81,6 +81,34 @@ bool Adapter::transmitData(const QByteArray &data, quint32 timeout)
     return true;
 }
 
+QByteArray Adapter::bindRequestPayload(const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId)
+{
+    bindRequestStruct request;
+    quint64 src, dst = m_ieeeAddress;
+    QTimer timer;
+
+    if (!dstAddress.isEmpty())
+    {
+        memcpy(&dst, dstAddress.constData(), sizeof(dst));
+
+        switch (dstAddress.length())
+        {
+            case 2:  break;
+            case 8:  dst = qToLittleEndian(qFromBigEndian(dst)); break;
+            default: return QByteArray();
+        }
+    }
+
+    memcpy(&src, srcAddress.constData(), sizeof(src));
+
+    request.srcAddress = qToLittleEndian(qFromBigEndian(src));
+    request.srcEndpointId = srcEndpointId;
+    request.clusterId = qToLittleEndian(clusterId);
+    request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
+
+    return QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1));
+}
+
 void Adapter::readyRead(void)
 {
     m_timer->start(SERIAL_RECEIVE_TIMEOUT);

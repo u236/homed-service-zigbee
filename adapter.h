@@ -14,6 +14,19 @@
 #define PROFILE_HUE                     0xA1E0 // Philips HUE
 #define PROFILE_ZLL                     0xC05E // ZigBee Light Link
 
+#define APS_NODE_DESCRIPTOR             0x0002
+#define APS_SIMPLE_DESCRIPTOR           0x0004
+#define APS_ACTIVE_ENDPOINTS            0x0005
+#define APS_DEVICE_ANNOUNCE             0x0013
+#define APS_BIND                        0x0021
+#define APS_UNBIND                      0x0022
+
+#define ADDRESS_MODE_NOT_PRESENT        0x00
+#define ADDRESS_MODE_GROUP              0x01
+#define ADDRESS_MODE_16_BIT             0x02
+#define ADDRESS_MODE_64_BIT             0x03
+#define ADDRESS_MODE_BROADCAST          0xFF
+
 #include <QSerialPort>
 #include <QSettings>
 #include <QSharedPointer>
@@ -25,6 +38,58 @@ enum class LogicalType
     Router,
     EndDevice
 };
+
+#pragma pack(push, 1) // TODO: combine response handlers?
+
+struct deviceAnnounceStruct
+{
+    quint16 networkAddress;
+    quint64 ieeeAddress;
+    quint8  capabilities;
+};
+
+struct nodeDescriptorResponseStruct
+{
+    quint8  status;
+    quint16 networkAddress;
+    quint8  logicalType;
+    quint8  apsFlags;
+    quint8  capabilityFlags;
+    quint16 manufacturerCode;
+    quint8  maxBufferSize;
+    quint16 maxTransferSize;
+    quint16 serverFlags;
+    quint16 maxOutTransferSize;
+    quint8  descriptorCapabilities;
+};
+
+struct simpleDescriptorResponseStruct
+{
+    quint8  status;
+    quint16 networkAddress;
+    quint8  length;
+    quint8  endpointId;
+    quint16 profileId;
+    quint16 deviceId;
+    quint8  version;
+};
+
+struct activeEndpointsResponseStruct
+{
+    quint8  status;
+    quint16 networkAddress;
+    quint8  count;
+};
+
+struct bindRequestStruct
+{
+    quint64 srcAddress;
+    quint8  srcEndpointId;
+    quint16 clusterId;
+    quint8  dstAddressMode;
+};
+
+#pragma pack(pop)
 
 class EndpointDataObject;
 typedef QSharedPointer <EndpointDataObject> EndpointData;
@@ -88,6 +153,8 @@ protected:
     QSerialPort *m_port;
     QTimer *m_timer;
 
+    quint64 m_ieeeAddress;
+
     qint16 m_bootPin, m_resetPin;
     QString m_reset;
 
@@ -99,6 +166,8 @@ protected:
 
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
     bool transmitData(const QByteArray &data, quint32 timeout = 0);
+
+    QByteArray bindRequestPayload(const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId);
 
 private slots:
 

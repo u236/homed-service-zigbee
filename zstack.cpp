@@ -78,33 +78,20 @@ void ZStack::setPermitJoin(bool enabled)
 
 bool ZStack::nodeDescriptorRequest(quint16 networkAddress)
 {
-    nodeDescriptorRequestStruct request;
-
-    request.dstAddress = qToLittleEndian(networkAddress);
-    request.networkAddress = qToLittleEndian(networkAddress);
-
-    return sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
+    networkAddress = qToLittleEndian(networkAddress);
+    return sendRequest(ZDO_NODE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress))) && !m_replyData.at(0);
 }
 
 bool ZStack::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
 {
-    simpleDescriptorRequestStruct request;
-
-    request.dstAddress = qToLittleEndian(networkAddress);
-    request.networkAddress = qToLittleEndian(networkAddress);
-    request.endpointId = endpointId;
-
-    return sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
+    networkAddress = qToLittleEndian(networkAddress);
+    return sendRequest(ZDO_SIMPLE_DESC_REQ, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(1, static_cast <char> (endpointId))) && !m_replyData.at(0);
 }
 
 bool ZStack::activeEndpointsRequest(quint16 networkAddress)
 {
-    activeEndpointsRequestStruct request;
-
-    request.dstAddress = qToLittleEndian(networkAddress);
-    request.networkAddress = qToLittleEndian(networkAddress);
-
-    return sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0);
+    networkAddress = qToLittleEndian(networkAddress);
+    return sendRequest(ZDO_ACTIVE_EP_REQ, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)).append(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress))) && !m_replyData.at(0);
 }
 
 bool ZStack::lqiRequest(quint16 networkAddress, quint8 index)
@@ -119,38 +106,16 @@ bool ZStack::lqiRequest(quint16 networkAddress, quint8 index)
 
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
-    bindRequestStruct request;
-    quint64 src, dst = m_ieeeAddress;
-    QTimer timer;
+    QByteArray payload = bindRequestPayload(srcAddress, srcEndpointId, clusterId, dstAddress, dstEndpointId);
 
-    memcpy(&src, srcAddress.constData(), sizeof(src));
+    if (payload.isEmpty())
+        return false;
 
-    if (!dstAddress.isEmpty())
-    {
-        memcpy(&dst, dstAddress.constData(), sizeof(dst));
-
-        switch (dstAddress.length())
-        {
-            case 2:  break;
-            case 8:  dst = qToLittleEndian(qFromBigEndian(dst)); break;
-            default: return false;
-        }
-    }
-
-    request.networkAddress = qToLittleEndian(networkAddress);
-    request.srcAddress = qToLittleEndian(qFromBigEndian(src));
-    request.srcEndpointId = srcEndpointId;
-    request.clusterId = qToLittleEndian(clusterId);
-    request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
-
-    m_bindAddress = networkAddress;
+    m_bindAddress = qToLittleEndian(networkAddress);
     m_bindRequestStatus = false;
 
-    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1))) || m_replyData.at(0))
-    {
-        logWarning << (unbind ? "Unbind" : "Bind") << "request failed";
+    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&m_bindAddress), sizeof(m_bindAddress)).append(payload)) || m_replyData.at(0))
         return false;
-    }
 
     return waitForSignal(this, SIGNAL(bindResponse()), NETWORK_REQUEST_TIMEOUT) && m_bindRequestStatus;
 }
@@ -341,21 +306,21 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_NODE_DESC_RSP:
         {
-            const nodeDescriptorResponseStruct *message = reinterpret_cast <const nodeDescriptorResponseStruct*> (data.constData());
+            const nodeDescriptorResponseStruct *response = reinterpret_cast <const nodeDescriptorResponseStruct*> (data.constData() + 2);
 
-            if (!message->status)
-                emit nodeDescriptorReceived(qFromLittleEndian(message->srcAddress), static_cast <LogicalType> (message->logicalType & 0x03), qFromLittleEndian(message->manufacturerCode));
+            if (!response->status)
+                emit nodeDescriptorReceived(qFromLittleEndian(response->networkAddress), static_cast <LogicalType> (response->logicalType & 0x03), qFromLittleEndian(response->manufacturerCode));
 
             break;
         }
 
         case ZDO_SIMPLE_DESC_RSP:
         {
-            const simpleDescriptorResponseStruct *message = reinterpret_cast <const simpleDescriptorResponseStruct*> (data.constData());
+            const simpleDescriptorResponseStruct *response = reinterpret_cast <const simpleDescriptorResponseStruct*> (data.constData() + 2);
 
-            if (!message->status)
+            if (!response->status)
             {
-                QByteArray clusterData = data.mid(sizeof(simpleDescriptorResponseStruct));
+                QByteArray clusterData = data.mid(sizeof(simpleDescriptorResponseStruct) + 2);
                 QList <quint16> inClusters, outClusters;
                 quint16 clusterId;
 
@@ -373,7 +338,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
                     outClusters.append(qFromLittleEndian(clusterId));
                 }
 
-                emit simpleDescriptorReceived(qFromLittleEndian(message->srcAddress), message->endpointId, qFromLittleEndian(message->profileId), qFromLittleEndian(message->deviceId), inClusters, outClusters);
+                emit simpleDescriptorReceived(qFromLittleEndian(response->networkAddress), response->endpointId, qFromLittleEndian(response->profileId), qFromLittleEndian(response->deviceId), inClusters, outClusters);
             }
 
             break;
@@ -381,10 +346,10 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_ACTIVE_EP_RSP:
         {
-            const activeEndpointsResponseStruct *message = reinterpret_cast <const activeEndpointsResponseStruct*> (data.constData());
+            const activeEndpointsResponseStruct *response = reinterpret_cast <const activeEndpointsResponseStruct*> (data.constData() + 2);
 
-            if (!message->status)
-                emit activeEndpointsReceived(qFromLittleEndian(message->srcAddress), data.mid(sizeof(activeEndpointsResponseStruct), message->count));
+            if (!response->status)
+                emit activeEndpointsReceived(qFromLittleEndian(response->networkAddress), data.mid(sizeof(activeEndpointsResponseStruct) + 2, response->count));
 
             break;
         }
@@ -392,11 +357,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case ZDO_BIND_RSP:
         case ZDO_UNBIND_RSP:
         {
-            quint16 networkAddress;
-
-            memcpy(&networkAddress, data.constData(), sizeof(networkAddress));
-
-            if (qFromLittleEndian(networkAddress) == m_bindAddress)
+            if (!memcmp(data.constData(), &m_bindAddress, sizeof(m_bindAddress)))
             {
                 m_bindRequestStatus = data.at(2) ? false : true;
                 emit bindResponse();
@@ -407,18 +368,18 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_MGMT_LQI_RSP:
         {
-            const lqiResponseStruct *message = reinterpret_cast <const lqiResponseStruct*> (data.constData());
+            const lqiResponseStruct *response = reinterpret_cast <const lqiResponseStruct*> (data.constData());
 
-            if (!message->status)
+            if (!response->status)
             {
-                for (quint8 i = 0; i < message->count; i++)
+                for (quint8 i = 0; i < response->count; i++)
                 {
                     const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (data.constData() + sizeof(lqiResponseStruct) + i * sizeof(neighborRecordStruct));
-                    emit neighborRecordReceived(qFromLittleEndian(message->networkAddress), qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(message->index | i));
+                    emit neighborRecordReceived(qFromLittleEndian(response->networkAddress), qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(response->index | i));
                 }
 
-                if (message->index + message->count < message->total)
-                    lqiRequest(qFromLittleEndian(message->networkAddress), message->index + message->count);
+                if (response->index + response->count < response->total)
+                    lqiRequest(qFromLittleEndian(response->networkAddress), response->index + response->count);
             }
 
             break;
@@ -437,16 +398,16 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_END_DEVICE_ANNCE_IND:
         {
-            const deviceAnnounceStruct *message = reinterpret_cast <const deviceAnnounceStruct*> (data.constData());
-            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
-            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
+            const deviceAnnounceStruct *announce = reinterpret_cast <const deviceAnnounceStruct*> (data.constData() + 2);
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
+            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(announce->networkAddress));
             break;
         }
 
         case ZDO_LEAVE_IND:
         {
-            const deviceLeaveStruct *message = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
-            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
+            const deviceLeaveStruct *announce = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
             emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
             break;
         }
