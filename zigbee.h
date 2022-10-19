@@ -123,7 +123,8 @@ private:
     QJsonArray serializeEndpoints(const Device &device);
     QJsonArray serializeNeighbors(const Device &device);
 
-    Device findDevice(quint16 networkAddress);
+    Device getDevice(quint16 networkAddress);
+    Endpoint getEndpoint(const Device &device, quint8 endpointId);
 
     void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
     void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
@@ -132,13 +133,16 @@ private:
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
 
     void interviewDevice(const Device &device);
+    void interviewFinished(const Device &device);
+    void interviewError(const Device &device, const QString &reason);
+
     void configureReporting(const Endpoint &endpoint, const Reporting &reporting);
 
     bool readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes, bool enqueue = true);
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data);
 
     void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload);
-    void globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload);
+    void globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 commandId, QByteArray payload);
 
     void touchLinkReset(const QByteArray &ieeeAddress, quint8 channel);
     void touchLinkScan(void);
@@ -151,7 +155,7 @@ private slots:
     void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
     void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
     void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
-    void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool first);
+    void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start);
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 

@@ -83,6 +83,9 @@ public:
     inline QString name(void) { return m_name.isEmpty() ? m_ieeeAddress.toHex(':') : m_name; }
     inline void setName(const QString &value) { m_name = value; }
 
+    inline QString description(void) { return m_description; }
+    inline void setDescription(const QString &value) { m_description = value; }
+
     inline bool nodeDescriptorReceived(void) { return m_nodeDescriptorReceived; }
     inline void setNodeDescriptorReceived(void) { m_nodeDescriptorReceived = true; }
 
@@ -112,7 +115,7 @@ private:
     LogicalType m_logicalType;
     quint8 m_version;
     quint16 m_manufacturerCode;
-    QString m_manufacturerName, m_modelName, m_name;
+    QString m_manufacturerName, m_modelName, m_description, m_name;
 
     bool m_nodeDescriptorReceived, m_interviewFinished, m_multipleEndpoints;
 
