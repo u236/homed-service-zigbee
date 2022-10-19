@@ -34,7 +34,8 @@
 #define FRAME_CLEAR_TRANSIENT_LINK_KEYS                         0x006B
 #define FRAME_FIND_KEY_TABLE_ENTRY                              0x0075
 #define FRAME_ERASE_KEY_TABLE_ENTRY                             0x0076
-#define SET_EXTENDED_TIMEOUT                                    0x007E
+#define FRAME_SET_EXTENDED_TIMEOUT                              0x007E
+#define FRAME_GET_VALUE                                         0x00AA
 #define FRAME_SET_VALUE                                         0x00AB
 #define FRAME_ADD_TRANSIENT_LINK_KEY                            0x00AF
 #define FRAME_CLEAR_KEY_TABLE                                   0x00B1
@@ -72,13 +73,12 @@
 #define VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE                    0x05
 #define VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE                    0x06
 #define VALUE_STACK_TOKEN_WRITING                               0x07
+#define VALUE_VERSION_INFO                                      0x11
 #define VALUE_CCA_THRESHOLD                                     0x15
 #define VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE                0x3F
 
 #define CONCENTRATOR_LOW_RAM                                    0xFFF8
 #define CONCENTRATOR_HIGH_RAM                                   0xFFF9
-
-//
 
 #define APS_OPTION_RETRY                                        0x0040
 #define APS_OPTION_ENABLE_ROUTE_DISCOVERY                       0x0100

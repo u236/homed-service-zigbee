@@ -236,7 +236,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     request.length = static_cast <quint8> (payload.length());
 
     if (sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) && !m_replyData.at(0))
-        sendFrame(SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
+        sendFrame(FRAME_SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
 
     if (!sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) || m_replyData.at(0))
     {
@@ -376,7 +376,6 @@ void EZSP::parsePacket(const QByteArray &payload)
                     sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
             }
 
-            // emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
             break;
         }
 
@@ -602,7 +601,16 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    logInfo << "EZSP" << QString::asprintf("v%d", m_version).toUtf8().constData() << "adapter detected";
+    if (!sendFrame(FRAME_GET_VALUE, QByteArray(1, static_cast <char> (VALUE_VERSION_INFO))))
+    {
+        logWarning << "Version info request failed";
+        return false;
+    }
+
+    m_typeString = QString::asprintf("EZSP v%d", m_version);
+    m_versionString = QString::asprintf("%d.%d.%d-%d", m_replyData.at(4), m_replyData.at(5), m_replyData.at(6), m_replyData.at(2));
+
+    logInfo << QString("Adapter type: %1 (%2)").arg(m_typeString, m_versionString).toUtf8().constData();
 
     if (!sendFrame(FRAME_GET_IEEE_ADDRESS) || m_replyData.length() != sizeof(m_ieeeAddress))
     {

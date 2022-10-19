@@ -367,8 +367,21 @@ QJsonArray ZigBee::serializeDevices(void)
     {
         QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}, {"logicalType", static_cast <quint8> (it.value()->logicalType())}};
 
-        if (!it.value()->version())
-            json.insert("version", it.value()->version());
+        if (it.value()->logicalType() == LogicalType::Coordinator)
+        {
+            if (!m_adapter->typeString().isEmpty())
+                json.insert("type", m_adapter->typeString());
+
+            if (!m_adapter->versionString().isEmpty())
+                json.insert("version", m_adapter->versionString());
+        }
+        else
+        {
+            if (it.value()->version())
+                json.insert("version", it.value()->version());
+
+            json.insert("ineterviewFinished", it.value()->interviewFinished());
+        }
 
         if (it.value()->manufacturerCode())
             json.insert("manufacturerCode", it.value()->manufacturerCode());
@@ -381,9 +394,6 @@ QJsonArray ZigBee::serializeDevices(void)
 
         if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
             json.insert("name", it.value()->name());
-
-        if (it.value()->logicalType() != LogicalType::Coordinator)
-            json.insert("ineterviewFinished", it.value()->interviewFinished());
 
         if (it.value()->lastSeen())
             json.insert("lastSeen", it.value()->lastSeen());
@@ -406,13 +416,14 @@ QJsonArray ZigBee::serializeEndpoints(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        QJsonObject json = {{"endpointId", it.key()}};
+        QJsonObject json;
 
-        if (it.value()->profileId())
-            json.insert("profileId", it.value()->profileId());
+        if (!it.value()->profileId() && !it.value()->deviceId())
+            continue;
 
-        if (it.value()->deviceId())
-            json.insert("deviceId", it.value()->deviceId());
+        json.insert("endpointId", it.key());
+        json.insert("profileId", it.value()->profileId());
+        json.insert("deviceId", it.value()->deviceId());
 
         if (!it.value()->inClusters().isEmpty())
         {

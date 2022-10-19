@@ -470,20 +470,23 @@ bool ZStack::startCoordinator(void)
     switch (m_replyData.at(1))
     {
         case 0x01:
-            logInfo << "Z-Stack 3.x.0 adapter detected";
+            m_typeString = "Z-Stack 3.x.0";
             m_version = ZStackVersion::ZStack3x0;
             break;
 
         case 0x02:
-            logInfo << "Z-Stack 3.0.x adapter detected";
+            m_typeString = "Z-Stack 3.0.x";
             m_version = ZStackVersion::ZStack30x;
             break;
 
         default:
-            logInfo << "Z-Stack 1.2.x adapter detected";
+            m_typeString = "Z-Stack 1.2.x";
             m_version = ZStackVersion::ZStack12x;
             break;
     }
+
+    // TODO: get firmware version
+    logInfo << QString("Adapter type: %1").arg(m_typeString).toUtf8().constData();
 
     if (!sendRequest(UTIL_GET_DEVICE_INFO) || m_replyData.at(0))
     {

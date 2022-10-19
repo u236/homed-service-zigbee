@@ -148,12 +148,13 @@ public:
 
     virtual quint8 dataRequestStatus(void) = 0;
 
+    inline QString typeString(void) { return m_typeString; }
+    inline QString versionString(void) { return m_versionString; }
+
 protected:
 
     QSerialPort *m_port;
     QTimer *m_timer;
-
-    quint64 m_ieeeAddress;
 
     qint16 m_bootPin, m_resetPin;
     QString m_reset;
@@ -161,6 +162,9 @@ protected:
     quint16 m_panId;
     quint8 m_channel;
     bool m_debug, m_write;
+
+    QString m_typeString, m_versionString;
+    quint64 m_ieeeAddress;
 
     QMap <quint8, EndpointData> m_endpointsData;
 
