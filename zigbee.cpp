@@ -366,6 +366,7 @@ QJsonArray ZigBee::serializeDevices(void)
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
     {
         QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}, {"logicalType", static_cast <quint8> (it.value()->logicalType())}};
+        QJsonArray endpointsArray = serializeEndpoints(it.value()), neighborsArray = serializeNeighbors(it.value());
 
         if (it.value()->logicalType() == LogicalType::Coordinator)
         {
@@ -398,11 +399,11 @@ QJsonArray ZigBee::serializeDevices(void)
         if (it.value()->lastSeen())
             json.insert("lastSeen", it.value()->lastSeen());
 
-        if (!it.value()->endpoints().isEmpty())
-            json.insert("endpoints", serializeEndpoints(it.value()));
+        if (!endpointsArray.isEmpty())
+            json.insert("endpoints", endpointsArray);
 
-        if (!it.value()->neighbors().isEmpty())
-            json.insert("neighbors", serializeNeighbors(it.value()));
+        if (!neighborsArray.isEmpty())
+            json.insert("neighbors", neighborsArray);
 
         array.append(json);
     }

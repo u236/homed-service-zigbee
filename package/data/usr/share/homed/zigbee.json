@@ -41,7 +41,7 @@
       "properties":     ["status"]
     },
     {
-      "description":    "PTVO Firmware Based RGB Led Controller (endpoint 1)",
+      "description":    "PTVO Firmware Based RGB Led Controller",
       "modelNames":     ["RGB Strip"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "properties":     ["status", "level"],
@@ -49,7 +49,6 @@
       "endpointId":     1
     },
     {
-      "description":    "PTVO Firmware Based RGB Led Controller (endpoint 2)",
       "modelNames":     ["RGB Strip"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
@@ -95,7 +94,7 @@
   "LUMI":
   [
     {
-      "description":    "Aqara 10A Smart Plug SP-EUC01 (endpoint 1)",
+      "description":    "Aqara 10A Smart Plug SP-EUC01",
       "modelNames":     ["lumi.plug.maeu01"],
       "actions":        ["status"],
       "properties":     ["status", "lumiData"],
@@ -103,7 +102,6 @@
       "endpointId":     1
     },
     {
-      "description":    "Aqara 10A Smart Plug SP-EUC01 (endpoint 21)",
       "modelNames":     ["lumi.plug.maeu01"],
       "properties":     ["lumiPower"],
       "endpointId":     21
@@ -129,19 +127,17 @@
       "properties":     ["lumiBatteryVoltage", "lumiSwitchAction"]
     },
     {
-      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM (endpoint 1)",
+      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBatteryVoltage"],
       "endpointId":     1
     },
     {
-      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM (endpoint 2)",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiCubeMovement"],
       "endpointId":     2
     },
     {
-      "description":    "Aqara Cube Smart Home Controller MFKZQ01LM (endpoint 3)",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiCubeRotation"],
       "endpointId":     3
