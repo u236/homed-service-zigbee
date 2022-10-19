@@ -13,16 +13,16 @@ void Controller::mqttConnected(void)
 {
     logInfo << "MQTT connected";
 
-    mqttSubscribe("homed/config/zigbee");
-    mqttSubscribe("homed/command/zigbee");
-    mqttSubscribe("homed/td/zigbee/#");
+    mqttSubscribe(mqttTopic("config/zigbee"));
+    mqttSubscribe(mqttTopic("command/zigbee"));
+    mqttSubscribe(mqttTopic("td/zigbee/#"));
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
     QJsonObject json = QJsonDocument::fromJson(message).object();
 
-    if (topic.name() == "homed/config/zigbee" && json.contains("devices"))
+    if (topic.name() == mqttTopic("config/zigbee") && json.contains("devices"))
     {
         QJsonArray array = json.value("devices").toArray();
 
@@ -36,7 +36,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->setDeviceName(QByteArray::fromHex(item.value("ieeeAddress").toString().toUtf8()), item.value("deviceName").toString());
         }
     }
-    else if (topic.name() == "homed/command/zigbee" && json.contains("action"))
+    else if (topic.name() == mqttTopic("command/zigbee") && json.contains("action"))
     {
         Command command = static_cast <Command> (m_commands.keyToValue(json.value("action").toString().toUtf8().constData()));
 
@@ -85,7 +85,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 break;
         }
     }
-    else if (topic.name().startsWith("homed/td/zigbee/"))
+    else if (topic.name().startsWith(mqttTopic("td/zigbee/")))
     {
         QList <QString> list = topic.name().split('/');
 
@@ -119,7 +119,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
 void Controller::joinEvent(bool joined)
 {
-    mqttPublish("homed/td/display", {{"notification", QString("ZIGBEE DEVICE %1").arg(joined ? "JOINED": "LEAVED")}});
+    mqttPublish(mqttTopic("td/display"), {{"notification", QString("ZIGBEE DEVICE %1").arg(joined ? "JOINED": "LEAVED")}});
 }
 
 void Controller::endpointUpdated(const Device &device, quint8 endpointId)
@@ -156,10 +156,10 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
         return;
 
     json.insert("linkQuality", device->linkQuality());
-    mqttPublish(QString("homed/fd/zigbee/").append(device->ieeeAddress().toHex(':')).append(device->multipleEndpoints() ? QString("/%1").arg(endpointId) : QString()), json);
+    mqttPublish(mqttTopic("fd/zigbee/%1").arg(device->ieeeAddress().toHex(':').constData()).append(device->multipleEndpoints() ? QString("/%1").arg(endpointId) : QString()), json);
 }
 
 void Controller::statusStored(const QJsonObject &json)
 {
-    mqttPublish("homed/status/zigbee", json, true);
+    mqttPublish(mqttTopic("status/zigbee"), json, true);
 }
