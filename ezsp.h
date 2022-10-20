@@ -231,6 +231,14 @@ struct setValueStruct
     quint8  length;
 };
 
+struct versionInfoStruct
+{
+    quint16 build;
+    quint8  major;
+    quint8  minor;
+    quint8  patch;
+};
+
 #pragma pack(pop)
 
 class EZSP : public Adapter

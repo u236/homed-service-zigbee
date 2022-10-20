@@ -75,6 +75,16 @@
 
 #pragma pack(push, 1)
 
+struct versionResponseStruct
+{
+    quint8  transport;
+    quint8  product;
+    quint8  major;
+    quint8  minor;
+    quint8  patch;
+    quint32 build;
+};
+
 struct registerEndpointRequestStruct
 {
     quint8  endpointId;

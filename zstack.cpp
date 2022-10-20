@@ -461,13 +461,17 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 
 bool ZStack::startCoordinator(void)
 {
+    versionResponseStruct version;
+
     if (!sendRequest(SYS_VERSION))
     {
         logWarning << "Adapter version request failed";
         return false;
     }
 
-    switch (m_replyData.at(1))
+    memcpy(&version, m_replyData.constData(), sizeof(version));
+
+    switch (version.product)
     {
         case 0x01:
             m_typeString = "Z-Stack 3.x.0";
@@ -485,8 +489,8 @@ bool ZStack::startCoordinator(void)
             break;
     }
 
-    // TODO: get firmware version
-    logInfo << QString("Adapter type: %1").arg(m_typeString).toUtf8().constData();
+    m_versionString = QString::number(qFromLittleEndian(version.build));
+    logInfo << QString("Adapter type: %1 (%2)").arg(m_typeString, m_versionString).toUtf8().constData();
 
     if (!sendRequest(UTIL_GET_DEVICE_INFO) || m_replyData.at(0))
     {

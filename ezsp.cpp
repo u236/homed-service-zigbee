@@ -148,7 +148,7 @@ bool EZSP::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, qui
     if (data.isEmpty())
         return false;
 
-    return sendUnicast(networkAddress, 0x0000, unbind ? APS_UNBIND : APS_BIND, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(data)); // TODO: wait bind response
+    return sendUnicast(networkAddress, 0x0000, unbind ? APS_UNBIND : APS_BIND, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(data)); // TODO: wait for bind response
 }
 
 bool EZSP::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload)
@@ -513,9 +513,15 @@ bool EZSP::startNetwork(void)
         }
     }
 
-    if (!sendFrame(FRAME_CLEAR_TRANSIENT_LINK_KEYS) || !sendFrame(FRAME_CLEAR_KEY_TABLE) || m_replyData.at(0))
+    if (!sendFrame(FRAME_CLEAR_KEY_TABLE) || m_replyData.at(0))
     {
         logWarning << "Clear key table request failed";
+        return false;
+    }
+
+    if (!sendFrame(FRAME_CLEAR_TRANSIENT_LINK_KEYS))
+    {
+        logWarning << "Clear transient link keys request failed";
         return false;
     }
 
@@ -581,6 +587,7 @@ bool EZSP::startCoordinator(void)
 {
     setConcentratorStruct concentrator;
     networkParametersStruct network;
+    versionInfoStruct version;
     quint64 ieeeAddress;
 
     if (!sendFrame(FRAME_VERSION, QByteArray(), true))
@@ -607,8 +614,10 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
+    memcpy(&version, m_replyData.constData() + 2, sizeof(version));
+
     m_typeString = QString::asprintf("EZSP v%d", m_version);
-    m_versionString = QString::asprintf("%d.%d.%d-%d", m_replyData.at(4), m_replyData.at(5), m_replyData.at(6), m_replyData.at(2));
+    m_versionString = QString::asprintf("%d.%d.%d-%d", version.major, version.minor, version.patch, qFromLittleEndian(version.build));
 
     logInfo << QString("Adapter type: %1 (%2)").arg(m_typeString, m_versionString).toUtf8().constData();
 

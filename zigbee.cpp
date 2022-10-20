@@ -523,7 +523,7 @@ void ZigBee::setupDevice(const Device &device)
 
     if (array.isEmpty())
     {
-        logWarning << "Device" << device->name() << "manufacturer name " << device->manufacturerName() << "unrecognized";
+        logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "unrecognized";
         return;
     }
 
@@ -1275,13 +1275,16 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
         return;
 
     for (int i = 0; i < data.length(); i++)
-        list.append(QString::asprintf("0x%02X", data.at(i)));
+    {
+        quint8 endpointId = static_cast <quint8> (data.at(i));
 
-    logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");
+        if (device->endpoints().find(endpointId) == device->endpoints().end())
+            device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
 
-    for (int i = 0; i < data.length(); i++)
-        if (device->endpoints().find(static_cast <quint8> (data.at(i))) == device->endpoints().end())
-            device->endpoints().insert(static_cast <quint8> (data.at(i)), Endpoint(new EndpointObject(data.at(i), device)));
+        list.append(QString::asprintf("0x%02X", endpointId));
+    }
+
+    logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");    
 
     device->updateLastSeen();
     m_interviewQueue.enqueue(device);

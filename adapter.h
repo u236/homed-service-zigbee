@@ -11,7 +11,7 @@
 #define PROFILE_TA                      0x0107 // Telecom Applications
 #define PROFILE_PHHC                    0x0108 // Personal Home & Hospital Care
 #define PROFILE_AMI                     0x0109 // Advanced Metering Initiative
-#define PROFILE_HUE                     0xA1E0 // Philips HUE
+#define PROFILE_GP                      0xA1E0 // ZigBee Green Power
 #define PROFILE_ZLL                     0xC05E // ZigBee Light Link
 
 #define APS_NODE_DESCRIPTOR             0x0002
