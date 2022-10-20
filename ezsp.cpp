@@ -223,7 +223,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
 {
     sendUnicastStruct request;
 
-    request.type = EMBER_OUTGOING_DIRECT;
+    request.type = MESSAGE_TYPE_DIRECT;
     request.networkAddress = qToLittleEndian(networkAddress);
     request.profileId = qToLittleEndian(profileId);
     request.clusterId = qToLittleEndian(clusterId);
@@ -360,20 +360,25 @@ void EZSP::parsePacket(const QByteArray &payload)
         case FRAME_TRUST_CENTER_JOIN_HANDLER:
         {
             const trustCenterJoinHandlerStruct *message = reinterpret_cast <const trustCenterJoinHandlerStruct*> (data.constData());
-            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
 
-            if (message->status == EMBER_DEVICE_LEFT)
+            switch (message->status)
             {
-                emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
-                break;
-            }
+                case TRUST_CENTER_UNSECURED_JOIN:
+                {
+                    sendFrame(FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
 
-            if (message->status == EMBER_STANDARD_SECURITY_UNSECURED_JOIN)
-            {
-                sendFrame(FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
+                    if (m_replyData.at(0) != static_cast <char> (0xFF))
+                        sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
 
-                if (m_replyData.at(0) != static_cast <char> (0xFF))
-                    sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
+                    break;
+                }
+
+                case TRUST_CENTER_DEVICE_LEFT:
+                {
+                    quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
+                    emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
+                    break;
+                }
             }
 
             break;
@@ -490,7 +495,7 @@ bool EZSP::startNetwork(void)
         return false;
     }
 
-    if (m_replyData.at(0) == static_cast <char> (EMBER_JOINED_NETWORK))
+    if (m_replyData.at(0) == static_cast <char> (NETWORK_STATUS_JOINED))
     {
         m_stackStatus = 0x00;
 
@@ -506,7 +511,7 @@ bool EZSP::startNetwork(void)
             return false;
         }
 
-        if (m_stackStatus != EMBER_NETWORK_DOWN)
+        if (m_stackStatus != STACK_STATUS_NETWORK_DOWN)
         {
             logWarning << "Unexpected stack status" << QString::asprintf("0x%02X", m_stackStatus) << "received";
             return false;
@@ -574,7 +579,7 @@ bool EZSP::startNetwork(void)
         return false;
     }
 
-    if (m_replyData.at(0) != static_cast <char> (EMBER_JOINED_NETWORK))
+    if (m_replyData.at(0) != static_cast <char> (NETWORK_STATUS_JOINED))
     {
         logWarning << "Unexpected network status" << QString::asprintf("0x%02X", m_replyData.at(0)) << "received";
         return false;
@@ -589,6 +594,7 @@ bool EZSP::startCoordinator(void)
     networkParametersStruct network;
     versionInfoStruct version;
     quint64 ieeeAddress;
+    bool check = false;
 
     if (!sendFrame(FRAME_VERSION, QByteArray(), true))
     {
@@ -667,10 +673,10 @@ bool EZSP::startCoordinator(void)
 
     concentrator.enabled = 0x01;
     concentrator.type = qToLittleEndian <quint16> (CONCENTRATOR_HIGH_RAM);
-    concentrator.minTime = qToLittleEndian <quint16> (MTOR_MIN_TIME);
-    concentrator.maxTime = qToLittleEndian <quint16> (MTOR_MAX_TIME);
-    concentrator.routeErrorThreshold = MTOR_ROUTE_ERROR_THRESHOLD;
-    concentrator.deliveryFailureThreshold = MTOR_DELIVERY_FAILURE_THRESHOLD;
+    concentrator.minTime = qToLittleEndian <quint16> (CONCENTRATOR_MIN_TIME);
+    concentrator.maxTime = qToLittleEndian <quint16> (CONCENTRATOR_MAX_TIME);
+    concentrator.routeErrorThreshold = CONCENTRATOR_ROUTE_ERROR_THRESHOLD;
+    concentrator.deliveryFailureThreshold = CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD;
     concentrator.maxHops = 0;
 
     if (!sendFrame(FRAME_SET_CONCENTRATOR, QByteArray(reinterpret_cast <char*> (&concentrator), sizeof(concentrator))) || m_replyData.at(0))
@@ -740,13 +746,29 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&network, m_replyData.constData() + 2, sizeof(network));
 
-    if (m_replyData.at(1) != 0x01 || network.extendedPanId != m_ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != EMBER_NETWORK_UP)
+    if (m_replyData.at(1) != 0x01 || network.extendedPanId != m_ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != STACK_STATUS_NETWORK_UP)
     {
-        // TODO: check network key?
+        logWarning << "Adapter network parameters doesn't match configuration";
+        check = true;
+    }
 
+    if (!sendFrame(FRAME_GET_GEY, QByteArray(1, static_cast <char> (CURRENT_NETWORK_KEY))))
+    {
+        logWarning << "Get network key request failed";
+        return false;
+    }
+
+    if (m_replyData.mid(4, m_networkKey.length()) != m_networkKey)
+    {
+        logWarning << "Adapter network key doesn't match configuration";
+        check = true;
+    }
+
+    if (check)
+    {
         if (!m_write)
         {
-            logWarning << "Write protected";
+            logWarning << "Adapter configuration can't be changed, write protection enabled";
             return false;
         }
 

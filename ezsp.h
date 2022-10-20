@@ -31,6 +31,7 @@
 #define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
 #define FRAME_LOOKUP_IEEE_ADDRESS                               0x0061
 #define FRAME_SET_INITIAL_SECURITY_STATE                        0x0068
+#define FRAME_GET_GEY                                           0x006A
 #define FRAME_CLEAR_TRANSIENT_LINK_KEYS                         0x006B
 #define FRAME_FIND_KEY_TABLE_ENTRY                              0x0075
 #define FRAME_ERASE_KEY_TABLE_ENTRY                             0x0076
@@ -77,34 +78,25 @@
 #define VALUE_CCA_THRESHOLD                                     0x15
 #define VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE                0x3F
 
-#define CONCENTRATOR_LOW_RAM                                    0xFFF8
 #define CONCENTRATOR_HIGH_RAM                                   0xFFF9
+#define CONCENTRATOR_MIN_TIME                                   10
+#define CONCENTRATOR_MAX_TIME                                   90
+#define CONCENTRATOR_ROUTE_ERROR_THRESHOLD                      4
+#define CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD                 3
+
+#define STACK_STATUS_NETWORK_UP                                 0x90
+#define STACK_STATUS_NETWORK_DOWN                               0x91
+
+#define TRUST_CENTER_UNSECURED_JOIN                             0x01
+#define TRUST_CENTER_DEVICE_LEFT                                0x02
+
+#define MESSAGE_TYPE_DIRECT                                     0x00
 
 #define APS_OPTION_RETRY                                        0x0040
 #define APS_OPTION_ENABLE_ROUTE_DISCOVERY                       0x0100
 
-//
-
-#define MTOR_MIN_TIME                                           10
-#define MTOR_MAX_TIME                                           90
-#define MTOR_ROUTE_ERROR_THRESHOLD                              4
-#define MTOR_DELIVERY_FAILURE_THRESHOLD                         3
-
-#define EMBER_NETWORK_UP                                        0x90
-#define EMBER_NETWORK_DOWN                                      0x91
-
-#define EMBER_NO_NETWORK                                        0x00
-#define EMBER_JOINING_NETWORK                                   0x01
-#define EMBER_JOINED_NETWORK                                    0x02
-#define EMBER_JOINED_NETWORK_NO_PARENT                          0x03
-#define EMBER_LEAVING_NETWORK                                   0x04
-
-#define EMBER_STANDARD_SECURITY_UNSECURED_JOIN                  0x01
-#define EMBER_DEVICE_LEFT                                       0x02
-
-#define EMBER_OUTGOING_DIRECT                                   0x00
-
-//
+#define NETWORK_STATUS_JOINED                                   0x02
+#define CURRENT_NETWORK_KEY                                     0x03
 
 #include "adapter.h"
 

@@ -542,7 +542,7 @@ bool ZStack::startCoordinator(void)
 
             if (status || data != it.value())
             {
-                logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "value" << data.toHex(':') << "does not match configuration value" << it.value().toHex(':');
+                logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "value" << data.toHex(':') << "doesn't match configuration value" << it.value().toHex(':');
 
                 if (!m_write)
                 {
