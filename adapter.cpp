@@ -6,7 +6,8 @@
 Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_port(new QSerialPort(this)), m_timer(new QTimer(this))
 {
     m_port->setPortName(config->value("zigbee/port", "/dev/ttyUSB0").toString());
-    m_port->setBaudRate(QSerialPort::Baud115200);
+    m_port->setBaudRate(config->value("zigbee/baudtate", 115200).toInt());
+
     m_port->setDataBits(QSerialPort::Data8);
     m_port->setParity(QSerialPort::NoParity);
     m_port->setStopBits(QSerialPort::OneStop);
@@ -30,7 +31,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_port(n
     m_endpointsData.insert(0x0C, EndpointData(new EndpointDataObject(PROFILE_GP,  0x0005)));
     m_endpointsData.insert(0xF2, EndpointData(new EndpointDataObject(PROFILE_ZLL, 0x0005)));
 
-    // TODO: use defines here
+    // TODO: use defines here or remove after MG12 tests
     m_endpointsData.value(0x01)->inClusters() = {0x0000, 0x0003, 0x0006, 0x000A, 0x0019, 0x001A, 0x0300};
     m_endpointsData.value(0x01)->outClusters() = {0x0000, 0x0003, 0x0004, 0x0005, 0x0006, 0x0008, 0x0020, 0x0300, 0x0400, 0x0402, 0x0405, 0x0406, 0x0500, 0x0B01, 0x0B03, 0x0B04, 0x0702, 0x1000, 0xFC01, 0xFC02};
     m_endpointsData.value(0xF2)->outClusters() = {0x0021};
