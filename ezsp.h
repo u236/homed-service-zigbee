@@ -1,6 +1,9 @@
 #ifndef EZSP_H
 #define EZSP_H
 
+#define ASH_MIN_LENGTH                                          4
+#define ASH_MAX_LENGTH                                          132
+
 #define ASH_FLAG_BYTE                                           0x7E
 #define ASH_REQUEST_TIMEOUT                                     2000
 
@@ -241,9 +244,7 @@ public:
 
     EZSP(QSettings *config, QObject *parent);
 
-    void reset(void) override;
     void setPermitJoin(bool enabled) override;
-
     bool nodeDescriptorRequest(quint16 networkAddress) override;
     bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
     bool activeEndpointsRequest(quint16 networkAddress) override;
@@ -267,7 +268,7 @@ private:
     quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestId, m_requestStatus;
 
     QByteArray m_replyData;
-    bool m_replyStatus;
+    bool m_replyReceived, m_errorReceived;
 
     QList <setConfigStruct> m_config, m_policy;
     QMap <quint8, QByteArray> m_values;
@@ -284,13 +285,18 @@ private:
     bool startNetwork(void);
     bool startCoordinator(void);
 
+    void handleError(const QString &reason);
+
+    void softReset(void) override;
+    void parseData(void) override;
+
 private slots:
 
-    void receiveData(void) override;
+    void handleQueue(void) override;
 
 signals:
-  
-    void replyReceived(void);
+
+    void dataReceived(void);
     void stackStatusReceived(void);
     void messageSent(void);
 

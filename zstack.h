@@ -5,12 +5,11 @@
 #define ZSTACK_CLEAR_DELAY                          4000
 #define ZSTACK_REQUEST_TIMEOUT                      5000
 
-#define ZSTACK_PACKET_START                         0xFE
+#define ZSTACK_SKIP_BOOTLOADER                      0xEF
+#define ZSTACK_PACKET_FLAG                          0xFE
 #define ZSTACK_COORDINATOR_STARTED                  0x09
-#define ZSTACK_TX_POWER                             0x14
 
 #define PERMIT_JOIN_MODE_ADDREESS                   0x0F
-#define PERMIT_JOIN_MODE_BROADCAST                  0xFF
 #define PERMIT_JOIN_BROARCAST_ADDRESS               0xFFFC
 
 #define AF_ACK_REQUEST                              0x10
@@ -257,9 +256,7 @@ public:
 
     ZStack(QSettings *config, QObject *parent);
 
-    void reset(void) override;
     void setPermitJoin(bool enabled) override;
-
     bool nodeDescriptorRequest(quint16 networkAddress) override;
     bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
     bool activeEndpointsRequest(quint16 networkAddress) override;
@@ -304,12 +301,16 @@ private:
     bool startCoordinator(void);
     void coordinatorStarted(void);
 
+    void softReset(void) override;
+    void parseData(void) override;
+
 private slots:
 
-    void receiveData(void) override;
+    void handleQueue(void) override;
 
 signals:
 
+    void dataReceived(void);
     void bindResponse(void);
     void dataConfirm(void);
 

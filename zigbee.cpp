@@ -8,33 +8,22 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
 {
-    QList <QString> list = {"ezsp", "znp"};
-    QString adapterType = config->value("zigbee/adapter", "znp").toString();
-
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
     PropertyObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
 
-    switch (list.indexOf(adapterType))
-    {
-        case 0:  m_adapter = new EZSP(config, this); break;
-        case 1:  m_adapter = new ZStack(config, this); break;
-        default: logWarning << "Unrecognized adapter type" << adapterType; return;
-    }
-
-    m_libraryFile = config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
-    m_databaseFile = config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
-    m_ledPin = static_cast <qint16> (config->value("gpio/led", -1).toInt());
+    m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
+    m_databaseFile = m_config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
+    m_ledPin = static_cast <qint16> (m_config->value("gpio/led", -1).toInt());
 
     GPIO::setDirection(m_ledPin, GPIO::Output);
     GPIO::setStatus(m_ledPin, false);
 
-    connect(m_adapter, &ZStack::coordinatorReady, this, &ZigBee::coordinatorReady);
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
-    connect(m_queuesTimer, &QTimer::timeout, this, &ZigBee::handleQueues);
+    connect(m_queuesTimer, &QTimer::timeout, this, &ZigBee::handleQueue);
     connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
     connect(m_ledTimer, &QTimer::timeout, this, &ZigBee::disableLed);
 
@@ -45,18 +34,26 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_neighbor
 void ZigBee::init(void)
 {
     QFile file(m_databaseFile);
+    QList <QString> list = {"ezsp", "znp"};
+    QString adapterType = m_config->value("zigbee/adapter", "znp").toString();
 
     if (file.open(QFile::ReadOnly | QFile::Text))
     {
         QJsonObject json = QJsonDocument::fromJson(file.readAll()).object();
-
         unserializeDevices(json.value("devices").toArray());
         m_permitJoin = json.value("permitJoin").toBool();
-
         file.close();
     }
 
-    m_adapter->reset();
+    switch (list.indexOf(adapterType))
+    {
+        case 0:  m_adapter = new EZSP(m_config, this); break;
+        case 1:  m_adapter = new ZStack(m_config, this); break;
+        default: logWarning << "Unrecognized adapter type" << adapterType; return;
+    }
+
+    connect(m_adapter, &ZStack::coordinatorReady, this, &ZigBee::coordinatorReady);
+    m_adapter->init();
 }
 
 void ZigBee::setPermitJoin(bool enabled)
@@ -1167,15 +1164,6 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
 
-    connect(m_adapter, &ZStack::deviceJoined, this, &ZigBee::deviceJoined);
-    connect(m_adapter, &ZStack::deviceLeft, this, &ZigBee::deviceLeft);
-    connect(m_adapter, &ZStack::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
-    connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
-    connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
-    connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
-    connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
-    connect(m_adapter, &ZStack::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
-
     for (auto it = m_devices.begin(); it != m_devices.end(); it++)
     {
         if (it.key() == ieeeAddress || it.value()->logicalType() == LogicalType::Coordinator)
@@ -1191,6 +1179,15 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     m_devices.insert(ieeeAddress, device);
     m_adapter->setPermitJoin(m_permitJoin);
+
+    connect(m_adapter, &ZStack::deviceJoined, this, &ZigBee::deviceJoined);
+    connect(m_adapter, &ZStack::deviceLeft, this, &ZigBee::deviceLeft);
+    connect(m_adapter, &ZStack::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
+    connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
+    connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
+    connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
+    connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
+    connect(m_adapter, &ZStack::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
 
     m_queuesTimer->start(HANDLE_QUEUES_INTERVAL);
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
@@ -1434,7 +1431,7 @@ void ZigBee::updateNeighbors(void)
     }
 }
 
-void ZigBee::handleQueues(void)
+void ZigBee::handleQueue(void)
 {
     while (!m_bindQueue.isEmpty())
     {

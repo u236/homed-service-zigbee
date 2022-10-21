@@ -2,7 +2,8 @@
 #define ADAPTER_H
 
 #define ADAPTER_RESET_DELAY             100
-#define SERIAL_RECEIVE_TIMEOUT          10
+#define ADAPTER_RESET_TIMEOUT           10000
+#define SOCKET_RECONNECT_INTERVAL       5000
 #define NETWORK_REQUEST_TIMEOUT         10000
 
 #define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
@@ -27,9 +28,12 @@
 #define ADDRESS_MODE_64_BIT             0x03
 #define ADDRESS_MODE_BROADCAST          0xFF
 
+#include <QHostAddress>
+#include <QQueue>
 #include <QSerialPort>
 #include <QSettings>
 #include <QSharedPointer>
+#include <QTcpSocket>
 #include <QTimer>
 
 enum class LogicalType
@@ -126,9 +130,8 @@ class Adapter : public QObject
 public:
 
     Adapter(QSettings *config, QObject *parent);
-    virtual ~Adapter(void) {}
+    ~Adapter(void);
 
-    virtual void reset(void) = 0;
     virtual void setPermitJoin(bool enabled) = 0;
 
     virtual bool nodeDescriptorRequest(quint16 networkAddress) = 0;
@@ -151,10 +154,19 @@ public:
     inline QString typeString(void) { return m_typeString; }
     inline QString versionString(void) { return m_versionString; }
 
+    void init(void);
+
 protected:
 
-    QSerialPort *m_port;
-    QTimer *m_timer;
+    QSerialPort *m_serial;
+    QTcpSocket *m_socket;
+    QIODevice *m_device;
+
+    QTimer *m_socketTimer, *m_resetTimer;
+
+    QHostAddress m_adddress;
+    quint16 m_port;
+    bool m_connected;
 
     qint16 m_bootPin, m_resetPin;
     QString m_reset;
@@ -166,17 +178,30 @@ protected:
     QString m_typeString, m_versionString;
     quint64 m_ieeeAddress;
 
+    QByteArray m_buffer;
+    QQueue <QByteArray> m_queue;
+
     QMap <quint8, EndpointData> m_endpointsData;
 
+    void reset(void);
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
-    bool transmitData(const QByteArray &data, quint32 timeout = 0);
-
     QByteArray bindRequestPayload(const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId);
+
+private:
+
+    virtual void softReset(void) = 0;
+    virtual void parseData(void) = 0;
 
 private slots:
 
+    virtual void handleQueue(void) = 0;
+
     void readyRead(void);
-    virtual void receiveData(void) = 0;
+    void resetTimeout(void);
+
+    void socketConnected(void);
+    void socketError(QTcpSocket::SocketError error);
+    void socketReconnect(void);
 
 signals:
 

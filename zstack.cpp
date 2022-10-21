@@ -15,47 +15,6 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_nvItems.insert(ZCD_NV_CHANLIST,          QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
     m_nvItems.insert(ZCD_NV_LOGICAL_TYPE,      QByteArray(1, 0x00));
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB,     QByteArray(1, 0x01));
-
-    GPIO::setDirection(m_bootPin, GPIO::Output);
-    GPIO::setDirection(m_resetPin, GPIO::Output);
-}
-
-void ZStack::reset(void)
-{
-    QList <QString> list = {"soft", "gpio"};
-
-    m_port->close();
-
-    if (!m_port->open(QIODevice::ReadWrite))
-    {
-        logWarning << "Can't open port" << m_port->portName();
-        return;
-    }
-
-    logInfo << "Resetting adapter...";
-
-    switch (list.indexOf(m_reset))
-    {
-        case 0:
-            m_port->write(QByteArray(1, 0xEF));
-            QThread::msleep(ADAPTER_RESET_DELAY);
-            sendRequest(SYS_RESET_REQ, QByteArray(1, 0x01));
-            break;
-
-        case 1:
-            GPIO::setStatus(m_bootPin, true);
-            GPIO::setStatus(m_resetPin, false);
-            QThread::msleep(ADAPTER_RESET_DELAY);
-            GPIO::setStatus(m_resetPin, true);
-            break;
-
-        default:
-            m_port->setDataTerminalReady(false);
-            m_port->setRequestToSend(true);
-            QThread::msleep(ADAPTER_RESET_DELAY);
-            m_port->setRequestToSend(false);
-            break;
-    }
 }
 
 void ZStack::setPermitJoin(bool enabled)
@@ -64,8 +23,8 @@ void ZStack::setPermitJoin(bool enabled)
 
     request.mode = PERMIT_JOIN_MODE_ADDREESS;
     request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
-    request.duration = enabled ? 0xFF : 0;
-    request.significance = 0;
+    request.duration = enabled ? 0xFF : 0x00;
+    request.significance = 0x00;
 
     if (sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
     {
@@ -226,11 +185,14 @@ void ZStack::resetInterPan(void)
 bool ZStack::sendRequest(quint16 command, const QByteArray &data)
 {
     QByteArray request;
-    char fcs = 0;
+    quint8 fcs = 0;
+
+    if (m_debug)
+        logInfo << "-->" << QString::asprintf("%04X", command) << data.toHex(':');
 
     command = qToBigEndian(command);
 
-    request.append(ZSTACK_PACKET_START);
+    request.append(ZSTACK_PACKET_FLAG);
     request.append(static_cast <char> (data.length()));
     request.append(reinterpret_cast <char*> (&command), sizeof(command));
     request.append(data);
@@ -238,18 +200,20 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     for (int i = 1; i < request.length(); i++)
         fcs ^= request[i];
 
-    if (!transmitData(request.append(fcs), ZSTACK_REQUEST_TIMEOUT))
-        return false;
-
-    return m_replyCommand == qFromBigEndian(command);
+    m_device->write(request.append(static_cast <char> (fcs)));
+    return waitForSignal(this, SIGNAL(dataReceived()), ZSTACK_REQUEST_TIMEOUT) && m_replyCommand == qFromBigEndian(command);
 }
 
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
 {
+    if (m_debug)
+        logInfo << "<--" << QString::asprintf("%04X", command) << data.toHex(':');
+
     if (command & 0x2000)
     {
         m_replyCommand = command ^ 0x4000;
         m_replyData = data;
+        emit dataReceived();
         return;
     }
 
@@ -264,6 +228,8 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case SYS_RESET_IND:
         {
+            m_resetTimer->stop();
+
             if (!startCoordinator())
                 logWarning << "Coordinator startup failed";
 
@@ -431,7 +397,7 @@ bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
     nvWriteRequestStruct request;
 
     request.id = qToLittleEndian(id);
-    request.offset = 0;
+    request.offset = 0x00;
     request.length = static_cast <quint8> (data.length());
 
     if (!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
@@ -513,7 +479,7 @@ bool ZStack::startCoordinator(void)
                 nvReadReplyStruct *reply;
 
                 request.id = qToLittleEndian <quint16> (it.key());
-                request.offset = 0;
+                request.offset = 0x00;
 
                 if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
                 {
@@ -622,8 +588,8 @@ bool ZStack::startCoordinator(void)
         request.endpointId = it.key();
         request.profileId = qToLittleEndian(it.value()->profileId());
         request.deviceId = qToLittleEndian(it.value()->deviceId());
-        request.version = 0;
-        request.latency = 0;
+        request.version = 0x00;
+        request.latency = 0x00;
 
         data.append(static_cast <char> (it.value()->inClusters().count()));
 
@@ -669,32 +635,50 @@ void ZStack::coordinatorStarted(void)
     emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
 }
 
-void ZStack::receiveData(void)
+void ZStack::softReset(void)
 {
-    QByteArray buffer = m_port->readAll();
+    m_device->write(QByteArray(1, ZSTACK_SKIP_BOOTLOADER));
+    QThread::msleep(ADAPTER_RESET_DELAY);
+    sendRequest(SYS_RESET_REQ, QByteArray(1, 0x01));
+}
 
-    while (!buffer.isEmpty())
+void ZStack::parseData(void)
+{
+    while (!m_buffer.isEmpty())
     {
-        quint8 *packet = reinterpret_cast <quint8*> (buffer.data()), length = packet[1], fcs = 0;
-        quint16 command;
+        quint8 length = static_cast <quint8> (m_buffer.at(1)), fcs = 0;
 
-        if (buffer.length() < 5 || buffer.length() < length + 5 || packet[0] != ZSTACK_PACKET_START)
-            return;
-
-        for (quint8 i = 1; i < length + 4; i++)
-            fcs ^= packet[i];
-
-        if (fcs != packet[length + 4])
+        if (m_buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG))
         {
-            logWarning << "Packet" << buffer.left(length + 5).toHex(':') << "FCS mismatch";
-            return;
+            m_buffer.clear();
+            break;
         }
 
-        if (m_debug)
-            logInfo << "Packet received:" << buffer.left(length + 5).toHex(':');
+        if (m_buffer.length() < 5 || m_buffer.length() < length + 5)
+            break;
 
-        memcpy(&command, buffer.constData() + 2, sizeof(command));
-        parsePacket(qFromBigEndian(command), QByteArray(reinterpret_cast <char*> (packet + 4), length));
-        buffer.remove(0, length + 5);
+        for (quint8 i = 1; i < length + 4; i++)
+            fcs ^= m_buffer.at(i);
+
+        if (fcs != static_cast <quint8> (m_buffer.at(length + 4)))
+        {
+            logWarning << "Packet" << m_buffer.left(length + 5).toHex(':') << "FCS mismatch";
+            m_buffer.clear();
+            break;
+        }
+
+        m_queue.enqueue(m_buffer.mid(2, length + 2));
+        m_buffer.remove(0, length + 5);
+    }
+}
+
+void ZStack::handleQueue(void)
+{
+    while (!m_queue.isEmpty())
+    {
+        QByteArray packet = m_queue.dequeue();
+        quint16 command;
+        memcpy(&command, packet.constData(), sizeof(command));
+        parsePacket(qFromBigEndian(command), packet.mid(2));
     }
 }

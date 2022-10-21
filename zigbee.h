@@ -101,11 +101,15 @@ public:
 
 private:
 
-    Adapter *m_adapter;
+    QSettings *m_config;
     QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusTimer, *m_ledTimer;
 
-    QString m_libraryFile, m_databaseFile, m_otaUpgradeFile;
+    Adapter *m_adapter;
+
+    QString m_libraryFile, m_databaseFile;
     qint16 m_ledPin;
+
+    QString m_otaUpgradeFile;
     quint8 m_transactionId, m_interPanChannel;
     bool m_permitJoin;
 
@@ -162,7 +166,7 @@ private slots:
     void interviewTimeout(void);
     void pollAttributes(void);
     void updateNeighbors(void);
-    void handleQueues(void);
+    void handleQueue(void);
     void storeStatus(void);
     void disableLed(void);
 

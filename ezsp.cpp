@@ -1,6 +1,5 @@
 #include <QtEndian>
 #include <QRandomGenerator>
-#include <QThread>
 #include "ezsp.h"
 #include "gpio.h"
 #include "logger.h"
@@ -49,42 +48,6 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
     m_values.insert(VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     QByteArray::fromHex("5200"));
     m_values.insert(VALUE_CCA_THRESHOLD,                      QByteArray(1, 0x00));
     m_values.insert(VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, QByteArray(1, 0x03));
-}
-
-void EZSP::reset(void)
-{
-    QList <QString> list = {"soft", "gpio"};
-
-    m_port->close();
-
-    if (!m_port->open(QIODevice::ReadWrite))
-    {
-        logWarning << "Can't open port" << m_port->portName();
-        return;
-    }
-
-    logInfo << "Resetting adapter...";
-
-    switch (list.indexOf(m_reset))
-    {
-        case 0:
-            sendRequest(ASH_CONTROL_RST);
-            break;
-
-        case 1:
-            GPIO::setStatus(m_bootPin, true);
-            GPIO::setStatus(m_resetPin, false);
-            QThread::msleep(ADAPTER_RESET_DELAY);
-            GPIO::setStatus(m_resetPin, true);
-            break;
-
-        default:
-            m_port->setDataTerminalReady(false);
-            m_port->setRequestToSend(true);
-            QThread::msleep(ADAPTER_RESET_DELAY);
-            m_port->setRequestToSend(false);
-            break;
-    }
 }
 
 void EZSP::setPermitJoin(bool enabled)
@@ -251,7 +214,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 {
     QByteArray payload;
-    quint8 control = (m_sequenceId & 0x07) << 4 | (m_acknowledgeId & 0x07);
+    quint8 control = (m_sequenceId & 0x07) << 4 | m_acknowledgeId;
 
     if (version)
     {
@@ -281,12 +244,15 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
     for (quint8 i = 0; i < 3; i ++)
     {
         m_replyData.clear();
-        m_replyStatus = false;
+        m_replyReceived = false;
 
         sendRequest(control, payload);
 
-        if (waitForSignal(this, SIGNAL(replyReceived()), ASH_REQUEST_TIMEOUT) && m_replyStatus)
+        if (waitForSignal(this, SIGNAL(dataReceived()), ASH_REQUEST_TIMEOUT) && m_replyReceived)
             return true;
+
+        if (m_errorReceived)
+            return false;
 
         control |= 0x08;
     }
@@ -319,20 +285,17 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
         }
     }
 
-    transmitData(buffer.append(ASH_FLAG_BYTE));
+    m_errorReceived = false;
+    m_device->write(buffer.append(static_cast <char> (ASH_FLAG_BYTE)));
 }
 
 void EZSP::parsePacket(const QByteArray &payload)
 {
     const ezspHeaderStruct *header = reinterpret_cast <const ezspHeaderStruct*> (payload.constData());
-    quint16 frameId;
-    QByteArray data;
-
-    frameId = qFromLittleEndian(header->frameId);
-    data = payload.mid(sizeof(ezspHeaderStruct));
+    QByteArray data = payload.mid(sizeof(ezspHeaderStruct));
 
     if (m_debug)
-        logInfo << "<--" << QString::asprintf("%02x", header->sequence) <<  QString::asprintf("%02X%02X", header->frameControlLow, header->frameControlHigh) << QString::asprintf("%04X", frameId) << data.toHex(':');
+        logInfo << "<--" << QString::asprintf("%02x", header->sequence) <<  QString::asprintf("%02X%02X", header->frameControlLow, header->frameControlHigh) << QString::asprintf("%04X", qFromLittleEndian(header->frameId)) << data.toHex(':');
 
     if (!(header->frameControlLow & 0x18) && header->sequence == m_sequenceId)
     {
@@ -342,13 +305,13 @@ void EZSP::parsePacket(const QByteArray &payload)
             m_replyData = data;
 
         m_sequenceId++;
-        m_replyStatus = true;
+        m_replyReceived = true;
 
-        emit replyReceived();
+        emit dataReceived();
         return;
     }
 
-    switch (frameId)
+    switch (qFromLittleEndian(header->frameId))
     {
         case FRAME_STACK_STATUS_HANDLER:
         {
@@ -593,7 +556,6 @@ bool EZSP::startCoordinator(void)
     setConcentratorStruct concentrator;
     networkParametersStruct network;
     versionInfoStruct version;
-    quint64 ieeeAddress;
     bool check = false;
 
     if (!sendFrame(FRAME_VERSION, QByteArray(), true))
@@ -639,22 +601,20 @@ bool EZSP::startCoordinator(void)
     {
         setConfigStruct request = m_config.at(i);
 
-        if (!sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
-        {
-            logWarning << "Set config item" << QString::asprintf("0x%02X", request.id) << "request failed";
-            return false;
-        }
+        if (sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+            continue;
+
+        logWarning << "Set config item" << QString::asprintf("0x%02X", request.id) << "request failed";
     }
 
     for (int i = 0; i < m_policy.length(); i++)
     {
         setConfigStruct request = m_policy.at(i);
 
-        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
-        {
-            logWarning << "Set policy item" << QString::asprintf("0x%02X", request.id) << "request failed";
-            return false;
-        }
+        if (sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+            continue;
+
+        logWarning << "Set policy item" << QString::asprintf("0x%02X", request.id) << "request failed";
     }
 
     for (auto it = m_values.begin(); it != m_values.end(); it++)
@@ -664,11 +624,10 @@ bool EZSP::startCoordinator(void)
         request.id = it.key();
         request.length = static_cast <quint8> (it.value().length());
 
-        if (!sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(it.value())) || m_replyData.at(0))
-        {
-            logWarning << "Set value item" << QString::asprintf("0x%02X", it.key()) << "request failed";
-            return false;
-        }
+        if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(it.value())) && !m_replyData.at(0))
+            continue;
+
+        logWarning << "Set value item" << QString::asprintf("0x%02X", it.key()) << "request failed";
     }
 
     concentrator.enabled = 0x01;
@@ -785,68 +744,95 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    ieeeAddress = qToBigEndian(qFromLittleEndian(m_ieeeAddress));
-    emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
-
     return true;
 }
 
-void EZSP::receiveData(void)
+void EZSP::handleError(const QString &reason)
 {
-    QByteArray buffer = m_port->readAll();
+    logWarning << reason.toUtf8().constData();
 
-    while (!buffer.isEmpty())
+    m_errorReceived = true;
+    emit dataReceived();
+
+    m_buffer.clear();
+    reset();
+}
+
+void EZSP::softReset(void)
+{
+    sendRequest(ASH_CONTROL_RST);
+}
+
+void EZSP::parseData(void)
+{
+    while (!m_buffer.isEmpty())
     {
         QByteArray data;
-        quint8 length, control;
-        quint16 crc;
+        quint16 length, crc;
 
-        if (buffer.startsWith(QByteArray::fromHex("1AC102")) || buffer.startsWith(QByteArray::fromHex("1AC202")))
-            buffer.remove(0, 1);
+        if (m_buffer.startsWith(QByteArray::fromHex("1AC102")) || m_buffer.startsWith(QByteArray::fromHex("1AC202"))) // TODO: check this
+            m_buffer.remove(0, 1);
 
-        if (buffer.length() < 4 || !buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
-            return;
-
-        length = static_cast <quint8> (buffer.indexOf(ASH_FLAG_BYTE));
-
-        for (int i = 0; i < length; i++)
+        if (m_buffer.length() < ASH_MIN_LENGTH || m_buffer.length() > ASH_MAX_LENGTH)
         {
-            if (buffer.at(i) == static_cast <char> (0x7D))
-            {
-                switch (buffer.at(++i))
-                {
-                    case 0x31: data.append(0x11); break;
-                    case 0x33: data.append(0x13); break;
-                    case 0x38: data.append(0x18); break;
-                    case 0x3A: data.append(0x1A); break;
-                    case 0x5D: data.append(0x7D); break;
-                    case 0x5E: data.append(0x7E); break;
-
-                    default:
-                        logWarning << "Packet" << buffer.toHex(':') << "unstaffing failed at position" << i;
-                        reset();
-                        return;
-                }
-            }
-            else
-                data.append(buffer.at(i));
+            m_buffer.clear();
+            break;
         }
 
+        if (!m_buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
+            break;
+
+        length = static_cast <quint16> (m_buffer.indexOf(ASH_FLAG_BYTE));
+
+        for (int i = 0; i < length && !m_errorReceived; i++)
+        {
+            if (m_buffer.at(i) != static_cast <char> (0x7D))
+            {
+                data.append(m_buffer.at(i));
+                continue;
+            }
+
+            switch (m_buffer.at(++i))
+            {
+                case 0x31: data.append(0x11); break;
+                case 0x33: data.append(0x13); break;
+                case 0x38: data.append(0x18); break;
+                case 0x3A: data.append(0x1A); break;
+                case 0x5D: data.append(0x7D); break;
+                case 0x5E: data.append(0x7E); break;
+
+                default:
+                    handleError(QString("Packet %1 unstaffing failed at position %2").arg(QString(m_buffer.toHex(':'))).arg(i));
+                    break;
+            }
+        }
+
+        if (m_errorReceived)
+            break;
+
         memcpy(&crc, data.constData() + data.length() - 2, sizeof(crc));
-        buffer.remove(0, length + 1);
 
         if (crc != getCRC(reinterpret_cast <quint8*> (data.data()), data.length() - 2))
         {
-            logWarning << "Packet" << data.toHex(':') << "CRC mismatch";
-            reset();
-            return;
+            handleError(QString("Packet %1 CRC mismatch").arg(QString(m_buffer.mid(0, length + 1).toHex(':'))));
+            break;
         }
 
-        control = static_cast <quint8> (data.at(0));
+        m_queue.enqueue(data);
+        m_buffer.remove(0, length + 1);
+    }
+}
+
+void EZSP::handleQueue(void)
+{
+    while (!m_queue.isEmpty())
+    {
+        QByteArray packet = m_queue.dequeue();
+        quint8 control = static_cast <quint8> (packet.at(0));
 
         if (!(control & 0x80))
         {
-            QByteArray payload = data.mid(1, data.length() - 3);
+            QByteArray payload = packet.mid(1, packet.length() - 3);
 
             m_acknowledgeId = ((control >> 4) + 1) & 0x07;
             sendRequest(ASH_CONTROL_ACK | m_acknowledgeId);
@@ -859,36 +845,44 @@ void EZSP::receiveData(void)
 
         if ((control & 0xE0) == ASH_CONTROL_ACK)
         {
-            m_replyStatus = true;
-            emit replyReceived();
+            m_replyReceived = true;
+            emit dataReceived();
             continue;
         }
 
         if ((control & 0xE0) == ASH_CONTROL_NAK)
         {
-            logWarning << "Received NAK frame";
-            emit replyReceived();
-            return;
+            logWarning << "Received NAK frame:" << QString::asprintf("%d, %d", m_acknowledgeId, control & 0x07).toUtf8().constData();
+            emit dataReceived();
+            break;
         }
 
         if (control == ASH_CONTROL_RSTACK)
         {
+            m_resetTimer->stop();
+
             m_sequenceId = 0;
             m_acknowledgeId = 0;
 
-            if (!startCoordinator())
-                logWarning << "Coordinator startup failed";
+            if (startCoordinator())
+            {
+                quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(m_ieeeAddress));
+                emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
+                break;
+            }
 
-            return;
+            logWarning << "Coordinator startup failed";
+            break;
         }
 
         if (control == ASH_CONTROL_ERROR)
         {
-            logWarning << "Received ERROR frame";
-            reset();
-            return;
+            handleError("Received ERROR frame");
+            break;
         }
 
-        logWarning << "Received unrecognized ASH frame:" << data.toHex(':');
+        handleError(QString("Received unrecognized ASH frame:").arg(QString(packet.toHex(':'))));
     }
+
+    m_queue.clear();
 }
