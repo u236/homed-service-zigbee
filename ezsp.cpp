@@ -29,25 +29,25 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090A0B0C0D0E0F").toString().remove("0x").toUtf8());
 
-    m_config.insert(CONFIG_PACKET_BUFFER_COUNT,               0x00FF);
-    m_config.insert(CONFIG_STACK_PROFILE,                     0x0002);
-    m_config.insert(CONFIG_SECURITY_LEVEL,                    0x0005);
+    m_config.append({CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
+    m_config.append({CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
+    m_config.append({CONFIG_PACKET_BUFFER_COUNT,                  qToLittleEndian <quint16> (0x00FF)});
 
-    m_policy.insert(POLICY_TRUST_CENTER,                      DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS);
-    m_policy.insert(POLICY_BINDING_MODIFICATION,              DECISION_DISALLOW_BINDING_MODIFICATION);
-    m_policy.insert(POLICY_UNICAST_REPLIES,                   DECISION_HOST_WILL_NOT_SUPPLY_REPLY);
-    m_policy.insert(POLICY_POLL_HANDLER,                      DECISION_POLL_HANDLER_IGNORE);
-    m_policy.insert(POLICY_MESSAGE_CONTENTS_IN_CALLBACK,      DECISION_MESSAGE_TAG_ONLY_IN_CALLBACK);
-    m_policy.insert(POLICY_TC_KEY_REQUEST,                    DECISION_ALLOW_TC_KEY_REQUESTS);
-    m_policy.insert(POLICY_APP_KEY_REQUEST,                   DECISION_ALLOW_APP_KEY_REQUESTS);
-    m_policy.insert(POLICY_PACKET_VALIDATE_LIBRARY,           DECISION_PACKET_VALIDATE_LIBRARY_CHECKS_DISABLED);
-    m_policy.insert(POLICY_ZLL,                               DECISION_ALLOW_JOINS);
-    m_policy.insert(POLICY_TC_REJOINS_USING_WELL_KNOWN_KEY,   DECISION_ALLOW_JOINS);
+    m_policy.append({POLICY_BINDING_MODIFICATION,                 qToLittleEndian <quint16> (DECISION_DISALLOW_BINDING_MODIFICATION)});
+    m_policy.append({POLICY_UNICAST_REPLIES,                      qToLittleEndian <quint16> (DECISION_HOST_WILL_NOT_SUPPLY_REPLY)});
+    m_policy.append({POLICY_POLL_HANDLER,                         qToLittleEndian <quint16> (DECISION_POLL_HANDLER_IGNORE)});
+    m_policy.append({POLICY_MESSAGE_CONTENTS_IN_CALLBACK,         qToLittleEndian <quint16> (DECISION_MESSAGE_TAG_ONLY_IN_CALLBACK)});
+    m_policy.append({POLICY_PACKET_VALIDATE_LIBRARY,              qToLittleEndian <quint16> (DECISION_PACKET_VALIDATE_LIBRARY_CHECKS_DISABLED)});
+    m_policy.append({POLICY_ZLL,                                  qToLittleEndian <quint16> (DECISION_ALLOW_JOINS)});
+    m_policy.append({POLICY_TC_REJOINS_USING_WELL_KNOWN_KEY,      qToLittleEndian <quint16> (DECISION_ALLOW_JOINS)});
+    m_policy.append({POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (DECISION_ALLOW_APP_KEY_REQUESTS)});
+    m_policy.append({POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (DECISION_ALLOW_TC_KEY_REQUESTS)});
+    m_policy.append({POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS)});
 
-    m_values.insert(VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE,     QByteArray::fromHex("5200"));
-    m_values.insert(VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     QByteArray::fromHex("5200"));
-    m_values.insert(VALUE_CCA_THRESHOLD,                      QByteArray(1, 0x00));
-    m_values.insert(VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, QByteArray(1, 0x03));
+    m_values.append({VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
+    m_values.append({VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
+    m_values.append({VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, 1, qToLittleEndian <quint16> (0x0003)});
+    m_values.append({VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
 }
 
 void EZSP::setPermitJoin(bool enabled)
@@ -601,43 +601,34 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&m_ieeeAddress, m_replyData.constData(), sizeof(m_ieeeAddress));
 
-    for (auto it = m_config.begin(); it != m_config.end(); it++)
+    for (int i = 0; i < m_config.length(); i++)
     {
-        setConfigStruct request;
-
-        request.id = it.key();
-        request.value = qToLittleEndian(it.value());
+        setConfigStruct request = m_config.at(i);
 
         if (sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
             continue;
 
-        logWarning << "Set config item" << QString::asprintf("0x%02X", it.key()) << "request failed";
+        logWarning << "Set config" << QString::asprintf("0x%02X", request.id) << "request failed";
     }
 
-    for (auto it = m_policy.begin(); it != m_policy.end(); it++)
+    for (int i = 0; i < m_policy.length(); i++)
     {
-        setConfigStruct request;
-
-        request.id = it.key();
-        request.value = qToLittleEndian(it.value());
+        setConfigStruct request = m_policy.at(i);
 
         if (sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
             continue;
 
-        logWarning << "Set policy item" << QString::asprintf("0x%02X", it.key()) << "request failed";
+        logWarning << "Set policy" << QString::asprintf("0x%02X", request.id) << "request failed";
     }
 
-    for (auto it = m_values.begin(); it != m_values.end(); it++)
+    for (int i = 0; i < m_values.length(); i++)
     {
-        setValueStruct request;
+        setValueStruct request = m_values.at(i);
 
-        request.id = it.key();
-        request.length = static_cast <quint8> (it.value().length());
-
-        if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(it.value())) && !m_replyData.at(0))
+        if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), request.length + 2)) && !m_replyData.at(0))
             continue;
 
-        logWarning << "Set value item" << QString::asprintf("0x%02X", it.key()) << "request failed";
+        logWarning << "Set value" << QString::asprintf("0x%02X", request.id) << "request failed";
     }
 
     concentrator.enabled = 0x01;

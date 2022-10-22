@@ -1,7 +1,6 @@
 #ifndef EZSP_H
 #define EZSP_H
 
-
 #define ASH_FLAG_BYTE                                           0x7E
 #define ASH_MAX_LENGTH                                          0x84
 #define ASH_REQUEST_TIMEOUT                                     2000
@@ -214,6 +213,7 @@ struct setValueStruct
 {
     quint8  id;
     quint8  length;
+    quint16 value;
 };
 
 struct setInitialSecurityStateStruct
@@ -269,8 +269,8 @@ private:
     QByteArray m_replyData;
     bool m_replyReceived, m_errorReceived;
 
-    QMap <quint8, quint16> m_config, m_policy;
-    QMap <quint8, QByteArray> m_values;
+    QList <setConfigStruct> m_config, m_policy;
+    QList <setValueStruct> m_values;
 
     quint16 getCRC(quint8 *data, quint32 length);
     void randomize(QByteArray &data);
