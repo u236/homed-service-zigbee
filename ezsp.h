@@ -1,10 +1,9 @@
 #ifndef EZSP_H
 #define EZSP_H
 
-#define ASH_MIN_LENGTH                                          4
-#define ASH_MAX_LENGTH                                          132
 
 #define ASH_FLAG_BYTE                                           0x7E
+#define ASH_MAX_LENGTH                                          0x84
 #define ASH_REQUEST_TIMEOUT                                     2000
 
 #define ASH_CONTROL_ACK                                         0x80
@@ -211,6 +210,12 @@ struct setConfigStruct
     quint16 value;
 };
 
+struct setValueStruct
+{
+    quint8  id;
+    quint8  length;
+};
+
 struct setInitialSecurityStateStruct
 {
     quint16 bitmask;
@@ -218,12 +223,6 @@ struct setInitialSecurityStateStruct
     quint8  networkKey[16];
     quint8  networkKeySequenceNumber;
     quint64 preconfiguredTrustCenter;
-};
-
-struct setValueStruct
-{
-    quint8  id;
-    quint8  length;
 };
 
 struct versionInfoStruct
@@ -270,7 +269,7 @@ private:
     QByteArray m_replyData;
     bool m_replyReceived, m_errorReceived;
 
-    QList <setConfigStruct> m_config, m_policy;
+    QMap <quint8, quint16> m_config, m_policy;
     QMap <quint8, QByteArray> m_values;
 
     quint16 getCRC(quint8 *data, quint32 length);
