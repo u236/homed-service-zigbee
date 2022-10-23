@@ -106,10 +106,7 @@ private:
 
     Adapter *m_adapter;
 
-    QString m_libraryFile, m_databaseFile;
-    qint16 m_ledPin;
-
-    QString m_otaUpgradeFile;
+    QString m_ledPin, m_libraryFile, m_databaseFile, m_otaUpgradeFile;
     quint8 m_transactionId, m_interPanChannel;
     bool m_permitJoin;
 

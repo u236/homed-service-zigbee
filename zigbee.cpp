@@ -15,11 +15,11 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     PropertyObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
 
+    m_ledPin = m_config->value("gpio/led", "-1").toString();
     m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
     m_databaseFile = m_config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
-    m_ledPin = static_cast <qint16> (m_config->value("gpio/led", -1).toInt());
 
-    GPIO::setDirection(m_ledPin, GPIO::Output);
+    GPIO::direction(m_ledPin, GPIO::Output);
     GPIO::setStatus(m_ledPin, false);
 
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);

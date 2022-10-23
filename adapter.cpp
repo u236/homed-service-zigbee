@@ -20,12 +20,12 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
         m_serial->setParity(QSerialPort::NoParity);
         m_serial->setStopBits(QSerialPort::OneStop);
 
-        m_bootPin = static_cast <qint16> (config->value("gpio/boot", -1).toInt());
-        m_resetPin = static_cast <qint16> (config->value("gpio/reset", -1).toInt());
+        m_bootPin = config->value("gpio/boot", "-1").toString();
+        m_resetPin = config->value("gpio/reset", "-1").toString();
         m_reset = config->value("zigbee/reset").toString();
 
-        GPIO::setDirection(m_bootPin, GPIO::Output);
-        GPIO::setDirection(m_resetPin, GPIO::Output);
+        GPIO::direction(m_bootPin, GPIO::Output);
+        GPIO::direction(m_resetPin, GPIO::Output);
     }
     else
     {
@@ -125,7 +125,9 @@ void Adapter::reset(void)
             m_serial->setRequestToSend(false);
             break;
 
-        default: softReset(); break;
+        default:
+            softReset();
+            break;
     }
 }
 

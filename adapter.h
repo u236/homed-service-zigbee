@@ -168,9 +168,7 @@ protected:
     quint16 m_port;
     bool m_connected;
 
-    qint16 m_bootPin, m_resetPin;
-    QString m_reset;
-
+    QString m_bootPin, m_resetPin, m_reset;
     quint16 m_panId;
     quint8 m_channel;
     bool m_debug, m_write;
