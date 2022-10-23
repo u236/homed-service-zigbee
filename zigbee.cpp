@@ -813,7 +813,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
         if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
         {
-            if (!device->manufacturerName().isEmpty() && (device->modelName() == "TS0012" || device->modelName() == "TS0203" || device->modelName() == "TS0601")) // vendor is model some TuYa devices
+            if (!device->manufacturerName().isEmpty() && (device->modelName() == "TS0012" || device->modelName() == "TS0201" || device->modelName() == "TS0203" || device->modelName() == "TS0601")) // vendor is model some TuYa devices
             {
                 device->setModelName(device->manufacturerName());
                 device->setManufacturerName("TUYA");

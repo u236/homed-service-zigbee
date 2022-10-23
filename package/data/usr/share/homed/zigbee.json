@@ -1,4 +1,15 @@
 {
+  "aqara":
+  [
+    {
+      "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
+      "modelNames":     ["lumi.motion.ac01"],
+      "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance", "lumiResetPresence"],
+      "properties":     ["lumiData"],
+      "polls":          ["lumiPresenceSensor"]
+    }
+  ],
+
   "eWeLink":
   [
     {
@@ -80,17 +91,6 @@
     }
   ],
 
-  "aqara":
-  [
-    {
-      "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
-      "modelNames":     ["lumi.motion.ac01"],
-      "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance", "lumiResetPresence"],
-      "properties":     ["lumiData"],
-      "polls":          ["lumiPresenceSensor"]
-    }
-  ],
-
   "LUMI":
   [
     {
@@ -167,6 +167,17 @@
 
   "TUYA":
   [
+    {
+      "description":    "TUYA TS0201 Temperature and Humidity Sensor",
+      "modelNames":     ["_TZ3000_dowj6gyi", "_TZ3000_8ybe88nf"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "tuyaDummy"]
+    },
+    {
+      "description":    "TUYA TS0203 Door and Window Sensor",
+      "modelNames":     ["_TZ3000_26fmupbb"],
+      "properties":     ["batteryPercentage", "iasZoneStatus", "tuyaDummy"],
+      "reportings":     ["batteryPercentage"]
+    },
     {
       "description":    "TUYA TS0601 Human Presence Detector",
       "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
