@@ -16,6 +16,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Temperature>         ("temperatureProperty");
     qRegisterMetaType <Properties::Humidity>            ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>           ("occupancyProperty");
+    qRegisterMetaType <Properties::IASZoneStatus>       ("iasZoneStatusProperty");
     qRegisterMetaType <Properties::Energy>              ("energyProperty");
     qRegisterMetaType <Properties::Power>               ("powerProperty");
     qRegisterMetaType <Properties::IdentifyAction>      ("identifyActionProperty");
@@ -202,6 +203,15 @@ void Properties::Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, 
         return;
 
     m_value = data.at(0) ? true : false;
+}
+
+
+void Properties::IASZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload)
+{
+    if (commandId != 0x00)
+        return;
+
+    m_value = payload.at(0) ? "off" : "on";
 }
 
 void Properties::Energy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

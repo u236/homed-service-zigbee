@@ -177,6 +177,16 @@ namespace Properties
 
     };
 
+    class IASZoneStatus : public PropertyObject
+    {
+
+    public:
+
+        IASZoneStatus(void) : PropertyObject("status", CLUSTER_IAS_ZONE, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
+
     class Energy : public PropertyObject
     {
 
@@ -314,22 +324,22 @@ namespace PropertiesLUMI
 
     };
 
-    class Power : public PropertyObject
-    {
-
-    public:
-
-        Power(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
     class BatteryVoltage : public PropertyObject
     {
 
     public:
 
         BatteryVoltage(void) : PropertyObject("battery", CLUSTER_BASIC) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class Power : public PropertyObject
+    {
+
+    public:
+
+        Power(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
