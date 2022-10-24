@@ -171,18 +171,18 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     if (m_debug)
         logInfo << "-->" << QString::asprintf("%04X", command) << data.toHex(':');
 
-    command = qToBigEndian(command);
+    m_command = qToBigEndian(command);
 
     request.append(ZSTACK_PACKET_FLAG);
     request.append(static_cast <char> (data.length()));
-    request.append(reinterpret_cast <char*> (&command), sizeof(command));
+    request.append(reinterpret_cast <char*> (&m_command), sizeof(m_command));
     request.append(data);
 
     for (int i = 1; i < request.length(); i++)
         fcs ^= request[i];
 
     m_device->write(request.append(static_cast <char> (fcs)));
-    return waitForSignal(this, SIGNAL(dataReceived()), ZSTACK_REQUEST_TIMEOUT) && m_replyCommand == qFromBigEndian(command);
+    return waitForSignal(this, SIGNAL(dataReceived()), ZSTACK_REQUEST_TIMEOUT);
 }
 
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
@@ -192,9 +192,12 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
     if (command & 0x2000)
     {
-        m_replyCommand = command ^ 0x4000;
-        m_replyData = data;
-        emit dataReceived();
+        if ((command ^ 0x4000) == qFromBigEndian(m_command))
+        {
+            m_replyData = data;
+            emit dataReceived();
+        }
+
         return;
     }
 
@@ -625,7 +628,7 @@ bool ZStack::permitJoin(bool enabled)
     request.duration = enabled ? 0xF0 : 0x00;
     request.significance = 0x00;
 
-    if (!sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || !m_replyData.at(0))
+    if (!sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
     {
         logWarning << "Set permit join request failed";
         return false;

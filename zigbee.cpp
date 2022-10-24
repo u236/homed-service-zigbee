@@ -25,7 +25,7 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     connect(m_devices, &DeviceList::statusStored, this, &ZigBee::statusStored);
 
     GPIO::direction(m_statusLedPin, GPIO::Output);
-    GPIO::setStatus(m_statusLedPin, false);
+    GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
 
     if (m_statusLedPin == m_blinkLedPin)
         return;
@@ -50,7 +50,9 @@ void ZigBee::init(void)
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
 
-    connect(m_adapter, &ZStack::coordinatorReady, this, &ZigBee::coordinatorReady);
+    connect(m_adapter, &Adapter::coordinatorReady, this, &ZigBee::coordinatorReady);
+    connect(m_adapter, &Adapter::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
+
     m_adapter->init();
 }
 
@@ -1006,21 +1008,32 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     m_devices->setAdapterType(m_adapter->type());
     m_devices->setAdapterVersion(m_adapter->version());
 
-    connect(m_adapter, &ZStack::deviceJoined, this, &ZigBee::deviceJoined);
-    connect(m_adapter, &ZStack::deviceLeft, this, &ZigBee::deviceLeft);
-    connect(m_adapter, &ZStack::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
-    connect(m_adapter, &ZStack::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
-    connect(m_adapter, &ZStack::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
-    connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
-    connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
-    connect(m_adapter, &ZStack::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
-    connect(m_adapter, &ZStack::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
+    connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined);
+    connect(m_adapter, &Adapter::deviceLeft, this, &ZigBee::deviceLeft);
+    connect(m_adapter, &Adapter::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
+    connect(m_adapter, &Adapter::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
+    connect(m_adapter, &Adapter::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
+    connect(m_adapter, &Adapter::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
+    connect(m_adapter, &Adapter::messageReveived, this, &ZigBee::messageReveived);
+    connect(m_adapter, &Adapter::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
 
     m_queuesTimer->start(HANDLE_QUEUES_INTERVAL);
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
     m_adapter->setPermitJoin(m_devices->permitJoin());
 
     m_devices->storeStatus();
+}
+
+void ZigBee::permitJoinUpdated(bool enabled)
+{
+    if (enabled)
+    {
+        m_statusLedTimer->start(STATUS_LED_TIMEOUT);
+        return;
+    }
+
+    m_statusLedTimer->stop();
+    GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
 }
 
 void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
@@ -1170,7 +1183,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     endpoint = getEndpoint(device, endpointId);
     header.frameControl = static_cast <quint8> (data.at(0));
 
-    blink(20);
+    blink(50);
 
     if (header.frameControl & FC_MANUFACTURER_SPECIFIC)
     {
@@ -1227,18 +1240,6 @@ void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpo
     }
 
     logWarning << "Unrecognized extended message received from" << ieeeAddress.toHex(':') << "endpoint" << QString::asprintf("0x%02X", endpointId) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << data.toHex(':');
-}
-
-void ZigBee::permitJoinUpdated(bool enabled)
-{
-    if (enabled)
-    {
-        m_statusLedTimer->start(STATUS_LED_TIMEOUT);
-        return;
-    }
-
-    m_statusLedTimer->stop();
-    GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
 }
 
 void ZigBee::interviewTimeout(void)

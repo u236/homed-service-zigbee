@@ -286,7 +286,7 @@ private:
     quint8 m_dataRequestStatus;
     bool m_dataRequestFinished;
 
-    quint16 m_replyCommand;
+    quint16 m_command;
     QByteArray m_replyData;
 
     QMap <quint16, QByteArray> m_nvItems;

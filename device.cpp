@@ -2,7 +2,7 @@
 #include "device.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config) : m_timer(new QTimer(this)), m_file(config->value("zigbee/database", "/var/db/homed/zigbee.json").toString()), m_permitJoin(true)
+DeviceList::DeviceList(QSettings *config) : m_timer(new QTimer(this)), m_file(config->value("zigbee/database", "/var/db/homed/zigbee.json").toString()), m_permitJoin(false)
 {
     if (m_file.open(QFile::ReadOnly | QFile::Text))
     {
