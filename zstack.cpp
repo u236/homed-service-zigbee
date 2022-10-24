@@ -1,6 +1,5 @@
 #include <QtEndian>
 #include <QThread>
-#include "gpio.h"
 #include "logger.h"
 #include "zstack.h"
 

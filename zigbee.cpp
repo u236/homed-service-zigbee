@@ -468,7 +468,7 @@ void ZigBee::interviewDevice(const Device &device)
         return;
     }
 
-    if (device->endpoints().isEmpty())
+    if (!device->activeEndpointsReceived())
     {
         if (!m_adapter->activeEndpointsRequest(device->networkAddress()))
             interviewError(device, "active endpoints request failed");
@@ -485,6 +485,11 @@ void ZigBee::interviewDevice(const Device &device)
 
             return;
         }
+    }
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        // TODO: enroll IAS Zone here?
 
         if (it.value()->inClusters().contains(CLUSTER_BASIC))
         {
@@ -1067,6 +1072,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
 
     device->setNodeDescriptorReceived();
     device->updateLastSeen();
+
     m_interviewQueue.enqueue(device);
 }
 
@@ -1090,7 +1096,9 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
 
     logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");    
 
+    device->setActiveEndpointsReceived();
     device->updateLastSeen();
+
     m_interviewQueue.enqueue(device);
 }
 

@@ -1,7 +1,6 @@
 #include <QtEndian>
 #include <QRandomGenerator>
 #include "ezsp.h"
-#include "gpio.h"
 #include "logger.h"
 
 static const uint16_t crcTable[256] =

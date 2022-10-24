@@ -61,7 +61,7 @@ class DeviceObject : public QObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_version(0), m_manufacturerCode(0), m_nodeDescriptorReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_lastSeen(0), m_linkQuality(0) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_version(0), m_manufacturerCode(0), m_nodeDescriptorReceived(false), m_activeEndpointsReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -93,6 +93,9 @@ public:
     inline bool nodeDescriptorReceived(void) { return m_nodeDescriptorReceived; }
     inline void setNodeDescriptorReceived(void) { m_nodeDescriptorReceived = true; }
 
+    inline bool activeEndpointsReceived(void) { return m_activeEndpointsReceived; }
+    inline void setActiveEndpointsReceived(void) { m_activeEndpointsReceived = true; }
+
     inline bool interviewFinished(void) { return m_interviewFinished; }
     inline void setInterviewFinished(void) { m_interviewFinished = true; }
 
@@ -121,7 +124,7 @@ private:
     quint16 m_manufacturerCode;
     QString m_manufacturerName, m_modelName, m_description, m_name;
 
-    bool m_nodeDescriptorReceived, m_interviewFinished, m_multipleEndpoints;
+    bool m_nodeDescriptorReceived, m_activeEndpointsReceived, m_interviewFinished, m_multipleEndpoints;
 
     qint64 m_lastSeen;
     quint8 m_linkQuality;
