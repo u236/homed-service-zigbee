@@ -8,7 +8,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_transactionId(0)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_transactionId(0)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -23,10 +23,9 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
     connect(m_queuesTimer, &QTimer::timeout, this, &ZigBee::handleQueue);
-    connect(m_statusTimer, &QTimer::timeout, this, &ZigBee::storeStatus);
     connect(m_ledTimer, &QTimer::timeout, this, &ZigBee::disableLed);
+    connect(m_devices, &DeviceList::statusStored, this, &ZigBee::statusStored);
 
-    m_statusTimer->setSingleShot(true);
     m_ledTimer->setSingleShot(true);
 }
 
@@ -54,7 +53,7 @@ void ZigBee::setPermitJoin(bool enabled)
 {
     m_devices->setPermitJoin(enabled);
     m_adapter->setPermitJoin(enabled);
-    storeStatus();
+    m_devices->storeStatus();
 }
 
 void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
@@ -77,7 +76,7 @@ void ZigBee::removeDevice(const QByteArray &ieeeAddress)
     logInfo << "Device" << it.value()->name() << "removed";
 
     m_devices->erase(it);
-    storeStatus();
+    m_devices->storeStatus();
 }
 
 void ZigBee::updateDevice(const QByteArray &ieeeAddress, bool reportings)
@@ -517,9 +516,11 @@ void ZigBee::interviewFinished(const Device &device)
             configureReporting(it.value(), it.value()->reportings().at(i));
 
     logInfo << "Device" << device->name() << "interview finished";
+
     device->timer()->stop();
     device->setInterviewFinished();
-    storeStatus();
+
+    m_devices->storeStatus();
 }
 
 void ZigBee::interviewError(const Device &device, const QString &reason)
@@ -1004,7 +1005,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
     m_adapter->setPermitJoin(m_devices->permitJoin());
 
-    storeStatus();
+    m_devices->storeStatus();
 }
 
 void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
@@ -1050,7 +1051,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     logInfo << "Device" << it.value()->name() << "left network";
 
     m_devices->erase(it);
-    storeStatus();
+    m_devices->storeStatus();
 
     emit joinEvent(false);
 }
@@ -1286,12 +1287,6 @@ void ZigBee::handleQueue(void)
         Device device = m_neighborsQueue.dequeue();
         m_adapter->lqiRequest(device->networkAddress());
     }
-}
-
-void ZigBee::storeStatus(void)
-{
-    m_statusTimer->start(STORE_STATUS_INTERVAL);
-    emit statusStored(m_devices->store());
 }
 
 void ZigBee::disableLed(void)

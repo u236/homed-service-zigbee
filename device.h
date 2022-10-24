@@ -1,6 +1,8 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#define STORE_STATUS_INTERVAL           60000
+
 #include <QDateTime>
 #include <QFile>
 #include <QJsonArray>
@@ -134,8 +136,9 @@ private:
 
 };
 
-class DeviceList : public QMap <QByteArray, Device>
+class DeviceList : public QObject, public QMap <QByteArray, Device>
 {
+    Q_OBJECT
 
 public:
 
@@ -147,10 +150,11 @@ public:
     inline void setAdapterType(const QString &value) { m_adapterType = value; }
     inline void setAdapterVersion(const QString &value) { m_adapterVersion = value; }
 
-    QJsonObject store(void);
     Device byNetwork(quint16 networkAddress);
 
 private:
+
+    QTimer *m_timer;
 
     QFile m_file;
     bool m_permitJoin;
@@ -164,6 +168,14 @@ private:
     QJsonArray serializeDevices(void);
     QJsonArray serializeEndpoints(const Device &device);
     QJsonArray serializeNeighbors(const Device &device);
+
+public slots:
+
+    void storeStatus(void);
+
+signals:
+
+    void statusStored(const QJsonObject &json);
 
 };
 

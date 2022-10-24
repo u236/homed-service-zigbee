@@ -2,7 +2,7 @@
 #include "device.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config) : m_file(config->value("zigbee/database", "/var/db/homed/zigbee.json").toString()), m_permitJoin(true)
+DeviceList::DeviceList(QSettings *config) : m_timer(new QTimer(this)), m_file(config->value("zigbee/database", "/var/db/homed/zigbee.json").toString()), m_permitJoin(true)
 {
     if (m_file.open(QFile::ReadOnly | QFile::Text))
     {
@@ -12,25 +12,7 @@ DeviceList::DeviceList(QSettings *config) : m_file(config->value("zigbee/databas
         m_file.close();
     }
 
-    if (isEmpty())
-        return;
-
-    logInfo << count() << "devices loaded";
-}
-
-QJsonObject DeviceList::store(void)
-{
-    QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}};
-
-    if (m_file.open(QFile::WriteOnly | QFile::Text))
-    {
-        m_file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-        m_file.close();
-    }
-    else
-        logWarning << "Can't open database file, status not saved";
-
-    return json;
+    connect(m_timer, &QTimer::timeout, this, &DeviceList::storeStatus);
 }
 
 Device DeviceList::byNetwork(quint16 networkAddress)
@@ -69,6 +51,11 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
             insert(device->ieeeAddress(), device);
         }
     }
+
+    if (isEmpty())
+        return;
+
+    logInfo << count() << "devices loaded";
 }
 
 void DeviceList::unserializeEndpoints(const Device &device, const QJsonArray &endpoints)
@@ -214,4 +201,21 @@ QJsonArray DeviceList::serializeNeighbors(const Device &device)
     }
 
     return array;
+}
+
+void DeviceList::storeStatus(void)
+{
+    QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}};
+
+    m_timer->start(STORE_STATUS_INTERVAL);
+
+    if (m_file.open(QFile::WriteOnly | QFile::Text))
+    {
+        m_file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        m_file.close();
+    }
+    else
+        logWarning << "Can't open database file, status not saved";
+
+    emit statusStored(json);
 }

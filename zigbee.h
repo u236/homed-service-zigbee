@@ -3,7 +3,6 @@
 
 #define HANDLE_QUEUES_INTERVAL          1
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
-#define STORE_STATUS_INTERVAL           60000
 #define DEVICE_INTERVIEW_TIMEOUT        15000
 
 #include "device.h"
@@ -98,7 +97,7 @@ public:
 private:
 
     QSettings *m_config;
-    QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusTimer, *m_ledTimer;
+    QTimer *m_neighborsTimer, *m_queuesTimer, *m_ledTimer;
 
     DeviceList *m_devices;
     Adapter *m_adapter;
@@ -149,7 +148,6 @@ private slots:
     void pollAttributes(void);
     void updateNeighbors(void);
     void handleQueue(void);
-    void storeStatus(void);
     void disableLed(void);
 
 signals:
