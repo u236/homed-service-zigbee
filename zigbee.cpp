@@ -8,7 +8,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_transactionId(0), m_permitJoin(true)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_transactionId(0)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -16,8 +16,7 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     ReportingObject::registerMetaTypes();
 
     m_ledPin = m_config->value("gpio/led", "-1").toString();
-    m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString();
-    m_databaseFile = m_config->value("zigbee/database", "/var/db/homed/zigbee.json").toString();
+    m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString(); // TODO: make it QFile?
 
     GPIO::direction(m_ledPin, GPIO::Output);
     GPIO::setStatus(m_ledPin, false);
@@ -33,17 +32,12 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 
 void ZigBee::init(void)
 {
-    QFile file(m_databaseFile);
     QList <QString> list = {"ezsp", "znp"};
     QString adapterType = m_config->value("zigbee/adapter", "znp").toString();
 
-    if (file.open(QFile::ReadOnly | QFile::Text))
-    {
-        QJsonObject json = QJsonDocument::fromJson(file.readAll()).object();
-        unserializeDevices(json.value("devices").toArray());
-        m_permitJoin = json.value("permitJoin").toBool();
-        file.close();
-    }
+    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
+        if (it.value()->interviewFinished())
+            setupDevice(it.value());
 
     switch (list.indexOf(adapterType))
     {
@@ -58,16 +52,16 @@ void ZigBee::init(void)
 
 void ZigBee::setPermitJoin(bool enabled)
 {
-    m_permitJoin = enabled;
-    m_adapter->setPermitJoin(m_permitJoin);
+    m_devices->setPermitJoin(enabled);
+    m_adapter->setPermitJoin(enabled);
     storeStatus();
 }
 
 void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
 
-    if (it == m_devices.end())
+    if (it == m_devices->end())
         return;
 
     it.value()->setName(name);
@@ -75,20 +69,20 @@ void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
 
 void ZigBee::removeDevice(const QByteArray &ieeeAddress)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
 
-    if (it == m_devices.end())
+    if (it == m_devices->end())
         return;
 
     logInfo << "Device" << it.value()->name() << "removed";
 
-    m_devices.erase(it);
+    m_devices->erase(it);
     storeStatus();
 }
 
 void ZigBee::updateDevice(const QByteArray &ieeeAddress, bool reportings)
 {
-    Device device = m_devices.value(ieeeAddress);
+    Device device = m_devices->value(ieeeAddress);
 
     if (device.isNull())
         return;
@@ -110,7 +104,7 @@ void ZigBee::updateDevice(const QByteArray &ieeeAddress, bool reportings)
 
 void ZigBee::updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange)
 {
-    Device device = m_devices.value(ieeeAddress);
+    Device device = m_devices->value(ieeeAddress);
 
     if (device.isNull())
         return;
@@ -143,9 +137,9 @@ void ZigBee::updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, c
 
 void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
 
-    if (it == m_devices.end())
+    if (it == m_devices->end())
         return;
 
     switch (dstAddress.type())
@@ -170,10 +164,10 @@ void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, qu
 
 void ZigBee::groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 groupId, bool remove)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
     zclHeaderStruct header;
 
-    if (it == m_devices.end())
+    if (it == m_devices->end())
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
@@ -186,10 +180,10 @@ void ZigBee::groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quin
 
 void ZigBee::removeAllGroups(const QByteArray &ieeeAddress, quint8 endpointId)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
     zclHeaderStruct header;
 
-    if (it == m_devices.end())
+    if (it == m_devices->end())
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
@@ -201,11 +195,11 @@ void ZigBee::removeAllGroups(const QByteArray &ieeeAddress, quint8 endpointId)
 
 void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
     zclHeaderStruct header;
     otaImageNotifyStruct payload;
 
-    if (it == m_devices.end() || fileName.isEmpty() || !QFile::exists(fileName))
+    if (it == m_devices->end() || fileName.isEmpty() || !QFile::exists(fileName))
         return;
 
     m_otaUpgradeFile = fileName;
@@ -238,7 +232,7 @@ void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, boo
 
 void ZigBee::deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData)
 {
-    Device device = m_devices.value(ieeeAddress);
+    Device device = m_devices->value(ieeeAddress);
 
     if (device.isNull())
         return;
@@ -280,195 +274,6 @@ void ZigBee::groupAction(quint16 groupId, const QString &actionName, const QVari
 
         m_adapter->extendedDataRequest(groupId, 0xFF, 0x0000, 0x01, action->clusterId(), data, true);
     }
-}
-
-void ZigBee::unserializeDevices(const QJsonArray &devices)
-{
-    for (auto it = devices.begin(); it != devices.end(); it++)
-    {
-        QJsonObject json = it->toObject();
-
-        if (json.contains("ieeeAddress") && json.contains("networkAddress"))
-        {
-            Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt())));
-
-            device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
-            device->setVersion(static_cast <quint8> (json.value("version").toInt()));
-            device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
-            device->setManufacturerName(json.value("manufacturerName").toString());
-            device->setModelName(json.value("modelName").toString());
-            device->setName(json.value("name").toString());
-            device->setLastSeen(json.value("lastSeen").toInt());
-
-            unserializeEndpoints(device, json.value("endpoints").toArray());
-            unserializeNeighbors(device, json.value("neighbors").toArray());
-
-            if (json.value("ineterviewFinished").toBool())
-                device->setInterviewFinished();
-
-            if (device->interviewFinished())
-                setupDevice(device);
-
-            m_devices.insert(device->ieeeAddress(), device);
-        }
-    }
-
-    if (m_devices.isEmpty())
-        return;
-
-    logInfo << m_devices.count() << "devices loaded";
-}
-
-void ZigBee::unserializeEndpoints(const Device &device, const QJsonArray &endpoints)
-{
-    for (auto it = endpoints.begin(); it != endpoints.end(); it++)
-    {
-        QJsonObject json = it->toObject();
-
-        if (json.contains("endpointId"))
-        {
-            quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
-            Endpoint endpoint(new EndpointObject(endpointId, device));
-            QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray();
-
-            endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
-            endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
-
-            for (const QJsonValue &clusterId : inClusters)
-                endpoint->inClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-            for (const QJsonValue &clusterId : outClusters)
-                endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-            device->endpoints().insert(endpointId, endpoint);
-        }
-    }
-}
-
-void ZigBee::unserializeNeighbors(const Device &device, const QJsonArray &neighbors)
-{
-    for (auto it = neighbors.begin(); it != neighbors.end(); it++)
-    {
-        QJsonObject json = it->toObject();
-
-        if (json.contains("networkAddress") && json.contains("linkQuality"))
-            device->neighbors().insert(static_cast <quint16> (json.value("networkAddress").toInt()), static_cast <quint8> (json.value("linkQuality").toInt()));
-    }
-}
-
-QJsonArray ZigBee::serializeDevices(void)
-{
-    QJsonArray array;
-
-    for (auto it = m_devices.begin(); it != m_devices.end(); it++)
-    {
-        QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}, {"logicalType", static_cast <quint8> (it.value()->logicalType())}};
-        QJsonArray endpointsArray = serializeEndpoints(it.value()), neighborsArray = serializeNeighbors(it.value());
-
-        if (it.value()->logicalType() == LogicalType::Coordinator)
-        {
-            if (!m_adapter->typeString().isEmpty())
-                json.insert("type", m_adapter->typeString());
-
-            if (!m_adapter->versionString().isEmpty())
-                json.insert("version", m_adapter->versionString());
-        }
-        else
-        {
-            if (it.value()->version())
-                json.insert("version", it.value()->version());
-
-            json.insert("ineterviewFinished", it.value()->interviewFinished());
-        }
-
-        if (it.value()->manufacturerCode())
-            json.insert("manufacturerCode", it.value()->manufacturerCode());
-
-        if (!it.value()->manufacturerName().isEmpty())
-            json.insert("manufacturerName", it.value()->manufacturerName());
-
-        if (!it.value()->modelName().isEmpty())
-            json.insert("modelName", it.value()->modelName());
-
-        if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
-            json.insert("name", it.value()->name());
-
-        if (it.value()->lastSeen())
-            json.insert("lastSeen", it.value()->lastSeen());
-
-        if (!endpointsArray.isEmpty())
-            json.insert("endpoints", endpointsArray);
-
-        if (!neighborsArray.isEmpty())
-            json.insert("neighbors", neighborsArray);
-
-        array.append(json);
-    }
-
-    return array;
-}
-
-QJsonArray ZigBee::serializeEndpoints(const Device &device)
-{
-    QJsonArray array;
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        QJsonObject json;
-
-        if (!it.value()->profileId() && !it.value()->deviceId())
-            continue;
-
-        json.insert("endpointId", it.key());
-        json.insert("profileId", it.value()->profileId());
-        json.insert("deviceId", it.value()->deviceId());
-
-        if (!it.value()->inClusters().isEmpty())
-        {
-            QJsonArray inClusters;
-
-            for (int i = 0; i < it.value()->inClusters().count(); i++)
-                inClusters.append(it.value()->inClusters().at(i));
-
-            json.insert("inClusters", inClusters);
-        }
-
-        if (!it.value()->outClusters().isEmpty())
-        {
-            QJsonArray outClusters;
-
-            for (int i = 0; i < it.value()->outClusters().count(); i++)
-                outClusters.append(it.value()->outClusters().at(i));
-
-            json.insert("outClusters", outClusters);
-        }
-
-        array.append(json);
-    }
-
-    return array;
-}
-
-QJsonArray ZigBee::serializeNeighbors(const Device &device)
-{
-    QJsonArray array;
-
-    for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
-    {
-        QJsonObject json = {{"networkAddress", it.key()}, {"linkQuality", it.value()}};
-        array.append(json);
-    }
-
-    return array;
-}
-
-Device ZigBee::getDevice(quint16 networkAddress)
-{
-    for (auto it = m_devices.begin(); it != m_devices.end(); it++)
-        if (it.value()->networkAddress() == networkAddress)
-            return it.value();
-
-    return Device();
 }
 
 Endpoint ZigBee::getEndpoint(const Device &device, quint8 endpointId)
@@ -1164,12 +969,12 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
 
-    for (auto it = m_devices.begin(); it != m_devices.end(); it++)
+    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
         if (it.key() == ieeeAddress || it.value()->logicalType() == LogicalType::Coordinator)
-            m_devices.erase(it++);
+            m_devices->erase(it++);
 
-        if (it == m_devices.end())
+        if (it == m_devices->end())
             break;
     }
 
@@ -1177,8 +982,9 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     device->setName("HOMEd Coordinator");
     device->setInterviewFinished();
 
-    m_devices.insert(ieeeAddress, device);
-    m_adapter->setPermitJoin(m_permitJoin);
+    m_devices->insert(ieeeAddress, device);
+    m_devices->setAdapterType(m_adapter->type());
+    m_devices->setAdapterVersion(m_adapter->version());
 
     connect(m_adapter, &ZStack::deviceJoined, this, &ZigBee::deviceJoined);
     connect(m_adapter, &ZStack::deviceLeft, this, &ZigBee::deviceLeft);
@@ -1191,15 +997,16 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 
     m_queuesTimer->start(HANDLE_QUEUES_INTERVAL);
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+    m_adapter->setPermitJoin(m_devices->permitJoin());
 
     storeStatus();
 }
 
 void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
 
-    if (it != m_devices.end())
+    if (it != m_devices->end())
     {
         if (it.value()->timer()->isActive())
             return;
@@ -1210,7 +1017,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
     else
     {
         logInfo << "Device" << ieeeAddress.toHex(':') << "joined network with address" << QString::asprintf("0x%04X", networkAddress);
-        it = m_devices.insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
+        it = m_devices->insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
     }
 
     m_ledTimer->start(500);
@@ -1227,9 +1034,9 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
 
 void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
 {
-    auto it = m_devices.find(ieeeAddress);
+    auto it = m_devices->find(ieeeAddress);
 
-    if (it == m_devices.end())
+    if (it == m_devices->end())
         return;
 
     m_ledTimer->start(500);
@@ -1237,7 +1044,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
 
     logInfo << "Device" << it.value()->name() << "left network";
 
-    m_devices.erase(it);
+    m_devices->erase(it);
     storeStatus();
 
     emit joinEvent(false);
@@ -1245,7 +1052,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode)
 {
-    Device device = getDevice(networkAddress);
+    Device device = m_devices->byNetwork(networkAddress);
 
     if (device.isNull() || device->interviewFinished())
         return;
@@ -1265,7 +1072,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
 
 void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray data)
 {
-    Device device = getDevice(networkAddress);
+    Device device = m_devices->byNetwork(networkAddress);
     QList <QString> list;
 
     if (device.isNull() || device->interviewFinished())
@@ -1289,7 +1096,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
 
 void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList<quint16> &inClusters, const QList<quint16> &outClusters)
 {
-    Device device = getDevice(networkAddress);
+    Device device = m_devices->byNetwork(networkAddress);
     Endpoint endpoint;
 
     if (device.isNull() || device->interviewFinished())
@@ -1311,7 +1118,7 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId,
 
 void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start)
 {
-    Device device = getDevice(networkAddress);
+    Device device = m_devices->byNetwork(networkAddress);
 
     if (device.isNull())
         return;
@@ -1322,7 +1129,7 @@ void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddr
         device->neighbors().clear();
     }
 
-    if (getDevice(neighborAddress).isNull())
+    if (m_devices->byNetwork(neighborAddress).isNull())
         return;
 
     device->neighbors().insert(neighborAddress, linkQuality);
@@ -1331,7 +1138,7 @@ void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddr
 
 void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
 {
-    Device device = getDevice(networkAddress);
+    Device device = m_devices->byNetwork(networkAddress);
     Endpoint endpoint;
     zclHeaderStruct header;
     QByteArray payload;
@@ -1422,7 +1229,7 @@ void ZigBee::pollAttributes(void)
 
 void ZigBee::updateNeighbors(void)
 {
-    for (auto it = m_devices.begin(); it != m_devices.end(); it++)
+    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
         if (it.value()->logicalType() == LogicalType::EndDevice || m_neighborsQueue.contains(it.value()))
             continue;
@@ -1475,21 +1282,8 @@ void ZigBee::handleQueue(void)
 
 void ZigBee::storeStatus(void)
 {
-    QFile file(m_databaseFile);
-    QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}};
-
     m_statusTimer->start(STORE_STATUS_INTERVAL);
-
-    if (!file.open(QFile::WriteOnly | QFile::Text))
-    {
-        logWarning << "Can't open database file, status not saved";
-        return;
-    }
-
-    file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-    file.close();
-
-    emit statusStored(json);
+    emit statusStored(m_devices->store());
 }
 
 void ZigBee::disableLed(void)

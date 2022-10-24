@@ -2,6 +2,10 @@
 #define DEVICE_H
 
 #include <QDateTime>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include "action.h"
 #include "adapter.h"
 #include "poll.h"
@@ -124,6 +128,39 @@ private:
 
     QMap <quint8, Endpoint> m_endpoints;
     QMap <quint16, quint8> m_neighbors;
+
+};
+
+class DeviceList : public QMap <QByteArray, Device>
+{
+
+public:
+
+    DeviceList(QSettings *config);
+
+    inline bool permitJoin(void) { return m_permitJoin; }
+    inline void setPermitJoin(bool value) { m_permitJoin = value; }
+
+    inline void setAdapterType(const QString &value) { m_adapterType = value; }
+    inline void setAdapterVersion(const QString &value) { m_adapterVersion = value; }
+
+    QJsonObject store(void);
+    Device byNetwork(quint16 networkAddress);
+
+private:
+
+    QFile m_file;
+    bool m_permitJoin;
+
+    QString m_adapterType, m_adapterVersion;
+
+    void unserializeDevices(const QJsonArray &devices);
+    void unserializeEndpoints(const Device &device, const QJsonArray &endpoints);
+    void unserializeNeighbors(const Device &device, const QJsonArray &neighbors);
+
+    QJsonArray serializeDevices(void);
+    QJsonArray serializeEndpoints(const Device &device);
+    QJsonArray serializeNeighbors(const Device &device);
 
 };
 

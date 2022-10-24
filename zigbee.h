@@ -6,10 +6,6 @@
 #define STORE_STATUS_INTERVAL           60000
 #define DEVICE_INTERVIEW_TIMEOUT        15000
 
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QQueue>
 #include "device.h"
 
 class BindRequestObject;
@@ -104,27 +100,16 @@ private:
     QSettings *m_config;
     QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusTimer, *m_ledTimer;
 
+    DeviceList *m_devices;
     Adapter *m_adapter;
 
-    QString m_ledPin, m_libraryFile, m_databaseFile, m_otaUpgradeFile;
+    QString m_ledPin, m_libraryFile, m_otaUpgradeFile;
     quint8 m_transactionId, m_interPanChannel;
-    bool m_permitJoin;
-
-    QMap <QByteArray, Device> m_devices;
 
     QQueue <BindRequest> m_bindQueue;
     QQueue <DataRequest> m_dataQueue;
     QQueue <Device> m_interviewQueue, m_neighborsQueue;
 
-    void unserializeDevices(const QJsonArray &devices);
-    void unserializeEndpoints(const Device &device, const QJsonArray &endpoints);
-    void unserializeNeighbors(const Device &device, const QJsonArray &neighbors);
-
-    QJsonArray serializeDevices(void);
-    QJsonArray serializeEndpoints(const Device &device);
-    QJsonArray serializeNeighbors(const Device &device);
-
-    Device getDevice(quint16 networkAddress);
     Endpoint getEndpoint(const Device &device, quint8 endpointId);
 
     void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);

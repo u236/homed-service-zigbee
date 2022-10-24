@@ -18,6 +18,7 @@ SOURCES += \
     action.cpp \
     adapter.cpp \
     controller.cpp \
+    device.cpp \
     ezsp.cpp \
     poll.cpp \
     property.cpp \

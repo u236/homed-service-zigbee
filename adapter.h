@@ -151,8 +151,8 @@ public:
 
     virtual quint8 dataRequestStatus(void) = 0;
 
-    inline QString typeString(void) { return m_typeString; }
-    inline QString versionString(void) { return m_versionString; }
+    inline QString type(void) { return m_typeString; }
+    inline QString version(void) { return m_versionString; }
 
     void init(void);
 
