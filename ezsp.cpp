@@ -49,34 +49,6 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
     m_values.append({VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
 }
 
-void EZSP::setPermitJoin(bool enabled)
-{
-    setConfigStruct policy;
-
-    if (enabled && (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E63653039")) || m_replyData.at(0)))
-    {
-        logWarning << "Add transient key request failed";
-        return;
-    }
-
-    if (!sendFrame(FRAME_PERMIT_JOINING, QByteArray(1, enabled ? 0xFF : 0x00)) || m_replyData.at(0))
-    {
-        logWarning << "Set permit join request failed";
-        return;
-    }
-
-    policy.id = POLICY_TRUST_CENTER;
-    policy.value = qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS);
-
-    if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
-    {
-        logWarning << "Set policy item" << QString::asprintf("0x%02X", POLICY_TRUST_CENTER) << "request failed";
-        return;
-    }
-
-    logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
-}
-
 bool EZSP::nodeDescriptorRequest(quint16 networkAddress)
 {
     quint16 data = qToLittleEndian(networkAddress);
@@ -756,6 +728,37 @@ void EZSP::handleError(const QString &reason)
 
     m_buffer.clear();
     reset();
+}
+
+bool EZSP::permitJoin(bool enabled)
+{
+    if (enabled)
+    {
+        setConfigStruct policy;
+
+        if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E63653039")) || m_replyData.at(0))
+        {
+            logWarning << "Add transient key request failed";
+            return false;
+        }
+
+        policy.id = POLICY_TRUST_CENTER;
+        policy.value = qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS);
+
+        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
+        {
+            logWarning << "Set policy item" << QString::asprintf("0x%02X", POLICY_TRUST_CENTER) << "request failed";
+            return false;
+        }
+    }
+
+    if (!sendFrame(FRAME_PERMIT_JOINING, QByteArray(1, enabled ? 0xF0 : 0x00)) || m_replyData.at(0))
+    {
+        logWarning << "Set permit join request failed";
+        return false;
+    }
+
+    return true;
 }
 
 void EZSP::softReset(void)

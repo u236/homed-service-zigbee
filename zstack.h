@@ -256,7 +256,6 @@ public:
 
     ZStack(QSettings *config, QObject *parent);
 
-    void setPermitJoin(bool enabled) override;
     bool nodeDescriptorRequest(quint16 networkAddress) override;
     bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
     bool activeEndpointsRequest(quint16 networkAddress) override;
@@ -301,6 +300,7 @@ private:
     bool startCoordinator(void);
     void coordinatorStarted(void);
 
+    bool permitJoin(bool enabled) override;
     void softReset(void) override;
     void parseData(void) override;
 

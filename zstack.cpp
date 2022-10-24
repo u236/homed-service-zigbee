@@ -16,24 +16,6 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB,     QByteArray(1, 0x01));
 }
 
-void ZStack::setPermitJoin(bool enabled)
-{
-    permitJoinRequestStruct request;
-
-    request.mode = PERMIT_JOIN_MODE_ADDREESS;
-    request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
-    request.duration = enabled ? 0xFF : 0x00;
-    request.significance = 0x00;
-
-    if (sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
-    {
-        logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
-        return;
-    }
-
-    logWarning << "Set permit join request failed";
-}
-
 bool ZStack::nodeDescriptorRequest(quint16 networkAddress)
 {
     quint16 data = qToLittleEndian(networkAddress);
@@ -632,6 +614,24 @@ void ZStack::coordinatorStarted(void)
     quint64 ieeeAddress;
     ieeeAddress = qToBigEndian(qFromLittleEndian(m_ieeeAddress));
     emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
+}
+
+bool ZStack::permitJoin(bool enabled)
+{
+    permitJoinRequestStruct request;
+
+    request.mode = PERMIT_JOIN_MODE_ADDREESS;
+    request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
+    request.duration = enabled ? 0xF0 : 0x00;
+    request.significance = 0x00;
+
+    if (!sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || !m_replyData.at(0))
+    {
+        logWarning << "Set permit join request failed";
+        return false;
+    }
+
+    return true;
 }
 
 void ZStack::softReset(void)

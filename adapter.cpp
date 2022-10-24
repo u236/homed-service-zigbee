@@ -6,7 +6,7 @@
 #include "gpio.h"
 #include "logger.h"
 
-Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_socketTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_connected(false)
+Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_socketTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_connected(false)
 {
     QString portName = config->value("zigbee/port", "/dev/ttyUSB0").toString();
 
@@ -64,6 +64,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
 
     connect(m_device, &QIODevice::readyRead, this, &Adapter::readyRead);
     connect(m_resetTimer, &QTimer::timeout, this, &Adapter::resetTimeout);
+    connect(m_permitJoinTimer, &QTimer::timeout, this, &Adapter::permitJoinTimeout);
 
     m_resetTimer->setSingleShot(true);
 }
@@ -100,6 +101,25 @@ void Adapter::init(void)
         m_socket->disconnectFromHost();
 
     m_socket->connectToHost(m_adddress, m_port);
+}
+
+void Adapter::setPermitJoin(bool enabled)
+{
+    if (!permitJoin(enabled))
+        return;
+
+    if (m_permitJoin != enabled)
+    {
+        logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
+
+        if (enabled)
+            m_permitJoinTimer->start(PERMIT_JOIN_TIMEOUT);
+        else
+            m_permitJoinTimer->stop();
+
+        m_permitJoin = enabled;
+        emit permitJoinUpdated(enabled);
+    }
 }
 
 void Adapter::reset(void)
@@ -174,13 +194,6 @@ QByteArray Adapter::bindRequestPayload(const QByteArray &srcAddress, quint8 srcE
     return QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1));
 }
 
-void Adapter::readyRead(void)
-{
-    m_buffer.append(m_device->readAll());
-    parseData();
-    QTimer::singleShot(0, this, &Adapter::handleQueue);
-}
-
 void Adapter::socketConnected(void)
 {
     logInfo << "Successfully connected to" << m_adddress.toString();
@@ -200,8 +213,24 @@ void Adapter::socketReconnect(void)
     m_socket->connectToHost(m_adddress, m_port);
 }
 
+void Adapter::readyRead(void)
+{
+    m_buffer.append(m_device->readAll());
+    parseData();
+    QTimer::singleShot(0, this, &Adapter::handleQueue);
+}
+
 void Adapter::resetTimeout(void)
 {
     logWarning << "Adapter reset timed out";
     init();
+}
+
+void Adapter::permitJoinTimeout(void)
+{
+    if (permitJoin(true))
+        return;
+
+    m_permitJoinTimer->stop();
+    emit permitJoinUpdated(false);
 }

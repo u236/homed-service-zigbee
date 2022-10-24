@@ -1,9 +1,12 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
+#define SOCKET_RECONNECT_INTERVAL       5000
+
 #define ADAPTER_RESET_DELAY             100
 #define ADAPTER_RESET_TIMEOUT           10000
-#define SOCKET_RECONNECT_INTERVAL       5000
+
+#define PERMIT_JOIN_TIMEOUT             60000
 #define NETWORK_REQUEST_TIMEOUT         10000
 
 #define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
@@ -132,8 +135,6 @@ public:
     Adapter(QSettings *config, QObject *parent);
     ~Adapter(void);
 
-    virtual void setPermitJoin(bool enabled) = 0;
-
     virtual bool nodeDescriptorRequest(quint16 networkAddress) = 0;
     virtual bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) = 0;
     virtual bool activeEndpointsRequest(quint16 networkAddress) = 0;
@@ -155,6 +156,7 @@ public:
     inline QString version(void) { return m_versionString; }
 
     void init(void);
+    void setPermitJoin(bool enabled);
 
 protected:
 
@@ -162,7 +164,7 @@ protected:
     QTcpSocket *m_socket;
     QIODevice *m_device;
 
-    QTimer *m_socketTimer, *m_resetTimer;
+    QTimer *m_socketTimer, *m_resetTimer, *m_permitJoinTimer;
 
     QHostAddress m_adddress;
     quint16 m_port;
@@ -175,6 +177,7 @@ protected:
 
     QString m_typeString, m_versionString;
     quint64 m_ieeeAddress;
+    bool m_permitJoin;
 
     QByteArray m_buffer;
     QQueue <QByteArray> m_queue;
@@ -187,6 +190,7 @@ protected:
 
 private:
 
+    virtual bool permitJoin(bool enabled) = 0;
     virtual void softReset(void) = 0;
     virtual void parseData(void) = 0;
 
@@ -194,12 +198,13 @@ private slots:
 
     virtual void handleQueue(void) = 0;
 
-    void readyRead(void);
-    void resetTimeout(void);
-
     void socketConnected(void);
     void socketError(QTcpSocket::SocketError error);
     void socketReconnect(void);
+
+    void readyRead(void);
+    void resetTimeout(void);
+    void permitJoinTimeout(void);
 
 signals:
 
@@ -212,6 +217,8 @@ signals:
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start);
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+
+    void permitJoinUpdated(bool enabled);
 
 };
 
