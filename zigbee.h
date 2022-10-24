@@ -4,6 +4,7 @@
 #define HANDLE_QUEUES_INTERVAL          1
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define DEVICE_INTERVIEW_TIMEOUT        15000
+#define STATUS_LED_TIMEOUT              200
 
 #include "device.h"
 
@@ -97,12 +98,12 @@ public:
 private:
 
     QSettings *m_config;
-    QTimer *m_neighborsTimer, *m_queuesTimer, *m_ledTimer;
+    QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusLedTimer;
 
     DeviceList *m_devices;
     Adapter *m_adapter;
 
-    QString m_ledPin, m_libraryFile, m_otaUpgradeFile;
+    QString m_statusLedPin, m_blinkLedPin, m_libraryFile, m_otaUpgradeFile;
     quint8 m_transactionId, m_interPanChannel;
 
     QQueue <BindRequest> m_bindQueue;
@@ -132,6 +133,8 @@ private:
     void touchLinkReset(const QByteArray &ieeeAddress, quint8 channel);
     void touchLinkScan(void);
 
+    void blink(quint16 timeout);
+
 private slots:
 
     void coordinatorReady(const QByteArray &ieeeAddress);
@@ -143,12 +146,15 @@ private slots:
     void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start);
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void permitJoinUpdated(bool enabled);
 
     void interviewTimeout(void);
     void pollAttributes(void);
     void updateNeighbors(void);
     void handleQueue(void);
-    void disableLed(void);
+
+    void updateStatusLed(void);
+    void updateBlinkLed(void);
 
 signals:
 

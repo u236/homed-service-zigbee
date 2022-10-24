@@ -8,25 +8,30 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_ledTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_transactionId(0)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_transactionId(0)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
     PropertyObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
 
-    m_ledPin = m_config->value("gpio/led", "-1").toString();
+    m_statusLedPin = m_config->value("gpio/status", "-1").toString();
+    m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
     m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString(); // TODO: make it QFile?
-
-    GPIO::direction(m_ledPin, GPIO::Output);
-    GPIO::setStatus(m_ledPin, false);
 
     connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
     connect(m_queuesTimer, &QTimer::timeout, this, &ZigBee::handleQueue);
-    connect(m_ledTimer, &QTimer::timeout, this, &ZigBee::disableLed);
+    connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
     connect(m_devices, &DeviceList::statusStored, this, &ZigBee::statusStored);
 
-    m_ledTimer->setSingleShot(true);
+    GPIO::direction(m_statusLedPin, GPIO::Output);
+    GPIO::setStatus(m_statusLedPin, false);
+
+    if (m_statusLedPin == m_blinkLedPin)
+        return;
+
+    GPIO::direction(m_blinkLedPin, GPIO::Output);
+    GPIO::setStatus(m_blinkLedPin, false);
 }
 
 void ZigBee::init(void)
@@ -969,6 +974,15 @@ void ZigBee::touchLinkScan(void)
     logInfo << "TouchLink scan finished successfully";
 }
 
+void ZigBee::blink(quint16 timeout)
+{
+    if (m_statusLedTimer->isActive() && m_statusLedPin == m_blinkLedPin)
+        return;
+
+    GPIO::setStatus(m_blinkLedPin, true);
+    QTimer::singleShot(timeout, this, &ZigBee::updateBlinkLed);
+}
+
 void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
 {
     Device device(new DeviceObject(ieeeAddress));
@@ -1000,6 +1014,7 @@ void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
     connect(m_adapter, &ZStack::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
     connect(m_adapter, &ZStack::messageReveived, this, &ZigBee::messageReveived);
     connect(m_adapter, &ZStack::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
+    connect(m_adapter, &ZStack::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
 
     m_queuesTimer->start(HANDLE_QUEUES_INTERVAL);
     m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
@@ -1026,8 +1041,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         it = m_devices->insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
     }
 
-    m_ledTimer->start(500);
-    GPIO::setStatus(m_ledPin, true);
+    blink(500);
 
     connect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout);
     it.value()->timer()->setSingleShot(true);
@@ -1045,10 +1059,8 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     if (it == m_devices->end())
         return;
 
-    m_ledTimer->start(500);
-    GPIO::setStatus(m_ledPin, true);
-
     logInfo << "Device" << it.value()->name() << "left network";
+    blink(500);
 
     m_devices->erase(it);
     m_devices->storeStatus();
@@ -1156,11 +1168,9 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         return;
 
     endpoint = getEndpoint(device, endpointId);
-
-    m_ledTimer->start(50);
-    GPIO::setStatus(m_ledPin, true);
-
     header.frameControl = static_cast <quint8> (data.at(0));
+
+    blink(20);
 
     if (header.frameControl & FC_MANUFACTURER_SPECIFIC)
     {
@@ -1217,6 +1227,18 @@ void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpo
     }
 
     logWarning << "Unrecognized extended message received from" << ieeeAddress.toHex(':') << "endpoint" << QString::asprintf("0x%02X", endpointId) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << data.toHex(':');
+}
+
+void ZigBee::permitJoinUpdated(bool enabled)
+{
+    if (enabled)
+    {
+        m_statusLedTimer->start(STATUS_LED_TIMEOUT);
+        return;
+    }
+
+    m_statusLedTimer->stop();
+    GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
 }
 
 void ZigBee::interviewTimeout(void)
@@ -1289,7 +1311,12 @@ void ZigBee::handleQueue(void)
     }
 }
 
-void ZigBee::disableLed(void)
+void ZigBee::updateStatusLed(void)
 {
-    GPIO::setStatus(m_ledPin, false);
+    GPIO::setStatus(m_statusLedPin, !GPIO::getStatus(m_statusLedPin));
+}
+
+void ZigBee::updateBlinkLed(void)
+{
+    GPIO::setStatus(m_blinkLedPin, false);
 }
