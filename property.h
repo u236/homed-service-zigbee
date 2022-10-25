@@ -89,6 +89,16 @@ namespace Properties
 
     };
 
+    class Contact : public PropertyObject
+    {
+
+    public:
+
+        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class Level : public PropertyObject
     {
 
@@ -177,16 +187,6 @@ namespace Properties
 
     };
 
-    class IASZoneStatus : public PropertyObject
-    {
-
-    public:
-
-        IASZoneStatus(void) : PropertyObject("status", CLUSTER_IAS_ZONE, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
-
-    };
-
     class Energy : public PropertyObject
     {
 
@@ -241,6 +241,49 @@ namespace Properties
     public:
 
         LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
+}
+
+namespace PropertiesIAS
+{
+    class Contact : public PropertyObject
+    {
+
+    public:
+
+        Contact(void) : PropertyObject("contact", CLUSTER_IAS_ZONE, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
+
+    class WaterLeak : public PropertyObject
+    {
+
+    public:
+
+        WaterLeak(void) : PropertyObject("waterLeak", CLUSTER_IAS_ZONE, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
+
+    class Tamper : public PropertyObject
+    {
+
+    public:
+
+        Tamper(void) : PropertyObject("tamper", CLUSTER_IAS_ZONE, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
+
+    class BatteryLow : public PropertyObject
+    {
+
+    public:
+
+        BatteryLow(void) : PropertyObject("batteryLow", CLUSTER_IAS_ZONE, true) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };

@@ -8,6 +8,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::BatteryPercentage>   ("batteryPercentageProperty");
     qRegisterMetaType <Properties::BatteryUndivided>    ("batteryUndividedProperty");
     qRegisterMetaType <Properties::Status>              ("statusProperty");
+    qRegisterMetaType <Properties::Contact>             ("contactProperty");
     qRegisterMetaType <Properties::Level>               ("levelProperty");
     qRegisterMetaType <Properties::ColorHS>             ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>             ("colorXYProperty");
@@ -16,12 +17,16 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Temperature>         ("temperatureProperty");
     qRegisterMetaType <Properties::Humidity>            ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>           ("occupancyProperty");
-    qRegisterMetaType <Properties::IASZoneStatus>       ("iasZoneStatusProperty");
     qRegisterMetaType <Properties::Energy>              ("energyProperty");
     qRegisterMetaType <Properties::Power>               ("powerProperty");
     qRegisterMetaType <Properties::IdentifyAction>      ("identifyActionProperty");
     qRegisterMetaType <Properties::SwitchAction>        ("switchActionProperty");
     qRegisterMetaType <Properties::LevelAction>         ("levelActionProperty");
+
+    qRegisterMetaType <PropertiesIAS::Contact>          ("iasContactProperty");
+    qRegisterMetaType <PropertiesIAS::WaterLeak>        ("iasWaterLeakProperty");
+    qRegisterMetaType <PropertiesIAS::Tamper>           ("iasTamperProperty");
+    qRegisterMetaType <PropertiesIAS::BatteryLow>       ("iasBatteryLowProperty");
 
     qRegisterMetaType <PropertiesPTVO::CO2>             ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>     ("ptvoTemperatureProperty");
@@ -81,6 +86,14 @@ void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, con
         return;
 
     m_value = data.at(0) ? "on" : "off";
+}
+
+void Properties::Contact::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+        return;
+
+    m_value = data.at(0) ? true : false;
 }
 
 void Properties::Level::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -203,15 +216,6 @@ void Properties::Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, 
         return;
 
     m_value = data.at(0) ? true : false;
-}
-
-
-void Properties::IASZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload)
-{
-    if (commandId != 0x00)
-        return;
-
-    m_value = payload.at(0) ? "off" : "on";
 }
 
 void Properties::Energy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -344,6 +348,38 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
         case 0x05: m_value = "moveUp"; break;
         case 0x07: m_value = "moveStop"; break;
     }
+}
+
+void PropertiesIAS::Contact::parseCommand(quint8 commandId, const QByteArray &payload)
+{
+    if (commandId != 0x00)
+        return;
+
+    m_value = (payload.at(0) & 0x01) ? false : true;
+}
+
+void PropertiesIAS::WaterLeak::parseCommand(quint8 commandId, const QByteArray &payload)
+{
+    if (commandId != 0x00)
+        return;
+
+    m_value = (payload.at(0) & 0x01) ? true : false;
+}
+
+void PropertiesIAS::Tamper::parseCommand(quint8 commandId, const QByteArray &payload)
+{
+    if (commandId != 0x00)
+        return;
+
+    m_value = (payload.at(0) & 0x04) ? true : false;
+}
+
+void PropertiesIAS::BatteryLow::parseCommand(quint8 commandId, const QByteArray &payload)
+{
+    if (commandId != 0x00)
+        return;
+
+    m_value = (payload.at(0) & 0x08) ? true : false;
 }
 
 void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
