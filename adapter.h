@@ -154,6 +154,7 @@ public:
 
     inline QString type(void) { return m_typeString; }
     inline QString version(void) { return m_versionString; }
+    inline quint64 ieeeAddress(void) { return m_ieeeAddress; }
 
     void init(void);
     void setPermitJoin(bool enabled);
@@ -177,6 +178,7 @@ protected:
 
     QString m_typeString, m_versionString;
     quint64 m_ieeeAddress;
+
     bool m_permitJoin;
 
     QByteArray m_buffer;
@@ -208,7 +210,7 @@ private slots:
 
 signals:
 
-    void coordinatorReady(const QByteArray &ieeeAddress);
+    void coordinatorReady(void);
     void permitJoinUpdated(bool enabled);
 
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);

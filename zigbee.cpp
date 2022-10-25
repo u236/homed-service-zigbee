@@ -458,59 +458,111 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->interviewFinished())
         return;
 
-    if (!device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
-    {
-        interviewFinished(device);
-        return;
-    }
-
     device->timer()->start(DEVICE_INTERVIEW_TIMEOUT);
 
-    if (!device->nodeDescriptorReceived())
+    if (device->manufacturerName().isEmpty() || device->modelName().isEmpty())
     {
-        if (!m_adapter->nodeDescriptorRequest(device->networkAddress()))
-            interviewError(device, "node descriptor request failed");
-
-        return;
-    }
-
-    if (!device->activeEndpointsReceived())
-    {
-        if (!m_adapter->activeEndpointsRequest(device->networkAddress()))
-            interviewError(device, "active endpoints request failed");
-
-        return;
-    }
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        if (!it.value()->profileId() && !it.value()->deviceId())
+        if (!device->nodeDescriptorReceived())
         {
+            if (!m_adapter->nodeDescriptorRequest(device->networkAddress()))
+                interviewError(device, "node descriptor request failed");
+
+            return;
+        }
+
+        if (!device->activeEndpointsReceived())
+        {
+            if (!m_adapter->activeEndpointsRequest(device->networkAddress()))
+                interviewError(device, "active endpoints request failed");
+
+            return;
+        }
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        {
+            if (it.value()->profileId() || it.value()->deviceId())
+                continue;
+
             if (!m_adapter->simpleDescriptorRequest(device->networkAddress(), it.key()))
                 interviewError(device, QString::asprintf("endpoint 0x%02X simple descriptor request failed", it.key()));
 
             return;
         }
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        {
+            if (!it.value()->inClusters().contains(CLUSTER_BASIC))
+                continue;
+
+            if (!readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005}, false))
+                interviewError(device, "read basic attributes request failed");
+
+            return;
+        }
+
+        interviewError(device, "device has empty manufacturer name or model name");
     }
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        // TODO: enroll IAS Zone here?
+        if (!it.value()->inClusters().contains(CLUSTER_IAS_ZONE))
+            continue;
 
-        if (it.value()->inClusters().contains(CLUSTER_BASIC))
+        switch (it.value()->zoneStatus())
         {
-            if (!readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005}, false))
-                interviewError(device, "read basic cluster attributes request failed");
+            case ZoneStatus::Unknown:
+            {
+                if (!readAttributes(device, it.key(), CLUSTER_IAS_ZONE, {0x0000, 0x0010}, false))
+                    interviewError(device, "read current IAS zone status request failed");
 
-            return;
+                return;
+            }
+
+            case ZoneStatus::SetAddress:
+            {
+                zclHeaderStruct header;
+                writeArrtibutesStruct payload;
+                quint64 ieeeAddress = m_adapter->ieeeAddress();
+
+                header.frameControl = FC_DISABLE_DEFAULT_RESPONSE;
+                header.transactionId = m_transactionId++;
+                header.commandId = CMD_WRITE_ATTRIBUTES;
+
+                payload.attributeId = qToLittleEndian <quint16> (0x0010);
+                payload.dataType = DATA_TYPE_IEEE_ADDRESS;
+
+                if (!m_adapter->dataRequest(device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress))))
+                    interviewError(device, "write IAS zone CIE address request failed");
+
+                return;
+            }
+
+            case ZoneStatus::Enroll:
+            {
+                zclHeaderStruct header;
+                iasZoneEnrollResponseStruct payload;
+
+                header.frameControl =  FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE;
+                header.transactionId = m_transactionId++;
+                header.commandId = 0x00;
+
+                payload.responseCode = 0x00;
+                payload.zoneId = 0x42;
+
+                if (!m_adapter->dataRequest(device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload))))
+                    interviewError(device, "enroll IAS zone request failed");
+                else if (!readAttributes(device, it.key(), CLUSTER_IAS_ZONE, {0x0000, 0x0010}, false))
+                    interviewError(device, "read updated IAS zone status request failed");
+
+                return;
+            }
+
+            case ZoneStatus::Enrolled:
+                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", it.value()->id()) << "IAS zone enrolled";
+                break;
         }
     }
 
-    interviewError(device, "device has empty manufacturer name or model name");
-}
-
-void ZigBee::interviewFinished(const Device &device)
-{
     setupDevice(device);
 
     if (device->description().isEmpty())
@@ -532,11 +584,11 @@ void ZigBee::interviewFinished(const Device &device)
 
 void ZigBee::interviewError(const Device &device, const QString &reason)
 {
-    if (device->timer()->isActive())
-    {
-        logWarning << "Device" << device->name() << "interview aborted:" << reason;
-        device->timer()->stop();
-    }
+    if (!device->timer()->isActive())
+        return;
+
+    logWarning << "Device" << device->name() << "interview aborted:" << reason;
+    device->timer()->stop();
 }
 
 void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)
@@ -610,7 +662,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
             case 0x0004:
 
-                if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
+                if (dataType != DATA_TYPE_CHARACTER_STRING)
                     return;
 
                 device->setManufacturerName(QString(data).trimmed());
@@ -618,7 +670,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
             case 0x0005:
 
-                if (device->interviewFinished() || dataType != DATA_TYPE_CHARACTER_STRING)
+                if (dataType != DATA_TYPE_CHARACTER_STRING)
                     return;
 
                 device->setModelName(QString(data).trimmed());
@@ -631,7 +683,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
         if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
         {
-            QList <QString> list = {"TS0012", "TS0201", "TS0203", "TS0207" "TS0601"}; // vendor is model some TuYa devices
+            QList <QString> list = {"TS0012", "TS0201", "TS0203", "TS0207", "TS0601"}; // vendor is model some TuYa devices
 
             if (!device->manufacturerName().isEmpty() && list.contains(device->modelName()))
             {
@@ -639,7 +691,38 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 device->setManufacturerName("TUYA");
             }
 
-            interviewFinished(device);
+            interviewDevice(device);
+        }
+
+        return;
+    }
+
+    if (clusterId == CLUSTER_IAS_ZONE && (attributeId == 0x0000 || attributeId == 0x0010))
+    {
+        switch (attributeId)
+        {
+            case 0x0000:
+            {
+                if (dataType != DATA_TYPE_8BIT_ENUM)
+                    return;
+
+                endpoint->setZoneStatus(data.at(0) ? ZoneStatus::Enrolled : ZoneStatus::Enroll);
+                break;
+            }
+
+            case 0x0010:
+            {
+                quint64 ieeeAddress = m_adapter->ieeeAddress();
+
+                if (dataType != DATA_TYPE_IEEE_ADDRESS)
+                    return;
+
+                if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
+                    endpoint->setZoneStatus(ZoneStatus::SetAddress);
+
+                interviewDevice(device);
+                break;
+            }
         }
 
         return;
@@ -865,7 +948,6 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
     switch (commandId)
     {
         case CMD_READ_ATTRIBUTES: // TODO: tyua sensor reading time cluster
-        case CMD_WRITE_ATTRIBUTES_RESPONSE:
         case CMD_CONFIGURE_REPORTING_RESPONSE:
         case CMD_DEFAULT_RESPONSE:
             break;
@@ -873,7 +955,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
         case CMD_READ_ATTRIBUTES_RESPONSE:
         case CMD_REPORT_ATTRIBUTES:
         {
-            while (payload.length())
+            while (payload.length() > 2)
             {
                 quint8 dataType, offset, size = 0;
                 quint16 attributeId;
@@ -904,6 +986,17 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
                 parseAttribute(endpoint, clusterId, attributeId, dataType, payload.mid(offset, size));
                 payload.remove(0, offset + size);
+            }
+
+            break;
+        }
+
+        case CMD_WRITE_ATTRIBUTES_RESPONSE:
+        {
+            if (clusterId == CLUSTER_IAS_ZONE && !payload.at(0))
+            {
+                endpoint->setZoneStatus(ZoneStatus::Enroll);
+                interviewDevice(device);
             }
 
             break;
@@ -987,8 +1080,10 @@ void ZigBee::blink(quint16 timeout)
     QTimer::singleShot(timeout, this, &ZigBee::updateBlinkLed);
 }
 
-void ZigBee::coordinatorReady(const QByteArray &ieeeAddress)
+void ZigBee::coordinatorReady(void)
 {
+    quint64 adapterAddress = qToBigEndian(qFromLittleEndian(m_adapter->ieeeAddress()));
+    QByteArray ieeeAddress(reinterpret_cast <char*> (&adapterAddress), sizeof(adapterAddress));
     Device device(new DeviceObject(ieeeAddress));
 
     logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
@@ -1122,7 +1217,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
         list.append(QString::asprintf("0x%02X", endpointId));
     }
 
-    logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");    
+    logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");
 
     device->setActiveEndpointsReceived();
     device->updateLastSeen();

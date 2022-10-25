@@ -20,18 +20,29 @@ typedef QSharedPointer <EndpointObject> Endpoint;
 class DeviceObject;
 typedef QSharedPointer <DeviceObject> Device;
 
+enum class ZoneStatus
+{
+    Unknown,
+    SetAddress,
+    Enroll,
+    Enrolled
+};
+
 class EndpointObject : public EndpointDataObject
 {
 
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-         EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_dataUpdated(false) {}
+         EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_zoneStatus(ZoneStatus::Unknown), m_dataUpdated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
 
     inline quint8 id(void) {return m_id; }
     inline Device device(void) { return m_device; }
+
+    inline ZoneStatus zoneStatus(void) { return m_zoneStatus; }
+    inline void setZoneStatus(ZoneStatus value) { m_zoneStatus = value; }
 
     inline bool dataUpdated(void) { return m_dataUpdated; }
     inline void setDataUpdated(bool value) { m_dataUpdated = value; }
@@ -47,6 +58,8 @@ private:
 
     quint8 m_id;
     Device m_device;
+
+    ZoneStatus m_zoneStatus;
     bool m_dataUpdated;
 
     QList <Action> m_actions;

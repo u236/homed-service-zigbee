@@ -341,7 +341,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
                 m_status = static_cast <quint8> (data.at(0));
 
             if (m_version == ZStackVersion::ZStack12x && m_status == ZSTACK_COORDINATOR_STARTED)
-                coordinatorStarted();
+                emit coordinatorReady();
 
             break;
         }
@@ -365,7 +365,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case APP_CNF_BDB_COMMISSIONING_NOTIFICATION:
         {
             if (!data.at(2) && m_status == ZSTACK_COORDINATOR_STARTED)
-                coordinatorStarted();
+                emit coordinatorReady();
 
             break;
         }
@@ -610,13 +610,6 @@ bool ZStack::startCoordinator(void)
     }
 
     return true;
-}
-
-void ZStack::coordinatorStarted(void)
-{
-    quint64 ieeeAddress;
-    ieeeAddress = qToBigEndian(qFromLittleEndian(m_ieeeAddress));
-    emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
 }
 
 bool ZStack::permitJoin(bool enabled)

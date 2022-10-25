@@ -716,6 +716,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
+    emit coordinatorReady();
     return true;
 }
 
@@ -867,14 +868,9 @@ void EZSP::handleQueue(void)
             m_sequenceId = 0;
             m_acknowledgeId = 0;
 
-            if (startCoordinator())
-            {
-                quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(m_ieeeAddress));
-                emit coordinatorReady(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
-                break;
-            }
+            if (!startCoordinator())
+                logWarning << "Coordinator startup failed";
 
-            logWarning << "Coordinator startup failed";
             break;
         }
 

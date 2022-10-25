@@ -298,7 +298,6 @@ private:
     bool writeConfiguration(quint16 id, const QByteArray &data);
 
     bool startCoordinator(void);
-    void coordinatorStarted(void);
 
     bool permitJoin(bool enabled) override;
     void softReset(void) override;

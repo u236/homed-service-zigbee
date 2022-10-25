@@ -137,7 +137,7 @@ private:
 
 private slots:
 
-    void coordinatorReady(const QByteArray &ieeeAddress);
+    void coordinatorReady(void);
     void permitJoinUpdated(bool enabled);
 
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);

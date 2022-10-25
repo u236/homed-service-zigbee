@@ -46,11 +46,13 @@
 #define DATA_TYPE_48BIT_SIGNED                      0x2D
 #define DATA_TYPE_56BIT_SIGNED                      0x2E
 #define DATA_TYPE_64BIT_SIGNED                      0x2F
+#define DATA_TYPE_8BIT_ENUM                         0x30
 #define DATA_TYPE_SINGLE_PRECISION                  0x39
 #define DATA_TYPE_DOUBLE_PRECISION                  0x3A
 #define DATA_TYPE_OCTET_STRING                      0x41
 #define DATA_TYPE_CHARACTER_STRING                  0x42
 #define DATA_TYPE_STRUCTURE                         0x4C
+#define DATA_TYPE_IEEE_ADDRESS                      0xF0
 
 #define CLUSTER_BASIC                               0x0000
 #define CLUSTER_POWER_CONFIGURATION                 0x0001
@@ -68,8 +70,6 @@
 #define CLUSTER_RELATIVE_HUMIDITY                   0x0405
 #define CLUSTER_OCCUPANCY_SENSING                   0x0406
 #define CLUSTER_IAS_ZONE                            0x0500
-#define CLUSTER_IAS_ACE                             0x0501
-#define CLUSTER_IAS_WD                              0x0502
 #define CLUSTER_SMART_ENERGY_METERING               0x0702
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_TOUCHLINK                           0x1000
@@ -188,6 +188,12 @@ struct otaUpgradeEndResponseStruct
     quint32 fileVersion;
     quint32 currentTime;
     quint32 upgradeTime;
+};
+
+struct iasZoneEnrollResponseStruct
+{
+    quint8  responseCode;
+    quint8  zoneId;
 };
 
 struct touchLinkScanStruct

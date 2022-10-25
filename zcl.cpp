@@ -50,6 +50,7 @@ quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
         case DATA_TYPE_8BIT_BITMAP:
         case DATA_TYPE_8BIT_UNSIGNED:
         case DATA_TYPE_8BIT_SIGNED:
+        case DATA_TYPE_8BIT_ENUM:
             return 1;
 
         case DATA_TYPE_16BIT_BITMAP:
@@ -87,6 +88,7 @@ quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
         case DATA_TYPE_64BIT_UNSIGNED:
         case DATA_TYPE_64BIT_SIGNED:
         case DATA_TYPE_DOUBLE_PRECISION:
+        case DATA_TYPE_IEEE_ADDRESS:
             return 8;
 
         case DATA_TYPE_OCTET_STRING:
