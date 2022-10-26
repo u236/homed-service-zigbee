@@ -2,6 +2,7 @@
 #define ADAPTER_H
 
 #define SOCKET_RECONNECT_INTERVAL       5000
+#define DEVICE_RECEIVE_TIMEOUT          20
 
 #define ADAPTER_RESET_DELAY             100
 #define ADAPTER_RESET_TIMEOUT           10000
@@ -165,7 +166,7 @@ protected:
     QTcpSocket *m_socket;
     QIODevice *m_device;
 
-    QTimer *m_socketTimer, *m_resetTimer, *m_permitJoinTimer;
+    QTimer *m_socketTimer, *m_receiveTimer, *m_resetTimer, *m_permitJoinTimer;
 
     QHostAddress m_adddress;
     quint16 m_port;
@@ -204,6 +205,7 @@ private slots:
     void socketError(QTcpSocket::SocketError error);
     void socketReconnect(void);
 
+    void startTimer(void);
     void readyRead(void);
     void resetTimeout(void);
     void permitJoinTimeout(void);

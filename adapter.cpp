@@ -6,7 +6,7 @@
 #include "gpio.h"
 #include "logger.h"
 
-Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_socketTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_connected(false), m_permitJoin(false)
+Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_socketTimer(new QTimer(this)), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_connected(false), m_permitJoin(false)
 {
     QString portName = config->value("zigbee/port", "/dev/ttyUSB0").toString();
 
@@ -37,7 +37,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
 
         connect(m_socket, &QTcpSocket::connected, this, &Adapter::socketConnected);
         connect(m_socket, &QTcpSocket::errorOccurred, this, &Adapter::socketError);
-        connect(m_socketTimer,  &QTimer::timeout, this, &Adapter::socketReconnect);
+        connect(m_socketTimer, &QTimer::timeout, this, &Adapter::socketReconnect);
 
         m_socketTimer->setSingleShot(true);
     }
@@ -62,10 +62,12 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
     m_endpointsData.value(0x01)->outClusters() = {0x0000, 0x0003, 0x0004, 0x0005, 0x0006, 0x0008, 0x0020, 0x0300, 0x0400, 0x0402, 0x0405, 0x0406, 0x0500, 0x0B01, 0x0B03, 0x0B04, 0x0702, 0x1000, 0xFC01, 0xFC02};
     m_endpointsData.value(0xF2)->outClusters() = {0x0021};
 
-    connect(m_device, &QIODevice::readyRead, this, &Adapter::readyRead);
+    connect(m_device, &QIODevice::readyRead, this, &Adapter::startTimer);
+    connect(m_receiveTimer, &QTimer::timeout, this, &Adapter::readyRead);
     connect(m_resetTimer, &QTimer::timeout, this, &Adapter::resetTimeout);
     connect(m_permitJoinTimer, &QTimer::timeout, this, &Adapter::permitJoinTimeout);
 
+    m_receiveTimer->setSingleShot(true);
     m_resetTimer->setSingleShot(true);
 }
 
@@ -211,6 +213,11 @@ void Adapter::socketError(QAbstractSocket::SocketError error)
 void Adapter::socketReconnect(void)
 {
     m_socket->connectToHost(m_adddress, m_port);
+}
+
+void Adapter::startTimer(void)
+{
+    m_receiveTimer->start(DEVICE_RECEIVE_TIMEOUT);
 }
 
 void Adapter::readyRead(void)
