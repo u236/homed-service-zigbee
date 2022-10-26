@@ -506,10 +506,7 @@ bool EZSP::startNetwork(void)
     value.length = 0x00;
 
     if (!sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)).append(1, 0x01)) || m_replyData.at(0))
-    {
-        logWarning << "Set value item" << QString::asprintf("0x%02X", VALUE_STACK_TOKEN_WRITING) << "request failed" << m_replyData.toHex(':');
-        return false;
-    }
+        logWarning << "Set value" << QString::asprintf("0x%02X", VALUE_STACK_TOKEN_WRITING) << "request failed";
 
     if (!sendFrame(FRAME_NETWORK_STATUS))
     {

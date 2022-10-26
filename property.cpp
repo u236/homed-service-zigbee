@@ -24,9 +24,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::LevelAction>         ("levelActionProperty");
 
     qRegisterMetaType <PropertiesIAS::Contact>          ("iasContactProperty");
+    qRegisterMetaType <PropertiesIAS::Occupancy>        ("iasOccupancyProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>        ("iasWaterLeakProperty");
-    qRegisterMetaType <PropertiesIAS::Tamper>           ("iasTamperProperty");
-    qRegisterMetaType <PropertiesIAS::BatteryLow>       ("iasBatteryLowProperty");
 
     qRegisterMetaType <PropertiesPTVO::CO2>             ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>     ("ptvoTemperatureProperty");
@@ -350,36 +349,28 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
     }
 }
 
-void PropertiesIAS::Contact::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload)
 {
+    quint16 value;
+
     if (commandId != 0x00)
         return;
 
-    m_value = (payload.at(0) & 0x01) ? false : true;
-}
+    memcpy(&value, payload.constData(), sizeof(value));
+    value = qFromLittleEndian(value);
+    m_map.insert(m_name, (value & 0x0001) ? true : false);
 
-void PropertiesIAS::WaterLeak::parseCommand(quint8 commandId, const QByteArray &payload)
-{
-    if (commandId != 0x00)
-        return;
+    if (value & 0x0004)
+        m_map.insert("tamper", true);
+    else
+        m_map.remove("tamper");
 
-    m_value = (payload.at(0) & 0x01) ? true : false;
-}
+    if (value & 0x0008)
+        m_map.insert("batteryLow", true);
+    else
+        m_map.remove("batteryLow");
 
-void PropertiesIAS::Tamper::parseCommand(quint8 commandId, const QByteArray &payload)
-{
-    if (commandId != 0x00)
-        return;
-
-    m_value = (payload.at(0) & 0x04) ? true : false;
-}
-
-void PropertiesIAS::BatteryLow::parseCommand(quint8 commandId, const QByteArray &payload)
-{
-    if (commandId != 0x00)
-        return;
-
-    m_value = (payload.at(0) & 0x08) ? true : false;
+    m_value = m_map;
 }
 
 void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

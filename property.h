@@ -248,43 +248,44 @@ namespace Properties
 
 namespace PropertiesIAS
 {
-    class Contact : public PropertyObject
+    class ZoneStatus : public PropertyObject
     {
 
     public:
 
-        Contact(void) : PropertyObject("contact", CLUSTER_IAS_ZONE, true) {}
+        ZoneStatus(const QString &name) : PropertyObject(name, CLUSTER_IAS_ZONE, true){}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    private:
+
+        QMap <QString, QVariant> m_map;
 
     };
 
-    class WaterLeak : public PropertyObject
+    class Contact : public ZoneStatus
     {
 
     public:
 
-        WaterLeak(void) : PropertyObject("waterLeak", CLUSTER_IAS_ZONE, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        Contact(void) : ZoneStatus("contact") {}
 
     };
 
-    class Tamper : public PropertyObject
+    class Occupancy : public ZoneStatus
     {
 
     public:
 
-        Tamper(void) : PropertyObject("tamper", CLUSTER_IAS_ZONE, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        Occupancy(void) : ZoneStatus("occupancy") {}
 
     };
 
-    class BatteryLow : public PropertyObject
+    class WaterLeak : public ZoneStatus
     {
 
     public:
 
-        BatteryLow(void) : PropertyObject("batteryLow", CLUSTER_IAS_ZONE, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        WaterLeak(void) : ZoneStatus("waterLeak") {}
 
     };
 }
@@ -434,7 +435,7 @@ namespace PropertiesTUYA
 
     };
 
-    class Dummy : public PropertyObject
+    class Dummy : public PropertyObject // TODO: move it to main properties namespace
     {
 
     public:
