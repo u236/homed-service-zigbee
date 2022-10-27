@@ -1,9 +1,9 @@
 #ifndef EZSP_H
 #define EZSP_H
 
-#define ASH_FLAG_BYTE                                           0x7E
-#define ASH_MAX_LENGTH                                          0x84
 #define ASH_REQUEST_TIMEOUT                                     2000
+#define ASH_MIN_LENGTH                                          4
+#define ASH_FLAG_BYTE                                           0x7E
 
 #define ASH_CONTROL_ACK                                         0x80
 #define ASH_CONTROL_NAK                                         0xA0

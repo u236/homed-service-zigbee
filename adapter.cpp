@@ -222,7 +222,6 @@ void Adapter::startTimer(void)
 
 void Adapter::readyRead(void)
 {
-    m_buffer.append(m_device->readAll());
     parseData();
     QTimer::singleShot(0, this, &Adapter::handleQueue);
 }

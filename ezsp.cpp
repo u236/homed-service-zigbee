@@ -724,7 +724,6 @@ void EZSP::handleError(const QString &reason)
     m_errorReceived = true;
     emit dataReceived();
 
-    m_buffer.clear();
     reset();
 }
 
@@ -766,34 +765,30 @@ void EZSP::softReset(void)
 
 void EZSP::parseData(void)
 {
-    while (!m_buffer.isEmpty())
+    QByteArray buffer = m_device->readAll();
+
+    while (!buffer.isEmpty())
     {
         QByteArray data;
         quint16 length, crc;
 
-        if (m_buffer.startsWith(QByteArray::fromHex("1AC102")) || m_buffer.startsWith(QByteArray::fromHex("1AC202"))) // TODO: check this
-            m_buffer.remove(0, 1);
+        if (buffer.startsWith(QByteArray::fromHex("1AC102")) || buffer.startsWith(QByteArray::fromHex("1AC202")))
+            buffer.remove(0, 1);
 
-        if (m_buffer == QByteArray(1, 0x11) || m_buffer.length() > ASH_MAX_LENGTH) // TODO: fight with fucking 0x11 on startup
+        if (buffer.length() < ASH_MIN_LENGTH || !buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
+            return;
+
+        length = static_cast <quint16> (buffer.indexOf(ASH_FLAG_BYTE));
+
+        for (int i = 0; i < length; i++)
         {
-            m_buffer.clear();
-            break;
-        }
-
-        if (!m_buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
-            break;
-
-        length = static_cast <quint16> (m_buffer.indexOf(ASH_FLAG_BYTE));
-
-        for (int i = 0; i < length && !m_errorReceived; i++)
-        {
-            if (m_buffer.at(i) != static_cast <char> (0x7D))
+            if (buffer.at(i) != static_cast <char> (0x7D))
             {
-                data.append(m_buffer.at(i));
+                data.append(buffer.at(i));
                 continue;
             }
 
-            switch (m_buffer.at(++i))
+            switch (buffer.at(++i))
             {
                 case 0x31: data.append(0x11); break;
                 case 0x33: data.append(0x13); break;
@@ -803,24 +798,21 @@ void EZSP::parseData(void)
                 case 0x5E: data.append(0x7E); break;
 
                 default:
-                    handleError(QString("Packet %1 unstaffing failed at position %2").arg(QString(m_buffer.toHex(':'))).arg(i));
-                    break;
+                    handleError(QString("Packet %1 unstaffing failed at position %2").arg(QString(buffer.toHex(':'))).arg(i));
+                    return;
             }
         }
-
-        if (m_errorReceived)
-            break;
 
         memcpy(&crc, data.constData() + data.length() - 2, sizeof(crc));
 
         if (crc != getCRC(reinterpret_cast <quint8*> (data.data()), data.length() - 2))
         {
-            handleError(QString("Packet %1 CRC mismatch").arg(QString(m_buffer.mid(0, length + 1).toHex(':'))));
-            break;
+            handleError(QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(0, length + 1).toHex(':'))));
+            return;
         }
 
         m_queue.enqueue(data);
-        m_buffer.remove(0, length + 1);
+        buffer.remove(0, length + 1);
     }
 }
 

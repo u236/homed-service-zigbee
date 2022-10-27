@@ -182,9 +182,7 @@ protected:
 
     bool m_permitJoin;
 
-    QByteArray m_buffer;
     QQueue <QByteArray> m_queue;
-
     QMap <quint8, EndpointData> m_endpointsData;
 
     void reset(void);

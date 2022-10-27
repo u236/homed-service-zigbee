@@ -563,6 +563,11 @@ void ZigBee::interviewDevice(const Device &device)
         }
     }
 
+    interviewFinished(device);
+}
+
+void ZigBee::interviewFinished(const Device &device)
+{
     setupDevice(device);
 
     if (device->description().isEmpty())
@@ -676,7 +681,11 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 device->setModelName(QString(data).trimmed());
 
                 if (device->manufacturerName().isEmpty() && device->modelName().startsWith("lumi.sensor")) // some LUMI devices send modelName attribute on join
+                {
                     device->setManufacturerName("LUMI");
+                    interviewFinished(device);
+                    return;
+                }
 
                 break;
         }
@@ -691,7 +700,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 device->setManufacturerName("TUYA");
             }
 
-            interviewDevice(device);
+            m_interviewQueue.enqueue(device);
         }
 
         return;
@@ -720,7 +729,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
                     endpoint->setZoneStatus(ZoneStatus::SetAddress);
 
-                interviewDevice(device);
+                m_interviewQueue.enqueue(device);
                 break;
             }
         }
@@ -996,7 +1005,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
             if (clusterId == CLUSTER_IAS_ZONE && !payload.at(0))
             {
                 endpoint->setZoneStatus(ZoneStatus::Enroll);
-                interviewDevice(device);
+                m_interviewQueue.enqueue(device);
             }
 
             break;
@@ -1308,6 +1317,9 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         endpoint->setDataUpdated(false);
         emit endpointUpdated(device, endpoint->id());
     }
+
+    if (!(header.frameControl & FC_CLUSTER_SPECIFIC) && (header.commandId == CMD_READ_ATTRIBUTES_RESPONSE || header.commandId == CMD_WRITE_ATTRIBUTES_RESPONSE || header.commandId == CMD_CONFIGURE_REPORTING_RESPONSE))
+        return;
 
     if (!(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {

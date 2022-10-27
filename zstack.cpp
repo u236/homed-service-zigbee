@@ -639,31 +639,33 @@ void ZStack::softReset(void)
 
 void ZStack::parseData(void)
 {
-    while (!m_buffer.isEmpty())
-    {
-        quint8 length = static_cast <quint8> (m_buffer.at(1)), fcs = 0;
+    QByteArray buffer = m_device->readAll();
 
-        if (m_buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG))
+    while (!buffer.isEmpty())
+    {
+        quint8 length = static_cast <quint8> (buffer.at(1)), fcs = 0;
+
+        if (buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG))
         {
-            m_buffer.clear();
+            buffer.clear();
             break;
         }
 
-        if (m_buffer.length() < 5 || m_buffer.length() < length + 5)
+        if (buffer.length() < 5 || buffer.length() < length + 5)
             break;
 
         for (quint8 i = 1; i < length + 4; i++)
-            fcs ^= m_buffer.at(i);
+            fcs ^= buffer.at(i);
 
-        if (fcs != static_cast <quint8> (m_buffer.at(length + 4)))
+        if (fcs != static_cast <quint8> (buffer.at(length + 4)))
         {
-            logWarning << "Packet" << m_buffer.left(length + 5).toHex(':') << "FCS mismatch";
-            m_buffer.clear();
+            logWarning << "Packet" << buffer.left(length + 5).toHex(':') << "FCS mismatch";
+            buffer.clear();
             break;
         }
 
-        m_queue.enqueue(m_buffer.mid(2, length + 2));
-        m_buffer.remove(0, length + 5);
+        m_queue.enqueue(buffer.mid(2, length + 2));
+        buffer.remove(0, length + 5);
     }
 }
 
