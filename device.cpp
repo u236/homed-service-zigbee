@@ -35,8 +35,9 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
             Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt())));
 
             device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
-            device->setVersion(static_cast <quint8> (json.value("version").toInt()));
             device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
+            device->setVersion(static_cast <quint8> (json.value("version").toInt()));
+            device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
             device->setManufacturerName(json.value("manufacturerName").toString());
             device->setModelName(json.value("modelName").toString());
             device->setName(json.value("name").toString());
@@ -106,6 +107,9 @@ QJsonArray DeviceList::serializeDevices(void)
         QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}, {"logicalType", static_cast <quint8> (it.value()->logicalType())}};
         QJsonArray endpointsArray = serializeEndpoints(it.value()), neighborsArray = serializeNeighbors(it.value());
 
+        if (it.value()->manufacturerCode())
+            json.insert("manufacturerCode", it.value()->manufacturerCode());
+
         if (it.value()->logicalType() == LogicalType::Coordinator)
         {
              if (!m_adapterType.isEmpty())
@@ -119,11 +123,11 @@ QJsonArray DeviceList::serializeDevices(void)
             if (it.value()->version())
                 json.insert("version", it.value()->version());
 
+            if (it.value()->powerSource())
+                json.insert("powerSource", it.value()->powerSource());
+
             json.insert("ineterviewFinished", it.value()->interviewFinished());
         }
-
-        if (it.value()->manufacturerCode())
-            json.insert("manufacturerCode", it.value()->manufacturerCode());
 
         if (!it.value()->manufacturerName().isEmpty())
             json.insert("manufacturerName", it.value()->manufacturerName());

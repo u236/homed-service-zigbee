@@ -15,6 +15,9 @@
 #define CMD_REPORT_ATTRIBUTES                       0x0A
 #define CMD_DEFAULT_RESPONSE                        0x0B
 
+#define POWER_SOURCE_UNKNOWN                        0x00
+#define POWER_SOURCE_BATTERY                        0x03
+
 #define STATUS_SUCCESS                              0x00
 #define STATUS_INSUFFICIENT_SPACE                   0x89
 #define STATUS_DUPLICATE_EXISTS                     0x8A

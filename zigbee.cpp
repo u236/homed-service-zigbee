@@ -460,7 +460,7 @@ void ZigBee::interviewDevice(const Device &device)
 
     device->timer()->start(DEVICE_INTERVIEW_TIMEOUT);
 
-    if (device->manufacturerName().isEmpty() || device->modelName().isEmpty())
+    if (device->manufacturerName().isEmpty() || device->modelName().isEmpty() || device->powerSource() == POWER_SOURCE_UNKNOWN)
     {
         if (!device->nodeDescriptorReceived())
         {
@@ -494,7 +494,7 @@ void ZigBee::interviewDevice(const Device &device)
             if (!it.value()->inClusters().contains(CLUSTER_BASIC))
                 continue;
 
-            if (!readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005}, false))
+            if (!readAttributes(device, it.key(), CLUSTER_BASIC, {0x0001, 0x0004, 0x0005, 0x0007}, false))
                 interviewError(device, "read basic attributes request failed");
 
             return;
@@ -653,7 +653,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     Device device = endpoint->device();
     bool check = false;
 
-    if (clusterId == CLUSTER_BASIC && (attributeId == 0x0001 || attributeId == 0x0004 || attributeId == 0x0005))
+    if (clusterId == CLUSTER_BASIC && (attributeId == 0x0001 || attributeId == 0x0004 || attributeId == 0x0005 || attributeId == 0x0007))
     {
         switch (attributeId)
         {
@@ -682,15 +682,24 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
                 if (device->manufacturerName().isEmpty() && device->modelName().startsWith("lumi.sensor")) // some LUMI devices send modelName attribute on join
                 {
+                    device->setPowerSource(POWER_SOURCE_BATTERY);
                     device->setManufacturerName("LUMI");
                     interviewFinished(device);
                     return;
                 }
 
                 break;
+
+            case 0x0007:
+
+                if (dataType != DATA_TYPE_8BIT_ENUM)
+                    return;
+
+                device->setPowerSource(static_cast <quint8> (data.at(0)));
+                break;
         }
 
-        if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
+        if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && device->powerSource() != POWER_SOURCE_UNKNOWN)
         {
             QList <QString> list = {"TS0012", "TS0201", "TS0202", "TS0203", "TS0207", "TS0601"}; // vendor is model some TuYa devices
 
@@ -1288,7 +1297,6 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 
     endpoint = getEndpoint(device, endpointId);
     header.frameControl = static_cast <quint8> (data.at(0));
-
     blink(50);
 
     if (header.frameControl & FC_MANUFACTURER_SPECIFIC)
@@ -1318,10 +1326,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         emit endpointUpdated(device, endpoint->id());
     }
 
-    if (!(header.frameControl & FC_CLUSTER_SPECIFIC) && (header.commandId == CMD_READ_ATTRIBUTES_RESPONSE || header.commandId == CMD_WRITE_ATTRIBUTES_RESPONSE || header.commandId == CMD_CONFIGURE_REPORTING_RESPONSE))
-        return;
-
-    if (!(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    if (device->powerSource() != POWER_SOURCE_UNKNOWN && device->powerSource() != POWER_SOURCE_BATTERY && (header.frameControl & FC_CLUSTER_SPECIFIC || header.commandId == CMD_REPORT_ATTRIBUTES) && !(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
         defaultResponseStruct response;
 

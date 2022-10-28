@@ -76,7 +76,7 @@ class DeviceObject : public QObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_version(0), m_manufacturerCode(0), m_nodeDescriptorReceived(false), m_activeEndpointsReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_lastSeen(0), m_linkQuality(0) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_nodeDescriptorReceived(false), m_activeEndpointsReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -87,11 +87,14 @@ public:
     inline LogicalType logicalType(void) { return m_logicalType; }
     inline void setLogicalType(LogicalType value) { m_logicalType = value; }
 
+    inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
+    inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
+
     inline quint8 version(void) { return m_version; }
     inline void setVersion(quint8 value) { m_version = value; }
 
-    inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
-    inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
+    inline quint8 powerSource(void) { return m_powerSource; }
+    inline void setPowerSource(quint8 value) { m_powerSource = value; }
 
     inline QString manufacturerName(void) { return m_manufacturerName; }
     inline void setManufacturerName(const QString &value) { m_manufacturerName = value; }
@@ -135,8 +138,8 @@ private:
     quint16 m_networkAddress;
 
     LogicalType m_logicalType;
-    quint8 m_version;
     quint16 m_manufacturerCode;
+    quint8 m_version, m_powerSource;
     QString m_manufacturerName, m_modelName, m_description, m_name;
 
     bool m_nodeDescriptorReceived, m_activeEndpointsReceived, m_interviewFinished, m_multipleEndpoints;
