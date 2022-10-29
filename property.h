@@ -271,6 +271,15 @@ namespace PropertiesIAS
 
     };
 
+    class Gas : public ZoneStatus
+    {
+
+    public:
+
+        Gas(void) : ZoneStatus("gas") {}
+
+    };
+
     class Occupancy : public ZoneStatus
     {
 

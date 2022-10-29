@@ -459,7 +459,11 @@ void ZigBee::interviewDevice(const Device &device)
         return;
 
     device->timer()->start(DEVICE_INTERVIEW_TIMEOUT);
+    m_interviewQueue.enqueue(device);
+}
 
+void ZigBee::interviewRequest(const Device &device)
+{
     if (device->manufacturerName().isEmpty() || device->modelName().isEmpty() || device->powerSource() == POWER_SOURCE_UNKNOWN)
     {
         if (!device->nodeDescriptorReceived())
@@ -701,15 +705,24 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
         if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && device->powerSource() != POWER_SOURCE_UNKNOWN)
         {
-            QList <QString> list = {"TS0012", "TS0201", "TS0202", "TS0203", "TS0205", "TS0207", "TS0601"}; // vendor is model some TuYa devices
+            QList <QString> list = {
+                "TS0001", "TS0002", "TS0004", "TS0004",
+                "TS0011", "TS0012", "TS0013", "TS0014",
+                "TS0201", "TS0202", "TS0203", "TS0204", "TS0205", "TS0207",
+                "TS0601"
+            }; // vendor is model TUYA devices
 
             if (!device->manufacturerName().isEmpty() && list.contains(device->modelName()))
             {
-                device->setModelName(device->modelName() == "TS0203" || device->modelName() == "TS0205" ? device->modelName() : device->manufacturerName());
+                QList <QString> swap = {"TS0001", "TS0011", "TS0201", "TS0202", "TS0207", "TS0601"};
+
+                if (swap.contains(device->modelName()))
+                    device->setModelName(device->manufacturerName());
+
                 device->setManufacturerName("TUYA");
             }
 
-            m_interviewQueue.enqueue(device);
+            interviewDevice(device);
         }
 
         return;
@@ -738,7 +751,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
                     endpoint->setZoneStatus(ZoneStatus::SetAddress);
 
-                m_interviewQueue.enqueue(device);
+                interviewDevice(device);
                 break;
             }
         }
@@ -1014,7 +1027,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
             if (clusterId == CLUSTER_IAS_ZONE && !payload.at(0))
             {
                 endpoint->setZoneStatus(ZoneStatus::Enroll);
-                m_interviewQueue.enqueue(device);
+                interviewDevice(device);
             }
 
             break;
@@ -1155,28 +1168,31 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
 {
     auto it = m_devices->find(ieeeAddress);
 
-    if (it != m_devices->end())
-    {
-        if (it.value()->timer()->isActive())
-            return;
-
-        logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04X", networkAddress);
-        it.value()->setNetworkAddress(networkAddress);
-    }
-    else
+    if (it == m_devices->end())
     {
         logInfo << "Device" << ieeeAddress.toHex(':') << "joined network with address" << QString::asprintf("0x%04X", networkAddress);
         it = m_devices->insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
     }
+    else
+        logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04X", networkAddress);
 
     blink(500);
 
-    connect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout);
-    it.value()->timer()->setSingleShot(true);
+    if (it.value()->networkAddress() != networkAddress)
+    {
+        it.value()->setNetworkAddress(networkAddress);
+        logInfo << "Device" << it.value()->name() << "network address updated";
+    }
 
-    m_interviewQueue.enqueue(it.value());
+    if (!it.value()->interviewFinished() && !it.value()->timer()->isActive())
+    {
+        logInfo << "Device" << it.value()->name() << "interview started...";
+        connect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout);
+        it.value()->timer()->setSingleShot(true);
+        interviewDevice(it.value());
+    }
+
     it.value()->updateLastSeen();
-
     emit joinEvent(true);
 }
 
@@ -1200,7 +1216,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
 {
     Device device = m_devices->byNetwork(networkAddress);
 
-    if (device.isNull() || device->nodeDescriptorReceived())
+    if (device.isNull() || device->interviewFinished())
         return;
 
     device->setLogicalType(logicalType);
@@ -1214,7 +1230,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
     device->setNodeDescriptorReceived();
     device->updateLastSeen();
 
-    m_interviewQueue.enqueue(device);
+    interviewDevice(device);
 }
 
 void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray data)
@@ -1222,7 +1238,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
     Device device = m_devices->byNetwork(networkAddress);
     QList <QString> list;
 
-    if (device.isNull() || device->activeEndpointsReceived())
+    if (device.isNull() || device->interviewFinished())
         return;
 
     for (int i = 0; i < data.length(); i++)
@@ -1240,7 +1256,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
     device->setActiveEndpointsReceived();
     device->updateLastSeen();
 
-    m_interviewQueue.enqueue(device);
+    interviewDevice(device);
 }
 
 void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList<quint16> &inClusters, const QList<quint16> &outClusters)
@@ -1262,7 +1278,7 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId,
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "simple descriptor received";
 
     device->updateLastSeen();
-    m_interviewQueue.enqueue(device);
+    interviewDevice(device);
 }
 
 void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start)
@@ -1417,7 +1433,7 @@ void ZigBee::handleQueue(void)
     }
 
     if (!m_interviewQueue.isEmpty())
-        interviewDevice(m_interviewQueue.dequeue());
+        interviewRequest(m_interviewQueue.dequeue());
 
     if (!m_neighborsQueue.isEmpty())
     {

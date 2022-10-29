@@ -119,6 +119,7 @@ private:
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
 
     void interviewDevice(const Device &device);
+    void interviewRequest(const Device &device);
     void interviewFinished(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 

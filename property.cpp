@@ -24,6 +24,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::LevelAction>             ("levelActionProperty");
 
     qRegisterMetaType <PropertiesIAS::Contact>              ("iasContactProperty");
+    qRegisterMetaType <PropertiesIAS::Contact>              ("iasGasProperty");
     qRegisterMetaType <PropertiesIAS::Occupancy>            ("iasOccupancyProperty");
     qRegisterMetaType <PropertiesIAS::Smoke>                ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>            ("iasWaterLeakProperty");

@@ -219,41 +219,85 @@
   "TUYA":
   [
     {
-      "description":    "TUYA Smoke Detector TS0205",
+      "description":    "TUYA TS0001/TS0011 Switch (1-Gang)",
+      "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
+      "actions":        ["status"],
+      "properties":     ["status"],
+      "reportings":     ["status"]
+    },
+    {
+      "description":    "TUYA TS0002/TS0012 Switch (2-Gang)",
+      "modelNames":     ["TS0002", "TS0012"],
+      "actions":        ["status"],
+      "properties":     ["status"],
+      "reportings":     ["status"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TUYA TS0003/TS0013 Switch (3-Gang)",
+      "modelNames":     ["TS0003", "TS0013"],
+      "actions":        ["status"],
+      "properties":     ["status"],
+      "reportings":     ["status"],
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "description":    "TUYA TS0004/TS0014 Switch (4-Gang)",
+      "modelNames":     ["TS0004", "TS0014"],
+      "actions":        ["status"],
+      "properties":     ["status"],
+      "reportings":     ["status"],
+      "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "TUYA TS0006 Switch (6-Gang)",
+      "modelNames":     ["TS0006"],
+      "actions":        ["status"],
+      "properties":     ["status"],
+      "reportings":     ["status"],
+      "endpointId":     [1, 2, 3, 4, 5, 6]
+    },
+    {
+      "description":    "TUYA TS0204 Gas Detector",
+      "modelNames":     ["TS0204"],
+      "properties":     ["batteryPercentage", "iasGas"]
+    },
+    {
+      "description":    "TUYA TS0205 Smoke Detector",
       "modelNames":     ["TS0205"],
       "properties":     ["batteryPercentage", "iasSmoke"]
     },
     {
-      "description":    "TUYA Door and Window Sensor TS0203",
+      "description":    "TUYA TS0203 Door and Window Sensor",
       "modelNames":     ["TS0203"],
       "properties":     ["batteryPercentage", "iasContact"],
       "reportings":     ["batteryPercentage"]
     },
     {
-      "description":    "TUYA Human Presence Detector",
+      "description":    "TUYA TS0601 Human Presence Detector",
       "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
       "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
       "properties":     ["tuyaPresenceSensor"]
     },
     {
-      "description":    "TUYA Motion Sensor",
+      "description":    "TUYA TS0202 Motion Sensor",
       "modelNames":     ["_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6", "_TYZB01_jytabjkb"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"]
     },
     {
-      "description":    "TUYA Configurable Motion Sensor (partially supported)",
-      "modelNames":     ["_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_msl6wxk9"],
+      "description":    "TUYA TS0202 Configurable Motion Sensor (partially supported)",
+      "modelNames":     ["_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_msl6wxk9"],
       "properties":     ["batteryPercentage", "iasOccupancy"]
     },
     {
-      "description":    "TUYA Water Leak Sensor",
+      "description":    "TUYA TS0207 Water Leak Sensor",
       "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_upgcbody"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "reportings":     ["batteryPercentage"]
     },
     {
-      "description":    "TUYA Temperature and Humidity Sensor",
+      "description":    "TUYA TS0201 Temperature and Humidity Sensor",
       "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y"],
       "properties":     ["batteryPercentage", "temperature", "humidity"]
     }
