@@ -17,6 +17,12 @@
       "modelNames":     ["TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"]
+    },
+    {
+      "description":    "Sonoff Door and Window Sensor SNZB-04",
+      "modelNames":     ["DS01"],
+      "properties":     ["batteryPercentage", "iasContact"],
+      "reportings":     ["batteryPercentage"]
     }
   ],
 
@@ -30,6 +36,16 @@
       "polls":          ["status", "level", "colorHS", "colorXY"],
       "endpointId":     11,
       "pollInterval":   60
+    }
+  ],
+
+  "HEIMAN":
+  [
+    {
+      "description":    "Heiman Smoke Detector HS1SA",
+      "modelNames":     ["SmokeSensor-EM", "SmokeSensor-N"],
+      "properties":     ["batteryPercentage", "iasSmoke"],
+      "reportings":     ["batteryPercentage"]
     }
   ],
 
@@ -94,9 +110,16 @@
   "LDS":
   [
     {
+      "description":    "Perenio Door and Window Sensor PECWS01",
+      "modelNames":     ["ZHA-DoorLockSensor"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "reportings":     ["batteryPercentage"]
+    },
+    {
       "description":    "Perenio Motion Sensor PECMS01",
       "modelNames":     ["ZHA-PirSensor"],
-      "properties":     ["batteryPercentage", "iasOccupancy"]
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "reportings":     ["batteryPercentage"]
     }
   ],
 
@@ -164,6 +187,11 @@
       "description":    "Life Control Water Leak Sensor MCLH-07",
       "modelNames":     ["Leak_Sensor"],
       "properties":     ["batteryUndivided", "iasWaterLeak"]
+    },
+    {
+      "description":    "Life Control Air Quality Sensor MCLH-08",
+      "modelNames":     ["VOC_Sensor"],
+      "properties":     ["batteryUndivided", "lifeControlAirQuality"]
     }
   ],
 
@@ -172,7 +200,7 @@
     {
       "description":    "Perenio Water Leak Sensor PECLS01",
       "modelNames":     ["PECLS01"],
-      "properties":     ["batteryPercentage", "iasWaterLeak", "tuyaDummy"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
       "reportings":     ["batteryPercentage"]
     }
   ],
@@ -191,38 +219,43 @@
   "TUYA":
   [
     {
-      "description":    "TUYA Door and Window Sensor",
+      "description":    "TUYA Smoke Detector TS0205",
+      "modelNames":     ["TS0205"],
+      "properties":     ["batteryPercentage", "iasSmoke"]
+    },
+    {
+      "description":    "TUYA Door and Window Sensor TS0203",
       "modelNames":     ["TS0203"],
-      "properties":     ["batteryPercentage", "iasContact", "tuyaDummy"],
+      "properties":     ["batteryPercentage", "iasContact"],
       "reportings":     ["batteryPercentage"]
     },
     {
       "description":    "TUYA Human Presence Detector",
       "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
       "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
-      "properties":     ["tuyaDummy", "tuyaPresenceSensor"]
+      "properties":     ["tuyaPresenceSensor"]
     },
     {
       "description":    "TUYA Motion Sensor",
       "modelNames":     ["_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6", "_TYZB01_jytabjkb"],
-      "properties":     ["batteryPercentage", "iasOccupancy", "tuyaDummy"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"]
     },
     {
       "description":    "TUYA Configurable Motion Sensor (partially supported)",
       "modelNames":     ["_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_msl6wxk9"],
-      "properties":     ["batteryPercentage", "iasOccupancy", "tuyaDummy"]
+      "properties":     ["batteryPercentage", "iasOccupancy"]
     },
     {
       "description":    "TUYA Water Leak Sensor",
       "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_upgcbody"],
-      "properties":     ["batteryPercentage", "iasWaterLeak", "tuyaDummy"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
       "reportings":     ["batteryPercentage"]
     },
     {
       "description":    "TUYA Temperature and Humidity Sensor",
       "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y"],
-      "properties":     ["batteryPercentage", "temperature", "humidity", "tuyaDummy"]
+      "properties":     ["batteryPercentage", "temperature", "humidity"]
     }
   ],
 

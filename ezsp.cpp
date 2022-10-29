@@ -82,7 +82,8 @@ bool EZSP::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, qui
     if (data.isEmpty())
         return false;
 
-    return sendUnicast(networkAddress, 0x0000, unbind ? APS_UNBIND : APS_BIND, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(data)); // TODO: wait for bind response
+    m_bindRequestStatus = false;
+    return sendUnicast(networkAddress, 0x0000, unbind ? APS_UNBIND : APS_BIND, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(data)) && m_bindRequestStatus;
 }
 
 bool EZSP::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload)
@@ -179,7 +180,7 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     }
 
     m_requestId = static_cast <quint8> (m_replyData.at(1));
-    return waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT) && !m_requestStatus;
+    return waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT) && !m_dataRequestStatus;
 }
 
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
@@ -324,7 +325,7 @@ void EZSP::parsePacket(const QByteArray &payload)
 
             if (message->sequence == m_requestId)
             {
-                m_requestStatus = message->status;
+                m_dataRequestStatus = message->status;
                 emit messageSent();
             }
 
@@ -400,6 +401,13 @@ void EZSP::parsePacket(const QByteArray &payload)
                     quint64 ieeeAddress;
                     ieeeAddress = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
                     emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(announce->networkAddress));
+                    break;
+                }
+
+                case APS_BIND:
+                case APS_UNBIND:
+                {
+                    m_bindRequestStatus = payload.at(1) ? false : true;
                     break;
                 }
 

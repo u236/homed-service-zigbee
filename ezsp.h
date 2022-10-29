@@ -258,12 +258,13 @@ public:
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPan(void) override;
 
-    inline quint8 dataRequestStatus(void) override { return m_requestStatus; }
+    inline quint8 dataRequestStatus(void) override { return m_dataRequestStatus; }
 
 private:
 
     QByteArray m_networkKey;
-    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestId, m_requestStatus;
+    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestId, m_dataRequestStatus;
+    bool m_bindRequestStatus;
 
     QByteArray m_replyData;
     bool m_replyReceived, m_errorReceived;

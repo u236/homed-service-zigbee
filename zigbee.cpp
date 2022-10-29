@@ -653,7 +653,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     Device device = endpoint->device();
     bool check = false;
 
-    if (clusterId == CLUSTER_BASIC && (attributeId == 0x0001 || attributeId == 0x0004 || attributeId == 0x0005 || attributeId == 0x0007))
+    if (clusterId == CLUSTER_BASIC) // TODO: check if any devices sends some data via basic cluster
     {
         switch (attributeId)
         {
@@ -701,11 +701,11 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
         if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && device->powerSource() != POWER_SOURCE_UNKNOWN)
         {
-            QList <QString> list = {"TS0012", "TS0201", "TS0202", "TS0203", "TS0207", "TS0601"}; // vendor is model some TuYa devices
+            QList <QString> list = {"TS0012", "TS0201", "TS0202", "TS0203", "TS0205", "TS0207", "TS0601"}; // vendor is model some TuYa devices
 
             if (!device->manufacturerName().isEmpty() && list.contains(device->modelName()))
             {
-                device->setModelName(device->modelName() == "TS0203" ? device->modelName() : device->manufacturerName());
+                device->setModelName(device->modelName() == "TS0203" || device->modelName() == "TS0205" ? device->modelName() : device->manufacturerName());
                 device->setManufacturerName("TUYA");
             }
 
@@ -1200,7 +1200,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
 {
     Device device = m_devices->byNetwork(networkAddress);
 
-    if (device.isNull() || device->interviewFinished())
+    if (device.isNull() || device->nodeDescriptorReceived())
         return;
 
     device->setLogicalType(logicalType);
@@ -1222,7 +1222,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
     Device device = m_devices->byNetwork(networkAddress);
     QList <QString> list;
 
-    if (device.isNull() || device->interviewFinished())
+    if (device.isNull() || device->activeEndpointsReceived())
         return;
 
     for (int i = 0; i < data.length(); i++)

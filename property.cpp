@@ -4,44 +4,45 @@
 
 void PropertyObject::registerMetaTypes(void)
 {
-    qRegisterMetaType <Properties::BatteryVoltage>      ("batteryVoltageProperty");
-    qRegisterMetaType <Properties::BatteryPercentage>   ("batteryPercentageProperty");
-    qRegisterMetaType <Properties::BatteryUndivided>    ("batteryUndividedProperty");
-    qRegisterMetaType <Properties::Status>              ("statusProperty");
-    qRegisterMetaType <Properties::Contact>             ("contactProperty");
-    qRegisterMetaType <Properties::Level>               ("levelProperty");
-    qRegisterMetaType <Properties::ColorHS>             ("colorHSProperty");
-    qRegisterMetaType <Properties::ColorXY>             ("colorXYProperty");
-    qRegisterMetaType <Properties::ColorTemperature>    ("colorTemperatureProperty");
-    qRegisterMetaType <Properties::Illuminance>         ("illuminanceProperty");
-    qRegisterMetaType <Properties::Temperature>         ("temperatureProperty");
-    qRegisterMetaType <Properties::Humidity>            ("humidityProperty");
-    qRegisterMetaType <Properties::Occupancy>           ("occupancyProperty");
-    qRegisterMetaType <Properties::Energy>              ("energyProperty");
-    qRegisterMetaType <Properties::Power>               ("powerProperty");
-    qRegisterMetaType <Properties::IdentifyAction>      ("identifyActionProperty");
-    qRegisterMetaType <Properties::SwitchAction>        ("switchActionProperty");
-    qRegisterMetaType <Properties::LevelAction>         ("levelActionProperty");
+    qRegisterMetaType <Properties::BatteryVoltage>          ("batteryVoltageProperty");
+    qRegisterMetaType <Properties::BatteryPercentage>       ("batteryPercentageProperty");
+    qRegisterMetaType <Properties::BatteryUndivided>        ("batteryUndividedProperty");
+    qRegisterMetaType <Properties::Status>                  ("statusProperty");
+    qRegisterMetaType <Properties::Contact>                 ("contactProperty");
+    qRegisterMetaType <Properties::Level>                   ("levelProperty");
+    qRegisterMetaType <Properties::ColorHS>                 ("colorHSProperty");
+    qRegisterMetaType <Properties::ColorXY>                 ("colorXYProperty");
+    qRegisterMetaType <Properties::ColorTemperature>        ("colorTemperatureProperty");
+    qRegisterMetaType <Properties::Illuminance>             ("illuminanceProperty");
+    qRegisterMetaType <Properties::Temperature>             ("temperatureProperty");
+    qRegisterMetaType <Properties::Humidity>                ("humidityProperty");
+    qRegisterMetaType <Properties::Occupancy>               ("occupancyProperty");
+    qRegisterMetaType <Properties::Energy>                  ("energyProperty");
+    qRegisterMetaType <Properties::Power>                   ("powerProperty");
+    qRegisterMetaType <Properties::IdentifyAction>          ("identifyActionProperty");
+    qRegisterMetaType <Properties::SwitchAction>            ("switchActionProperty");
+    qRegisterMetaType <Properties::LevelAction>             ("levelActionProperty");
 
-    qRegisterMetaType <PropertiesIAS::Contact>          ("iasContactProperty");
-    qRegisterMetaType <PropertiesIAS::Occupancy>        ("iasOccupancyProperty");
-    qRegisterMetaType <PropertiesIAS::WaterLeak>        ("iasWaterLeakProperty");
+    qRegisterMetaType <PropertiesIAS::Contact>              ("iasContactProperty");
+    qRegisterMetaType <PropertiesIAS::Occupancy>            ("iasOccupancyProperty");
+    qRegisterMetaType <PropertiesIAS::Smoke>                ("iasSmokeProperty");
+    qRegisterMetaType <PropertiesIAS::WaterLeak>            ("iasWaterLeakProperty");
 
-    qRegisterMetaType <PropertiesPTVO::CO2>             ("ptvoCO2Property");
-    qRegisterMetaType <PropertiesPTVO::Temperature>     ("ptvoTemperatureProperty");
-    qRegisterMetaType <PropertiesPTVO::ChangePattern>   ("ptvoChangePatternProperty");
-    qRegisterMetaType <PropertiesPTVO::Pattern>         ("ptvoPatternProperty");
-    qRegisterMetaType <PropertiesPTVO::SwitchAction>    ("ptvoSwitchActionProperty");
+    qRegisterMetaType <PropertiesLUMI::Data>                ("lumiDataProperty");
+    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
+    qRegisterMetaType <PropertiesLUMI::Power>               ("lumiPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
 
-    qRegisterMetaType <PropertiesLUMI::Data>            ("lumiDataProperty");
-    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>  ("lumiBatteryVoltageProperty");
-    qRegisterMetaType <PropertiesLUMI::Power>           ("lumiPowerProperty");
-    qRegisterMetaType <PropertiesLUMI::SwitchAction>    ("lumiSwitchActionProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeRotation>    ("lumiCubeRotationProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeMovement>    ("lumiCubeMovementProperty");
+    qRegisterMetaType <PropertiesPTVO::CO2>                 ("ptvoCO2Property");
+    qRegisterMetaType <PropertiesPTVO::Temperature>         ("ptvoTemperatureProperty");
+    qRegisterMetaType <PropertiesPTVO::ChangePattern>       ("ptvoChangePatternProperty");
+    qRegisterMetaType <PropertiesPTVO::Pattern>             ("ptvoPatternProperty");
+    qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesTUYA::PresenceSensor>  ("tuyaPresenceSensorProperty");
-    qRegisterMetaType <PropertiesTUYA::Dummy>           ("tuyaDummyProperty");
+    qRegisterMetaType <PropertiesLifeControl::AirQuality>   ("lifeControlAirQualityProperty");
+    qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
@@ -373,87 +374,6 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
     m_value = m_map;
 }
 
-void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0x0055:
-        {
-            float value = 0;
-
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_buffer = value;
-            break;
-        }
-
-        case 0x001C:
-        {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
-                return;
-
-            m_value = m_buffer;
-            break;
-        }
-    }
-}
-
-void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0x0055:
-        {
-            float value = 0;
-
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_buffer = value;
-            break;
-        }
-
-        case 0x001C:
-        {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "C")
-                return;
-
-            m_value = m_buffer;
-            break;
-        }
-    }
-}
-
-void PropertiesPTVO::ChangePattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
-        return;
-
-    m_value = data.at(0) ? "on" : "off";
-}
-
-void PropertiesPTVO::Pattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    float value = 0;
-
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-    m_value = static_cast <quint8> (value);
-}
-
-void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-        return;
-
-    m_value = data.at(0) ? "on" : "off";
-}
-
 void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId == 0x00F7)
@@ -750,6 +670,107 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dat
         m_value = "drop";
 }
 
+void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value = 0;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_buffer = value;
+            break;
+        }
+
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
+                return;
+
+            m_value = m_buffer;
+            break;
+        }
+    }
+}
+
+void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value = 0;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_buffer = value;
+            break;
+        }
+
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "C")
+                return;
+
+            m_value = m_buffer;
+            break;
+        }
+    }
+}
+
+void PropertiesPTVO::ChangePattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+        return;
+
+    m_value = data.at(0) ? "on" : "off";
+}
+
+void PropertiesPTVO::Pattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = static_cast <quint8> (value);
+}
+
+void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+        return;
+
+    m_value = data.at(0) ? "on" : "off";
+}
+
+void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    qint16 value;
+
+    if (dataType != DATA_TYPE_16BIT_SIGNED || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+
+    switch (attributeId)
+    {
+        case 0x0000: m_map.insert("tempertature", qFromLittleEndian(value) / 100.0); break;
+        case 0x0001: m_map.insert("humidity", qFromLittleEndian(value) / 100.0); break;
+        case 0x0002: m_map.insert("eco2", qFromLittleEndian(value)); break;
+        case 0x0003: m_map.insert("voc", qFromLittleEndian(value)); break;
+    }
+
+    m_value = m_map;
+}
+
 void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
@@ -796,11 +817,4 @@ void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteA
         return;
 
     m_value = m_map;
-}
-
-void PropertiesTUYA::Dummy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) // just ignore cluster 0x0000 attribute reports
-{
-    Q_UNUSED(attributeId)
-    Q_UNUSED(dataType)
-    Q_UNUSED(data)
 }

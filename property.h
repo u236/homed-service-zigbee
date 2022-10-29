@@ -280,73 +280,21 @@ namespace PropertiesIAS
 
     };
 
+    class Smoke : public ZoneStatus
+    {
+
+    public:
+
+        Smoke(void) : ZoneStatus("smoke") {}
+
+    };
+
     class WaterLeak : public ZoneStatus
     {
 
     public:
 
         WaterLeak(void) : ZoneStatus("waterLeak") {}
-
-    };
-}
-
-namespace PropertiesPTVO
-{
-    class CO2 : public PropertyObject
-    {
-
-    public:
-
-        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QVariant m_buffer;
-
-    };
-
-    class Temperature: public PropertyObject
-    {
-
-    public:
-
-        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QVariant m_buffer;
-
-    };
-
-    class ChangePattern : public PropertyObject
-    {
-
-    public:
-
-        ChangePattern(void) : PropertyObject("changePattern", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class Pattern: public PropertyObject
-    {
-
-    public:
-
-        Pattern(void) : PropertyObject("pattern", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class SwitchAction : public PropertyObject
-    {
-
-    public:
-
-        SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 }
@@ -419,6 +367,84 @@ namespace PropertiesLUMI
     };
 }
 
+namespace PropertiesPTVO
+{
+    class CO2 : public PropertyObject
+    {
+
+    public:
+
+        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QVariant m_buffer;
+
+    };
+
+    class Temperature: public PropertyObject
+    {
+
+    public:
+
+        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QVariant m_buffer;
+
+    };
+
+    class ChangePattern : public PropertyObject
+    {
+
+    public:
+
+        ChangePattern(void) : PropertyObject("changePattern", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class Pattern: public PropertyObject
+    {
+
+    public:
+
+        Pattern(void) : PropertyObject("pattern", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class SwitchAction : public PropertyObject
+    {
+
+    public:
+
+        SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
+namespace PropertiesLifeControl
+{
+    class AirQuality : public PropertyObject
+    {
+
+    public:
+
+        AirQuality(void) : PropertyObject(QString(), CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QMap <QString, QVariant> m_map;
+
+    };
+}
+
 namespace PropertiesTUYA
 {
     class PresenceSensor : public PropertyObject
@@ -432,16 +458,6 @@ namespace PropertiesTUYA
     private:
 
         QMap <QString, QVariant> m_map;
-
-    };
-
-    class Dummy : public PropertyObject // TODO: move it to main properties namespace
-    {
-
-    public:
-
-        Dummy(void) : PropertyObject(QString(), CLUSTER_BASIC) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 }
