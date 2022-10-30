@@ -21,6 +21,22 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::DistanceMin>        ("tuyaDistanceMinAction");
     qRegisterMetaType <ActionsTUYA::DistanceMax>        ("tuyaDistanceMaxAction");
     qRegisterMetaType <ActionsTUYA::DetectionDelay>     ("tuyaDetectionDelayAction");
+    qRegisterMetaType <ActionsTUYA::PowerOnBehavior>    ("tuyaPowerOnBehaviorAction");
+}
+
+QByteArray ActionObject::writeAttributeRequest(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    zclHeaderStruct header;
+    writeArrtibutesStruct payload;
+
+    header.frameControl = 0x00;
+    header.transactionId = m_transactionId++;
+    header.commandId = CMD_WRITE_ATTRIBUTES;
+
+    payload.attributeId = qToLittleEndian <quint16> (attributeId);
+    payload.dataType = dataType;
+
+    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(data);
 }
 
 QByteArray Actions::Status::request(const QVariant &data)
@@ -192,18 +208,8 @@ QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
 
 QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
 {
-    zclHeaderStruct header;
-    writeArrtibutesStruct payload;
     float value = data.toFloat();
-
-    header.frameControl = 0x00;
-    header.transactionId = m_transactionId++;
-    header.commandId = CMD_WRITE_ATTRIBUTES;
-
-    payload.attributeId = qToLittleEndian <quint16> (0x0055);
-    payload.dataType = DATA_TYPE_SINGLE_PRECISION;
-
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (&value), sizeof(value));
+    return writeAttributeRequest(0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::Request::makeRequest(quint8 transactionId, quint16 attributeId, quint8 dataType, void *data)
@@ -336,4 +342,15 @@ QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
 
     value = qToBigEndian(value);
     return makeRequest(m_transactionId++, 0x65, 0x02, &value);
+}
+
+QByteArray ActionsTUYA::PowerOnBehavior::request(const QVariant &data)
+{
+    QList <QString> list = {"on", "off", "previous"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(0x8002, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }

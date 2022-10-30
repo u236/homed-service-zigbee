@@ -60,6 +60,8 @@ protected:
     quint16 m_clusterId;
     quint8 m_transactionId;
 
+    QByteArray writeAttributeRequest(quint16 attributeId, quint8 dataType, const QByteArray &data);
+
 };
 
 namespace Actions
@@ -237,6 +239,16 @@ namespace ActionsTUYA
     public:
 
         DetectionDelay(void) : ActionObject("detectionDelay", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class PowerOnBehavior : public Request, public ActionObject
+    {
+
+    public:
+
+        PowerOnBehavior(void) : ActionObject("powerOnBehavior", CLUSTER_ON_OFF) {}
         QByteArray request(const QVariant &data) override;
 
     };

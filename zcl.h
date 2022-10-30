@@ -77,8 +77,11 @@
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_TOUCHLINK                           0x1000
 
-#define CLUSTER_TUYA                                0xEF00
 #define CLUSTER_LUMI                                0xFCC0
+
+#define CLUSTER_TUYA                                0xEF00
+#define CLUSTER_TUYA_SWITCH_TYPE                    0xE001
+#define CLUSTER_TUYA_UNKNOWN                        0xE000
 
 #include <QByteArray>
 

@@ -308,6 +308,23 @@ namespace PropertiesIAS
     };
 }
 
+namespace PropertiesLifeControl
+{
+    class AirQuality : public PropertyObject
+    {
+
+    public:
+
+        AirQuality(void) : PropertyObject(QString(), CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QMap <QString, QVariant> m_map;
+
+    };
+}
+
 namespace PropertiesLUMI
 {
     class Data : public PropertyObject
@@ -437,23 +454,6 @@ namespace PropertiesPTVO
     };
 }
 
-namespace PropertiesLifeControl
-{
-    class AirQuality : public PropertyObject
-    {
-
-    public:
-
-        AirQuality(void) : PropertyObject(QString(), CLUSTER_TEMPERATURE_MEASUREMENT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QMap <QString, QVariant> m_map;
-
-    };
-}
-
 namespace PropertiesTUYA
 {
     class PresenceSensor : public PropertyObject
@@ -467,6 +467,36 @@ namespace PropertiesTUYA
     private:
 
         QMap <QString, QVariant> m_map;
+
+    };
+
+    class PowerOnBehavior : public PropertyObject
+    {
+
+    public:
+
+        PowerOnBehavior(void) : PropertyObject("powerOnBehavior", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class SwitchType : public PropertyObject
+    {
+
+    public:
+
+        SwitchType(void) : PropertyObject("switchType", CLUSTER_TUYA_SWITCH_TYPE) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class Unknown : public PropertyObject
+    {
+
+    public:
+
+        Unknown(void) : PropertyObject(QString(), CLUSTER_TUYA_UNKNOWN) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 }

@@ -29,6 +29,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIAS::Smoke>                ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>            ("iasWaterLeakProperty");
 
+    qRegisterMetaType <PropertiesLifeControl::AirQuality>   ("lifeControlAirQualityProperty");
+
     qRegisterMetaType <PropertiesLUMI::Data>                ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>               ("lumiPowerProperty");
@@ -42,8 +44,10 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::Pattern>             ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesLifeControl::AirQuality>   ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
+    qRegisterMetaType <PropertiesTUYA::PowerOnBehavior>     ("tuyaPowerOnBehaviorProperty");
+    qRegisterMetaType <PropertiesTUYA::SwitchType>          ("tuyaSwitchTypeProperty");
+    qRegisterMetaType <PropertiesTUYA::Unknown>             ("tuyaUnknownProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
@@ -371,6 +375,26 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
         m_map.insert("batteryLow", true);
     else
         m_map.remove("batteryLow");
+
+    m_value = m_map;
+}
+
+void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    qint16 value;
+
+    if (dataType != DATA_TYPE_16BIT_SIGNED || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+
+    switch (attributeId)
+    {
+        case 0x0000: m_map.insert("tempertature", qFromLittleEndian(value) / 100.0); break;
+        case 0x0001: m_map.insert("humidity", qFromLittleEndian(value) / 100.0); break;
+        case 0x0002: m_map.insert("eco2", qFromLittleEndian(value)); break;
+        case 0x0003: m_map.insert("voc", qFromLittleEndian(value)); break;
+    }
 
     m_value = m_map;
 }
@@ -752,26 +776,6 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
     m_value = data.at(0) ? "on" : "off";
 }
 
-void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    qint16 value;
-
-    if (dataType != DATA_TYPE_16BIT_SIGNED || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-
-    switch (attributeId)
-    {
-        case 0x0000: m_map.insert("tempertature", qFromLittleEndian(value) / 100.0); break;
-        case 0x0001: m_map.insert("humidity", qFromLittleEndian(value) / 100.0); break;
-        case 0x0002: m_map.insert("eco2", qFromLittleEndian(value)); break;
-        case 0x0003: m_map.insert("voc", qFromLittleEndian(value)); break;
-    }
-
-    m_value = m_map;
-}
-
 void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
@@ -818,4 +822,37 @@ void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteA
         return;
 
     m_value = m_map;
+}
+
+void PropertiesTUYA::PowerOnBehavior::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x8002 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "on"; break;
+        case 0x01: m_value = "off"; break;
+        case 0x02: m_value = "previous"; break;
+    }
+}
+
+void PropertiesTUYA::SwitchType::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0030 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "momentary"; break;
+        case 0x01: m_value = "state"; break;
+        case 0x02: m_value = "momentary"; break;
+    }
+}
+
+void PropertiesTUYA::Unknown::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    Q_UNUSED(attributeId)
+    Q_UNUSED(dataType)
+    Q_UNUSED(data)
 }
