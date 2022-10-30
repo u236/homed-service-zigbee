@@ -705,18 +705,19 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
         if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && device->powerSource() != POWER_SOURCE_UNKNOWN)
         {
-            QList <QString> list = {
+            QList <QString> tuya = // TUYA devices model names
+            {
                 "TS0001", "TS0002", "TS0004", "TS0004",
                 "TS0011", "TS0012", "TS0013", "TS0014",
                 "TS0201", "TS0202", "TS0203", "TS0204", "TS0205", "TS0207",
                 "TS0601"
-            }; // vendor is model TUYA devices
+            };
 
-            if (!device->manufacturerName().isEmpty() && list.contains(device->modelName()))
+            if (!device->manufacturerName().isEmpty() && tuya.contains(device->modelName()))
             {
-                QList <QString> swap = {"TS0001", "TS0011", "TS0201", "TS0202", "TS0207", "TS0601"};
+                QList <QString> list = {"TS0001", "TS0011", "TS0201", "TS0202", "TS0207", "TS0601"};
 
-                if (swap.contains(device->modelName()))
+                if (list.contains(device->modelName()))
                     device->setModelName(device->manufacturerName());
 
                 device->setManufacturerName("TUYA");

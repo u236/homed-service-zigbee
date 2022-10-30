@@ -12,7 +12,7 @@ Build Linux ARM Binary:
   except:
     - branches
   only:
-    - tags
+    - /^\d.\d.\d+$/
 
 Build OpenWRT MIPS Binary:
   stage: build
@@ -29,7 +29,8 @@ Build OpenWRT MIPS Binary:
   except:
     - branches
   only:
-    - tags
+    - /^\d.\d.\d+$/
+    - /^mips-.*$/
 
 Deploy Linux ARM Package:
   stage: deploy
@@ -55,7 +56,7 @@ Deploy Linux ARM Package:
   except:
     - branches
   only:
-    - tags
+    - /^\d.\d.\d+$/
 
 Deploy OpenWRT MIPS Package:
   stage: deploy
@@ -82,4 +83,4 @@ Deploy OpenWRT MIPS Package:
   except:
     - branches
   only:
-    - tags
+    - /^\d.\d.\d+$/
