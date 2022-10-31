@@ -844,7 +844,7 @@ void PropertiesTUYA::SwitchType::parseAttribte(quint16 attributeId, quint8 dataT
 
     switch (static_cast <quint8> (data.at(0)))
     {
-        case 0x00: m_value = "momentary"; break;
+        case 0x00: m_value = "toggle"; break;
         case 0x01: m_value = "state"; break;
         case 0x02: m_value = "momentary"; break;
     }

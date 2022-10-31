@@ -205,6 +205,16 @@
     }
   ],
 
+  "SONOFF":
+  [
+    {
+      "description":    "Sonoff Relay/Switch ZBMINI",
+      "modelNames":     ["01MINIZB"],
+      "actions":        ["status"],
+      "properties":     ["status"]
+    }
+  ],
+
   "TexasInstruments":
   [
     {
@@ -281,7 +291,7 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
-      "modelNames":     ["_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6", "_TYZB01_jytabjkb"],
+      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_jytabjkb", "_TYZB01_qjqgmqxr", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZE200_bq5c8xfe", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_hktqahrq", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6", "_TZ3000_mmtwjmaq", "_TZ3000_otvn3lne", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"]
     },

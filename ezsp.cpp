@@ -23,7 +23,7 @@ static const uint16_t crcTable[256] =
     0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0), m_requestId(0)
 {
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090A0B0C0D0E0F").toString().remove("0x").toUtf8());
@@ -52,19 +52,19 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
 bool EZSP::nodeDescriptorRequest(quint16 networkAddress)
 {
     quint16 data = qToLittleEndian(networkAddress);
-    return sendUnicast(networkAddress, 0x0000, APS_NODE_DESCRIPTOR, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(reinterpret_cast <char*> (&data), sizeof(data)));
+    return sendUnicast(networkAddress, 0x0000, APS_NODE_DESCRIPTOR, 0x00, 0x00, QByteArray(1, static_cast <char> (m_requestId)).append(reinterpret_cast <char*> (&data), sizeof(data)));
 }
 
 bool EZSP::simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId)
 {
     quint16 data = qToLittleEndian(networkAddress);
-    return sendUnicast(networkAddress, 0x0000, APS_SIMPLE_DESCRIPTOR, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (endpointId)));
+    return sendUnicast(networkAddress, 0x0000, APS_SIMPLE_DESCRIPTOR, 0x00, 0x00, QByteArray(1, static_cast <char> (m_requestId)).append(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (endpointId)));
 }
 
 bool EZSP::activeEndpointsRequest(quint16 networkAddress)
 {
     quint16 data = qToLittleEndian(networkAddress);
-    return sendUnicast(networkAddress, 0x0000, APS_ACTIVE_ENDPOINTS, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(reinterpret_cast <char*> (&data), sizeof(data)));
+    return sendUnicast(networkAddress, 0x0000, APS_ACTIVE_ENDPOINTS, 0x00, 0x00, QByteArray(1, static_cast <char> (m_requestId)).append(reinterpret_cast <char*> (&data), sizeof(data)));
 }
 
 bool EZSP::lqiRequest(quint16 networkAddress, quint8 index)
@@ -82,8 +82,7 @@ bool EZSP::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, qui
     if (data.isEmpty())
         return false;
 
-    m_bindRequestStatus = false;
-    return sendUnicast(networkAddress, 0x0000, unbind ? APS_UNBIND : APS_BIND, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(data)) && m_bindRequestStatus;
+    return sendUnicast(networkAddress, 0x0000, unbind ? APS_UNBIND : APS_BIND, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(data));
 }
 
 bool EZSP::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload)
@@ -167,20 +166,22 @@ bool EZSP::sendUnicast(quint16 networkAddress, quint16 profileId, quint16 cluste
     request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
     request.groupId = 0x0000;
     request.sequence = m_sequenceId;
-    request.tag = m_sequenceId;
+    request.tag = m_requestId;
     request.length = static_cast <quint8> (payload.length());
+
+    m_messageSent = false;
 
     if (sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) && !m_replyData.at(0))
         sendFrame(FRAME_SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
 
     if (!sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) || m_replyData.at(0))
-    {
-        logWarning << "Send unicast message request failed";
         return false;
-    }
 
-    m_requestId = static_cast <quint8> (m_replyData.at(1));
-    return waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT) && !m_dataRequestStatus;
+    if (!m_messageSent && !waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT))
+        return false;
+
+    m_requestId++;
+    return m_requestStatus ? false : true;
 }
 
 bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
@@ -323,9 +324,10 @@ void EZSP::parsePacket(const QByteArray &payload)
         {
             const messageSentHandlerStruct *message = reinterpret_cast <const messageSentHandlerStruct*> (data.constData());
 
-            if (message->sequence == m_requestId)
+            if (m_requestId == message->tag)
             {
-                m_dataRequestStatus = message->status;
+                m_requestStatus = message->status;
+                m_messageSent = true;
                 emit messageSent();
             }
 
@@ -335,7 +337,7 @@ void EZSP::parsePacket(const QByteArray &payload)
         case FRAME_INCOMING_MESSAGE_HANDLER:
         {
             const incomingMessageHandlerStruct *message = reinterpret_cast <const incomingMessageHandlerStruct*> (data.constData());
-            QByteArray payload = data.mid(sizeof(incomingMessageHandlerStruct));
+            QByteArray payload = data.mid(sizeof(incomingMessageHandlerStruct), message->length);
 
             if (message->profileId)
             {
@@ -345,6 +347,15 @@ void EZSP::parsePacket(const QByteArray &payload)
 
             switch (qToLittleEndian(message->clusterId) & 0x00FF)
             {
+                case APS_DEVICE_ANNOUNCE:
+                {
+                    const deviceAnnounceStruct *announce = reinterpret_cast <const deviceAnnounceStruct*> (payload.constData() + 1);
+                    quint64 ieeeAddress;
+                    ieeeAddress = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
+                    emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(announce->networkAddress));
+                    break;
+                }
+
                 case APS_NODE_DESCRIPTOR:
                 {
                     const nodeDescriptorResponseStruct *response = reinterpret_cast <const nodeDescriptorResponseStruct*> (payload.constData() + 1);
@@ -395,21 +406,9 @@ void EZSP::parsePacket(const QByteArray &payload)
                     break;
                 }
 
-                case APS_DEVICE_ANNOUNCE:
-                {
-                    const deviceAnnounceStruct *announce = reinterpret_cast <const deviceAnnounceStruct*> (payload.constData() + 1);
-                    quint64 ieeeAddress;
-                    ieeeAddress = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
-                    emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(announce->networkAddress));
-                    break;
-                }
-
                 case APS_BIND:
                 case APS_UNBIND:
-                {
-                    m_bindRequestStatus = payload.at(1) ? false : true;
                     break;
-                }
 
                 default:
                 {

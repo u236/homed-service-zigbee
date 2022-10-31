@@ -128,8 +128,10 @@ void Adapter::reset(void)
 {
     QList <QString> list = {"gpio", "flow"};
 
-    logInfo << "Resetting adapter" << QString("(%1)").arg(list.contains(m_reset) ? m_reset : "soft").toUtf8().constData();
+    m_device->readAll();
     m_resetTimer->start(ADAPTER_RESET_TIMEOUT);
+
+    logInfo << "Resetting adapter" << QString("(%1)").arg(list.contains(m_reset) ? m_reset : "soft").toUtf8().constData();
 
     switch (list.indexOf(m_reset))
     {

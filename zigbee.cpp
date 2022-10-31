@@ -572,12 +572,11 @@ void ZigBee::interviewRequest(const Device &device)
 
 void ZigBee::interviewFinished(const Device &device)
 {
+    logInfo << "Device" << device->name() << "manufacturer name is" << device->manufacturerName() << "and model name is" << device->modelName();
     setupDevice(device);
 
-    if (device->description().isEmpty())
-        logInfo << "Device" << device->name() << "manufacturer name is" << device->manufacturerName() << "and model name is" << device->modelName();
-    else
-        logInfo << "Device" << device->name() << "is" << device->description();
+    if (!device->description().isEmpty())
+        logInfo << "Device" << device->name() << "identified as" << device->description();
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         for (int i = 0; i < it.value()->reportings().count(); i++)
@@ -995,7 +994,10 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 if (commandId == CMD_READ_ATTRIBUTES_RESPONSE)
                 {
                     if (payload.at(2))
-                        break;
+                    {
+                        payload.remove(0, 3);
+                        continue;
+                    }
 
                     dataType = static_cast <quint8> (payload.at(3));
                     offset = 4;
