@@ -87,7 +87,7 @@ void Properties::BatteryUndivided::parseAttribte(quint16 attributeId, quint8 dat
 
 void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+    if (attributeId != 0x0000 || (dataType != DATA_TYPE_BOOLEAN && dataType != DATA_TYPE_8BIT_UNSIGNED) || data.length() != 1)
         return;
 
     m_value = data.at(0) ? "on" : "off";
@@ -383,7 +383,7 @@ void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint
 {
     qint16 value;
 
-    if (dataType != DATA_TYPE_16BIT_SIGNED || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if ((dataType != DATA_TYPE_16BIT_UNSIGNED && dataType != DATA_TYPE_16BIT_SIGNED) || data.length() != 2)
         return;
 
     memcpy(&value, data.constData(), data.length());
