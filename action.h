@@ -203,6 +203,46 @@ namespace ActionsTUYA
 
     };
 
+    class Volume : public Request, public ActionObject
+    {
+
+    public:
+
+        Volume(void) : ActionObject("volume", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class Duration : public Request, public ActionObject
+    {
+
+    public:
+
+        Duration(void) : ActionObject("duration", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class Alarm : public Request, public ActionObject
+    {
+
+    public:
+
+        Alarm(void) : ActionObject("alarm", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class Melody : public Request, public ActionObject
+    {
+
+    public:
+
+        Melody(void) : ActionObject("melody", CLUSTER_TUYA) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
     class Sensitivity : public Request, public ActionObject
     {
 

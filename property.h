@@ -456,17 +456,40 @@ namespace PropertiesPTVO
 
 namespace PropertiesTUYA
 {
-    class PresenceSensor : public PropertyObject
+    class Data : public PropertyObject
     {
 
     public:
 
-        PresenceSensor(void) : PropertyObject(QString(), CLUSTER_TUYA) {}
+        Data(void) : PropertyObject(QString(), CLUSTER_TUYA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    protected:
+
+        QMap <QString, QVariant> m_map;
 
     private:
 
-        QMap <QString, QVariant> m_map;
+        QVariant parseData(const tuyaHeaderStruct *header, const QByteArray &data);
+        virtual void update(quint8 dataPoint, const QVariant &data) = 0;
+
+    };
+
+    class NeoSiren : public Data
+    {
+
+    public:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
+    class PresenceSensor : public Data
+    {
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
 
     };
 

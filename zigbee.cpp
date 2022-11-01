@@ -695,7 +695,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
             case 0x0007:
 
-                if (dataType != DATA_TYPE_8BIT_ENUM)
+                if (dataType != DATA_TYPE_8BIT_UNSIGNED && dataType != DATA_TYPE_8BIT_ENUM)
                     return;
 
                 device->setPowerSource(static_cast <quint8> (data.at(0)));

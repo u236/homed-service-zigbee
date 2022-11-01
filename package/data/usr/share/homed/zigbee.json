@@ -268,6 +268,12 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
+      "description":    "TUYA TS0601 Neo Siren",
+      "modelNames":     ["_TZE200_t1blo2bj"],
+      "actions":        ["tuyaVolume", "tuyaDuration", "tuyaAlarm", "tuyaMelody"],
+      "properties":     ["tuyaNeoSiren"]
+    },
+    {
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
       "properties":     ["batteryPercentage", "iasGas"]

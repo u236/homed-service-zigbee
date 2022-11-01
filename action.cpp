@@ -17,6 +17,10 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::Distance>           ("lumiDistanceAction");
     qRegisterMetaType <ActionsLUMI::ResetPresence>      ("lumiResetPresenceAction");
 
+    qRegisterMetaType <ActionsTUYA::Volume>             ("tuyaVolumeAction");
+    qRegisterMetaType <ActionsTUYA::Duration>           ("tuyaDurationAction");
+    qRegisterMetaType <ActionsTUYA::Alarm>              ("tuyaAlarmAction");
+    qRegisterMetaType <ActionsTUYA::Melody>             ("tuyaMelodyAction");
     qRegisterMetaType <ActionsTUYA::Sensitivity>        ("tuyaSensitivityAction");
     qRegisterMetaType <ActionsTUYA::DistanceMin>        ("tuyaDistanceMinAction");
     qRegisterMetaType <ActionsTUYA::DistanceMax>        ("tuyaDistanceMaxAction");
@@ -298,6 +302,43 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
     }
 
     return QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (data), tuyaHeader.length);
+}
+
+QByteArray ActionsTUYA::Volume::request(const QVariant &data)
+{
+    QList <QString> list = {"low", "medium", "high"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return makeRequest(m_transactionId++, 0x05, 0x04, &value);
+}
+
+QByteArray ActionsTUYA::Duration::request(const QVariant &data)
+{
+    quint32 value = static_cast <quint32> (data.toInt());
+
+    if (value > 1800)
+        return QByteArray();
+
+    return makeRequest(m_transactionId++, 0x07, 0x02, &value);
+}
+
+QByteArray ActionsTUYA::Alarm::request(const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return makeRequest(m_transactionId++, 0x0D, 0x01, &value);
+}
+
+QByteArray ActionsTUYA::Melody::request(const QVariant &data)
+{
+    quint32 value = static_cast <quint32> (data.toInt());
+
+    if (value < 1 || value > 18)
+        return QByteArray();
+
+    return makeRequest(m_transactionId++, 0x15, 0x04, &value);
 }
 
 QByteArray ActionsTUYA::Sensitivity::request(const QVariant &data)

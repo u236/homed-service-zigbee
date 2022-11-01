@@ -776,7 +776,7 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
     m_value = data.at(0) ? "on" : "off";
 }
 
-void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
     QVariant data;
@@ -784,15 +784,32 @@ void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteA
     if (commandId != 0x02)
         return;
 
+    data = parseData(header, payload.mid(sizeof(tuyaHeaderStruct)));
+
+    if (!data.isValid())
+        return;
+
+    update(header->dataPoint, data);
+}
+
+QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const QByteArray &data)
+{
     switch (header->dataType)
     {
+        case 0x01:
+
+            if (header->length == 1)
+                return data.at(0) ? true : false;
+
+            break;
+
         case 0x02:
 
             if (header->length == 4)
             {
                 quint32 value;
-                memcpy(&value, payload.constData() + sizeof(tuyaHeaderStruct), header->length);
-                data = qFromBigEndian(value);
+                memcpy(&value, data.constData(), header->length);
+                return qFromBigEndian(value);
             }
 
             break;
@@ -800,15 +817,37 @@ void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteA
         case 0x04:
 
             if (header->length == 1)
-                data = payload.at(sizeof(tuyaHeaderStruct)) ? true : false;
+                return static_cast <quint8> (data.at(0));
 
             break;
     }
 
-    if (!data.isValid())
-        return;
+    return QVariant();
+}
 
-    switch (header->dataPoint)
+void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
+{
+    switch (dataPoint)
+    {
+        case 0x05:
+        {
+            QList <QString> list = {"low", "medium", "high"};
+            m_map.insert("volume", list.at(data.toInt()));
+            break;
+        }
+
+        case 0x07: m_map.insert("duration", data.toInt()); break;
+        case 0x0D: m_map.insert("alarm", data.toBool()); break;
+        case 0x0F: m_map.insert("battery", data.toInt()); break;
+        case 0x15: m_map.insert("melody", data.toBool()); break;
+    }
+
+    m_value = m_map;
+}
+
+void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &data)
+{
+    switch (dataPoint)
     {
         case 0x01: m_map.insert("occupancy", data.toBool()); break;
         case 0x02: m_map.insert("sensitivity", data.toInt()); break;
@@ -817,9 +856,6 @@ void PropertiesTUYA::PresenceSensor::parseCommand(quint8 commandId, const QByteA
         case 0x65: m_map.insert("detectionDelay", data.toInt()); break;
         case 0x68: m_map.insert("illuminance", data.toInt()); break;
     }
-
-    if (m_map.isEmpty())
-        return;
 
     m_value = m_map;
 }
