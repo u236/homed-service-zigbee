@@ -2,6 +2,8 @@
 
 Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
 {
+    m_names = getConfig()->value("mqtt/names", false).toBool();
+
     connect(m_zigbee, &ZigBee::joinEvent, this, &Controller::joinEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
     connect(m_zigbee, &ZigBee::statusStored, this, &Controller::statusStored);
@@ -46,34 +48,38 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->setPermitJoin(json.value("enabled").toBool());
                 break;
 
+            case Command::setDeviceName:
+                m_zigbee->setDeviceName(json.value("device").toString(), json.value("name").toString());
+                break;
+
             case Command::removeDevice:
-                m_zigbee->removeDevice(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()));
+                m_zigbee->removeDevice(json.value("device").toString());
                 break;
 
             case Command::updateDevice:
-                m_zigbee->updateDevice(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), json.value("reportings").toBool());
+                m_zigbee->updateDevice(json.value("device").toString(), json.value("reportings").toBool());
                 break;
 
             case Command::updateReporting:
-                m_zigbee->updateReporting(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("reporting").toString(), static_cast <quint16> (json.value("minInterval").toInt()), static_cast <quint16> (json.value("maxInterval").toInt()), static_cast <quint16> (json.value("valueChange").toInt()));
+                m_zigbee->updateReporting(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("reporting").toString(), static_cast <quint16> (json.value("minInterval").toInt()), static_cast <quint16> (json.value("maxInterval").toInt()), static_cast <quint16> (json.value("valueChange").toInt()));
                 break;
 
             case Command::bindDevice:
             case Command::unbindDevice:
-                m_zigbee->bindingControl(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("clusterId").toInt()), json.value(json.contains("groupId") ? "groupId" : "dstAddress").toVariant(), static_cast <quint8> (json.value("dstEndpointId").toInt()), command == Command::unbindDevice);
+                m_zigbee->bindingControl(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("clusterId").toInt()), json.value(json.contains("groupId") ? "groupId" : "dstAddress").toVariant(), static_cast <quint8> (json.value("dstEndpointId").toInt()), command == Command::unbindDevice);
                 break;
 
             case Command::addGroup:
             case Command::removeGroup:
-                m_zigbee->groupControl(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("groupId").toInt()), command == Command::removeGroup);
+                m_zigbee->groupControl(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), static_cast <quint16> (json.value("groupId").toInt()), command == Command::removeGroup);
                 break;
 
             case Command::removeAllGroups:
-                m_zigbee->removeAllGroups(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()));
+                m_zigbee->removeAllGroups(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()));
                 break;
 
             case Command::otaUpgrade:
-                m_zigbee->otaUpgrade(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString());
+                m_zigbee->otaUpgrade(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString());
                 break;
 
             case Command::touchLinkScan:
@@ -91,27 +97,22 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
         if (list.value(3) != "group")
         {
-            QByteArray ieeeAddress = QByteArray::fromHex(list.value(3).toUtf8());
-            quint8 endpointId = static_cast <quint8> (list.value(4).toInt());
-
             for (auto it = json.begin(); it != json.end(); it++)
             {
                 if (!it.value().toVariant().isValid())
                     continue;
 
-                m_zigbee->deviceAction(ieeeAddress, endpointId, it.key(), it.value().toVariant());
+                m_zigbee->deviceAction(list.value(3), static_cast <quint8> (list.value(4).toInt()), it.key(), it.value().toVariant());
             }
         }
         else
         {
-            quint16 groupId = static_cast <quint16> (list.value(4).toInt());
-
             for (auto it = json.begin(); it != json.end(); it++)
             {
                 if (!it.value().toVariant().isValid())
                     continue;
 
-                m_zigbee->groupAction(groupId, it.key(), it.value().toVariant());
+                m_zigbee->groupAction(static_cast <quint16> (list.value(4).toInt()), it.key(), it.value().toVariant());
             }
         }
     }
@@ -156,7 +157,7 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
         return;
 
     json.insert("linkQuality", device->linkQuality());
-    mqttPublish(mqttTopic("fd/zigbee/%1").arg(device->ieeeAddress().toHex(':').constData()).append(device->multipleEndpoints() ? QString("/%1").arg(endpointId) : QString()), json);
+    mqttPublish(mqttTopic("fd/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')).append(device->multipleEndpoints() ? QString("/%1").arg(endpointId) : QString()), json);
 }
 
 void Controller::statusStored(const QJsonObject &json)

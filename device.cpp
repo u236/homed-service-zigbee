@@ -15,6 +15,15 @@ DeviceList::DeviceList(QSettings *config) : m_timer(new QTimer(this)), m_file(co
     connect(m_timer, &QTimer::timeout, this, &DeviceList::storeStatus);
 }
 
+Device DeviceList::byName(const QString &name)
+{
+    for (auto it = begin(); it != end(); it++)
+        if (it.value()->name() == name)
+            return it.value();
+
+    return value(QByteArray::fromHex(name.toUtf8()));
+}
+
 Device DeviceList::byNetwork(quint16 networkAddress)
 {
     for (auto it = begin(); it != end(); it++)

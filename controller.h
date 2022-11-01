@@ -18,6 +18,7 @@ public:
     enum class Command
     {
         setPermitJoin,
+        setDeviceName,
         removeDevice,
         updateDevice,
         updateReporting,
@@ -37,6 +38,7 @@ private:
 
     ZigBee *m_zigbee;
     QMetaEnum m_commands;
+    bool m_names;
 
 private slots:
 

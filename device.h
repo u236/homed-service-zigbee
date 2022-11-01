@@ -166,6 +166,7 @@ public:
     inline void setAdapterType(const QString &value) { m_adapterType = value; }
     inline void setAdapterVersion(const QString &value) { m_adapterVersion = value; }
 
+    Device byName(const QString &name);
     Device byNetwork(quint16 networkAddress);
 
 private:

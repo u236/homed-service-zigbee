@@ -63,32 +63,32 @@ void ZigBee::setPermitJoin(bool enabled)
     m_devices->storeStatus();
 }
 
-void ZigBee::setDeviceName(const QByteArray &ieeeAddress, const QString &name)
+void ZigBee::setDeviceName(const QString &deviceName, const QString &newName)
 {
-    auto it = m_devices->find(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
 
-    if (it == m_devices->end())
+    if (device.isNull())
         return;
 
-    it.value()->setName(name);
+    device->setName(newName);
 }
 
-void ZigBee::removeDevice(const QByteArray &ieeeAddress)
+void ZigBee::removeDevice(const QString &deviceName)
 {
-    auto it = m_devices->find(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
 
-    if (it == m_devices->end())
+    if (device.isNull())
         return;
 
-    logInfo << "Device" << it.value()->name() << "removed";
+    logInfo << "Device" << device->name() << "removed";
 
-    m_devices->erase(it);
+    m_devices->remove(device->ieeeAddress());
     m_devices->storeStatus();
 }
 
-void ZigBee::updateDevice(const QByteArray &ieeeAddress, bool reportings)
+void ZigBee::updateDevice(const QString &deviceName, bool reportings)
 {
-    Device device = m_devices->value(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
 
     if (device.isNull())
         return;
@@ -108,9 +108,9 @@ void ZigBee::updateDevice(const QByteArray &ieeeAddress, bool reportings)
     logInfo << "Device" << device->name() << "configuration updated";
 }
 
-void ZigBee::updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange)
+void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange)
 {
-    Device device = m_devices->value(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
 
     if (device.isNull())
         return;
@@ -141,11 +141,11 @@ void ZigBee::updateReporting(const QByteArray &ieeeAddress, quint8 endpointId, c
     }
 }
 
-void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind)
+void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind)
 {
-    auto it = m_devices->find(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
 
-    if (it == m_devices->end())
+    if (device.isNull())
         return;
 
     switch (dstAddress.type())
@@ -153,13 +153,13 @@ void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, qu
         case QVariant::LongLong:
         {
             quint16 value = qToLittleEndian <quint16> (dstAddress.toInt());
-            enqueueBindRequest(it.value(), endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
+            enqueueBindRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
             break;
         }
 
         case QVariant::String:
         {
-            enqueueBindRequest(it.value(), endpointId, clusterId, QByteArray::fromHex(dstAddress.toString().toUtf8()), dstEndpointId, unbind);
+            enqueueBindRequest(device, endpointId, clusterId, QByteArray::fromHex(dstAddress.toString().toUtf8()), dstEndpointId, unbind);
             break;
         }
 
@@ -168,12 +168,12 @@ void ZigBee::bindingControl(const QByteArray &ieeeAddress, quint8 endpointId, qu
     }
 }
 
-void ZigBee::groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quint16 groupId, bool remove)
+void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 groupId, bool remove)
 {
-    auto it = m_devices->find(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
     zclHeaderStruct header;
 
-    if (it == m_devices->end())
+    if (device.isNull())
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
@@ -181,31 +181,31 @@ void ZigBee::groupControl(const QByteArray &ieeeAddress, quint8 endpointId, quin
     header.commandId = remove ? 0x03 : 0x00;
 
     groupId = qFromLittleEndian(groupId);
-    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
+    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
 }
 
-void ZigBee::removeAllGroups(const QByteArray &ieeeAddress, quint8 endpointId)
+void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
 {
-    auto it = m_devices->find(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
     zclHeaderStruct header;
 
-    if (it == m_devices->end())
+    if (device.isNull())
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
     header.transactionId = m_transactionId++;
     header.commandId = 0x04;
 
-    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)), QString("remove all groups request"));
+    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)), QString("remove all groups request"));
 }
 
-void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const QString &fileName)
+void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName)
 {
-    auto it = m_devices->find(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
     zclHeaderStruct header;
     otaImageNotifyStruct payload;
 
-    if (it == m_devices->end() || fileName.isEmpty() || !QFile::exists(fileName))
+    if (device.isNull() || fileName.isEmpty() || !QFile::exists(fileName))
         return;
 
     m_otaUpgradeFile = fileName;
@@ -217,7 +217,7 @@ void ZigBee::otaUpgrade(const QByteArray &ieeeAddress, quint8 endpointId, const 
     payload.type = 0x00;
     payload.jitter = 0x64; // TODO: check this
 
-    enqueueDataRequest(it.value(), endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
 }
 
 void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
@@ -236,9 +236,9 @@ void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, boo
     }
 }
 
-void ZigBee::deviceAction(const QByteArray &ieeeAddress, quint8 endpointId, const QString &actionName, const QVariant &actionData)
+void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QString &actionName, const QVariant &actionData)
 {
-    Device device = m_devices->value(ieeeAddress);
+    Device device = m_devices->byName(deviceName);
 
     if (device.isNull())
         return;
