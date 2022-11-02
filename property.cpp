@@ -44,6 +44,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::Pattern>             ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
 
+    qRegisterMetaType <PropertiesTUYA::NeoSiren>            ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnBehavior>     ("tuyaPowerOnBehaviorProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchType>          ("tuyaSwitchTypeProperty");
@@ -781,7 +782,7 @@ void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payl
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
     QVariant data;
 
-    if (commandId != 0x02)
+    if (commandId != 0x01 && commandId != 0x02)
         return;
 
     data = parseData(header, payload.mid(sizeof(tuyaHeaderStruct)));
@@ -839,7 +840,7 @@ void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
         case 0x07: m_map.insert("duration", data.toInt()); break;
         case 0x0D: m_map.insert("alarm", data.toBool()); break;
         case 0x0F: m_map.insert("battery", data.toInt()); break;
-        case 0x15: m_map.insert("melody", data.toBool()); break;
+        case 0x15: m_map.insert("melody", data.toInt()); break;
     }
 
     m_value = m_map;

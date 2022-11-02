@@ -112,7 +112,7 @@
     {
       "description":    "Perenio Door and Window Sensor PECWS01",
       "modelNames":     ["ZHA-DoorLockSensor"],
-      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "properties":     ["batteryPercentage", "iasContact"],
       "reportings":     ["batteryPercentage"]
     },
     {

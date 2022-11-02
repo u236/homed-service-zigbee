@@ -8,7 +8,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_transactionId(0)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_transactionId(0)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -58,9 +58,10 @@ void ZigBee::init(void)
 
 void ZigBee::setPermitJoin(bool enabled)
 {
-    m_devices->setPermitJoin(enabled);
+    if (!m_adapter)
+        return;
+
     m_adapter->setPermitJoin(enabled);
-    m_devices->storeStatus();
 }
 
 void ZigBee::setDeviceName(const QString &deviceName, const QString &newName)
@@ -141,25 +142,32 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
     }
 }
 
-void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind)
+void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint16 clusterId, const QVariant &dstName, quint8 dstEndpointId, bool unbind)
 {
     Device device = m_devices->byName(deviceName);
 
     if (device.isNull())
         return;
 
-    switch (dstAddress.type())
+    switch (dstName.type())
     {
         case QVariant::LongLong:
         {
-            quint16 value = qToLittleEndian <quint16> (dstAddress.toInt());
-            enqueueBindRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
+            quint16 value = qToLittleEndian <quint16> (dstName.toInt());
+
+            if (value)
+                enqueueBindRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
+
             break;
         }
 
         case QVariant::String:
         {
-            enqueueBindRequest(device, endpointId, clusterId, QByteArray::fromHex(dstAddress.toString().toUtf8()), dstEndpointId, unbind);
+            Device destination = m_devices->byName(deviceName);
+
+            if (!destination.isNull())
+                enqueueBindRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
+
             break;
         }
 
@@ -1157,14 +1165,19 @@ void ZigBee::coordinatorReady(void)
 
 void ZigBee::permitJoinUpdated(bool enabled)
 {
-    if (enabled)
+    if (!enabled)
+    {
+        m_statusLedTimer->stop();
+        GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
+    }
+    else
     {
         m_statusLedTimer->start(STATUS_LED_TIMEOUT);
-        return;
+        GPIO::setStatus(m_statusLedPin, true);
     }
 
-    m_statusLedTimer->stop();
-    GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
+    m_devices->setPermitJoin(enabled);
+    m_devices->storeStatus();
 }
 
 void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)

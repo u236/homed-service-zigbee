@@ -296,9 +296,17 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
 
     switch (tuyaHeader.dataType)
     {
-        case 0x02: tuyaHeader.length = 4; break;
-        case 0x04: tuyaHeader.length = 1; break;
-        default: return QByteArray();
+        case 0x01:
+        case 0x04:
+            tuyaHeader.length = 1;
+            break;
+
+        case 0x02:
+            tuyaHeader.length = 4;
+            break;
+
+        default:
+            return QByteArray();
     }
 
     return QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (data), tuyaHeader.length);
@@ -322,6 +330,7 @@ QByteArray ActionsTUYA::Duration::request(const QVariant &data)
     if (value > 1800)
         return QByteArray();
 
+    value = qToBigEndian(value);
     return makeRequest(m_transactionId++, 0x07, 0x02, &value);
 }
 
@@ -333,7 +342,7 @@ QByteArray ActionsTUYA::Alarm::request(const QVariant &data)
 
 QByteArray ActionsTUYA::Melody::request(const QVariant &data)
 {
-    quint32 value = static_cast <quint32> (data.toInt());
+    quint8 value = static_cast <quint8> (data.toInt());
 
     if (value < 1 || value > 18)
         return QByteArray();
