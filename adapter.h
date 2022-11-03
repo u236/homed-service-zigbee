@@ -25,6 +25,7 @@
 #define APS_DEVICE_ANNOUNCE             0x0013
 #define APS_BIND                        0x0021
 #define APS_UNBIND                      0x0022
+#define APS_LEAVE                       0x0034
 
 #define ADDRESS_MODE_NOT_PRESENT        0x00
 #define ADDRESS_MODE_GROUP              0x01
@@ -145,13 +146,15 @@ public:
     virtual bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data) = 0;
 
     virtual bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
-    virtual bool extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
+    virtual bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
+
+    virtual bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress) = 0;
 
     virtual bool setInterPanEndpointId(quint8 endpointId) = 0;
     virtual bool setInterPanChannel(quint8 channel) = 0;
     virtual void resetInterPan(void) = 0;
 
-    virtual quint8 dataRequestStatus(void) = 0;
+    virtual quint8 requestStatus(void) = 0;
 
     inline QString type(void) { return m_typeString; }
     inline QString version(void) { return m_versionString; }

@@ -252,13 +252,15 @@ public:
     bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload) override;
 
     bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
-    bool extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+    bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+
+    bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress) override;
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPan(void) override;
 
-    inline quint8 dataRequestStatus(void) override { return m_requestStatus; }
+    inline quint8 requestStatus(void) override { return m_requestStatus; }
 
 private:
 

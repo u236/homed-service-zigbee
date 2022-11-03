@@ -64,26 +64,37 @@ void ZigBee::setPermitJoin(bool enabled)
     m_adapter->setPermitJoin(enabled);
 }
 
-void ZigBee::setDeviceName(const QString &deviceName, const QString &newName)
+void ZigBee::setDeviceName(const QString &deviceName, const QString &newName, bool store)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     device->setName(newName);
+
+    if (!store)
+        return;
+
+    m_devices->storeStatus();
 }
 
-void ZigBee::removeDevice(const QString &deviceName)
+void ZigBee::removeDevice(const QString &deviceName, bool force)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
-    logInfo << "Device" << device->name() << "removed";
+    if (!force)
+    {
+        m_removeQueue.enqueue(device);
+        return;
+    }
 
-    m_devices->remove(device->ieeeAddress());
+    logInfo << "Device" << device->name() << "removed (force)";
+
+    m_devices->removeDevice(device);
     m_devices->storeStatus();
 }
 
@@ -91,7 +102,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     setupDevice(device);
@@ -113,7 +124,7 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -146,7 +157,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     switch (dstName.type())
@@ -165,7 +176,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
         {
             Device destination = m_devices->byName(deviceName);
 
-            if (!destination.isNull())
+            if (!destination.isNull() && !destination->removed())
                 enqueueBindRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
 
             break;
@@ -181,7 +192,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
     Device device = m_devices->byName(deviceName);
     zclHeaderStruct header;
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
@@ -197,7 +208,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     Device device = m_devices->byName(deviceName);
     zclHeaderStruct header;
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
@@ -213,7 +224,7 @@ void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QStr
     zclHeaderStruct header;
     otaImageNotifyStruct payload;
 
-    if (device.isNull() || fileName.isEmpty() || !QFile::exists(fileName))
+    if (device.isNull() || device->removed() || fileName.isEmpty() || !QFile::exists(fileName))
         return;
 
     m_otaUpgradeFile = fileName;
@@ -248,7 +259,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -1068,7 +1079,7 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 
     if (!m_adapter->extendedDataRequest(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
     {
-        logWarning << "TouchLink scan request failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        logWarning << "TouchLink scan request failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
         return;
     }
 
@@ -1076,7 +1087,7 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 
     if (!m_adapter->extendedDataRequest(ieeeAddress, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload.transactionId)))))
     {
-        logWarning << "TouchLink reset request failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        logWarning << "TouchLink reset request failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
         return;
     }
 
@@ -1105,7 +1116,7 @@ void ZigBee::touchLinkScan(void)
 
         if (!m_adapter->extendedDataRequest(0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
         {
-            logWarning << "TouchLink scan request failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+            logWarning << "TouchLink scan request failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
             return;
         }
     }
@@ -1126,7 +1137,7 @@ void ZigBee::coordinatorReady(void)
 {
     quint64 adapterAddress = qToBigEndian(qFromLittleEndian(m_adapter->ieeeAddress()));
     QByteArray ieeeAddress(reinterpret_cast <char*> (&adapterAddress), sizeof(adapterAddress));
-    Device device(new DeviceObject(ieeeAddress));
+    Device device(new DeviceObject(ieeeAddress, 0x0000, "HOMEd Coordinator"));
 
     logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
 
@@ -1140,7 +1151,6 @@ void ZigBee::coordinatorReady(void)
     }
 
     device->setLogicalType(LogicalType::Coordinator);
-    device->setName("HOMEd Coordinator");
     device->setInterviewFinished();
 
     m_devices->insert(ieeeAddress, device);
@@ -1190,14 +1200,19 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         it = m_devices->insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
     }
     else
+    {
+        if (it.value()->removed())
+            it.value()->setRemoved(false);
+
         logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04X", networkAddress);
+    }
 
     blink(500);
 
     if (it.value()->networkAddress() != networkAddress)
     {
-        it.value()->setNetworkAddress(networkAddress);
         logInfo << "Device" << it.value()->name() << "network address updated";
+        it.value()->setNetworkAddress(networkAddress);
     }
 
     if (!it.value()->interviewFinished() && !it.value()->timer()->isActive())
@@ -1222,7 +1237,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     logInfo << "Device" << it.value()->name() << "left network";
     blink(500);
 
-    m_devices->erase(it);
+    m_devices->removeDevice(it.value());
     m_devices->storeStatus();
 
     emit joinEvent(false);
@@ -1232,7 +1247,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
 {
     Device device = m_devices->byNetwork(networkAddress);
 
-    if (device.isNull() || device->interviewFinished())
+    if (device.isNull() || device->removed())
         return;
 
     device->setLogicalType(logicalType);
@@ -1254,7 +1269,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
     Device device = m_devices->byNetwork(networkAddress);
     QList <QString> list;
 
-    if (device.isNull() || device->interviewFinished())
+    if (device.isNull() || device->removed())
         return;
 
     for (int i = 0; i < data.length(); i++)
@@ -1280,7 +1295,7 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId,
     Device device = m_devices->byNetwork(networkAddress);
     Endpoint endpoint;
 
-    if (device.isNull() || device->interviewFinished())
+    if (device.isNull() || device->removed())
         return;
 
     endpoint = getEndpoint(device, endpointId);
@@ -1301,7 +1316,7 @@ void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddr
 {
     Device device = m_devices->byNetwork(networkAddress);
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     if (start)
@@ -1309,9 +1324,6 @@ void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddr
         logInfo << "Device" << device->name() << "neighbors list received";
         device->neighbors().clear();
     }
-
-    if (m_devices->byNetwork(neighborAddress).isNull())
-        return;
 
     device->neighbors().insert(neighborAddress, linkQuality);
     device->updateLastSeen();
@@ -1324,7 +1336,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     zclHeaderStruct header;
     QByteArray payload;
 
-    if (device.isNull())
+    if (device.isNull() || device->removed())
         return;
 
     endpoint = getEndpoint(device, endpointId);
@@ -1445,7 +1457,7 @@ void ZigBee::handleQueue(void)
             continue;
         }
 
-        logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "failed, status code:" << QString::asprintf("%02X", m_adapter->dataRequestStatus());
+        logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
     }
 
     if (!m_interviewQueue.isEmpty())
@@ -1455,6 +1467,20 @@ void ZigBee::handleQueue(void)
     {
         Device device = m_neighborsQueue.dequeue();
         m_adapter->lqiRequest(device->networkAddress());
+    }
+
+    if (!m_removeQueue.isEmpty())
+    {
+        Device device = m_removeQueue.dequeue();
+
+        if (!m_adapter->leaveRequest(device->networkAddress(), device->ieeeAddress()))
+            logInfo << "Device" << device->name() << "removed, but leave request failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
+
+        if (!device->removed())
+        {
+            m_devices->removeDevice(device);
+            m_devices->storeStatus();
+        }
     }
 }
 

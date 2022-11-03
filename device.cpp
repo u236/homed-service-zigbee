@@ -33,39 +33,52 @@ Device DeviceList::byNetwork(quint16 networkAddress)
     return Device();
 }
 
+void DeviceList::removeDevice(const Device &device)
+{
+    if (device->name() != device->ieeeAddress().toHex(':'))
+    {
+        insert(device->ieeeAddress(), Device(new DeviceObject(device->ieeeAddress(), device->networkAddress(), device->name(), true)));
+        return;
+    }
+
+    remove(device->ieeeAddress());
+}
+
 void DeviceList::unserializeDevices(const QJsonArray &devices)
 {
+    quint16 count = 0;
+
     for (auto it = devices.begin(); it != devices.end(); it++)
     {
         QJsonObject json = it->toObject();
 
         if (json.contains("ieeeAddress") && json.contains("networkAddress"))
         {
-            Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt())));
+            Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt()), json.value("name").toString(), json.value("removed").toBool()));
 
-            device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
-            device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
-            device->setVersion(static_cast <quint8> (json.value("version").toInt()));
-            device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
-            device->setManufacturerName(json.value("manufacturerName").toString());
-            device->setModelName(json.value("modelName").toString());
-            device->setName(json.value("name").toString());
-            device->setLastSeen(json.value("lastSeen").toInt());
+            if (!device->removed())
+            {
+                if (json.value("ineterviewFinished").toBool())
+                    device->setInterviewFinished();
 
-            unserializeEndpoints(device, json.value("endpoints").toArray());
-            unserializeNeighbors(device, json.value("neighbors").toArray());
+                device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
+                device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
+                device->setVersion(static_cast <quint8> (json.value("version").toInt()));
+                device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
+                device->setManufacturerName(json.value("manufacturerName").toString());
+                device->setModelName(json.value("modelName").toString());
+                device->setLastSeen(json.value("lastSeen").toInt());
 
-            if (json.value("ineterviewFinished").toBool())
-                device->setInterviewFinished();
+                unserializeEndpoints(device, json.value("endpoints").toArray());
+                unserializeNeighbors(device, json.value("neighbors").toArray());
+            }
 
             insert(device->ieeeAddress(), device);
+            count++;
         }
     }
 
-    if (isEmpty())
-        return;
-
-    logInfo << count() << "devices loaded";
+    logInfo << count << "devices loaded";
 }
 
 void DeviceList::unserializeEndpoints(const Device &device, const QJsonArray &endpoints)
@@ -113,48 +126,55 @@ QJsonArray DeviceList::serializeDevices(void)
 
     for (auto it = begin(); it != end(); it++)
     {
-        QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}, {"logicalType", static_cast <quint8> (it.value()->logicalType())}};
-        QJsonArray endpointsArray = serializeEndpoints(it.value()), neighborsArray = serializeNeighbors(it.value());
+        QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}};
 
-        if (it.value()->manufacturerCode())
-            json.insert("manufacturerCode", it.value()->manufacturerCode());
-
-        if (it.value()->logicalType() == LogicalType::Coordinator)
+        if (!it.value()->removed())
         {
-             if (!m_adapterType.isEmpty())
-                 json.insert("type", m_adapterType);
+            if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
+                json.insert("name", it.value()->name());
 
-             if (!m_adapterVersion.isEmpty())
-                 json.insert("version", m_adapterVersion);
+            json.insert("logicalType", static_cast <quint8> (it.value()->logicalType()));
+
+            if (it.value()->logicalType() == LogicalType::Coordinator)
+            {
+                if (!m_adapterType.isEmpty())
+                    json.insert("type", m_adapterType);
+
+                if (!m_adapterVersion.isEmpty())
+                    json.insert("version", m_adapterVersion);
+            }
+            else
+            {
+                json.insert("ineterviewFinished", it.value()->interviewFinished());
+                json.insert("manufacturerCode", it.value()->manufacturerCode());
+
+                if (it.value()->version())
+                    json.insert("version", it.value()->version());
+
+                if (it.value()->powerSource())
+                    json.insert("powerSource", it.value()->powerSource());
+
+                if (!it.value()->manufacturerName().isEmpty())
+                    json.insert("manufacturerName", it.value()->manufacturerName());
+
+                if (!it.value()->modelName().isEmpty())
+                    json.insert("modelName", it.value()->modelName());
+
+                if (it.value()->lastSeen())
+                    json.insert("lastSeen", it.value()->lastSeen());
+            }
+
+            if (!it.value()->endpoints().isEmpty())
+                json.insert("endpoints", serializeEndpoints(it.value()));
+
+            if (!it.value()->neighbors().isEmpty())
+                json.insert("neighbors", serializeNeighbors(it.value()));
         }
         else
         {
-            if (it.value()->version())
-                json.insert("version", it.value()->version());
-
-            if (it.value()->powerSource())
-                json.insert("powerSource", it.value()->powerSource());
-
-            json.insert("ineterviewFinished", it.value()->interviewFinished());
-        }
-
-        if (!it.value()->manufacturerName().isEmpty())
-            json.insert("manufacturerName", it.value()->manufacturerName());
-
-        if (!it.value()->modelName().isEmpty())
-            json.insert("modelName", it.value()->modelName());
-
-        if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
             json.insert("name", it.value()->name());
-
-        if (it.value()->lastSeen())
-            json.insert("lastSeen", it.value()->lastSeen());
-
-        if (!endpointsArray.isEmpty())
-            json.insert("endpoints", endpointsArray);
-
-        if (!neighborsArray.isEmpty())
-            json.insert("neighbors", neighborsArray);
+            json.insert("removed", true);
+        }
 
         array.append(json);
     }

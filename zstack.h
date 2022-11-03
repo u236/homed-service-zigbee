@@ -32,6 +32,7 @@
 #define ZDO_BIND_REQ                                0x2521
 #define ZDO_UNBIND_REQ                              0x2522
 #define ZDO_MGMT_LQI_REQ                            0x2531
+#define ZDO_MGMT_LEAVE_REQ                          0x2534
 #define ZDO_MGMT_PERMIT_JOIN_REQ                    0x2536
 #define ZDO_STARTUP_FROM_APP                        0x2540
 #define ZB_READ_CONFIGURATION                       0x2604
@@ -50,6 +51,7 @@
 #define ZDO_BIND_RSP                                0x45A1
 #define ZDO_UNBIND_RSP                              0x45A2
 #define ZDO_MGMT_LQI_RSP                            0x45B1
+#define ZDO_MGMT_LEAVE_RSP                          0x45B4
 #define ZDO_MGMT_PERMIT_JOIN_RSP                    0x45B6
 #define ZDO_MGMT_NWK_UPDATE_RSP                     0x45B8
 #define ZDO_STATE_CHANGE_IND                        0x45C0
@@ -265,13 +267,15 @@ public:
     bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload) override;
 
     bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
-    bool extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+    bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+
+    bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress) override;
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPan(void) override;
 
-    inline quint8 dataRequestStatus(void) override { return m_dataRequestStatus; }
+    inline quint8 requestStatus(void) override { return m_requestStatus; }
 
 private:
 
@@ -280,11 +284,9 @@ private:
     quint8 m_status, m_transactionId;
     bool m_clear;
 
-    quint16 m_bindAddress;
-    bool m_bindRequestStatus;
-
-    quint8 m_dataRequestStatus;
-    bool m_dataRequestFinished;
+    quint16 m_requestAddress;
+    quint8 m_requestStatus;
+    bool m_responseReceived;
 
     quint16 m_command;
     QByteArray m_replyData;
@@ -310,8 +312,7 @@ private slots:
 signals:
 
     void dataReceived(void);
-    void bindResponse(void);
-    void dataConfirm(void);
+    void responseReceived(void);
 
 };
 

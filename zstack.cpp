@@ -51,13 +51,13 @@ bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, q
     if (data.isEmpty())
         return false;
 
-    m_bindAddress = qToLittleEndian(networkAddress);
-    m_bindRequestStatus = false;
+    m_requestAddress = qToLittleEndian(networkAddress);
+    m_responseReceived = false;
 
-    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&m_bindAddress), sizeof(m_bindAddress)).append(data)) || m_replyData.at(0))
+    if (!sendRequest(unbind ? ZDO_UNBIND_REQ : ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&m_requestAddress), sizeof(m_requestAddress)).append(data)) || m_replyData.at(0))
         return false;
 
-    return waitForSignal(this, SIGNAL(bindResponse()), NETWORK_REQUEST_TIMEOUT) && m_bindRequestStatus;
+    return (m_responseReceived || waitForSignal(this, SIGNAL(responseReceived()), NETWORK_REQUEST_TIMEOUT)) && (m_requestStatus ? false : true);
 }
 
 bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload)
@@ -73,16 +73,16 @@ bool ZStack::dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clus
     data.radius = AF_DEFAULT_RADIUS;
     data.length = static_cast <quint8> (payload.length());
 
-    m_dataRequestFinished = false;
+    m_responseReceived = false;
 
     if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) || m_replyData.at(0))
         return false;
 
-    if (!m_dataRequestFinished && !waitForSignal(this, SIGNAL(dataConfirm()), NETWORK_REQUEST_TIMEOUT))
+    if (!m_responseReceived && !waitForSignal(this, SIGNAL(responseReceived()), NETWORK_REQUEST_TIMEOUT))
         return false;
 
     m_transactionId++;
-    return m_dataRequestStatus ? false : true;
+    return m_requestStatus ? false : true;
 }
 
 bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
@@ -111,22 +111,38 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     data.radius = dstPanId ? AF_DEFAULT_RADIUS * 2 : AF_DEFAULT_RADIUS;
     data.length = qToLittleEndian <quint16> (payload.length());
 
-    m_dataRequestFinished = false;
+    m_responseReceived = false;
 
     if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) || m_replyData.at(0))
         return false;
 
-    if (!m_dataRequestFinished && !waitForSignal(this, SIGNAL(dataConfirm()), NETWORK_REQUEST_TIMEOUT))
+    if (!m_responseReceived && !waitForSignal(this, SIGNAL(responseReceived()), NETWORK_REQUEST_TIMEOUT))
         return false;
 
     m_transactionId++;
-    return m_dataRequestStatus ? false : true;
+    return m_requestStatus ? false : true;
 }
 
-bool ZStack::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
+bool ZStack::extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
 {
-    address = qToLittleEndian(address);
-    return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
+    networkAddress = qToLittleEndian(networkAddress);
+    return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
+}
+
+bool ZStack::leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress)
+{
+    quint64 data;
+
+    memcpy(&data, ieeeAddress.constData(), sizeof(data));
+    data = qToLittleEndian(qFromBigEndian(data));
+
+    m_requestAddress = qToLittleEndian(networkAddress);
+    m_responseReceived = false;
+
+    if (!sendRequest(ZDO_MGMT_LEAVE_REQ, QByteArray(reinterpret_cast <char*> (&m_requestAddress), sizeof(m_requestAddress)).append(reinterpret_cast <char*> (&data), sizeof(data)).append(1, 0x00)) || m_replyData.at(0))
+        return false;
+
+    return (m_responseReceived || waitForSignal(this, SIGNAL(responseReceived()), NETWORK_REQUEST_TIMEOUT)) && (m_requestStatus ? false : true);
 }
 
 bool ZStack::setInterPanEndpointId(quint8 endpointId)
@@ -210,6 +226,20 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case ZDO_TC_DEV_IND:
             break;
 
+        case ZDO_BIND_RSP:
+        case ZDO_UNBIND_RSP:
+        case ZDO_MGMT_LEAVE_RSP:
+        {
+            if (!memcmp(data.constData(), &m_requestAddress, sizeof(m_requestAddress)))
+            {
+                m_requestStatus = data.at(2);
+                m_responseReceived = true;
+                emit responseReceived();
+            }
+
+            break;
+        }
+
         case SYS_RESET_IND:
         {
             m_resetTimer->stop();
@@ -224,9 +254,9 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         {
             if (static_cast <quint8> (data.at(2)) == m_transactionId)
             {
-                m_dataRequestStatus = data.at(0);
-                m_dataRequestFinished = true;
-                emit dataConfirm();
+                m_requestStatus = data.at(0);
+                m_responseReceived = true;
+                emit responseReceived();
             }
 
             break;
@@ -300,18 +330,6 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
             if (!response->status)
                 emit activeEndpointsReceived(qFromLittleEndian(response->networkAddress), data.mid(sizeof(activeEndpointsResponseStruct) + 2, response->count));
-
-            break;
-        }
-
-        case ZDO_BIND_RSP:
-        case ZDO_UNBIND_RSP:
-        {
-            if (!memcmp(data.constData(), &m_bindAddress, sizeof(m_bindAddress)))
-            {
-                m_bindRequestStatus = data.at(2) ? false : true;
-                emit bindResponse();
-            }
 
             break;
         }

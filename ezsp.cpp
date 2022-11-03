@@ -103,9 +103,9 @@ bool EZSP::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, 
     return true;
 }
 
-bool EZSP::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
+bool EZSP::extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
 {
-    Q_UNUSED(address)
+    Q_UNUSED(networkAddress)
     Q_UNUSED(dstEndpointId)
     Q_UNUSED(dstPanId)
     Q_UNUSED(srcEndpointId)
@@ -114,6 +114,16 @@ bool EZSP::extendedDataRequest(quint16 address, quint8 dstEndpointId, quint16 ds
     Q_UNUSED(group)
 
     return true;
+}
+
+bool EZSP::leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress)
+{
+    quint64 address;
+
+    memcpy(&address, ieeeAddress.constData(), sizeof(address));
+    address = qToLittleEndian(qFromBigEndian(address));
+
+    return sendUnicast(networkAddress, 0x0000, APS_LEAVE, 0x00, 0x00, QByteArray(1, static_cast <char> (m_sequenceId)).append(reinterpret_cast <char*> (&address), sizeof(address)).append(1, 0x00));
 }
 
 bool EZSP::setInterPanEndpointId(quint8 endpointId)
@@ -408,6 +418,7 @@ void EZSP::parsePacket(const QByteArray &payload)
 
                 case APS_BIND:
                 case APS_UNBIND:
+                case APS_LEAVE:
                     break;
 
                 default:

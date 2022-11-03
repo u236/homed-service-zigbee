@@ -75,14 +75,29 @@ class DeviceObject : public QObject
 
 public:
 
-    DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress = 0) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_nodeDescriptorReceived(false), m_activeEndpointsReceived(false), m_interviewFinished(false), m_multipleEndpoints(false), m_lastSeen(0), m_linkQuality(0) {}
+    DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_nodeDescriptorReceived(false), m_activeEndpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
     inline quint16 networkAddress(void) { return m_networkAddress; }
     inline void setNetworkAddress(quint16 value) { m_networkAddress = value; }
+
+    inline QString name(void) { return m_name.isEmpty() ? m_ieeeAddress.toHex(':') : m_name; }
+    inline void setName(const QString &value) { m_name = value; }
+
+    inline bool removed(void) { return m_removed; }
+    inline void setRemoved(bool value) { m_removed = value; }
+
+    inline bool nodeDescriptorReceived(void) { return m_nodeDescriptorReceived; }
+    inline void setNodeDescriptorReceived(void) { m_nodeDescriptorReceived = true; }
+
+    inline bool activeEndpointsReceived(void) { return m_activeEndpointsReceived; }
+    inline void setActiveEndpointsReceived(void) { m_activeEndpointsReceived = true; }
+
+    inline bool interviewFinished(void) { return m_interviewFinished; }
+    inline void setInterviewFinished(void) { m_interviewFinished = true; }
 
     inline LogicalType logicalType(void) { return m_logicalType; }
     inline void setLogicalType(LogicalType value) { m_logicalType = value; }
@@ -102,30 +117,18 @@ public:
     inline QString modelName(void) { return m_modelName; }
     inline void setModelName(const QString &value) { m_modelName = value; }
 
-    inline QString name(void) { return m_name.isEmpty() ? m_ieeeAddress.toHex(':') : m_name; }
-    inline void setName(const QString &value) { m_name = value; }
-
-    inline QString description(void) { return m_description; }
-    inline void setDescription(const QString &value) { m_description = value; }
-
-    inline bool nodeDescriptorReceived(void) { return m_nodeDescriptorReceived; }
-    inline void setNodeDescriptorReceived(void) { m_nodeDescriptorReceived = true; }
-
-    inline bool activeEndpointsReceived(void) { return m_activeEndpointsReceived; }
-    inline void setActiveEndpointsReceived(void) { m_activeEndpointsReceived = true; }
-
-    inline bool interviewFinished(void) { return m_interviewFinished; }
-    inline void setInterviewFinished(void) { m_interviewFinished = true; }
-
-    inline bool multipleEndpoints(void) { return m_multipleEndpoints; }
-    inline void setMultipleEndpoints(bool value) { m_multipleEndpoints = value; }
-
     inline qint64 lastSeen(void) { return m_lastSeen; }
     inline void setLastSeen(qint64 value) { m_lastSeen = value; }
     inline void updateLastSeen(void) { m_lastSeen = QDateTime::currentSecsSinceEpoch(); }
 
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
+
+    inline QString description(void) { return m_description; }
+    inline void setDescription(const QString &value) { m_description = value; }
+
+    inline bool multipleEndpoints(void) { return m_multipleEndpoints; }
+    inline void setMultipleEndpoints(bool value) { m_multipleEndpoints = value; }
 
     inline QMap <quint8, Endpoint> &endpoints(void) { return m_endpoints; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
@@ -136,16 +139,20 @@ private:
 
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;
+    QString m_name;
+
+    bool m_removed, m_nodeDescriptorReceived, m_activeEndpointsReceived, m_interviewFinished;
 
     LogicalType m_logicalType;
     quint16 m_manufacturerCode;
     quint8 m_version, m_powerSource;
-    QString m_manufacturerName, m_modelName, m_description, m_name;
-
-    bool m_nodeDescriptorReceived, m_activeEndpointsReceived, m_interviewFinished, m_multipleEndpoints;
+    QString m_manufacturerName, m_modelName;
 
     qint64 m_lastSeen;
     quint8 m_linkQuality;
+
+    QString m_description;
+    bool m_multipleEndpoints;
 
     QMap <quint8, Endpoint> m_endpoints;
     QMap <quint16, quint8> m_neighbors;
@@ -168,6 +175,8 @@ public:
 
     Device byName(const QString &name);
     Device byNetwork(quint16 networkAddress);
+
+    void removeDevice(const Device &device);
 
 private:
 

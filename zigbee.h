@@ -79,8 +79,8 @@ public:
     void init(void);
     void setPermitJoin(bool enabled);
 
-    void setDeviceName(const QString &deviceName, const QString &newName);
-    void removeDevice(const QString &deviceName);
+    void setDeviceName(const QString &deviceName, const QString &newName, bool store = true);
+    void removeDevice(const QString &deviceName, bool force);
 
     void updateDevice(const QString &deviceName, bool reportings);
     void updateReporting(const QString &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
@@ -108,7 +108,7 @@ private:
 
     QQueue <BindRequest> m_bindQueue;
     QQueue <DataRequest> m_dataQueue;
-    QQueue <Device> m_interviewQueue, m_neighborsQueue;
+    QQueue <Device> m_interviewQueue, m_neighborsQueue, m_removeQueue;
 
     Endpoint getEndpoint(const Device &device, quint8 endpointId);
 
