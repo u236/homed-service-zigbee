@@ -68,7 +68,7 @@ void ZigBee::setDeviceName(const QString &deviceName, const QString &newName, bo
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     device->setName(newName);
@@ -83,7 +83,7 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     if (!force)
@@ -102,7 +102,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     setupDevice(device);
@@ -124,7 +124,7 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -157,7 +157,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     switch (dstName.type())
@@ -192,7 +192,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
     Device device = m_devices->byName(deviceName);
     zclHeaderStruct header;
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
@@ -208,7 +208,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     Device device = m_devices->byName(deviceName);
     zclHeaderStruct header;
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     header.frameControl = FC_CLUSTER_SPECIFIC;
@@ -224,7 +224,7 @@ void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QStr
     zclHeaderStruct header;
     otaImageNotifyStruct payload;
 
-    if (device.isNull() || device->removed() || fileName.isEmpty() || !QFile::exists(fileName))
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator || fileName.isEmpty() || !QFile::exists(fileName))
         return;
 
     m_otaUpgradeFile = fileName;
@@ -259,7 +259,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)

@@ -83,7 +83,7 @@ public:
     void removeDevice(const QString &deviceName, bool force);
 
     void updateDevice(const QString &deviceName, bool reportings);
-    void updateReporting(const QString &ieeeAddress, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
+    void updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
 
     void bindingControl(const QString &deviceName, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind);
     void groupControl(const QString &deviceName, quint8 endpointId, quint16 groupId, bool remove);
