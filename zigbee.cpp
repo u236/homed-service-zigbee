@@ -601,7 +601,8 @@ void ZigBee::interviewFinished(const Device &device)
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
 
-    logInfo << "Device" << device->name() << "interview finished";
+    logInfo << "Device" << device->name() << "interview finished successfully";
+    emit deviceEvent(device, "interviewFinished");
 
     device->timer()->stop();
     device->setInterviewFinished();
@@ -614,7 +615,9 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
     if (!device->timer()->isActive())
         return;
 
-    logWarning << "Device" << device->name() << "interview aborted:" << reason;
+    logWarning << "Device" << device->name() << "interview error:" << reason;
+    emit deviceEvent(device, "interviewError");
+
     device->timer()->stop();
 }
 
@@ -1207,6 +1210,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04X", networkAddress);
     }
 
+    it.value()->updateLastSeen();
     blink(500);
 
     if (it.value()->networkAddress() != networkAddress)
@@ -1223,8 +1227,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         interviewDevice(it.value());
     }
 
-    it.value()->updateLastSeen();
-    emit joinEvent(true);
+    emit deviceEvent(it.value(), "deviceJoined");
 }
 
 void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
@@ -1240,7 +1243,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     m_devices->removeDevice(it.value());
     m_devices->storeStatus();
 
-    emit joinEvent(false);
+    emit deviceEvent(it.value(), "deviceLeft");
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode)
@@ -1402,8 +1405,9 @@ void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpo
 
 void ZigBee::interviewTimeout(void)
 {
-    DeviceObject *device = reinterpret_cast <DeviceObject*> (sender()->parent());
+    Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
     logWarning << "Device" << device->name() << "interview timed out";
+    emit deviceEvent(device, "interviewTimeout");
 }
 
 void ZigBee::pollAttributes(void)

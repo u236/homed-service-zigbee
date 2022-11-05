@@ -45,7 +45,7 @@ private slots:
     void mqttConnected(void) override;
     void mqttReceived(const QByteArray &message, const QMqttTopicName &topic) override;
 
-    void joinEvent(bool joined);
+    void deviceEvent(const Device &device, const QString &event);
     void endpointUpdated(const Device &device, quint8 endpointId);
     void statusStored(const QJsonObject &json);
 
