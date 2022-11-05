@@ -54,6 +54,7 @@
 #define DATA_TYPE_DOUBLE_PRECISION                  0x3A
 #define DATA_TYPE_OCTET_STRING                      0x41
 #define DATA_TYPE_CHARACTER_STRING                  0x42
+#define DATA_TYPE_ARRAY                             0x48
 #define DATA_TYPE_STRUCTURE                         0x4C
 #define DATA_TYPE_IEEE_ADDRESS                      0xF0
 

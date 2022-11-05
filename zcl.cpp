@@ -95,6 +95,7 @@ quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
         case DATA_TYPE_CHARACTER_STRING:
             return static_cast <quint8> (data.at((*offset)++));
 
+        case DATA_TYPE_ARRAY:
         case DATA_TYPE_STRUCTURE:
             return static_cast <quint8> (data.length() - *offset);
     }
