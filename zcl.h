@@ -19,6 +19,7 @@
 #define POWER_SOURCE_BATTERY                        0x03
 
 #define STATUS_SUCCESS                              0x00
+#define STATUS_UNSUPPORTED_ATTRIBUTE                0x86
 #define STATUS_INSUFFICIENT_SPACE                   0x89
 #define STATUS_DUPLICATE_EXISTS                     0x8A
 #define STATUS_NOT_FOUND                            0x8B

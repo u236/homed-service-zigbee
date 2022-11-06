@@ -994,16 +994,49 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId) << "with payload" << payload.toHex(':');
 }
 
-void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 commandId, QByteArray payload)
+void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
 {
     Device device = endpoint->device();
 
     switch (commandId)
     {
-        case CMD_READ_ATTRIBUTES: // TODO: tyua sensor reading time cluster
         case CMD_CONFIGURE_REPORTING_RESPONSE:
         case CMD_DEFAULT_RESPONSE:
             break;
+
+        case CMD_READ_ATTRIBUTES:
+        {
+            zclHeaderStruct header;
+            QByteArray data;
+            quint16 attributeId;
+
+            header.frameControl = FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
+            header.transactionId = transactionId;
+            header.commandId = CMD_READ_ATTRIBUTES_RESPONSE;
+
+            for (quint8 i = 0; i < payload.length(); i += sizeof(attributeId))
+            {
+                memcpy(&attributeId, payload.constData() + i, sizeof(attributeId));
+                data.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
+
+                if (clusterId == CLUSTER_TIME && qFromLittleEndian(attributeId) == 0x0007)
+                {
+                    QDateTime now = QDateTime::currentDateTime();
+                    quint32 value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - 946684800);
+                    logInfo << "Device" << device->name() << "requested local time";
+                    data.append(1, static_cast <char> (STATUS_SUCCESS)).append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+
+                }
+                else
+                {
+                    logInfo << "Device" << device->name() << "requested unrecognized attribute" << QString::asprintf("0x%04X", qToLittleEndian(attributeId)) << "from cluster" << QString::asprintf("0x%04X", clusterId);
+                    data.append(1, static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
+                }
+            }
+
+            enqueueDataRequest(device, endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(data));
+            break;
+        }
 
         case CMD_READ_ATTRIBUTES_RESPONSE:
         case CMD_REPORT_ATTRIBUTES:
@@ -1362,7 +1395,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     if (header.frameControl & FC_CLUSTER_SPECIFIC)
         clusterCommandReceived(endpoint, clusterId, header.transactionId, header.commandId, payload);
     else
-        globalCommandReceived(endpoint, clusterId, header.commandId, payload);
+        globalCommandReceived(endpoint, clusterId, header.transactionId, header.commandId, payload);
 
     device->setLinkQuality(linkQuality);
     device->updateLastSeen();
