@@ -4,6 +4,7 @@
 void ActionObject::registerMetaTypes(void)
 {
     qRegisterMetaType <Actions::Status>                 ("statusAction");
+    qRegisterMetaType <Actions::PowerOnStatus>          ("powerOnStatusAction");
     qRegisterMetaType <Actions::Level>                  ("levelAction");
     qRegisterMetaType <Actions::ColorHS>                ("colorHSAction");
     qRegisterMetaType <Actions::ColorXY>                ("colorXYAction");
@@ -25,7 +26,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::DistanceMin>        ("tuyaDistanceMinAction");
     qRegisterMetaType <ActionsTUYA::DistanceMax>        ("tuyaDistanceMaxAction");
     qRegisterMetaType <ActionsTUYA::DetectionDelay>     ("tuyaDetectionDelayAction");
-    qRegisterMetaType <ActionsTUYA::PowerOnBehavior>    ("tuyaPowerOnBehaviorAction");
+    qRegisterMetaType <ActionsTUYA::PowerOnStatus>      ("tuyaPowerOnBehaviorAction");
 }
 
 QByteArray ActionObject::writeAttributeRequest(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -53,6 +54,17 @@ QByteArray Actions::Status::request(const QVariant &data)
     header.commandId = status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00;
 
     return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
+}
+
+QByteArray Actions::PowerOnStatus::request(const QVariant &data)
+{
+    QList <QString> list = {"off", "on", "toggle", "previous"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0 || value > 2)
+        value = 0xFF;
+
+    return writeAttributeRequest(0x4003, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray Actions::Level::request(const QVariant &data)
@@ -394,7 +406,7 @@ QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
     return makeRequest(m_transactionId++, 0x65, 0x02, &value);
 }
 
-QByteArray ActionsTUYA::PowerOnBehavior::request(const QVariant &data)
+QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
 {
     QList <QString> list = {"off", "on", "previous"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));

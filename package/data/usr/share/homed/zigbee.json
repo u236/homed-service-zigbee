@@ -88,15 +88,15 @@
     {
       "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
       "modelNames":     ["TRADFRI bulb E14 WS 470lm"],
-      "actions":        ["status", "level", "colorTemperature"],
-      "properties":     ["status", "level", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
+      "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "reportings":     ["status", "level", "colorTemperature"]
     },
     {
       "description":    "TRADFRI Dimmable Bulb",
       "modelNames":     ["TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
-      "actions":        ["status", "level"],
-      "properties":     ["status", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "properties":     ["status", "powerOnStatus", "level"],
       "reportings":     ["status", "level"]
     },
     {
@@ -231,39 +231,39 @@
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
       "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
-      "actions":        ["status", "tuyaPowerOnBehavior"],
-      "properties":     ["status", "tuyaPowerOnBehavior", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
       "reportings":     ["status"]
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
       "modelNames":     ["TS0002", "TS0012"],
-      "actions":        ["status", "tuyaPowerOnBehavior"],
-      "properties":     ["status", "tuyaPowerOnBehavior", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
       "reportings":     ["status"],
       "endpointId":     [1, 2]
     },
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay/Switch",
       "modelNames":     ["TS0003", "TS0013"],
-      "actions":        ["status", "tuyaPowerOnBehavior"],
-      "properties":     ["status", "tuyaPowerOnBehavior", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3]
     },
     {
       "description":    "TUYA TS0004/TS0014 4-Channel Relay/Switch",
       "modelNames":     ["TS0004", "TS0014"],
-      "actions":        ["status", "tuyaPowerOnBehavior"],
-      "properties":     ["status", "tuyaPowerOnBehavior", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3, 4]
     },
     {
       "description":    "TUYA TS0006 6-Channel Relay/Switch",
       "modelNames":     ["TS0006"],
-      "actions":        ["status", "tuyaPowerOnBehavior"],
-      "properties":     ["status", "tuyaPowerOnBehavior", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },

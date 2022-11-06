@@ -76,6 +76,16 @@ namespace Actions
 
     };
 
+    class PowerOnStatus : public ActionObject
+    {
+
+    public:
+
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
     class Level : public ActionObject
     {
 
@@ -283,12 +293,12 @@ namespace ActionsTUYA
 
     };
 
-    class PowerOnBehavior : public Request, public ActionObject
+    class PowerOnStatus : public Request, public ActionObject
     {
 
     public:
 
-        PowerOnBehavior(void) : ActionObject("powerOnBehavior", CLUSTER_ON_OFF) {}
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF) {}
         QByteArray request(const QVariant &data) override;
 
     };

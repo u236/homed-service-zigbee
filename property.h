@@ -99,6 +99,16 @@ namespace Properties
 
     };
 
+    class PowerOnStatus : public PropertyObject
+    {
+
+    public:
+
+        PowerOnStatus(void) : PropertyObject("powerOnStatus", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class Level : public PropertyObject
     {
 
@@ -493,12 +503,12 @@ namespace PropertiesTUYA
 
     };
 
-    class PowerOnBehavior : public PropertyObject
+    class PowerOnStatus : public PropertyObject
     {
 
     public:
 
-        PowerOnBehavior(void) : PropertyObject("powerOnBehavior", CLUSTER_ON_OFF) {}
+        PowerOnStatus(void) : PropertyObject("powerOnStatus", CLUSTER_ON_OFF) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

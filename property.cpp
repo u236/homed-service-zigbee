@@ -9,6 +9,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::BatteryUndivided>        ("batteryUndividedProperty");
     qRegisterMetaType <Properties::Status>                  ("statusProperty");
     qRegisterMetaType <Properties::Contact>                 ("contactProperty");
+    qRegisterMetaType <Properties::PowerOnStatus>           ("powerOnStatusProperty");
     qRegisterMetaType <Properties::Level>                   ("levelProperty");
     qRegisterMetaType <Properties::ColorHS>                 ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                 ("colorXYProperty");
@@ -46,7 +47,7 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesTUYA::NeoSiren>            ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
-    qRegisterMetaType <PropertiesTUYA::PowerOnBehavior>     ("tuyaPowerOnBehaviorProperty");
+    qRegisterMetaType <PropertiesTUYA::PowerOnStatus>       ("tuyaPowerOnStatusProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchType>          ("tuyaSwitchTypeProperty");
     qRegisterMetaType <PropertiesTUYA::Unknown>             ("tuyaUnknownProperty");
 }
@@ -100,6 +101,20 @@ void Properties::Contact::parseAttribte(quint16 attributeId, quint8 dataType, co
         return;
 
     m_value = data.at(0) ? true : false;
+}
+
+void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x4003 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "off"; break;
+        case 0x01: m_value = "on"; break;
+        case 0x02: m_value = "toggle"; break;
+        case 0xFF: m_value = "previous"; break;
+    }
 }
 
 void Properties::Level::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -861,7 +876,7 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
     m_value = m_map;
 }
 
-void PropertiesTUYA::PowerOnBehavior::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x8002 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
         return;
