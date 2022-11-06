@@ -868,8 +868,8 @@ void PropertiesTUYA::PowerOnBehavior::parseAttribte(quint16 attributeId, quint8 
 
     switch (static_cast <quint8> (data.at(0)))
     {
-        case 0x00: m_value = "on"; break;
-        case 0x01: m_value = "off"; break;
+        case 0x00: m_value = "off"; break;
+        case 0x01: m_value = "on"; break;
         case 0x02: m_value = "previous"; break;
     }
 }

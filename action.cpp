@@ -396,7 +396,7 @@ QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
 
 QByteArray ActionsTUYA::PowerOnBehavior::request(const QVariant &data)
 {
-    QList <QString> list = {"on", "off", "previous"};
+    QList <QString> list = {"off", "on", "previous"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)
