@@ -1017,7 +1017,9 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
             for (quint8 i = 0; i < payload.length(); i += sizeof(attributeId))
             {
                 memcpy(&attributeId, payload.constData() + i, sizeof(attributeId));
-                data.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
+                attributeId = qFromLittleEndian(attributeId);
+
+                data.append(payload.mid(i, sizeof(attributeId)));
 
                 if (clusterId == CLUSTER_TIME && (attributeId == 0x0000 || attributeId == 0x0002 || attributeId == 0x0007))
                 {
@@ -1026,7 +1028,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
                     data.append(1, static_cast <char> (STATUS_SUCCESS));
 
-                    switch (qFromLittleEndian(attributeId))
+                    switch (attributeId)
                     {
                         case 0x0000:
                             logInfo << "Device" << device->name() << "requested UTC time";
@@ -1050,7 +1052,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     continue;
                 }
 
-                logWarning << "Device" << device->name() << "requested unrecognized attribute" << QString::asprintf("0x%04X", qToLittleEndian(attributeId)) << "from cluster" << QString::asprintf("0x%04X", clusterId);
+                logWarning << "Device" << device->name() << "requested unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "from cluster" << QString::asprintf("0x%04X", clusterId);
                 data.append(1, static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
             }
 
