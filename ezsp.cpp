@@ -69,10 +69,7 @@ bool EZSP::activeEndpointsRequest(quint16 networkAddress)
 
 bool EZSP::lqiRequest(quint16 networkAddress, quint8 index)
 {
-    Q_UNUSED(networkAddress)
-    Q_UNUSED(index)
-
-    return true;
+    return sendUnicast(networkAddress, 0x0000, APS_LQI, 0x00, 0x00, QByteArray(1, static_cast <char> (m_requestId)).append(1, static_cast <char> (index)));
 }
 
 bool EZSP::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
@@ -412,6 +409,27 @@ void EZSP::parsePacket(const QByteArray &payload)
 
                     if (!response->status)
                         emit activeEndpointsReceived(qFromLittleEndian(response->networkAddress), payload.mid(sizeof(activeEndpointsResponseStruct) + 1, response->count));
+
+                    break;
+                }
+
+                case APS_LQI:
+                {
+                    const lqiResponseStruct *response = reinterpret_cast <const lqiResponseStruct*> (payload.constData() + 1);
+
+                    if (!response->status)
+                    {
+                        for (quint8 i = 0; i < response->count; i++)
+                        {
+                            const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (payload.constData() + sizeof(lqiResponseStruct) + i * sizeof(neighborRecordStruct) + 1);
+                            emit neighborRecordReceived(qFromLittleEndian(message->networkAddress), qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(response->index | i));
+                        }
+
+                        if (response->index + response->count >= response->total)
+                            break;
+
+                        lqiRequest(qFromLittleEndian(message->networkAddress), response->index + response->count);
+                    }
 
                     break;
                 }

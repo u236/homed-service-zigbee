@@ -36,12 +36,8 @@ bool ZStack::activeEndpointsRequest(quint16 networkAddress)
 
 bool ZStack::lqiRequest(quint16 networkAddress, quint8 index)
 {
-    lqiRequestStruct data;
-
-    data.networkAddress = qToLittleEndian(networkAddress);
-    data.index = index;
-
-    return sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) && !m_replyData.at(0);
+    quint16 data = qToLittleEndian(networkAddress);
+    return sendRequest(ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(1, static_cast <char> (index))) && !m_replyData.at(0);
 }
 
 bool ZStack::bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
@@ -336,18 +332,23 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_MGMT_LQI_RSP:
         {
-            const lqiResponseStruct *response = reinterpret_cast <const lqiResponseStruct*> (data.constData());
+            const lqiResponseStruct *response = reinterpret_cast <const lqiResponseStruct*> (data.constData() + 2);
+            quint16 networkAddress;
+
+            memcpy(&networkAddress, data.constData(), sizeof(networkAddress));
 
             if (!response->status)
             {
                 for (quint8 i = 0; i < response->count; i++)
                 {
-                    const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (data.constData() + sizeof(lqiResponseStruct) + i * sizeof(neighborRecordStruct));
-                    emit neighborRecordReceived(qFromLittleEndian(response->networkAddress), qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(response->index | i));
+                    const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (data.constData() + sizeof(lqiResponseStruct) + i * sizeof(neighborRecordStruct) + 2);
+                    emit neighborRecordReceived(qFromLittleEndian(networkAddress), qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(response->index | i));
                 }
 
-                if (response->index + response->count < response->total)
-                    lqiRequest(qFromLittleEndian(response->networkAddress), response->index + response->count);
+                if (response->index + response->count >= response->total)
+                    break;
+
+                lqiRequest(qFromLittleEndian(networkAddress), response->index + response->count);
             }
 
             break;

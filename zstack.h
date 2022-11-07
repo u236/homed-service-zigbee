@@ -103,32 +103,6 @@ struct permitJoinRequestStruct
     quint8  significance;
 };
 
-struct lqiRequestStruct
-{
-    quint16 networkAddress;
-    quint8  index;
-};
-
-struct lqiResponseStruct
-{
-    quint16 networkAddress;
-    quint8  status;
-    quint8  total;
-    quint8  index;
-    quint8  count;
-};
-
-struct neighborRecordStruct
-{
-    quint64 extendedPanId;
-    quint64 ieeeAddress;
-    quint16 networkAddress;
-    quint8  options;
-    quint8  permitJoining;
-    quint8  depth;
-    quint8  linkQuality;
-};
-
 struct dataRequestStruct
 {
     quint16 networkAddress;

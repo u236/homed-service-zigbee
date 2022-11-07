@@ -25,6 +25,7 @@
 #define APS_DEVICE_ANNOUNCE             0x0013
 #define APS_BIND                        0x0021
 #define APS_UNBIND                      0x0022
+#define APS_LQI                         0x0031
 #define APS_LEAVE                       0x0034
 
 #define ADDRESS_MODE_NOT_PRESENT        0x00
@@ -88,6 +89,25 @@ struct activeEndpointsResponseStruct
     quint8  status;
     quint16 networkAddress;
     quint8  count;
+};
+
+struct lqiResponseStruct
+{
+    quint8  status;
+    quint8  total;
+    quint8  index;
+    quint8  count;
+};
+
+struct neighborRecordStruct
+{
+    quint64 extendedPanId;
+    quint64 ieeeAddress;
+    quint16 networkAddress;
+    quint8  options;
+    quint8  permitJoining;
+    quint8  depth;
+    quint8  linkQuality;
 };
 
 struct bindRequestStruct
