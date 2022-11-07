@@ -1019,19 +1019,39 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 memcpy(&attributeId, payload.constData() + i, sizeof(attributeId));
                 data.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
 
-                if (clusterId == CLUSTER_TIME && qFromLittleEndian(attributeId) == 0x0007)
+                if (clusterId == CLUSTER_TIME && (attributeId == 0x0000 || attributeId == 0x0002 || attributeId == 0x0007))
                 {
                     QDateTime now = QDateTime::currentDateTime();
-                    quint32 value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - 946684800);
-                    logInfo << "Device" << device->name() << "requested local time";
-                    data.append(1, static_cast <char> (STATUS_SUCCESS)).append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                    quint32 value;
 
+                    data.append(1, static_cast <char> (STATUS_SUCCESS));
+
+                    switch (qFromLittleEndian(attributeId))
+                    {
+                        case 0x0000:
+                            logInfo << "Device" << device->name() << "requested UTC time";
+                            value = qToLittleEndian <quint32> (now.toTime_t() - 946684800);
+                            data.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            break;
+
+                        case 0x0002:
+                            logInfo << "Device" << device->name() << "requested time zone";
+                            value = qToLittleEndian <quint32> (now.offsetFromUtc());
+                            data.append(1, static_cast <char> (DATA_TYPE_32BIT_SIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            break;
+
+                        case 0x0007:
+                            logInfo << "Device" << device->name() << "requested local time";
+                            value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - 946684800);
+                            data.append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            break;
+                    }
+
+                    continue;
                 }
-                else
-                {
-                    logInfo << "Device" << device->name() << "requested unrecognized attribute" << QString::asprintf("0x%04X", qToLittleEndian(attributeId)) << "from cluster" << QString::asprintf("0x%04X", clusterId);
-                    data.append(1, static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
-                }
+
+                logWarning << "Device" << device->name() << "requested unrecognized attribute" << QString::asprintf("0x%04X", qToLittleEndian(attributeId)) << "from cluster" << QString::asprintf("0x%04X", clusterId);
+                data.append(1, static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
             }
 
             enqueueDataRequest(device, endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(data));

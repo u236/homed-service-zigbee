@@ -26,7 +26,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::DistanceMin>        ("tuyaDistanceMinAction");
     qRegisterMetaType <ActionsTUYA::DistanceMax>        ("tuyaDistanceMaxAction");
     qRegisterMetaType <ActionsTUYA::DetectionDelay>     ("tuyaDetectionDelayAction");
-    qRegisterMetaType <ActionsTUYA::PowerOnStatus>      ("tuyaPowerOnBehaviorAction");
+    qRegisterMetaType <ActionsTUYA::PowerOnStatus>      ("tuyaPowerOnStatusAction");
 }
 
 QByteArray ActionObject::writeAttributeRequest(quint16 attributeId, quint8 dataType, const QByteArray &data)

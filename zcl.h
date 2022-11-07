@@ -57,6 +57,7 @@
 #define DATA_TYPE_CHARACTER_STRING                  0x42
 #define DATA_TYPE_ARRAY                             0x48
 #define DATA_TYPE_STRUCTURE                         0x4C
+#define DATA_TYPE_UTC_TIME                          0xE2
 #define DATA_TYPE_IEEE_ADDRESS                      0xF0
 
 #define CLUSTER_BASIC                               0x0000
