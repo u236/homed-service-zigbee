@@ -1309,13 +1309,13 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     if (it == m_devices->end())
         return;
 
-    logInfo << "Device" << it.value()->name() << "left network";
     blink(500);
+
+    logInfo << "Device" << it.value()->name() << "left network";
+    emit deviceEvent(it.value(), "deviceLeft");
 
     m_devices->removeDevice(it.value());
     m_devices->storeStatus();
-
-    emit deviceEvent(it.value(), "deviceLeft");
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode)
