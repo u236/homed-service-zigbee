@@ -1,25 +1,36 @@
 #ifndef ZIGBEE_H
 #define ZIGBEE_H
 
-#define HANDLE_QUEUES_INTERVAL          1
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define DEVICE_INTERVIEW_TIMEOUT        15000
 #define STATUS_LED_TIMEOUT              200
 
 #include "device.h"
 
-class BindRequestObject;
-typedef QSharedPointer <BindRequestObject> BindRequest;
+class BindingRequestObject;
+typedef QSharedPointer <BindingRequestObject> BindingRequest;
 
 class DataRequestObject;
 typedef QSharedPointer <DataRequestObject> DataRequest;
 
-class BindRequestObject
+class RequestObject;
+typedef QSharedPointer <RequestObject> Request;
+
+enum class RequestType
+{
+    Binding,
+    Data,
+    Remove,
+    LQI,
+    Interview
+};
+
+class BindingRequestObject
 {
 
 public:
 
-    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind) :
+    BindingRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind) :
         m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_dstAddress(dstAddress), m_dstEndpointId(dstEndpointId), m_unbind(unbind) {}
 
     inline Device device(void) { return m_device; }
@@ -29,7 +40,7 @@ public:
     inline quint8 dstEndpointId(void) { return m_dstEndpointId; }
     inline bool unbind(void) { return m_unbind; }
 
-    inline bool operator == (BindRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId() && m_dstAddress == other.dstAddress() && m_dstEndpointId == other.dstEndpointId() && m_unbind == other.unbind(); }
+    inline bool operator == (BindingRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId() && m_dstAddress == other.dstAddress() && m_dstEndpointId == other.dstEndpointId() && m_unbind == other.unbind(); }
 
 private:
 
@@ -68,6 +79,24 @@ private:
 
 };
 
+class RequestObject
+{
+
+public:
+
+    RequestObject(const QVariant &value, RequestType type) :
+        m_value(value), m_type(type) {}
+
+    inline QVariant value(void) { return m_value; }
+    inline RequestType type(void) { return m_type; }
+
+private:
+
+    QVariant m_value;
+    RequestType m_type;
+
+};
+
 class ZigBee : public QObject
 {
     Q_OBJECT
@@ -98,7 +127,7 @@ public:
 private:
 
     QSettings *m_config;
-    QTimer *m_neighborsTimer, *m_queuesTimer, *m_statusLedTimer;
+    QTimer *m_queueTimer, *m_neignborsTimer, *m_statusLedTimer;
 
     DeviceList *m_devices;
     Adapter *m_adapter;
@@ -106,14 +135,13 @@ private:
     QString m_statusLedPin, m_blinkLedPin, m_libraryFile, m_otaUpgradeFile;
     quint8 m_transactionId, m_interPanChannel;
 
-    QQueue <BindRequest> m_bindQueue;
-    QQueue <DataRequest> m_dataQueue;
-    QQueue <Device> m_interviewQueue, m_neighborsQueue, m_removeQueue;
+    QQueue <Request> m_queue;
+
+    void enqueueBindingRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
+    void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
+    void enqueueDeviceRequest(const Device &device, RequestType type);
 
     Endpoint getEndpoint(const Device &device, quint8 endpointId);
-
-    void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
-    void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
 
     void setupDevice(const Device &device);
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
@@ -150,10 +178,10 @@ private slots:
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
-    void interviewTimeout(void);
-    void pollAttributes(void);
-    void updateNeighbors(void);
     void handleQueue(void);
+    void updateNeighbors(void);
+    void pollAttributes(void);
+    void interviewTimeout(void);
 
     void updateStatusLed(void);
     void updateBlinkLed(void);
@@ -165,5 +193,8 @@ signals:
     void statusStored(const QJsonObject &json);
 
 };
+
+Q_DECLARE_METATYPE(BindingRequest)
+Q_DECLARE_METATYPE(DataRequest)
 
 #endif

@@ -8,7 +8,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_neighborsTimer(new QTimer(this)), m_queuesTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_transactionId(0)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_queueTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_transactionId(0)
 {
     ActionObject::registerMetaTypes();
     PollObject::registerMetaTypes();
@@ -19,8 +19,6 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
     m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString(); // TODO: make it QFile?
 
-    connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
-    connect(m_queuesTimer, &QTimer::timeout, this, &ZigBee::handleQueue);
     connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
     connect(m_devices, &DeviceList::statusStored, this, &ZigBee::statusStored);
 
@@ -88,7 +86,7 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
 
     if (!force)
     {
-        m_removeQueue.enqueue(device);
+        enqueueDeviceRequest(device, RequestType::Remove);
         return;
     }
 
@@ -167,7 +165,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             quint16 value = qToLittleEndian <quint16> (dstName.toInt());
 
             if (value)
-                enqueueBindRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
+                enqueueBindingRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
 
             break;
         }
@@ -177,7 +175,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             Device destination = m_devices->byName(deviceName);
 
             if (!destination.isNull() && !destination->removed())
-                enqueueBindRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
+                enqueueBindingRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
 
             break;
         }
@@ -243,15 +241,12 @@ void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, boo
 {
     if (m_adapter->setInterPanEndpointId(0x0C))
     {
-        m_queuesTimer->stop();
-
         if (reset)
             touchLinkReset(ieeeAddress, channel);
         else
             touchLinkScan();
 
         m_adapter->resetInterPan();
-        m_queuesTimer->start();
     }
 }
 
@@ -301,6 +296,46 @@ void ZigBee::groupAction(quint16 groupId, const QString &actionName, const QVari
     }
 }
 
+void ZigBee::enqueueBindingRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
+{
+    BindingRequest request(new BindingRequestObject(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind));
+
+    for (int i = 0; i < m_queue.length(); i++)
+        if (m_queue.at(i)->type() == RequestType::Binding && *(qvariant_cast <BindingRequest> (m_queue.at(i)->value()).data()) == *request.data())
+            return;
+
+    if (!m_queueTimer->isActive())
+        m_queueTimer->start();
+
+    m_queue.enqueue(Request(new RequestObject(QVariant::fromValue(request), RequestType::Binding)));
+}
+
+void ZigBee::enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name)
+{
+    DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name));
+
+    for (int i = 0; i < m_queue.length(); i++)
+        if (m_queue.at(i)->type() == RequestType::Data && *(qvariant_cast <DataRequest> (m_queue.at(i)->value()).data()) == *request.data())
+            return;
+
+    if (!m_queueTimer->isActive())
+        m_queueTimer->start();
+
+    m_queue.enqueue(Request(new RequestObject(QVariant::fromValue(request), RequestType::Data)));
+}
+
+void ZigBee::enqueueDeviceRequest(const Device &device, RequestType type)
+{
+    for (int i = 0; i < m_queue.length(); i++)
+        if (m_queue.at(i)->type() == type && qvariant_cast <Device> (m_queue.at(i)->value()) == device)
+            return;
+
+    if (!m_queueTimer->isActive())
+        m_queueTimer->start();
+
+    m_queue.enqueue(Request(new RequestObject(QVariant::fromValue(device), type)));
+}
+
 Endpoint ZigBee::getEndpoint(const Device &device, quint8 endpointId)
 {
     auto it = device->endpoints().find(endpointId);
@@ -309,28 +344,6 @@ Endpoint ZigBee::getEndpoint(const Device &device, quint8 endpointId)
         it = device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
 
     return it.value();
-}
-
-void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
-{
-    BindRequest request(new BindRequestObject(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind));
-
-    for (int i = 0; i < m_bindQueue.length(); i++)
-        if (*m_bindQueue.at(i).data() == *request.data())
-            return;
-
-    m_bindQueue.enqueue(request);
-}
-
-void ZigBee::enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name)
-{
-    DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name));
-
-    for (int i = 0; i < m_dataQueue.length(); i++)
-        if (*m_dataQueue.at(i).data() == *request.data())
-            return;
-
-    m_dataQueue.enqueue(request);
 }
 
 void ZigBee::setupDevice(const Device &device)
@@ -477,8 +490,8 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->interviewFinished())
         return;
 
+    enqueueDeviceRequest(device, RequestType::Interview);
     device->timer()->start(DEVICE_INTERVIEW_TIMEOUT);
-    m_interviewQueue.enqueue(device);
 }
 
 void ZigBee::interviewRequest(const Device &device)
@@ -645,7 +658,7 @@ void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
         payload.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
     }
 
-    enqueueBindRequest(device, endpoint->id(), reporting->clusterId());
+    enqueueBindingRequest(device, endpoint->id(), reporting->clusterId());
     enqueueDataRequest(device, endpoint->id(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload), QString("%1 reporting configuration").arg(reporting->name()));
 }
 
@@ -1224,10 +1237,14 @@ void ZigBee::coordinatorReady(void)
     connect(m_adapter, &Adapter::messageReveived, this, &ZigBee::messageReveived);
     connect(m_adapter, &Adapter::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
 
-    m_queuesTimer->start(HANDLE_QUEUES_INTERVAL);
-    m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
-    m_adapter->setPermitJoin(m_devices->permitJoin());
+    connect(m_queueTimer, &QTimer::timeout, this, &ZigBee::handleQueue);
+    connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
 
+    if (!m_queue.isEmpty())
+        m_queueTimer->start();
+
+    m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+    m_adapter->setPermitJoin(m_devices->permitJoin());
     m_devices->storeStatus();
 }
 
@@ -1458,11 +1475,88 @@ void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpo
     logWarning << "Unrecognized extended message received from" << ieeeAddress.toHex(':') << "endpoint" << QString::asprintf("0x%02X", endpointId) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << data.toHex(':');
 }
 
-void ZigBee::interviewTimeout(void)
+void ZigBee::handleQueue(void)
 {
-    Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
-    logWarning << "Device" << device->name() << "interview timed out";
-    emit deviceEvent(device, "interviewTimeout");
+    while (!m_queue.isEmpty())
+    {
+        Request request = m_queue.dequeue();
+
+        switch (request->type())
+        {
+            case RequestType::Binding:
+            {
+                BindingRequest bindRequest = qvariant_cast <BindingRequest> (request->value());
+
+                if (!m_adapter->bindRequest(bindRequest->device()->networkAddress(), bindRequest->device()->ieeeAddress(), bindRequest->endpointId(), bindRequest->clusterId(), bindRequest->dstAddress(), bindRequest->dstEndpointId(), bindRequest->unbind()))
+                {
+                    logWarning << "Device" << bindRequest->device()->name() << "endpoint" << QString::asprintf("0x%02X", bindRequest->endpointId()) << "cluster" << QString::asprintf("0x%04X", bindRequest->clusterId()) << (bindRequest->unbind() ? "unbinding" : "binding") << "failed";
+                    break;
+                }
+
+                if (!bindRequest->dstAddress().isEmpty())
+                    logInfo << "Device" << bindRequest->device()->name() << (bindRequest->unbind() ? "unbinding" : "binding") << "finished succesfully";
+
+                break;
+            }
+
+            case RequestType::Data:
+            {
+                DataRequest dataRequest = qvariant_cast <DataRequest> (request->value());
+
+                if (!m_adapter->dataRequest(dataRequest->device()->networkAddress(), dataRequest->endpointId(), dataRequest->clusterId(), dataRequest->data()))
+                {
+                    logWarning << "Device" << dataRequest->device()->name() << (!dataRequest->name().isEmpty() ? dataRequest->name().toUtf8().constData() : "data request") << "failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
+                    break;
+                }
+
+                if (!dataRequest->name().isEmpty())
+                    logInfo << "Device" << dataRequest->device()->name() << dataRequest->name().toUtf8().constData() << "finished successfully";
+
+                break;
+            }
+
+            case RequestType::Remove:
+            {
+                Device device = qvariant_cast <Device> (request->value());
+
+                if (!m_adapter->leaveRequest(device->networkAddress(), device->ieeeAddress()))
+                    logInfo << "Device" << device->name() << "removed, but leave request failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
+
+                if (!device->removed())
+                {
+                    m_devices->removeDevice(device);
+                    m_devices->storeStatus();
+                }
+
+                break;
+            }
+
+            case RequestType::LQI:
+            {
+                m_adapter->lqiRequest(qvariant_cast <Device> (request->value())->networkAddress());
+                break;
+            }
+
+            case RequestType::Interview:
+            {
+                interviewRequest(qvariant_cast <Device> (request->value()));
+                break;
+            }
+        }
+    }
+
+    m_queueTimer->stop();
+}
+
+void ZigBee::updateNeighbors(void)
+{
+    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
+    {
+        if (it.value()->logicalType() == LogicalType::EndDevice)
+            continue;
+
+        enqueueDeviceRequest(it.value(), RequestType::LQI);
+    }
 }
 
 void ZigBee::pollAttributes(void)
@@ -1476,71 +1570,11 @@ void ZigBee::pollAttributes(void)
     }
 }
 
-void ZigBee::updateNeighbors(void)
+void ZigBee::interviewTimeout(void)
 {
-    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
-    {
-        if (it.value()->logicalType() == LogicalType::EndDevice || m_neighborsQueue.contains(it.value()))
-            continue;
-
-        m_neighborsQueue.enqueue(it.value());
-    }
-}
-
-void ZigBee::handleQueue(void)
-{
-    while (!m_bindQueue.isEmpty())
-    {
-        BindRequest request = m_bindQueue.dequeue();
-
-        if (m_adapter->bindRequest(request->device()->networkAddress(), request->device()->ieeeAddress(), request->endpointId(), request->clusterId(), request->dstAddress(), request->dstEndpointId(), request->unbind()))
-        {
-            if (!request->dstAddress().isEmpty())
-                logInfo << "Device" << request->device()->name() << (request->unbind() ? "unbinding" : "binding") << "finished succesfully";
-
-            continue;
-        }
-
-        logWarning << "Device" << request->device()->name() << "endpoint" << QString::asprintf("0x%02X", request->endpointId()) << "cluster" << QString::asprintf("0x%04X", request->clusterId()) << (request->unbind() ? "unbinding" : "binding") << "failed";
-    }
-
-    while (!m_dataQueue.isEmpty())
-    {
-        DataRequest request = m_dataQueue.dequeue();
-
-        if (m_adapter->dataRequest(request->device()->networkAddress(), request->endpointId(), request->clusterId(), request->data()))
-        {
-            if (!request->name().isEmpty())
-                logInfo << "Device" << request->device()->name() << request->name().toUtf8().constData() << "finished successfully";
-
-            continue;
-        }
-
-        logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
-    }
-
-    if (!m_interviewQueue.isEmpty())
-        interviewRequest(m_interviewQueue.dequeue());
-
-    if (!m_neighborsQueue.isEmpty())
-    {
-        Device device = m_neighborsQueue.dequeue();
-        m_adapter->lqiRequest(device->networkAddress());
-    }
-
-    if (!m_removeQueue.isEmpty())
-    {
-        Device device = m_removeQueue.dequeue();
-
-        if (!m_adapter->leaveRequest(device->networkAddress(), device->ieeeAddress()))
-            logInfo << "Device" << device->name() << "removed, but leave request failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
-
-        if (!device->removed())
-        {
-            m_devices->removeDevice(device);
-            m_devices->storeStatus();
-        }
-    }
+    Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
+    logWarning << "Device" << device->name() << "interview timed out";
+    emit deviceEvent(device, "interviewTimeout");
 }
 
 void ZigBee::updateStatusLed(void)
