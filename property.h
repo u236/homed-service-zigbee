@@ -23,7 +23,9 @@ public:
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
+
     inline QVariant value(void) { return m_value; }
+    inline void setValue(const QVariant &value) { m_value = value; }
 
     inline bool singleShot(void) { return m_singleShot; }
     inline void clear(void) { m_value = QVariant(); }
@@ -94,7 +96,7 @@ namespace Properties
 
     public:
 
-        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF) {}
+        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF, true) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
@@ -263,7 +265,7 @@ namespace PropertiesIAS
 
     public:
 
-        ZoneStatus(const QString &name) : PropertyObject(name, CLUSTER_IAS_ZONE, true){}
+        ZoneStatus(const QString &name) : PropertyObject(name, CLUSTER_IAS_ZONE, true) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     private:
@@ -325,7 +327,7 @@ namespace PropertiesLifeControl
 
     public:
 
-        AirQuality(void) : PropertyObject(QString(), CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        AirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -342,7 +344,7 @@ namespace PropertiesLUMI
 
     public:
 
-        Data(void) : PropertyObject(QString(), CLUSTER_LUMI) {}
+        Data(void) : PropertyObject("lumiData", CLUSTER_LUMI) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -410,7 +412,7 @@ namespace PropertiesPerenio
 
     public:
 
-        SmartPlug(void) : PropertyObject(QString(), CLUSTER_PERENIO) {}
+        SmartPlug(void) : PropertyObject("perenioSmartPlug", CLUSTER_PERENIO) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -488,7 +490,7 @@ namespace PropertiesTUYA
 
     public:
 
-        Data(void) : PropertyObject(QString(), CLUSTER_TUYA) {}
+        Data(void) : PropertyObject("tuyaData", CLUSTER_TUYA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     protected:
@@ -545,7 +547,7 @@ namespace PropertiesTUYA
 
     public:
 
-        Unknown(void) : PropertyObject(QString(), CLUSTER_TUYA_UNKNOWN) {}
+        Unknown(void) : PropertyObject("tuyaUnknown", CLUSTER_TUYA_UNKNOWN) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

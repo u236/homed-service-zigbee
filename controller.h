@@ -47,7 +47,7 @@ private slots:
 
     void deviceEvent(const Device &device, const QString &event);
     void endpointUpdated(const Device &device, quint8 endpointId);
-    void statusStored(const QJsonObject &json);
+    void statusUpdated(const QJsonObject &json);
 
 };
 

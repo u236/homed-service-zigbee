@@ -1,7 +1,8 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#define STORE_STATUS_INTERVAL           60000
+#define STORE_DATABASE_INTERVAL         60000
+#define STORE_PROPERTIES_INTERVAL       1000
 
 #include <QDateTime>
 #include <QFile>
@@ -178,30 +179,40 @@ public:
 
     void removeDevice(const Device &device);
 
+    void restoreState(void);
+    void storeStateLater(void);
+
 private:
 
-    QTimer *m_timer;
+    QTimer *m_databaseTimer, *m_stateTimer;
 
-    QFile m_file;
+    QFile m_databaseFile, m_stateFile;
     bool m_permitJoin;
 
     QString m_adapterType, m_adapterVersion;
+    QJsonObject m_state;
 
     void unserializeDevices(const QJsonArray &devices);
     void unserializeEndpoints(const Device &device, const QJsonArray &endpoints);
     void unserializeNeighbors(const Device &device, const QJsonArray &neighbors);
+    void unserializeState(const Device &device, const QJsonObject &state);
 
     QJsonArray serializeDevices(void);
     QJsonArray serializeEndpoints(const Device &device);
     QJsonArray serializeNeighbors(const Device &device);
+    QJsonObject serializeState(const Device &device);
 
 public slots:
 
-    void storeStatus(void);
+    void storeDatabase(void);
+
+private slots:
+
+    void storeState(void);
 
 signals:
 
-    void statusStored(const QJsonObject &json);
+    void statusUpdated(const QJsonObject &json);
 
 };
 

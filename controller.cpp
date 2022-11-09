@@ -6,7 +6,7 @@ Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this)), m_comman
 
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
-    connect(m_zigbee, &ZigBee::statusStored, this, &Controller::statusStored);
+    connect(m_zigbee, &ZigBee::statusUpdated, this, &Controller::statusUpdated);
 
     m_zigbee->init();
 }
@@ -18,6 +18,8 @@ void Controller::mqttConnected(void)
     mqttSubscribe(mqttTopic("config/zigbee"));
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
+
+    m_zigbee->restoreState();
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -148,8 +150,10 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
             else
                 json.insert(property->name(), QJsonValue::fromVariant(property->value()));
 
-            if (property->singleShot())
-                property->clear();
+            if (!property->singleShot())
+                continue;
+
+            property->clear();
         }
     }
 
@@ -160,7 +164,7 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
     mqttPublish(mqttTopic("fd/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')).append(device->multipleEndpoints() ? QString("/%1").arg(endpointId) : QString()), json);
 }
 
-void Controller::statusStored(const QJsonObject &json)
+void Controller::statusUpdated(const QJsonObject &json)
 {
     mqttPublish(mqttTopic("status/zigbee"), json, true);
 }

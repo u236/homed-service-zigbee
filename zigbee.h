@@ -106,6 +106,7 @@ public:
     ZigBee(QSettings *config, QObject *parent);
 
     void init(void);
+    void restoreState(void);
     void setPermitJoin(bool enabled);
 
     void setDeviceName(const QString &deviceName, const QString &newName, bool store = true);
@@ -190,7 +191,7 @@ signals:
 
     void deviceEvent(const Device &device, const QString &event);
     void endpointUpdated(const Device &device, quint8 endpointId);
-    void statusStored(const QJsonObject &json);
+    void statusUpdated(const QJsonObject &json);
 
 };
 

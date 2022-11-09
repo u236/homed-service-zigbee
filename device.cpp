@@ -2,17 +2,24 @@
 #include "device.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config) : m_timer(new QTimer(this)), m_file(config->value("zigbee/database", "/var/db/homed/zigbee.json").toString()), m_permitJoin(false)
+DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_stateTimer(new QTimer(this)), m_permitJoin(false)
 {
-    if (m_file.open(QFile::ReadOnly | QFile::Text))
+    m_databaseFile.setFileName(config->value("zigbee/database", "/var/db/homed-zigbee-database.json").toString());
+    m_stateFile.setFileName(config->value("zigbee/state", "/var/db/homed-zigbee-state.json").toString());
+
+    if (m_databaseFile.open(QFile::ReadOnly | QFile::Text))
     {
-        QJsonObject json = QJsonDocument::fromJson(m_file.readAll()).object();
+        QJsonObject json = QJsonDocument::fromJson(m_databaseFile.readAll()).object();
         unserializeDevices(json.value("devices").toArray());
         m_permitJoin = json.value("permitJoin").toBool();
-        m_file.close();
+        m_databaseFile.close();
     }
 
-    connect(m_timer, &QTimer::timeout, this, &DeviceList::storeStatus);
+    connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::storeDatabase);
+    connect(m_stateTimer, &QTimer::timeout, this, &DeviceList::storeState);
+
+    m_databaseTimer->setSingleShot(true);
+    m_stateTimer->setSingleShot(true);
 }
 
 Device DeviceList::byName(const QString &name)
@@ -42,6 +49,31 @@ void DeviceList::removeDevice(const Device &device)
     }
 
     remove(device->ieeeAddress());
+}
+
+void DeviceList::restoreState(void)
+{
+    if (m_stateFile.open(QFile::ReadOnly | QFile::Text))
+    {
+        QJsonObject json = QJsonDocument::fromJson(m_stateFile.readAll()).object();
+
+        for (auto it = begin(); it != end(); it++)
+        {
+            QJsonObject item = json.value(it.value()->ieeeAddress().toHex(':')).toObject();
+
+            if (it.value()->removed() || item.isEmpty())
+                continue;
+
+            unserializeState(it.value(), item);
+        }
+
+        m_stateFile.close();
+    }
+}
+
+void DeviceList::storeStateLater(void)
+{
+    m_stateTimer->start(STORE_PROPERTIES_INTERVAL);
 }
 
 void DeviceList::unserializeDevices(const QJsonArray &devices)
@@ -117,6 +149,30 @@ void DeviceList::unserializeNeighbors(const Device &device, const QJsonArray &ne
             continue;
 
         device->neighbors().insert(static_cast <quint16> (json.value("networkAddress").toInt()), static_cast <quint8> (json.value("linkQuality").toInt()));
+    }
+}
+
+void DeviceList::unserializeState(const Device &device, const QJsonObject &state)
+{
+    for (auto it = state.begin(); it != state.end(); it++)
+    {
+        Endpoint endpoint = device->endpoints().value(static_cast <quint8> (it.key().toInt()));
+        QJsonObject item = it.value().toObject();
+
+        if (endpoint.isNull())
+            continue;
+
+        for (int i = 0; i < endpoint->properties().count(); i++)
+        {
+            const Property &property = endpoint->properties().at(i);
+            QVariant value = item.value(property->name()).toVariant();
+
+            if (!value.isValid())
+                continue;
+
+            property->setValue(value);
+            endpoint->setDataUpdated(true);
+        }
     }
 }
 
@@ -236,19 +292,75 @@ QJsonArray DeviceList::serializeNeighbors(const Device &device)
     return array;
 }
 
-void DeviceList::storeStatus(void)
+QJsonObject DeviceList::serializeState(const Device &device)
+{
+    QJsonObject json;
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        QJsonObject item;
+
+        for (int i = 0; i < it.value()->properties().count(); i++)
+        {
+            const Property &property = it.value()->properties().at(i);
+
+            if (!property->value().isValid())
+                continue;
+
+            item.insert(property->name(), QJsonValue::fromVariant(property->value()));
+        }
+
+        if (item.isEmpty())
+            continue;
+
+        json.insert(QString::number(it.value()->id()), item);
+    }
+
+    return json;
+}
+
+void DeviceList::storeDatabase(void)
 {
     QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}};
 
-    m_timer->start(STORE_STATUS_INTERVAL);
+    m_databaseTimer->start(STORE_DATABASE_INTERVAL);
 
-    if (m_file.open(QFile::WriteOnly | QFile::Text))
+    if (m_databaseFile.open(QFile::WriteOnly | QFile::Text))
     {
-        m_file.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-        m_file.close();
+        m_databaseFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        m_databaseFile.close();
     }
     else
-        logWarning << "Can't open database file, status not saved";
+        logWarning << "Can't open database file, database not stored";
 
-    emit statusStored(json);
+
+    emit statusUpdated(json);
+}
+
+void DeviceList::storeState(void)
+{
+    QJsonObject json;
+
+    for (auto it = begin(); it != end(); it++)
+    {
+        QJsonObject item = serializeState(it.value());
+
+        if (item.isEmpty())
+            continue;
+
+        json.insert(it.value()->ieeeAddress().toHex(':'), item);
+    }
+
+    if (m_state == json)
+        return;
+
+    if (m_stateFile.open(QFile::WriteOnly | QFile::Text))
+    {
+        m_stateFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        m_stateFile.close();
+    }
+    else
+        logWarning << "Can't open state file, state not stored";
+
+    m_state = json;
 }

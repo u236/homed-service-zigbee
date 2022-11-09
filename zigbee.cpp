@@ -20,7 +20,7 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString(); // TODO: make it QFile?
 
     connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
-    connect(m_devices, &DeviceList::statusStored, this, &ZigBee::statusStored);
+    connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
 
     GPIO::direction(m_statusLedPin, GPIO::Output);
     GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
@@ -54,6 +54,25 @@ void ZigBee::init(void)
     m_adapter->init();
 }
 
+void ZigBee::restoreState(void)
+{
+    m_devices->restoreState();
+
+    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
+    {
+        const Device &device = it.value();
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        {
+            if (!it.value()->dataUpdated())
+                continue;
+
+            emit endpointUpdated(device, it.value()->id());
+            it.value()->setDataUpdated(false);
+        }
+    }
+}
+
 void ZigBee::setPermitJoin(bool enabled)
 {
     if (!m_adapter)
@@ -74,7 +93,7 @@ void ZigBee::setDeviceName(const QString &deviceName, const QString &newName, bo
     if (!store)
         return;
 
-    m_devices->storeStatus();
+    m_devices->storeDatabase();
 }
 
 void ZigBee::removeDevice(const QString &deviceName, bool force)
@@ -93,7 +112,7 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     logInfo << "Device" << device->name() << "removed (force)";
 
     m_devices->removeDevice(device);
-    m_devices->storeStatus();
+    m_devices->storeDatabase();
 }
 
 void ZigBee::updateDevice(const QString &deviceName, bool reportings)
@@ -620,7 +639,7 @@ void ZigBee::interviewFinished(const Device &device)
     device->timer()->stop();
     device->setInterviewFinished();
 
-    m_devices->storeStatus();
+    m_devices->storeDatabase();
 }
 
 void ZigBee::interviewError(const Device &device, const QString &reason)
@@ -1245,7 +1264,7 @@ void ZigBee::coordinatorReady(void)
 
     m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
     m_adapter->setPermitJoin(m_devices->permitJoin());
-    m_devices->storeStatus();
+    m_devices->storeDatabase();
 }
 
 void ZigBee::permitJoinUpdated(bool enabled)
@@ -1262,7 +1281,7 @@ void ZigBee::permitJoinUpdated(bool enabled)
     }
 
     m_devices->setPermitJoin(enabled);
-    m_devices->storeStatus();
+    m_devices->storeDatabase();
 }
 
 void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
@@ -1315,7 +1334,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     emit deviceEvent(it.value(), "deviceLeft");
 
     m_devices->removeDevice(it.value());
-    m_devices->storeStatus();
+    m_devices->storeDatabase();
 }
 
 void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode)
@@ -1441,8 +1460,9 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 
     if (endpoint->dataUpdated())
     {
-        endpoint->setDataUpdated(false);
         emit endpointUpdated(device, endpoint->id());
+        endpoint->setDataUpdated(false);
+        m_devices->storeStateLater();
     }
 
     if (device->powerSource() != POWER_SOURCE_UNKNOWN && device->powerSource() != POWER_SOURCE_BATTERY && (header.frameControl & FC_CLUSTER_SPECIFIC || header.commandId == CMD_REPORT_ATTRIBUTES) && !(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
@@ -1522,12 +1542,11 @@ void ZigBee::handleQueue(void)
                 if (!m_adapter->leaveRequest(device->networkAddress(), device->ieeeAddress()))
                     logInfo << "Device" << device->name() << "removed, but leave request failed, status code:" << QString::asprintf("%02X", m_adapter->requestStatus());
 
-                if (!device->removed())
-                {
-                    m_devices->removeDevice(device);
-                    m_devices->storeStatus();
-                }
+                if (device->removed())
+                    break;
 
+                m_devices->removeDevice(device);
+                m_devices->storeDatabase();
                 break;
             }
 
