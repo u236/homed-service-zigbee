@@ -1306,7 +1306,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
 {
     auto it = m_devices->find(ieeeAddress);
 
-    if (it == m_devices->end())
+    if (it == m_devices->end() || it.value()->removed())
         return;
 
     blink(500);

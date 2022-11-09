@@ -198,6 +198,14 @@
   "Perenio":
   [
     {
+      "description":    "Perenio 16A Smart Plug PEHPL0X",
+      "modelNames":     ["PEHPL0X"],
+      "actions":        ["status", "perenioPowerOnStatus", "perenioResetAlarms", "perenioAlarmVoltageMin", "perenioAlarmVoltageMax", "perenioAlarmPowerMax", "perenioAlarmEnergyLimit"],
+      "properties":     ["status", "perenioSmartPlug"],
+      "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
+      "polls":          ["perenioSmartPlug"]
+    },
+    {
       "description":    "Perenio Water Leak Sensor PECLS01",
       "modelNames":     ["PECLS01"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],

@@ -39,6 +39,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
 
+    qRegisterMetaType <PropertiesPerenio::SmartPlug>        ("perenioSmartPlugProperty");
+
     qRegisterMetaType <PropertiesPTVO::CO2>                 ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>         ("ptvoTemperatureProperty");
     qRegisterMetaType <PropertiesPTVO::ChangePattern>       ("ptvoChangePatternProperty");
@@ -709,6 +711,80 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dat
         m_value = "flip";
     else if (value >= 64)
         m_value = "drop";
+}
+
+void PropertiesPerenio::SmartPlug::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0000:
+        {
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                break;
+
+            switch (data.at(0))
+            {
+                case 0x00: m_map.insert("powerOnStatus", "off"); break;
+                case 0x01: m_map.insert("powerOnStatus", "on"); break;
+                case 0x02: m_map.insert("powerOnStatus", "prevoious"); break;
+            }
+
+            break;
+        }
+
+        case 0x0001:
+        {
+            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                break;
+
+            m_map.insert("alarmVoltateMin",  data.at(0) & 0x01 ? true : false);
+            m_map.insert("alarmVoltateMax",  data.at(0) & 0x02 ? true : false);
+            m_map.insert("alarmPowerMax",    data.at(0) & 0x04 ? true : false);
+            m_map.insert("alarmEnergyLimit", data.at(0) & 0x08 ? true : false);
+
+            break;
+        }
+
+        case 0x000E:
+        {
+            quint32 value;
+
+            if (dataType != DATA_TYPE_32BIT_UNSIGNED || data.length() != 4)
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            m_map.insert("energy", qFromLittleEndian(value));
+            break;
+        }
+
+        default:
+        {
+            quint16 value;
+
+            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+
+
+            switch (attributeId)
+            {
+                case 0x0003: m_map.insert("voltage", qFromLittleEndian(value)); break;
+                case 0x0004: m_map.insert("voltageMin", qFromLittleEndian(value)); break;
+                case 0x0005: m_map.insert("voltageMax", qFromLittleEndian(value)); break;
+                case 0x000A: m_map.insert("power", qFromLittleEndian(value)); break;
+                case 0x000B: m_map.insert("powerMax", qFromLittleEndian(value)); break;
+                case 0x000F: m_map.insert("energyLimit", qFromLittleEndian(value)); break;
+            }
+
+            break;
+        }
+    }
+
+    if (m_map.isEmpty())
+        return;
+
+    m_value = m_map;
 }
 
 void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

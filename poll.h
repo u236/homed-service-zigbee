@@ -111,4 +111,16 @@ namespace PollsLUMI
     };
 }
 
+namespace PollsPerenio
+{
+    class SmartPlug : public PollObject
+    {
+
+    public:
+
+        SmartPlug(void) : PollObject("smartPlug", CLUSTER_PERENIO, {0x0000, 0x0001, 0x0004, 0x0005, 0x000B, 0x000F}) {}
+
+    };
+}
+
 #endif

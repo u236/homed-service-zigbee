@@ -881,7 +881,9 @@ void EZSP::handleQueue(void)
 
         if ((control & 0xE0) == ASH_CONTROL_NAK)
         {
-            logWarning << "Received NAK frame:" << QString::asprintf("%d, %d", m_acknowledgeId, control & 0x07).toUtf8().constData();
+            if (m_debug)
+                logWarning << "Received NAK frame:" << QString::asprintf("%d, %d", m_acknowledgeId, control & 0x07).toUtf8().constData();
+
             emit dataReceived();
             break;
         }

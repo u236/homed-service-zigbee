@@ -160,4 +160,34 @@ namespace Reportings
     };
 }
 
+namespace ReportingsPerenio
+{
+    class Voltage : public ReportingObject
+    {
+
+    public:
+
+        Voltage(void) : ReportingObject("voltage", CLUSTER_PERENIO, 0x0003, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 0) {}
+
+    };
+
+    class Power : public ReportingObject
+    {
+
+    public:
+
+        Power(void) : ReportingObject("power", CLUSTER_PERENIO, 0x000A, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 0) {}
+
+    };
+
+    class Energy : public ReportingObject
+    {
+
+    public:
+
+        Energy(void) : ReportingObject("energy", CLUSTER_PERENIO, 0x000E, DATA_TYPE_32BIT_UNSIGNED, 15, 600, 0) {}
+
+    };
+}
+
 #endif

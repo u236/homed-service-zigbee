@@ -403,6 +403,23 @@ namespace PropertiesLUMI
     };
 }
 
+namespace PropertiesPerenio
+{
+    class SmartPlug : public PropertyObject
+    {
+
+    public:
+
+        SmartPlug(void) : PropertyObject(QString(), CLUSTER_PERENIO) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QMap <QString, QVariant> m_map;
+
+    };
+}
+
 namespace PropertiesPTVO
 {
     class CO2 : public PropertyObject

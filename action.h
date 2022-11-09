@@ -202,6 +202,69 @@ namespace ActionsLUMI
     };
 }
 
+namespace ActionsPerenio
+{
+    class PowerOnStatus : public ActionObject
+    {
+
+    public:
+
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class ResetAlarms : public ActionObject
+    {
+
+    public:
+
+        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmVoltageMin : public ActionObject
+    {
+
+    public:
+
+        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmVoltageMax : public ActionObject
+    {
+
+    public:
+
+        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmPowerMax : public ActionObject
+    {
+
+    public:
+
+        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmEnergyLimit : public ActionObject
+    {
+
+    public:
+
+        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+}
+
 namespace ActionsTUYA
 {
     class Request
@@ -293,7 +356,7 @@ namespace ActionsTUYA
 
     };
 
-    class PowerOnStatus : public Request, public ActionObject
+    class PowerOnStatus : public ActionObject
     {
 
     public:
