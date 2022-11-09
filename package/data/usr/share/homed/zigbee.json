@@ -107,6 +107,41 @@
     }
   ],
 
+  "Konke":
+  [
+    {
+      "description":    "Konke Smoke Detector TW-S1",
+      "modelNames":     ["3AFE010104020028"],
+      "properties":     ["batteryPercentage", "iasSmoke"]
+    },
+    {
+      "description":    "Konke Door and Window Sensor 2AJZ4KPDR or KK-DS-J01W",
+      "modelNames":     ["3AFE130104020015", "3AFE221004021015", "3AFE270104020015", "3AFE280104020015"],
+      "properties":     ["batteryPercentage", "iasContact"]
+    },
+    {
+      "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
+      "modelNames":     ["3AFE07010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
+      "properties":     ["batteryPercentage", "iasOccupancy"]
+    },
+    {
+      "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",
+      "modelNames":     ["3AFE21100402102A", "LH07321"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"]
+    },
+    {
+      "description":    "Konke Temperature and Humidity 2AJZ4KPFT",
+      "modelNames":     ["3AFE140103020000", "3AFE220103020000"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"]
+    },
+    {
+      "description":    "Konke Temperature, Humidity and Illuminance Sensor KK-WA-J01W",
+      "modelNames":     ["3AFE090103021000"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "illuminance"]
+    }
+  ],
+
   "LDS":
   [
     {
@@ -119,7 +154,6 @@
       "description":    "Perenio Motion Sensor PECMS01",
       "modelNames":     ["ZHA-PirSensor"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
-      "reportings":     ["batteryPercentage"]
     }
   ],
 
@@ -330,7 +364,7 @@
   "XIAOMI":
   [
     {
-      "description":    "Xiaomi Light Detection Sensor GZCGQ01LM",
+      "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
       "modelNames":     ["lumi.sen_ill.mgl01"],
       "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
       "reportings":     ["batteryVoltage", "illuminance"]
