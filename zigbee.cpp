@@ -354,7 +354,7 @@ void ZigBee::setupDevice(const Device &device)
 
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        logWarning << "Can't open library file, devices not loaded";
+        logWarning << "Can't open library file, device" << device->name() << "not configured";
         return;
     }
 

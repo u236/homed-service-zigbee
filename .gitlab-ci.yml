@@ -1,49 +1,33 @@
-Build Linux ARM Binary:
+.build:
   stage: build
   script:
-  - "export PATH=\"$PATH:/opt/gcc-arm-linux-gnueabihf/bin\""
-  - "/opt/qt-armhf-5.15.4-static/bin/qmake homed-zigbee.pro"
+  - "export PATH=\"$PATH:/opt/${COMPILER}/bin\""
+  - "export STAGING_DIR=\"/opt/${COMPILER}\""
+  - "/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro"
   - "make -j8"
-  - "cp homed-zigbee homed-zigbee-armhf"
+  - "cp homed-zigbee homed-zigbee-${ARCHITECTURE}"
   artifacts:
     paths:
-    - "homed-zigbee-armhf"
+    - "homed-zigbee-${ARCHITECTURE}"
     expire_in: 1 day
   except:
     - branches
   only:
     - /^\d.\d.\d+$/
 
-Build OpenWRT MIPS Binary:
-  stage: build
-  script:
-  - "export PATH=\"$PATH:/opt/gcc-mips-openwrt-linux/bin\""
-  - "export STAGING_DIR=\"/opt/gcc-mips-openwrt-linux\""
-  - "/opt/qt-mips-5.15.4-static/bin/qmake homed-zigbee.pro"
-  - "make -j8"
-  - "cp homed-zigbee homed-zigbee-mips"
-  artifacts:
-    paths:
-    - "homed-zigbee-mips"
-    expire_in: 1 day
-  except:
-    - branches
-  only:
-    - /^\d.\d.\d+$/
-    - /^mips-.*$/
-
-Deploy Linux ARM Package:
+.deploy_apt:
   stage: deploy
   variables:
-    PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_armhf.deb
+    PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.deb
   script:
   - "mkdir -p package/data/lib/systemd/system"
   - "mkdir -p package/data/usr/local/bin"
   - "cp -r package/debian package/data/DEBIAN"
   - "cp package/systemd/homed-zigbee.service package/data/lib/systemd/system"
-  - "cp homed-zigbee-armhf package/data/usr/local/bin/homed-zigbee"
+  - "cp homed-zigbee-${ARCHITECTURE} package/data/usr/local/bin/homed-zigbee"
   - "md5deep -lr package/data | grep -v DEBIAN | sed \"s+package/data/++g\" | sort -k2 > package/data/DEBIAN/md5sums"
   - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" package/data/DEBIAN/control"
+  - "sed -i \"s+^Architecture:.*+Architecture: ${ARCHITECTURE}+g\" package/data/DEBIAN/control"
   - "chmod +x package/data/DEBIAN/postinst"
   - "chmod +x package/data/DEBIAN/prerm"
   - "fakeroot dpkg-deb --build package/data"
@@ -58,16 +42,16 @@ Deploy Linux ARM Package:
   only:
     - /^\d.\d.\d+$/
 
-Deploy OpenWRT MIPS Package:
+.deploy_ipk:
   stage: deploy
   variables:
-    PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_mips_24kc.ipk
+    PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.ipk
   script:
   - "mkdir -p package/data/etc/init.d"
   - "mkdir -p package/data/usr/bin"
   - "mkdir -p package/data/var/db"
   - "cp package/procd/homed-zigbee package/data/etc/init.d"
-  - "cp homed-zigbee-mips package/data/usr/bin/homed-zigbee"
+  - "cp homed-zigbee-${ARCHITECTURE} package/data/usr/bin/homed-zigbee"
   - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" package/openwrt/control"
   - "echo \"2.0\" > debian-binary"
   - "chmod +x package/data/etc/init.d/homed-zigbee"
@@ -84,3 +68,39 @@ Deploy OpenWRT MIPS Package:
     - branches
   only:
     - /^\d.\d.\d+$/
+
+Build Linux Binary (aarch64):
+  extends: .build
+  variables:
+    COMPILER: gcc-aarch64-linux-gnu
+    QT_BUILD: qt-aarch64-5.15.4-static
+    ARCHITECTURE: aarch64
+
+Build Linux Binary (armhf):
+  extends: .build
+  variables:
+    COMPILER: gcc-arm-linux-gnueabihf
+    QT_BUILD: qt-armhf-5.15.4-static
+    ARCHITECTURE: armhf
+
+Build OpenWRT Binary (mips):
+  extends: .build
+  variables:
+    COMPILER: gcc-mips-openwrt-linux
+    QT_BUILD: qt-mips-5.15.4-static
+    ARCHITECTURE: mips_24kc
+
+Deploy APT Package (aarch64):
+  extends: .deploy_apt
+  variables:
+    ARCHITECTURE: aarch64
+
+Deploy APT Package (armhf):
+  extends: .deploy_apt
+  variables:
+    ARCHITECTURE: armhf
+
+Deploy OpenWRT Package (mips):
+  extends: .deploy_ipk
+  variables:
+    ARCHITECTURE: mips_24kc

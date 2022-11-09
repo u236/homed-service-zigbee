@@ -1,6 +1,6 @@
 Package: homed-zigbee
 Version:
-Architecture: armhf
+Architecture:
 Maintainer: u236
 Section: misc
 Priority: standard

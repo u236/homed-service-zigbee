@@ -154,6 +154,7 @@
       "description":    "Perenio Motion Sensor PECMS01",
       "modelNames":     ["ZHA-PirSensor"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
+      "reportings":     ["batteryPercentage"]
     }
   ],
 
