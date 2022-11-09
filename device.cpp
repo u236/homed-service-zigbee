@@ -2,10 +2,10 @@
 #include "device.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_stateTimer(new QTimer(this)), m_permitJoin(false)
+DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
 {
     m_databaseFile.setFileName(config->value("zigbee/database", "/var/db/homed-zigbee-database.json").toString());
-    m_stateFile.setFileName(config->value("zigbee/state", "/var/db/homed-zigbee-state.json").toString());
+    m_propertiesFile.setFileName(config->value("zigbee/properties", "/var/db/homed-zigbee-properties.json").toString());
 
     if (m_databaseFile.open(QFile::ReadOnly | QFile::Text))
     {
@@ -15,11 +15,11 @@ DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m
         m_databaseFile.close();
     }
 
-    connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::storeDatabase);
-    connect(m_stateTimer, &QTimer::timeout, this, &DeviceList::storeState);
+    connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
+    connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
 
     m_databaseTimer->setSingleShot(true);
-    m_stateTimer->setSingleShot(true);
+    m_propertiesTimer->setSingleShot(true);
 }
 
 Device DeviceList::byName(const QString &name)
@@ -51,29 +51,25 @@ void DeviceList::removeDevice(const Device &device)
     remove(device->ieeeAddress());
 }
 
-void DeviceList::restoreState(void)
+void DeviceList::storeDatabase(void)
 {
-    if (m_stateFile.open(QFile::ReadOnly | QFile::Text))
-    {
-        QJsonObject json = QJsonDocument::fromJson(m_stateFile.readAll()).object();
-
-        for (auto it = begin(); it != end(); it++)
-        {
-            QJsonObject item = json.value(it.value()->ieeeAddress().toHex(':')).toObject();
-
-            if (it.value()->removed() || item.isEmpty())
-                continue;
-
-            unserializeState(it.value(), item);
-        }
-
-        m_stateFile.close();
-    }
+    m_databaseTimer->start(STORE_DATABASE_DELAY);
 }
 
-void DeviceList::storeStateLater(void)
+void DeviceList::storeProperties(void)
 {
-    m_stateTimer->start(STORE_PROPERTIES_INTERVAL);
+    m_propertiesTimer->start(STORE_PROPERTIES_DELAY);
+}
+
+void DeviceList::restoreProperties(void)
+{
+    if (!m_propertiesFile.open(QFile::ReadOnly | QFile::Text))
+        return;
+
+    unserializeProperties(QJsonDocument::fromJson(m_propertiesFile.readAll()).object());
+    m_propertiesFile.close();
+
+    logInfo << "Properties restored";
 }
 
 void DeviceList::unserializeDevices(const QJsonArray &devices)
@@ -90,6 +86,8 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
             if (!device->removed())
             {
+                QJsonArray endpointsArray = json.value("endpoints").toArray(), neighborsArray = json.value("neighbors").toArray();
+
                 if (json.value("ineterviewFinished").toBool())
                     device->setInterviewFinished();
 
@@ -101,8 +99,51 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 device->setModelName(json.value("modelName").toString());
                 device->setLastSeen(json.value("lastSeen").toInt());
 
-                unserializeEndpoints(device, json.value("endpoints").toArray());
-                unserializeNeighbors(device, json.value("neighbors").toArray());
+                for (auto it = endpointsArray.begin(); it != endpointsArray.end(); it++)
+                {
+                    QJsonObject item = it->toObject();
+
+                    if (item.contains("endpointId"))
+                    {
+                        quint8 endpointId = static_cast <quint8> (item.value("endpointId").toInt());
+                        Endpoint endpoint(new EndpointObject(endpointId, device));
+                        QJsonArray inClusters = item.value("inClusters").toArray(), outClusters = item.value("outClusters").toArray();
+
+                        endpoint->setProfileId(static_cast <quint16> (item.value("profileId").toInt()));
+                        endpoint->setDeviceId(static_cast <quint16> (item.value("deviceId").toInt()));
+
+                        for (const QJsonValue &clusterId : inClusters)
+                            endpoint->inClusters().append(static_cast <quint16> (clusterId.toInt()));
+
+                        for (const QJsonValue &clusterId : outClusters)
+                            endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
+
+                        device->endpoints().insert(endpointId, endpoint);
+                    }
+                }
+
+                for (auto it = neighborsArray.begin(); it != neighborsArray.end(); it++)
+                {
+                    QJsonObject item = it->toObject();
+
+                    if (item.contains("endpointId"))
+                    {
+                        quint8 endpointId = static_cast <quint8> (item.value("endpointId").toInt());
+                        Endpoint endpoint(new EndpointObject(endpointId, device));
+                        QJsonArray inClusters = item.value("inClusters").toArray(), outClusters = item.value("outClusters").toArray();
+
+                        endpoint->setProfileId(static_cast <quint16> (item.value("profileId").toInt()));
+                        endpoint->setDeviceId(static_cast <quint16> (item.value("deviceId").toInt()));
+
+                        for (const QJsonValue &clusterId : inClusters)
+                            endpoint->inClusters().append(static_cast <quint16> (clusterId.toInt()));
+
+                        for (const QJsonValue &clusterId : outClusters)
+                            endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
+
+                        device->endpoints().insert(endpointId, endpoint);
+                    }
+                }
             }
 
             insert(device->ieeeAddress(), device);
@@ -113,65 +154,35 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
     logInfo << count << "devices loaded";
 }
 
-void DeviceList::unserializeEndpoints(const Device &device, const QJsonArray &endpoints)
+void DeviceList::unserializeProperties(const QJsonObject &properties)
 {
-    for (auto it = endpoints.begin(); it != endpoints.end(); it++)
+    for (auto it = begin(); it != end(); it++)
     {
-        QJsonObject json = it->toObject();
+        const Device &device = it.value();
+        QJsonObject json = properties.value(it.value()->ieeeAddress().toHex(':')).toObject();
 
-        if (json.contains("endpointId"))
-        {
-            quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
-            Endpoint endpoint(new EndpointObject(endpointId, device));
-            QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray();
-
-            endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
-            endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
-
-            for (const QJsonValue &clusterId : inClusters)
-                endpoint->inClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-            for (const QJsonValue &clusterId : outClusters)
-                endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-            device->endpoints().insert(endpointId, endpoint);
-        }
-    }
-}
-
-void DeviceList::unserializeNeighbors(const Device &device, const QJsonArray &neighbors)
-{
-    for (auto it = neighbors.begin(); it != neighbors.end(); it++)
-    {
-        QJsonObject json = it->toObject();
-
-        if (!json.contains("networkAddress") || !json.contains("linkQuality"))
+        if (device->removed() || json.isEmpty())
             continue;
 
-        device->neighbors().insert(static_cast <quint16> (json.value("networkAddress").toInt()), static_cast <quint8> (json.value("linkQuality").toInt()));
-    }
-}
-
-void DeviceList::unserializeState(const Device &device, const QJsonObject &state)
-{
-    for (auto it = state.begin(); it != state.end(); it++)
-    {
-        Endpoint endpoint = device->endpoints().value(static_cast <quint8> (it.key().toInt()));
-        QJsonObject item = it.value().toObject();
-
-        if (endpoint.isNull())
-            continue;
-
-        for (int i = 0; i < endpoint->properties().count(); i++)
+        for (auto it = json.begin(); it != json.end(); it++)
         {
-            const Property &property = endpoint->properties().at(i);
-            QVariant value = item.value(property->name()).toVariant();
+            const Endpoint &endpoint = device->endpoints().value(static_cast <quint8> (it.key().toInt()));
+            QJsonObject item = it.value().toObject();
 
-            if (!value.isValid())
+            if (endpoint.isNull())
                 continue;
 
-            property->setValue(value);
-            endpoint->setDataUpdated(true);
+            for (int i = 0; i < endpoint->properties().count(); i++)
+            {
+                const Property &property = endpoint->properties().at(i);
+                QVariant value = item.value(property->name()).toVariant();
+
+                if (!value.isValid())
+                    continue;
+
+                property->setValue(value);
+                endpoint->setDataUpdated(true);
+            }
         }
     }
 }
@@ -182,16 +193,17 @@ QJsonArray DeviceList::serializeDevices(void)
 
     for (auto it = begin(); it != end(); it++)
     {
+        const Device &device = it.value();
         QJsonObject json = {{"ieeeAddress", QString(it.value()->ieeeAddress().toHex(':'))}, {"networkAddress", it.value()->networkAddress()}};
 
-        if (!it.value()->removed())
+        if (!device->removed())
         {
-            if (it.value()->name() != it.value()->ieeeAddress().toHex(':'))
-                json.insert("name", it.value()->name());
+            if (device->name() != device->ieeeAddress().toHex(':'))
+                json.insert("name", device->name());
 
-            json.insert("logicalType", static_cast <quint8> (it.value()->logicalType()));
+            json.insert("logicalType", static_cast <quint8> (device->logicalType()));
 
-            if (it.value()->logicalType() == LogicalType::Coordinator)
+            if (device->logicalType() == LogicalType::Coordinator)
             {
                 if (!m_adapterType.isEmpty())
                     json.insert("type", m_adapterType);
@@ -201,34 +213,79 @@ QJsonArray DeviceList::serializeDevices(void)
             }
             else
             {
-                json.insert("ineterviewFinished", it.value()->interviewFinished());
-                json.insert("manufacturerCode", it.value()->manufacturerCode());
+                json.insert("ineterviewFinished", device->interviewFinished());
+                json.insert("manufacturerCode", device->manufacturerCode());
 
-                if (it.value()->version())
-                    json.insert("version", it.value()->version());
+                if (device->version())
+                    json.insert("version", device->version());
 
-                if (it.value()->powerSource())
-                    json.insert("powerSource", it.value()->powerSource());
+                if (device->powerSource())
+                    json.insert("powerSource", device->powerSource());
 
-                if (!it.value()->manufacturerName().isEmpty())
-                    json.insert("manufacturerName", it.value()->manufacturerName());
+                if (!device->manufacturerName().isEmpty())
+                    json.insert("manufacturerName", device->manufacturerName());
 
-                if (!it.value()->modelName().isEmpty())
-                    json.insert("modelName", it.value()->modelName());
+                if (!device->modelName().isEmpty())
+                    json.insert("modelName", device->modelName());
 
-                if (it.value()->lastSeen())
-                    json.insert("lastSeen", it.value()->lastSeen());
+                if (device->lastSeen())
+                    json.insert("lastSeen", device->lastSeen());
             }
 
-            if (!it.value()->endpoints().isEmpty())
-                json.insert("endpoints", serializeEndpoints(it.value()));
+            if (!device->endpoints().isEmpty())
+            {
+                QJsonArray array;
 
-            if (!it.value()->neighbors().isEmpty())
-                json.insert("neighbors", serializeNeighbors(it.value()));
+                for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+                {
+                    QJsonObject item;
+
+                    if (!it.value()->profileId() && !it.value()->deviceId())
+                        continue;
+
+                    item.insert("endpointId", it.key());
+                    item.insert("profileId", it.value()->profileId());
+                    item.insert("deviceId", it.value()->deviceId());
+
+                    if (!it.value()->inClusters().isEmpty())
+                    {
+                        QJsonArray inClusters;
+
+                        for (int i = 0; i < it.value()->inClusters().count(); i++)
+                            inClusters.append(it.value()->inClusters().at(i));
+
+                        item.insert("inClusters", inClusters);
+                    }
+
+                    if (!it.value()->outClusters().isEmpty())
+                    {
+                        QJsonArray outClusters;
+
+                        for (int i = 0; i < it.value()->outClusters().count(); i++)
+                            outClusters.append(it.value()->outClusters().at(i));
+
+                        item.insert("outClusters", outClusters);
+                    }
+
+                    array.append(item);
+                }
+
+                json.insert("endpoints", array);
+            }
+
+            if (!device->neighbors().isEmpty())
+            {
+                QJsonArray array;
+
+                for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
+                    array.append(QJsonObject {{"networkAddress", it.key()}, {"linkQuality", it.value()}});
+
+                json.insert("neighbors", array);
+            }
         }
         else
         {
-            json.insert("name", it.value()->name());
+            json.insert("name", device->name());
             json.insert("removed", true);
         }
 
@@ -238,88 +295,45 @@ QJsonArray DeviceList::serializeDevices(void)
     return array;
 }
 
-QJsonArray DeviceList::serializeEndpoints(const Device &device)
-{
-    QJsonArray array;
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        QJsonObject json;
-
-        if (!it.value()->profileId() && !it.value()->deviceId())
-            continue;
-
-        json.insert("endpointId", it.key());
-        json.insert("profileId", it.value()->profileId());
-        json.insert("deviceId", it.value()->deviceId());
-
-        if (!it.value()->inClusters().isEmpty())
-        {
-            QJsonArray inClusters;
-
-            for (int i = 0; i < it.value()->inClusters().count(); i++)
-                inClusters.append(it.value()->inClusters().at(i));
-
-            json.insert("inClusters", inClusters);
-        }
-
-        if (!it.value()->outClusters().isEmpty())
-        {
-            QJsonArray outClusters;
-
-            for (int i = 0; i < it.value()->outClusters().count(); i++)
-                outClusters.append(it.value()->outClusters().at(i));
-
-            json.insert("outClusters", outClusters);
-        }
-
-        array.append(json);
-    }
-
-    return array;
-}
-
-QJsonArray DeviceList::serializeNeighbors(const Device &device)
-{
-    QJsonArray array;
-
-    for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
-    {
-        QJsonObject json = {{"networkAddress", it.key()}, {"linkQuality", it.value()}};
-        array.append(json);
-    }
-
-    return array;
-}
-
-QJsonObject DeviceList::serializeState(const Device &device)
+QJsonObject DeviceList::serializeProperties(void)
 {
     QJsonObject json;
 
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    for (auto it = begin(); it != end(); it++)
     {
+        const Device &device = it.value();
         QJsonObject item;
 
-        for (int i = 0; i < it.value()->properties().count(); i++)
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
-            const Property &property = it.value()->properties().at(i);
+            QJsonObject data;
 
-            if (!property->value().isValid())
+            for (int i = 0; i < it.value()->properties().count(); i++)
+            {
+                const Property &property = it.value()->properties().at(i);
+
+                if (!property->value().isValid())
+                    continue;
+
+                data.insert(property->name(), QJsonValue::fromVariant(property->value()));
+            }
+
+            if (data.isEmpty())
                 continue;
 
-            item.insert(property->name(), QJsonValue::fromVariant(property->value()));
+            item.insert(QString::number(it.value()->id()), data);
         }
 
         if (item.isEmpty())
             continue;
 
-        json.insert(QString::number(it.value()->id()), item);
+        json.insert(it.value()->ieeeAddress().toHex(':'), item);
     }
 
     return json;
 }
 
-void DeviceList::storeDatabase(void)
+void DeviceList::writeDatabase(void)
 {
     QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}};
 
@@ -333,34 +347,23 @@ void DeviceList::storeDatabase(void)
     else
         logWarning << "Can't open database file, database not stored";
 
-
     emit statusUpdated(json);
 }
 
-void DeviceList::storeState(void)
+void DeviceList::writeProperties(void)
 {
-    QJsonObject json;
+    QJsonObject json = serializeProperties();
 
-    for (auto it = begin(); it != end(); it++)
-    {
-        QJsonObject item = serializeState(it.value());
-
-        if (item.isEmpty())
-            continue;
-
-        json.insert(it.value()->ieeeAddress().toHex(':'), item);
-    }
-
-    if (m_state == json)
+    if (m_properties == json)
         return;
 
-    if (m_stateFile.open(QFile::WriteOnly | QFile::Text))
+    if (m_propertiesFile.open(QFile::WriteOnly | QFile::Text))
     {
-        m_stateFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-        m_stateFile.close();
+        m_propertiesFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        m_propertiesFile.close();
     }
     else
-        logWarning << "Can't open state file, state not stored";
+        logWarning << "Can't open properties file, properties not stored";
 
-    m_state = json;
+    m_properties = json;
 }

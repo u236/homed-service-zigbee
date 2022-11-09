@@ -106,7 +106,7 @@ public:
     ZigBee(QSettings *config, QObject *parent);
 
     void init(void);
-    void restoreState(void);
+    void restoreProperties(void);
     void setPermitJoin(bool enabled);
 
     void setDeviceName(const QString &deviceName, const QString &newName, bool store = true);

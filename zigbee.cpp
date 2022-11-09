@@ -54,9 +54,9 @@ void ZigBee::init(void)
     m_adapter->init();
 }
 
-void ZigBee::restoreState(void)
+void ZigBee::restoreProperties(void)
 {
-    m_devices->restoreState();
+    m_devices->restoreProperties();
 
     for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
@@ -1462,7 +1462,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     {
         emit endpointUpdated(device, endpoint->id());
         endpoint->setDataUpdated(false);
-        m_devices->storeStateLater();
+        m_devices->storeProperties();
     }
 
     if (device->powerSource() != POWER_SOURCE_UNKNOWN && device->powerSource() != POWER_SOURCE_BATTERY && (header.frameControl & FC_CLUSTER_SPECIFIC || header.commandId == CMD_REPORT_ATTRIBUTES) && !(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))

@@ -19,7 +19,7 @@ void Controller::mqttConnected(void)
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
 
-    m_zigbee->restoreState();
+    m_zigbee->restoreProperties();
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
