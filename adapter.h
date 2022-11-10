@@ -49,7 +49,7 @@ enum class LogicalType
     EndDevice
 };
 
-#pragma pack(push, 1) // TODO: combine response handlers?
+#pragma pack(push, 1)
 
 struct deviceAnnounceStruct
 {
@@ -157,18 +157,8 @@ public:
     Adapter(QSettings *config, QObject *parent);
     ~Adapter(void);
 
-    virtual bool nodeDescriptorRequest(quint16 networkAddress) = 0;
-    virtual bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) = 0;
-    virtual bool activeEndpointsRequest(quint16 networkAddress) = 0;
-    virtual bool lqiRequest(quint16 networkAddress, quint8 index = 0) = 0;
-
-    virtual bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false) = 0;
-    virtual bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data) = 0;
-
     virtual bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
     virtual bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
-
-    virtual bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress) = 0;
 
     virtual bool setInterPanEndpointId(quint8 endpointId) = 0;
     virtual bool setInterPanChannel(quint8 channel) = 0;
@@ -182,6 +172,14 @@ public:
 
     void init(void);
     void setPermitJoin(bool enabled);
+
+    bool nodeDescriptorRequest(quint16 networkAddress);
+    bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId);
+    bool activeEndpointsRequest(quint16 networkAddress);
+    bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
+    bool lqiRequest(quint16 networkAddress, quint8 index = 0);
+    bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress);
+    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
 
 protected:
 
@@ -204,17 +202,19 @@ protected:
     quint64 m_ieeeAddress;
 
     bool m_permitJoin;
+    quint8 m_requestId;
 
     QQueue <QByteArray> m_queue;
     QMap <quint8, EndpointData> m_endpointsData;
 
     void reset(void);
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
-    QByteArray bindRequestPayload(const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId);
+    void parseMessage(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
 
 private:
 
     virtual bool permitJoin(bool enabled) = 0;
+    virtual bool unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) = 0;
     virtual void softReset(void) = 0;
     virtual void parseData(void) = 0;
 

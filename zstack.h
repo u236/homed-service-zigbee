@@ -34,6 +34,7 @@
 #define ZDO_MGMT_LQI_REQ                            0x2531
 #define ZDO_MGMT_LEAVE_REQ                          0x2534
 #define ZDO_MGMT_PERMIT_JOIN_REQ                    0x2536
+#define ZDO_MSG_CB_REGISTER                         0x253E
 #define ZDO_STARTUP_FROM_APP                        0x2540
 #define ZB_READ_CONFIGURATION                       0x2604
 #define ZB_WRITE_CONFIGURATION                      0x2605
@@ -60,6 +61,7 @@
 #define ZDO_CONCENTRATOR_IND                        0x45C8
 #define ZDO_LEAVE_IND                               0x45C9
 #define ZDO_TC_DEV_IND                              0x45CA
+#define ZDO_MSG_CB_INCOMING                         0x45FF
 #define APP_CNF_BDB_COMMISSIONING_NOTIFICATION      0x4F80
 
 #define ZCD_NV_STARTUP_OPTION                       0x0003
@@ -215,6 +217,16 @@ struct deviceLeaveStruct
     quint8  rejoin;
 };
 
+struct zdoMessageStruct
+{
+    quint16 srcAddress;
+    quint8  broadcast;
+    quint16 clusterId;
+    quint8  security;
+    quint8  transactionId;
+    quint16 dstAddress;
+};
+
 #pragma pack(pop)
 
 enum class ZStackVersion
@@ -232,18 +244,8 @@ public:
 
     ZStack(QSettings *config, QObject *parent);
 
-    bool nodeDescriptorRequest(quint16 networkAddress) override;
-    bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
-    bool activeEndpointsRequest(quint16 networkAddress) override;
-    bool lqiRequest(quint16 networkAddress, quint8 index = 0) override;
-
-    bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false) override;
-    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload) override;
-
     bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
     bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
-
-    bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress) override;
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
@@ -255,10 +257,9 @@ private:
 
     ZStackVersion m_version;
 
-    quint8 m_status, m_transactionId;
+    quint8 m_status;
     bool m_clear;
 
-    quint16 m_requestAddress;
     quint8 m_requestStatus;
     bool m_responseReceived;
 
@@ -266,16 +267,17 @@ private:
     QByteArray m_replyData;
 
     QMap <quint16, QByteArray> m_nvItems;
+    QList <quint16> m_apsClusters;
 
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
     void parsePacket(quint16 command, const QByteArray &data);
 
     bool writeNvItem(quint16 id, const QByteArray &data);
     bool writeConfiguration(quint16 id, const QByteArray &data);
-
     bool startCoordinator(void);
 
     bool permitJoin(bool enabled) override;
+    bool unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) override;
     void softReset(void) override;
     void parseData(void) override;
 

@@ -243,18 +243,8 @@ public:
 
     EZSP(QSettings *config, QObject *parent);
 
-    bool nodeDescriptorRequest(quint16 networkAddress) override;
-    bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId) override;
-    bool activeEndpointsRequest(quint16 networkAddress) override;
-    bool lqiRequest(quint16 networkAddress, quint8 index = 0) override;
-
-    bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false) override;
-    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload) override;
-
     bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
     bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
-
-    bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress) override;
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
@@ -265,7 +255,7 @@ public:
 private:
 
     QByteArray m_networkKey;
-    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestId, m_requestStatus;
+    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestStatus;
 
     QByteArray m_replyData;
     bool m_replyReceived, m_errorReceived, m_messageSent;
@@ -276,18 +266,16 @@ private:
     quint16 getCRC(quint8 *data, quint32 length);
     void randomize(QByteArray &data);
 
-    bool sendUnicast(quint16 networkAddress, quint16 profileId, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload);
     bool sendFrame(quint16 frameId, const QByteArray &data = QByteArray(), bool version = false);
-
     void sendRequest(quint8 control, const QByteArray &payload = QByteArray());
     void parsePacket(const QByteArray &payload);
 
     bool startNetwork(void);
     bool startCoordinator(void);
-
     void handleError(const QString &reason);
 
     bool permitJoin(bool enabled) override;
+    bool unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) override;
     void softReset(void) override;
     void parseData(void) override;
 
