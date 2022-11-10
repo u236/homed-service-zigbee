@@ -10,9 +10,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorXY>                    ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>           ("colorTemperatureAction");
 
-    qRegisterMetaType <ActionsPTVO::ChangePattern>          ("ptvoChangePatternAction");
-    qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
-
     qRegisterMetaType <ActionsLUMI::Sensitivity>            ("lumiSensitivityAction");
     qRegisterMetaType <ActionsLUMI::Mode>                   ("lumiModeAction");
     qRegisterMetaType <ActionsLUMI::Distance>               ("lumiDistanceAction");
@@ -24,6 +21,9 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPerenio::AlarmVoltageMax>     ("perenioAlarmVoltageMaxAction");
     qRegisterMetaType <ActionsPerenio::AlarmPowerMax>       ("perenioAlarmPowerMaxAction");
     qRegisterMetaType <ActionsPerenio::AlarmEnergyLimit>    ("perenioAlarmEnergyLimitAction");
+
+    qRegisterMetaType <ActionsPTVO::ChangePattern>          ("ptvoChangePatternAction");
+    qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
     qRegisterMetaType <ActionsTUYA::Volume>                 ("tuyaVolumeAction");
     qRegisterMetaType <ActionsTUYA::Duration>               ("tuyaDurationAction");
@@ -217,24 +217,6 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
     }
 }
 
-QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
-{
-    zclHeaderStruct header;
-    QString status = data.toString();
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-    header.commandId = status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00;
-
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
-}
-
-QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
-{
-    float value = data.toFloat();
-    return writeAttributeRequest(0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
 QByteArray ActionsLUMI::Request::makeRequest(quint8 transactionId, quint16 attributeId, quint8 dataType, void *data)
 {
     zclHeaderStruct header;
@@ -345,6 +327,24 @@ QByteArray ActionsPerenio::AlarmEnergyLimit::request(const QVariant &data)
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
     return writeAttributeRequest(0x000F, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
+{
+    zclHeaderStruct header;
+    QString status = data.toString();
+
+    header.frameControl = FC_CLUSTER_SPECIFIC;
+    header.transactionId = m_transactionId++;
+    header.commandId = status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00;
+
+    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
+}
+
+QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
+{
+    float value = data.toFloat();
+    return writeAttributeRequest(0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)

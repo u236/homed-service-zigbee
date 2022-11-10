@@ -30,8 +30,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIAS::Smoke>                ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>            ("iasWaterLeakProperty");
 
-    qRegisterMetaType <PropertiesLifeControl::AirQuality>   ("lifeControlAirQualityProperty");
-
     qRegisterMetaType <PropertiesLUMI::Data>                ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>               ("lumiPowerProperty");
@@ -39,6 +37,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
 
+    qRegisterMetaType <PropertiesLifeControl::AirQuality>   ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesPerenio::SmartPlug>        ("perenioSmartPlugProperty");
 
     qRegisterMetaType <PropertiesPTVO::CO2>                 ("ptvoCO2Property");
@@ -375,6 +374,7 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
 
 void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload)
 {
+    QMap <QString, QVariant> map = m_value.toMap();
     quint16 value;
 
     if (commandId != 0x00)
@@ -382,71 +382,42 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
 
     memcpy(&value, payload.constData(), sizeof(value));
     value = qFromLittleEndian(value);
-    m_map.insert(m_name, (value & 0x0001) ? true : false);
+    map.insert(m_name, (value & 0x0001) ? true : false);
 
     if (value & 0x0004)
-        m_map.insert("tamper", true);
-    else
-        m_map.remove("tamper");
+        map.insert("tamper", true);
 
     if (value & 0x0008)
-        m_map.insert("batteryLow", true);
-    else
-        m_map.remove("batteryLow");
+        map.insert("batteryLow", true);
 
-    m_value = m_map;
-}
-
-void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    qint16 value;
-
-    if ((dataType != DATA_TYPE_16BIT_UNSIGNED && dataType != DATA_TYPE_16BIT_SIGNED) || data.length() != 2)
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-
-    switch (attributeId)
-    {
-        case 0x0000: m_map.insert("tempertature", qFromLittleEndian(value) / 100.0); break;
-        case 0x0001: m_map.insert("humidity", qFromLittleEndian(value) / 100.0); break;
-        case 0x0002: m_map.insert("eco2", qFromLittleEndian(value)); break;
-        case 0x0003: m_map.insert("voc", qFromLittleEndian(value)); break;
-    }
-
-    m_value = m_map;
+    m_value = map;
 }
 
 void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (attributeId == 0x00F7)
-    {
+    QMap <QString, QVariant> map = m_value.toMap();
 
-        if (dataType != DATA_TYPE_OCTET_STRING)
-            return;
-
-        for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
-        {
-            quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
-
-            if (!size)
-                break;
-
-            parseData(data.at(i), itemType, data.mid(offset, size));
-            i += size + 1;
-        }
-    }
-
-    else
-        parseData(attributeId, dataType, data);
-
-    if (m_map.isEmpty())
+    if (attributeId != 0x00F7 || dataType != DATA_TYPE_OCTET_STRING)
         return;
 
-    m_value = m_map;
+    for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+    {
+        quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
+
+        if (!size)
+            break;
+
+        parseData(data.at(i), itemType, data.mid(offset, size), map);
+        i += size + 1;
+    }
+
+    if (map.isEmpty())
+        return;
+
+    m_value = map;
 }
 
-void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data, QMap <QString, QVariant> &map)
 {
     switch (dataPoint)
     {
@@ -457,7 +428,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
 
-                m_map.insert("temperature", static_cast <qint8> (data.at(0)));
+                map.insert("temperature", static_cast <qint8> (data.at(0)));
             }
 
             break;
@@ -471,7 +442,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            m_map.insert("outageCount", qFromLittleEndian(value) - 1);
+            map.insert("outageCount", qFromLittleEndian(value) - 1);
             break;
         }
 
@@ -485,14 +456,14 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                     break;
 
                 memcpy(&value, data.constData(), data.length());
-                m_map.insert("illuminance", qFromLittleEndian(value));
+                map.insert("illuminance", qFromLittleEndian(value));
             }
             else
             {
                 if (dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
                     break;
 
-                m_map.insert("status", data.at(0) ? "on" : "off");
+                map.insert("status", data.at(0) ? "on" : "off");
             }
 
             break;
@@ -506,7 +477,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
 
-                m_map.insert("occupancy", data.at(0) ? true : false);
+                map.insert("occupancy", data.at(0) ? true : false);
             }
 
             break;
@@ -524,13 +495,13 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 if (dataPoint != 0x0066 ? dataPoint == 0x010C : m_version < 50)
                 {
                     QList <QString> list = {"low", "medium", "high"};
-                    m_map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
+                    map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
                 }
                 else
                 {
                     QList <QString> list = {"enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"};
-                    m_map.insert("event", list.value(data.at(0), "unknown"));
-                    m_map.insert("occupancy", data.at(0) != 0x01 ? true : false);
+                    map.insert("event", list.value(data.at(0), "unknown"));
+                    map.insert("occupancy", data.at(0) != 0x01 ? true : false);
                 }
             }
 
@@ -547,7 +518,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                     break;
 
-                m_map.insert("mode", list.value(data.at(0), "unknown"));
+                map.insert("mode", list.value(data.at(0), "unknown"));
             }
 
             break;
@@ -563,7 +534,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                     break;
 
-                m_map.insert("distance", list.value(data.at(0), "unknown"));
+                map.insert("distance", list.value(data.at(0), "unknown"));
             }
 
             break;
@@ -577,7 +548,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            m_map.insert("energy", static_cast <double> (round(value * 100)) / 100);
+            map.insert("energy", static_cast <double> (round(value * 100)) / 100);
             break;
         }
 
@@ -589,7 +560,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            m_map.insert("voltage", static_cast <double> (round(value)) / 10);
+            map.insert("voltage", static_cast <double> (round(value)) / 10);
             break;
         }
 
@@ -601,7 +572,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            m_map.insert("current", static_cast <double> (round(value)) / 1000);
+            map.insert("current", static_cast <double> (round(value)) / 1000);
             break;
         }
 
@@ -613,7 +584,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            m_map.insert("power", static_cast <double> (round(value * 100)) / 100);
+            map.insert("power", static_cast <double> (round(value * 100)) / 100);
             break;
         }
     }
@@ -713,8 +684,34 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dat
         m_value = "drop";
 }
 
+void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    qint16 value;
+
+    if ((dataType != DATA_TYPE_16BIT_UNSIGNED && dataType != DATA_TYPE_16BIT_SIGNED) || data.length() != 2)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+
+    switch (attributeId)
+    {
+        case 0x0000: map.insert("tempertature", qFromLittleEndian(value) / 100.0); break;
+        case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0); break;
+        case 0x0002: map.insert("eco2", qFromLittleEndian(value)); break;
+        case 0x0003: map.insert("voc", qFromLittleEndian(value)); break;
+    }
+
+    if (map.isEmpty())
+        return;
+
+    m_value = map;
+}
+
 void PropertiesPerenio::SmartPlug::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
+    QMap <QString, QVariant> map = m_value.toMap();
+
     switch (attributeId)
     {
         case 0x0000:
@@ -724,9 +721,9 @@ void PropertiesPerenio::SmartPlug::parseAttribte(quint16 attributeId, quint8 dat
 
             switch (data.at(0))
             {
-                case 0x00: m_map.insert("powerOnStatus", "off"); break;
-                case 0x01: m_map.insert("powerOnStatus", "on"); break;
-                case 0x02: m_map.insert("powerOnStatus", "prevoious"); break;
+                case 0x00: map.insert("powerOnStatus", "off"); break;
+                case 0x01: map.insert("powerOnStatus", "on"); break;
+                case 0x02: map.insert("powerOnStatus", "prevoious"); break;
             }
 
             break;
@@ -737,10 +734,10 @@ void PropertiesPerenio::SmartPlug::parseAttribte(quint16 attributeId, quint8 dat
             if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                 break;
 
-            m_map.insert("alarmVoltateMin",  data.at(0) & 0x01 ? true : false);
-            m_map.insert("alarmVoltateMax",  data.at(0) & 0x02 ? true : false);
-            m_map.insert("alarmPowerMax",    data.at(0) & 0x04 ? true : false);
-            m_map.insert("alarmEnergyLimit", data.at(0) & 0x08 ? true : false);
+            map.insert("alarmVoltateMin",  data.at(0) & 0x01 ? true : false);
+            map.insert("alarmVoltateMax",  data.at(0) & 0x02 ? true : false);
+            map.insert("alarmPowerMax",    data.at(0) & 0x04 ? true : false);
+            map.insert("alarmEnergyLimit", data.at(0) & 0x08 ? true : false);
 
             break;
         }
@@ -753,7 +750,7 @@ void PropertiesPerenio::SmartPlug::parseAttribte(quint16 attributeId, quint8 dat
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            m_map.insert("energy", qFromLittleEndian(value));
+            map.insert("energy", static_cast <double> (qFromLittleEndian(value)) / 1000);
             break;
         }
 
@@ -769,22 +766,22 @@ void PropertiesPerenio::SmartPlug::parseAttribte(quint16 attributeId, quint8 dat
 
             switch (attributeId)
             {
-                case 0x0003: m_map.insert("voltage", qFromLittleEndian(value)); break;
-                case 0x0004: m_map.insert("voltageMin", qFromLittleEndian(value)); break;
-                case 0x0005: m_map.insert("voltageMax", qFromLittleEndian(value)); break;
-                case 0x000A: m_map.insert("power", qFromLittleEndian(value)); break;
-                case 0x000B: m_map.insert("powerMax", qFromLittleEndian(value)); break;
-                case 0x000F: m_map.insert("energyLimit", qFromLittleEndian(value)); break;
+                case 0x0003: map.insert("voltage", qFromLittleEndian(value)); break;
+                case 0x0004: map.insert("voltageMin", qFromLittleEndian(value)); break;
+                case 0x0005: map.insert("voltageMax", qFromLittleEndian(value)); break;
+                case 0x000A: map.insert("power", qFromLittleEndian(value)); break;
+                case 0x000B: map.insert("powerMax", qFromLittleEndian(value)); break;
+                case 0x000F: map.insert("energyLimit", qFromLittleEndian(value)); break;
             }
 
             break;
         }
     }
 
-    if (m_map.isEmpty())
+    if (map.isEmpty())
         return;
 
-    m_value = m_map;
+    m_value = map;
 }
 
 void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -919,37 +916,47 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
 
 void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
 {
+    QMap <QString, QVariant> map = m_value.toMap();
+
     switch (dataPoint)
     {
         case 0x05:
         {
             QList <QString> list = {"low", "medium", "high"};
-            m_map.insert("volume", list.at(data.toInt()));
+            map.insert("volume", list.at(data.toInt()));
             break;
         }
 
-        case 0x07: m_map.insert("duration", data.toInt()); break;
-        case 0x0D: m_map.insert("alarm", data.toBool()); break;
-        case 0x0F: m_map.insert("battery", data.toInt()); break;
-        case 0x15: m_map.insert("melody", data.toInt()); break;
+        case 0x07: map.insert("duration", data.toInt()); break;
+        case 0x0D: map.insert("alarm", data.toBool()); break;
+        case 0x0F: map.insert("battery", data.toInt()); break;
+        case 0x15: map.insert("melody", data.toInt()); break;
     }
 
-    m_value = m_map;
+    if (map.isEmpty())
+        return;
+
+    m_value = map;
 }
 
 void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &data)
 {
+    QMap <QString, QVariant> map = m_value.toMap();
+
     switch (dataPoint)
     {
-        case 0x01: m_map.insert("occupancy", data.toBool()); break;
-        case 0x02: m_map.insert("sensitivity", data.toInt()); break;
-        case 0x03: m_map.insert("distanceMin", data.toDouble() / 100); break;
-        case 0x04: m_map.insert("distanceMax", data.toDouble() / 100); break;
-        case 0x65: m_map.insert("detectionDelay", data.toInt()); break;
-        case 0x68: m_map.insert("illuminance", data.toInt()); break;
+        case 0x01: map.insert("occupancy", data.toBool()); break;
+        case 0x02: map.insert("sensitivity", data.toInt()); break;
+        case 0x03: map.insert("distanceMin", data.toDouble() / 100); break;
+        case 0x04: map.insert("distanceMax", data.toDouble() / 100); break;
+        case 0x65: map.insert("detectionDelay", data.toInt()); break;
+        case 0x68: map.insert("illuminance", data.toInt()); break;
     }
 
-    m_value = m_map;
+    if (map.isEmpty())
+        return;
+
+    m_value = map;
 }
 
 void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

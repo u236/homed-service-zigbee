@@ -98,6 +98,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 device->setManufacturerName(json.value("manufacturerName").toString());
                 device->setModelName(json.value("modelName").toString());
                 device->setLastSeen(json.value("lastSeen").toInt());
+                device->setLinkQuality(json.value("linkQuality").toInt());
 
                 for (auto it = endpointsArray.begin(); it != endpointsArray.end(); it++)
                 {
@@ -230,6 +231,9 @@ QJsonArray DeviceList::serializeDevices(void)
 
                 if (device->lastSeen())
                     json.insert("lastSeen", device->lastSeen());
+
+                if (device->linkQuality())
+                    json.insert("linkQuality", device->linkQuality());
             }
 
             if (!device->endpoints().isEmpty())

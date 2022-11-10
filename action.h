@@ -127,29 +127,6 @@ namespace Actions
     };
 }
 
-namespace ActionsPTVO
-{
-    class ChangePattern : public ActionObject
-    {
-
-    public:
-
-        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class Pattern : public ActionObject
-    {
-
-    public:
-
-        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-}
-
 namespace ActionsLUMI
 {
     class Request
@@ -260,6 +237,29 @@ namespace ActionsPerenio
     public:
 
         AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+}
+
+namespace ActionsPTVO
+{
+    class ChangePattern : public ActionObject
+    {
+
+    public:
+
+        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class Pattern : public ActionObject
+    {
+
+    public:
+
+        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT) {}
         QByteArray request(const QVariant &data) override;
 
     };

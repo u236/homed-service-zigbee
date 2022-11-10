@@ -1,7 +1,6 @@
 #ifndef PROPERTY_H
 #define PROPERTY_H
 
-#include <QMap>
 #include <QSharedPointer>
 #include <QVariant>
 #include "zcl.h"
@@ -268,10 +267,6 @@ namespace PropertiesIAS
         ZoneStatus(const QString &name) : PropertyObject(name, CLUSTER_IAS_ZONE, true) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
-    private:
-
-        QMap <QString, QVariant> m_map;
-
     };
 
     class Contact : public ZoneStatus
@@ -320,23 +315,6 @@ namespace PropertiesIAS
     };
 }
 
-namespace PropertiesLifeControl
-{
-    class AirQuality : public PropertyObject
-    {
-
-    public:
-
-        AirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QMap <QString, QVariant> m_map;
-
-    };
-}
-
 namespace PropertiesLUMI
 {
     class Data : public PropertyObject
@@ -349,8 +327,7 @@ namespace PropertiesLUMI
 
     private:
 
-        QMap <QString, QVariant> m_map;
-        void parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data);
+        void parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data, QMap <QString, QVariant> &map);
 
     };
 
@@ -405,6 +382,19 @@ namespace PropertiesLUMI
     };
 }
 
+namespace PropertiesLifeControl
+{
+    class AirQuality : public PropertyObject
+    {
+
+    public:
+
+        AirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
 namespace PropertiesPerenio
 {
     class SmartPlug : public PropertyObject
@@ -414,10 +404,6 @@ namespace PropertiesPerenio
 
         SmartPlug(void) : PropertyObject("perenioSmartPlug", CLUSTER_PERENIO) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QMap <QString, QVariant> m_map;
 
     };
 }
@@ -492,10 +478,6 @@ namespace PropertiesTUYA
 
         Data(void) : PropertyObject("tuyaData", CLUSTER_TUYA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
-
-    protected:
-
-        QMap <QString, QVariant> m_map;
 
     private:
 
