@@ -43,14 +43,17 @@ class ActionObject
 
 public:
 
-    ActionObject(const QString &name, quint16 clusterId) :
-        m_name(name), m_clusterId(clusterId), m_transactionId(0) {}
+    ActionObject(const QString &name, quint16 clusterId, quint16 attributeId = 0, quint8 dataType = 0, bool poll = false) :
+        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_poll(poll), m_transactionId(0) {}
 
     virtual ~ActionObject(void) {}
     virtual QByteArray request(const QVariant &data) = 0;
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
+    inline quint8 dataType(void) { return m_dataType; }
+    inline quint16 attributeId(void) { return m_attributeId; }
+    inline bool poll(void) { return m_poll; }
 
     static void registerMetaTypes(void);
 
@@ -58,9 +61,14 @@ protected:
 
     QString m_name;
     quint16 m_clusterId;
+
+    quint16 m_attributeId;
+    quint8 m_dataType;
+    bool m_poll;
+
     quint8 m_transactionId;
 
-    QByteArray writeAttributeRequest(quint16 attributeId, quint8 dataType, const QByteArray &data);
+    QByteArray writeAttributeRequest(const QByteArray &data);
 
 };
 
@@ -81,7 +89,7 @@ namespace Actions
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF) {}
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x4003, DATA_TYPE_8BIT_ENUM, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -186,7 +194,7 @@ namespace ActionsPerenio
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO) {}
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO, 0x0000, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -196,7 +204,7 @@ namespace ActionsPerenio
 
     public:
 
-        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO) {}
+        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO, 0x0001, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -206,7 +214,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO) {}
+        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO, 0x0004, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -216,7 +224,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO) {}
+        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO, 0x0005, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -226,7 +234,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO) {}
+        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO, 0x000B, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -236,7 +244,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO) {}
+        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO, 0x000F, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -259,7 +267,7 @@ namespace ActionsPTVO
 
     public:
 
-        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT) {}
+        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -361,7 +369,7 @@ namespace ActionsTUYA
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF) {}
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x8002, DATA_TYPE_8BIT_ENUM, true) {}
         QByteArray request(const QVariant &data) override;
 
     };

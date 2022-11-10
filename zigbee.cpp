@@ -293,6 +293,10 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                     continue;
 
                 enqueueDataRequest(device, it.value()->id(), action->clusterId(), data, QString("%1 action").arg(action->name()));
+
+                if (action->poll())
+                    readAttributes(device, it.value()->id(), action->clusterId(), {action->attributeId()});
+
                 break;
             }
         }
