@@ -135,6 +135,29 @@ namespace Actions
     };
 }
 
+namespace ActionsPTVO
+{
+    class ChangePattern : public ActionObject
+    {
+
+    public:
+
+        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class Pattern : public ActionObject
+    {
+
+    public:
+
+        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+}
+
 namespace ActionsLUMI
 {
     class Request
@@ -182,92 +205,6 @@ namespace ActionsLUMI
     public:
 
         ResetPresence(void) : ActionObject("resetPresence", CLUSTER_LUMI) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-}
-
-namespace ActionsPerenio
-{
-    class PowerOnStatus : public ActionObject
-    {
-
-    public:
-
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO, 0x0000, DATA_TYPE_8BIT_UNSIGNED, true) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class ResetAlarms : public ActionObject
-    {
-
-    public:
-
-        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO, 0x0001, DATA_TYPE_8BIT_UNSIGNED, true) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class AlarmVoltageMin : public ActionObject
-    {
-
-    public:
-
-        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO, 0x0004, DATA_TYPE_16BIT_UNSIGNED, true) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class AlarmVoltageMax : public ActionObject
-    {
-
-    public:
-
-        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO, 0x0005, DATA_TYPE_16BIT_UNSIGNED, true) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class AlarmPowerMax : public ActionObject
-    {
-
-    public:
-
-        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO, 0x000B, DATA_TYPE_16BIT_UNSIGNED, true) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class AlarmEnergyLimit : public ActionObject
-    {
-
-    public:
-
-        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO, 0x000F, DATA_TYPE_16BIT_UNSIGNED, true) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-}
-
-namespace ActionsPTVO
-{
-    class ChangePattern : public ActionObject
-    {
-
-    public:
-
-        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class Pattern : public ActionObject
-    {
-
-    public:
-
-        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -370,6 +307,69 @@ namespace ActionsTUYA
     public:
 
         PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x8002, DATA_TYPE_8BIT_ENUM, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+}
+
+namespace ActionsPerenio
+{
+    class PowerOnStatus : public ActionObject
+    {
+
+    public:
+
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO, 0x0000, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class ResetAlarms : public ActionObject
+    {
+
+    public:
+
+        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO, 0x0001, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmVoltageMin : public ActionObject
+    {
+
+    public:
+
+        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO, 0x0004, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmVoltageMax : public ActionObject
+    {
+
+    public:
+
+        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO, 0x0005, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmPowerMax : public ActionObject
+    {
+
+    public:
+
+        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO, 0x000B, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class AlarmEnergyLimit : public ActionObject
+    {
+
+    public:
+
+        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO, 0x000F, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };

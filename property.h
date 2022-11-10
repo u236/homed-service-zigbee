@@ -315,6 +315,67 @@ namespace PropertiesIAS
     };
 }
 
+namespace PropertiesPTVO
+{
+    class CO2 : public PropertyObject
+    {
+
+    public:
+
+        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QVariant m_buffer;
+
+    };
+
+    class Temperature: public PropertyObject
+    {
+
+    public:
+
+        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    private:
+
+        QVariant m_buffer;
+
+    };
+
+    class ChangePattern : public PropertyObject
+    {
+
+    public:
+
+        ChangePattern(void) : PropertyObject("changePattern", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class Pattern: public PropertyObject
+    {
+
+    public:
+
+        Pattern(void) : PropertyObject("pattern", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class SwitchAction : public PropertyObject
+    {
+
+    public:
+
+        SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
 namespace PropertiesLUMI
 {
     class Data : public PropertyObject
@@ -382,93 +443,6 @@ namespace PropertiesLUMI
     };
 }
 
-namespace PropertiesLifeControl
-{
-    class AirQuality : public PropertyObject
-    {
-
-    public:
-
-        AirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-}
-
-namespace PropertiesPerenio
-{
-    class SmartPlug : public PropertyObject
-    {
-
-    public:
-
-        SmartPlug(void) : PropertyObject("perenioSmartPlug", CLUSTER_PERENIO) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-}
-
-namespace PropertiesPTVO
-{
-    class CO2 : public PropertyObject
-    {
-
-    public:
-
-        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QVariant m_buffer;
-
-    };
-
-    class Temperature: public PropertyObject
-    {
-
-    public:
-
-        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QVariant m_buffer;
-
-    };
-
-    class ChangePattern : public PropertyObject
-    {
-
-    public:
-
-        ChangePattern(void) : PropertyObject("changePattern", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class Pattern: public PropertyObject
-    {
-
-    public:
-
-        Pattern(void) : PropertyObject("pattern", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class SwitchAction : public PropertyObject
-    {
-
-    public:
-
-        SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-}
-
 namespace PropertiesTUYA
 {
     class Data : public PropertyObject
@@ -530,6 +504,32 @@ namespace PropertiesTUYA
     public:
 
         Unknown(void) : PropertyObject("tuyaUnknown", CLUSTER_TUYA_UNKNOWN) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
+namespace PropertiesLifeControl
+{
+    class AirQuality : public PropertyObject
+    {
+
+    public:
+
+        AirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+}
+
+namespace PropertiesPerenio
+{
+    class SmartPlug : public PropertyObject
+    {
+
+    public:
+
+        SmartPlug(void) : PropertyObject("perenioSmartPlug", CLUSTER_PERENIO) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

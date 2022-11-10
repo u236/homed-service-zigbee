@@ -10,20 +10,13 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorXY>                    ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>           ("colorTemperatureAction");
 
+    qRegisterMetaType <ActionsPTVO::ChangePattern>          ("ptvoChangePatternAction");
+    qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
+
     qRegisterMetaType <ActionsLUMI::Sensitivity>            ("lumiSensitivityAction");
     qRegisterMetaType <ActionsLUMI::Mode>                   ("lumiModeAction");
     qRegisterMetaType <ActionsLUMI::Distance>               ("lumiDistanceAction");
     qRegisterMetaType <ActionsLUMI::ResetPresence>          ("lumiResetPresenceAction");
-
-    qRegisterMetaType <ActionsPerenio::PowerOnStatus>       ("perenioPowerOnStatusAction");
-    qRegisterMetaType <ActionsPerenio::ResetAlarms>         ("perenioResetAlarmsAction");
-    qRegisterMetaType <ActionsPerenio::AlarmVoltageMin>     ("perenioAlarmVoltageMinAction");
-    qRegisterMetaType <ActionsPerenio::AlarmVoltageMax>     ("perenioAlarmVoltageMaxAction");
-    qRegisterMetaType <ActionsPerenio::AlarmPowerMax>       ("perenioAlarmPowerMaxAction");
-    qRegisterMetaType <ActionsPerenio::AlarmEnergyLimit>    ("perenioAlarmEnergyLimitAction");
-
-    qRegisterMetaType <ActionsPTVO::ChangePattern>          ("ptvoChangePatternAction");
-    qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
     qRegisterMetaType <ActionsTUYA::Volume>                 ("tuyaVolumeAction");
     qRegisterMetaType <ActionsTUYA::Duration>               ("tuyaDurationAction");
@@ -34,6 +27,13 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::DistanceMax>            ("tuyaDistanceMaxAction");
     qRegisterMetaType <ActionsTUYA::DetectionDelay>         ("tuyaDetectionDelayAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>          ("tuyaPowerOnStatusAction");
+
+    qRegisterMetaType <ActionsPerenio::PowerOnStatus>       ("perenioPowerOnStatusAction");
+    qRegisterMetaType <ActionsPerenio::ResetAlarms>         ("perenioResetAlarmsAction");
+    qRegisterMetaType <ActionsPerenio::AlarmVoltageMin>     ("perenioAlarmVoltageMinAction");
+    qRegisterMetaType <ActionsPerenio::AlarmVoltageMax>     ("perenioAlarmVoltageMaxAction");
+    qRegisterMetaType <ActionsPerenio::AlarmPowerMax>       ("perenioAlarmPowerMaxAction");
+    qRegisterMetaType <ActionsPerenio::AlarmEnergyLimit>    ("perenioAlarmEnergyLimitAction");
 }
 
 QByteArray ActionObject::writeAttributeRequest(const QByteArray &data)
@@ -217,6 +217,24 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
     }
 }
 
+QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
+{
+    zclHeaderStruct header;
+    QString status = data.toString();
+
+    header.frameControl = FC_CLUSTER_SPECIFIC;
+    header.transactionId = m_transactionId++;
+    header.commandId = status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00;
+
+    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
+}
+
+QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
+{
+    float value = data.toFloat();
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
 QByteArray ActionsLUMI::Request::makeRequest(quint8 transactionId, quint16 attributeId, quint8 dataType, void *data)
 {
     zclHeaderStruct header;
@@ -280,71 +298,6 @@ QByteArray ActionsLUMI::ResetPresence::request(const QVariant &data)
 
     quint8 value = 1; // TODO: check this
     return makeRequest(m_transactionId++, 0x0157, DATA_TYPE_8BIT_UNSIGNED, &value);
-}
-
-QByteArray ActionsPerenio::PowerOnStatus::request(const QVariant &data)
-{
-    QList <QString> list = {"off", "on", "previous"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsPerenio::ResetAlarms::request(const QVariant &data)
-{
-    if (!data.toBool())
-        return QByteArray();
-
-    return writeAttributeRequest(QByteArray(1, 0x00));
-}
-
-QByteArray ActionsPerenio::AlarmVoltageMin::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsPerenio::AlarmVoltageMax::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsPerenio::AlarmPowerMax::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsPerenio::AlarmEnergyLimit::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
-{
-    zclHeaderStruct header;
-    QString status = data.toString();
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-    header.commandId = status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00;
-
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
-}
-
-QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
-{
-    float value = data.toFloat();
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)
@@ -470,5 +423,52 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsPerenio::PowerOnStatus::request(const QVariant &data)
+{
+    QList <QString> list = {"off", "on", "previous"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsPerenio::ResetAlarms::request(const QVariant &data)
+{
+    if (!data.toBool())
+        return QByteArray();
+
+    return writeAttributeRequest(QByteArray(1, 0x00));
+}
+
+QByteArray ActionsPerenio::AlarmVoltageMin::request(const QVariant &data)
+{
+    quint16 value = static_cast <quint16> (data.toInt());
+    value = qToLittleEndian(value);
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsPerenio::AlarmVoltageMax::request(const QVariant &data)
+{
+    quint16 value = static_cast <quint16> (data.toInt());
+    value = qToLittleEndian(value);
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsPerenio::AlarmPowerMax::request(const QVariant &data)
+{
+    quint16 value = static_cast <quint16> (data.toInt());
+    value = qToLittleEndian(value);
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsPerenio::AlarmEnergyLimit::request(const QVariant &data)
+{
+    quint16 value = static_cast <quint16> (data.toInt());
+    value = qToLittleEndian(value);
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
