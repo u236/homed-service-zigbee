@@ -106,7 +106,7 @@ namespace PollsLUMI
 
     public:
 
-        PresenceSensor(void) : PollObject("presenceSensor", CLUSTER_LUMI, {0x010C, 0x0144, 0x146}) {}
+        PresenceSensor(void) : PollObject("presenceSensor", CLUSTER_LUMI, {0x010C, 0x0144, 0x0146}) {}
 
     };
 }

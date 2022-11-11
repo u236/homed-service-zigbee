@@ -478,19 +478,24 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
-    if (attributeId != 0x00F7 || dataType != DATA_TYPE_OCTET_STRING)
-        return;
-
-    for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+    if (attributeId == 0x00F7)
     {
-        quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
+        if (dataType != DATA_TYPE_OCTET_STRING)
+            return;
 
-        if (!size)
-            break;
+        for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
+        {
+            quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
 
-        parseData(data.at(i), itemType, data.mid(offset, size), map);
-        i += size + 1;
+            if (!size)
+                break;
+
+            parseData(data.at(i), itemType, data.mid(offset, size), map);
+            i += size + 1;
+        }
     }
+    else
+        parseData(attributeId, dataType, data, map);
 
     if (map.isEmpty())
         return;
