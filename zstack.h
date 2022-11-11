@@ -244,14 +244,12 @@ public:
 
     ZStack(QSettings *config, QObject *parent);
 
-    bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
-    bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+    bool extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
+    bool extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPan(void) override;
-
-    inline quint8 requestStatus(void) override { return m_requestStatus; }
 
 private:
 
@@ -259,9 +257,6 @@ private:
 
     quint8 m_status;
     bool m_clear;
-
-    quint8 m_requestStatus;
-    bool m_responseReceived;
 
     quint16 m_command;
     QByteArray m_replyData;
@@ -276,10 +271,10 @@ private:
     bool writeConfiguration(quint16 id, const QByteArray &data);
     bool startCoordinator(void);
 
-    bool permitJoin(bool enabled) override;
-    bool unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) override;
     void softReset(void) override;
     void parseData(void) override;
+    bool permitJoin(bool enabled) override;
+    bool unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) override;
 
 private slots:
 
@@ -288,7 +283,6 @@ private slots:
 signals:
 
     void dataReceived(void);
-    void responseReceived(void);
 
 };
 

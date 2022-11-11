@@ -243,22 +243,20 @@ public:
 
     EZSP(QSettings *config, QObject *parent);
 
-    bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
-    bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+    bool extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
+    bool extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPan(void) override;
 
-    inline quint8 requestStatus(void) override { return m_requestStatus; }
-
 private:
 
     QByteArray m_networkKey;
-    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId, m_requestStatus;
+    quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId;
 
     QByteArray m_replyData;
-    bool m_replyReceived, m_errorReceived, m_messageSent;
+    bool m_replyReceived, m_errorReceived;
 
     QList <setConfigStruct> m_config, m_policy;
     QList <setValueStruct> m_values;
@@ -274,10 +272,10 @@ private:
     bool startCoordinator(void);
     void handleError(const QString &reason);
 
-    bool permitJoin(bool enabled) override;
-    bool unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) override;
     void softReset(void) override;
     void parseData(void) override;
+    bool permitJoin(bool enabled) override;
+    bool unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) override;
 
 private slots:
 
@@ -287,7 +285,6 @@ signals:
 
     void dataReceived(void);
     void stackStatusReceived(void);
-    void messageSent(void);
 
 };
 

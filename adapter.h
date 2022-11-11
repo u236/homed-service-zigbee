@@ -157,14 +157,12 @@ public:
     Adapter(QSettings *config, QObject *parent);
     ~Adapter(void);
 
-    virtual bool extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
-    virtual bool extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
+    virtual bool extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
+    virtual bool extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
 
     virtual bool setInterPanEndpointId(quint8 endpointId) = 0;
     virtual bool setInterPanChannel(quint8 channel) = 0;
     virtual void resetInterPan(void) = 0;
-
-    virtual quint8 requestStatus(void) = 0;
 
     inline QString type(void) { return m_typeString; }
     inline QString version(void) { return m_versionString; }
@@ -173,13 +171,13 @@ public:
     void init(void);
     void setPermitJoin(bool enabled);
 
-    bool nodeDescriptorRequest(quint16 networkAddress);
-    bool simpleDescriptorRequest(quint16 networkAddress, quint8 endpointId);
-    bool activeEndpointsRequest(quint16 networkAddress);
-    bool bindRequest(quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
-    bool lqiRequest(quint16 networkAddress, quint8 index = 0);
-    bool leaveRequest(quint16 networkAddress, const QByteArray &ieeeAddress);
-    bool dataRequest(quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
+    bool nodeDescriptorRequest(quint8 id, quint16 networkAddress);
+    bool simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId);
+    bool activeEndpointsRequest(quint8 id, quint16 networkAddress);
+    bool bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
+    bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index = 0);
+    bool leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress);
+    bool dataRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
 
 protected:
 
@@ -202,7 +200,6 @@ protected:
     quint64 m_ieeeAddress;
 
     bool m_permitJoin;
-    quint8 m_requestId;
 
     QQueue <QByteArray> m_queue;
     QMap <quint8, EndpointData> m_endpointsData;
@@ -213,10 +210,10 @@ protected:
 
 private:
 
-    virtual bool permitJoin(bool enabled) = 0;
-    virtual bool unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) = 0;
     virtual void softReset(void) = 0;
     virtual void parseData(void) = 0;
+    virtual bool permitJoin(bool enabled) = 0;
+    virtual bool unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) = 0;
 
 private slots:
 
@@ -235,6 +232,7 @@ signals:
 
     void coordinatorReady(void);
     void permitJoinUpdated(bool enabled);
+    void requestFinished(quint8 id, quint8 status);
 
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);
     void deviceLeft(const QByteArray &ieeeAddress);

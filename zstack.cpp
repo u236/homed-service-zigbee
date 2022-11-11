@@ -18,7 +18,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_apsClusters = {APS_NODE_DESCRIPTOR, APS_SIMPLE_DESCRIPTOR, APS_ACTIVE_ENDPOINTS, APS_BIND, APS_UNBIND, APS_LQI, APS_LEAVE};
 }
 
-bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
+bool ZStack::extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
     extendedDataRequestStruct data;
 
@@ -39,27 +39,18 @@ bool ZStack::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId
     data.dstPanId = qToLittleEndian(dstPanId);
     data.srcEndpointId = srcEndpointId;
     data.clusterId = qToLittleEndian(clusterId);
-    data.transactionId = m_requestId;
+    data.transactionId = id;
     data.options = 0x00;
     data.radius = dstPanId ? AF_DEFAULT_RADIUS * 2 : AF_DEFAULT_RADIUS;
     data.length = qToLittleEndian <quint16> (payload.length());
 
-    m_responseReceived = false;
-
-    if (!sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) || m_replyData.at(0))
-        return false;
-
-    if (!m_responseReceived && !waitForSignal(this, SIGNAL(responseReceived()), NETWORK_REQUEST_TIMEOUT))
-        return false;
-
-    m_requestId++;
-    return m_requestStatus ? false : true;
+    return sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) && !m_replyData.at(0);
 }
 
-bool ZStack::extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
+bool ZStack::extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
 {
     networkAddress = qToLittleEndian(networkAddress);
-    return extendedDataRequest(QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
+    return extendedDataRequest(id, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
 }
 
 bool ZStack::setInterPanEndpointId(quint8 endpointId)
@@ -162,13 +153,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case AF_DATA_CONFIRM:
         {
-            if (static_cast <quint8> (data.at(2)) == m_requestId)
-            {
-                m_requestStatus = data.at(0);
-                m_responseReceived = true;
-                emit responseReceived();
-            }
-
+            emit requestFinished(static_cast <quint8> (data.at(2)), static_cast <quint8> (data.at(0)));
             break;
         }
 
@@ -224,15 +209,9 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case ZDO_MSG_CB_INCOMING:
         {
             const zdoMessageStruct *message = reinterpret_cast <const zdoMessageStruct*> (data.constData());
-
-            if (message->transactionId == m_requestId)
-            {
-                m_requestStatus = data.at(sizeof(zdoMessageStruct));
-                m_responseReceived = true;
-                emit responseReceived();
-            }
-
-            parseMessage(qFromLittleEndian(message->srcAddress), qFromLittleEndian(message->clusterId), data.mid(sizeof(zdoMessageStruct)));
+            QByteArray payload = data.mid(sizeof(zdoMessageStruct));
+            parseMessage(qFromLittleEndian(message->srcAddress), qFromLittleEndian(message->clusterId), payload);
+            emit requestFinished(message->transactionId, static_cast <quint8> (payload.at(0)));
             break;
         }
 
@@ -497,49 +476,6 @@ bool ZStack::startCoordinator(void)
     return true;
 }
 
-bool ZStack::permitJoin(bool enabled)
-{
-    permitJoinRequestStruct request;
-
-    request.mode = PERMIT_JOIN_MODE_ADDREESS;
-    request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
-    request.duration = enabled ? 0xF0 : 0x00;
-    request.significance = 0x00;
-
-    if (!sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
-    {
-        logWarning << "Set permit join request failed";
-        return false;
-    }
-
-    return true;
-}
-
-bool ZStack::unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
-{
-    dataRequestStruct data;
-
-    data.networkAddress = qToLittleEndian(networkAddress);
-    data.dstEndpointId = dstEndPointId;
-    data.srcEndpointId = srcEndPointId;
-    data.clusterId = qToLittleEndian(clusterId);
-    data.transactionId = m_requestId;
-    data.options = AF_DISCV_ROUTE;
-    data.radius = AF_DEFAULT_RADIUS;
-    data.length = static_cast <quint8> (payload.length());
-
-    m_responseReceived = false;
-
-    if (!sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) || m_replyData.at(0))
-        return false;
-
-    if (!m_responseReceived && !waitForSignal(this, SIGNAL(responseReceived()), NETWORK_REQUEST_TIMEOUT))
-        return false;
-
-    m_requestId++;
-    return m_requestStatus ? false : true;
-}
-
 void ZStack::softReset(void)
 {
     m_device->write(QByteArray(1, ZSTACK_SKIP_BOOTLOADER));
@@ -577,6 +513,40 @@ void ZStack::parseData(void)
         m_queue.enqueue(buffer.mid(2, length + 2));
         buffer.remove(0, length + 5);
     }
+}
+
+bool ZStack::permitJoin(bool enabled)
+{
+    permitJoinRequestStruct request;
+
+    request.mode = PERMIT_JOIN_MODE_ADDREESS;
+    request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
+    request.duration = enabled ? 0xF0 : 0x00;
+    request.significance = 0x00;
+
+    if (!sendRequest(ZDO_MGMT_PERMIT_JOIN_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
+    {
+        logWarning << "Set permit join request failed";
+        return false;
+    }
+
+    return true;
+}
+
+bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
+{
+    dataRequestStruct data;
+
+    data.networkAddress = qToLittleEndian(networkAddress);
+    data.dstEndpointId = dstEndPointId;
+    data.srcEndpointId = srcEndPointId;
+    data.clusterId = qToLittleEndian(clusterId);
+    data.transactionId = id;
+    data.options = AF_DISCV_ROUTE;
+    data.radius = AF_DEFAULT_RADIUS;
+    data.length = static_cast <quint8> (payload.length());
+
+    return sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) && !m_replyData.at(0);
 }
 
 void ZStack::handleQueue(void)

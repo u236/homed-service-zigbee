@@ -25,6 +25,14 @@ enum class RequestType
     Interview
 };
 
+enum class RequestStatus
+{
+    Pending,
+    Sent,
+    Finished,
+    Aborted
+};
+
 class BindingRequestObject
 {
 
@@ -84,16 +92,20 @@ class RequestObject
 
 public:
 
-    RequestObject(const QVariant &value, RequestType type) :
-        m_value(value), m_type(type) {}
+    RequestObject(const QVariant &request, RequestType type) :
+        m_request(request), m_type(type), m_status(RequestStatus::Pending) {}
 
-    inline QVariant value(void) { return m_value; }
+    inline QVariant request(void) { return m_request; }
     inline RequestType type(void) { return m_type; }
+
+    inline RequestStatus status(void) { return m_status; }
+    inline void setStatus(RequestStatus value) { m_status = value; }
 
 private:
 
-    QVariant m_value;
+    QVariant m_request;
     RequestType m_type;
+    RequestStatus m_status;
 
 };
 
@@ -128,33 +140,32 @@ public:
 private:
 
     QSettings *m_config;
-    QTimer *m_queueTimer, *m_neignborsTimer, *m_statusLedTimer;
+    QTimer *m_requestTimer, *m_neignborsTimer, *m_statusLedTimer;
 
     DeviceList *m_devices;
     Adapter *m_adapter;
 
     QString m_statusLedPin, m_blinkLedPin, m_libraryFile, m_otaUpgradeFile;
-    quint8 m_transactionId, m_interPanChannel;
+    quint8  m_requestId, m_interPanChannel;
 
-    QQueue <Request> m_queue;
+    QMap <quint8, Request> m_requests;
 
     void enqueueBindingRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
     void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
     void enqueueDeviceRequest(const Device &device, RequestType type);
 
     Endpoint getEndpoint(const Device &device, quint8 endpointId);
+    QByteArray attributesRequest(quint8 id, QList <quint16> attributes);
+    bool interviewRequest(quint8 id, const Device &device);
 
     void setupDevice(const Device &device);
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
 
     void interviewDevice(const Device &device);
-    void interviewRequest(const Device &device);
     void interviewFinished(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 
     void configureReporting(const Endpoint &endpoint, const Reporting &reporting);
-
-    bool readAttributes(const Device &device, quint8 endpointId, quint16 clusterId, QList <quint16> attributes, bool enqueue = true);
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data);
 
     void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload);
@@ -169,6 +180,7 @@ private slots:
 
     void coordinatorReady(void);
     void permitJoinUpdated(bool enabled);
+    void requestFinished(quint8 id, quint8 status);
 
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);
     void deviceLeft(const QByteArray &ieeeAddress);
@@ -179,7 +191,7 @@ private slots:
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
-    void handleQueue(void);
+    void handleRequests(void);
     void updateNeighbors(void);
     void pollAttributes(void);
     void interviewTimeout(void);

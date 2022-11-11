@@ -49,8 +49,9 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
     m_values.append({VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
 }
 
-bool EZSP::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
+bool EZSP::extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
+    Q_UNUSED(id)
     Q_UNUSED(address)
     Q_UNUSED(dstEndpointId)
     Q_UNUSED(dstPanId)
@@ -62,8 +63,9 @@ bool EZSP::extendedDataRequest(const QByteArray &address, quint8 dstEndpointId, 
     return true;
 }
 
-bool EZSP::extendedDataRequest(quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
+bool EZSP::extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
 {
+    Q_UNUSED(id)
     Q_UNUSED(networkAddress)
     Q_UNUSED(dstEndpointId)
     Q_UNUSED(dstPanId)
@@ -251,14 +253,7 @@ void EZSP::parsePacket(const QByteArray &payload)
         case FRAME_MESSAGE_SENT_HANDLER:
         {
             const messageSentHandlerStruct *message = reinterpret_cast <const messageSentHandlerStruct*> (data.constData());
-
-            if (m_requestId == message->tag)
-            {
-                m_requestStatus = message->status;
-                m_messageSent = true;
-                emit messageSent();
-            }
-
+            emit requestFinished(message->tag, message->status);
             break;
         }
 
@@ -600,68 +595,6 @@ void EZSP::handleError(const QString &reason)
     reset();
 }
 
-bool EZSP::permitJoin(bool enabled)
-{
-    if (enabled)
-    {
-        setConfigStruct policy;
-
-        if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E63653039")) || m_replyData.at(0))
-        {
-            logWarning << "Add transient key request failed";
-            return false;
-        }
-
-        policy.id = POLICY_TRUST_CENTER;
-        policy.value = qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS);
-
-        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
-        {
-            logWarning << "Set policy item" << QString::asprintf("0x%02X", POLICY_TRUST_CENTER) << "request failed";
-            return false;
-        }
-    }
-
-    if (!sendFrame(FRAME_PERMIT_JOINING, QByteArray(1, enabled ? 0xF0 : 0x00)) || m_replyData.at(0))
-    {
-        logWarning << "Set permit join request failed";
-        return false;
-    }
-
-    return true;
-}
-
-bool EZSP::unicastRequest(quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
-{
-    sendUnicastStruct request;
-
-    request.type = MESSAGE_TYPE_DIRECT;
-    request.networkAddress = qToLittleEndian(networkAddress);
-    request.profileId = qToLittleEndian <quint16> (m_endpointsData.contains(srcEndPointId) ? m_endpointsData.value(srcEndPointId)->profileId() : 0x0000);
-    request.clusterId = qToLittleEndian(clusterId);
-    request.srcEndpointId = srcEndPointId;
-    request.dstEndpointId = dstEndPointId;
-    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
-    request.groupId = 0x0000;
-    request.sequence = m_sequenceId;
-    request.tag = m_requestId;
-    request.length = static_cast <quint8> (payload.length());
-
-    m_messageSent = false;
-
-    if (sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) && !m_replyData.at(0))
-        sendFrame(FRAME_SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
-
-    if (!sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) || m_replyData.at(0))
-        return false;
-
-    if (!m_messageSent && !waitForSignal(this, SIGNAL(messageSent()), NETWORK_REQUEST_TIMEOUT))
-        return false;
-
-    m_requestId++;
-    return m_requestStatus ? false : true;
-}
-
 void EZSP::softReset(void)
 {
     sendRequest(ASH_CONTROL_RST);
@@ -718,6 +651,59 @@ void EZSP::parseData(void)
         m_queue.enqueue(data);
         buffer.remove(0, length + 1);
     }
+}
+
+bool EZSP::permitJoin(bool enabled)
+{
+    if (enabled)
+    {
+        setConfigStruct policy;
+
+        if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E63653039")) || m_replyData.at(0))
+        {
+            logWarning << "Add transient key request failed";
+            return false;
+        }
+
+        policy.id = POLICY_TRUST_CENTER;
+        policy.value = qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS);
+
+        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
+        {
+            logWarning << "Set policy item" << QString::asprintf("0x%02X", POLICY_TRUST_CENTER) << "request failed";
+            return false;
+        }
+    }
+
+    if (!sendFrame(FRAME_PERMIT_JOINING, QByteArray(1, enabled ? 0xF0 : 0x00)) || m_replyData.at(0))
+    {
+        logWarning << "Set permit join request failed";
+        return false;
+    }
+
+    return true;
+}
+
+bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
+{
+    sendUnicastStruct request;
+
+    request.type = MESSAGE_TYPE_DIRECT;
+    request.networkAddress = qToLittleEndian(networkAddress);
+    request.profileId = qToLittleEndian <quint16> (m_endpointsData.contains(srcEndPointId) ? m_endpointsData.value(srcEndPointId)->profileId() : 0x0000);
+    request.clusterId = qToLittleEndian(clusterId);
+    request.srcEndpointId = srcEndPointId;
+    request.dstEndpointId = dstEndPointId;
+    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+    request.groupId = 0x0000;
+    request.sequence = m_sequenceId;
+    request.tag = id;
+    request.length = static_cast <quint8> (payload.length());
+
+    if (sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) && !m_replyData.at(0))
+        sendFrame(FRAME_SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
+
+    return sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
 }
 
 void EZSP::handleQueue(void)
