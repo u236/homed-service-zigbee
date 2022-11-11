@@ -1251,22 +1251,24 @@ void ZigBee::coordinatorReady(void)
     m_devices->setAdapterType(m_adapter->type());
     m_devices->setAdapterVersion(m_adapter->version());
 
-    connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined);
-    connect(m_adapter, &Adapter::deviceLeft, this, &ZigBee::deviceLeft);
-    connect(m_adapter, &Adapter::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived);
-    connect(m_adapter, &Adapter::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived);
-    connect(m_adapter, &Adapter::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived);
-    connect(m_adapter, &Adapter::neighborRecordReceived, this, &ZigBee::neighborRecordReceived);
-    connect(m_adapter, &Adapter::messageReveived, this, &ZigBee::messageReveived);
-    connect(m_adapter, &Adapter::extendedMessageReveived, this, &ZigBee::extendedMessageReveived);
+    connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::deviceLeft, this, &ZigBee::deviceLeft, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::neighborRecordReceived, this, &ZigBee::neighborRecordReceived, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::messageReveived, this, &ZigBee::messageReveived, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::extendedMessageReveived, this, &ZigBee::extendedMessageReveived, Qt::UniqueConnection);
 
-    connect(m_queueTimer, &QTimer::timeout, this, &ZigBee::handleQueue);
-    connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors);
+    connect(m_queueTimer, &QTimer::timeout, this, &ZigBee::handleQueue, Qt::UniqueConnection);
+    connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
 
     if (!m_queue.isEmpty())
         m_queueTimer->start();
 
-    m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+    if (!m_neignborsTimer->isActive())
+        m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+
     m_adapter->setPermitJoin(m_devices->permitJoin());
     m_devices->storeDatabase();
 }
