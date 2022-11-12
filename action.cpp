@@ -235,28 +235,6 @@ QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::Request::makeRequest(quint8 transactionId, quint16 attributeId, quint8 dataType, void *data)
-{
-    zclHeaderStruct header;
-    writeArrtibutesStruct payload;
-    size_t length;
-
-    header.frameControl = 0x00;
-    header.transactionId = transactionId;
-    header.commandId = CMD_WRITE_ATTRIBUTES;
-
-    payload.attributeId = qToLittleEndian <quint16> (attributeId);
-    payload.dataType = dataType;
-
-    switch (payload.dataType)
-    {
-        case DATA_TYPE_8BIT_UNSIGNED: length = 1; break;
-        default: return QByteArray();
-    }
-
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (data), length);
-}
-
 QByteArray ActionsLUMI::Sensitivity::request(const QVariant &data)
 {
     QList <QString> list = {"low", "medium", "high"};
@@ -266,7 +244,7 @@ QByteArray ActionsLUMI::Sensitivity::request(const QVariant &data)
         return QByteArray();
 
     value += 1;
-    return makeRequest(m_transactionId++, 0x010C, DATA_TYPE_8BIT_UNSIGNED, &value);
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::Mode::request(const QVariant &data)
@@ -277,7 +255,7 @@ QByteArray ActionsLUMI::Mode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return makeRequest(m_transactionId++, 0x0144, DATA_TYPE_8BIT_UNSIGNED, &value);
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::Distance::request(const QVariant &data)
@@ -288,16 +266,17 @@ QByteArray ActionsLUMI::Distance::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return makeRequest(m_transactionId++, 0x0146, DATA_TYPE_8BIT_UNSIGNED, &value);
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::ResetPresence::request(const QVariant &data)
 {
+    quint8 value = 1; // TODO: check this
+
     if (!data.toBool())
         return QByteArray();
 
-    quint8 value = 1; // TODO: check this
-    return makeRequest(m_transactionId++, 0x0157, DATA_TYPE_8BIT_UNSIGNED, &value);
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)

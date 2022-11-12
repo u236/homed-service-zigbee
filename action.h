@@ -160,51 +160,42 @@ namespace ActionsPTVO
 
 namespace ActionsLUMI
 {
-    class Request
-    {
-
-    protected:
-
-        QByteArray makeRequest(quint8 transactionId, quint16 attributeId, quint8 dataType, void *data);
-
-    };
-
-    class Sensitivity : public Request, public ActionObject
+    class Sensitivity : public ActionObject
     {
 
     public:
 
-        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_LUMI) {}
+        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_LUMI, 0x010C, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class Mode : public Request, public ActionObject
+    class Mode : public ActionObject
     {
 
     public:
 
-        Mode(void) : ActionObject("mode", CLUSTER_LUMI) {}
+        Mode(void) : ActionObject("mode", CLUSTER_LUMI, 0x0144, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class Distance : public Request, public ActionObject
+    class Distance : public ActionObject
     {
 
     public:
 
-        Distance(void) : ActionObject("distance", CLUSTER_LUMI) {}
+        Distance(void) : ActionObject("distance", CLUSTER_LUMI, 0x0146, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class ResetPresence : public Request, public ActionObject
+    class ResetPresence : public ActionObject
     {
 
     public:
 
-        ResetPresence(void) : ActionObject("resetPresence", CLUSTER_LUMI) {}
+        ResetPresence(void) : ActionObject("resetPresence", CLUSTER_LUMI, 0x0157, DATA_TYPE_8BIT_UNSIGNED) {}
         QByteArray request(const QVariant &data) override;
 
     };
