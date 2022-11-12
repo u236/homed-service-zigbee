@@ -1,8 +1,8 @@
 .build:
   stage: build
   script:
-  - "export PATH=\"$PATH:/opt/${COMPILER}/bin\""
-  - "export STAGING_DIR=\"/opt/${COMPILER}\""
+  - "[ ! -z \"${COMPILER}\" ] && export PATH=\"$PATH:/opt/${COMPILER}/bin\""
+  - "[ ! -z \"${COMPILER}\" ] && export STAGING_DIR=\"/opt/${COMPILER}\""
   - "/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro"
   - "make -j8"
   - "cp homed-zigbee homed-zigbee-${ARCHITECTURE}"
@@ -68,27 +68,59 @@
     - branches
   only:
     - /^\d.\d.\d+$/
+    - mips
+
+Build Linux Binary (x86_64):
+  extends: .build
+  variables:
+    ARCHITECTURE: x86_64
+    QT_BUILD: qt-x86_64-5.15.4-static
+  only:
+    - docker
 
 Build Linux Binary (aarch64):
   extends: .build
   variables:
-    COMPILER: gcc-aarch64-linux-gnu
-    QT_BUILD: qt-aarch64-5.15.4-static
     ARCHITECTURE: aarch64
+    QT_BUILD: qt-aarch64-5.15.4-static
+    COMPILER: gcc-aarch64-linux-gnu
+  only:
+    - docker
 
 Build Linux Binary (armhf):
   extends: .build
   variables:
-    COMPILER: gcc-arm-linux-gnueabihf
-    QT_BUILD: qt-armhf-5.15.4-static
     ARCHITECTURE: armhf
+    QT_BUILD: qt-armhf-5.15.4-static
+    COMPILER: gcc-arm-linux-gnueabihf
+  only:
+    - docker
 
 Build OpenWRT Binary (mips):
   extends: .build
   variables:
-    COMPILER: gcc-mips-openwrt-linux
-    QT_BUILD: qt-mips-5.15.4-static
     ARCHITECTURE: mips_24kc
+    QT_BUILD: qt-mips-5.15.4-static
+    COMPILER: gcc-mips-openwrt-linux
+  only:
+    - mips
+
+Deploy Docker Images:
+  stage: deploy
+  script:
+  - "cp homed-zigbee-x86_64 docker/homed-zigbee-amd64"
+  - "cp homed-zigbee-aarch64 docker/homed-zigbee-arm64"
+  - "cp homed-zigbee-armhf docker/homed-zigbee-arm"
+  - "cp package/data/usr/share/homed/zigbee.json docker/"
+  - "docker buildx create --driver-opt network=host --name job_${CI_JOB_ID} --use"
+  - "docker buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --push --tag 127.0.0.1:5000/homed-zigbee docker/"
+  - "docker buildx prune -af"
+  - "docker buildx rm"
+  except:
+    - branches
+  only:
+    - /^\d.\d.\d+$/
+    - docker
 
 Deploy APT Package (aarch64):
   extends: .deploy_apt
