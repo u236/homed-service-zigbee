@@ -375,7 +375,7 @@ QByteArray ZigBee::attributesRequest(quint8 id, QList<quint16> attributes)
 
 bool ZigBee::interviewRequest(quint8 id, const Device &device)
 {
-    if (device->manufacturerName().isEmpty() || device->modelName().isEmpty() || device->powerSource() == POWER_SOURCE_UNKNOWN)
+    if (device->manufacturerName().isEmpty() || device->modelName().isEmpty())
     {
         if (!device->nodeDescriptorReceived())
         {
@@ -767,7 +767,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 break;
         }
 
-        if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && device->powerSource() != POWER_SOURCE_UNKNOWN)
+        if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
         {
             QList <QString> tuya = // TUYA devices model names
             {
@@ -1542,8 +1542,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         m_devices->storeProperties();
     }
 
-    // TODO: remove power source check
-    if (device->powerSource() != POWER_SOURCE_UNKNOWN && device->powerSource() != POWER_SOURCE_BATTERY && (header.frameControl & FC_CLUSTER_SPECIFIC || header.commandId == CMD_REPORT_ATTRIBUTES) && !(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    if ((header.frameControl & FC_CLUSTER_SPECIFIC || header.commandId == CMD_REPORT_ATTRIBUTES) && !(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
         defaultResponseStruct response;
 
