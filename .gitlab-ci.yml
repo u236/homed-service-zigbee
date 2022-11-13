@@ -14,6 +14,7 @@
     - branches
   only:
     - /^\d.\d.\d+$/
+    - dev
 
 .deploy_apt:
   stage: deploy
@@ -59,7 +60,7 @@
   - "chmod +x package/openwrt/prerm"
   - "fakeroot tar -czf control.tar.gz -C package/openwrt ."
   - "fakeroot tar -czf data.tar.gz -C package/data ."
-  - "fakeroot tar -czf ${PACKAGE_FILE} control.tar.gz data.tar.gz  debian-binary"
+  - "fakeroot tar -czf ${PACKAGE_FILE} control.tar.gz data.tar.gz debian-binary"
   artifacts:
     paths:
     - ${PACKAGE_FILE}
@@ -75,8 +76,6 @@ Build Linux Binary (x86_64):
   variables:
     ARCHITECTURE: x86_64
     QT_BUILD: qt-x86_64-5.15.4-static
-  only:
-    - docker
 
 Build Linux Binary (aarch64):
   extends: .build
@@ -84,8 +83,6 @@ Build Linux Binary (aarch64):
     ARCHITECTURE: aarch64
     QT_BUILD: qt-aarch64-5.15.4-static
     COMPILER: gcc-aarch64-linux-gnu
-  only:
-    - docker
 
 Build Linux Binary (armhf):
   extends: .build
@@ -93,8 +90,6 @@ Build Linux Binary (armhf):
     ARCHITECTURE: armhf
     QT_BUILD: qt-armhf-5.15.4-static
     COMPILER: gcc-arm-linux-gnueabihf
-  only:
-    - docker
 
 Build OpenWRT Binary (mips):
   extends: .build
@@ -102,8 +97,6 @@ Build OpenWRT Binary (mips):
     ARCHITECTURE: mips_24kc
     QT_BUILD: qt-mips-5.15.4-static
     COMPILER: gcc-mips-openwrt-linux
-  only:
-    - mips
 
 Deploy Docker Images:
   stage: deploy
@@ -113,14 +106,14 @@ Deploy Docker Images:
   - "cp homed-zigbee-armhf docker/homed-zigbee-arm"
   - "cp package/data/usr/share/homed/zigbee.json docker/"
   - "docker buildx create --driver-opt network=host --name job_${CI_JOB_ID} --use"
-  - "docker buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --push --tag 127.0.0.1:5000/homed-zigbee docker/"
+  - "docker buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --push --tag 127.0.0.1:5000/homed-zigbee:${CI_COMMIT_TAG} --tag 127.0.0.1:5000/homed-zigbee:latest docker/"
   - "docker buildx prune -af"
   - "docker buildx rm"
   except:
     - branches
   only:
     - /^\d.\d.\d+$/
-    - docker
+    - dev
 
 Deploy APT Package (aarch64):
   extends: .deploy_apt
