@@ -121,8 +121,8 @@
     },
     {
       "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
-      "modelNames":     ["3AFE07010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
-      "properties":     ["batteryPercentage", "iasOccupancy"]
+      "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
+      "properties":     ["batteryPercentage", "iasOccupancy", "lumiUnknown"]
     },
     {
       "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",

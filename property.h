@@ -441,6 +441,16 @@ namespace PropertiesLUMI
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
+
+    class Unknown : public PropertyObject
+    {
+
+    public:
+
+        Unknown(void) : PropertyObject("lumiUnknown", CLUSTER_LUMI) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
 }
 
 namespace PropertiesTUYA

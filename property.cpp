@@ -42,6 +42,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
+    qRegisterMetaType <PropertiesLUMI::Unknown>             ("lumiUnknownProperty");
 
     qRegisterMetaType <PropertiesTUYA::NeoSiren>            ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
@@ -768,6 +769,13 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dat
         m_value = "flip";
     else if (value >= 64)
         m_value = "drop";
+}
+
+void PropertiesLUMI::Unknown::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    Q_UNUSED(attributeId)
+    Q_UNUSED(dataType)
+    Q_UNUSED(data)
 }
 
 void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload)
