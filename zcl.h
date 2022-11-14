@@ -64,6 +64,7 @@
 #define CLUSTER_POWER_CONFIGURATION                 0x0001
 #define CLUSTER_IDENTIFY                            0x0003
 #define CLUSTER_GROUPS                              0x0004
+#define CLUSTER_SCENES                              0x0005
 #define CLUSTER_ON_OFF                              0x0006
 #define CLUSTER_LEVEL_CONTROL                       0x0008
 #define CLUSTER_TIME                                0x000A
@@ -123,7 +124,19 @@ struct defaultResponseStruct
 struct groupControlResponseStruct
 {
     quint8  status;
-    quint16 grpoupId;
+    quint16 groupId;
+};
+
+struct recallSceneStruct
+{
+    quint16 groupId;
+    quint8  sceneId;
+};
+
+struct moveToLevelStruct
+{
+    quint8  level;
+    quint16 time;
 };
 
 struct otaFileHeaderStruct
@@ -198,6 +211,26 @@ struct otaUpgradeEndResponseStruct
     quint32 fileVersion;
     quint32 currentTime;
     quint32 upgradeTime;
+};
+
+struct moveToColorXYStruct
+{
+    quint16 colorX;
+    quint16 colorY;
+    quint16 time;
+};
+
+struct moveToColorHSStruct
+{
+    quint8  colorH;
+    quint8  colorS;
+    quint16 time;
+};
+
+struct moveToColorTemperatureStruct
+{
+    quint16 temperature;
+    quint16 time;
 };
 
 struct iasZoneEnrollResponseStruct

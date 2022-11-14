@@ -85,7 +85,7 @@ QByteArray Actions::Level::request(const QVariant &data)
     {
         case QVariant::LongLong:
         {
-            levelStruct payload;
+            moveToLevelStruct payload;
 
             header.commandId = 0x00;
             payload.level = static_cast <quint8> (data.toInt() < 0xFE ? data.toInt() : 0xFE);
@@ -96,7 +96,7 @@ QByteArray Actions::Level::request(const QVariant &data)
 
         case QVariant::List:
         {
-            levelStruct payload;
+            moveToLevelStruct payload;
             QList <QVariant> list = data.toList();
 
             header.commandId = 0x00;
@@ -138,7 +138,7 @@ QByteArray Actions::ColorHS::request(const QVariant &data)
     {
         case QVariant::List:
         {
-            colorHSStruct payload;
+            moveToColorHSStruct payload;
             QList <QVariant> list = data.toList();
 
             payload.colorH = static_cast <quint8> (list.value(0).toInt() < 0xFE ? list.value(0).toInt() : 0xFE);
@@ -165,7 +165,7 @@ QByteArray Actions::ColorXY::request(const QVariant &data)
     {
         case QVariant::List:
         {
-            colorXYStruct payload;
+            moveToColorXYStruct payload;
             QList <QVariant> list = data.toList();
             double colorX = list.value(0).toDouble() * 0xFFFF, colorY = list.value(1).toDouble() * 0xFFFF;
 
@@ -193,7 +193,7 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
     {
         case QVariant::LongLong:
         {
-            colorTemperatureStruct payload;
+            moveToColorTemperatureStruct payload;
 
             payload.temperature = qToLittleEndian <quint16> (data.toInt() < 0xFEFF ? data.toInt() : 0xFEFF);
             payload.time = 0;
@@ -203,7 +203,7 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
 
         case QVariant::List:
         {
-            colorTemperatureStruct payload;
+            moveToColorTemperatureStruct payload;
             QList <QVariant> list = data.toList();
 
             payload.temperature = qToLittleEndian <quint16> (list.value(0).toInt() < 0xFEFF ? list.value(0).toInt() : 0xFEFF);

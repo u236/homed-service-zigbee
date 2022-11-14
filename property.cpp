@@ -20,6 +20,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Occupancy>               ("occupancyProperty");
     qRegisterMetaType <Properties::Energy>                  ("energyProperty");
     qRegisterMetaType <Properties::Power>                   ("powerProperty");
+    qRegisterMetaType <Properties::Scene>                   ("sceneProperty");
     qRegisterMetaType <Properties::IdentifyAction>          ("identifyActionProperty");
     qRegisterMetaType <Properties::SwitchAction>            ("switchActionProperty");
     qRegisterMetaType <Properties::LevelAction>             ("levelActionProperty");
@@ -337,6 +338,17 @@ void Properties::Power::parseAttribte(quint16 attributeId, quint8 dataType, cons
             break;
         }
     }
+}
+
+void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
+{
+    const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
+    QVariant sceneName = m_sceneNames.value(QString::number(command->sceneId));
+
+    if (commandId != 0x05)
+        return;
+
+    m_value = sceneName.isValid() ? sceneName : command->sceneId;
 }
 
 void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray &payload)

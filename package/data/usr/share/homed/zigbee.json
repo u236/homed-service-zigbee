@@ -139,6 +139,12 @@
       "description":    "Konke Temperature, Humidity and Illuminance Sensor KK-WA-J01W",
       "modelNames":     ["3AFE090103021000"],
       "properties":     ["batteryPercentage", "temperature", "humidity", "illuminance"]
+    },
+    {
+      "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "sceneNames":     {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}
     }
   ],
 

@@ -5,36 +5,6 @@
 #include <QVariant>
 #include "zcl.h"
 
-#pragma pack(push, 1)
-
-struct levelStruct
-{
-    quint8  level;
-    quint16 time;
-};
-
-struct colorXYStruct
-{
-    quint16 colorX;
-    quint16 colorY;
-    quint16 time;
-};
-
-struct colorHSStruct
-{
-    quint8  colorH;
-    quint8  colorS;
-    quint16 time;
-};
-
-struct colorTemperatureStruct
-{
-    quint16 temperature;
-    quint16 time;
-};
-
-#pragma pack(pop)
-
 class ActionObject;
 typedef QSharedPointer <ActionObject> Action;
 

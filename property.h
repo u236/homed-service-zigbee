@@ -29,8 +29,9 @@ public:
     inline bool singleShot(void) { return m_singleShot; }
     inline void clear(void) { m_value = QVariant(); }
 
-    inline void setVersion(quint8 value) { m_version = value; }
     inline void setModel(const QString &value) { m_model = value; }
+    inline void setVersion(quint8 value) { m_version = value; }
+    inline void setSceneNames(const QMap <QString, QVariant> &value) { m_sceneNames = value; }
 
     static void registerMetaTypes(void);
 
@@ -41,8 +42,9 @@ protected:
     QVariant m_value;
     bool m_singleShot;
 
-    quint8 m_version;
     QString m_model;
+    quint8 m_version;
+    QMap <QString, QVariant> m_sceneNames;
 
     quint8 percentage(double min, double max, double value);
 
@@ -223,6 +225,16 @@ namespace Properties
     private:
 
         quint16 m_multiplier, m_divider;
+
+    };
+
+    class Scene : public PropertyObject
+    {
+
+    public:
+
+        Scene(void) : PropertyObject("scene", CLUSTER_SCENES, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
