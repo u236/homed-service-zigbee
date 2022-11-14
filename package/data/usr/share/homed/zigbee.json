@@ -141,10 +141,34 @@
       "properties":     ["batteryPercentage", "temperature", "humidity", "illuminance"]
     },
     {
+      "description":    "Konke Wireless Switch 2AJZ4KPKEY",
+      "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
+      "properties":     ["batteryPercentage", "konkeSwitchAction", "lumiUnknown"]
+    },
+    {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
-      "sceneNames":     {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}
+      "sceneNames":     {"241": "hexagon"},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "sceneNames":     {"242": "square"},
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "sceneNames":     {"243": "triangle"},
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "sceneNames":     {"244": "circle"},
+      "endpointId":     4
     }
   ],
 

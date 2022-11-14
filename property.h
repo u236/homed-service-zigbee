@@ -531,27 +531,34 @@ namespace PropertiesTUYA
     };
 }
 
-namespace PropertiesLifeControl
+namespace PropertiesOther
 {
-    class AirQuality : public PropertyObject
+    class KonkeSwitchAction : public PropertyObject
     {
 
     public:
 
-        AirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        KonkeSwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
-}
 
-namespace PropertiesPerenio
-{
-    class SmartPlug : public PropertyObject
+    class LifeControlAirQuality : public PropertyObject
     {
 
     public:
 
-        SmartPlug(void) : PropertyObject("perenioSmartPlug", CLUSTER_PERENIO) {}
+        LifeControlAirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class PerenioSmartPlug : public PropertyObject
+    {
+
+    public:
+
+        PerenioSmartPlug(void) : PropertyObject("perenioSmartPlug", CLUSTER_PERENIO) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

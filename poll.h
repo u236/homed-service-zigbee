@@ -99,26 +99,23 @@ namespace Polls
     };
 }
 
-namespace PollsLUMI
+namespace PollsOther
 {
-    class PresenceSensor : public PollObject
+    class LumiPresenceSensor : public PollObject
     {
 
     public:
 
-        PresenceSensor(void) : PollObject("presenceSensor", CLUSTER_LUMI, {0x010C, 0x0144, 0x0146}) {}
+        LumiPresenceSensor(void) : PollObject("presenceSensor", CLUSTER_LUMI, {0x010C, 0x0144, 0x0146}) {}
 
     };
-}
 
-namespace PollsPerenio
-{
-    class SmartPlug : public PollObject
+    class PerenioSmartPlug : public PollObject
     {
 
     public:
 
-        SmartPlug(void) : PollObject("smartPlug", CLUSTER_PERENIO, {0x0000, 0x0001, 0x0004, 0x0005, 0x000B, 0x000F}) {}
+        PerenioSmartPlug(void) : PollObject("smartPlug", CLUSTER_PERENIO, {0x0000, 0x0001, 0x0004, 0x0005, 0x000B, 0x000F}) {}
 
     };
 }

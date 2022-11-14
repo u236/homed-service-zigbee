@@ -4,55 +4,56 @@
 
 void PropertyObject::registerMetaTypes(void)
 {
-    qRegisterMetaType <Properties::BatteryVoltage>          ("batteryVoltageProperty");
-    qRegisterMetaType <Properties::BatteryPercentage>       ("batteryPercentageProperty");
-    qRegisterMetaType <Properties::BatteryUndivided>        ("batteryUndividedProperty");
-    qRegisterMetaType <Properties::Status>                  ("statusProperty");
-    qRegisterMetaType <Properties::Contact>                 ("contactProperty");
-    qRegisterMetaType <Properties::PowerOnStatus>           ("powerOnStatusProperty");
-    qRegisterMetaType <Properties::Level>                   ("levelProperty");
-    qRegisterMetaType <Properties::ColorHS>                 ("colorHSProperty");
-    qRegisterMetaType <Properties::ColorXY>                 ("colorXYProperty");
-    qRegisterMetaType <Properties::ColorTemperature>        ("colorTemperatureProperty");
-    qRegisterMetaType <Properties::Illuminance>             ("illuminanceProperty");
-    qRegisterMetaType <Properties::Temperature>             ("temperatureProperty");
-    qRegisterMetaType <Properties::Humidity>                ("humidityProperty");
-    qRegisterMetaType <Properties::Occupancy>               ("occupancyProperty");
-    qRegisterMetaType <Properties::Energy>                  ("energyProperty");
-    qRegisterMetaType <Properties::Power>                   ("powerProperty");
-    qRegisterMetaType <Properties::Scene>                   ("sceneProperty");
-    qRegisterMetaType <Properties::IdentifyAction>          ("identifyActionProperty");
-    qRegisterMetaType <Properties::SwitchAction>            ("switchActionProperty");
-    qRegisterMetaType <Properties::LevelAction>             ("levelActionProperty");
+    qRegisterMetaType <Properties::BatteryVoltage>              ("batteryVoltageProperty");
+    qRegisterMetaType <Properties::BatteryPercentage>           ("batteryPercentageProperty");
+    qRegisterMetaType <Properties::BatteryUndivided>            ("batteryUndividedProperty");
+    qRegisterMetaType <Properties::Status>                      ("statusProperty");
+    qRegisterMetaType <Properties::Contact>                     ("contactProperty");
+    qRegisterMetaType <Properties::PowerOnStatus>               ("powerOnStatusProperty");
+    qRegisterMetaType <Properties::Level>                       ("levelProperty");
+    qRegisterMetaType <Properties::ColorHS>                     ("colorHSProperty");
+    qRegisterMetaType <Properties::ColorXY>                     ("colorXYProperty");
+    qRegisterMetaType <Properties::ColorTemperature>            ("colorTemperatureProperty");
+    qRegisterMetaType <Properties::Illuminance>                 ("illuminanceProperty");
+    qRegisterMetaType <Properties::Temperature>                 ("temperatureProperty");
+    qRegisterMetaType <Properties::Humidity>                    ("humidityProperty");
+    qRegisterMetaType <Properties::Occupancy>                   ("occupancyProperty");
+    qRegisterMetaType <Properties::Energy>                      ("energyProperty");
+    qRegisterMetaType <Properties::Power>                       ("powerProperty");
+    qRegisterMetaType <Properties::Scene>                       ("sceneProperty");
+    qRegisterMetaType <Properties::IdentifyAction>              ("identifyActionProperty");
+    qRegisterMetaType <Properties::SwitchAction>                ("switchActionProperty");
+    qRegisterMetaType <Properties::LevelAction>                 ("levelActionProperty");
 
-    qRegisterMetaType <PropertiesIAS::Contact>              ("iasContactProperty");
-    qRegisterMetaType <PropertiesIAS::Contact>              ("iasGasProperty");
-    qRegisterMetaType <PropertiesIAS::Occupancy>            ("iasOccupancyProperty");
-    qRegisterMetaType <PropertiesIAS::Smoke>                ("iasSmokeProperty");
-    qRegisterMetaType <PropertiesIAS::WaterLeak>            ("iasWaterLeakProperty");
+    qRegisterMetaType <PropertiesIAS::Contact>                  ("iasContactProperty");
+    qRegisterMetaType <PropertiesIAS::Contact>                  ("iasGasProperty");
+    qRegisterMetaType <PropertiesIAS::Occupancy>                ("iasOccupancyProperty");
+    qRegisterMetaType <PropertiesIAS::Smoke>                    ("iasSmokeProperty");
+    qRegisterMetaType <PropertiesIAS::WaterLeak>                ("iasWaterLeakProperty");
 
-    qRegisterMetaType <PropertiesPTVO::CO2>                 ("ptvoCO2Property");
-    qRegisterMetaType <PropertiesPTVO::Temperature>         ("ptvoTemperatureProperty");
-    qRegisterMetaType <PropertiesPTVO::ChangePattern>       ("ptvoChangePatternProperty");
-    qRegisterMetaType <PropertiesPTVO::Pattern>             ("ptvoPatternProperty");
-    qRegisterMetaType <PropertiesPTVO::SwitchAction>        ("ptvoSwitchActionProperty");
+    qRegisterMetaType <PropertiesPTVO::CO2>                     ("ptvoCO2Property");
+    qRegisterMetaType <PropertiesPTVO::Temperature>             ("ptvoTemperatureProperty");
+    qRegisterMetaType <PropertiesPTVO::ChangePattern>           ("ptvoChangePatternProperty");
+    qRegisterMetaType <PropertiesPTVO::Pattern>                 ("ptvoPatternProperty");
+    qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
 
-    qRegisterMetaType <PropertiesLUMI::Data>                ("lumiDataProperty");
-    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>      ("lumiBatteryVoltageProperty");
-    qRegisterMetaType <PropertiesLUMI::Power>               ("lumiPowerProperty");
-    qRegisterMetaType <PropertiesLUMI::SwitchAction>        ("lumiSwitchActionProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeRotation>        ("lumiCubeRotationProperty");
-    qRegisterMetaType <PropertiesLUMI::CubeMovement>        ("lumiCubeMovementProperty");
-    qRegisterMetaType <PropertiesLUMI::Unknown>             ("lumiUnknownProperty");
+    qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
+    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
+    qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
+    qRegisterMetaType <PropertiesLUMI::CubeMovement>            ("lumiCubeMovementProperty");
+    qRegisterMetaType <PropertiesLUMI::Unknown>                 ("lumiUnknownProperty");
 
-    qRegisterMetaType <PropertiesTUYA::NeoSiren>            ("tuyaNeoSirenProperty");
-    qRegisterMetaType <PropertiesTUYA::PresenceSensor>      ("tuyaPresenceSensorProperty");
-    qRegisterMetaType <PropertiesTUYA::PowerOnStatus>       ("tuyaPowerOnStatusProperty");
-    qRegisterMetaType <PropertiesTUYA::SwitchType>          ("tuyaSwitchTypeProperty");
-    qRegisterMetaType <PropertiesTUYA::Unknown>             ("tuyaUnknownProperty");
+    qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
+    qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
+    qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
+    qRegisterMetaType <PropertiesTUYA::SwitchType>              ("tuyaSwitchTypeProperty");
+    qRegisterMetaType <PropertiesTUYA::Unknown>                 ("tuyaUnknownProperty");
 
-    qRegisterMetaType <PropertiesLifeControl::AirQuality>   ("lifeControlAirQualityProperty");
-    qRegisterMetaType <PropertiesPerenio::SmartPlug>        ("perenioSmartPlugProperty");
+    qRegisterMetaType <PropertiesOther::KonkeSwitchAction>      ("konkeSwitchActionProperty");
+    qRegisterMetaType <PropertiesOther::LifeControlAirQuality>  ("lifeControlAirQualityProperty");
+    qRegisterMetaType <PropertiesOther::PerenioSmartPlug>       ("perenioSmartPlugProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
@@ -917,7 +918,20 @@ void PropertiesTUYA::Unknown::parseAttribte(quint16 attributeId, quint8 dataType
     Q_UNUSED(data)
 }
 
-void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesOther::KonkeSwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0000 && dataType != DATA_TYPE_BOOLEAN)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x80: m_value = "singleClick"; break;
+        case 0x81: m_value = "doubleClick"; break;
+        case 0x82: m_value = "longClick"; break;
+    }
+}
+
+void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     qint16 value;
@@ -941,7 +955,7 @@ void PropertiesLifeControl::AirQuality::parseAttribte(quint16 attributeId, quint
     m_value = map;
 }
 
-void PropertiesPerenio::SmartPlug::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
