@@ -117,8 +117,9 @@ public:
 
     ZigBee(QSettings *config, QObject *parent);
 
+    inline DeviceList *devices(void) { return m_devices; }
+
     void init(void);
-    void restoreProperties(void);
     void setPermitJoin(bool enabled);
 
     void setDeviceName(const QString &deviceName, const QString &newName, bool store = true);
@@ -145,7 +146,7 @@ private:
     DeviceList *m_devices;
     Adapter *m_adapter;
 
-    QString m_statusLedPin, m_blinkLedPin, m_libraryFile, m_otaUpgradeFile;
+    QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
     quint8  m_requestId, m_interPanChannel;
 
     QMap <quint8, Request> m_requests;
@@ -154,12 +155,8 @@ private:
     void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
     void enqueueDeviceRequest(const Device &device, RequestType type);
 
-    Endpoint getEndpoint(const Device &device, quint8 endpointId);
     QByteArray attributesRequest(quint8 id, QList <quint16> attributes);
     bool interviewRequest(quint8 id, const Device &device);
-
-    void setupDevice(const Device &device);
-    void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
 
     void interviewDevice(const Device &device);
     void interviewFinished(const Device &device);
@@ -193,8 +190,9 @@ private slots:
 
     void handleRequests(void);
     void updateNeighbors(void);
-    void pollAttributes(void);
     void interviewTimeout(void);
+
+    void pollRequest(EndpointObject *endpoint, const Poll &poll);
 
     void updateStatusLed(void);
     void updateBlinkLed(void);

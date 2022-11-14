@@ -36,7 +36,7 @@ class EndpointObject : public EndpointDataObject
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-         EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_zoneStatus(ZoneStatus::Unknown), m_dataUpdated(false) {}
+         EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_zoneStatus(ZoneStatus::Unknown), m_updated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
 
@@ -46,8 +46,8 @@ public:
     inline ZoneStatus zoneStatus(void) { return m_zoneStatus; }
     inline void setZoneStatus(ZoneStatus value) { m_zoneStatus = value; }
 
-    inline bool dataUpdated(void) { return m_dataUpdated; }
-    inline void setDataUpdated(bool value) { m_dataUpdated = value; }
+    inline bool updated(void) { return m_updated; }
+    inline void setUpdated(bool value) { m_updated = value; }
 
     inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Property> &properties(void) { return m_properties; }
@@ -62,7 +62,7 @@ private:
     Device m_device;
 
     ZoneStatus m_zoneStatus;
-    bool m_dataUpdated;
+    bool m_updated;
 
     QList <Action> m_actions;
     QList <Property> m_properties;
@@ -175,21 +175,24 @@ public:
     inline void setAdapterType(const QString &value) { m_adapterType = value; }
     inline void setAdapterVersion(const QString &value) { m_adapterVersion = value; }
 
+    void init(void);
+
     Device byName(const QString &name);
     Device byNetwork(quint16 networkAddress);
+    Endpoint endpoint(const Device &device, quint8 endpointId);
 
+    void setupDevice(const Device &device);
+    void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
     void removeDevice(const Device &device);
 
     void storeDatabase(void);
     void storeProperties(void);
 
-    void restoreProperties(void);
-
 private:
 
     QTimer *m_databaseTimer, *m_propertiesTimer;
 
-    QFile m_databaseFile, m_propertiesFile;
+    QFile m_libraryFile, m_databaseFile, m_propertiesFile;
     bool m_permitJoin;
 
     QString m_adapterType, m_adapterVersion;
@@ -205,10 +208,12 @@ private slots:
 
     void writeDatabase(void);
     void writeProperties(void);
+    void pollAttributes(void);
 
 signals:
 
     void statusUpdated(const QJsonObject &json);
+    void pollRequest(EndpointObject *endpoint, const Poll &poll);
 
 };
 

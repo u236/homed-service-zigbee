@@ -4,22 +4,41 @@
 
 DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
 {
+    ActionObject::registerMetaTypes();
+    PollObject::registerMetaTypes();
+    PropertyObject::registerMetaTypes();
+    ReportingObject::registerMetaTypes();
+
+    m_libraryFile.setFileName(config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString());
     m_databaseFile.setFileName(config->value("zigbee/database", "/var/db/homed-zigbee-database.json").toString());
     m_propertiesFile.setFileName(config->value("zigbee/properties", "/var/db/homed-zigbee-properties.json").toString());
-
-    if (m_databaseFile.open(QFile::ReadOnly | QFile::Text))
-    {
-        QJsonObject json = QJsonDocument::fromJson(m_databaseFile.readAll()).object();
-        unserializeDevices(json.value("devices").toArray());
-        m_permitJoin = json.value("permitJoin").toBool();
-        m_databaseFile.close();
-    }
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
     connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
 
     m_databaseTimer->setSingleShot(true);
     m_propertiesTimer->setSingleShot(true);
+}
+
+void DeviceList::init(void)
+{
+    QJsonObject json;
+
+    if (!m_databaseFile.open(QFile::ReadOnly | QFile::Text))
+        return;
+
+    json = QJsonDocument::fromJson(m_databaseFile.readAll()).object();
+    unserializeDevices(json.value("devices").toArray());
+    m_permitJoin = json.value("permitJoin").toBool();
+    m_databaseFile.close();
+
+    if (!m_propertiesFile.open(QFile::ReadOnly | QFile::Text))
+        return;
+
+    unserializeProperties(QJsonDocument::fromJson(m_propertiesFile.readAll()).object());
+    m_propertiesFile.close();
+
+    logInfo << "Properties restored";
 }
 
 Device DeviceList::byName(const QString &name)
@@ -38,6 +57,159 @@ Device DeviceList::byNetwork(quint16 networkAddress)
             return it.value();
 
     return Device();
+}
+
+Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
+{
+    auto it = device->endpoints().find(endpointId);
+
+    if (it == device->endpoints().end())
+        it = device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
+
+    return it.value();
+}
+
+void DeviceList::setupDevice(const Device &device)
+{
+    QJsonArray array;
+    bool check = false;
+
+    if (!m_libraryFile.open(QFile::ReadOnly | QFile::Text))
+    {
+        logWarning << "Can't open library file, device" << device->name() << "not configured";
+        return;
+    }
+
+    array = QJsonDocument::fromJson(m_libraryFile.readAll()).object().value(device->manufacturerName()).toArray();
+    m_libraryFile.close();
+
+    if (array.isEmpty())
+    {
+        logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "unrecognized";
+        return;
+    }
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        disconnect(it.value()->timer(), &QTimer::timeout, this, &DeviceList::pollAttributes);
+        it.value()->timer()->stop();
+
+        it.value()->actions().clear();
+        it.value()->properties().clear();
+        it.value()->reportings().clear();
+        it.value()->polls().clear();
+    }
+
+    for (auto it = array.begin(); it != array.end(); it++)
+    {
+        QJsonObject json = it->toObject();
+        QJsonArray array = json.value("modelNames").toArray();
+
+        if (array.contains(device->modelName()))
+        {
+            QJsonValue endpoinId = json.value("endpointId");
+            QList <QVariant> list = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
+
+            for (int i = 0; i < list.count(); i++)
+                setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json);
+
+            if (device->description().isEmpty())
+                device->setDescription(json.value("description").toString());
+
+            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
+            check = true;
+        }
+    }
+
+    if (check)
+        return;
+
+    logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
+}
+
+void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
+{
+    Device device = endpoint->device();
+    QJsonArray actions = json.value("actions").toArray(), properties = json.value("properties").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
+    quint32 pollInterval = static_cast <quint32> (json.value("pollInterval").toInt());
+
+    for (auto it = actions.begin(); it != actions.end(); it++)
+    {
+        int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
+
+        if (type)
+        {
+            Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
+            endpoint->actions().append(action);
+            continue;
+        }
+
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "action" << it->toString() << "unrecognized";
+    }
+
+    for (auto it = properties.begin(); it != properties.end(); it++)
+    {
+        int type = QMetaType::type(QString(it->toString()).append("Property").toUtf8());
+
+        if (type)
+        {
+            Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
+
+            property->setModel(device->modelName());
+            property->setVersion(device->version());
+
+            if (property->name() == "scene" && json.contains("sceneNames"))
+                property->setSceneNames(json.value("sceneNames").toObject().toVariantMap());
+
+            endpoint->properties().append(property);
+            continue;
+        }
+
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "property" << it->toString() << "unrecognized";
+    }
+
+    for (auto it = reportings.begin(); it != reportings.end(); it++)
+    {
+        int type = QMetaType::type(QString(it->toString()).append("Reporting").toUtf8());
+
+        if (type)
+        {
+            Reporting reporting(reinterpret_cast <ReportingObject*> (QMetaType::create(type)));
+            endpoint->reportings().append(reporting);
+            continue;
+        }
+
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "reporting" << it->toString() << "unrecognized";
+    }
+
+    for (auto it = polls.begin(); it != polls.end(); it++)
+    {
+        int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
+
+        if (type)
+        {
+            Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
+            endpoint->polls().append(poll);
+            continue;
+        }
+
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "poll" << it->toString() << "unrecognized";
+    }
+
+    if (!endpoint->polls().isEmpty())
+    {
+        for (int i = 0; i < endpoint->polls().count(); i++)
+        {
+            const Poll &poll = endpoint->polls().at(i);
+            emit pollRequest(endpoint.data(), poll);
+        }
+
+        if (pollInterval)
+        {
+            connect(endpoint->timer(), &QTimer::timeout, this, &DeviceList::pollAttributes);
+            endpoint->timer()->start(pollInterval * 1000);
+        }
+    }
 }
 
 void DeviceList::removeDevice(const Device &device)
@@ -59,17 +231,6 @@ void DeviceList::storeDatabase(void)
 void DeviceList::storeProperties(void)
 {
     m_propertiesTimer->start(STORE_PROPERTIES_DELAY);
-}
-
-void DeviceList::restoreProperties(void)
-{
-    if (!m_propertiesFile.open(QFile::ReadOnly | QFile::Text))
-        return;
-
-    unserializeProperties(QJsonDocument::fromJson(m_propertiesFile.readAll()).object());
-    m_propertiesFile.close();
-
-    logInfo << "Properties restored";
 }
 
 void DeviceList::unserializeDevices(const QJsonArray &devices)
@@ -147,6 +308,9 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 }
             }
 
+            if (device->interviewFinished())
+                setupDevice(device);
+
             insert(device->ieeeAddress(), device);
             count++;
         }
@@ -182,7 +346,7 @@ void DeviceList::unserializeProperties(const QJsonObject &properties)
                     continue;
 
                 property->setValue(value);
-                endpoint->setDataUpdated(true);
+                endpoint->setUpdated(true);
             }
         }
     }
@@ -370,4 +534,15 @@ void DeviceList::writeProperties(void)
         logWarning << "Can't open properties file, properties not stored";
 
     m_properties = json;
+}
+
+void DeviceList::pollAttributes(void)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
+
+    for (int i = 0; i < endpoint->polls().count(); i++)
+    {
+        const Poll &poll = endpoint->polls().at(i);
+        emit pollRequest(endpoint, poll);
+    }
 }

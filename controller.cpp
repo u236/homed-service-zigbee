@@ -19,7 +19,18 @@ void Controller::mqttConnected(void)
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
 
-    m_zigbee->restoreProperties();
+    for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
+    {
+        const Device &device = it.value();
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        {
+            if (!it.value()->updated())
+                continue;
+
+            endpointUpdated(device, it.value()->id());
+        }
+    }
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -155,6 +166,8 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
 
             property->clear();
         }
+
+        it.value()->setUpdated(false);
     }
 
     if (json.isEmpty())

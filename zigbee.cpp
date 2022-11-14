@@ -10,17 +10,12 @@
 
 ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_requestId(0)
 {
-    ActionObject::registerMetaTypes();
-    PollObject::registerMetaTypes();
-    PropertyObject::registerMetaTypes();
-    ReportingObject::registerMetaTypes();
-
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
-    m_libraryFile = m_config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString(); // TODO: make it QFile?
 
-    connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
+    connect(m_devices, &DeviceList::pollRequest, this, &ZigBee::pollRequest);
     connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
+    connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
 
     GPIO::direction(m_statusLedPin, GPIO::Output);
     GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
@@ -37,10 +32,6 @@ void ZigBee::init(void)
     QList <QString> list = {"ezsp", "znp"};
     QString adapterType = m_config->value("zigbee/adapter", "znp").toString();
 
-    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
-        if (it.value()->interviewFinished())
-            setupDevice(it.value());
-
     switch (list.indexOf(adapterType))
     {
         case 0:  m_adapter = new EZSP(m_config, this); break;
@@ -52,26 +43,8 @@ void ZigBee::init(void)
     connect(m_adapter, &Adapter::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
     connect(m_adapter, &Adapter::requestFinished, this, &ZigBee::requestFinished);
 
+    m_devices->init();
     m_adapter->init();
-}
-
-void ZigBee::restoreProperties(void)
-{
-    m_devices->restoreProperties();
-
-    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
-    {
-        const Device &device = it.value();
-
-        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        {
-            if (!it.value()->dataUpdated())
-                continue;
-
-            emit endpointUpdated(device, it.value()->id());
-            it.value()->setDataUpdated(false);
-        }
-    }
 }
 
 void ZigBee::setPermitJoin(bool enabled)
@@ -122,7 +95,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    setupDevice(device);
+    m_devices->setupDevice(device);
 
     if (!reportings)
     {
@@ -345,16 +318,6 @@ void ZigBee::enqueueDeviceRequest(const Device &device, RequestType type)
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(device), type)));
 }
 
-Endpoint ZigBee::getEndpoint(const Device &device, quint8 endpointId)
-{
-    auto it = device->endpoints().find(endpointId);
-
-    if (it == device->endpoints().end())
-        it = device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
-
-    return it.value();
-}
-
 QByteArray ZigBee::attributesRequest(quint8 id, QList<quint16> attributes)
 {
     zclHeaderStruct header;
@@ -507,150 +470,6 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
     return true;
 }
 
-void ZigBee::setupDevice(const Device &device)
-{
-    QFile file(m_libraryFile);
-    QJsonArray array;
-    bool check = false;
-
-    if (!file.open(QFile::ReadOnly | QFile::Text))
-    {
-        logWarning << "Can't open library file, device" << device->name() << "not configured";
-        return;
-    }
-
-    array = QJsonDocument::fromJson(file.readAll()).object().value(device->manufacturerName()).toArray();
-    file.close();
-
-    if (array.isEmpty())
-    {
-        logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "unrecognized";
-        return;
-    }
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        disconnect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-        it.value()->timer()->stop();
-
-        it.value()->actions().clear();
-        it.value()->properties().clear();
-        it.value()->reportings().clear();
-        it.value()->polls().clear();
-    }
-
-    for (auto it = array.begin(); it != array.end(); it++)
-    {
-        QJsonObject json = it->toObject();
-        QJsonArray array = json.value("modelNames").toArray();
-
-        if (array.contains(device->modelName()))
-        {
-            QJsonValue endpoinId = json.value("endpointId");
-            QList <QVariant> list = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
-
-            for (int i = 0; i < list.count(); i++)
-                setupEndpoint(getEndpoint(device, static_cast <quint8> (list.at(i).toInt())), json);
-
-            if (device->description().isEmpty())
-                device->setDescription(json.value("description").toString());
-
-            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
-            check = true;
-        }
-    }
-
-    if (check)
-        return;
-
-    logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
-}
-
-void ZigBee::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
-{
-    Device device = endpoint->device();
-    QJsonArray actions = json.value("actions").toArray(), properties = json.value("properties").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
-    quint32 pollInterval = static_cast <quint32> (json.value("pollInterval").toInt());
-
-    for (auto it = actions.begin(); it != actions.end(); it++)
-    {
-        int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
-
-        if (type)
-        {
-            Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
-            endpoint->actions().append(action);
-            continue;
-        }
-
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "action" << it->toString() << "unrecognized";
-    }
-
-    for (auto it = properties.begin(); it != properties.end(); it++)
-    {
-        int type = QMetaType::type(QString(it->toString()).append("Property").toUtf8());
-
-        if (type)
-        {
-            Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
-
-            property->setModel(device->modelName());
-            property->setVersion(device->version());
-
-            if (property->name() == "scene" && json.contains("sceneNames"))
-                property->setSceneNames(json.value("sceneNames").toObject().toVariantMap());
-
-            endpoint->properties().append(property);
-            continue;
-        }
-
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "property" << it->toString() << "unrecognized";
-    }
-
-    for (auto it = reportings.begin(); it != reportings.end(); it++)
-    {
-        int type = QMetaType::type(QString(it->toString()).append("Reporting").toUtf8());
-
-        if (type)
-        {
-            Reporting reporting(reinterpret_cast <ReportingObject*> (QMetaType::create(type)));
-            endpoint->reportings().append(reporting);
-            continue;
-        }
-
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "reporting" << it->toString() << "unrecognized";
-    }
-
-    for (auto it = polls.begin(); it != polls.end(); it++)
-    {
-        int type = QMetaType::type(QString(it->toString()).append("Poll").toUtf8());
-
-        if (type)
-        {
-            Poll poll(reinterpret_cast <PollObject*> (QMetaType::create(type)));
-            endpoint->polls().append(poll);
-            continue;
-        }
-
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "poll" << it->toString() << "unrecognized";
-    }
-
-    if (!endpoint->polls().isEmpty())
-    {
-        for (int i = 0; i < endpoint->polls().count(); i++)
-        {
-            const Poll &poll = endpoint->polls().at(i);
-            enqueueDataRequest(endpoint->device(), endpoint->id(), poll->clusterId(), attributesRequest(m_requestId, poll->attributes()));
-        }
-
-        if (pollInterval)
-        {
-            connect(endpoint->timer(), &QTimer::timeout, this, &ZigBee::pollAttributes);
-            endpoint->timer()->start(pollInterval * 1000);
-        }
-    }
-}
-
 void ZigBee::interviewDevice(const Device &device)
 {
     if (device->interviewFinished())
@@ -663,7 +482,7 @@ void ZigBee::interviewDevice(const Device &device)
 void ZigBee::interviewFinished(const Device &device)
 {
     logInfo << "Device" << device->name() << "manufacturer name is" << device->manufacturerName() << "and model name is" << device->modelName();
-    setupDevice(device);
+    m_devices->setupDevice(device);
 
     if (!device->description().isEmpty())
         logInfo << "Device" << device->name() << "identified as" << device->description();
@@ -846,7 +665,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
             if (property->value() == value)
                 continue;
 
-            endpoint->setDataUpdated(true);
+            endpoint->setUpdated(true);
         }
     }
 
@@ -1034,7 +853,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             if (property->value() == value)
                 continue;
 
-            endpoint->setDataUpdated(true);
+            endpoint->setUpdated(true);
         }
     }
 
@@ -1474,7 +1293,7 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId,
     if (device.isNull() || device->removed())
         return;
 
-    endpoint = getEndpoint(device, endpointId);
+    endpoint = m_devices->endpoint(device, endpointId);
 
     endpoint->setProfileId(profileId);
     endpoint->setDeviceId(deviceId);
@@ -1515,7 +1334,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     if (device.isNull() || device->removed())
         return;
 
-    endpoint = getEndpoint(device, endpointId);
+    endpoint = m_devices->endpoint(device, endpointId);
     header.frameControl = static_cast <quint8> (data.at(0));
     blink(50);
 
@@ -1540,11 +1359,10 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     device->setLinkQuality(linkQuality);
     device->updateLastSeen();
 
-    if (endpoint->dataUpdated())
+    if (endpoint->updated())
     {
-        emit endpointUpdated(device, endpoint->id());
-        endpoint->setDataUpdated(false);
         m_devices->storeProperties();
+        emit endpointUpdated(device, endpoint->id());
     }
 
     if ((header.frameControl & FC_CLUSTER_SPECIFIC || header.commandId == CMD_REPORT_ATTRIBUTES) && !(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
@@ -1671,22 +1489,16 @@ void ZigBee::updateNeighbors(void)
     }
 }
 
-void ZigBee::pollAttributes(void)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
-
-    for (int i = 0; i < endpoint->polls().count(); i++)
-    {
-        const Poll &poll = endpoint->polls().at(i);
-        enqueueDataRequest(endpoint->device(), endpoint->id(), poll->clusterId(), attributesRequest(m_requestId, poll->attributes()));
-    }
-}
-
 void ZigBee::interviewTimeout(void)
 {
     Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
     logWarning << "Device" << device->name() << "interview timed out";
     emit deviceEvent(device, "interviewTimeout");
+}
+
+void ZigBee::pollRequest(EndpointObject *endpoint, const Poll &poll)
+{
+    enqueueDataRequest(endpoint->device(), endpoint->id(), poll->clusterId(), attributesRequest(m_requestId, poll->attributes()));
 }
 
 void ZigBee::updateStatusLed(void)
