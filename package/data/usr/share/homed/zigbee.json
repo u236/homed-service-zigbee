@@ -102,8 +102,9 @@
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
       "modelNames":     ["TRADFRI on/off switch"],
-      "properties":     ["batteryUndivided", "identifyAction", "switchAction", "levelAction"],
-      "reportings":     ["batteryPercentage"]
+      "properties":     ["batteryPercentage", "identifyAction", "switchAction", "levelAction"],
+      "reportings":     ["batteryPercentage"],
+      "options":        {"batteryUndivided": true}
     }
   ],
 
@@ -149,25 +150,22 @@
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
-      "sceneNames":     {"241": "hexagon"},
-      "endpointId":     1
+      "endpointId":     1,
+      "options":        {"scenes": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}}
     },
     {
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
-      "sceneNames":     {"242": "square"},
       "endpointId":     2
     },
     {
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
-      "sceneNames":     {"243": "triangle"},
       "endpointId":     3
     },
     {
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
-      "sceneNames":     {"244": "circle"},
       "endpointId":     4
     }
   ],
@@ -246,17 +244,20 @@
     {
       "description":    "Life Control Door and Window Sensor MCLH-04",
       "modelNames":     ["Door_Sensor"],
-      "properties":     ["batteryUndivided", "iasContact"]
+      "properties":     ["batteryPercentage", "iasContact"],
+      "options":        {"batteryUndivided": true}
     },
     {
       "description":    "Life Control Water Leak Sensor MCLH-07",
       "modelNames":     ["Leak_Sensor"],
-      "properties":     ["batteryUndivided", "iasWaterLeak"]
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "options":        {"batteryUndivided": true}
     },
     {
       "description":    "Life Control Air Quality Sensor MCLH-08",
       "modelNames":     ["VOC_Sensor"],
-      "properties":     ["batteryUndivided", "lifeControlAirQuality"]
+      "properties":     ["batteryPercentage", "lifeControlAirQuality"],
+      "options":        {"batteryUndivided": true}
     }
   ],
 

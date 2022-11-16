@@ -6,7 +6,6 @@ void PropertyObject::registerMetaTypes(void)
 {
     qRegisterMetaType <Properties::BatteryVoltage>              ("batteryVoltageProperty");
     qRegisterMetaType <Properties::BatteryPercentage>           ("batteryPercentageProperty");
-    qRegisterMetaType <Properties::BatteryUndivided>            ("batteryUndividedProperty");
     qRegisterMetaType <Properties::Status>                      ("statusProperty");
     qRegisterMetaType <Properties::Contact>                     ("contactProperty");
     qRegisterMetaType <Properties::PowerOnStatus>               ("powerOnStatusProperty");
@@ -80,15 +79,7 @@ void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, quint8 da
     if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = static_cast <quint8> (data.at(0)) / 2.0;
-}
-
-void Properties::BatteryUndivided::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-        return;
-
-    m_value = static_cast <quint8> (data.at(0));
+    m_value = static_cast <quint8> (data.at(0)) / (m_options.value("batteryUndivided").toBool() ? 1.0 : 2.0);
 }
 
 void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -344,12 +335,12 @@ void Properties::Power::parseAttribte(quint16 attributeId, quint8 dataType, cons
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
-    QVariant sceneName = m_sceneNames.value(QString::number(command->sceneId));
+    QVariant scene = m_options.value("scenes").toMap().value(QString::number(command->sceneId));
 
     if (commandId != 0x05)
         return;
 
-    m_value = sceneName.isValid() ? sceneName : command->sceneId;
+    m_value = scene.isValid() ? scene : command->sceneId;
 }
 
 void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray &payload)
@@ -523,7 +514,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
     {
         case 0x0003:
         {
-            if (m_model != "lumi.sen_ill.mgl01")
+            if (m_modelName != "lumi.sen_ill.mgl01")
             {
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
@@ -548,7 +539,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
 
         case 0x0064:
         {
-            if (m_model == "lumi.sen_ill.mgl01")
+            if (m_modelName == "lumi.sen_ill.mgl01")
             {
                 quint32 value;
 
@@ -558,13 +549,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 memcpy(&value, data.constData(), data.length());
                 map.insert("illuminance", qFromLittleEndian(value));
             }
-            else
-            {
-                if (dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
-                    break;
-
-                map.insert("status", data.at(0) ? "on" : "off");
-            }
 
             break;
         }
@@ -572,7 +556,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0065:
         case 0x0142:
         {
-            if (m_model == "lumi.motion.ac01")
+            if (m_modelName == "lumi.motion.ac01")
             {
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
@@ -587,7 +571,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x010C:
         case 0x0143:
         {
-            if (m_model == "lumi.motion.ac01")
+            if (m_modelName == "lumi.motion.ac01")
             {
                 if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                     break;
@@ -611,7 +595,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0067:
         case 0x0144:
         {
-            if (m_model == "lumi.motion.ac01")
+            if (m_modelName == "lumi.motion.ac01")
             {
                 QList <QString> list = {"undirected", "directed"};
 
@@ -627,7 +611,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0069:
         case 0x0146:
         {
-            if (m_model == "lumi.motion.ac01")
+            if (m_modelName == "lumi.motion.ac01")
             {
                 QList <QString> list = {"far", "middle", "near"};
 

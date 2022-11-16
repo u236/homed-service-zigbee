@@ -29,9 +29,9 @@ public:
     inline bool singleShot(void) { return m_singleShot; }
     inline void clear(void) { m_value = QVariant(); }
 
-    inline void setModel(const QString &value) { m_model = value; }
+    inline void setModelName(const QString &value) { m_modelName = value; }
     inline void setVersion(quint8 value) { m_version = value; }
-    inline void setSceneNames(const QMap <QString, QVariant> &value) { m_sceneNames = value; }
+    inline void setOptions(const QMap <QString, QVariant> &value) { m_options = value; }
 
     static void registerMetaTypes(void);
 
@@ -42,9 +42,9 @@ protected:
     QVariant m_value;
     bool m_singleShot;
 
-    QString m_model;
+    QString m_modelName;
     quint8 m_version;
-    QMap <QString, QVariant> m_sceneNames;
+    QMap <QString, QVariant> m_options;
 
     quint8 percentage(double min, double max, double value);
 
@@ -68,16 +68,6 @@ namespace Properties
     public:
 
         BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class BatteryUndivided : public PropertyObject
-    {
-
-    public:
-
-        BatteryUndivided(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

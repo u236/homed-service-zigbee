@@ -25,6 +25,7 @@ public:
     inline quint16 attributeId(void) { return m_attributeId; }
     inline bool poll(void) { return m_poll; }
 
+    inline void setOptions(const QMap <QString, QVariant> &value) { m_options = value; }
     static void registerMetaTypes(void);
 
 protected:
@@ -37,6 +38,7 @@ protected:
     bool m_poll;
 
     quint8 m_transactionId;
+    QMap <QString, QVariant> m_options;
 
     QByteArray writeAttributeRequest(const QByteArray &data);
 

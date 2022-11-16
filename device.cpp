@@ -113,8 +113,11 @@ void DeviceList::setupDevice(const Device &device)
             for (int i = 0; i < list.count(); i++)
                 setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json);
 
-            if (device->description().isEmpty())
+            if (json.contains("description"))
                 device->setDescription(json.value("description").toString());
+
+            if (json.contains("options"))
+                device->options() = json.value("options").toObject().toVariantMap();
 
             device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
             check = true;
@@ -140,6 +143,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
+            action->setOptions(device->options());
             endpoint->actions().append(action);
             continue;
         }
@@ -154,13 +158,9 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
-
-            property->setModel(device->modelName());
+            property->setModelName(device->modelName());
             property->setVersion(device->version());
-
-            if (property->name() == "scene" && json.contains("sceneNames"))
-                property->setSceneNames(json.value("sceneNames").toObject().toVariantMap());
-
+            property->setOptions(device->options());
             endpoint->properties().append(property);
             continue;
         }

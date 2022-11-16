@@ -132,6 +132,7 @@ public:
     inline bool multipleEndpoints(void) { return m_multipleEndpoints; }
     inline void setMultipleEndpoints(bool value) { m_multipleEndpoints = value; }
 
+    inline QMap <QString, QVariant> &options(void) { return m_options; }
     inline QMap <quint8, Endpoint> &endpoints(void) { return m_endpoints; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
@@ -156,6 +157,7 @@ private:
     QString m_description;
     bool m_multipleEndpoints;
 
+    QMap <QString, QVariant> m_options;
     QMap <quint8, Endpoint> m_endpoints;
     QMap <quint16, quint8> m_neighbors;
 
