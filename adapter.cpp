@@ -258,11 +258,11 @@ void Adapter::parseMessage(quint16 networkAddress, quint16 clusterId, const QByt
         case APS_SIMPLE_DESCRIPTOR:
         {
             const simpleDescriptorResponseStruct *response = reinterpret_cast <const simpleDescriptorResponseStruct*> (payload.constData());
+            QList <quint16> inClusters, outClusters;
 
             if (!response->status)
             {
                 QByteArray clusterData = payload.mid(sizeof(simpleDescriptorResponseStruct));
-                QList <quint16> inClusters, outClusters;
                 quint16 clusterId;
 
                 for (quint8 i = 0; i < static_cast <quint8> (clusterData.at(0)); i++)
@@ -280,8 +280,10 @@ void Adapter::parseMessage(quint16 networkAddress, quint16 clusterId, const QByt
                 }
 
                 emit simpleDescriptorReceived(qFromLittleEndian(response->networkAddress), response->endpointId, qFromLittleEndian(response->profileId), qFromLittleEndian(response->deviceId), inClusters, outClusters);
+                break;
             }
 
+            emit simpleDescriptorReceived(qFromLittleEndian(response->networkAddress), 0, 0, 0, inClusters, outClusters);
             break;
         }
 

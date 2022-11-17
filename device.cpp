@@ -113,13 +113,14 @@ void DeviceList::setupDevice(const Device &device)
             for (int i = 0; i < list.count(); i++)
                 setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json);
 
+            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
+
             if (json.contains("description"))
                 device->setDescription(json.value("description").toString());
 
             if (json.contains("options"))
                 device->options() = json.value("options").toObject().toVariantMap();
 
-            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
             check = true;
         }
     }
