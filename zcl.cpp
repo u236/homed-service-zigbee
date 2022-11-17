@@ -1,4 +1,18 @@
+#include <QtEndian>
 #include "zcl.h"
+
+QByteArray zclHeader(quint8 frameControl, quint8 transactionId, quint8 commandId, quint16 manufacturerCode)
+{
+    QByteArray header(1, static_cast <char> (manufacturerCode ? frameControl | FC_MANUFACTURER_SPECIFIC : frameControl));
+
+    if (manufacturerCode)
+    {
+        manufacturerCode = qToLittleEndian(manufacturerCode);
+        header.append(reinterpret_cast <char*> (&manufacturerCode), sizeof(manufacturerCode));
+    }
+
+    return header.append(1, static_cast <char> (transactionId)).append(1, static_cast <char> (commandId));
+}
 
 quint8 zclDataSize(quint8 dataType)
 {

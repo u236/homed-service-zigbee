@@ -92,13 +92,6 @@
 
 #pragma pack(push, 1)
 
-struct zclHeaderStruct
-{
-    quint8  frameControl;
-    quint8  transactionId;
-    quint8  commandId;
-};
-
 struct writeArrtibutesStruct
 {
     quint16 attributeId;
@@ -257,6 +250,8 @@ struct tuyaHeaderStruct
 };
 
 #pragma pack(pop)
+
+QByteArray zclHeader(quint8 frameControl, quint8 transactionId, quint8 commandId, quint16 manufacturerCode = 0);
 
 quint8 zclDataSize(quint8 dataType);
 quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset);

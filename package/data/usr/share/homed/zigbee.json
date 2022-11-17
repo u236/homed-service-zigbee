@@ -4,7 +4,7 @@
     {
       "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
       "modelNames":     ["lumi.motion.ac01"],
-      "actions":        ["lumiSensitivity", "lumiMode", "lumiDistance", "lumiResetPresence"],
+      "actions":        ["lumiSensitivity", "lumiDetectionMode", "lumiDistance", "lumiResetPresence"],
       "properties":     ["lumiData"],
       "polls":          ["lumiPresenceSensor"]
     }

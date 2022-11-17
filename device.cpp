@@ -110,9 +110,6 @@ void DeviceList::setupDevice(const Device &device)
             QJsonValue endpoinId = json.value("endpointId");
             QList <QVariant> list = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
 
-            for (int i = 0; i < list.count(); i++)
-                setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json);
-
             device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
 
             if (json.contains("description"))
@@ -120,6 +117,9 @@ void DeviceList::setupDevice(const Device &device)
 
             if (json.contains("options"))
                 device->options() = json.value("options").toObject().toVariantMap();
+
+            for (int i = 0; i < list.count(); i++)
+                setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json);
 
             check = true;
         }

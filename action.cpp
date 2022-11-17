@@ -14,7 +14,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
     qRegisterMetaType <ActionsLUMI::Sensitivity>            ("lumiSensitivityAction");
-    qRegisterMetaType <ActionsLUMI::Mode>                   ("lumiModeAction");
+    qRegisterMetaType <ActionsLUMI::DetectionMode>          ("lumiDetectionModeAction");
     qRegisterMetaType <ActionsLUMI::Distance>               ("lumiDistanceAction");
     qRegisterMetaType <ActionsLUMI::ResetPresence>          ("lumiResetPresenceAction");
 
@@ -38,29 +38,18 @@ void ActionObject::registerMetaTypes(void)
 
 QByteArray ActionObject::writeAttributeRequest(const QByteArray &data)
 {
-    zclHeaderStruct header;
     writeArrtibutesStruct payload;
-
-    header.frameControl = 0x00;
-    header.transactionId = m_transactionId++;
-    header.commandId = CMD_WRITE_ATTRIBUTES;
 
     payload.attributeId = qToLittleEndian <quint16> (m_attributeId);
     payload.dataType = m_dataType;
 
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(data);
+    return zclHeader(0x00, m_transactionId++, CMD_WRITE_ATTRIBUTES, m_manufacturerCode).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(data);
 }
 
 QByteArray Actions::Status::request(const QVariant &data)
 {
-    zclHeaderStruct header;
     QString status = data.toString();
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-    header.commandId = status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00;
-
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00);
 }
 
 QByteArray Actions::PowerOnStatus::request(const QVariant &data)
@@ -76,34 +65,27 @@ QByteArray Actions::PowerOnStatus::request(const QVariant &data)
 
 QByteArray Actions::Level::request(const QVariant &data)
 {
-    zclHeaderStruct header;
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-
     switch (data.type())
     {
         case QVariant::LongLong:
         {
             moveToLevelStruct payload;
 
-            header.commandId = 0x00;
             payload.level = static_cast <quint8> (data.toInt() < 0xFE ? data.toInt() : 0xFE);
             payload.time = 0;
 
-            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         case QVariant::List:
         {
-            moveToLevelStruct payload;
             QList <QVariant> list = data.toList();
+            moveToLevelStruct payload;
 
-            header.commandId = 0x00;
             payload.level = static_cast <quint8> (list.value(0).toInt() < 0xFE ? list.value(0).toInt() : 0xFE);
             payload.time = qToLittleEndian <quint16> (list.value(1).toInt());
 
-            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         case QVariant::String:
@@ -113,12 +95,10 @@ QByteArray Actions::Level::request(const QVariant &data)
             if (action != "moveStop")
             {
                 quint8 payload[2] = {static_cast <quint8> (action == "moveUp" ? 0x00 : 0x01), 0x55}; // TODO: check this
-                header.commandId = 0x01;
-                return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+                return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x01).append(reinterpret_cast <char*> (&payload), sizeof(payload));
             }
 
-            header.commandId = 0x07;
-            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x07);
         }
 
         default:
@@ -128,24 +108,18 @@ QByteArray Actions::Level::request(const QVariant &data)
 
 QByteArray Actions::ColorHS::request(const QVariant &data)
 {
-    zclHeaderStruct header;
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-    header.commandId = 0x06;
-
     switch (data.type())
     {
         case QVariant::List:
         {
-            moveToColorHSStruct payload;
             QList <QVariant> list = data.toList();
+            moveToColorHSStruct payload;
 
             payload.colorH = static_cast <quint8> (list.value(0).toInt() < 0xFE ? list.value(0).toInt() : 0xFE);
             payload.colorS = static_cast <quint8> (list.value(1).toInt() < 0xFE ? list.value(1).toInt() : 0xFE);
             payload.time = qToLittleEndian <quint16> (list.value(2).toInt());
 
-            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x06).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         default:
@@ -155,25 +129,19 @@ QByteArray Actions::ColorHS::request(const QVariant &data)
 
 QByteArray Actions::ColorXY::request(const QVariant &data)
 {
-    zclHeaderStruct header;
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-    header.commandId = 0x07;
-
     switch (data.type())
     {
         case QVariant::List:
         {
-            moveToColorXYStruct payload;
             QList <QVariant> list = data.toList();
             double colorX = list.value(0).toDouble() * 0xFFFF, colorY = list.value(1).toDouble() * 0xFFFF;
+            moveToColorXYStruct payload;
 
             payload.colorX = qToLittleEndian <quint16> (colorX < 0xFEFF ? colorX : 0xFEFF);
             payload.colorY = qToLittleEndian <quint16> (colorY < 0xFEFF ? colorY : 0xFEFF);
             payload.time = qToLittleEndian <quint16> (list.value(2).toInt());
 
-            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x07).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         default:
@@ -183,12 +151,6 @@ QByteArray Actions::ColorXY::request(const QVariant &data)
 
 QByteArray Actions::ColorTemperature::request(const QVariant &data)
 {
-    zclHeaderStruct header;
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-    header.commandId = 0x0A;
-
     switch (data.type())
     {
         case QVariant::LongLong:
@@ -198,18 +160,18 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
             payload.temperature = qToLittleEndian <quint16> (data.toInt() < 0xFEFF ? data.toInt() : 0xFEFF);
             payload.time = 0;
 
-            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         case QVariant::List:
         {
-            moveToColorTemperatureStruct payload;
             QList <QVariant> list = data.toList();
+            moveToColorTemperatureStruct payload;
 
             payload.temperature = qToLittleEndian <quint16> (list.value(0).toInt() < 0xFEFF ? list.value(0).toInt() : 0xFEFF);
             payload.time = qToLittleEndian <quint16> (list.value(1).toInt());
 
-            return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         default:
@@ -219,14 +181,8 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
 
 QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
 {
-    zclHeaderStruct header;
     QString status = data.toString();
-
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_transactionId++;
-    header.commandId = status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00;
-
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header));
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00);
 }
 
 QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
@@ -247,7 +203,7 @@ QByteArray ActionsLUMI::Sensitivity::request(const QVariant &data)
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::Mode::request(const QVariant &data)
+QByteArray ActionsLUMI::DetectionMode::request(const QVariant &data)
 {
     QList <QString> list = {"undirected", "directed"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -281,35 +237,30 @@ QByteArray ActionsLUMI::ResetPresence::request(const QVariant &data)
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)
 {
-    zclHeaderStruct zclHeader;
-    tuyaHeaderStruct tuyaHeader;
+    tuyaHeaderStruct header;
 
-    zclHeader.frameControl = FC_CLUSTER_SPECIFIC;
-    zclHeader.transactionId = transactionId;
-    zclHeader.commandId = 0x00;
+    header.status = 0x00;
+    header.transactionId = transactionId;
+    header.dataPoint = dataPoint;
+    header.dataType = dataType;
+    header.function = 0x00;
 
-    tuyaHeader.status = 0x00;
-    tuyaHeader.transactionId = transactionId;
-    tuyaHeader.dataPoint = dataPoint;
-    tuyaHeader.dataType = dataType;
-    tuyaHeader.function = 0x00;
-
-    switch (tuyaHeader.dataType)
+    switch (header.dataType)
     {
         case 0x01:
         case 0x04:
-            tuyaHeader.length = 1;
+            header.length = 1;
             break;
 
         case 0x02:
-            tuyaHeader.length = 4;
+            header.length = 4;
             break;
 
         default:
             return QByteArray();
     }
 
-    return QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&tuyaHeader), sizeof(tuyaHeader)).append(reinterpret_cast <char*> (data), tuyaHeader.length);
+    return zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x00).append(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (data), header.length);
 }
 
 QByteArray ActionsTUYA::Volume::request(const QVariant &data)

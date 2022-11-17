@@ -180,38 +180,27 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
 void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 groupId, bool remove)
 {
     Device device = m_devices->byName(deviceName);
-    zclHeaderStruct header;
 
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_requestId;
-    header.commandId = remove ? 0x03 : 0x00;
-
     groupId = qFromLittleEndian(groupId);
-    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
+    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
 }
 
 void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
 {
     Device device = m_devices->byName(deviceName);
-    zclHeaderStruct header;
 
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    header.frameControl = FC_CLUSTER_SPECIFIC;
-    header.transactionId = m_requestId;
-    header.commandId = 0x04;
-
-    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)), QString("remove all groups request"));
+    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04), QString("remove all groups request"));
 }
 
 void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName)
 {
     Device device = m_devices->byName(deviceName);
-    zclHeaderStruct header;
     otaImageNotifyStruct payload;
 
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator || fileName.isEmpty() || !QFile::exists(fileName))
@@ -219,14 +208,10 @@ void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QStr
 
     m_otaUpgradeFile = fileName;
 
-    header.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT;
-    header.transactionId = m_requestId;
-    header.commandId = 0x00;
-
     payload.type = 0x00;
     payload.jitter = 0x64; // TODO: check this
 
-    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT, m_requestId, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
 }
 
 void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
@@ -266,7 +251,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                     enqueueDataRequest(device, it.value()->id(), action->clusterId(), data, QString("%1 action").arg(action->name()));
 
                 if (action->poll())
-                    enqueueDataRequest(device, it.value()->id(), action->clusterId(), attributesRequest(m_requestId, {action->attributeId()}));
+                    enqueueDataRequest(device, it.value()->id(), action->clusterId(), attributesRequest(m_requestId, {action->attributeId()}, action->manufacturerCode()));
 
                 break;
             }
@@ -318,22 +303,17 @@ void ZigBee::enqueueDeviceRequest(const Device &device, RequestType type)
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(device), type)));
 }
 
-QByteArray ZigBee::attributesRequest(quint8 id, QList<quint16> attributes)
+QByteArray ZigBee::attributesRequest(quint8 id, QList <quint16> attributes, quint16 manufacturerCode)
 {
-    zclHeaderStruct header;
-    QByteArray payload;
-
-    header.frameControl = 0x00;
-    header.transactionId = id;
-    header.commandId = CMD_READ_ATTRIBUTES;
+    QByteArray request = zclHeader(0x00, id, CMD_READ_ATTRIBUTES, manufacturerCode);
 
     for (int i = 0; i < attributes.count(); i++)
     {
         quint16 attributeId = qToLittleEndian(attributes.at(i));
-        payload.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
+        request.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
     }
 
-    return QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload);
+    return request;
 }
 
 bool ZigBee::interviewRequest(quint8 id, const Device &device)
@@ -406,18 +386,13 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             case ZoneStatus::SetAddress:
             {
-                zclHeaderStruct header;
                 writeArrtibutesStruct payload;
                 quint64 ieeeAddress = m_adapter->ieeeAddress();
-
-                header.frameControl = FC_DISABLE_DEFAULT_RESPONSE;
-                header.transactionId = id;
-                header.commandId = CMD_WRITE_ATTRIBUTES;
 
                 payload.attributeId = qToLittleEndian <quint16> (0x0010);
                 payload.dataType = DATA_TYPE_IEEE_ADDRESS;
 
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress))))
+                if (m_adapter->dataRequest(id, device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, zclHeader(FC_DISABLE_DEFAULT_RESPONSE, id, CMD_WRITE_ATTRIBUTES).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress))))
                     return true;
 
                 interviewError(device, "write IAS zone CIE address request failed");
@@ -426,17 +401,12 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             case ZoneStatus::Enroll:
             {
-                zclHeaderStruct header;
                 iasZoneEnrollResponseStruct payload;
-
-                header.frameControl =  FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE;
-                header.transactionId = id;
-                header.commandId = 0x00;
 
                 payload.responseCode = 0x00;
                 payload.zoneId = 0x42;
 
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (&payload), sizeof(payload))) && m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, attributesRequest(id, {0x0000, 0x0010})))
+                if (m_adapter->dataRequest(id, device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload))) && m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, attributesRequest(id, {0x0000, 0x0010})))
                     return true;
 
                 interviewError(device, "enroll IAS zone request failed");
@@ -499,14 +469,9 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
 void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)
 {
     Device device = endpoint->device();
-    zclHeaderStruct header;
-    QByteArray payload;
+    QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
 
     enqueueBindingRequest(device, endpoint->id(), reporting->clusterId());
-
-    header.frameControl = 0x00;
-    header.transactionId = m_requestId;
-    header.commandId = CMD_CONFIGURE_REPORTING;
 
     for (int i = 0; i < reporting->attributes().count(); i++)
     {
@@ -519,10 +484,10 @@ void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
         item.maxInterval = qToLittleEndian(reporting->maxInterval());
         item.valueChange = qToLittleEndian(reporting->valueChange());
 
-        payload.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
+        request.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
     }
 
-    enqueueDataRequest(device, endpoint->id(), reporting->clusterId(), QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload), QString("%1 reporting configuration").arg(reporting->name()));
+    enqueueDataRequest(device, endpoint->id(), reporting->clusterId(), request, QString("%1 reporting configuration").arg(reporting->name()));
 }
 
 void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -712,16 +677,12 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     if (clusterId == CLUSTER_OTA_UPGRADE)
     {
         QFile file(m_otaUpgradeFile);
-        otaFileHeaderStruct fileHeader;
-        zclHeaderStruct zclHeader;
+        otaFileHeaderStruct header;
 
-        memset(&fileHeader, 0, sizeof(fileHeader));
+        memset(&header, 0, sizeof(header));
 
         if (file.exists() && file.open(QFile::ReadOnly))
-            memcpy(&fileHeader, file.read(sizeof(fileHeader)).constData(), sizeof(fileHeader));
-
-        zclHeader.frameControl = FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
-        zclHeader.transactionId = transactionId;
+            memcpy(&header, file.read(sizeof(header)).constData(), sizeof(header));
 
         switch (commandId)
         {
@@ -730,30 +691,28 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 const otaNextImageRequestStruct *request = reinterpret_cast <const otaNextImageRequestStruct*> (payload.constData());
                 otaNextImageResponseStruct response;
 
-                zclHeader.commandId = 0x02;
-
-                if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType)
+                if (!file.isOpen() || request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType)
                 {
-                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(STATUS_NO_IMAGE_AVAILABLE));
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x02).append(STATUS_NO_IMAGE_AVAILABLE));
                     break;
                 }
 
-                if (request->fileVersion == fileHeader.fileVersion)
+                if (request->fileVersion == header.fileVersion)
                 {
                     logInfo << "Device" << device->name() << "OTA upgrade not started, version match:" << QString::asprintf("0x%08X", qFromLittleEndian(request->fileVersion)).toUtf8().constData();
-                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(STATUS_NO_IMAGE_AVAILABLE));
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x02).append(STATUS_NO_IMAGE_AVAILABLE));
                     break;
                 }
 
                 logInfo << "Device" << device->name() << "OTA upgrade started...";
 
                 response.status = 0x00;
-                response.manufacturerCode = fileHeader.manufacturerCode;
-                response.imageType = fileHeader.imageType;
-                response.fileVersion = fileHeader.fileVersion;
-                response.imageSize = fileHeader.imageSize;
+                response.manufacturerCode = header.manufacturerCode;
+                response.imageType = header.imageType;
+                response.fileVersion = header.fileVersion;
+                response.imageSize = header.imageSize;
 
-                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x02).append(reinterpret_cast <char*> (&response), sizeof(response)));
                 break;
             }
 
@@ -761,30 +720,28 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             {
                 const otaImageBlockRequestStruct *request = reinterpret_cast <const otaImageBlockRequestStruct*> (payload.constData());
                 otaImageBlockResponseStruct response;
-                QByteArray data;
+                QByteArray block;
 
-                zclHeader.commandId = 0x05;
-
-                if (!file.isOpen() || request->manufacturerCode != fileHeader.manufacturerCode || request->imageType != fileHeader.imageType ||request->fileVersion != fileHeader.fileVersion)
+                if (!file.isOpen() || request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType ||request->fileVersion != header.fileVersion)
                 {
-                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(STATUS_NO_IMAGE_AVAILABLE));
+                    enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x05).append(STATUS_NO_IMAGE_AVAILABLE));
                     break;
                 }
 
                 file.seek(qFromLittleEndian(request->fileOffset));
-                data = file.read(request->dataSizeMax);
+                block = file.read(request->dataSizeMax);
 
                 // TODO: use percentage here
-                logInfo << "Device" << device->name() << "OTA upgrade writing" << data.length() << "bytes with offset" << QString::asprintf("0x%04X", qFromLittleEndian(request->fileOffset));
+                logInfo << "Device" << device->name() << "OTA upgrade writing" << block.length() << "bytes with offset" << QString::asprintf("0x%04X", qFromLittleEndian(request->fileOffset));
 
                 response.status = 0x00;
                 response.manufacturerCode = request->manufacturerCode;
                 response.imageType = request->imageType;
                 response.fileVersion = request->fileVersion;
                 response.fileOffset = request->fileOffset;
-                response.dataSize = static_cast <quint8> (data.length());
+                response.dataSize = static_cast <quint8> (block.length());
 
-                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)).append(data));
+                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x05).append(reinterpret_cast <char*> (&response), sizeof(response)).append(block));
                 break;
             }
             case 0x06:
@@ -792,7 +749,6 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 const otaUpgradeEndRequestStruct *request = reinterpret_cast <const otaUpgradeEndRequestStruct*> (payload.constData());
                 otaUpgradeEndResponseStruct response;
 
-                zclHeader.commandId = 0x07;
                 m_otaUpgradeFile.clear();
 
                 if (request->status)
@@ -809,7 +765,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 response.currentTime = 0;
                 response.upgradeTime = 0;
 
-                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, QByteArray(reinterpret_cast <char*> (&zclHeader), sizeof(zclHeader)).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                enqueueDataRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x07).append(reinterpret_cast <char*> (&response), sizeof(response)));
                 break;
             }
 
@@ -858,46 +814,41 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
         case CMD_READ_ATTRIBUTES:
         {
-            zclHeaderStruct header;
-            QByteArray data;
+            QByteArray request = zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_READ_ATTRIBUTES_RESPONSE);
             quint16 attributeId;
-
-            header.frameControl = FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
-            header.transactionId = transactionId;
-            header.commandId = CMD_READ_ATTRIBUTES_RESPONSE;
 
             for (quint8 i = 0; i < payload.length(); i += sizeof(attributeId))
             {
                 memcpy(&attributeId, payload.constData() + i, sizeof(attributeId));
                 attributeId = qFromLittleEndian(attributeId);
 
-                data.append(payload.mid(i, sizeof(attributeId)));
+                request.append(payload.mid(i, sizeof(attributeId)));
 
                 if (clusterId == CLUSTER_TIME && (attributeId == 0x0000 || attributeId == 0x0002 || attributeId == 0x0007))
                 {
                     QDateTime now = QDateTime::currentDateTime();
                     quint32 value;
 
-                    data.append(1, static_cast <char> (STATUS_SUCCESS));
+                    request.append(1, static_cast <char> (STATUS_SUCCESS));
 
                     switch (attributeId)
                     {
                         case 0x0000:
                             logInfo << "Device" << device->name() << "requested UTC time";
                             value = qToLittleEndian <quint32> (now.toTime_t() - 946684800);
-                            data.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            request.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0002:
                             logInfo << "Device" << device->name() << "requested time zone";
                             value = qToLittleEndian <quint32> (now.offsetFromUtc());
-                            data.append(1, static_cast <char> (DATA_TYPE_32BIT_SIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            request.append(1, static_cast <char> (DATA_TYPE_32BIT_SIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0007:
                             logInfo << "Device" << device->name() << "requested local time";
                             value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - 946684800);
-                            data.append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            request.append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
                     }
 
@@ -905,10 +856,10 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 }
 
                 logWarning << "Device" << device->name() << "requested unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "from cluster" << QString::asprintf("0x%04X", clusterId);
-                data.append(1, static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
+                request.append(1, static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
             }
 
-            enqueueDataRequest(device, endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(data));
+            enqueueDataRequest(device, endpoint->id(), clusterId, request);
             break;
         }
 
@@ -973,12 +924,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
 void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 {
-    zclHeaderStruct header;
     touchLinkScanStruct payload;
-
-    header.frameControl = FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE;
-    header.transactionId = m_requestId;
-    header.commandId = 0x00;
 
     payload.transactionId = QRandomGenerator::global()->generate();
     payload.zigBeeInformation = 0x04;
@@ -987,15 +933,13 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
     if (!m_adapter->setInterPanChannel(channel))
         return;
 
-    if (!m_adapter->extendedDataRequest(m_requestId, 0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
+    if (!m_adapter->extendedDataRequest(m_requestId, 0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, m_requestId, 0x00).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
     {
         logWarning << "TouchLink scan request failed";
         return;
     }
 
-    header.commandId = 0x07;
-
-    if (!m_adapter->extendedDataRequest(m_requestId, ieeeAddress, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload.transactionId)))))
+    if (!m_adapter->extendedDataRequest(m_requestId, ieeeAddress, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, m_requestId, 0x07).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload.transactionId)))))
     {
         logWarning << "TouchLink reset request failed";
         return;
@@ -1006,17 +950,14 @@ void ZigBee::touchLinkReset(const QByteArray &ieeeAddress, quint8 channel)
 
 void ZigBee::touchLinkScan(void)
 {
-    zclHeaderStruct header;
+    QByteArray request = zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, m_requestId, 0x00);
     touchLinkScanStruct payload;
-
-    header.frameControl = FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE;
-    header.transactionId = m_requestId;
-    header.commandId = 0x00;
 
     payload.transactionId = QRandomGenerator::global()->generate();
     payload.zigBeeInformation = 0x04;
     payload.touchLinkInformation = 0x12;
 
+    request.append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)));
     logInfo << "TouchLink scan started...";
 
     for (m_interPanChannel = 11; m_interPanChannel <= 26; m_interPanChannel++)
@@ -1024,7 +965,7 @@ void ZigBee::touchLinkScan(void)
         if (!m_adapter->setInterPanChannel(m_interPanChannel))
             return;
 
-        if (!m_adapter->extendedDataRequest(m_requestId, 0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&payload), sizeof(payload)))))
+        if (!m_adapter->extendedDataRequest(m_requestId, 0xFFFF, 0xFE, 0xFFFF, 0x0C, CLUSTER_TOUCHLINK, request))
         {
             logWarning << "TouchLink scan request failed";
             return;
@@ -1309,33 +1250,32 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 {
     Device device = m_devices->byNetwork(networkAddress);
     Endpoint endpoint;
-    zclHeaderStruct header;
+    quint8 frameControl = static_cast <quint8> (data.at(0)), transactionId, commandId;
     QByteArray payload;
 
     if (device.isNull() || device->removed())
         return;
 
     endpoint = m_devices->endpoint(device, endpointId);
-    header.frameControl = static_cast <quint8> (data.at(0));
     blink(50);
 
-    if (header.frameControl & FC_MANUFACTURER_SPECIFIC)
+    if (frameControl & FC_MANUFACTURER_SPECIFIC)  // TODO: get manufacturerCode
     {
-        header.transactionId = static_cast <quint8> (data.at(3));
-        header.commandId = static_cast <quint8> (data.at(4));
+        transactionId = static_cast <quint8> (data.at(3));
+        commandId = static_cast <quint8> (data.at(4));
         payload = data.mid(5);
     }
     else
     {
-        header.transactionId = static_cast <quint8> (data.at(1));
-        header.commandId = static_cast <quint8> (data.at(2));
+        transactionId = static_cast <quint8> (data.at(1));
+        commandId = static_cast <quint8> (data.at(2));
         payload = data.mid(3);
     }
 
-    if (header.frameControl & FC_CLUSTER_SPECIFIC)
-        clusterCommandReceived(endpoint, clusterId, header.transactionId, header.commandId, payload);
+    if (frameControl & FC_CLUSTER_SPECIFIC)
+        clusterCommandReceived(endpoint, clusterId, transactionId, commandId, payload);
     else
-        globalCommandReceived(endpoint, clusterId, header.transactionId, header.commandId, payload);
+        globalCommandReceived(endpoint, clusterId, transactionId, commandId, payload);
 
     device->setLinkQuality(linkQuality);
     device->updateLastSeen();
@@ -1346,17 +1286,14 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         emit endpointUpdated(device, endpoint->id());
     }
 
-    if ((header.frameControl & FC_CLUSTER_SPECIFIC || header.commandId == CMD_REPORT_ATTRIBUTES) && !(header.frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    if ((frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
         defaultResponseStruct response;
 
-        header.frameControl = FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE;
-        header.commandId = CMD_DEFAULT_RESPONSE;
-
-        response.commandId = header.commandId;
+        response.commandId = commandId;
         response.status = 0x00;
 
-        enqueueDataRequest(device, endpoint->id(), clusterId, QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
+        enqueueDataRequest(device, endpoint->id(), clusterId, zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_DEFAULT_RESPONSE).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
     }
 }
 
@@ -1365,9 +1302,7 @@ void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpo
     Q_UNUSED(endpointId)
     Q_UNUSED(linkQuality)
 
-    const zclHeaderStruct *header = reinterpret_cast <const zclHeaderStruct*> (data.constData());
-
-    if (clusterId == CLUSTER_TOUCHLINK && header->commandId == 0x01)
+    if (clusterId == CLUSTER_TOUCHLINK && data.at(2) == 0x01)
     {
         logInfo << "TouchLink scan response received from device" << ieeeAddress.toHex(':') << "at channel" << m_interPanChannel;
         return;

@@ -13,16 +13,17 @@ class ActionObject
 
 public:
 
-    ActionObject(const QString &name, quint16 clusterId, quint16 attributeId = 0, quint8 dataType = 0, bool poll = false) :
-        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId), m_dataType(dataType), m_poll(poll), m_transactionId(0) {}
+    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode = 0, quint16 attributeId = 0, quint8 dataType = 0, bool poll = false) :
+        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributeId(attributeId), m_dataType(dataType), m_poll(poll), m_transactionId(0) {}
 
     virtual ~ActionObject(void) {}
     virtual QByteArray request(const QVariant &data) = 0;
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
-    inline quint8 dataType(void) { return m_dataType; }
+    inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
     inline quint16 attributeId(void) { return m_attributeId; }
+    inline quint8 dataType(void) { return m_dataType; }
     inline bool poll(void) { return m_poll; }
 
     inline void setOptions(const QMap <QString, QVariant> &value) { m_options = value; }
@@ -31,16 +32,14 @@ public:
 protected:
 
     QString m_name;
-    quint16 m_clusterId;
-
-    quint16 m_attributeId;
+    quint16 m_clusterId, m_manufacturerCode, m_attributeId;
     quint8 m_dataType;
     bool m_poll;
 
     quint8 m_transactionId;
     QMap <QString, QVariant> m_options;
 
-    QByteArray writeAttributeRequest(const QByteArray &data);
+    QByteArray writeAttributeRequest(const QByteArray &data); // TODO: move this to zcl
 
 };
 
@@ -61,7 +60,7 @@ namespace Actions
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x4003, DATA_TYPE_8BIT_ENUM, true) {}
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x4003, DATA_TYPE_8BIT_ENUM, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -124,7 +123,7 @@ namespace ActionsPTVO
 
     public:
 
-        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, true) {}
+        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT, 0x0000, 0x0055, DATA_TYPE_SINGLE_PRECISION, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -137,17 +136,17 @@ namespace ActionsLUMI
 
     public:
 
-        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_LUMI, 0x010C, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_LUMI, 0x115F, 0x010C, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class Mode : public ActionObject
+    class DetectionMode : public ActionObject
     {
 
     public:
 
-        Mode(void) : ActionObject("mode", CLUSTER_LUMI, 0x0144, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        DetectionMode(void) : ActionObject("mode", CLUSTER_LUMI, 0x115F, 0x0144, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -157,7 +156,7 @@ namespace ActionsLUMI
 
     public:
 
-        Distance(void) : ActionObject("distance", CLUSTER_LUMI, 0x0146, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        Distance(void) : ActionObject("distance", CLUSTER_LUMI, 0x115F, 0x0146, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -167,7 +166,7 @@ namespace ActionsLUMI
 
     public:
 
-        ResetPresence(void) : ActionObject("resetPresence", CLUSTER_LUMI, 0x0157, DATA_TYPE_8BIT_UNSIGNED) {}
+        ResetPresence(void) : ActionObject("resetPresence", CLUSTER_LUMI, 0x115F, 0x0157, DATA_TYPE_8BIT_UNSIGNED) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -269,7 +268,7 @@ namespace ActionsTUYA
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x8002, DATA_TYPE_8BIT_ENUM, true) {}
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x8002, DATA_TYPE_8BIT_ENUM, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -282,7 +281,7 @@ namespace ActionsPerenio
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO, 0x0000, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO, 0x0000, 0x0000, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -292,7 +291,7 @@ namespace ActionsPerenio
 
     public:
 
-        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO, 0x0001, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO, 0x0000, 0x0001, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -302,7 +301,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO, 0x0004, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO, 0x0000, 0x0004, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -312,7 +311,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO, 0x0005, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO, 0x0000, 0x0005, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -322,7 +321,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO, 0x000B, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO, 0x0000, 0x000B, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -332,7 +331,7 @@ namespace ActionsPerenio
 
     public:
 
-        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO, 0x000F, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO, 0x0000, 0x000F, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
