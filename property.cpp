@@ -39,6 +39,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::ButtonAction>            ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>            ("lumiCubeMovementProperty");
@@ -50,7 +51,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::SwitchType>              ("tuyaSwitchTypeProperty");
     qRegisterMetaType <PropertiesTUYA::Unknown>                 ("tuyaUnknownProperty");
 
-    qRegisterMetaType <PropertiesOther::KonkeSwitchAction>      ("konkeSwitchActionProperty");
+    qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>  ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>       ("perenioSmartPlugProperty");
 }
@@ -514,7 +515,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
     {
         case 0x0003:
         {
-            if (m_modelName != "lumi.sen_ill.mgl01")
+            if (m_modelName != "lumi.remote.b686opcn01" && m_modelName != "lumi.sen_ill.mgl01")
             {
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
@@ -534,6 +535,21 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
 
             memcpy(&value, data.constData(), data.length());
             map.insert("outageCount", qFromLittleEndian(value) - 1);
+            break;
+        }
+
+        case 0x0009:
+        {
+            if (m_modelName == "lumi.remote.b686opcn01")
+            {
+                QList <QString> list = {"command", "event"};
+
+                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+                    break;
+
+                map.insert("mode", list.value(data.at(0), "unknown"));
+            }
+
             break;
         }
 
@@ -715,19 +731,38 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, quint8 dataType, 
     m_value = static_cast <double> (round(value * 100)) / 100;
 }
 
-void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (((attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN) && (attributeId != 0x8000 || dataType != DATA_TYPE_8BIT_UNSIGNED)) || data.length() != 1)
         return;
 
     switch (static_cast <quint8> (data.at(0)))
     {
-        case 0x00: m_value = "on"; break;
-        case 0x01: m_value = "off"; break;
+        case 0x00: m_value = "on"; break;               // TODO: singleClick
+        case 0x01: m_value = "off"; break;              // TODO: release
         case 0x02: m_value = "doubleClick"; break;
         case 0x03: m_value = "tripleClick"; break;
         case 0x04: m_value = "quadrupleClick"; break;
         case 0x80: m_value = "multipleClick"; break;
+    }
+}
+
+void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    qint16 value = 0;
+
+    if (attributeId != 0x0055 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+
+    switch (qFromLittleEndian(value))
+    {
+        case 0x0000: m_value = "longClick"; break;
+        case 0x0001: m_value = "singleClick"; break;
+        case 0x0002: m_value = "doubleClick"; break;
+        case 0x0003: m_value = "tripleClick"; break;
+        case 0x00FF: m_value = "release"; break;
     }
 }
 
@@ -902,7 +937,7 @@ void PropertiesTUYA::Unknown::parseAttribte(quint16 attributeId, quint8 dataType
     Q_UNUSED(data)
 }
 
-void PropertiesOther::KonkeSwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0000 && dataType != DATA_TYPE_BOOLEAN)
         return;

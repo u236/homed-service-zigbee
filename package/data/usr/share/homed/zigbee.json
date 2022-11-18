@@ -142,9 +142,9 @@
       "properties":     ["batteryPercentage", "temperature", "humidity", "illuminance"]
     },
     {
-      "description":    "Konke Wireless Switch 2AJZ4KPKEY",
+      "description":    "Konke Wireless Button 2AJZ4KPKEY",
       "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
-      "properties":     ["batteryPercentage", "konkeSwitchAction", "lumiUnknown"]
+      "properties":     ["batteryPercentage", "konkeButtonAction", "lumiUnknown"]
     },
     {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
@@ -217,10 +217,22 @@
       "properties":     ["lumiBatteryVoltage", "temperature", "humidity"]
     },
     {
-      "description":    "Xiaomi Wireless Switch WXKG01LM",
+      "description":    "Xiaomi Wireless Button WXKG01LM",
       "modelNames":     ["lumi.sensor_switch"],
-      "properties":     ["lumiBatteryVoltage", "lumiSwitchAction"]
+      "properties":     ["lumiBatteryVoltage", "lumiButtonAction"]
     },
+
+
+    {
+      "description":    "Aqara Opple Wireless Switch WXCJKG13LM",
+      "modelNames":     ["lumi.remote.b686opcn01"],
+      "actions":        ["lumiOperationMode"],
+      "properties":     ["batteryVoltage", "lumiData", "lumiSwitchAction"],
+      "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
+      "endpointId":     [1, 2, 3, 4, 5, 6]
+    },
+
+
     {
       "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],

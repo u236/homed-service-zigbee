@@ -131,6 +131,16 @@ namespace ActionsPTVO
 
 namespace ActionsLUMI
 {
+    class OperationMode : public ActionObject
+    {
+
+    public:
+
+        OperationMode(void) : ActionObject("mode", CLUSTER_LUMI, 0x115F, 0x0009, DATA_TYPE_8BIT_UNSIGNED, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
     class Sensitivity : public ActionObject
     {
 

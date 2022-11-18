@@ -414,12 +414,22 @@ namespace PropertiesLUMI
 
     };
 
+    class ButtonAction : public PropertyObject
+    {
+
+    public:
+
+        ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class SwitchAction : public PropertyObject
     {
 
     public:
 
-        SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
+        SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
@@ -523,12 +533,12 @@ namespace PropertiesTUYA
 
 namespace PropertiesOther
 {
-    class KonkeSwitchAction : public PropertyObject
+    class KonkeButtonAction : public PropertyObject
     {
 
     public:
 
-        KonkeSwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
+        KonkeButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

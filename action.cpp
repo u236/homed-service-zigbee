@@ -13,6 +13,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::ChangePattern>          ("ptvoChangePatternAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
+    qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::Sensitivity>            ("lumiSensitivityAction");
     qRegisterMetaType <ActionsLUMI::DetectionMode>          ("lumiDetectionModeAction");
     qRegisterMetaType <ActionsLUMI::Distance>               ("lumiDistanceAction");
@@ -188,6 +189,17 @@ QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
 QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
 {
     float value = data.toFloat();
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::OperationMode::request(const QVariant &data)
+{
+    QList <QString> list = {"command", "event"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
