@@ -510,6 +510,7 @@ void DeviceList::writeDatabase(void)
     if (m_databaseFile.open(QFile::WriteOnly | QFile::Text))
     {
         m_databaseFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        m_databaseFile.flush();
         m_databaseFile.close();
     }
     else
@@ -528,6 +529,7 @@ void DeviceList::writeProperties(void)
     if (m_propertiesFile.open(QFile::WriteOnly | QFile::Text))
     {
         m_propertiesFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        m_propertiesFile.flush();
         m_propertiesFile.close();
     }
     else

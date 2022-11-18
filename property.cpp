@@ -373,7 +373,7 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
     {
         case 0x01:
         case 0x05:
-            m_value = payload.at(0) ? "moveLevelDown" : "movLevelUp";
+            m_value = payload.at(0) ? "moveLevelDown" : "moveLevelUp";
             break;
 
         case 0x02:
@@ -630,7 +630,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                     break;
 
-                if (dataPoint != 0x0066 ? dataPoint == 0x010C : m_version < 50)
+                if (dataPoint != 0x0066 ? dataPoint == 0x010C : m_version >= 50)
                 {
                     QList <QString> list = {"low", "medium", "high"};
                     map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));

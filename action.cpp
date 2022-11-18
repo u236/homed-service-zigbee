@@ -94,9 +94,9 @@ QByteArray Actions::Level::request(const QVariant &data)
         {
             QString action = data.toString();
 
-            if (action != "moveStop")
+            if (action != "stopLevel") // TODO: add step actions
             {
-                quint8 payload[2] = {static_cast <quint8> (action == "moveUp" ? 0x00 : 0x01), 0x55}; // TODO: check this
+                quint8 payload[2] = {static_cast <quint8> (action == "moveLevelUp" ? 0x00 : 0x01), 0x55}; // TODO: check this
                 return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x01).append(reinterpret_cast <char*> (&payload), sizeof(payload));
             }
 
