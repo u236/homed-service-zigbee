@@ -132,9 +132,6 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
 
-    inline bool multipleEndpoints(void) { return m_multipleEndpoints; }
-    inline void setMultipleEndpoints(bool value) { m_multipleEndpoints = value; }
-
     inline QString description(void) { return m_description; }
     inline void setDescription(const QString &value) { m_description = value; }
 
@@ -160,8 +157,6 @@ private:
 
     qint64 m_lastSeen;
     quint8 m_linkQuality;
-
-    bool m_multipleEndpoints;
     QString m_description;
 
     QMap <QString, QVariant> m_options;
@@ -191,7 +186,7 @@ public:
     Endpoint endpoint(const Device &device, quint8 endpointId);
 
     void setupDevice(const Device &device);
-    void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json);
+    void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
     void removeDevice(const Device &device);
 
     void storeDatabase(void);

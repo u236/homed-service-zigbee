@@ -110,8 +110,6 @@ void DeviceList::setupDevice(const Device &device)
             QJsonValue endpoinId = json.value("endpointId");
             QList <QVariant> list = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
 
-            device->setMultipleEndpoints(endpoinId.type() == QJsonValue::Array);
-
             if (json.contains("description"))
                 device->setDescription(json.value("description").toString());
 
@@ -119,7 +117,7 @@ void DeviceList::setupDevice(const Device &device)
                 device->options() = json.value("options").toObject().toVariantMap();
 
             for (int i = 0; i < list.count(); i++)
-                setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json);
+                setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
 
             check = true;
         }
@@ -131,7 +129,7 @@ void DeviceList::setupDevice(const Device &device)
     logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
 }
 
-void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json)
+void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
 {
     Device device = endpoint->device();
     QJsonArray actions = json.value("actions").toArray(), properties = json.value("properties").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
@@ -159,6 +157,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
+            property->setMultiple(multiple);
             property->setModelName(device->modelName());
             property->setVersion(device->version());
             property->setOptions(device->options());

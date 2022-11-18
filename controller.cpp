@@ -138,28 +138,22 @@ void Controller::deviceEvent(const Device &device, const QString &event)
 
 void Controller::endpointUpdated(const Device &device, quint8 endpointId)
 {
-    QJsonObject json;
+    QMap <QString, QVariant> endpointMap, deviceMap;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (device->multipleEndpoints() && it.value()->id() != endpointId)
-            continue;
-
         for (int i = 0; i < it.value()->properties().count(); i++)
         {
             const Property &property = it.value()->properties().at(i);
+            QMap <QString, QVariant> &map = property->multiple() ? endpointMap : deviceMap;
 
             if (!property->value().isValid())
                 continue;
 
-            if (property->value().type() == QVariant::Map)
-            {
-                QMap <QString, QVariant> map = json.toVariantMap();
-                map.insert(property->value().toMap());
-                json = QJsonObject::fromVariantMap(map);
-            }
+            if (property->value().type() != QVariant::Map)
+                map.insert(property->name(), property->value());
             else
-                json.insert(property->name(), QJsonValue::fromVariant(property->value()));
+                map.insert(property->value().toMap());
 
             if (!property->singleShot())
                 continue;
@@ -170,11 +164,11 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
         it.value()->setUpdated(false);
     }
 
-    if (json.isEmpty())
-        return;
+    if (!endpointMap.isEmpty())
+        mqttPublish(mqttTopic("fd/zigbee/%1/%2").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')).arg(endpointId), QJsonObject::fromVariantMap(endpointMap));
 
-    json.insert("linkQuality", device->linkQuality());
-    mqttPublish(mqttTopic("fd/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')).append(device->multipleEndpoints() ? QString("/%1").arg(endpointId) : QString()), json);
+    deviceMap.insert("linkQuality", device->linkQuality());
+    mqttPublish(mqttTopic("fd/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(deviceMap));
 }
 
 void Controller::statusUpdated(const QJsonObject &json)

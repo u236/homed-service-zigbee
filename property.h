@@ -29,6 +29,9 @@ public:
     inline bool singleShot(void) { return m_singleShot; }
     inline void clear(void) { m_value = QVariant(); }
 
+    inline bool multiple(void) { return m_multiple; }
+    inline void setMultiple(bool value) { m_multiple = value; }
+
     inline void setModelName(const QString &value) { m_modelName = value; }
     inline void setVersion(quint8 value) { m_version = value; }
     inline void setOptions(const QMap <QString, QVariant> &value) { m_options = value; }
@@ -40,7 +43,7 @@ protected:
     QString m_name;
     quint16 m_clusterId;
     QVariant m_value;
-    bool m_singleShot;
+    bool m_singleShot, m_multiple;
 
     QString m_modelName;
     quint8 m_version;
