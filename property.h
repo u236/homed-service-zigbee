@@ -260,6 +260,16 @@ namespace Properties
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
+
+    class ColorAction : public PropertyObject
+    {
+
+    public:
+
+        ColorAction(void) : PropertyObject("action", CLUSTER_COLOR_CONTROL, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
 }
 
 namespace PropertiesIAS

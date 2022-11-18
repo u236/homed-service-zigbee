@@ -23,6 +23,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::IdentifyAction>              ("identifyActionProperty");
     qRegisterMetaType <Properties::SwitchAction>                ("switchActionProperty");
     qRegisterMetaType <Properties::LevelAction>                 ("levelActionProperty");
+    qRegisterMetaType <Properties::ColorAction>                 ("colorActionProperty");
 
     qRegisterMetaType <PropertiesIAS::Contact>                  ("iasContactProperty");
     qRegisterMetaType <PropertiesIAS::Contact>                  ("iasGasProperty");
@@ -368,13 +369,50 @@ void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &
 
 void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
-    Q_UNUSED(payload)
-
     switch (commandId)
     {
-        case 0x01: m_value = "moveDown"; break;
-        case 0x05: m_value = "moveUp"; break;
-        case 0x07: m_value = "moveStop"; break;
+        case 0x01:
+        case 0x05:
+            m_value = payload.at(0) ? "moveLevelDown" : "movLevelUp";
+            break;
+
+        case 0x02:
+        case 0x06:
+            m_value = payload.at(0) ? "stepLevelDown" : "stepLevelUp";
+            break;
+
+        case 0x03:
+        case 0x07:
+            m_value = "stopLevel";
+            break;
+    }
+}
+
+void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &payload)
+{
+    switch (commandId)
+    {
+        case 0x4B:
+
+            switch (payload.at(0))
+            {
+                case 0x00: m_value = "stopColorTemperature"; break;
+                case 0x01: m_value = "moveColorTemperatureUp"; break;
+                case 0x03: m_value = "moveColorTemperatureDown"; break;
+            }
+
+            break;
+
+
+        case 0x4C:
+
+            switch (payload.at(0))
+            {
+                case 0x01: m_value = "stepColorTemperatureUp"; break;
+                case 0x03: m_value = "stepColorTemperatureDown"; break;
+            }
+
+            break;
     }
 }
 
@@ -919,7 +957,7 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 da
 
 void PropertiesTUYA::SwitchType::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (attributeId != 0x0030 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+    if (attributeId != 0xD030 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
         return;
 
     switch (static_cast <quint8> (data.at(0)))

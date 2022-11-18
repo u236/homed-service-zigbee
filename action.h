@@ -282,6 +282,16 @@ namespace ActionsTUYA
         QByteArray request(const QVariant &data) override;
 
     };
+
+    class SwitchType : public ActionObject
+    {
+
+    public:
+
+        SwitchType(void) : ActionObject("switchType", CLUSTER_TUYA_SWITCH_TYPE, 0x0000, 0xD030, DATA_TYPE_8BIT_ENUM, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
 }
 
 namespace ActionsPerenio

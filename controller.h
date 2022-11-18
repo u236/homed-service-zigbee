@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION     "3.0.43"
+#define SERVICE_VERSION     "3.0.44"
 
 #include <QMetaEnum>
 #include "homed.h"

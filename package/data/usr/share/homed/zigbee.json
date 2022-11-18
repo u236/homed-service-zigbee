@@ -221,18 +221,45 @@
       "modelNames":     ["lumi.sensor_switch"],
       "properties":     ["lumiBatteryVoltage", "lumiButtonAction"]
     },
-
-
     {
-      "description":    "Aqara Opple Wireless Switch WXCJKG13LM",
+      "description":    "Aqara Opple 2-band Wireless Switch WXCJKG11LM",
+      "modelNames":     ["lumi.remote.b286opcn01"],
+      "actions":        ["lumiOperationMode"],
+      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "lumiData"],
+      "reportings":     ["batteryVoltage", "status"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.remote.b286opcn01"],
+      "properties":     ["lumiSwitchAction"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "Aqara Opple 4-band Wireless Switch WXCJKG12LM",
+      "modelNames":     ["lumi.remote.b486opcn01"],
+      "actions":        ["lumiOperationMode"],
+      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.remote.b486opcn01"],
+      "properties":     ["lumiSwitchAction"],
+      "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "Aqara Opple 6-band Wireless Switch WXCJKG13LM",
       "modelNames":     ["lumi.remote.b686opcn01"],
       "actions":        ["lumiOperationMode"],
-      "properties":     ["batteryVoltage", "lumiData", "lumiSwitchAction"],
+      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.remote.b686opcn01"],
+      "properties":     ["lumiSwitchAction"],
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
-
-
     {
       "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
@@ -317,39 +344,63 @@
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
       "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
-      "actions":        ["status", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaPowerOnStatus", "tuyaSwitchType"],
       "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
       "reportings":     ["status"]
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
       "modelNames":     ["TS0002", "TS0012"],
-      "actions":        ["status", "tuyaPowerOnStatus"],
-      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0002", "TS0012"],
+      "actions":        ["status"],
+      "properties":     ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2]
     },
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay/Switch",
       "modelNames":     ["TS0003", "TS0013"],
-      "actions":        ["status", "tuyaPowerOnStatus"],
-      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0003", "TS0013"],
+      "actions":        ["status"],
+      "properties":     ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3]
     },
     {
       "description":    "TUYA TS0004/TS0014 4-Channel Relay/Switch",
       "modelNames":     ["TS0004", "TS0014"],
-      "actions":        ["status", "tuyaPowerOnStatus"],
-      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0004", "TS0014"],
+      "actions":        ["status"],
+      "properties":     ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3, 4]
     },
     {
       "description":    "TUYA TS0006 6-Channel Relay/Switch",
       "modelNames":     ["TS0006"],
-      "actions":        ["status", "tuyaPowerOnStatus"],
-      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0006"],
+      "actions":        ["status"],
+      "properties":     ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
