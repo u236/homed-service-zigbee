@@ -1,5 +1,6 @@
 #include <math.h>
 #include <QtEndian>
+#include "device.h"
 #include "property.h"
 
 void PropertyObject::registerMetaTypes(void)
@@ -57,6 +58,24 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>       ("perenioSmartPlugProperty");
 }
 
+quint8 PropertyObject::deviceVersion(void)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->version() : 0;
+}
+
+QString PropertyObject::deviceModelName(void)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->modelName() : QString();
+}
+
+QVariant PropertyObject::deviceOption(const QString &key)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
+}
+
 quint8 PropertyObject::percentage(double min, double max, double value)
 {
     if (value < min)
@@ -81,7 +100,7 @@ void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, quint8 da
     if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
         return;
 
-    m_value = static_cast <quint8> (data.at(0)) / (m_options.value("batteryUndivided").toBool() ? 1.0 : 2.0);
+    m_value = static_cast <quint8> (data.at(0)) / (deviceOption("batteryUndivided").toBool() ? 1.0 : 2.0);
 }
 
 void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -337,7 +356,7 @@ void Properties::Power::parseAttribte(quint16 attributeId, quint8 dataType, cons
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
-    QVariant scene = m_options.value("scenes").toMap().value(QString::number(command->sceneId));
+    QVariant scene = deviceOption("scenes").toMap().value(QString::number(command->sceneId));
 
     if (commandId != 0x05)
         return;
@@ -549,11 +568,13 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
 
 void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data, QMap <QString, QVariant> &map)
 {
+    QString modelName = deviceModelName();
+
     switch (dataPoint)
     {
         case 0x0003:
         {
-            if (m_modelName != "lumi.remote.b686opcn01" && m_modelName != "lumi.sen_ill.mgl01")
+            if (modelName != "lumi.remote.b686opcn01" && modelName != "lumi.sen_ill.mgl01")
             {
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
@@ -578,7 +599,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
 
         case 0x0009:
         {
-            if (m_modelName == "lumi.remote.b686opcn01")
+            if (modelName == "lumi.remote.b686opcn01")
             {
                 QList <QString> list = {"command", "event"};
 
@@ -593,7 +614,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
 
         case 0x0064:
         {
-            if (m_modelName == "lumi.sen_ill.mgl01")
+            if (modelName == "lumi.sen_ill.mgl01")
             {
                 quint32 value;
 
@@ -610,7 +631,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0065:
         case 0x0142:
         {
-            if (m_modelName == "lumi.motion.ac01")
+            if (modelName == "lumi.motion.ac01")
             {
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
@@ -625,12 +646,12 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x010C:
         case 0x0143:
         {
-            if (m_modelName == "lumi.motion.ac01")
+            if (modelName == "lumi.motion.ac01")
             {
                 if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                     break;
 
-                if (dataPoint != 0x0066 ? dataPoint == 0x010C : m_version >= 50)
+                if (dataPoint != 0x0066 ? dataPoint == 0x010C : deviceVersion() >= 50)
                 {
                     QList <QString> list = {"low", "medium", "high"};
                     map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
@@ -649,7 +670,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0067:
         case 0x0144:
         {
-            if (m_modelName == "lumi.motion.ac01")
+            if (modelName == "lumi.motion.ac01")
             {
                 QList <QString> list = {"undirected", "directed"};
 
@@ -665,7 +686,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0069:
         case 0x0146:
         {
-            if (m_modelName == "lumi.motion.ac01")
+            if (modelName == "lumi.motion.ac01")
             {
                 QList <QString> list = {"far", "middle", "near"};
 

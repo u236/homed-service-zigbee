@@ -52,8 +52,8 @@ public:
     inline ZoneStatus zoneStatus(void) { return m_zoneStatus; }
     inline void setZoneStatus(ZoneStatus value) { m_zoneStatus = value; }
 
-    inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Property> &properties(void) { return m_properties; }
+    inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Reporting> &reportings(void) { return m_reportings; }
     inline QList <Poll> &polls(void) { return m_polls; }
 

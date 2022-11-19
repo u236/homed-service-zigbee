@@ -4,8 +4,8 @@
     {
       "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
       "modelNames":     ["lumi.motion.ac01"],
-      "actions":        ["lumiSensitivity", "lumiDetectionMode", "lumiDistance", "lumiResetPresence"],
       "properties":     ["lumiData"],
+      "actions":        ["lumiSensitivity", "lumiDetectionMode", "lumiDistance", "lumiResetPresence"],
       "polls":          ["lumiPresenceSensor"]
     }
   ],
@@ -31,8 +31,8 @@
     {
       "description":    "Life Control Smart Bulb MCLH-02",
       "modelNames":     ["vivi ZLight"],
-      "actions":        ["status", "level", "colorHS", "colorXY"],
       "properties":     ["status", "level", "colorHS", "colorXY"],
+      "actions":        ["status", "level", "colorHS", "colorXY"],
       "polls":          ["status", "level", "colorHS", "colorXY"],
       "endpointId":     11,
       "pollInterval":   60
@@ -64,21 +64,21 @@
     {
       "description":    "PTVO Firmware Based Smart Plug",
       "modelNames":     ["LC Outlet"],
-      "actions":        ["status"],
-      "properties":     ["status"]
+      "properties":     ["status"],
+      "actions":        ["status"]
     },
     {
       "description":    "PTVO Firmware Based RGB Led Controller",
       "modelNames":     ["RGB Strip"],
-      "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "properties":     ["status", "level"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "reportings":     ["status"],
       "endpointId":     1
     },
     {
       "modelNames":     ["RGB Strip"],
-      "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
+      "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "endpointId":     2
     }
   ],
@@ -88,15 +88,15 @@
     {
       "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
       "modelNames":     ["TRADFRI bulb E14 WS 470lm"],
-      "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "reportings":     ["status", "level", "colorTemperature"]
     },
     {
       "description":    "TRADFRI Dimmable Bulb",
       "modelNames":     ["TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
-      "actions":        ["status", "powerOnStatus", "level"],
       "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
       "reportings":     ["status", "level"]
     },
     {
@@ -191,8 +191,8 @@
     {
       "description":    "Aqara 10A Smart Plug SP-EUC01",
       "modelNames":     ["lumi.plug.maeu01"],
-      "actions":        ["status"],
       "properties":     ["status", "lumiData"],
+      "actions":        ["status"],
       "reportings":     ["status"],
       "endpointId":     1
     },
@@ -224,8 +224,8 @@
     {
       "description":    "Aqara Opple 2-band Wireless Switch WXCJKG11LM",
       "modelNames":     ["lumi.remote.b286opcn01"],
-      "actions":        ["lumiOperationMode"],
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "lumiData"],
+      "actions":        ["lumiOperationMode"],
       "reportings":     ["batteryVoltage", "status"],
       "endpointId":     1
     },
@@ -237,8 +237,8 @@
     {
       "description":    "Aqara Opple 4-band Wireless Switch WXCJKG12LM",
       "modelNames":     ["lumi.remote.b486opcn01"],
-      "actions":        ["lumiOperationMode"],
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "actions":        ["lumiOperationMode"],
       "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
       "endpointId":     1
     },
@@ -250,8 +250,8 @@
     {
       "description":    "Aqara Opple 6-band Wireless Switch WXCJKG13LM",
       "modelNames":     ["lumi.remote.b686opcn01"],
-      "actions":        ["lumiOperationMode"],
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "actions":        ["lumiOperationMode"],
       "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
       "endpointId":     1
     },
@@ -305,8 +305,8 @@
     {
       "description":    "Perenio 16A Smart Plug PEHPL0X",
       "modelNames":     ["PEHPL0X"],
-      "actions":        ["status", "perenioPowerOnStatus", "perenioResetAlarms", "perenioAlarmVoltageMin", "perenioAlarmVoltageMax", "perenioAlarmPowerMax", "perenioAlarmEnergyLimit"],
       "properties":     ["status", "perenioSmartPlug"],
+      "actions":        ["status", "perenioPowerOnStatus", "perenioResetAlarms", "perenioAlarmVoltageMin", "perenioAlarmVoltageMax", "perenioAlarmPowerMax", "perenioAlarmEnergyLimit"],
       "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
       "polls":          ["perenioSmartPlug"]
     },
@@ -323,8 +323,8 @@
     {
       "description":    "Sonoff Relay/Switch ZBMINI",
       "modelNames":     ["01MINIZB"],
-      "actions":        ["status"],
-      "properties":     ["status"]
+      "properties":     ["status"],
+      "actions":        ["status"]
     }
   ],
 
@@ -333,8 +333,8 @@
     {
       "description":    "Life Control 10A Smart Plug MCLH-03",
       "modelNames":     ["RICI01"],
-      "actions":        ["status"],
       "properties":     ["status"],
+      "actions":        ["status"],
       "reportings":     ["status"]
     }
   ],
@@ -344,71 +344,71 @@
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
       "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
-      "actions":        ["status", "tuyaPowerOnStatus", "tuyaSwitchType"],
       "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus", "tuyaSwitchType"],
       "reportings":     ["status"]
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
       "modelNames":     ["TS0002", "TS0012"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "endpointId":     1
     },
     {
       "modelNames":     ["TS0002", "TS0012"],
-      "actions":        ["status"],
       "properties":     ["status"],
+      "actions":        ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2]
     },
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay/Switch",
       "modelNames":     ["TS0003", "TS0013"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "endpointId":     1
     },
     {
       "modelNames":     ["TS0003", "TS0013"],
-      "actions":        ["status"],
       "properties":     ["status"],
+      "actions":        ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3]
     },
     {
       "description":    "TUYA TS0004/TS0014 4-Channel Relay/Switch",
       "modelNames":     ["TS0004", "TS0014"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "endpointId":     1
     },
     {
       "modelNames":     ["TS0004", "TS0014"],
-      "actions":        ["status"],
       "properties":     ["status"],
+      "actions":        ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3, 4]
     },
     {
       "description":    "TUYA TS0006 6-Channel Relay/Switch",
       "modelNames":     ["TS0006"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
       "endpointId":     1
     },
     {
       "modelNames":     ["TS0006"],
-      "actions":        ["status"],
       "properties":     ["status"],
+      "actions":        ["status"],
       "reportings":     ["status"],
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
       "description":    "TUYA TS0601 Neo Siren",
       "modelNames":     ["_TZE200_t1blo2bj"],
-      "actions":        ["tuyaVolume", "tuyaDuration", "tuyaAlarm", "tuyaMelody"],
-      "properties":     ["tuyaNeoSiren"]
+      "properties":     ["tuyaNeoSiren"],
+      "actions":        ["tuyaVolume", "tuyaDuration", "tuyaAlarm", "tuyaMelody"]
     },
     {
       "description":    "TUYA TS0204 Gas Detector",
@@ -429,8 +429,8 @@
     {
       "description":    "TUYA TS0601 Human Presence Detector",
       "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
-      "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
-      "properties":     ["tuyaPresenceSensor"]
+      "properties":     ["tuyaPresenceSensor"],
+      "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"]
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",

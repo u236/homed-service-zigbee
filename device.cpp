@@ -4,10 +4,10 @@
 
 DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
 {
-    ActionObject::registerMetaTypes();
-    PollObject::registerMetaTypes();
     PropertyObject::registerMetaTypes();
+    ActionObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
+    PollObject::registerMetaTypes();
 
     m_libraryFile.setFileName(config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString());
     m_databaseFile.setFileName(config->value("zigbee/database", "/var/db/homed-zigbee-database.json").toString());
@@ -91,9 +91,7 @@ void DeviceList::setupDevice(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        disconnect(it.value()->timer(), &QTimer::timeout, this, &DeviceList::pollAttributes);
         it.value()->timer()->stop();
-
         it.value()->actions().clear();
         it.value()->properties().clear();
         it.value()->reportings().clear();
@@ -123,32 +121,15 @@ void DeviceList::setupDevice(const Device &device)
         }
     }
 
-    if (check)
-        return;
-
-    logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
+    if (!check)
+        logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
 {
     Device device = endpoint->device();
-    QJsonArray actions = json.value("actions").toArray(), properties = json.value("properties").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
-    quint32 pollInterval = static_cast <quint32> (json.value("pollInterval").toInt());
-
-    for (auto it = actions.begin(); it != actions.end(); it++)
-    {
-        int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
-
-        if (type)
-        {
-            Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
-            action->setOptions(device->options());
-            endpoint->actions().append(action);
-            continue;
-        }
-
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "action" << it->toString() << "unrecognized";
-    }
+    QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
+    quint32 pollInterval = static_cast <quint32> (json.value("pollInterval").toInt()); // TODO: move to options
 
     for (auto it = properties.begin(); it != properties.end(); it++)
     {
@@ -157,15 +138,27 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
+            property->setParent(endpoint.data());
             property->setMultiple(multiple);
-            property->setModelName(device->modelName());
-            property->setVersion(device->version());
-            property->setOptions(device->options());
             endpoint->properties().append(property);
             continue;
         }
 
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "property" << it->toString() << "unrecognized";
+    }
+
+    for (auto it = actions.begin(); it != actions.end(); it++)
+    {
+        int type = QMetaType::type(QString(it->toString()).append("Action").toUtf8());
+
+        if (type)
+        {
+            Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
+            endpoint->actions().append(action);
+            continue;
+        }
+
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "action" << it->toString() << "unrecognized";
     }
 
     for (auto it = reportings.begin(); it != reportings.end(); it++)
@@ -206,7 +199,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (pollInterval)
         {
-            connect(endpoint->timer(), &QTimer::timeout, this, &DeviceList::pollAttributes);
+            connect(endpoint->timer(), &QTimer::timeout, this, &DeviceList::pollAttributes, Qt::UniqueConnection);
             endpoint->timer()->start(pollInterval * 1000);
         }
     }
@@ -316,7 +309,8 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
         }
     }
 
-    logInfo << count << "devices loaded";
+    if (count)
+        logInfo << count << "devices loaded";
 }
 
 void DeviceList::unserializeProperties(const QJsonObject &properties)

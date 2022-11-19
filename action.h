@@ -26,7 +26,6 @@ public:
     inline quint8 dataType(void) { return m_dataType; }
     inline bool poll(void) { return m_poll; }
 
-    inline void setOptions(const QMap <QString, QVariant> &value) { m_options = value; }
     static void registerMetaTypes(void);
 
 protected:
@@ -37,7 +36,6 @@ protected:
     bool m_poll;
 
     quint8 m_transactionId;
-    QMap <QString, QVariant> m_options;
 
     QByteArray writeAttributeRequest(const QByteArray &data); // TODO: move this to zcl
 

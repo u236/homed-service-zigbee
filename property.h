@@ -22,19 +22,16 @@ public:
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
-
-    inline QVariant value(void) { return m_value; }
-    inline void setValue(const QVariant &value) { m_value = value; }
-
     inline bool singleShot(void) { return m_singleShot; }
-    inline void clear(void) { m_value = QVariant(); }
+
+    inline void setParent(QObject *value) { m_parent = value; }
 
     inline bool multiple(void) { return m_multiple; }
     inline void setMultiple(bool value) { m_multiple = value; }
 
-    inline void setModelName(const QString &value) { m_modelName = value; }
-    inline void setVersion(quint8 value) { m_version = value; }
-    inline void setOptions(const QMap <QString, QVariant> &value) { m_options = value; }
+    inline QVariant value(void) { return m_value; }
+    inline void setValue(const QVariant &value) { m_value = value; }
+    inline void clearValue(void) { m_value = QVariant(); }
 
     static void registerMetaTypes(void);
 
@@ -42,12 +39,16 @@ protected:
 
     QString m_name;
     quint16 m_clusterId;
-    QVariant m_value;
-    bool m_singleShot, m_multiple;
+    bool m_singleShot;
 
-    QString m_modelName;
-    quint8 m_version;
-    QMap <QString, QVariant> m_options;
+    QObject *m_parent;
+    bool m_multiple;
+
+    QVariant m_value;
+
+    quint8 deviceVersion(void);
+    QString deviceModelName(void);
+    QVariant deviceOption(const QString &key);
 
     quint8 percentage(double min, double max, double value);
 

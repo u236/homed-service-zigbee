@@ -158,7 +158,7 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
             if (!property->singleShot())
                 continue;
 
-            property->clear();
+            property->clearValue();
         }
 
         it.value()->setUpdated(false);
