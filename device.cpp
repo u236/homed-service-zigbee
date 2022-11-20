@@ -12,6 +12,7 @@ DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m
     m_libraryFile.setFileName(config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString());
     m_databaseFile.setFileName(config->value("zigbee/database", "/var/db/homed-zigbee-database.json").toString());
     m_propertiesFile.setFileName(config->value("zigbee/properties", "/var/db/homed-zigbee-properties.json").toString());
+    m_optionsFile.setFileName(config->value("zigbee/options", "/var/db/homed-zigbee-options.json").toString());
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
     connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
@@ -113,6 +114,14 @@ void DeviceList::setupDevice(const Device &device)
 
             if (json.contains("options"))
                 device->options() = json.value("options").toObject().toVariantMap();
+
+            if (m_optionsFile.open(QFile::ReadOnly | QFile::Text))
+            {
+                QJsonObject json = QJsonDocument::fromJson(m_optionsFile.readAll()).object();
+                QString key = device->ieeeAddress().toHex(':');
+                device->options().insert(json.value(json.contains(key) ? key : device->name()).toObject().toVariantMap());
+                m_optionsFile.close();
+            }
 
             for (int i = 0; i < list.count(); i++)
                 setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);

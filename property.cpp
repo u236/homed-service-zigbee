@@ -222,7 +222,7 @@ void Properties::Illuminance::parseAttribte(quint16 attributeId, quint8 dataType
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
+    m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0) + deviceOption("illuminanceOffset").toInt();
 }
 
 void Properties::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -233,7 +233,7 @@ void Properties::Temperature::parseAttribte(quint16 attributeId, quint8 dataType
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0;
+    m_value = qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble();
 }
 
 void Properties::Humidity::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -244,7 +244,7 @@ void Properties::Humidity::parseAttribte(quint16 attributeId, quint8 dataType, c
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0;
+    m_value = qFromLittleEndian(value) / 100.0 + deviceOption("humidityOffset").toDouble();
 }
 
 void Properties::Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -598,7 +598,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
                     break;
 
-                map.insert("temperature", static_cast <qint8> (data.at(0)));
+                map.insert("temperature", static_cast <qint8> (data.at(0)) + deviceOption("temperatureOffset").toDouble());
             }
 
             break;
@@ -641,7 +641,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                     break;
 
                 memcpy(&value, data.constData(), data.length());
-                map.insert("illuminance", qFromLittleEndian(value));
+                map.insert("illuminance", qFromLittleEndian(value) + deviceOption("illuminanceOffset").toInt());
             }
 
             break;
@@ -973,7 +973,7 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
         case 0x03: map.insert("distanceMin", data.toDouble() / 100); break;
         case 0x04: map.insert("distanceMax", data.toDouble() / 100); break;
         case 0x65: map.insert("detectionDelay", data.toInt()); break;
-        case 0x68: map.insert("illuminance", data.toInt()); break;
+        case 0x68: map.insert("illuminance", data.toInt() + deviceOption("illuminanceOffset").toInt()); break;
     }
 
     if (map.isEmpty())

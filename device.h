@@ -196,7 +196,7 @@ private:
 
     QTimer *m_databaseTimer, *m_propertiesTimer;
 
-    QFile m_libraryFile, m_databaseFile, m_propertiesFile;
+    QFile m_libraryFile, m_databaseFile, m_propertiesFile, m_optionsFile;
     bool m_permitJoin;
 
     QString m_adapterType, m_adapterVersion;
