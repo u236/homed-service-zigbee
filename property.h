@@ -19,6 +19,8 @@ public:
     virtual ~PropertyObject(void) {}
     virtual void parseAttribte(quint16, quint8, const QByteArray &) {}
     virtual void parseCommand(quint8, const QByteArray &) {}
+    virtual void clearValue(void) { m_value = QVariant(); }
+    virtual void resetValue(void) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
@@ -31,7 +33,6 @@ public:
 
     inline QVariant value(void) { return m_value; }
     inline void setValue(const QVariant &value) { m_value = value; }
-    inline void clearValue(void) { m_value = QVariant(); }
 
     static void registerMetaTypes(void);
 
@@ -191,6 +192,7 @@ namespace Properties
 
         Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING, true) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+        void resetValue(void) override;
 
     };
 
@@ -282,6 +284,8 @@ namespace PropertiesIAS
 
         ZoneStatus(const QString &name) : PropertyObject(name, CLUSTER_IAS_ZONE, true) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        void clearValue(void) override;
+        void resetValue(void) override;
 
     };
 

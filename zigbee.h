@@ -171,6 +171,7 @@ private:
     void touchLinkReset(const QByteArray &ieeeAddress, quint8 channel);
     void touchLinkScan(void);
 
+    void startDeviceTimer(const Device &device, quint32 timeout);
     void blink(quint16 timeout);
 
 private slots:
@@ -190,7 +191,7 @@ private slots:
 
     void handleRequests(void);
     void updateNeighbors(void);
-    void interviewTimeout(void);
+    void deviceTimeout(void);
 
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 

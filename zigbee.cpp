@@ -431,7 +431,7 @@ void ZigBee::interviewDevice(const Device &device)
         return;
 
     enqueueDeviceRequest(device, RequestType::Interview);
-    device->timer()->start(DEVICE_INTERVIEW_TIMEOUT);
+    startDeviceTimer(device, DEVICE_INTERVIEW_TIMEOUT);
 }
 
 void ZigBee::interviewFinished(const Device &device)
@@ -495,7 +495,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     Device device = endpoint->device();
     bool check = false;
 
-    if (clusterId == CLUSTER_BASIC) // TODO: check if any devices sends some data via basic cluster
+    if (clusterId == CLUSTER_BASIC)
     {
         switch (attributeId)
         {
@@ -611,6 +611,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
             property->parseAttribte(attributeId, dataType, data);
             check = true;
+
+            if (property->singleShot())
+                startDeviceTimer(device, static_cast <quint32> (device->options().value("timeout").toInt()) * 1000);
 
             if (property->value() == value)
                 continue;
@@ -790,6 +793,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
             property->parseCommand(commandId, payload);
             check = true;
+
+            if (property->singleShot())
+                startDeviceTimer(device, static_cast <quint32> (device->options().value("timeout").toInt()) * 1000);
 
             if (property->value() == value)
                 continue;
@@ -975,6 +981,16 @@ void ZigBee::touchLinkScan(void)
     logInfo << "TouchLink scan finished successfully";
 }
 
+void ZigBee::startDeviceTimer(const Device &device, quint32 timeout)
+{
+    if (!timeout)
+        return;
+
+    connect(device->timer(), &QTimer::timeout, this, &ZigBee::deviceTimeout, Qt::UniqueConnection);
+    device->timer()->setSingleShot(true);
+    device->timer()->start(timeout);
+}
+
 void ZigBee::blink(quint16 timeout)
 {
     if (m_statusLedTimer->isActive() && m_statusLedPin == m_blinkLedPin)
@@ -1140,8 +1156,6 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
     if (!it.value()->interviewFinished() && !it.value()->timer()->isActive())
     {
         logInfo << "Device" << it.value()->name() << "interview started...";
-        connect(it.value()->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout);
-        it.value()->timer()->setSingleShot(true);
         interviewDevice(it.value());
     }
 
@@ -1405,11 +1419,41 @@ void ZigBee::updateNeighbors(void)
     }
 }
 
-void ZigBee::interviewTimeout(void)
+void ZigBee::deviceTimeout(void)
 {
     Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
-    logWarning << "Device" << device->name() << "interview timed out";
-    emit deviceEvent(device, "interviewTimeout");
+
+    if (!device->interviewFinished())
+    {
+        logWarning << "Device" << device->name() << "interview timed out";
+        emit deviceEvent(device, "interviewTimeout");
+        return;
+    }
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->properties().count(); i++)
+        {
+            const Property &property = it.value()->properties().at(i);
+
+            if (property->singleShot())
+            {
+                QVariant value = property->value();
+
+                property->resetValue();
+
+                if (property->value() == value)
+                    continue;
+
+                it.value()->setUpdated(true);
+            }
+
+            if (!it.value()->updated())
+                continue;
+
+            emit endpointUpdated(device, it.value()->id());
+        }
+    }
 }
 
 void ZigBee::pollRequest(EndpointObject *endpoint, const Poll &poll)

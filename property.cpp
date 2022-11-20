@@ -255,6 +255,11 @@ void Properties::Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, 
     m_value = data.at(0) ? true : false;
 }
 
+void Properties::Occupancy::resetValue(void)
+{
+    m_value = false;
+}
+
 void Properties::Energy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
@@ -453,6 +458,20 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
     if (value & 0x0008)
         map.insert("batteryLow", true);
 
+    m_value = map;
+}
+
+void PropertiesIAS::ZoneStatus::clearValue(void)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    map.remove(m_name);
+    m_value = map;
+}
+
+void PropertiesIAS::ZoneStatus::resetValue(void)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    map.insert(m_name, false);
     m_value = map;
 }
 

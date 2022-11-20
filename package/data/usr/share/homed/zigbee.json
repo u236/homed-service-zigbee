@@ -123,7 +123,8 @@
     {
       "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
       "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
-      "properties":     ["batteryPercentage", "iasOccupancy", "lumiUnknown"]
+      "properties":     ["batteryPercentage", "iasOccupancy", "lumiUnknown"],
+      "options":        {"timeout": 30}
     },
     {
       "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",
@@ -204,7 +205,8 @@
     {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
-      "properties":     ["lumiBatteryVoltage", "occupancy"]
+      "properties":     ["lumiBatteryVoltage", "occupancy"],
+      "options":        {"timeout": 30}
     },
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
@@ -434,9 +436,16 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
-      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_jytabjkb", "_TYZB01_qjqgmqxr", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZE200_bq5c8xfe", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_hktqahrq", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6", "_TZ3000_mmtwjmaq", "_TZ3000_otvn3lne", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz"],
+      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_mmtwjmaq", "_TZ3000_otvn3lne", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"]
+    },
+    {
+      "description":    "TUYA TS0202 Motion Sensor",
+      "modelNames":     ["_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "reportings":     ["batteryPercentage"],
+      "options":        {"timeout": 30}
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor (partially supported)",
