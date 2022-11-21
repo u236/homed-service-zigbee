@@ -28,7 +28,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::DistanceMax>            ("tuyaDistanceMaxAction");
     qRegisterMetaType <ActionsTUYA::DetectionDelay>         ("tuyaDetectionDelayAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>          ("tuyaPowerOnStatusAction");
-    qRegisterMetaType <ActionsTUYA::SwitchType>             ("tuyaSwitchTypeAction");
+    qRegisterMetaType <ActionsTUYA::SwitchMode>             ("tuyaSwitchModeAction");
 
     qRegisterMetaType <ActionsPerenio::PowerOnStatus>       ("perenioPowerOnStatusAction");
     qRegisterMetaType <ActionsPerenio::ResetAlarms>         ("perenioResetAlarmsAction");
@@ -369,7 +369,7 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsTUYA::SwitchType::request(const QVariant &data)
+QByteArray ActionsTUYA::SwitchMode::request(const QVariant &data)
 {
     QList <QString> list = {"toggle", "state", "momentary"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));

@@ -528,12 +528,12 @@ namespace PropertiesTUYA
 
     };
 
-    class SwitchType : public PropertyObject
+    class SwitchMode : public PropertyObject
     {
 
     public:
 
-        SwitchType(void) : PropertyObject("switchType", CLUSTER_TUYA_SWITCH_TYPE) {}
+        SwitchMode(void) : PropertyObject("mode", CLUSTER_TUYA_SWITCH_MODE) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

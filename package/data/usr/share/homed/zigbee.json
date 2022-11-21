@@ -346,15 +346,15 @@
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
       "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
-      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
-      "actions":        ["status", "tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus", "tuyaSwitchMode"],
       "reportings":     ["status"]
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
       "modelNames":     ["TS0002", "TS0012"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
       "endpointId":     1
     },
     {
@@ -367,8 +367,8 @@
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay/Switch",
       "modelNames":     ["TS0003", "TS0013"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
       "endpointId":     1
     },
     {
@@ -381,8 +381,8 @@
     {
       "description":    "TUYA TS0004/TS0014 4-Channel Relay/Switch",
       "modelNames":     ["TS0004", "TS0014"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
       "endpointId":     1
     },
     {
@@ -395,8 +395,8 @@
     {
       "description":    "TUYA TS0006 6-Channel Relay/Switch",
       "modelNames":     ["TS0006"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchType", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchType"],
+      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
+      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
       "endpointId":     1
     },
     {

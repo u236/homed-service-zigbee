@@ -50,7 +50,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
-    qRegisterMetaType <PropertiesTUYA::SwitchType>              ("tuyaSwitchTypeProperty");
+    qRegisterMetaType <PropertiesTUYA::SwitchMode>              ("tuyaSwitchModeProperty");
     qRegisterMetaType <PropertiesTUYA::Unknown>                 ("tuyaUnknownProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
@@ -836,7 +836,7 @@ void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
 
     switch (qFromLittleEndian(value))
     {
-        case 0x0000: m_value = "longClick"; break;
+        case 0x0000: m_value = "hold"; break;
         case 0x0001: m_value = "singleClick"; break;
         case 0x0002: m_value = "doubleClick"; break;
         case 0x0003: m_value = "tripleClick"; break;
@@ -995,7 +995,7 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 da
     }
 }
 
-void PropertiesTUYA::SwitchType::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0xD030 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
         return;
@@ -1024,7 +1024,7 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, quin
     {
         case 0x80: m_value = "singleClick"; break;
         case 0x81: m_value = "doubleClick"; break;
-        case 0x82: m_value = "longClick"; break;
+        case 0x82: m_value = "hold"; break;
     }
 }
 
