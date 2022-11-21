@@ -19,6 +19,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Humidity>                    ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>                   ("occupancyProperty");
     qRegisterMetaType <Properties::Energy>                      ("energyProperty");
+    qRegisterMetaType <Properties::Voltage>                     ("voltageProperty");
+    qRegisterMetaType <Properties::Current>                     ("currentProperty");
     qRegisterMetaType <Properties::Power>                       ("powerProperty");
     qRegisterMetaType <Properties::Scene>                       ("sceneProperty");
     qRegisterMetaType <Properties::IdentifyAction>              ("identifyActionProperty");
@@ -262,100 +264,50 @@ void Properties::Occupancy::resetValue(void)
 
 void Properties::Energy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    switch (attributeId)
-    {
-        case 0x0000:
-        {
-            qint64 value = 0;
+    double multiplier = deviceOption("energyMutiplier").toDouble();
+    qint64 value = 0;
 
-            if (dataType != DATA_TYPE_48BIT_UNSIGNED || data.length() != 6 || !m_multiplier || !m_divider)
-                return;
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_48BIT_UNSIGNED || data.length() != 6)
+        return;
 
-            memcpy(&value, data.constData(), data.length());
-            m_value = qFromLittleEndian(value);
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) * (multiplier ? multiplier : 1);
+}
 
-            if (m_multiplier > 1)
-                m_value = m_value.toDouble() * m_multiplier;
+void Properties::Voltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    double multiplier = deviceOption("voltageMutiplier").toDouble();
+    qint16 value = 0;
 
-            if (m_divider > 1)
-                m_value = m_value.toDouble() / m_divider;
+    if (attributeId != 0x0505 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+        return;
 
-            break;
-        }
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) * (multiplier ? multiplier : 1) + deviceOption("voltageOffset").toDouble();
+}
 
-        case 0x0301:
-        {
-            quint32 value = 0;
+void Properties::Current::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    double multiplier = deviceOption("currentMutiplier").toDouble();
+    qint16 value = 0;
 
-            if (dataType != DATA_TYPE_24BIT_UNSIGNED || data.length() != 3)
-                return;
+    if (attributeId != 0x0508 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+        return;
 
-            memcpy(&value, data.constData(), data.length());
-            m_multiplier = qFromLittleEndian(value);
-            break;
-        }
-
-        case 0x0302:
-        {
-            quint32 value = 0;
-
-            if (dataType != DATA_TYPE_24BIT_UNSIGNED || data.length() != 3)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_divider = qFromLittleEndian(value);
-            break;
-        }
-    }
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) * (multiplier ? multiplier : 1) + deviceOption("currentMutiplier").toDouble();
 }
 
 void Properties::Power::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    switch (attributeId)
-    {
-        case 0x050B:
-        {
-            qint16 value = 0;
+    double multiplier = deviceOption("powerMutiplier").toDouble();
+    qint16 value = 0;
 
-            if (dataType != DATA_TYPE_16BIT_SIGNED || data.length() != 2 || !m_multiplier || !m_divider)
-                return;
+    if (attributeId != 0x050B || dataType != DATA_TYPE_16BIT_SIGNED || data.length() != 2)
+        return;
 
-            memcpy(&value, data.constData(), data.length());
-            m_value = qFromLittleEndian(value);
-
-            if (m_multiplier > 1)
-                m_value = m_value.toDouble() * m_multiplier;
-
-            if (m_divider > 1)
-                m_value = m_value.toDouble() / m_divider;
-
-            break;
-        }
-
-        case 0x0604:
-        {
-            quint16 value = 0;
-
-            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_multiplier = qFromLittleEndian(value);
-            break;
-        }
-
-        case 0x0605:
-        {
-            quint16 value = 0;
-
-            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_divider = qFromLittleEndian(value);
-            break;
-        }
-    }
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) * (multiplier ? multiplier : 1) + deviceOption("powerOffset").toDouble();
 }
 
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
@@ -738,7 +690,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            map.insert("voltage", static_cast <double> (round(value)) / 10);
+            map.insert("voltage", static_cast <double> (round(value)) / 10) + deviceOption("voltageOffset").toDouble();
             break;
         }
 
@@ -750,7 +702,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            map.insert("current", static_cast <double> (round(value)) / 1000);
+            map.insert("current", static_cast <double> (round(value)) / 1000) + deviceOption("currentOffset").toDouble();
             break;
         }
 
@@ -762,7 +714,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("power", static_cast <double> (round(value * 100)) / 100);
+            map.insert("power", static_cast <double> (round(value * 100) + deviceOption("powerOffset").toDouble()) / 100);
             break;
         }
     }

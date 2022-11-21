@@ -201,12 +201,28 @@ namespace Properties
 
     public:
 
-        Energy(void) : PropertyObject("energy", CLUSTER_SMART_ENERGY_METERING), m_multiplier(0), m_divider(0) {}
+        Energy(void) : PropertyObject("energy", CLUSTER_SMART_ENERGY_METERING) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
-    private:
+    };
 
-        quint32 m_multiplier, m_divider;
+    class Voltage : public PropertyObject
+    {
+
+    public:
+
+        Voltage(void) : PropertyObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class Current : public PropertyObject
+    {
+
+    public:
+
+        Current(void) : PropertyObject("current", CLUSTER_ELECTRICAL_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -215,12 +231,8 @@ namespace Properties
 
     public:
 
-        Power(void) : PropertyObject("power", CLUSTER_ELECTRICAL_MEASUREMENT), m_multiplier(0), m_divider(0) {}
+        Power(void) : PropertyObject("power", CLUSTER_ELECTRICAL_MEASUREMENT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        quint16 m_multiplier, m_divider;
 
     };
 

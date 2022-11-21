@@ -146,7 +146,25 @@ namespace Reportings
 
     public:
 
-        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 0) {}
+        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 15, 600, 1) {}
+
+    };
+
+    class Voltage : public ReportingObject
+    {
+
+    public:
+
+        Voltage(void) : ReportingObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0505, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 1) {}
+
+    };
+
+    class Current : public ReportingObject
+    {
+
+    public:
+
+        Current(void) : ReportingObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0508, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 1) {}
 
     };
 
@@ -155,7 +173,7 @@ namespace Reportings
 
     public:
 
-        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600, 0) {}
+        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 15, 600, 1) {}
 
     };
 }
