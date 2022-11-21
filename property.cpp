@@ -51,8 +51,11 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
-    qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
+    qRegisterMetaType <PropertiesTUYA::ChildLock>               ("tuyaChildLockProperty");
+    qRegisterMetaType <PropertiesTUYA::BacklightMode>           ("tuyaBacklightModeProperty");
+    qRegisterMetaType <PropertiesTUYA::IndicatorMode>           ("tuyaIndicatorModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchMode>              ("tuyaSwitchModeProperty");
+    qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
     qRegisterMetaType <PropertiesTUYA::Unknown>                 ("tuyaUnknownProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
@@ -934,16 +937,38 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
     m_value = map;
 }
 
-void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::ChildLock::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    if (attributeId != 0x8002 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+    if (attributeId != 0x8000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+        return;
+
+    m_value = data.at(0) ? true : false;
+}
+
+void PropertiesTUYA::BacklightMode::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x8001 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "low"; break;
+        case 0x01: m_value = "medium"; break;
+        case 0x02: m_value = "high"; break;
+    }
+}
+
+void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x8001 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
         return;
 
     switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "off"; break;
-        case 0x01: m_value = "on"; break;
-        case 0x02: m_value = "previous"; break;
+        case 0x01: m_value = "default"; break;
+        case 0x02: m_value = "inverted"; break;
+        case 0x03: m_value = "on"; break;
     }
 }
 
@@ -957,6 +982,19 @@ void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, quint8 dataT
         case 0x00: m_value = "toggle"; break;
         case 0x01: m_value = "state"; break;
         case 0x02: m_value = "momentary"; break;
+    }
+}
+
+void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x8002 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "off"; break;
+        case 0x01: m_value = "on"; break;
+        case 0x02: m_value = "previous"; break;
     }
 }
 

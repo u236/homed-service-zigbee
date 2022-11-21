@@ -530,12 +530,32 @@ namespace PropertiesTUYA
 
     };
 
-    class PowerOnStatus : public PropertyObject
+    class ChildLock : public PropertyObject
     {
 
     public:
 
-        PowerOnStatus(void) : PropertyObject("powerOnStatus", CLUSTER_ON_OFF) {}
+        ChildLock(void) : PropertyObject("childLock", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class BacklightMode : public PropertyObject
+    {
+
+    public:
+
+        BacklightMode(void) : PropertyObject("backlightMode", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class IndicatorMode : public PropertyObject
+    {
+
+    public:
+
+        IndicatorMode(void) : PropertyObject("indicatorMode", CLUSTER_ON_OFF) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
@@ -545,7 +565,17 @@ namespace PropertiesTUYA
 
     public:
 
-        SwitchMode(void) : PropertyObject("mode", CLUSTER_TUYA_SWITCH_MODE) {}
+        SwitchMode(void) : PropertyObject("switchMode", CLUSTER_TUYA_SWITCH_MODE) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class PowerOnStatus : public PropertyObject
+    {
+
+    public:
+
+        PowerOnStatus(void) : PropertyObject("powerOnStatus", CLUSTER_ON_OFF) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

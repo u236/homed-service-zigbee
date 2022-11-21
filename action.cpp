@@ -27,8 +27,11 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::DistanceMin>            ("tuyaDistanceMinAction");
     qRegisterMetaType <ActionsTUYA::DistanceMax>            ("tuyaDistanceMaxAction");
     qRegisterMetaType <ActionsTUYA::DetectionDelay>         ("tuyaDetectionDelayAction");
-    qRegisterMetaType <ActionsTUYA::PowerOnStatus>          ("tuyaPowerOnStatusAction");
+    qRegisterMetaType <ActionsTUYA::ChildLock>              ("tuyaChildLockAction");
+    qRegisterMetaType <ActionsTUYA::BacklightMode>          ("tuyaBacklightModeAction");
+    qRegisterMetaType <ActionsTUYA::IndicatorMode>          ("tuyaIndicatorModeAction");
     qRegisterMetaType <ActionsTUYA::SwitchMode>             ("tuyaSwitchModeAction");
+    qRegisterMetaType <ActionsTUYA::PowerOnStatus>          ("tuyaPowerOnStatusAction");
 
     qRegisterMetaType <ActionsPerenio::PowerOnStatus>       ("perenioPowerOnStatusAction");
     qRegisterMetaType <ActionsPerenio::ResetAlarms>         ("perenioResetAlarmsAction");
@@ -358,9 +361,26 @@ QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
     return makeRequest(m_transactionId++, 0x65, 0x02, &value);
 }
 
-QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
+QByteArray ActionsTUYA::ChildLock::request(const QVariant &data)
 {
-    QList <QString> list = {"off", "on", "previous"};
+    qint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsTUYA::BacklightMode::request(const QVariant &data)
+{
+    QList <QString> list = {"low", "medium", "high"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsTUYA::IndicatorMode::request(const QVariant &data)
+{
+    QList <QString> list = {"off", "default", "inverted", "on"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)
@@ -372,6 +392,17 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
 QByteArray ActionsTUYA::SwitchMode::request(const QVariant &data)
 {
     QList <QString> list = {"toggle", "state", "momentary"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
+{
+    QList <QString> list = {"off", "on", "previous"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)

@@ -407,6 +407,14 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
+      "description":    "TUYA TS0011F Smart Plug With Power Monitoring",
+      "modelNames":     ["TS0011F"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
+      "actions":        ["status", "tuyaPowerOnStatus", "tuyaClildLock", "tuyaIndicatorMode", "tuyaSwitchMode"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
+      "options":        {"energyMultiplier": 0.01, "currentMultiplier": 0.001}
+    },
+    {
       "description":    "TUYA TS0601 Neo Siren",
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaNeoSiren"],

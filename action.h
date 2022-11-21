@@ -271,12 +271,32 @@ namespace ActionsTUYA
 
     };
 
-    class PowerOnStatus : public ActionObject
+    class ChildLock : public ActionObject
     {
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x8002, DATA_TYPE_8BIT_ENUM, true) {}
+        ChildLock(void) : ActionObject("childLock", CLUSTER_ON_OFF, 0x0000, 0x8000, DATA_TYPE_BOOLEAN, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class BacklightMode : public ActionObject
+    {
+
+    public:
+
+        BacklightMode(void) : ActionObject("backlightMode", CLUSTER_ON_OFF, 0x0000, 0x8001, DATA_TYPE_8BIT_ENUM, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class IndicatorMode : public ActionObject
+    {
+
+    public:
+
+        IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_ON_OFF, 0x0000, 0x8001, DATA_TYPE_8BIT_ENUM, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -286,7 +306,17 @@ namespace ActionsTUYA
 
     public:
 
-        SwitchMode(void) : ActionObject("mode", CLUSTER_TUYA_SWITCH_MODE, 0x0000, 0xD030, DATA_TYPE_8BIT_ENUM, true) {}
+        SwitchMode(void) : ActionObject("switchMode", CLUSTER_TUYA_SWITCH_MODE, 0x0000, 0xD030, DATA_TYPE_8BIT_ENUM, true) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class PowerOnStatus : public ActionObject
+    {
+
+    public:
+
+        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x8002, DATA_TYPE_8BIT_ENUM, true) {}
         QByteArray request(const QVariant &data) override;
 
     };

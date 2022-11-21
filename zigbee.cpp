@@ -545,8 +545,8 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         {
             QList <QString> tuya = // TUYA devices model names
             {
-                "TS0001", "TS0002", "TS0004", "TS0004",
-                "TS0011", "TS0012", "TS0013", "TS0014",
+                "TS0001", "TS0002", "TS0004", "TS0004", "TS0006",
+                "TS0011", "TS0012", "TS0013", "TS0014", "TS0011F",
                 "TS0201", "TS0202", "TS0203", "TS0204", "TS0205", "TS0207",
                 "TS0601"
             };
