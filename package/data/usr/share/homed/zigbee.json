@@ -413,8 +413,8 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
-      "description":    "TUYA TS0011F Smart Plug With Power Monitoring",
-      "modelNames":     ["TS0011F"],
+      "description":    "TUYA TS011F Smart Plug With Power Monitoring",
+      "modelNames":     ["TS011F"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
