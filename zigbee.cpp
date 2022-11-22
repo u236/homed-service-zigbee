@@ -247,7 +247,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
             {
                 QByteArray data = action->request(actionData);
 
-                if (!data.isEmpty())
+                if (!data.isEmpty() && !(actionData.type() == QVariant::String && actionData.toString().isEmpty()))
                     enqueueDataRequest(device, it.value()->id(), action->clusterId(), data, QString("%1 action").arg(action->name()));
 
                 if (action->poll())
@@ -268,7 +268,7 @@ void ZigBee::groupAction(quint16 groupId, const QString &actionName, const QVari
         Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
         QByteArray data = action->request(actionData);
 
-        if (data.isEmpty())
+        if (data.isEmpty() || (actionData.type() == QVariant::String && actionData.toString().isEmpty()))
             return;
 
         m_adapter->extendedDataRequest(m_requestId, groupId, 0xFF, 0x0000, 0x01, action->clusterId(), data, true);

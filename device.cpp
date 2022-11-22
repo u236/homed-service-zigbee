@@ -288,25 +288,12 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
                 for (auto it = neighborsArray.begin(); it != neighborsArray.end(); it++)
                 {
-                    QJsonObject item = it->toObject();
+                    QJsonObject json = it->toObject();
 
-                    if (item.contains("endpointId"))
-                    {
-                        quint8 endpointId = static_cast <quint8> (item.value("endpointId").toInt());
-                        Endpoint endpoint(new EndpointObject(endpointId, device));
-                        QJsonArray inClusters = item.value("inClusters").toArray(), outClusters = item.value("outClusters").toArray();
+                    if (!json.contains("networkAddress") || !json.contains("linkQuality"))
+                        continue;
 
-                        endpoint->setProfileId(static_cast <quint16> (item.value("profileId").toInt()));
-                        endpoint->setDeviceId(static_cast <quint16> (item.value("deviceId").toInt()));
-
-                        for (const QJsonValue &clusterId : inClusters)
-                            endpoint->inClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-                        for (const QJsonValue &clusterId : outClusters)
-                            endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-                        device->endpoints().insert(endpointId, endpoint);
-                    }
+                    device->neighbors().insert(static_cast <quint16> (json.value("networkAddress").toInt()), static_cast <quint8> (json.value("linkQuality").toInt()));
                 }
             }
 

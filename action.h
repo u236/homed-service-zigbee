@@ -111,7 +111,7 @@ namespace ActionsPTVO
 
     public:
 
-        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF) {}
+        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF, 0x0000, 0x0000, DATA_TYPE_BOOLEAN, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
