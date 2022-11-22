@@ -69,7 +69,6 @@
     - branches
   only:
     - /^\d.\d.\d+$/
-    - mips
 
 Build Linux Binary (x86_64):
   extends: .build

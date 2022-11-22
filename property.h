@@ -483,16 +483,6 @@ namespace PropertiesLUMI
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
-
-    class Unknown : public PropertyObject
-    {
-
-    public:
-
-        Unknown(void) : PropertyObject("lumiUnknown", CLUSTER_LUMI) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
 }
 
 namespace PropertiesTUYA
@@ -502,7 +492,7 @@ namespace PropertiesTUYA
 
     public:
 
-        Data(void) : PropertyObject("tuyaData", CLUSTER_TUYA) {}
+        Data(void) : PropertyObject("tuyaData", CLUSTER_TUYA_DATA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     private:
@@ -576,16 +566,6 @@ namespace PropertiesTUYA
     public:
 
         PowerOnStatus(void) : PropertyObject("powerOnStatus", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class Unknown : public PropertyObject
-    {
-
-    public:
-
-        Unknown(void) : PropertyObject("tuyaUnknown", CLUSTER_TUYA_UNKNOWN) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

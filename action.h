@@ -196,7 +196,7 @@ namespace ActionsTUYA
 
     public:
 
-        Volume(void) : ActionObject("volume", CLUSTER_TUYA) {}
+        Volume(void) : ActionObject("volume", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -206,7 +206,7 @@ namespace ActionsTUYA
 
     public:
 
-        Duration(void) : ActionObject("duration", CLUSTER_TUYA) {}
+        Duration(void) : ActionObject("duration", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -216,7 +216,7 @@ namespace ActionsTUYA
 
     public:
 
-        Alarm(void) : ActionObject("alarm", CLUSTER_TUYA) {}
+        Alarm(void) : ActionObject("alarm", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -226,7 +226,7 @@ namespace ActionsTUYA
 
     public:
 
-        Melody(void) : ActionObject("melody", CLUSTER_TUYA) {}
+        Melody(void) : ActionObject("melody", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -236,7 +236,7 @@ namespace ActionsTUYA
 
     public:
 
-        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_TUYA) {}
+        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -246,7 +246,7 @@ namespace ActionsTUYA
 
     public:
 
-        DistanceMin(void) : ActionObject("distanceMin", CLUSTER_TUYA) {}
+        DistanceMin(void) : ActionObject("distanceMin", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -256,7 +256,7 @@ namespace ActionsTUYA
 
     public:
 
-        DistanceMax(void) : ActionObject("distanceMax", CLUSTER_TUYA) {}
+        DistanceMax(void) : ActionObject("distanceMax", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -266,7 +266,7 @@ namespace ActionsTUYA
 
     public:
 
-        DetectionDelay(void) : ActionObject("detectionDelay", CLUSTER_TUYA) {}
+        DetectionDelay(void) : ActionObject("detectionDelay", CLUSTER_TUYA_DATA) {}
         QByteArray request(const QVariant &data) override;
 
     };

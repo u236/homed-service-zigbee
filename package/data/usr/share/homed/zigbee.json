@@ -123,8 +123,8 @@
     {
       "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
       "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
-      "properties":     ["batteryPercentage", "iasOccupancy", "lumiUnknown"],
-      "options":        {"timeout": 30}
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "options":        {"ignoreClusters": [64704], "timeout": 30}
     },
     {
       "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",
@@ -145,7 +145,8 @@
     {
       "description":    "Konke Wireless Button 2AJZ4KPKEY",
       "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
-      "properties":     ["batteryPercentage", "konkeButtonAction", "lumiUnknown"]
+      "properties":     ["batteryPercentage", "konkeButtonAction"],
+      "options":        {"ignoreClusters": [64704]}
     },
     {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
@@ -346,15 +347,17 @@
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
       "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
-      "properties":     ["status", "tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
-      "actions":        ["status", "tuyaPowerOnStatus", "tuyaSwitchMode"],
-      "reportings":     ["status"]
+      "properties":     ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "reportings":     ["status"],
+      "options":        {"ignoreClusters": [57344]}
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
       "modelNames":     ["TS0002", "TS0012"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
+      "properties":     ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
     {
@@ -367,8 +370,9 @@
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay/Switch",
       "modelNames":     ["TS0003", "TS0013"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
+      "properties":     ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
     {
@@ -381,8 +385,9 @@
     {
       "description":    "TUYA TS0004/TS0014 4-Channel Relay/Switch",
       "modelNames":     ["TS0004", "TS0014"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
+      "properties":     ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
     {
@@ -395,8 +400,9 @@
     {
       "description":    "TUYA TS0006 6-Channel Relay/Switch",
       "modelNames":     ["TS0006"],
-      "properties":     ["tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
-      "actions":        ["tuyaPowerOnStatus", "tuyaSwitchMode"],
+      "properties":     ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
     {
@@ -409,10 +415,10 @@
     {
       "description":    "TUYA TS0011F Smart Plug With Power Monitoring",
       "modelNames":     ["TS0011F"],
-      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaSwitchMode", "tuyaUnknown"],
-      "actions":        ["status", "tuyaPowerOnStatus", "tuyaClildLock", "tuyaIndicatorMode", "tuyaSwitchMode"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "options":        {"energyMultiplier": 0.01, "currentMultiplier": 0.001}
+      "options":        {"ignoreClusters": [57344, 57345], "energyMultiplier": 0.01, "currentMultiplier": 0.001}
     },
     {
       "description":    "TUYA TS0601 Neo Siren",

@@ -47,7 +47,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>            ("lumiCubeMovementProperty");
-    qRegisterMetaType <PropertiesLUMI::Unknown>                 ("lumiUnknownProperty");
 
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
@@ -56,7 +55,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>           ("tuyaIndicatorModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchMode>              ("tuyaSwitchModeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
-    qRegisterMetaType <PropertiesTUYA::Unknown>                 ("tuyaUnknownProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>  ("lifeControlAirQualityProperty");
@@ -836,13 +834,6 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dat
         m_value = "drop";
 }
 
-void PropertiesLUMI::Unknown::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    Q_UNUSED(attributeId)
-    Q_UNUSED(dataType)
-    Q_UNUSED(data)
-}
-
 void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
@@ -996,13 +987,6 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 da
         case 0x01: m_value = "on"; break;
         case 0x02: m_value = "previous"; break;
     }
-}
-
-void PropertiesTUYA::Unknown::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    Q_UNUSED(attributeId)
-    Q_UNUSED(dataType)
-    Q_UNUSED(data)
 }
 
 void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

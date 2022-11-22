@@ -598,7 +598,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         return;
     }
 
-    if (!device->interviewFinished())
+    if (!device->interviewFinished() || device->options().value("ignoreClusters").toList().contains(clusterId))
         return;
 
     for (int i = 0; i < endpoint->properties().count(); i++)
@@ -631,7 +631,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     Device device = endpoint->device();
     bool check = false;
 
-    if (!device->interviewFinished())
+    if (!device->interviewFinished() || device->options().value("ignoreClusters").toList().contains(clusterId))
         return;
 
     if (clusterId == CLUSTER_GROUPS)
