@@ -79,6 +79,42 @@ namespace Polls
         ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0007) {}
 
     };
+
+    class Energy : public PollObject
+    {
+
+    public:
+
+        Energy(void) : PollObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000) {}
+
+    };
+
+    class Voltage : public PollObject
+    {
+
+    public:
+
+        Voltage(void) : PollObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0505) {}
+
+    };
+
+    class Current : public PollObject
+    {
+
+    public:
+
+        Current(void) : PollObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0508) {}
+
+    };
+
+    class Power : public PollObject
+    {
+
+    public:
+
+        Power(void) : PollObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B) {}
+
+    };
 }
 
 namespace PollsOther

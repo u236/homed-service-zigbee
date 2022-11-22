@@ -34,8 +34,8 @@
       "properties":     ["status", "level", "colorHS", "colorXY"],
       "actions":        ["status", "level", "colorHS", "colorXY"],
       "polls":          ["status", "level", "colorHS", "colorXY"],
-      "endpointId":     11,
-      "pollInterval":   60
+      "options":        {"pollInterval": 60},
+      "endpointId":     11
     }
   ],
 
@@ -415,10 +415,18 @@
     {
       "description":    "TUYA TS011F Smart Plug With Power Monitoring",
       "modelNames":     ["TS011F"],
-      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "actions":        ["status", "tuyaClildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "options":        {"ignoreClusters": [57344, 57345], "energyMultiplier": 0.01, "currentMultiplier": 0.001}
+      "options":        {"ignoreClusters": [57344, 57345], "energyDivider": 100, "currentDivider": 1000}
+    },
+    {
+      "description":    "TUYA TS0121 Smart Plug With Power Monitoring",
+      "modelNames":     ["TS0121"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "polls":          ["energy", "voltage", "current", "power"],
+      "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000}
     },
     {
       "description":    "TUYA TS0601 Neo Siren",

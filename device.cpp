@@ -138,7 +138,6 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 {
     Device device = endpoint->device();
     QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
-    quint32 pollInterval = static_cast <quint32> (json.value("pollInterval").toInt()); // TODO: move to options
 
     for (auto it = properties.begin(); it != properties.end(); it++)
     {
@@ -200,6 +199,8 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
     if (!endpoint->polls().isEmpty())
     {
+        quint32 pollInterval = static_cast <quint32> (device->options().value("pollInterval").toInt());
+
         for (int i = 0; i < endpoint->polls().count(); i++)
         {
             const Poll &poll = endpoint->polls().at(i);

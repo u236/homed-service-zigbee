@@ -40,7 +40,7 @@ public:
 
     inline QTimer *timer(void) { return m_timer; }
 
-    inline quint8 id(void) {return m_id; }
+    inline quint8 id(void) { return m_id; }
     inline Device device(void) { return m_device; }
 
     inline bool descriptorReceived(void) { return m_descriptorReceived; }
@@ -62,7 +62,7 @@ private:
     QTimer *m_timer;
 
     quint8 m_id;
-    Device m_device;
+    QWeakPointer <DeviceObject> m_device;
 
     bool m_descriptorReceived, m_updated;
     ZoneStatus m_zoneStatus;
