@@ -344,42 +344,42 @@ namespace ActionsPerenio
 
     };
 
-    class AlarmVoltageMin : public ActionObject
+    class VoltageMin : public ActionObject
     {
 
     public:
 
-        AlarmVoltageMin(void) : ActionObject("alarmVoltageMin", CLUSTER_PERENIO, 0x0000, 0x0004, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        VoltageMin(void) : ActionObject("voltageMin", CLUSTER_PERENIO, 0x0000, 0x0004, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class AlarmVoltageMax : public ActionObject
+    class VoltageMax : public ActionObject
     {
 
     public:
 
-        AlarmVoltageMax(void) : ActionObject("alarmVoltageMax", CLUSTER_PERENIO, 0x0000, 0x0005, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        VoltageMax(void) : ActionObject("voltageMax", CLUSTER_PERENIO, 0x0000, 0x0005, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class AlarmPowerMax : public ActionObject
+    class PowerMax : public ActionObject
     {
 
     public:
 
-        AlarmPowerMax(void) : ActionObject("alarmPowerMax", CLUSTER_PERENIO, 0x0000, 0x000B, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        PowerMax(void) : ActionObject("powerMax", CLUSTER_PERENIO, 0x0000, 0x000B, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class AlarmEnergyLimit : public ActionObject
+    class EnergyLimit : public ActionObject
     {
 
     public:
 
-        AlarmEnergyLimit(void) : ActionObject("alarmEnergyLimit", CLUSTER_PERENIO, 0x0000, 0x000F, DATA_TYPE_16BIT_UNSIGNED, true) {}
+        EnergyLimit(void) : ActionObject("energyLimit", CLUSTER_PERENIO, 0x0000, 0x000F, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };

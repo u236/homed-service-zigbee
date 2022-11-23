@@ -35,10 +35,10 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsPerenio::PowerOnStatus>       ("perenioPowerOnStatusAction");
     qRegisterMetaType <ActionsPerenio::ResetAlarms>         ("perenioResetAlarmsAction");
-    qRegisterMetaType <ActionsPerenio::AlarmVoltageMin>     ("perenioAlarmVoltageMinAction");
-    qRegisterMetaType <ActionsPerenio::AlarmVoltageMax>     ("perenioAlarmVoltageMaxAction");
-    qRegisterMetaType <ActionsPerenio::AlarmPowerMax>       ("perenioAlarmPowerMaxAction");
-    qRegisterMetaType <ActionsPerenio::AlarmEnergyLimit>    ("perenioAlarmEnergyLimitAction");
+    qRegisterMetaType <ActionsPerenio::VoltageMin>          ("perenioAlarmVoltageMinAction");
+    qRegisterMetaType <ActionsPerenio::VoltageMax>          ("perenioAlarmVoltageMaxAction");
+    qRegisterMetaType <ActionsPerenio::PowerMax>            ("perenioAlarmPowerMaxAction");
+    qRegisterMetaType <ActionsPerenio::EnergyLimit>         ("perenioAlarmEnergyLimitAction");
 }
 
 QByteArray ActionObject::writeAttributeRequest(const QByteArray &data)
@@ -430,28 +430,28 @@ QByteArray ActionsPerenio::ResetAlarms::request(const QVariant &data)
     return writeAttributeRequest(QByteArray(1, 0x00));
 }
 
-QByteArray ActionsPerenio::AlarmVoltageMin::request(const QVariant &data)
+QByteArray ActionsPerenio::VoltageMin::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsPerenio::AlarmVoltageMax::request(const QVariant &data)
+QByteArray ActionsPerenio::VoltageMax::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsPerenio::AlarmPowerMax::request(const QVariant &data)
+QByteArray ActionsPerenio::PowerMax::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
     return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsPerenio::AlarmEnergyLimit::request(const QVariant &data)
+QByteArray ActionsPerenio::EnergyLimit::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);

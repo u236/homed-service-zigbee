@@ -467,7 +467,7 @@ void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 data
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            m_buffer = value;
+            m_buffer = value + deviceOption("temperatureOffset").toDouble();
             break;
         }
 
@@ -1014,8 +1014,8 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
 
     switch (attributeId)
     {
-        case 0x0000: map.insert("tempertature", qFromLittleEndian(value) / 100.0); break;
-        case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0); break;
+        case 0x0000: map.insert("tempertature", qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble()); break;
+        case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0 + deviceOption("humidityOffset").toDouble()); break;
         case 0x0002: map.insert("eco2", qFromLittleEndian(value)); break;
         case 0x0003: map.insert("voc", qFromLittleEndian(value)); break;
     }
