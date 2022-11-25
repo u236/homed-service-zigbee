@@ -9,11 +9,13 @@ DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m
     ReportingObject::registerMetaTypes();
     PollObject::registerMetaTypes();
 
+    // TODO: move all of this to [devices] config section
     m_libraryFile.setFileName(config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString());
     m_databaseFile.setFileName(config->value("zigbee/database", "/var/db/homed-zigbee-database.json").toString());
     m_propertiesFile.setFileName(config->value("zigbee/properties", "/var/db/homed-zigbee-properties.json").toString());
     m_optionsFile.setFileName(config->value("zigbee/options", "/var/db/homed-zigbee-options.json").toString());
     m_externalDir.setPath(config->value("zigbee/external", "/usr/share/homed/zigbee").toString());
+    m_offsets = config->value("zigbee/offsets", true).toBool();
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
     connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
@@ -171,9 +173,17 @@ void DeviceList::setupDevice(const Device &device)
 
             if (m_optionsFile.open(QFile::ReadOnly | QFile::Text))
             {
-                QJsonObject json = QJsonDocument::fromJson(m_optionsFile.readAll()).object();
                 QString key = device->ieeeAddress().toHex(':');
-                device->options().insert(json.value(json.contains(key) ? key : device->name()).toObject().toVariantMap());
+                QJsonObject json = QJsonDocument::fromJson(m_optionsFile.readAll()).object(), item = json.value(json.contains(key) ? key : device->name()).toObject();
+
+                for (auto it = item.begin(); it != item.end(); it++)
+                {
+                    if (!m_offsets && it.key().contains("Offset"))
+                        continue;
+
+                    device->options().insert(it.key(), it.value().toVariant());
+                }
+
                 m_optionsFile.close();
             }
 
