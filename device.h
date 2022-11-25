@@ -6,7 +6,7 @@
 #define STORE_PROPERTIES_DELAY      1000
 
 #include <QDateTime>
-#include <QFile>
+#include <QDir>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -199,6 +199,7 @@ private:
     QTimer *m_databaseTimer, *m_propertiesTimer;
 
     QFile m_libraryFile, m_databaseFile, m_propertiesFile, m_optionsFile;
+    QDir m_externalDir;
     bool m_permitJoin;
 
     QString m_adapterType, m_adapterVersion;
