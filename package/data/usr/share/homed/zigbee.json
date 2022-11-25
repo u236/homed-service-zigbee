@@ -1,15 +1,4 @@
 {
-  "aqara":
-  [
-    {
-      "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
-      "modelNames":     ["lumi.motion.ac01"],
-      "properties":     ["lumiData"],
-      "actions":        ["lumiSensitivity", "lumiDetectionMode", "lumiDistance", "lumiResetPresence"],
-      "polls":          ["lumiPresenceSensor"]
-    }
-  ],
-
   "eWeLink":
   [
     {
@@ -121,8 +110,14 @@
       "properties":     ["batteryPercentage", "iasContact"]
     },
     {
-      "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
-      "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
+      "description":    "Konke Motion Sensor 2AJZ4KPBS",
+      "modelNames":     ["3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "options":        {"ignoreClusters": [64704], "timeout": 120}
+    },
+    {
+      "description":    "Konke Motion Sensor KK-BS-J01W",
+      "modelNames":     ["3AFE07010402100D", "3AFE08010402100D"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "options":        {"ignoreClusters": [64704], "timeout": 30}
     },
@@ -132,7 +127,7 @@
       "properties":     ["batteryPercentage", "iasWaterLeak"]
     },
     {
-      "description":    "Konke Temperature and Humidity 2AJZ4KPFT",
+      "description":    "Konke Temperature and Humidity Sensor 2AJZ4KPFT",
       "modelNames":     ["3AFE140103020000", "3AFE220103020000"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"]
@@ -204,20 +199,33 @@
       "endpointId":     21
     },
     {
+      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
+      "modelNames":     ["lumi.sensor_magnet"],
+      "properties":     ["lumiBatteryVoltage", "contact"]
+    },
+    {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
       "properties":     ["lumiBatteryVoltage", "occupancy"],
       "options":        {"timeout": 30}
     },
     {
-      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
-      "modelNames":     ["lumi.sensor_magnet"],
-      "properties":     ["lumiBatteryVoltage", "contact"]
+      "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
+      "modelNames":     ["lumi.motion.ac01"],
+      "properties":     ["lumiData"],
+      "actions":        ["lumiSensitivity", "lumiDetectionMode", "lumiDistance", "lumiResetPresence"],
+      "polls":          ["lumiPresenceSensor"]
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
       "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
       "properties":     ["lumiBatteryVoltage", "temperature", "humidity"]
+    },
+    {
+      "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
+      "modelNames":     ["lumi.sen_ill.mgl01"],
+      "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
+      "reportings":     ["batteryVoltage", "illuminance"]
     },
     {
       "description":    "Xiaomi Wireless Button WXKG01LM",
@@ -484,16 +492,6 @@
       "description":    "TUYA TS0201 Temperature and Humidity Sensor",
       "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y"],
       "properties":     ["batteryPercentage", "temperature", "humidity"]
-    }
-  ],
-
-  "XIAOMI":
-  [
-    {
-      "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
-      "modelNames":     ["lumi.sen_ill.mgl01"],
-      "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
-      "reportings":     ["batteryVoltage", "illuminance"]
     }
   ]
 }

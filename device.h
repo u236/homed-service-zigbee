@@ -185,6 +185,8 @@ public:
     Device byNetwork(quint16 networkAddress);
     Endpoint endpoint(const Device &device, quint8 endpointId);
 
+    void updateIdentity(QString &manufacturerName, QString &modelName);
+
     void setupDevice(const Device &device);
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
     void removeDevice(const Device &device);

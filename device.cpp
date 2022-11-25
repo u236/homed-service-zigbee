@@ -70,8 +70,37 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
     return it.value();
 }
 
+void DeviceList::updateIdentity(QString &manufacturerName, QString &modelName)
+{
+    QList <QString> lumi = {"aqara", "XIAOMI"};
+    QList <QString> tuya =
+    {
+        "TS0001", "TS0002", "TS0004", "TS0004", "TS0006",
+        "TS0011", "TS0012", "TS0013", "TS0014", "TS011F", "TS0121",
+        "TS0201", "TS0202", "TS0203", "TS0204", "TS0205", "TS0207",
+        "TS0601"
+    };
+
+    if (lumi.contains(manufacturerName))
+    {
+        manufacturerName = "LUMI";
+        return;
+    }
+
+    if (tuya.contains(modelName))
+    {
+        QList <QString> list = {"TS0001", "TS0011", "TS0201", "TS0202", "TS0207", "TS0601"};
+
+        if (list.contains(modelName))
+            modelName = manufacturerName;
+
+        manufacturerName = "TUYA";
+    }
+}
+
 void DeviceList::setupDevice(const Device &device)
 {
+    QString manufacturerName = device->manufacturerName(), modelName = device->modelName();
     QJsonArray array;
     bool check = false;
 
@@ -81,7 +110,8 @@ void DeviceList::setupDevice(const Device &device)
         return;
     }
 
-    array = QJsonDocument::fromJson(m_libraryFile.readAll()).object().value(device->manufacturerName()).toArray();
+    updateIdentity(manufacturerName, modelName);
+    array = QJsonDocument::fromJson(m_libraryFile.readAll()).object().value(manufacturerName).toArray();
     m_libraryFile.close();
 
     if (array.isEmpty())
@@ -104,7 +134,7 @@ void DeviceList::setupDevice(const Device &device)
         QJsonObject json = it->toObject();
         QJsonArray array = json.value("modelNames").toArray();
 
-        if (array.contains(device->modelName()))
+        if (array.contains(modelName))
         {
             QJsonValue endpoinId = json.value("endpointId");
             QList <QVariant> list = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};

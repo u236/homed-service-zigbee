@@ -542,27 +542,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         }
 
         if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && (attributeId == 0x0004 || attributeId == 0x0005))
-        {
-            QList <QString> tuya = // TUYA devices model names
-            {
-                "TS0001", "TS0002", "TS0004", "TS0004", "TS0006",
-                "TS0011", "TS0012", "TS0013", "TS0014", "TS011F", "TS0121",
-                "TS0201", "TS0202", "TS0203", "TS0204", "TS0205", "TS0207",
-                "TS0601"
-            };
-
-            if (!device->manufacturerName().isEmpty() && tuya.contains(device->modelName()))
-            {
-                QList <QString> list = {"TS0001", "TS0011", "TS0201", "TS0202", "TS0207", "TS0601"};
-
-                if (list.contains(device->modelName()))
-                    device->setModelName(device->manufacturerName());
-
-                device->setManufacturerName("TUYA");
-            }
-
             interviewDevice(device);
-        }
 
         return;
     }
