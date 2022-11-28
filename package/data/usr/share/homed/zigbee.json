@@ -24,9 +24,8 @@
       "modelNames":     ["vivi ZLight"],
       "properties":     ["status", "level", "colorHS"],
       "actions":        ["status", "level", "colorHS"],
-      "polls":          ["status", "level", "colorHS"],
       "discoveries":    ["light"],
-      "options":        {"pollInterval": 60, "light": ["level", "color"]},
+      "options":        {"light": ["level", "color"]},
       "endpointId":     11
     }
   ],
@@ -69,7 +68,7 @@
     {
       "description":    "PTVO Firmware Based RGB Led Controller",
       "modelNames":     ["RGB Strip"],
-      "properties":     ["status", "level"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "reportings":     ["status"],
       "discoveries":    ["light"],

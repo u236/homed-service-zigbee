@@ -255,7 +255,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                     enqueueDataRequest(device, it.value()->id(), action->clusterId(), data, QString("%1 action").arg(action->name()));
 
                 if (action->poll())
-                    enqueueDataRequest(device, it.value()->id(), action->clusterId(), attributesRequest(m_requestId, {action->attributeId()}, action->manufacturerCode()));
+                    enqueueDataRequest(device, it.value()->id(), action->clusterId(), attributesRequest(m_requestId, action->attributes(), action->manufacturerCode()));
 
                 break;
             }

@@ -14,7 +14,10 @@ class ActionObject
 public:
 
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode = 0, quint16 attributeId = 0, quint8 dataType = 0, bool poll = false) :
-        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributeId(attributeId), m_dataType(dataType), m_poll(poll), m_transactionId(0) {}
+        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributes({attributeId}), m_dataType(dataType), m_poll(poll), m_transactionId(0) {}
+
+    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, QList <quint16> attributes) :
+        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributes(attributes), m_dataType(0), m_poll(true), m_transactionId(0) {}
 
     virtual ~ActionObject(void) {}
     virtual QByteArray request(const QVariant &data) = 0;
@@ -22,7 +25,8 @@ public:
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
-    inline quint16 attributeId(void) { return m_attributeId; }
+
+    inline QList <quint16> &attributes(void) { return m_attributes; }
     inline quint8 dataType(void) { return m_dataType; }
     inline bool poll(void) { return m_poll; }
 
@@ -31,13 +35,15 @@ public:
 protected:
 
     QString m_name;
-    quint16 m_clusterId, m_manufacturerCode, m_attributeId;
+    quint16 m_clusterId, m_manufacturerCode;
+
+    QList <quint16> m_attributes;
     quint8 m_dataType;
     bool m_poll;
 
     quint8 m_transactionId;
 
-    QByteArray writeAttributeRequest(const QByteArray &data); // TODO: move this to zcl
+    QByteArray writeAttributeRequest(const QByteArray &data); // TODO: move this to zcl ASAP
 
 };
 
@@ -48,7 +54,7 @@ namespace Actions
 
     public:
 
-        Status(void) : ActionObject("status", CLUSTER_ON_OFF) {}
+        Status(void) : ActionObject("status", CLUSTER_ON_OFF, 0x0000, 0x0000, DATA_TYPE_BOOLEAN, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -68,7 +74,7 @@ namespace Actions
 
     public:
 
-        Level(void) : ActionObject("level", CLUSTER_LEVEL_CONTROL) {}
+        Level(void) : ActionObject("level", CLUSTER_LEVEL_CONTROL, 0x0000, 0x0000, DATA_TYPE_8BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -78,7 +84,7 @@ namespace Actions
 
     public:
 
-        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL) {}
+        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0000, 0x0001}) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -88,7 +94,7 @@ namespace Actions
 
     public:
 
-        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL) {}
+        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0003, 0x0004}) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -98,7 +104,7 @@ namespace Actions
 
     public:
 
-        ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
+        ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0000, 0x0007, DATA_TYPE_16BIT_UNSIGNED, true) {}
         QByteArray request(const QVariant &data) override;
 
     };

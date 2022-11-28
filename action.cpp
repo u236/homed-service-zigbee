@@ -46,7 +46,7 @@ QByteArray ActionObject::writeAttributeRequest(const QByteArray &data)
 {
     writeArrtibutesStruct payload;
 
-    payload.attributeId = qToLittleEndian <quint16> (m_attributeId);
+    payload.attributeId = qToLittleEndian <quint16> (m_attributes.value(0));
     payload.dataType = m_dataType;
 
     return zclHeader(0x00, m_transactionId++, CMD_WRITE_ATTRIBUTES, m_manufacturerCode).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(data);

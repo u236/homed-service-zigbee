@@ -81,7 +81,7 @@ QJsonObject LightObject::reqest(void)
     if (options.contains("level"))
     {
         commandOnTemplate.append(               "{% if brightness is defined %},\"level\":{{ brightness }}{% endif %}");
-        json.insert("brightness_template",      "{{ value_json.status }}");
+        json.insert("brightness_template",      "{{ value_json.level }}");
     }
 
     if (options.contains("color"))
