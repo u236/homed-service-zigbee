@@ -10,13 +10,12 @@ DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m
     PollObject::registerMetaTypes();
     DiscoveryObject::registerMetaTypes();
 
-    // TODO: move all of this to [devices] config section
-    m_libraryFile.setFileName(config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString());
-    m_databaseFile.setFileName(config->value("zigbee/database", "/var/db/homed-zigbee-database.json").toString());
-    m_propertiesFile.setFileName(config->value("zigbee/properties", "/var/db/homed-zigbee-properties.json").toString());
-    m_optionsFile.setFileName(config->value("zigbee/options", "/var/db/homed-zigbee-options.json").toString());
-    m_externalDir.setPath(config->value("zigbee/external", "/usr/share/homed/zigbee").toString());
-    m_offsets = config->value("zigbee/offsets", true).toBool();
+    m_libraryFile.setFileName(config->value("device/library", "/usr/share/homed/zigbee.json").toString());
+    m_databaseFile.setFileName(config->value("device/database", "/var/db/homed-zigbee-database.json").toString());
+    m_propertiesFile.setFileName(config->value("device/properties", "/var/db/homed-zigbee-properties.json").toString());
+    m_optionsFile.setFileName(config->value("device/options", "/var/db/homed-zigbee-options.json").toString());
+    m_externalDir.setPath(config->value("device/external", "/usr/share/homed/zigbee").toString());
+    m_offsets = config->value("device/offsets", true).toBool();
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
     connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
