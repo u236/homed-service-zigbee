@@ -35,10 +35,10 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsPerenio::PowerOnStatus>       ("perenioPowerOnStatusAction");
     qRegisterMetaType <ActionsPerenio::ResetAlarms>         ("perenioResetAlarmsAction");
-    qRegisterMetaType <ActionsPerenio::VoltageMin>          ("perenioAlarmVoltageMinAction");
-    qRegisterMetaType <ActionsPerenio::VoltageMax>          ("perenioAlarmVoltageMaxAction");
-    qRegisterMetaType <ActionsPerenio::PowerMax>            ("perenioAlarmPowerMaxAction");
-    qRegisterMetaType <ActionsPerenio::EnergyLimit>         ("perenioAlarmEnergyLimitAction");
+    qRegisterMetaType <ActionsPerenio::VoltageMin>          ("perenioVoltageMinAction");
+    qRegisterMetaType <ActionsPerenio::VoltageMax>          ("perenioVoltageMaxAction");
+    qRegisterMetaType <ActionsPerenio::PowerMax>            ("perenioPowerMaxAction");
+    qRegisterMetaType <ActionsPerenio::EnergyLimit>         ("perenioEnergyLimitAction");
 }
 
 QByteArray ActionObject::writeAttributeRequest(const QByteArray &data)

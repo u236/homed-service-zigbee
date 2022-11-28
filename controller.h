@@ -38,7 +38,11 @@ private:
 
     ZigBee *m_zigbee;
     QMetaEnum m_commands;
-    bool m_names;
+
+    bool m_names, m_discovery;
+    QString m_discoveryPrefix;
+
+    void publishDiscovery(const Device &device);
 
 private slots:
 

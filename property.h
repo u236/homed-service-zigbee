@@ -349,12 +349,12 @@ namespace PropertiesIAS
 
 namespace PropertiesPTVO
 {
-    class CO2 : public PropertyObject
+    class Temperature: public PropertyObject
     {
 
     public:
 
-        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
+        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -363,12 +363,12 @@ namespace PropertiesPTVO
 
     };
 
-    class Temperature: public PropertyObject
+    class CO2 : public PropertyObject
     {
 
     public:
 
-        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
+        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:

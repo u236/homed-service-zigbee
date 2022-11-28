@@ -428,33 +428,6 @@ void PropertiesIAS::ZoneStatus::resetValue(void)
     m_value = map;
 }
 
-void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0x0055:
-        {
-            float value = 0;
-
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_buffer = value;
-            break;
-        }
-
-        case 0x001C:
-        {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
-                return;
-
-            m_value = m_buffer;
-            break;
-        }
-    }
-}
-
 void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
@@ -474,6 +447,33 @@ void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 data
         case 0x001C:
         {
             if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "C")
+                return;
+
+            m_value = m_buffer;
+            break;
+        }
+    }
+}
+
+void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value = 0;
+
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            m_buffer = value;
+            break;
+        }
+
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
                 return;
 
             m_value = m_buffer;
@@ -1016,7 +1016,7 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
     {
         case 0x0000: map.insert("tempertature", qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble()); break;
         case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0 + deviceOption("humidityOffset").toDouble()); break;
-        case 0x0002: map.insert("eco2", qFromLittleEndian(value)); break;
+        case 0x0002: map.insert("co2", qFromLittleEndian(value)); break;
         case 0x0003: map.insert("voc", qFromLittleEndian(value)); break;
     }
 

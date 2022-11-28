@@ -6,6 +6,7 @@ HEADERS += \
     adapter.h \
     controller.h \
     device.h \
+    discovery.h \
     ezsp.h \
     poll.h \
     property.h \
@@ -19,6 +20,7 @@ SOURCES += \
     adapter.cpp \
     controller.cpp \
     device.cpp \
+    discovery.cpp \
     ezsp.cpp \
     poll.cpp \
     property.cpp \

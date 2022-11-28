@@ -5,13 +5,15 @@
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02",
       "modelNames":     ["TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
-      "reportings":     ["batteryPercentage", "temperature", "humidity"]
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "discoveries":    ["battery", "temperature", "humidity"]
     },
     {
       "description":    "Sonoff Door and Window Sensor SNZB-04",
       "modelNames":     ["DS01"],
       "properties":     ["batteryPercentage", "iasContact"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "contact"]
     }
   ],
 
@@ -20,10 +22,11 @@
     {
       "description":    "Life Control Smart Bulb MCLH-02",
       "modelNames":     ["vivi ZLight"],
-      "properties":     ["status", "level", "colorHS", "colorXY"],
-      "actions":        ["status", "level", "colorHS", "colorXY"],
-      "polls":          ["status", "level", "colorHS", "colorXY"],
-      "options":        {"pollInterval": 60},
+      "properties":     ["status", "level", "colorHS"],
+      "actions":        ["status", "level", "colorHS"],
+      "polls":          ["status", "level", "colorHS"],
+      "discoveries":    ["light"],
+      "options":        {"pollInterval": 60, "light": ["level", "color"]},
       "endpointId":     11
     }
   ],
@@ -34,7 +37,8 @@
       "description":    "Heiman Smoke Detector HS1SA",
       "modelNames":     ["SmokeSensor-EM", "SmokeSensor-N"],
       "properties":     ["batteryPercentage", "iasSmoke"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "smoke"]
     }
   ],
 
@@ -43,18 +47,24 @@
     {
       "description":    "PTVO Firmware Based Button",
       "modelNames":     ["Button"],
-      "properties":     ["batteryPercentage", "ptvoSwitchAction"]
+      "properties":     ["batteryPercentage", "ptvoSwitchAction"],
+      "discoveries":    ["battery", "action"],
+      "options":        {"actions": ["on", "off"]}
     },
     {
       "description":    "PTVO Firmware Based CO2 Sensor",
       "modelNames":     ["CO2 Sensor"],
-      "properties":     ["ptvoCO2", "ptvoTemperature", "ptvoSwitchAction"]
+      "properties":     ["ptvoTemperature", "ptvoCO2", "ptvoSwitchAction"],
+      "discoveries":    ["action", "temperature", "co2"],
+      "options":        {"actions": ["on", "off"]}
     },
     {
       "description":    "PTVO Firmware Based Smart Plug",
       "modelNames":     ["LC Outlet"],
       "properties":     ["status"],
-      "actions":        ["status"]
+      "actions":        ["status"],
+      "discoveries":    ["switch"],
+      "options":        {"switch": "outlet"}
     },
     {
       "description":    "PTVO Firmware Based RGB Led Controller",
@@ -62,6 +72,8 @@
       "properties":     ["status", "level"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "reportings":     ["status"],
+      "discoveries":    ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"]},
       "endpointId":     1
     },
     {
@@ -79,21 +91,26 @@
       "modelNames":     ["TRADFRI bulb E14 WS 470lm"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
-      "reportings":     ["status", "level", "colorTemperature"]
+      "reportings":     ["status", "level", "colorTemperature"],
+      "discoveries":    ["light"],
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperatureMin": 250, "colorTemperatureMax": 454}
     },
     {
       "description":    "TRADFRI Dimmable Bulb",
       "modelNames":     ["TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
-      "reportings":     ["status", "level"]
+      "reportings":     ["status", "level"],
+      "discoveries":    ["light"],
+      "options":        {"light": ["level"]}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
       "modelNames":     ["TRADFRI on/off switch"],
       "properties":     ["batteryPercentage", "identifyAction", "switchAction", "levelAction"],
       "reportings":     ["batteryPercentage"],
-      "options":        {"batteryUndivided": true}
+      "discoveries":    ["battery", "action"],
+      "options":        {"batteryUndivided": true, "actions": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
     }
   ],
 
@@ -102,53 +119,62 @@
     {
       "description":    "Konke Smoke Detector KK-SA-H03",
       "modelNames":     ["3AFE010104020028"],
-      "properties":     ["batteryPercentage", "iasSmoke"]
+      "properties":     ["batteryPercentage", "iasSmoke"],
+      "discoveries":    ["battery", "smoke"]
     },
     {
       "description":    "Konke Door and Window Sensor 2AJZ4KPDR or KK-DS-J01W",
       "modelNames":     ["3AFE130104020015", "3AFE221004021015", "3AFE270104020015", "3AFE280104020015"],
-      "properties":     ["batteryPercentage", "iasContact"]
+      "properties":     ["batteryPercentage", "iasContact"],
+      "discoveries":    ["battery", "contact"]
     },
     {
       "description":    "Konke Motion Sensor 2AJZ4KPBS",
       "modelNames":     ["3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
+      "discoveries":    ["battery", "occupancy"],
       "options":        {"ignoreClusters": [64704], "timeout": 120}
     },
     {
       "description":    "Konke Motion Sensor KK-BS-J01W",
       "modelNames":     ["3AFE07010402100D", "3AFE08010402100D"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
+      "discoveries":    ["battery", "occupancy"],
       "options":        {"ignoreClusters": [64704], "timeout": 30}
     },
     {
       "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",
       "modelNames":     ["3AFE21100402102A", "LH07321"],
-      "properties":     ["batteryPercentage", "iasWaterLeak"]
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "discoveries":    ["battery", "waterLeak"]
     },
     {
       "description":    "Konke Temperature and Humidity Sensor 2AJZ4KPFT",
       "modelNames":     ["3AFE140103020000", "3AFE220103020000"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
-      "reportings":     ["batteryPercentage", "temperature", "humidity"]
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "discoveries":    ["battery", "temperature", "humidity"]
     },
     {
       "description":    "Konke Temperature, Humidity and Illuminance Sensor KK-ES-J01W",
       "modelNames":     ["3AFE090103021000"],
-      "properties":     ["batteryPercentage", "temperature", "humidity", "illuminance"]
+      "properties":     ["batteryPercentage", "temperature", "humidity", "illuminance"],
+      "discoveries":    ["battery", "temperature", "humidity", "illuminance"]
     },
     {
       "description":    "Konke Wireless Button 2AJZ4KPKEY",
       "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
       "properties":     ["batteryPercentage", "konkeButtonAction"],
-      "options":        {"ignoreClusters": [64704]}
+      "discoveries":    ["battery", "action"],
+      "options":        {"ignoreClusters": [64704], "actions": ["singleClick", "doubleClick", "hold"]}
     },
     {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
-      "endpointId":     1,
-      "options":        {"scenes": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}}
+      "discoveries":    ["battery", "scene"],
+      "options":        {"scenes": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}},
+      "endpointId":     1
     },
     {
       "modelNames":     ["3AFE241000040002"],
@@ -173,13 +199,15 @@
       "description":    "Perenio Door and Window Sensor PECWS01",
       "modelNames":     ["ZHA-DoorLockSensor"],
       "properties":     ["batteryPercentage", "iasContact"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "contact"]
     },
     {
       "description":    "Perenio Motion Sensor PECMS01",
       "modelNames":     ["ZHA-PirSensor"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "occupancy"]
     }
   ],
 
@@ -191,6 +219,8 @@
       "properties":     ["status", "lumiData"],
       "actions":        ["status"],
       "reportings":     ["status"],
+      "discoveries":    ["switch", "energy", "voltage", "power"],
+      "options":        {"switch": "outlet"},
       "endpointId":     1
     },
     {
@@ -201,12 +231,14 @@
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
-      "properties":     ["lumiBatteryVoltage", "contact"]
+      "properties":     ["lumiBatteryVoltage", "contact"],
+      "discoveries":    ["battery", "contact"]
     },
     {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
       "properties":     ["lumiBatteryVoltage", "occupancy"],
+      "discoveries":    ["battery", "occupancy"],
       "options":        {"timeout": 30}
     },
     {
@@ -214,23 +246,28 @@
       "modelNames":     ["lumi.motion.ac01"],
       "properties":     ["lumiData"],
       "actions":        ["lumiSensitivity", "lumiDetectionMode", "lumiDistance", "lumiResetPresence"],
-      "polls":          ["lumiPresenceSensor"]
+      "polls":          ["lumiPresenceSensor"],
+      "discoveries":    ["occupancy"]
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
       "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
-      "properties":     ["lumiBatteryVoltage", "temperature", "humidity"]
+      "properties":     ["lumiBatteryVoltage", "temperature", "humidity"],
+      "discoveries":    ["battery", "temperature", "humidity"]
     },
     {
       "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
       "modelNames":     ["lumi.sen_ill.mgl01"],
       "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
-      "reportings":     ["batteryVoltage", "illuminance"]
+      "reportings":     ["batteryVoltage", "illuminance"],
+      "discoveries":    ["battery", "illuminance"]
     },
     {
       "description":    "Xiaomi Wireless Button WXKG01LM",
       "modelNames":     ["lumi.sensor_switch"],
-      "properties":     ["lumiBatteryVoltage", "lumiButtonAction"]
+      "properties":     ["lumiBatteryVoltage", "lumiButtonAction"],
+      "discoveries":    ["battery", "action"],
+      "options":        {"actions": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
     },
     {
       "description":    "Aqara Opple 2-band Wireless Switch WXCJKG11LM",
@@ -238,11 +275,14 @@
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "reportings":     ["batteryVoltage", "status"],
+      "discoveries":    ["battery"],
+      "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.remote.b286opcn01"],
       "properties":     ["lumiSwitchAction"],
+      "discoveries":    ["action"],
       "endpointId":     [1, 2]
     },
     {
@@ -251,11 +291,14 @@
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
+      "discoveries":    ["battery"],
+      "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.remote.b486opcn01"],
       "properties":     ["lumiSwitchAction"],
+      "discoveries":    ["action"],
       "endpointId":     [1, 2, 3, 4]
     },
     {
@@ -264,17 +307,22 @@
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
+      "discoveries":    ["battery"],
+      "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.remote.b686opcn01"],
       "properties":     ["lumiSwitchAction"],
+      "discoveries":    ["action"],
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
       "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBatteryVoltage"],
+      "discoveries":    ["action"],
+      "options":        {"actions": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"]},
       "endpointId":     1
     },
     {
@@ -295,18 +343,21 @@
       "description":    "Life Control Door and Window Sensor MCLH-04",
       "modelNames":     ["Door_Sensor"],
       "properties":     ["batteryPercentage", "iasContact"],
+      "discoveries":    ["battery", "contact"],
       "options":        {"batteryUndivided": true}
     },
     {
       "description":    "Life Control Water Leak Sensor MCLH-07",
       "modelNames":     ["Leak_Sensor"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "discoveries":    ["battery", "waterLeak"],
       "options":        {"batteryUndivided": true}
     },
     {
       "description":    "Life Control Air Quality Sensor MCLH-08",
       "modelNames":     ["VOC_Sensor"],
       "properties":     ["batteryPercentage", "lifeControlAirQuality"],
+      "discoveries":    ["battery", "temperature", "humidity", "co2", "voc"],
       "options":        {"batteryUndivided": true}
     }
   ],
@@ -319,13 +370,16 @@
       "properties":     ["status", "perenioSmartPlug"],
       "actions":        ["status", "perenioPowerOnStatus", "perenioResetAlarms", "perenioVoltageMin", "perenioVoltageMax", "perenioPowerMax", "perenioEnergyLimit"],
       "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
-      "polls":          ["perenioSmartPlug"]
+      "polls":          ["perenioSmartPlug"],
+      "discoveries":    ["switch", "energy", "voltage", "power"],
+      "options":        {"switch": "outlet"}
     },
     {
       "description":    "Perenio Water Leak Sensor PECLS01",
       "modelNames":     ["PECLS01"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "waterLeak"]
     }
   ],
 
@@ -335,7 +389,8 @@
       "description":    "Sonoff Relay/Switch ZBMINI",
       "modelNames":     ["01MINIZB"],
       "properties":     ["status"],
-      "actions":        ["status"]
+      "actions":        ["status"],
+      "discoveries":    ["switch"]
     }
   ],
 
@@ -346,7 +401,9 @@
       "modelNames":     ["RICI01"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "reportings":     ["status"]
+      "reportings":     ["status"],
+      "discoveries":    ["switch"],
+      "options":        {"switch": "outlet"}
     }
   ],
 
@@ -358,6 +415,7 @@
       "properties":     ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "reportings":     ["status"],
+      "discoveries":    ["switch"],
       "options":        {"ignoreClusters": [57344]}
     },
     {
@@ -373,6 +431,7 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "reportings":     ["status"],
+      "discoveries":    ["switch"],
       "endpointId":     [1, 2]
     },
     {
@@ -388,6 +447,7 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "reportings":     ["status"],
+      "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3]
     },
     {
@@ -403,6 +463,7 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "reportings":     ["status"],
+      "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3, 4]
     },
     {
@@ -418,6 +479,7 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "reportings":     ["status"],
+      "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
@@ -426,7 +488,8 @@
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "options":        {"ignoreClusters": [57344, 57345], "energyDivider": 100, "currentDivider": 1000}
+      "discoveries":    ["switch", "energy", "voltage", "current", "power"],
+      "options":        {"ignoreClusters": [57344, 57345], "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
       "description":    "TUYA TS0121 Smart Plug With Power Monitoring",
@@ -434,64 +497,75 @@
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["energy", "voltage", "current", "power"],
-      "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000}
+      "discoveries":    ["switch", "energy", "voltage", "current", "power"],
+      "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
       "description":    "TUYA TS0601 Neo Siren",
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaNeoSiren"],
-      "actions":        ["tuyaVolume", "tuyaDuration", "tuyaAlarm", "tuyaMelody"]
+      "actions":        ["tuyaVolume", "tuyaDuration", "tuyaAlarm", "tuyaMelody"],
+      "discoveries":    []
     },
     {
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
-      "properties":     ["iasGas"]
+      "properties":     ["iasGas"],
+      "discoveries":    ["gas"]
     },
     {
       "description":    "TUYA TS0205 Smoke Detector",
       "modelNames":     ["TS0205"],
-      "properties":     ["batteryPercentage", "iasSmoke"]
+      "properties":     ["batteryPercentage", "iasSmoke"],
+      "discoveries":    ["battery", "smoke"]
     },
     {
       "description":    "TUYA TS0203 Door and Window Sensor",
       "modelNames":     ["TS0203"],
       "properties":     ["batteryPercentage", "iasContact"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "contact"]
     },
     {
       "description":    "TUYA TS0601 Human Presence Detector",
       "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
       "properties":     ["tuyaPresenceSensor"],
-      "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"]
+      "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
+      "discoveries":    ["occupancy"]
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
       "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_mmtwjmaq", "_TZ3000_otvn3lne", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "occupancy"]
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
       "modelNames":     ["_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "occupancy"],
       "options":        {"timeout": 30}
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor (partially supported)",
       "modelNames":     ["_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_msl6wxk9"],
-      "properties":     ["batteryPercentage", "iasOccupancy"]
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "discoveries":    ["battery", "occupancy"]
     },
     {
       "description":    "TUYA TS0207 Water Leak Sensor",
       "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_upgcbody"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
-      "reportings":     ["batteryPercentage"]
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "waterLeak"]
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor",
       "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y"],
-      "properties":     ["batteryPercentage", "temperature", "humidity"]
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "discoveries":    ["battery", "temperature", "humidity"]
     }
   ]
 }

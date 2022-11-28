@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include "action.h"
 #include "adapter.h"
+#include "discovery.h"
 #include "poll.h"
 #include "property.h"
 #include "reporting.h"
@@ -56,6 +57,7 @@ public:
     inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Reporting> &reportings(void) { return m_reportings; }
     inline QList <Poll> &polls(void) { return m_polls; }
+    inline QList <Discovery> &discoveries(void) { return m_discoveries; }
 
 private:
 
@@ -67,10 +69,11 @@ private:
     bool m_descriptorReceived, m_updated;
     ZoneStatus m_zoneStatus;
 
-    QList <Action> m_actions;
     QList <Property> m_properties;
+    QList <Action> m_actions;
     QList <Reporting> m_reportings;
     QList <Poll> m_polls;
+    QList <Discovery> m_discoveries;
 
 };
 

@@ -8,6 +8,7 @@ DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m
     ActionObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
     PollObject::registerMetaTypes();
+    DiscoveryObject::registerMetaTypes();
 
     // TODO: move all of this to [devices] config section
     m_libraryFile.setFileName(config->value("zigbee/library", "/usr/share/homed/zigbee.json").toString());
@@ -201,7 +202,7 @@ void DeviceList::setupDevice(const Device &device)
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
 {
     Device device = endpoint->device();
-    QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray();
+    QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), discoveries = json.value("discoveries").toArray();
 
     for (auto it = properties.begin(); it != properties.end(); it++)
     {
@@ -259,6 +260,22 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         }
 
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "poll" << it->toString() << "unrecognized";
+    }
+
+    for (auto it = discoveries.begin(); it != discoveries.end(); it++)
+    {
+        int type = QMetaType::type(QString(it->toString()).append("Discovery").toUtf8());
+
+        if (type)
+        {
+            Discovery discovery(reinterpret_cast <DiscoveryObject*> (QMetaType::create(type)));
+            discovery->setParent(endpoint.data());
+            discovery->setMultiple(multiple);
+            endpoint->discoveries().append(discovery);
+            continue;
+        }
+
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "discovery" << it->toString() << "unrecognized";
     }
 
     if (!endpoint->polls().isEmpty())
