@@ -13,7 +13,7 @@ Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this)), m_comman
     m_zigbee->init();
 }
 
-void Controller::publishDiscovery(const Device &device)
+void Controller::publishDiscovery(const Device &device, bool remove)
 {
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
@@ -22,7 +22,7 @@ void Controller::publishDiscovery(const Device &device)
             const Discovery &discovery = it.value()->discoveries().at(i);
             QString id = discovery->multiple() ? QString::number(it.value()->id()) : QString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
             QList <QString> object = {discovery->name()};
-            QJsonObject node, json = discovery->reqest();
+            QJsonObject json, node;
 
             if (!id.isEmpty())
             {
@@ -30,16 +30,23 @@ void Controller::publishDiscovery(const Device &device)
                 object.append(id);
             }
 
-            node.insert("identifiers", QJsonArray {QString(device->ieeeAddress().toHex())});
-            node.insert("name", device->name());
+            if (!remove)
+            {
+                json = discovery->reqest();
 
-            if (discovery->control())
-                json.insert("command_topic", mqttTopic("td/zigbee/%1").arg(topic));
+                node.insert("identifiers", QJsonArray {QString(device->ieeeAddress().toHex())});
+                node.insert("model", device->description());
+                node.insert("name", device->name());
 
-            json.insert("device", node);
-            json.insert("state_topic", mqttTopic("fd/zigbee/%1").arg(topic));
-            json.insert("name", QString("%1 (%2)").arg(device->name(), object.join(' ')));
-            json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
+                if (discovery->control())
+                    json.insert("command_topic", mqttTopic("td/zigbee/%1").arg(topic));
+
+                json.insert("availability", QJsonArray {QJsonObject {{"topic", mqttTopic("service/zigbee")}, {"value_template", "{{ value_json.status }}"}}});
+                json.insert("device", node);
+                json.insert("state_topic", mqttTopic("fd/zigbee/%1").arg(topic));
+                json.insert("name", QString("%1 (%2)").arg(device->name(), object.join(' ')));
+                json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
+            }
 
             if (discovery->name() == "action") // TODO: add scenes
             {
@@ -53,13 +60,16 @@ void Controller::publishDiscovery(const Device &device)
                     if (!id.isEmpty())
                         event.append(id);
 
-                    item.insert("automation_type", "trigger");
-                    item.insert("device", node);
-                    item.insert("payload", event.at(0));
-                    item.insert("subtype", event.join(' '));
-                    item.insert("topic", mqttTopic("fd/zigbee/%1").arg(topic));
-                    item.insert("type", discovery->name());
-                    item.insert("value_template", QString("{{ value_json.%1 }}").arg(discovery->name()));
+                    if (!remove)
+                    {
+                        item.insert("automation_type", "trigger");
+                        item.insert("device", node);
+                        item.insert("payload", event.at(0));
+                        item.insert("subtype", event.join(' '));
+                        item.insert("topic", mqttTopic("fd/zigbee/%1").arg(topic));
+                        item.insert("type", discovery->name());
+                        item.insert("value_template", QString("{{ value_json.%1 }}").arg(discovery->name()));
+                    }
 
                     mqttPublish(QString("%1/device_automation/%2/%3/config").arg(m_discoveryPrefix, device->ieeeAddress().toHex(), event.join('_')), item, true);
                 }
@@ -123,12 +133,12 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->setPermitJoin(json.value("enabled").toBool());
                 break;
 
-            case Command::setDeviceName:
-                m_zigbee->setDeviceName(json.value("device").toString(), json.value("name").toString());
-                break;
-
             case Command::removeDevice:
                 m_zigbee->removeDevice(json.value("device").toString(), json.value("force").toBool());
+                break;
+
+            case Command::setDeviceName:
+                m_zigbee->setDeviceName(json.value("device").toString(), json.value("name").toString());
                 break;
 
             case Command::updateDevice:
@@ -193,9 +203,28 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     }
 }
 
-void Controller::deviceEvent(const Device &device, const QString &event)
+void Controller::deviceEvent(const Device &device, ZigBee::Event event)
 {
-    mqttPublish(mqttTopic("event/zigbee"), {{"device", device->name()}, {"event", event}});
+    if (m_discovery)
+    {
+        switch (event)
+        {
+            case ZigBee::Event::deviceJoined:
+            case ZigBee::Event::deviceUpdated:
+                publishDiscovery(device);
+                break;
+
+            case ZigBee::Event::deviceLeft:
+            case ZigBee::Event::deviceRemoved:
+                publishDiscovery(device, true);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    mqttPublish(mqttTopic("event/zigbee"), {{"device", device->name()}, {"event", m_zigbee->eventName(event)}});
 }
 
 void Controller::endpointUpdated(const Device &device, quint8 endpointId)

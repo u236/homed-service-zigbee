@@ -5,6 +5,7 @@
 #define DEVICE_INTERVIEW_TIMEOUT        15000
 #define STATUS_LED_TIMEOUT              200
 
+#include <QMetaEnum>
 #include "device.h"
 
 class BindingRequestObject;
@@ -117,13 +118,27 @@ public:
 
     ZigBee(QSettings *config, QObject *parent);
 
+    enum class Event
+    {
+        deviceJoined,
+        deviceLeft,
+        deviceRemoved,
+        deviceUpdated,
+        interviewFinished,
+        interviewError,
+        interviewTimeout
+    };
+
+    Q_ENUM(Event)
+
     inline DeviceList *devices(void) { return m_devices; }
+    inline const char *eventName(Event event) { return m_events.valueToKey(static_cast <int> (event)); }
 
     void init(void);
     void setPermitJoin(bool enabled);
 
-    void setDeviceName(const QString &deviceName, const QString &newName, bool store = true);
     void removeDevice(const QString &deviceName, bool force);
+    void setDeviceName(const QString &deviceName, const QString &newName, bool store = true);
 
     void updateDevice(const QString &deviceName, bool reportings);
     void updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
@@ -146,8 +161,11 @@ private:
     DeviceList *m_devices;
     Adapter *m_adapter;
 
+    QMetaEnum m_events;
+    quint8  m_requestId;
+
     QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
-    quint8  m_requestId, m_interPanChannel;
+    quint8  m_interPanChannel;
 
     QMap <quint8, Request> m_requests;
 
@@ -200,7 +218,7 @@ private slots:
 
 signals:
 
-    void deviceEvent(const Device &device, const QString &event);
+    void deviceEvent(const Device &device, ZigBee::Event event);
     void endpointUpdated(const Device &device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
 

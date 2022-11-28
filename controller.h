@@ -3,7 +3,6 @@
 
 #define SERVICE_VERSION     "3.0.45"
 
-#include <QMetaEnum>
 #include "homed.h"
 #include "zigbee.h"
 
@@ -42,14 +41,14 @@ private:
     bool m_names, m_discovery;
     QString m_discoveryPrefix;
 
-    void publishDiscovery(const Device &device);
+    void publishDiscovery(const Device &device, bool remove = false);
 
 private slots:
 
     void mqttConnected(void) override;
     void mqttReceived(const QByteArray &message, const QMqttTopicName &topic) override;
 
-    void deviceEvent(const Device &device, const QString &event);
+    void deviceEvent(const Device &device, ZigBee::Event event);
     void endpointUpdated(const Device &device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
 

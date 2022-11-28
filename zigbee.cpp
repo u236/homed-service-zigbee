@@ -8,7 +8,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_requestId(0)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0)
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
@@ -55,21 +55,6 @@ void ZigBee::setPermitJoin(bool enabled)
     m_adapter->setPermitJoin(enabled);
 }
 
-void ZigBee::setDeviceName(const QString &deviceName, const QString &newName, bool store)
-{
-    Device device = m_devices->byName(deviceName);
-
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
-        return;
-
-    device->setName(newName);
-
-    if (!store)
-        return;
-
-    m_devices->storeDatabase();
-}
-
 void ZigBee::removeDevice(const QString &deviceName, bool force)
 {
     Device device = m_devices->byName(deviceName);
@@ -84,7 +69,25 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     }
 
     logInfo << "Device" << device->name() << "removed (force)";
+    emit deviceEvent(device, Event::deviceRemoved);
+
     m_devices->removeDevice(device);
+    m_devices->storeDatabase();
+}
+
+void ZigBee::setDeviceName(const QString &deviceName, const QString &newName, bool store)
+{
+    Device device = m_devices->byName(deviceName);
+
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+        return;
+
+    device->setName(newName);
+    emit deviceEvent(device, Event::deviceUpdated);
+
+    if (!store)
+        return;
+
     m_devices->storeDatabase();
 }
 
@@ -96,6 +99,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
         return;
 
     m_devices->setupDevice(device);
+    emit deviceEvent(device, Event::deviceUpdated);
 
     if (!reportings)
     {
@@ -447,7 +451,7 @@ void ZigBee::interviewFinished(const Device &device)
             configureReporting(it.value(), it.value()->reportings().at(i));
 
     logInfo << "Device" << device->name() << "interview finished successfully";
-    emit deviceEvent(device, "interviewFinished");
+    emit deviceEvent(device, Event::interviewFinished);
 
     device->timer()->stop();
     device->setInterviewFinished();
@@ -461,7 +465,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
         return;
 
     logWarning << "Device" << device->name() << "interview error:" << reason;
-    emit deviceEvent(device, "interviewError");
+    emit deviceEvent(device, Event::interviewError);
 
     device->timer()->stop();
 }
@@ -1095,6 +1099,8 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
                 break;
 
             logInfo << "Device" << device->name() << "removed";
+            emit deviceEvent(device, Event::deviceRemoved);
+
             m_devices->removeDevice(device);
             m_devices->storeDatabase();
             break;
@@ -1139,7 +1145,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         interviewDevice(it.value());
     }
 
-    emit deviceEvent(it.value(), "deviceJoined");
+    emit deviceEvent(it.value(), Event::deviceJoined);
 }
 
 void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
@@ -1153,7 +1159,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     blink(500);
 
     logInfo << "Device" << it.value()->name() << "left network";
-    emit deviceEvent(it.value(), "deviceLeft");
+    emit deviceEvent(it.value(), Event::deviceLeft);
 
     m_devices->removeDevice(it.value());
     m_devices->storeDatabase();
@@ -1406,7 +1412,7 @@ void ZigBee::deviceTimeout(void)
     if (!device->interviewFinished())
     {
         logWarning << "Device" << device->name() << "interview timed out";
-        emit deviceEvent(device, "interviewTimeout");
+        emit deviceEvent(device, Event::interviewTimeout);
         return;
     }
 
