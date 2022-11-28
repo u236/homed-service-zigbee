@@ -78,7 +78,7 @@ namespace Actions
 
     public:
 
-        ColorHS(void) : ActionObject("colorHS", CLUSTER_COLOR_CONTROL) {}
+        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL) {}
         QByteArray request(const QVariant &data) override;
 
     };
@@ -88,7 +88,7 @@ namespace Actions
 
     public:
 
-        ColorXY(void) : ActionObject("colorXY", CLUSTER_COLOR_CONTROL) {}
+        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL) {}
         QByteArray request(const QVariant &data) override;
 
     };

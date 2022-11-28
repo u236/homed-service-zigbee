@@ -1,5 +1,6 @@
 #include <QtEndian>
 #include "action.h"
+#include "color.h"
 
 void ActionObject::registerMetaTypes(void)
 {
@@ -119,10 +120,16 @@ QByteArray Actions::ColorHS::request(const QVariant &data)
         {
             QList <QVariant> list = data.toList();
             moveToColorHSStruct payload;
+            Color color(list.value(0).toDouble() / 0xFF, list.value(1).toDouble() / 0xFF, list.value(2).toDouble() / 0xFF);
+            double colorH, colorS;
 
-            payload.colorH = static_cast <quint8> (list.value(0).toInt() < 0xFE ? list.value(0).toInt() : 0xFE);
-            payload.colorS = static_cast <quint8> (list.value(1).toInt() < 0xFE ? list.value(1).toInt() : 0xFE);
-            payload.time = qToLittleEndian <quint16> (list.value(2).toInt());
+            color.toHS(&colorH, &colorS);
+            colorH *= 0xFF;
+            colorS *= 0xFF;
+
+            payload.colorH = static_cast <quint8> (colorH < 0xFE ? colorH : 0xFE);
+            payload.colorS = static_cast <quint8> (colorS < 0xFE ? colorS : 0xFE);
+            payload.time = qToLittleEndian <quint16> (list.value(3).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x06).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
@@ -139,12 +146,17 @@ QByteArray Actions::ColorXY::request(const QVariant &data)
         case QVariant::List:
         {
             QList <QVariant> list = data.toList();
-            double colorX = list.value(0).toDouble() * 0xFFFF, colorY = list.value(1).toDouble() * 0xFFFF;
             moveToColorXYStruct payload;
+            Color color(list.value(0).toDouble() / 0xFF, list.value(1).toDouble() / 0xFF, list.value(2).toDouble() / 0xFF);
+            double colorX, colorY;
+
+            color.toXY(&colorX, &colorY);
+            colorX *= 0xFFFF;
+            colorY *= 0xFFFF;
 
             payload.colorX = qToLittleEndian <quint16> (colorX < 0xFEFF ? colorX : 0xFEFF);
             payload.colorY = qToLittleEndian <quint16> (colorY < 0xFEFF ? colorY : 0xFEFF);
-            payload.time = qToLittleEndian <quint16> (list.value(2).toInt());
+            payload.time = qToLittleEndian <quint16> (list.value(3).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x07).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }

@@ -122,7 +122,7 @@ namespace Properties
 
     public:
 
-        ColorHS(void) : PropertyObject("colorHS", CLUSTER_COLOR_CONTROL) {}
+        ColorHS(void) : PropertyObject("color", CLUSTER_COLOR_CONTROL) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
@@ -136,7 +136,7 @@ namespace Properties
 
     public:
 
-        ColorXY(void) : PropertyObject("colorXY", CLUSTER_COLOR_CONTROL) {}
+        ColorXY(void) : PropertyObject("color", CLUSTER_COLOR_CONTROL) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:

@@ -1,5 +1,6 @@
 #include <math.h>
 #include <QtEndian>
+#include "color.h"
 #include "device.h"
 #include "property.h"
 
@@ -165,10 +166,11 @@ void Properties::ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, co
             break;
     }
 
-    if (!m_colorH.isValid() || !m_colorS.isValid())
-        return;
-
-    m_value = QList <QVariant> {m_colorH, m_colorS};
+    if (m_colorH.isValid() || m_colorS.isValid())
+    {
+        Color color = Color::fromHS(m_colorH.toDouble() / 0xFF, m_colorS.toDouble() / 0xFF);
+        m_value = QList <QVariant> {static_cast <quint8> (color.r() * 0xFF), static_cast <quint8> (color.g() * 0xFF), static_cast <quint8> (color.b() * 0xFF)};
+    }
 }
 
 void Properties::ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -183,7 +185,7 @@ void Properties::ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, co
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            m_colorX = static_cast <double> (qFromLittleEndian(value)) / 0xFFFF;
+            m_colorX = qFromLittleEndian(value);
             break;
         }
 
@@ -195,15 +197,16 @@ void Properties::ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, co
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            m_colorY = static_cast <double> (qFromLittleEndian(value)) / 0xFFFF;
+            m_colorY = qFromLittleEndian(value);
             break;
         }
     }
 
-    if (!m_colorX.isValid() || !m_colorY.isValid())
-        return;
-
-    m_value = QList <QVariant> {m_colorX, m_colorY};
+    if (m_colorX.isValid() || m_colorY.isValid())
+    {
+        Color color = Color::fromXY(m_colorX.toDouble() / 0xFFFF, m_colorY.toDouble() / 0xFFFF);
+        m_value = QList <QVariant> {static_cast <quint8> (color.r() * 0xFF), static_cast <quint8> (color.g() * 0xFF), static_cast <quint8> (color.b() * 0xFF)};
+    }
 }
 
 void Properties::ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

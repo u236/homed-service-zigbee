@@ -1,3 +1,4 @@
+include(../homed-common/homed-color.pri)
 include(../homed-common/homed-common.pri)
 include(../homed-common/homed-gpio.pri)
 
