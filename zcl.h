@@ -88,6 +88,7 @@
 #define CLUSTER_TUYA_SWITCH_MODE                    0xE001
 
 #include <QByteArray>
+#include <QList>
 
 #pragma pack(push, 1)
 
@@ -251,6 +252,8 @@ struct tuyaHeaderStruct
 #pragma pack(pop)
 
 QByteArray zclHeader(quint8 frameControl, quint8 transactionId, quint8 commandId, quint16 manufacturerCode = 0);
+QByteArray readAttributesRequest(quint8 transactionId, quint16 manufacturerCode, QList <quint16> attributes);
+QByteArray writeAttributeRequest(quint8 transactionId, quint16 manufacturerCode, quint16 attributeId, quint8 dataType, const QByteArray &data);
 
 quint8 zclDataSize(quint8 dataType);
 quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset);

@@ -560,7 +560,7 @@ QJsonObject DeviceList::serializeProperties(void)
             if (data.isEmpty())
                 continue;
 
-            item.insert(QString::number(it.value()->id()), data);
+            item.insert(QString::number(it.key()), data);
         }
 
         if (item.isEmpty())

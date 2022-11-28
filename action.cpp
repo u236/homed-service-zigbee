@@ -42,16 +42,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPerenio::EnergyLimit>         ("perenioEnergyLimitAction");
 }
 
-QByteArray ActionObject::writeAttributeRequest(const QByteArray &data)
-{
-    writeArrtibutesStruct payload;
-
-    payload.attributeId = qToLittleEndian <quint16> (m_attributes.value(0));
-    payload.dataType = m_dataType;
-
-    return zclHeader(0x00, m_transactionId++, CMD_WRITE_ATTRIBUTES, m_manufacturerCode).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(data);
-}
-
 QByteArray Actions::Status::request(const QVariant &data)
 {
     QString status = data.toString();
@@ -66,7 +56,7 @@ QByteArray Actions::PowerOnStatus::request(const QVariant &data)
     if (value < 0 || value > 2)
         value = 0xFF;
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x4003, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray Actions::Level::request(const QVariant &data)
@@ -205,7 +195,7 @@ QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
 QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
 {
     float value = data.toFloat();
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::OperationMode::request(const QVariant &data)
@@ -216,7 +206,7 @@ QByteArray ActionsLUMI::OperationMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0009, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::Sensitivity::request(const QVariant &data)
@@ -228,7 +218,7 @@ QByteArray ActionsLUMI::Sensitivity::request(const QVariant &data)
         return QByteArray();
 
     value += 1;
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x010C, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::DetectionMode::request(const QVariant &data)
@@ -239,7 +229,7 @@ QByteArray ActionsLUMI::DetectionMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0144, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::Distance::request(const QVariant &data)
@@ -250,17 +240,15 @@ QByteArray ActionsLUMI::Distance::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0146, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::ResetPresence::request(const QVariant &data)
 {
-    quint8 value = 1; // TODO: check this
-
     if (!data.toBool())
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0157, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x01)); // TODO: check payload
 }
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)
@@ -376,7 +364,7 @@ QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
 QByteArray ActionsTUYA::ChildLock::request(const QVariant &data)
 {
     qint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8000, DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::BacklightMode::request(const QVariant &data)
@@ -387,7 +375,7 @@ QByteArray ActionsTUYA::BacklightMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8001, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::IndicatorMode::request(const QVariant &data)
@@ -398,7 +386,7 @@ QByteArray ActionsTUYA::IndicatorMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8001, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::SwitchMode::request(const QVariant &data)
@@ -409,7 +397,7 @@ QByteArray ActionsTUYA::SwitchMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xD030, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
@@ -420,7 +408,7 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8002, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsPerenio::PowerOnStatus::request(const QVariant &data)
@@ -431,7 +419,7 @@ QByteArray ActionsPerenio::PowerOnStatus::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0000, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsPerenio::ResetAlarms::request(const QVariant &data)
@@ -439,33 +427,33 @@ QByteArray ActionsPerenio::ResetAlarms::request(const QVariant &data)
     if (!data.toBool())
         return QByteArray();
 
-    return writeAttributeRequest(QByteArray(1, 0x00));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0001, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x00)); // TODO: check payload
 }
 
 QByteArray ActionsPerenio::VoltageMin::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0004, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsPerenio::VoltageMax::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0005, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsPerenio::PowerMax::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000B, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsPerenio::EnergyLimit::request(const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     value = qToLittleEndian(value);
-    return writeAttributeRequest(QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000F, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }

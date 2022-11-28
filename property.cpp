@@ -1037,16 +1037,12 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, quint
     {
         case 0x0000:
         {
+            QList <QString> list = {"off", "on", "prevoious"};
+
             if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
                 break;
 
-            switch (data.at(0))
-            {
-                case 0x00: map.insert("powerOnStatus", "off"); break;
-                case 0x01: map.insert("powerOnStatus", "on"); break;
-                case 0x02: map.insert("powerOnStatus", "prevoious"); break;
-            }
-
+            map.insert("powerOnStatus", list.value(data.at(0), "unknown"));
             break;
         }
 
@@ -1083,7 +1079,6 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, quint
                 break;
 
             memcpy(&value, data.constData(), data.length());
-
 
             switch (attributeId)
             {

@@ -123,7 +123,7 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (endpointId && it.value()->id() != endpointId)
+        if (endpointId && it.key() != endpointId)
             continue;
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
@@ -240,7 +240,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (endpointId && it.value()->id() != endpointId)
+        if (endpointId && it.key() != endpointId)
             continue;
 
         for (int i = 0; i < it.value()->actions().count(); i++)
@@ -252,10 +252,10 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                 QByteArray data = action->request(actionData);
 
                 if (!data.isEmpty() && !(actionData.type() == QVariant::String && actionData.toString().isEmpty()))
-                    enqueueDataRequest(device, it.value()->id(), action->clusterId(), data, QString("%1 action").arg(action->name()));
+                    enqueueDataRequest(device, it.key(), action->clusterId(), data, QString("%1 action").arg(action->name()));
 
-                if (action->poll())
-                    enqueueDataRequest(device, it.value()->id(), action->clusterId(), attributesRequest(m_requestId, action->attributes(), action->manufacturerCode()));
+                if (!action->attributes().isEmpty())
+                    enqueueDataRequest(device, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes()));
 
                 break;
             }
@@ -307,19 +307,6 @@ void ZigBee::enqueueDeviceRequest(const Device &device, RequestType type)
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(device), type)));
 }
 
-QByteArray ZigBee::attributesRequest(quint8 id, QList <quint16> attributes, quint16 manufacturerCode)
-{
-    QByteArray request = zclHeader(0x00, id, CMD_READ_ATTRIBUTES, manufacturerCode);
-
-    for (int i = 0; i < attributes.count(); i++)
-    {
-        quint16 attributeId = qToLittleEndian(attributes.at(i));
-        request.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
-    }
-
-    return request;
-}
-
 bool ZigBee::interviewRequest(quint8 id, const Device &device)
 {
     if (device->manufacturerName().isEmpty() || device->modelName().isEmpty())
@@ -346,7 +333,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             if (!it.value()->descriptorReceived())
             {
-                device->setInterviewEndpointId(it.value()->id());
+                device->setInterviewEndpointId(it.key());
 
                 if (m_adapter->simpleDescriptorRequest(id, device->networkAddress(), it.key()))
                     return true;
@@ -360,7 +347,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             if (it.value()->inClusters().contains(CLUSTER_BASIC))
             {
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_BASIC, attributesRequest(id, {0x0001, 0x0004, 0x0005, 0x0007})))
+                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001, 0x0004, 0x0005, 0x0007})))
                     return true;
 
                 interviewError(device, "read basic attributes request failed");
@@ -381,7 +368,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             case ZoneStatus::Unknown:
             {
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, attributesRequest(id, {0x0000, 0x0010})))
+                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010})))
                     return true;
 
                 interviewError(device, "read current IAS zone status request failed");
@@ -390,13 +377,9 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             case ZoneStatus::SetAddress:
             {
-                writeArrtibutesStruct payload;
                 quint64 ieeeAddress = m_adapter->ieeeAddress();
 
-                payload.attributeId = qToLittleEndian <quint16> (0x0010);
-                payload.dataType = DATA_TYPE_IEEE_ADDRESS;
-
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, zclHeader(FC_DISABLE_DEFAULT_RESPONSE, id, CMD_WRITE_ATTRIBUTES).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress))))
+                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
                     return true;
 
                 interviewError(device, "write IAS zone CIE address request failed");
@@ -410,7 +393,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
                 payload.responseCode = 0x00;
                 payload.zoneId = 0x42;
 
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.value()->id(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload))) && m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, attributesRequest(id, {0x0000, 0x0010})))
+                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload))) && m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010})))
                     return true;
 
                 interviewError(device, "enroll IAS zone request failed");
@@ -419,7 +402,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             case ZoneStatus::Enrolled:
             {
-                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", it.value()->id()) << "IAS zone enrolled";
+                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", it.key()) << "IAS zone enrolled";
                 break;
             }
         }
@@ -1437,14 +1420,14 @@ void ZigBee::deviceTimeout(void)
             if (!it.value()->updated())
                 continue;
 
-            emit endpointUpdated(device, it.value()->id());
+            emit endpointUpdated(device, it.key());
         }
     }
 }
 
 void ZigBee::pollRequest(EndpointObject *endpoint, const Poll &poll)
 {
-    enqueueDataRequest(endpoint->device(), endpoint->id(), poll->clusterId(), attributesRequest(m_requestId, poll->attributes()));
+    enqueueDataRequest(endpoint->device(), endpoint->id(), poll->clusterId(), readAttributesRequest(m_requestId, 0x0000, poll->attributes()));
 }
 
 void ZigBee::updateStatusLed(void)

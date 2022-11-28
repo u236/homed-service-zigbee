@@ -20,7 +20,7 @@ void Controller::publishDiscovery(const Device &device, bool remove)
         for (int i = 0; i < it.value()->discoveries().count(); i++)
         {
             const Discovery &discovery = it.value()->discoveries().at(i);
-            QString id = discovery->multiple() ? QString::number(it.value()->id()) : QString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
+            QString id = discovery->multiple() ? QString::number(it.key()) : QString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
             QList <QString> object = {discovery->name()};
             QJsonObject json, node;
 
@@ -48,9 +48,9 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                 json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
             }
 
-            if (discovery->name() == "action") // TODO: add scenes
+            if (discovery->name() == "action" || discovery->name() == "scene")
             {
-                QList <QString> list = device->options().value("actions").toStringList();
+                QList <QString> list = discovery->name() == "action" ? device->options().value("actions").toStringList() : QVariant(device->options().value("scenes").toMap().values()).toStringList();
 
                 for (int i = 0; i < list.count(); i++)
                 {
@@ -100,7 +100,7 @@ void Controller::mqttConnected(void)
             if (!it.value()->updated())
                 continue;
 
-            endpointUpdated(device, it.value()->id());
+            endpointUpdated(device, it.key());
         }
     }
 }

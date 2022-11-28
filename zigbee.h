@@ -173,7 +173,6 @@ private:
     void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
     void enqueueDeviceRequest(const Device &device, RequestType type);
 
-    QByteArray attributesRequest(quint8 id, QList <quint16> attributes, quint16 manufacturerCode = 0); // TODO: move this to zcl
     bool interviewRequest(quint8 id, const Device &device);
 
     void interviewDevice(const Device &device);

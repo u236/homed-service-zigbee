@@ -14,6 +14,29 @@ QByteArray zclHeader(quint8 frameControl, quint8 transactionId, quint8 commandId
     return header.append(1, static_cast <char> (transactionId)).append(1, static_cast <char> (commandId));
 }
 
+QByteArray readAttributesRequest(quint8 transactionId, quint16 manufacturerCode, QList <quint16> attributes)
+{
+    QByteArray request = zclHeader(FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_READ_ATTRIBUTES, manufacturerCode);
+
+    for (int i = 0; i < attributes.count(); i++)
+    {
+        quint16 attributeId = qToLittleEndian(attributes.at(i));
+        request.append(reinterpret_cast <char*> (&attributeId), sizeof(attributeId));
+    }
+
+    return request;
+}
+
+QByteArray writeAttributeRequest(quint8 transactionId, quint16 manufacturerCode, quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    writeArrtibutesStruct payload;
+
+    payload.attributeId = qToLittleEndian(attributeId);
+    payload.dataType = dataType;
+
+    return zclHeader(FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_WRITE_ATTRIBUTES, manufacturerCode).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(data);
+}
+
 quint8 zclDataSize(quint8 dataType)
 {
     switch (dataType)
