@@ -202,7 +202,7 @@ namespace Sensor
 
     public:
 
-        Illuminance(void) : SensorObject("illuminance", "%") {}
+        Illuminance(void) : SensorObject("illuminance", "lux") {}
 
     };
 
