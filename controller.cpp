@@ -98,12 +98,7 @@ void Controller::mqttConnected(void)
             publishDiscovery(device);
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        {
-            if (!it.value()->updated())
-                continue;
-
             endpointUpdated(device, it.key());
-        }
     }
 }
 
@@ -240,7 +235,7 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
             const Property &property = it.value()->properties().at(i);
             QMap <QString, QVariant> &map = property->multiple() ? endpointMap : deviceMap;
 
-            if (!property->value().isValid())
+            if (!property->value().isValid() || (property->multiple() && it.value()->id() != endpointId))
                 continue;
 
             if (property->value().type() != QVariant::Map)

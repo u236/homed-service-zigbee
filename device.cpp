@@ -417,7 +417,6 @@ void DeviceList::unserializeProperties(const QJsonObject &properties)
                     continue;
 
                 property->setValue(value);
-                endpoint->setUpdated(true);
             }
         }
     }
