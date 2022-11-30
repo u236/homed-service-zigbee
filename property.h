@@ -349,51 +349,100 @@ namespace PropertiesIAS
 
 namespace PropertiesPTVO
 {
-    class Temperature: public PropertyObject
+    class Status : public PropertyObject
     {
 
     public:
 
-        Temperature(void) : PropertyObject("temperature", CLUSTER_ANALOG_INPUT) {}
+        Status(const QString &name) : PropertyObject(name, CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class AnalogInput: public PropertyObject
+    {
+
+    public:
+
+        AnalogInput(const QString &name, const QString &unit = QString()) : PropertyObject(name, CLUSTER_ANALOG_INPUT), m_unit(unit) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
 
+        QString m_unit;
         QVariant m_buffer;
 
     };
 
-    class CO2 : public PropertyObject
+    class ChangePattern : public Status
     {
 
     public:
 
-        CO2(void) : PropertyObject("co2", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    private:
-
-        QVariant m_buffer;
+        ChangePattern(void) : Status("changePattern") {}
 
     };
 
-    class ChangePattern : public PropertyObject
+    class Contact : public Status
     {
 
     public:
 
-        ChangePattern(void) : PropertyObject("changePattern", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+        Contact(void) : Status("contact") {}
 
     };
 
-    class Pattern: public PropertyObject
+    class Occupancy : public Status
     {
 
     public:
 
-        Pattern(void) : PropertyObject("pattern", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+        Occupancy(void) : Status("occupancy") {}
+
+    };
+
+    class WaterLeak : public Status
+    {
+
+    public:
+
+        WaterLeak(void) : Status("waterLeak") {}
+
+    };
+
+    class CO2: public AnalogInput
+    {
+
+    public:
+
+        CO2(void) : AnalogInput("co2", "ppm") {}
+
+    };
+
+    class Temperature: public AnalogInput
+    {
+
+    public:
+
+        Temperature(void) : AnalogInput("temperature", "C") {}
+
+    };
+
+    class Count: public AnalogInput
+    {
+
+    public:
+
+        Count(void) : AnalogInput("count") {}
+
+    };
+
+    class Pattern: public AnalogInput
+    {
+
+    public:
+
+        Pattern(void) : AnalogInput("pattern") {}
 
     };
 

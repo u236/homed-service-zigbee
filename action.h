@@ -104,23 +104,50 @@ namespace Actions
 
 namespace ActionsPTVO
 {
-    class ChangePattern : public ActionObject
+    class Status : public ActionObject
     {
 
     public:
 
-        ChangePattern(void) : ActionObject("changePattern", CLUSTER_ON_OFF, 0x0000, 0x0000) {}
+        Status(const QString &name) : ActionObject(name, CLUSTER_ON_OFF, 0x0000, 0x0000) {}
         QByteArray request(const QVariant &data) override;
 
     };
 
-    class Pattern : public ActionObject
+    class AnalogInput : public ActionObject
     {
 
     public:
 
-        Pattern(void) : ActionObject("pattern", CLUSTER_ANALOG_INPUT, 0x0000, 0x0055) {}
+        AnalogInput(const QString &name) : ActionObject(name, CLUSTER_ANALOG_INPUT, 0x0000, 0x0055) {}
         QByteArray request(const QVariant &data) override;
+
+    };
+
+    class ChangePattern : public Status
+    {
+
+    public:
+
+        ChangePattern(void) : Status("changePattern") {}
+
+    };
+
+    class Count : public AnalogInput
+    {
+
+    public:
+
+        Count(void) : AnalogInput("count") {}
+
+    };
+
+    class Pattern : public AnalogInput
+    {
+
+    public:
+
+        Pattern(void) : AnalogInput("pattern") {}
 
     };
 }

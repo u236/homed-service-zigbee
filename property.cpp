@@ -30,14 +30,18 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::ColorAction>                 ("colorActionProperty");
 
     qRegisterMetaType <PropertiesIAS::Contact>                  ("iasContactProperty");
-    qRegisterMetaType <PropertiesIAS::Contact>                  ("iasGasProperty");
+    qRegisterMetaType <PropertiesIAS::Gas>                      ("iasGasProperty");
     qRegisterMetaType <PropertiesIAS::Occupancy>                ("iasOccupancyProperty");
     qRegisterMetaType <PropertiesIAS::Smoke>                    ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>                ("iasWaterLeakProperty");
 
+    qRegisterMetaType <PropertiesPTVO::ChangePattern>           ("ptvoChangePatternProperty");
+    qRegisterMetaType <PropertiesPTVO::Contact>                 ("ptvoContactProperty");
+    qRegisterMetaType <PropertiesPTVO::Occupancy>               ("ptvoOccupancyProperty");
+    qRegisterMetaType <PropertiesPTVO::WaterLeak>               ("ptvoWaterLeakProperty");
     qRegisterMetaType <PropertiesPTVO::CO2>                     ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>             ("ptvoTemperatureProperty");
-    qRegisterMetaType <PropertiesPTVO::ChangePattern>           ("ptvoChangePatternProperty");
+    qRegisterMetaType <PropertiesPTVO::Count>                   ("ptvoCountProperty");
     qRegisterMetaType <PropertiesPTVO::Pattern>                 ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
 
@@ -431,77 +435,39 @@ void PropertiesIAS::ZoneStatus::resetValue(void)
     m_value = map;
 }
 
-void PropertiesPTVO::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0x0055:
-        {
-            float value = 0;
-
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_buffer = value + deviceOption("temperatureOffset").toDouble();
-            break;
-        }
-
-        case 0x001C:
-        {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "C")
-                return;
-
-            m_value = m_buffer;
-            break;
-        }
-    }
-}
-
-void PropertiesPTVO::CO2::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0x0055:
-        {
-            float value = 0;
-
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            m_buffer = value;
-            break;
-        }
-
-        case 0x001C:
-        {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != "ppm")
-                return;
-
-            m_value = m_buffer;
-            break;
-        }
-    }
-}
-
-void PropertiesPTVO::ChangePattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
         return;
 
-    m_value = data.at(0) ? "on" : "off";
+    m_value = data.at(0) ? true : false;
 }
 
-void PropertiesPTVO::Pattern::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
-    float value = 0;
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value = 0;
 
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-        return;
+            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+                return;
 
-    memcpy(&value, data.constData(), data.length());
-    m_value = static_cast <quint8> (value);
+            memcpy(&value, data.constData(), data.length());
+            (m_unit.isEmpty() ? m_value : m_buffer) = value;
+            break;
+        }
+
+        case 0x001C:
+        {
+            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != m_unit)
+                return;
+
+            m_value = m_buffer;
+            break;
+        }
+    }
 }
 
 void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

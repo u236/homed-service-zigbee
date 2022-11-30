@@ -12,6 +12,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorTemperature>           ("colorTemperatureAction");
 
     qRegisterMetaType <ActionsPTVO::ChangePattern>          ("ptvoChangePatternAction");
+    qRegisterMetaType <ActionsPTVO::Count>                  ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
@@ -186,13 +187,12 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
     }
 }
 
-QByteArray ActionsPTVO::ChangePattern::request(const QVariant &data)
+QByteArray ActionsPTVO::Status::request(const QVariant &data)
 {
-    QString status = data.toString();
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00);
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, data.toBool() ? 0x01 : 0x00);
 }
 
-QByteArray ActionsPTVO::Pattern::request(const QVariant &data)
+QByteArray ActionsPTVO::AnalogInput::request(const QVariant &data)
 {
     float value = data.toFloat();
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
