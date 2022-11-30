@@ -14,6 +14,7 @@ void DiscoveryObject::registerMetaTypes(void)
 
     qRegisterMetaType <Sensor::Action>          ("actionDiscovery");
     qRegisterMetaType <Sensor::Scene>           ("sceneDiscovery");
+    qRegisterMetaType <Sensor::Count>           ("countDiscovery");
     qRegisterMetaType <Sensor::Battery>         ("batteryDiscovery");
     qRegisterMetaType <Sensor::Temperature>     ("temperatureDiscovery");
     qRegisterMetaType <Sensor::Humidity>        ("humidityDiscovery");
@@ -24,6 +25,8 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Voltage>         ("voltageDiscovery");
     qRegisterMetaType <Sensor::Current>         ("currentDiscovery");
     qRegisterMetaType <Sensor::Power>           ("powerDiscovery");
+
+    qRegisterMetaType <Button::ResetCount>      ("resetCountDiscovery");
 }
 
 QVariant DiscoveryObject::deviceOption(const QString &key)
@@ -53,15 +56,16 @@ QJsonObject BinaryObject::reqest(void)
 
 QJsonObject SensorObject::reqest(void)
 {
-    QList <QString> list = {"action", "scene", "co2", "voc"};
+    QList <QString> list = {"action", "scene", "count", "co2", "voc"};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
     {
         case 0:  json.insert("icon",            "mdi:gesture-tap-hold"); break;
-        case 1:  json.insert("icon",            "mdi:button-pointer"); break;
-        case 2:  json.insert("device_class",    "carbon_dioxide"); break;
-        case 3:  json.insert("device_class",    "volatile_organic_compounds"); break;
+        case 1:  json.insert("icon",            "mdi:gesture-tap-button"); break;
+        case 2:  json.insert("icon",            "mdi:counter"); break;
+        case 3:  json.insert("device_class",    "carbon_dioxide"); break;
+        case 4:  json.insert("device_class",    "volatile_organic_compounds"); break;
         default: json.insert("device_class",    m_name); break;
     }
 
@@ -124,4 +128,9 @@ QJsonObject SwitchObject::reqest(void)
     json.insert("value_template",               "{{ value_json.status }}");
 
     return json;
+}
+
+QJsonObject ButtonObject::reqest(void)
+{
+    return {{"payload_press",                   m_payload}};
 }

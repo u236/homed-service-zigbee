@@ -41,9 +41,11 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                 if (discovery->control())
                     json.insert("command_topic", mqttTopic("td/zigbee/%1").arg(topic));
 
+                if (discovery->component() != "button")
+                    json.insert("state_topic", mqttTopic("fd/zigbee/%1").arg(topic));
+
                 json.insert("availability", QJsonArray {QJsonObject {{"topic", mqttTopic("service/zigbee")}, {"value_template", "{{ value_json.status }}"}}});
                 json.insert("device", node);
-                json.insert("state_topic", mqttTopic("fd/zigbee/%1").arg(topic));
                 json.insert("name", QString("%1 (%2)").arg(device->name(), object.join(' ')));
                 json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
             }

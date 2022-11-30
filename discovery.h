@@ -84,6 +84,20 @@ public:
 
 };
 
+class ButtonObject  : public DiscoveryObject
+{
+
+public:
+
+    ButtonObject(const QString &name, const QString &payload) : DiscoveryObject("button", name, true), m_payload(payload) {}
+    QJsonObject reqest(void) override;
+
+private:
+
+    QString m_payload;
+
+};
+
 namespace Binary
 {
     class Contact : public BinaryObject
@@ -149,6 +163,15 @@ namespace Sensor
     public:
 
         Scene(void) : SensorObject("scene") {}
+
+    };
+
+    class Count : public SensorObject
+    {
+
+    public:
+
+        Count(void) : SensorObject("count") {}
 
     };
 
@@ -239,6 +262,18 @@ namespace Sensor
     public:
 
         Power(void) : SensorObject("power", "W") {}
+
+    };
+}
+
+namespace Button
+{
+    class ResetCount : public ButtonObject
+    {
+
+    public:
+
+        ResetCount(void) : ButtonObject("resetCount", "{\"count\":0}") {}
 
     };
 }
