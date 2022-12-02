@@ -194,7 +194,7 @@ QByteArray ActionsPTVO::Status::request(const QVariant &data)
 
 QByteArray ActionsPTVO::AnalogInput::request(const QVariant &data)
 {
-    float value = data.toFloat();
+    float value = qToLittleEndian(data.toFloat());
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 

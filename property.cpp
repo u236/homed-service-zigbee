@@ -456,7 +456,7 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, quint8 data
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            (m_unit.isEmpty() ? m_value : m_buffer) = value + deviceOption(QString(m_name).append("Offset")).toDouble();
+            (m_unit.isEmpty() ? m_value : m_buffer) = qFromLittleEndian(value) + deviceOption(QString(m_name).append("Offset")).toDouble();
             break;
         }
 
@@ -645,49 +645,49 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
 
         case 0x0095:
         {
-            float value;
+            float value = 0;
 
             if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("energy", static_cast <double> (round(value * 100)) / 100);
+            map.insert("energy", static_cast <double> (round(qFromLittleEndian(value) * 100)) / 100);
             break;
         }
 
         case 0x0096:
         {
-            float value;
+            float value = 0;
 
             if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            map.insert("voltage", static_cast <double> (round(value)) / 10) + deviceOption("voltageOffset").toDouble();
+            map.insert("voltage", static_cast <double> (round(qFromLittleEndian(value))) / 10 + deviceOption("voltageOffset").toDouble());
             break;
         }
 
         case 0x0097:
         {
-            float value;
+            float value = 0;
 
             if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            map.insert("current", static_cast <double> (round(value)) / 1000) + deviceOption("currentOffset").toDouble();
+            map.insert("current", static_cast <double> (round(qFromLittleEndian(value))) / 1000 + deviceOption("currentOffset").toDouble());
             break;
         }
 
         case 0x0098:
         {
-            float value;
+            float value = 0;
 
             if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("power", static_cast <double> (round(value * 100) + deviceOption("powerOffset").toDouble()) / 100);
+            map.insert("power", static_cast <double> (round(qFromLittleEndian(value) * 100)) / 100 + deviceOption("powerOffset").toDouble());
             break;
         }
     }
@@ -731,7 +731,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, quint8 dataType, 
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = static_cast <double> (round(value * 100)) / 100;
+    m_value = static_cast <double> (round(qFromLittleEndian(value) * 100)) / 100 + deviceOption("powerOffset").toDouble();
 }
 
 void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -777,7 +777,7 @@ void PropertiesLUMI::CubeRotation::parseAttribte(quint16 attributeId, quint8 dat
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = value < 0 ? "rotateLeft" : "rotateRight";
+    m_value = qFromLittleEndian(value) < 0 ? "rotateLeft" : "rotateRight";
 }
 
 void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
