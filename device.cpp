@@ -11,10 +11,10 @@ DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m
     DiscoveryObject::registerMetaTypes();
 
     m_libraryFile.setFileName(config->value("device/library", "/usr/share/homed/zigbee.json").toString());
-    m_databaseFile.setFileName(config->value("device/database", "/var/db/homed-zigbee-database.json").toString());
-    m_propertiesFile.setFileName(config->value("device/properties", "/var/db/homed-zigbee-properties.json").toString());
-    m_optionsFile.setFileName(config->value("device/options", "/var/db/homed-zigbee-options.json").toString());
-    m_externalDir.setPath(config->value("device/external", "/usr/share/homed/zigbee").toString());
+    m_databaseFile.setFileName(config->value("device/database", "/opt/homed-zigbee/database.json").toString());
+    m_propertiesFile.setFileName(config->value("device/properties", "/opt/homed-zigbee/properties.json").toString());
+    m_optionsFile.setFileName(config->value("device/options", "/opt/homed-zigbee/options.json").toString());
+    m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
     m_offsets = config->value("device/offsets", true).toBool();
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
