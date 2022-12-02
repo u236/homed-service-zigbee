@@ -410,7 +410,7 @@ namespace PropertiesPTVO
 
     };
 
-    class CO2: public AnalogInput
+    class CO2 : public AnalogInput
     {
 
     public:
@@ -419,12 +419,21 @@ namespace PropertiesPTVO
 
     };
 
-    class Temperature: public AnalogInput
+    class Temperature : public AnalogInput
     {
 
     public:
 
         Temperature(void) : AnalogInput("temperature", "C") {}
+
+    };
+
+    class Humidity : public AnalogInput
+    {
+
+    public:
+
+        Humidity(void) : AnalogInput("humidity", "%") {}
 
     };
 

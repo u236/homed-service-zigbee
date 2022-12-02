@@ -41,6 +41,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::WaterLeak>               ("ptvoWaterLeakProperty");
     qRegisterMetaType <PropertiesPTVO::CO2>                     ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>             ("ptvoTemperatureProperty");
+    qRegisterMetaType <PropertiesPTVO::Temperature>             ("ptvoHumidityProperty");
     qRegisterMetaType <PropertiesPTVO::Count>                   ("ptvoCountProperty");
     qRegisterMetaType <PropertiesPTVO::Pattern>                 ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
@@ -232,7 +233,7 @@ void Properties::Illuminance::parseAttribte(quint16 attributeId, quint8 dataType
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0) + deviceOption("illuminanceOffset").toInt();
+    m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0) + deviceOption("illuminanceOffset").toDouble();
 }
 
 void Properties::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -455,13 +456,15 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, quint8 data
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            (m_unit.isEmpty() ? m_value : m_buffer) = value;
+            (m_unit.isEmpty() ? m_value : m_buffer) = value + deviceOption(QString(m_name).append("Offset")).toDouble();
             break;
         }
 
         case 0x001C:
         {
-            if (dataType != DATA_TYPE_CHARACTER_STRING || QString(data) != m_unit)
+            QList <QString> list = QString(data).split(',');
+
+            if (dataType != DATA_TYPE_CHARACTER_STRING || list.value(0) != m_unit)
                 return;
 
             m_value = m_buffer;
@@ -563,7 +566,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                     break;
 
                 memcpy(&value, data.constData(), data.length());
-                map.insert("illuminance", qFromLittleEndian(value) + deviceOption("illuminanceOffset").toInt());
+                map.insert("illuminance", qFromLittleEndian(value) + deviceOption("illuminanceOffset").toDouble());
             }
 
             break;
@@ -888,7 +891,7 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
         case 0x03: map.insert("distanceMin", data.toDouble() / 100); break;
         case 0x04: map.insert("distanceMax", data.toDouble() / 100); break;
         case 0x65: map.insert("detectionDelay", data.toInt()); break;
-        case 0x68: map.insert("illuminance", data.toInt() + deviceOption("illuminanceOffset").toInt()); break;
+        case 0x68: map.insert("illuminance", data.toInt() + deviceOption("illuminanceOffset").toDouble()); break;
     }
 
     if (map.isEmpty())
