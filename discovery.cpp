@@ -61,7 +61,7 @@ QJsonObject SensorObject::reqest(void)
 
     switch (list.indexOf(m_name))
     {
-        case 0:  json.insert("icon",            "mdi:gesture-tap-hold"); break;
+        case 0:  json.insert("icon",            "mdi:gesture-double-tap"); break;
         case 1:  json.insert("icon",            "mdi:gesture-tap-button"); break;
         case 2:  json.insert("icon",            "mdi:counter"); break;
         case 3:  json.insert("device_class",    "carbon_dioxide"); break;
@@ -72,7 +72,7 @@ QJsonObject SensorObject::reqest(void)
     if (!m_unit.isEmpty())
         json.insert("unit_of_measurement",      m_unit);
 
-    json.insert("value_template",               QString("{{ value_json.%1 }}").arg(m_name));
+    json.insert("value_template",               QString("{{ value_json.%1 | round(%2) }}").arg(m_name).arg(m_round));
     return json;
 }
 

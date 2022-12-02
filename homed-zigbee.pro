@@ -31,7 +31,7 @@ SOURCES += \
     zstack.cpp
 
 DISTFILES += \
-    package/data/usr/share/homed/zigbee.json
+    deploy/data/usr/share/homed/zigbee.json
 
 QT += serialport
 

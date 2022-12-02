@@ -55,12 +55,13 @@ class SensorObject : public DiscoveryObject
 
 public:
 
-    SensorObject(const QString &name, const QString &unit = QString()) : DiscoveryObject("sensor", name, false), m_unit(unit) {}
+    SensorObject(const QString &name, const QString &unit = QString(), quint8 round = 0) : DiscoveryObject("sensor", name, false), m_unit(unit), m_round(round) {}
     QJsonObject reqest(void) override;
 
 private:
 
     QString m_unit;
+    quint8 m_round;
 
 };
 
@@ -180,7 +181,7 @@ namespace Sensor
 
     public:
 
-        Battery(void) : SensorObject("battery", "%") {}
+        Battery(void) : SensorObject("battery", "%", 1) {}
 
     };
 
@@ -189,7 +190,7 @@ namespace Sensor
 
     public:
 
-        Temperature(void) : SensorObject("temperature", "°C") {}
+        Temperature(void) : SensorObject("temperature", "°C", 1) {}
 
     };
 
@@ -198,7 +199,7 @@ namespace Sensor
 
     public:
 
-        Humidity(void) : SensorObject("humidity", "%") {}
+        Humidity(void) : SensorObject("humidity", "%", 1) {}
 
     };
 
@@ -234,7 +235,7 @@ namespace Sensor
 
     public:
 
-        Energy(void) : SensorObject("energy", "kW·h") {}
+        Energy(void) : SensorObject("energy", "kW·h", 2) {}
 
     };
 
@@ -243,7 +244,7 @@ namespace Sensor
 
     public:
 
-        Voltage(void) : SensorObject("voltage", "V") {}
+        Voltage(void) : SensorObject("voltage", "V", 1) {}
 
     };
 
@@ -252,7 +253,7 @@ namespace Sensor
 
     public:
 
-        Current(void) : SensorObject("current", "A") {}
+        Current(void) : SensorObject("current", "A", 3) {}
 
     };
 
@@ -261,7 +262,7 @@ namespace Sensor
 
     public:
 
-        Power(void) : SensorObject("power", "W") {}
+        Power(void) : SensorObject("power", "W", 2) {}
 
     };
 }
