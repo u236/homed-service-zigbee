@@ -117,7 +117,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
             QJsonObject item = it->toObject();
 
             if (item.contains("ieeeAddress") && item.contains("deviceName"))
-                m_zigbee->setDeviceName(QByteArray::fromHex(item.value("ieeeAddress").toString().toUtf8()), item.value("deviceName").toString(), false);
+                m_zigbee->setDeviceName(item.value("ieeeAddress").toString(), item.value("deviceName").toString(), false);
         }
     }
     else if (topic.name() == mqttTopic("command/zigbee") && json.contains("action"))

@@ -153,6 +153,7 @@ void DeviceList::setupDevice(const Device &device)
         it.value()->properties().clear();
         it.value()->reportings().clear();
         it.value()->polls().clear();
+        it.value()->discoveries().clear();
     }
 
     for (auto it = array.begin(); it != array.end(); it++)

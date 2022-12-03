@@ -80,6 +80,12 @@
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "endpointId":     2
+    },
+    {
+      "modelNames":     ["RGB Strip"],
+      "properties":     ["ptvoCount"],
+      "actions":        ["ptvoCount"],
+      "endpointId":     3
     }
   ],
 
