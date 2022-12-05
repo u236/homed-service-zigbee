@@ -4,7 +4,8 @@ Controller::Controller(void) : m_zigbee(new ZigBee(getConfig(), this)), m_comman
 {
     m_names = getConfig()->value("mqtt/names", false).toBool();
     m_discovery = getConfig()->value("discovery/enabled", false).toBool();
-    m_discoveryPrefix = getConfig()->value("discovery/prefix", "discovery").toString();
+    m_discoveryPrefix = getConfig()->value("discovery/prefix", "homeassistant").toString();
+    m_discoveryStatus = getConfig()->value("discovery/status", "homeassistant/status").toString();
 
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
@@ -82,14 +83,8 @@ void Controller::publishDiscovery(const Device &device, bool remove)
     }
 }
 
-void Controller::mqttConnected(void)
+void Controller::publishProperties(void)
 {
-    logInfo << "MQTT connected";
-
-    mqttSubscribe(mqttTopic("config/zigbee"));
-    mqttSubscribe(mqttTopic("command/zigbee"));
-    mqttSubscribe(mqttTopic("td/zigbee/#"));
-
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
     {
         const Device &device = it.value();
@@ -100,6 +95,20 @@ void Controller::mqttConnected(void)
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             endpointUpdated(device, it.key());
     }
+}
+
+void Controller::mqttConnected(void)
+{
+    logInfo << "MQTT connected";
+
+    mqttSubscribe(mqttTopic("config/zigbee"));
+    mqttSubscribe(mqttTopic("command/zigbee"));
+    mqttSubscribe(mqttTopic("td/zigbee/#"));
+
+    if (m_discovery)
+        mqttSubscribe(m_discoveryStatus);
+
+    publishProperties();
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -197,6 +206,13 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->groupAction(static_cast <quint16> (list.value(4).toInt()), it.key(), it.value().toVariant());
             }
         }
+    }
+    else if (topic.name() == m_discoveryStatus)
+    {
+        if (message != "online")
+            return;
+
+        publishProperties();
     }
 }
 

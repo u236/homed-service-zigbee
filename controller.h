@@ -39,9 +39,10 @@ private:
     QMetaEnum m_commands;
 
     bool m_names, m_discovery;
-    QString m_discoveryPrefix;
+    QString m_discoveryPrefix, m_discoveryStatus;
 
     void publishDiscovery(const Device &device, bool remove = false);
+    void publishProperties(void);
 
 private slots:
 
