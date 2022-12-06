@@ -1160,7 +1160,7 @@ void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalT
 {
     Device device = m_devices->byNetwork(networkAddress);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->interviewFinished())
         return;
 
     logInfo << "Device" << device->name() << "node descriptor received, manufacturer code is" << QString::asprintf("0x%04X", manufacturerCode) << "and logical type is" << QString(logicalType == LogicalType::Router ? "router" : "end device");
@@ -1178,7 +1178,7 @@ void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray da
     Device device = m_devices->byNetwork(networkAddress);
     QList <QString> list;
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->interviewFinished())
         return;
 
     for (int i = 0; i < data.length(); i++)
@@ -1204,7 +1204,7 @@ void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId,
     Device device = m_devices->byNetwork(networkAddress);
     Endpoint endpoint;
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || device->interviewFinished())
         return;
 
     endpoint = m_devices->endpoint(device, endpointId ? endpointId : device->interviewEndpointId());
