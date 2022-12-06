@@ -251,11 +251,13 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
 {
     switch (event)
     {
-        case ZigBee::Event::deviceJoined:
+        case ZigBee::Event::deviceLeft:
+        case ZigBee::Event::deviceRemoved:
 
             if (m_discovery)
-                publishDiscovery(device);
+                publishDiscovery(device, true);
 
+            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
             break;
 
         case ZigBee::Event::deviceAboutToRename:
@@ -275,13 +277,11 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
 
             break;
 
-        case ZigBee::Event::deviceLeft:
-        case ZigBee::Event::deviceRemoved:
+        case ZigBee::Event::interviewFinished:
 
             if (m_discovery)
-                publishDiscovery(device, true);
+                publishDiscovery(device);
 
-            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
             break;
 
         default:

@@ -56,7 +56,7 @@ QJsonObject BinaryObject::reqest(void)
 
 QJsonObject SensorObject::reqest(void)
 {
-    QList <QString> list = {"action", "scene", "count", "co2", "voc"};
+    QList <QString> list = {"action", "scene", "count", "co2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
@@ -72,7 +72,10 @@ QJsonObject SensorObject::reqest(void)
     if (!m_unit.isEmpty())
         json.insert("unit_of_measurement",      m_unit);
 
-    json.insert("value_template",               QString("{{ value_json.%1 | round(%2) }}").arg(m_name).arg(m_round));
+    if (m_round)
+        valueTemplate.append(                   QString("round(%1)").arg(m_round));
+
+    json.insert("value_template",               QString("{{ %1 }}").arg(valueTemplate.join(" | ")));
     return json;
 }
 
