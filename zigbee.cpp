@@ -8,7 +8,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config)), m_adapter(nullptr), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0)
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
@@ -75,14 +75,15 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     m_devices->storeDatabase();
 }
 
-void ZigBee::setDeviceName(const QString &deviceName, const QString &newName, bool store)
+void ZigBee::setDeviceName(const QString &deviceName, const QString &name, bool store)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->name() == name || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    device->setName(newName);
+    emit deviceEvent(device, Event::deviceAboutToRename);
+    device->setName(name);
     emit deviceEvent(device, Event::deviceUpdated);
 
     if (!store)
@@ -1002,12 +1003,19 @@ void ZigBee::coordinatorReady(void)
 
     connect(m_requestTimer, &QTimer::timeout, this, &ZigBee::handleRequests, Qt::UniqueConnection);
     connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
+    connect(m_pingTimer, &QTimer::timeout, this, &ZigBee::pingRouters, Qt::UniqueConnection);
 
     if (!m_requests.isEmpty())
         m_requestTimer->start();
 
     if (!m_neignborsTimer->isActive())
         m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+
+    if (!m_pingTimer->isActive())
+    {
+        m_pingTimer->start(PING_ROUTERS_INTERVAL);
+        pingRouters();
+    }
 
     m_adapter->setPermitJoin(m_devices->permitJoin());
     m_devices->storeDatabase();
@@ -1385,6 +1393,27 @@ void ZigBee::updateNeighbors(void)
             continue;
 
         enqueueDeviceRequest(it.value(), RequestType::LQI);
+    }
+}
+
+void ZigBee::pingRouters(void)
+{
+    qint64 time = QDateTime::currentSecsSinceEpoch();
+
+    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
+    {
+        const Device &device = it.value();
+
+        if (it.value()->logicalType() != LogicalType::Router || time - device->lastSeen() < PING_ROUTERS_INTERVAL / 1000)
+            continue;
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        {
+            if (!it.value()->inClusters().contains(CLUSTER_BASIC))
+                continue;
+
+            enqueueDataRequest(device, it.key(), CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0000}));
+        }
     }
 }
 

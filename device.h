@@ -31,6 +31,13 @@ enum class ZoneStatus
     Enrolled
 };
 
+enum class AvailabilityStatus
+{
+    Unknown,
+    Online,
+    Offline
+};
+
 class EndpointObject : public EndpointDataObject
 {
 
@@ -84,7 +91,7 @@ class DeviceObject : public QObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_removed(removed), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_lastSeen(0), m_linkQuality(0) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_removed(removed), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -135,6 +142,9 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
 
+    inline AvailabilityStatus availability(void) { return m_availability; }
+    inline void setAvailability(AvailabilityStatus value) { m_availability = value; }
+
     inline QString description(void) { return m_description; }
     inline void setDescription(const QString &value) { m_description = value; }
 
@@ -160,6 +170,8 @@ private:
 
     qint64 m_lastSeen;
     quint8 m_linkQuality;
+
+    AvailabilityStatus m_availability;
     QString m_description;
 
     QMap <QString, QVariant> m_options;

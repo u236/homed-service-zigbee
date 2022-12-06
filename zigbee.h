@@ -2,6 +2,7 @@
 #define ZIGBEE_H
 
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
+#define PING_ROUTERS_INTERVAL           300000
 #define DEVICE_INTERVIEW_TIMEOUT        15000
 #define STATUS_LED_TIMEOUT              200
 
@@ -123,6 +124,7 @@ public:
         deviceJoined,
         deviceLeft,
         deviceRemoved,
+        deviceAboutToRename,
         deviceUpdated,
         interviewFinished,
         interviewError,
@@ -138,7 +140,7 @@ public:
     void setPermitJoin(bool enabled);
 
     void removeDevice(const QString &deviceName, bool force);
-    void setDeviceName(const QString &deviceName, const QString &newName, bool store = true);
+    void setDeviceName(const QString &deviceName, const QString &name, bool store = true);
 
     void updateDevice(const QString &deviceName, bool reportings);
     void updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
@@ -156,7 +158,7 @@ public:
 private:
 
     QSettings *m_config;
-    QTimer *m_requestTimer, *m_neignborsTimer, *m_statusLedTimer;
+    QTimer *m_requestTimer, *m_neignborsTimer, *m_pingTimer, *m_statusLedTimer;
 
     DeviceList *m_devices;
     Adapter *m_adapter;
@@ -208,6 +210,7 @@ private slots:
 
     void handleRequests(void);
     void updateNeighbors(void);
+    void pingRouters(void);
     void deviceTimeout(void);
 
     void pollRequest(EndpointObject *endpoint, const Poll &poll);

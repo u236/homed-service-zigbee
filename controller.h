@@ -1,7 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION     "3.0.47"
+#define SERVICE_VERSION                 "3.0.47"
+#define UPDATE_AVAILABILITY_INTERVAL    10000
 
 #include "homed.h"
 #include "zigbee.h"
@@ -35,7 +36,9 @@ public:
 
 private:
 
+    QTimer *m_timer;
     ZigBee *m_zigbee;
+
     QMetaEnum m_commands;
 
     bool m_names, m_discovery;
@@ -48,6 +51,8 @@ private slots:
 
     void mqttConnected(void) override;
     void mqttReceived(const QByteArray &message, const QMqttTopicName &topic) override;
+
+    void updateAvailability(void);
 
     void deviceEvent(const Device &device, ZigBee::Event event);
     void endpointUpdated(const Device &device, quint8 endpointId);

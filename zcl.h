@@ -16,6 +16,7 @@
 #define CMD_DEFAULT_RESPONSE                        0x0B
 
 #define POWER_SOURCE_UNKNOWN                        0x00
+#define POWER_SOURCE_MAINS                          0x01
 #define POWER_SOURCE_BATTERY                        0x03
 
 #define STATUS_SUCCESS                              0x00
