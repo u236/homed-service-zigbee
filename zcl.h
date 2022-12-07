@@ -26,6 +26,7 @@
 #define STATUS_NOT_FOUND                            0x8B
 #define STATUS_NO_IMAGE_AVAILABLE                   0x98
 
+#define DATA_TYPE_NO_DATA                           0x00
 #define DATA_TYPE_BOOLEAN                           0x10
 #define DATA_TYPE_8BIT_BITMAP                       0x18
 #define DATA_TYPE_16BIT_BITMAP                      0x19

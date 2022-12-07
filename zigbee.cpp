@@ -537,6 +537,13 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
     if (clusterId == CLUSTER_IAS_ZONE && (attributeId == 0x0000 || attributeId == 0x0010))
     {
+        if (dataType == DATA_TYPE_NO_DATA) // TODO: figure it out
+        {
+            endpoint->setZoneStatus(ZoneStatus::Enrolled);
+            interviewDevice(device);
+            return;
+        }
+
         switch (attributeId)
         {
             case 0x0000:
@@ -845,16 +852,21 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 quint8 dataType, offset, size = 0;
                 quint16 attributeId;
 
+                memcpy(&attributeId, payload.constData(), sizeof(attributeId));
+                attributeId = qFromLittleEndian(attributeId);
+
                 if (commandId == CMD_READ_ATTRIBUTES_RESPONSE)
                 {
-                    if (payload.at(2))
+                    if (!payload.at(2))
                     {
-                        payload.remove(0, 3);
-                        continue;
+                        dataType = static_cast <quint8> (payload.at(3));
+                        offset = 4;
                     }
-
-                    dataType = static_cast <quint8> (payload.at(3));
-                    offset = 4;
+                    else
+                    {
+                        dataType = DATA_TYPE_NO_DATA;
+                        offset = 3;
+                    }
                 }
                 else
                 {
@@ -862,11 +874,9 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     offset = 3;
                 }
 
-                memcpy(&attributeId, payload.constData(), sizeof(attributeId));
-                attributeId = qFromLittleEndian(attributeId);
                 size = zclDataSize(dataType, payload, &offset);
 
-                if (dataType != DATA_TYPE_OCTET_STRING && dataType != DATA_TYPE_CHARACTER_STRING && !size)
+                if (dataType != DATA_TYPE_NO_DATA && dataType != DATA_TYPE_OCTET_STRING && dataType != DATA_TYPE_CHARACTER_STRING && !size)
                 {
                     logWarning << "Unrecognized attribute" << QString::asprintf("0x%04X", attributeId) << "data type" << QString::asprintf("0x%02X", dataType) << "received from device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "with payload:" << payload.mid(offset).toHex(':');
                     return;

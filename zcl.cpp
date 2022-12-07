@@ -83,6 +83,9 @@ quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
 {
     switch (dataType)
     {
+        case DATA_TYPE_NO_DATA:
+            return 0;
+
         case DATA_TYPE_BOOLEAN:
         case DATA_TYPE_8BIT_BITMAP:
         case DATA_TYPE_8BIT_UNSIGNED:
