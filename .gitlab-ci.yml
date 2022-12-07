@@ -22,6 +22,7 @@
     PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.deb
   script:
   - "mkdir -p deploy/data/lib/systemd/system"
+  - "mkdir -p deploy/data/opt/homed-zigbee"
   - "mkdir -p deploy/data/usr/local/bin"
   - "cp -r deploy/debian deploy/data/DEBIAN"
   - "cp deploy/systemd/homed-zigbee.service deploy/data/lib/systemd/system"
@@ -49,8 +50,8 @@
     PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.ipk
   script:
   - "mkdir -p deploy/data/etc/init.d"
+  - "mkdir -p deploy/data/opt/homed-zigbee"
   - "mkdir -p deploy/data/usr/bin"
-  - "mkdir -p deploy/data/var/db"
   - "cp deploy/procd/homed-zigbee deploy/data/etc/init.d"
   - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/bin/homed-zigbee"
   - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/openwrt/control"
