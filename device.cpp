@@ -28,7 +28,7 @@ void DeviceList::init(void)
 {
     QJsonObject json;
 
-    if (!m_databaseFile.open(QFile::ReadOnly | QFile::Text))
+    if (!m_databaseFile.open(QFile::ReadOnly))
         return;
 
     json = QJsonDocument::fromJson(m_databaseFile.readAll()).object();
@@ -36,7 +36,7 @@ void DeviceList::init(void)
     m_permitJoin = json.value("permitJoin").toBool();
     m_databaseFile.close();
 
-    if (!m_propertiesFile.open(QFile::ReadOnly | QFile::Text))
+    if (!m_propertiesFile.open(QFile::ReadOnly))
         return;
 
     unserializeProperties(QJsonDocument::fromJson(m_propertiesFile.readAll()).object());
@@ -117,7 +117,7 @@ void DeviceList::setupDevice(const Device &device)
         {
             QFile file(QString("%1/%2").arg(m_externalDir.path(), list.at(i)));
 
-            if (!file.open(QFile::ReadOnly | QFile::Text))
+            if (!file.open(QFile::ReadOnly))
                 continue;
 
             array = QJsonDocument::fromJson(file.readAll()).object().value(manufacturerName).toArray();
@@ -130,7 +130,7 @@ void DeviceList::setupDevice(const Device &device)
 
     if (array.isEmpty())
     {
-        if (!m_libraryFile.open(QFile::ReadOnly | QFile::Text))
+        if (!m_libraryFile.open(QFile::ReadOnly))
         {
             logWarning << "Can't open library file, device" << device->name() << "not configured";
             return;
@@ -172,7 +172,7 @@ void DeviceList::setupDevice(const Device &device)
             if (json.contains("options"))
                 device->options() = json.value("options").toObject().toVariantMap();
 
-            if (m_optionsFile.open(QFile::ReadOnly | QFile::Text))
+            if (m_optionsFile.open(QFile::ReadOnly))
             {
                 QString key = device->ieeeAddress().toHex(':');
                 QJsonObject json = QJsonDocument::fromJson(m_optionsFile.readAll()).object(), item = json.value(json.contains(key) ? key : device->name()).toObject();
@@ -309,12 +309,12 @@ void DeviceList::removeDevice(const Device &device)
 
 void DeviceList::storeDatabase(void)
 {
-    m_databaseTimer->start(STORE_DATABASE_DELAY);
+    m_databaseTimer->start(STORE_DELAY);
 }
 
 void DeviceList::storeProperties(void)
 {
-    m_propertiesTimer->start(STORE_PROPERTIES_DELAY);
+    m_propertiesTimer->start(STORE_DELAY);
 }
 
 void DeviceList::unserializeDevices(const QJsonArray &devices)
@@ -578,10 +578,9 @@ void DeviceList::writeDatabase(void)
 
     m_databaseTimer->start(STORE_DATABASE_INTERVAL);
 
-    if (m_databaseFile.open(QFile::WriteOnly | QFile::Text))
+    if (m_databaseFile.open(QFile::WriteOnly))
     {
         m_databaseFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-        m_databaseFile.flush();
         m_databaseFile.close();
     }
     else
@@ -597,10 +596,9 @@ void DeviceList::writeProperties(void)
     if (m_properties == json)
         return;
 
-    if (m_propertiesFile.open(QFile::WriteOnly | QFile::Text))
+    if (m_propertiesFile.open(QFile::WriteOnly))
     {
         m_propertiesFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-        m_propertiesFile.flush();
         m_propertiesFile.close();
     }
     else
