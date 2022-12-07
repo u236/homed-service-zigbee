@@ -75,7 +75,7 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
 
 void DeviceList::updateIdentity(QString &manufacturerName, QString &modelName)
 {
-    QList <QString> lumi = {"aqara", "XIAOMI"};
+    QList <QString> lumi = {"aqara", "XIAOMI"}, orvibo = {"\u4e2d\u6027", "\u6b27\u745e", "\u94fe\u878d"};
     QList <QString> tuya =
     {
         "TS0001", "TS0002", "TS0004", "TS0004", "TS0006",
@@ -87,6 +87,12 @@ void DeviceList::updateIdentity(QString &manufacturerName, QString &modelName)
     if (lumi.contains(manufacturerName))
     {
         manufacturerName = "LUMI";
+        return;
+    }
+
+    if (orvibo.contains(manufacturerName))
+    {
+        manufacturerName = "ORVIBO";
         return;
     }
 
