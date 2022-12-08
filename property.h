@@ -77,6 +77,16 @@ namespace Properties
 
     };
 
+    class DeviceTemperature : public PropertyObject
+    {
+
+    public:
+
+        DeviceTemperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class Status : public PropertyObject
     {
 

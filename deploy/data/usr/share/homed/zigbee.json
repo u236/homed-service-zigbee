@@ -367,6 +367,15 @@
     }
   ],
 
+  "NXP":
+  [
+    {
+      "description":    "OpenLumi Router (JN5169)",
+      "modelNames":     ["openlumi.gw_router.jn5169"],
+      "properties":     ["deviceTemperature"]
+    }
+  ],
+
   "ORVIBO":
   [
     {

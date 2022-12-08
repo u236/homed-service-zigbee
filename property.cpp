@@ -8,6 +8,7 @@ void PropertyObject::registerMetaTypes(void)
 {
     qRegisterMetaType <Properties::BatteryVoltage>              ("batteryVoltageProperty");
     qRegisterMetaType <Properties::BatteryPercentage>           ("batteryPercentageProperty");
+    qRegisterMetaType <Properties::DeviceTemperature>           ("deviceTemperatureProperty");
     qRegisterMetaType <Properties::Status>                      ("statusProperty");
     qRegisterMetaType <Properties::Contact>                     ("contactProperty");
     qRegisterMetaType <Properties::PowerOnStatus>               ("powerOnStatusProperty");
@@ -110,6 +111,17 @@ void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, quint8 da
         return;
 
     m_value = static_cast <quint8> (data.at(0)) / (deviceOption("batteryUndivided").toBool() ? 1.0 : 2.0);
+}
+
+void Properties::DeviceTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    qint16 value = 0;
+
+    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) + deviceOption("temperatureOffset").toDouble();
 }
 
 void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

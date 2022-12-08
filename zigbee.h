@@ -4,7 +4,7 @@
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define PING_ROUTERS_INTERVAL           300000
 #define DEVICE_INTERVIEW_TIMEOUT        15000
-#define STATUS_LED_TIMEOUT              200
+#define STATUS_LED_TIMEOUT              500
 
 #include <QMetaEnum>
 #include "device.h"

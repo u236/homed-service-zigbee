@@ -64,6 +64,7 @@
 
 #define CLUSTER_BASIC                               0x0000
 #define CLUSTER_POWER_CONFIGURATION                 0x0001
+#define CLUSTER_TEMPERATURE_CONFIGURATION           0x0002
 #define CLUSTER_IDENTIFY                            0x0003
 #define CLUSTER_GROUPS                              0x0004
 #define CLUSTER_SCENES                              0x0005
