@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION                 "3.0.47"
+#define SERVICE_VERSION                 "3.1.0"
 #define UPDATE_AVAILABILITY_INTERVAL    10000
 
 #include "homed.h"

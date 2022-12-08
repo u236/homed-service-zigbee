@@ -114,6 +114,17 @@ void DeviceList::setupDevice(const Device &device)
     bool check = false;
 
     updateIdentity(manufacturerName, modelName);
+    device->setSupported(false);
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        it.value()->timer()->stop();
+        it.value()->actions().clear();
+        it.value()->properties().clear();
+        it.value()->reportings().clear();
+        it.value()->polls().clear();
+        it.value()->discoveries().clear();
+    }
 
     if (m_externalDir.exists())
     {
@@ -150,16 +161,6 @@ void DeviceList::setupDevice(const Device &device)
     {
         logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "unrecognized";
         return;
-    }
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        it.value()->timer()->stop();
-        it.value()->actions().clear();
-        it.value()->properties().clear();
-        it.value()->reportings().clear();
-        it.value()->polls().clear();
-        it.value()->discoveries().clear();
     }
 
     for (auto it = array.begin(); it != array.end(); it++)
@@ -201,8 +202,13 @@ void DeviceList::setupDevice(const Device &device)
         }
     }
 
-    if (!check)
-        logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
+    if (check)
+    {
+        device->setSupported(true);
+        return;
+    }
+
+    logWarning << "Device" << device->name() << "model name" << device->modelName() << "unrecognized";
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
@@ -455,6 +461,7 @@ QJsonArray DeviceList::serializeDevices(void)
             }
             else
             {
+                json.insert("supported", device->supported());
                 json.insert("ineterviewFinished", device->interviewFinished());
                 json.insert("manufacturerCode", device->manufacturerCode());
 

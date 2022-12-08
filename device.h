@@ -90,7 +90,7 @@ class DeviceObject : public QObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_removed(removed), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -112,6 +112,9 @@ public:
 
     inline bool removed(void) { return m_removed; }
     inline void setRemoved(bool value) { m_removed = value; }
+
+    inline bool supported(void) { return m_supported; }
+    inline void setSupported(bool value) { m_supported = value; }
 
     inline quint8 interviewEndpointId(void) { return m_interviewEndpointId; }
     inline void setInterviewEndpointId(quint8 value) { m_interviewEndpointId = value; }
@@ -159,7 +162,7 @@ private:
     quint16 m_networkAddress;
     QString m_name;
 
-    bool m_descriptorReceived, m_endpointsReceived, m_interviewFinished, m_removed;
+    bool m_removed, m_supported, m_descriptorReceived, m_endpointsReceived, m_interviewFinished;
     quint8 m_interviewEndpointId;
 
     LogicalType m_logicalType;
