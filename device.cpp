@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <QFile>
 #include "device.h"
 #include "logger.h"
@@ -594,6 +595,7 @@ void DeviceList::writeDatabase(void)
     if (m_databaseFile.open(QFile::WriteOnly))
     {
         m_databaseFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        fsync(m_databaseFile.handle());
         m_databaseFile.close();
     }
     else
@@ -612,6 +614,7 @@ void DeviceList::writeProperties(void)
     if (m_propertiesFile.open(QFile::WriteOnly))
     {
         m_propertiesFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
+        fsync(m_propertiesFile.handle());
         m_propertiesFile.close();
     }
     else
