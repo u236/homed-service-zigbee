@@ -148,7 +148,7 @@ void DeviceList::setupDevice(const Device &device)
     if (array.isEmpty())
     {
         if (!m_libraryFile.open(QFile::ReadOnly))
-            logWarning << "Can't open library file";
+            logWarning << "Library file" << m_libraryFile.fileName() << "error:" << m_libraryFile.errorString();
 
         if (m_libraryFile.isOpen())
         {
@@ -814,7 +814,7 @@ void DeviceList::writeDatabase(void)
         m_databaseFile.close();
     }
     else
-        logWarning << "Can't open database file, database not stored";
+        logWarning << "Database not stored, file" << m_databaseFile.fileName() << "error:" << m_databaseFile.errorString();
 
     emit statusUpdated(json);
 }
@@ -833,7 +833,7 @@ void DeviceList::writeProperties(void)
         m_propertiesFile.close();
     }
     else
-        logWarning << "Can't open properties file, properties not stored";
+        logWarning << "Properties not stored, file" << m_propertiesFile.fileName() << "error:" << m_propertiesFile.errorString();
 
     m_properties = json;
 }
