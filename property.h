@@ -14,7 +14,7 @@ class PropertyObject
 public:
 
     PropertyObject(const QString &name, quint16 clusterId, bool singleShot = false) :
-        m_name(name), m_clusterId(clusterId), m_singleShot(singleShot) {}
+        m_name(name), m_clusterId(clusterId), m_singleShot(singleShot), m_parent(nullptr), m_multiple(false) {}
 
     virtual ~PropertyObject(void) {}
     virtual void parseAttribte(quint16, quint8, const QByteArray &) {}
@@ -304,7 +304,7 @@ namespace PropertiesIAS
 
     public:
 
-        ZoneStatus(const QString &name) : PropertyObject(name, CLUSTER_IAS_ZONE, true) {}
+        ZoneStatus(const QString &name = "alarm") : PropertyObject(name, CLUSTER_IAS_ZONE, true) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
         void clearValue(void) override;
         void resetValue(void) override;

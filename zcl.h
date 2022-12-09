@@ -53,6 +53,7 @@
 #define DATA_TYPE_56BIT_SIGNED                      0x2E
 #define DATA_TYPE_64BIT_SIGNED                      0x2F
 #define DATA_TYPE_8BIT_ENUM                         0x30
+#define DATA_TYPE_16BIT_ENUM                        0x31
 #define DATA_TYPE_SINGLE_PRECISION                  0x39
 #define DATA_TYPE_DOUBLE_PRECISION                  0x3A
 #define DATA_TYPE_OCTET_STRING                      0x41

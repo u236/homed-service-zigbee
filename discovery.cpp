@@ -37,13 +37,14 @@ QVariant DiscoveryObject::deviceOption(const QString &key)
 
 QJsonObject BinaryObject::reqest(void)
 {
-    QList <QString> list = {"contact", "waterLeak"};
+    QList <QString> list = {"alarm", "contact", "waterLeak"};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
     {
-        case 0:  json.insert("device_class",    deviceOption("contact").toString() == "window" ? "window" : "door"); break;
-        case 1:  json.insert("device_class",    "moisture"); break;
+        case 0:  break;
+        case 1:  json.insert("device_class",    deviceOption("contact").toString() == "window" ? "window" : "door"); break;
+        case 2:  json.insert("device_class",    "moisture"); break;
         default: json.insert("device_class",    m_name); break;
     }
 

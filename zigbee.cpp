@@ -362,6 +362,15 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
+        if (device->powerSource() == POWER_SOURCE_MAINS && it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) && !it.value()->colorCapabilities())
+        {
+            if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
+                return true;
+
+            interviewError(device, "read color capabilities request failed");
+            return false;
+        }
+
         if (!it.value()->inClusters().contains(CLUSTER_IAS_ZONE))
             continue;
 
@@ -369,7 +378,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             case ZoneStatus::Unknown:
             {
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010})))
+                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0001, 0x0010})))
                     return true;
 
                 interviewError(device, "read current IAS zone status request failed");
@@ -535,9 +544,23 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         return;
     }
 
-    if (clusterId == CLUSTER_IAS_ZONE && (attributeId == 0x0000 || attributeId == 0x0010))
+    if (clusterId == CLUSTER_COLOR_CONTROL && attributeId == 0x400A)
     {
-        if (dataType == DATA_TYPE_NO_DATA) // TODO: figure it out
+        if (dataType == DATA_TYPE_16BIT_BITMAP)
+        {
+            quint16 value;
+            memcpy(&value, data.constData(), sizeof(value));
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04X", value);
+            endpoint->setColorCapabilities(value);
+        }
+
+        interviewDevice(device);
+        return;
+    }
+
+    if (clusterId == CLUSTER_IAS_ZONE)
+    {
+        if (attributeId == 0x0010 && dataType == DATA_TYPE_NO_DATA) // TODO: figure it out
         {
             endpoint->setZoneStatus(ZoneStatus::Enrolled);
             interviewDevice(device);
@@ -552,6 +575,19 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                     return;
 
                 endpoint->setZoneStatus(data.at(0) ? ZoneStatus::Enrolled : ZoneStatus::Enroll);
+                break;
+            }
+
+            case 0x0001:
+            {
+                quint16 value;
+
+                if (dataType != DATA_TYPE_16BIT_ENUM)
+                    return;
+
+                memcpy(&value, data.constData(), sizeof(value));
+                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04X", value);
+                endpoint->setZoneType(value);
                 break;
             }
 

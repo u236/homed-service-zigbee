@@ -323,9 +323,6 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
     if (!endpointMap.isEmpty())
         mqttPublish(mqttTopic("fd/zigbee/%1/%2").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')).arg(endpointId), QJsonObject::fromVariantMap(endpointMap), retain);
 
-    if (endpointMap.isEmpty() && deviceMap.isEmpty())
-        return;
-
     deviceMap.insert("linkQuality", device->linkQuality());
     mqttPublish(mqttTopic("fd/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(deviceMap), retain);
 }

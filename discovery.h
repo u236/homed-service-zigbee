@@ -12,7 +12,7 @@ class DiscoveryObject
 public:
 
     DiscoveryObject(const QString &component, const QString &name = QString(), bool control = true) :
-        m_component(component), m_name(name.isEmpty() ? component : name), m_control(control) {}
+        m_component(component), m_name(name.isEmpty() ? component : name), m_control(control), m_parent(nullptr), m_multiple(false) {}
 
     virtual ~DiscoveryObject(void) {}
     virtual QJsonObject reqest(void) = 0;
@@ -45,7 +45,7 @@ class BinaryObject : public DiscoveryObject
 
 public:
 
-    BinaryObject(const QString &name) : DiscoveryObject("binary_sensor", name, false) {}
+    BinaryObject(const QString &name = "alarm") : DiscoveryObject("binary_sensor", name, false) {}
     QJsonObject reqest(void) override;
 
 };
