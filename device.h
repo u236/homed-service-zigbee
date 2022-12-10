@@ -2,7 +2,8 @@
 #define DEVICE_H
 
 #define STORE_DATABASE_INTERVAL     60000
-#define STORE_DELAY                 1000
+#define STORE_DATABASE_DELAY        10
+#define STORE_PROPERTIES_DELAY      1000
 
 #include <QDateTime>
 #include <QDir>

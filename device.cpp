@@ -529,12 +529,12 @@ void DeviceList::removeDevice(const Device &device)
 
 void DeviceList::storeDatabase(void)
 {
-    m_databaseTimer->start(STORE_DELAY);
+    m_databaseTimer->start(STORE_DATABASE_DELAY);
 }
 
 void DeviceList::storeProperties(void)
 {
-    m_propertiesTimer->start(STORE_DELAY);
+    m_propertiesTimer->start(STORE_PROPERTIES_DELAY);
 }
 
 void DeviceList::unserializeDevices(const QJsonArray &devices)
