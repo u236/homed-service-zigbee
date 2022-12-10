@@ -987,12 +987,11 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, quin
     }
 }
 
-void PropertiesOther::SonoffButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
-    if (attributeId != 0x0000 && dataType != DATA_TYPE_BOOLEAN)
-        return;
+    Q_UNUSED(payload)
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (commandId)
     {
         case 0x00: m_value = "hold"; break;
         case 0x01: m_value = "doubleClick"; break;

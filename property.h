@@ -657,7 +657,7 @@ namespace PropertiesOther
     public:
 
         SonoffButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
