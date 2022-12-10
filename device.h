@@ -227,11 +227,9 @@ private:
 
     QFile m_libraryFile, m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_externalDir;
-
     bool m_offsets, m_permitJoin;
 
     QString m_adapterType, m_adapterVersion;
-    QJsonObject m_properties;
 
     void unserializeDevices(const QJsonArray &devices);
     void unserializeProperties(const QJsonObject &properties);

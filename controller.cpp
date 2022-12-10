@@ -2,6 +2,8 @@
 
 Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
 {
+    logInfo << "Starting version" << SERVICE_VERSION;
+
     m_names = getConfig()->value("mqtt/names", false).toBool();
     m_discovery = getConfig()->value("discovery/enabled", false).toBool();
     m_discoveryPrefix = getConfig()->value("discovery/prefix", "homeassistant").toString();

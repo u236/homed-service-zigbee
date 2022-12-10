@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <QFile>
+#include "controller.h"
 #include "device.h"
 #include "logger.h"
 
@@ -803,39 +804,35 @@ QJsonObject DeviceList::serializeProperties(void)
 
 void DeviceList::writeDatabase(void)
 {
-    QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}};
+    QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}, {"version", SERVICE_VERSION}};
 
     m_databaseTimer->start(STORE_DATABASE_INTERVAL);
+    emit statusUpdated(json);
 
     if (m_databaseFile.open(QFile::WriteOnly))
     {
         m_databaseFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
         fsync(m_databaseFile.handle());
         m_databaseFile.close();
+        return;
     }
-    else
-        logWarning << "Database not stored, file" << m_databaseFile.fileName() << "error:" << m_databaseFile.errorString();
 
-    emit statusUpdated(json);
+    logWarning << "Database not stored, file" << m_databaseFile.fileName() << "error:" << m_databaseFile.errorString();
 }
 
 void DeviceList::writeProperties(void)
 {
     QJsonObject json = serializeProperties();
 
-    if (m_properties == json)
-        return;
-
     if (m_propertiesFile.open(QFile::WriteOnly))
     {
         m_propertiesFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
         fsync(m_propertiesFile.handle());
         m_propertiesFile.close();
+        return;
     }
-    else
-        logWarning << "Properties not stored, file" << m_propertiesFile.fileName() << "error:" << m_propertiesFile.errorString();
 
-    m_properties = json;
+    logWarning << "Properties not stored, file" << m_propertiesFile.fileName() << "error:" << m_propertiesFile.errorString();
 }
 
 void DeviceList::pollAttributes(void)
