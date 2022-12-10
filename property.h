@@ -651,6 +651,16 @@ namespace PropertiesOther
 
     };
 
+    class SonoffButtonAction : public PropertyObject
+    {
+
+    public:
+
+        SonoffButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class LifeControlAirQuality : public PropertyObject
     {
 

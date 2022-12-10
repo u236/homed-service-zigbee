@@ -14,6 +14,14 @@
       "properties":     ["batteryPercentage", "iasContact"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "contact"]
+    },
+    {
+      "description":    "Sonoff Wireless Button SNZB-01",
+      "modelNames":     ["WB01", "WB-01"],
+      "properties":     ["batteryPercentage", "sonoffButtonAction"],
+      "reportings":     ["batteryPercentage", "status"],
+      "discoveries":    ["battery", "action"],
+      "options":        {"actions": ["singleClick", "doubleClick", "hold"]}
     }
   ],
 

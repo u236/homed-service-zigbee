@@ -64,6 +64,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
+    qRegisterMetaType <PropertiesOther::SonoffButtonAction>     ("sonoffButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>  ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>       ("perenioSmartPlugProperty");
 }
@@ -983,6 +984,19 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, quin
         case 0x80: m_value = "singleClick"; break;
         case 0x81: m_value = "doubleClick"; break;
         case 0x82: m_value = "hold"; break;
+    }
+}
+
+void PropertiesOther::SonoffButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0000 && dataType != DATA_TYPE_BOOLEAN)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "hold"; break;
+        case 0x01: m_value = "doubleClick"; break;
+        case 0x02: m_value = "singleClick"; break;
     }
 }
 
