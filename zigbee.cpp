@@ -111,7 +111,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i));
+            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
@@ -133,7 +133,7 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
             continue;
 
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i));
+            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
         {
@@ -450,7 +450,7 @@ void ZigBee::interviewFinished(const Device &device)
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i));
+            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));

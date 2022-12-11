@@ -5,6 +5,7 @@ include(../homed-common/homed-gpio.pri)
 HEADERS += \
     action.h \
     adapter.h \
+    binding.h \
     controller.h \
     device.h \
     discovery.h \
@@ -19,6 +20,7 @@ HEADERS += \
 SOURCES += \
     action.cpp \
     adapter.cpp \
+    binding.cpp \
     controller.cpp \
     device.cpp \
     discovery.cpp \

@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include "action.h"
 #include "adapter.h"
+#include "binding.h"
 #include "discovery.h"
 #include "poll.h"
 #include "property.h"
@@ -66,9 +67,9 @@ public:
     inline ZoneStatus zoneStatus(void) { return m_zoneStatus; }
     inline void setZoneStatus(ZoneStatus value) { m_zoneStatus = value; }
 
-    inline QList <quint16> &bindings(void) { return m_bindings; }
     inline QList <Property> &properties(void) { return m_properties; }
     inline QList <Action> &actions(void) { return m_actions; }
+    inline QList <Binding> &bindings(void) { return m_bindings; }
     inline QList <Reporting> &reportings(void) { return m_reportings; }
     inline QList <Poll> &polls(void) { return m_polls; }
     inline QList <Discovery> &discoveries(void) { return m_discoveries; }
@@ -85,9 +86,9 @@ private:
     quint16 m_colorCapabilities, m_zoneType;
     ZoneStatus m_zoneStatus;
 
-    QList <quint16> m_bindings;
     QList <Property> m_properties;
     QList <Action> m_actions;
+    QList <Binding> m_bindings;
     QList <Reporting> m_reportings;
     QList <Poll> m_polls;
     QList <Discovery> m_discoveries;

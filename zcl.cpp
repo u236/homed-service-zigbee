@@ -143,26 +143,3 @@ quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
 
     return 0;
 }
-
-quint16 bindingClusterId(const QString &binding, bool &check)
-{
-    QList <QString> list = {"battery", "status", "level", "color", "illuminance", "temperature", "humidity", "energy", "power", "perenio"};
-
-    check = list.contains(binding);
-
-    switch (list.indexOf(binding))
-    {
-        case 0: return CLUSTER_POWER_CONFIGURATION;
-        case 1: return CLUSTER_ON_OFF;
-        case 2: return CLUSTER_LEVEL_CONTROL;
-        case 3: return CLUSTER_COLOR_CONTROL;
-        case 4: return CLUSTER_ILLUMINANCE_MEASUREMENT;
-        case 5: return CLUSTER_TEMPERATURE_MEASUREMENT;
-        case 6: return CLUSTER_RELATIVE_HUMIDITY;
-        case 7: return CLUSTER_SMART_ENERGY_METERING;
-        case 8: return CLUSTER_ELECTRICAL_MEASUREMENT;
-        case 9: return CLUSTER_PERENIO;
-    }
-
-    return 0xFFFF;
-}

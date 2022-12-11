@@ -263,6 +263,4 @@ QByteArray writeAttributeRequest(quint8 transactionId, quint16 manufacturerCode,
 quint8 zclDataSize(quint8 dataType);
 quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset);
 
-quint16 bindingClusterId(const QString &binding, bool &check);
-
 #endif
