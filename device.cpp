@@ -120,8 +120,9 @@ void DeviceList::setupDevice(const Device &device)
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         it.value()->timer()->stop();
-        it.value()->actions().clear();
+        it.value()->bindings().clear();
         it.value()->properties().clear();
+        it.value()->actions().clear();
         it.value()->reportings().clear();
         it.value()->polls().clear();
         it.value()->discoveries().clear();
@@ -216,7 +217,21 @@ void DeviceList::setupDevice(const Device &device)
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
 {
     Device device = endpoint->device();
-    QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), discoveries = json.value("discoveries").toArray();
+    QJsonArray bindings = json.value("bindings").toArray(), properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), discoveries = json.value("discoveries").toArray();
+
+    for (auto it = bindings.begin(); it != bindings.end(); it++)
+    {
+        bool check;
+        quint16 clusterId = bindingClusterId(it->toString(), check);
+
+        if (check)
+        {
+            endpoint->bindings().append(clusterId);
+            continue;
+        }
+
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "binding" << it->toString() << "unrecognized";
+    }
 
     for (auto it = properties.begin(); it != properties.end(); it++)
     {

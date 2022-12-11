@@ -109,8 +109,13 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
     }
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->bindings().count(); i++)
+            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i));
+
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
+    }
 
     logInfo << "Device" << device->name() << "configuration updated";
 }
@@ -126,6 +131,9 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
     {
         if (endpointId && it.key() != endpointId)
             continue;
+
+        for (int i = 0; i < it.value()->bindings().count(); i++)
+            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i));
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
         {
@@ -440,8 +448,13 @@ void ZigBee::interviewFinished(const Device &device)
         logInfo << "Device" << device->name() << "identified as" << device->description();
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->bindings().count(); i++)
+            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i));
+
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
+    }
 
     logInfo << "Device" << device->name() << "interview finished successfully";
     emit deviceEvent(device, Event::interviewFinished);
@@ -467,8 +480,6 @@ void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
 {
     Device device = endpoint->device();
     QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
-
-    enqueueBindingRequest(device, endpoint->id(), reporting->clusterId());
 
     for (int i = 0; i < reporting->attributes().count(); i++)
     {
@@ -1103,9 +1114,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
                 break;
             }
 
-            if (!request->dstAddress().isEmpty())
-                logInfo << "Device" << request->device()->name() << (request->unbind() ? "unbinding" : "binding") << "finished succesfully";
-
+            logInfo << "Device" << request->device()->name() << "endpoint" << QString::asprintf("0x%02X", request->endpointId()) << "cluster" << QString::asprintf("0x%04X", request->clusterId()) << (request->unbind() ? "unbinding" : "binding") << "finished succesfully";
             break;
         }
 

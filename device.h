@@ -66,6 +66,7 @@ public:
     inline ZoneStatus zoneStatus(void) { return m_zoneStatus; }
     inline void setZoneStatus(ZoneStatus value) { m_zoneStatus = value; }
 
+    inline QList <quint16> &bindings(void) { return m_bindings; }
     inline QList <Property> &properties(void) { return m_properties; }
     inline QList <Action> &actions(void) { return m_actions; }
     inline QList <Reporting> &reportings(void) { return m_reportings; }
@@ -84,6 +85,7 @@ private:
     quint16 m_colorCapabilities, m_zoneType;
     ZoneStatus m_zoneStatus;
 
+    QList <quint16> m_bindings;
     QList <Property> m_properties;
     QList <Action> m_actions;
     QList <Reporting> m_reportings;

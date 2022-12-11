@@ -4,6 +4,7 @@
     {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02",
       "modelNames":     ["TH01"],
+      "bindings":       ["battery", "temperature", "humidity"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
       "discoveries":    ["battery", "temperature", "humidity"]
@@ -11,6 +12,7 @@
     {
       "description":    "Sonoff Door and Window Sensor SNZB-04",
       "modelNames":     ["DS01"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasContact"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "contact"]
@@ -18,8 +20,9 @@
     {
       "description":    "Sonoff Wireless Button SNZB-01",
       "modelNames":     ["WB01", "WB-01"],
+      "bindings":       ["battery", "status"],
       "properties":     ["batteryPercentage", "sonoffButtonAction"],
-      "reportings":     ["batteryPercentage", "status"],
+      "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "action"],
       "options":        {"actions": ["singleClick", "doubleClick", "hold"]}
     }
@@ -43,6 +46,7 @@
     {
       "description":    "Heiman Smoke Detector HS1SA",
       "modelNames":     ["SmokeSensor-EM", "SmokeSensor-N"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasSmoke"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "smoke"]
@@ -78,7 +82,6 @@
       "modelNames":     ["RGB Strip"],
       "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
-      "reportings":     ["status"],
       "discoveries":    ["light"],
       "options":        {"light": ["level", "color", "colorTemperature"]},
       "endpointId":     1
@@ -102,6 +105,7 @@
     {
       "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
       "modelNames":     ["TRADFRI bulb E14 WS 470lm"],
+      "bindings":       ["status", "level", "color"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "reportings":     ["status", "level", "colorTemperature"],
@@ -111,6 +115,7 @@
     {
       "description":    "TRADFRI Dimmable Bulb",
       "modelNames":     ["TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
+      "bindings":       ["status", "level"],
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
       "reportings":     ["status", "level"],
@@ -120,6 +125,7 @@
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
       "modelNames":     ["TRADFRI on/off switch"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "identifyAction", "switchAction", "levelAction"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "action"],
@@ -164,6 +170,7 @@
     {
       "description":    "Konke Temperature and Humidity Sensor 2AJZ4KPFT",
       "modelNames":     ["3AFE140103020000", "3AFE220103020000"],
+      "bindings":       ["battery", "temperature", "humidity"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
       "discoveries":    ["battery", "temperature", "humidity"]
@@ -211,6 +218,7 @@
     {
       "description":    "Perenio Door and Window Sensor PECWS01",
       "modelNames":     ["ZHA-DoorLockSensor"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasContact"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "contact"]
@@ -218,6 +226,7 @@
     {
       "description":    "Perenio Motion Sensor PECMS01",
       "modelNames":     ["ZHA-PirSensor"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "occupancy"]
@@ -229,6 +238,7 @@
     {
       "description":    "Aqara 10A Smart Plug SP-EUC01",
       "modelNames":     ["lumi.plug.maeu01"],
+      "bindings":       ["status"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status"],
       "reportings":     ["status"],
@@ -271,6 +281,7 @@
     {
       "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
       "modelNames":     ["lumi.sen_ill.mgl01"],
+      "bindings":       ["battery", "illuminance"],
       "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
       "reportings":     ["batteryVoltage", "illuminance"],
       "discoveries":    ["battery", "illuminance"]
@@ -285,9 +296,9 @@
     {
       "description":    "Aqara Opple 2-band Wireless Switch WXCJKG11LM",
       "modelNames":     ["lumi.remote.b286opcn01"],
+      "bindings":       ["battery", "status"],
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
-      "reportings":     ["batteryVoltage", "status"],
       "discoveries":    ["battery"],
       "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
@@ -301,9 +312,9 @@
     {
       "description":    "Aqara Opple 4-band Wireless Switch WXCJKG12LM",
       "modelNames":     ["lumi.remote.b486opcn01"],
+      "bindings":       ["battery", "status", "level", "color"],
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
-      "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
       "discoveries":    ["battery"],
       "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
@@ -317,9 +328,9 @@
     {
       "description":    "Aqara Opple 6-band Wireless Switch WXCJKG13LM",
       "modelNames":     ["lumi.remote.b686opcn01"],
+      "bindings":       ["battery", "status", "level", "color"],
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
-      "reportings":     ["batteryVoltage", "status", "level", "colorTemperature"],
       "discoveries":    ["battery"],
       "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
@@ -413,6 +424,7 @@
     {
       "description":    "Perenio 16A Smart Plug PEHPL0X",
       "modelNames":     ["PEHPL0X"],
+      "bindings":       ["status", "perenio"],
       "properties":     ["status", "perenioSmartPlug"],
       "actions":        ["status", "perenioPowerOnStatus", "perenioResetAlarms", "perenioVoltageMin", "perenioVoltageMax", "perenioPowerMax", "perenioEnergyLimit"],
       "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
@@ -423,6 +435,7 @@
     {
       "description":    "Perenio Water Leak Sensor PECLS01",
       "modelNames":     ["PECLS01"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "waterLeak"]
@@ -445,6 +458,7 @@
     {
       "description":    "Life Control 10A Smart Plug MCLH-03",
       "modelNames":     ["RICI01"],
+      "bindings":       ["status"],
       "properties":     ["status"],
       "actions":        ["status"],
       "reportings":     ["status"],
@@ -458,9 +472,9 @@
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
       "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
+      "bindings":       ["status"],
       "properties":     ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
-      "reportings":     ["status"],
       "discoveries":    ["switch"],
       "options":        {"ignoreClusters": [57344]}
     },
@@ -474,9 +488,9 @@
     },
     {
       "modelNames":     ["TS0002", "TS0012"],
+      "bindings":       ["status"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "reportings":     ["status"],
       "discoveries":    ["switch"],
       "endpointId":     [1, 2]
     },
@@ -490,9 +504,9 @@
     },
     {
       "modelNames":     ["TS0003", "TS0013"],
+      "bindings":       ["status"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "reportings":     ["status"],
       "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3]
     },
@@ -506,9 +520,9 @@
     },
     {
       "modelNames":     ["TS0004", "TS0014"],
+      "bindings":       ["status"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "reportings":     ["status"],
       "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3, 4]
     },
@@ -522,24 +536,25 @@
     },
     {
       "modelNames":     ["TS0006"],
+      "bindings":       ["status"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "reportings":     ["status"],
       "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
       "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
+      "bindings":       ["status"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "reportings":     ["status"],
       "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3, 4, 5]
     },
     {
       "description":    "TUYA TS011F Smart Plug With Power Monitoring",
       "modelNames":     ["_TZ3000_0yxeawjt", "_TZ3000_1h2x4akh", "_TZ3000_5f43h46b", "_TZ3000_7dndcnnb", "_TZ3000_9vo5icau", "_TZ3000_aim0ztek", "_TZ3000_amdymr7l", "_TZ3000_b28wrpvx", "_TZ3000_cehuw1lw", "_TZ3000_cjrngdr3", "_TZ3000_cphmq0q7", "_TZ3000_dksbtrzs", "_TZ3000_dpo1ysak", "_TZ3000_ew3ldmgx", "_TZ3000_f1bapcit", "_TZ3000_fgwhjm9j", "_TZ3000_gjnozsaz", "_TZ3000_gznh2xla", "_TZ3000_gvn91tmx", "_TZ3000_hdopuwv6", "_TZ3000_idrffznf", "_TZ3000_iksasdbv", "_TZ3000_jtgxgmks", "_TZ3000_jvzvulen", "_TZ3000_ko6v90pg", "_TZ3000_ksw8qtmt", "_TZ3000_kx0pris5", "_TZ3000_mlswgkc3", "_TZ3000_mraovvmm", "_TZ3000_nfnmi125", "_TZ3000_nmsciidq", "_TZ3000_okaz9tjs", "_TZ3000_ps3dmato", "_TZ3210_q7oryllx", "_TZ3000_r6buo8ba", "_TZ3000_rdfh8cfs", "_TZ3000_rdtixbnu", "_TZ3000_ss98ec5d", "_TZ3000_typdpbpg", "_TZ3000_u5u4cakc", "_TZ3000_w0qqde0g", "_TZ3000_waho4jtj", "_TZ3000_yujkchbz", "_TZ3000_z1pnpsdo", "_TZ3000_zloso4jk"],
+      "bindings":       ["status", "energy", "power"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
@@ -577,6 +592,7 @@
     {
       "description":    "TUYA TS0203 Door and Window Sensor",
       "modelNames":     ["TS0203"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasContact"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "contact"]
@@ -591,6 +607,7 @@
     {
       "description":    "TUYA TS0202 Motion Sensor",
       "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_mmtwjmaq", "_TZ3000_otvn3lne", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "occupancy"]
@@ -598,6 +615,7 @@
     {
       "description":    "TUYA TS0202 Motion Sensor",
       "modelNames":     ["_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "occupancy"],
@@ -612,6 +630,7 @@
     {
       "description":    "TUYA TS0207 Water Leak Sensor",
       "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_upgcbody"],
+      "bindings":       ["battery"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "waterLeak"]
