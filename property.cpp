@@ -1047,7 +1047,7 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
 
     switch (attributeId)
     {
-        case 0x0000: map.insert("tempertature", qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble()); break;
+        case 0x0000: map.insert("temperature", qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble()); break;
         case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0 + deviceOption("humidityOffset").toDouble()); break;
         case 0x0002: map.insert("co2", qFromLittleEndian(value)); break;
         case 0x0003: map.insert("voc", qFromLittleEndian(value)); break;
