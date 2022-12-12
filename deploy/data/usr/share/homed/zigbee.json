@@ -35,6 +35,7 @@
       "modelNames":     ["vivi ZLight"],
       "properties":     ["status", "level", "colorHS"],
       "actions":        ["status", "level", "colorHS"],
+      "polls":          ["status", "level", "colorHS"],
       "discoveries":    ["light"],
       "options":        {"light": ["level", "color"]},
       "endpointId":     11
@@ -109,6 +110,7 @@
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "bindings":       ["status", "level", "color"],
       "reportings":     ["status", "level", "colorTemperature"],
+      "polls":          ["status", "level", "colorTemperature"],
       "discoveries":    ["light"],
       "options":        {"light": ["level", "colorTemperature"], "colorTemperatureMin": 250, "colorTemperatureMax": 454}
     },
@@ -119,6 +121,7 @@
       "actions":        ["status", "powerOnStatus", "level"],
       "bindings":       ["status", "level"],
       "reportings":     ["status", "level"],
+      "polls":          ["status", "level"],
       "discoveries":    ["light"],
       "options":        {"light": ["level"]}
     },
@@ -398,7 +401,8 @@
     {
       "description":    "OpenLumi Router (JN5169)",
       "modelNames":     ["openlumi.gw_router.jn5169"],
-      "properties":     ["deviceTemperature"]
+      "properties":     ["deviceTemperature"],
+      "discoveries":    ["temperature"]
     }
   ],
 
@@ -421,8 +425,8 @@
     {
       "description":    "ORVIBO Water Leak Sensor SW21 or SW30",
       "modelNames":     ["52debf035a1b4a66af56415474646c02", "b7e305eb329f497384e966fe3fb0ac69", "da2edf1ded0d44e1815d06f45ce02029"],
-      "properties":     ["iasWaterLeak"],
-      "discoveries":    ["occupancy"]
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "discoveries":    ["battery", "occupancy"]
     }
   ],
 
