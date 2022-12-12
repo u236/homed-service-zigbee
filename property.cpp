@@ -13,6 +13,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Contact>                     ("contactProperty");
     qRegisterMetaType <Properties::PowerOnStatus>               ("powerOnStatusProperty");
     qRegisterMetaType <Properties::Level>                       ("levelProperty");
+    qRegisterMetaType <Properties::CoverStatus>                 ("coverStatusProperty");
     qRegisterMetaType <Properties::CoverPosition>               ("coverPositionProperty");
     qRegisterMetaType <Properties::CoverTilt>                   ("coverTiltProperty");
     qRegisterMetaType <Properties::ColorHS>                     ("colorHSProperty");
@@ -164,6 +165,14 @@ void Properties::Level::parseAttribte(quint16 attributeId, quint8 dataType, cons
         return;
 
     m_value = static_cast <quint8> (data.at(0));
+}
+
+void Properties::CoverStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0008 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+        return;
+
+    m_value = static_cast <quint8> (data.at(0)) < 100 ? "open" : "closed";
 }
 
 void Properties::CoverPosition::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

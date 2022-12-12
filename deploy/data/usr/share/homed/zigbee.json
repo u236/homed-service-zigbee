@@ -259,7 +259,8 @@
       "modelNames":     ["lumi.curtain"],
       "properties":     ["lumiCover"],
       "actions":        ["coverStatus", "lumiCoverPosition"],
-      "discoveries":    ["cover"]
+      "discoveries":    ["cover"],
+      "options":        {"ignoreClusters": [258]}
     },
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
