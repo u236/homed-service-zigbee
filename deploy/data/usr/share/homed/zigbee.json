@@ -252,6 +252,13 @@
       "endpointId":     21
     },
     {
+      "description":    "Aqara Curtain Motor ZNCLDJ11LM",
+      "modelNames":     ["lumi.curtain"],
+      "properties":     ["lumiCurtainPosition"],
+      "actions":        ["lumiCurtainPosition"],
+      "discoveries":    ["cover"]
+    },
+    {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
       "properties":     ["lumiBatteryVoltage", "contact"],

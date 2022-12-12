@@ -26,6 +26,7 @@ public:
     inline quint16 clusterId(void) { return m_clusterId; }
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
     inline QList <quint16> &attributes(void) { return m_attributes; }
+    inline void setParent(QObject *value) { m_parent = value; }
 
     static void registerMetaTypes(void);
 
@@ -35,7 +36,10 @@ protected:
     quint16 m_clusterId, m_manufacturerCode;
     QList <quint16> m_attributes;
 
+    QObject *m_parent;
     quint8 m_transactionId;
+
+    QVariant deviceOption(const QString &key);
 
 };
 
@@ -154,6 +158,16 @@ namespace ActionsPTVO
 
 namespace ActionsLUMI
 {
+    class CoverPosition : public ActionObject
+    {
+
+    public:
+
+        CoverPosition(void) : ActionObject("position", CLUSTER_ANALOG_OUTPUT, 0x115F, 0x0055) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
     class OperationMode : public ActionObject
     {
 

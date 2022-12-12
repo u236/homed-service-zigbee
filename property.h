@@ -127,6 +127,26 @@ namespace Properties
 
     };
 
+    class CoverPosition : public PropertyObject
+    {
+
+    public:
+
+        CoverPosition(void) : PropertyObject("position", CLUSTER_WINDOW_COVERING) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class CoverTilt : public PropertyObject
+    {
+
+    public:
+
+        CoverTilt(void) : PropertyObject("tilt", CLUSTER_WINDOW_COVERING) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
     class ColorHS : public PropertyObject
     {
 
@@ -508,6 +528,16 @@ namespace PropertiesLUMI
     public:
 
         Power(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
+
+    };
+
+    class CoverPosition : public PropertyObject
+    {
+
+    public:
+
+        CoverPosition(void) :  PropertyObject("position", CLUSTER_ANALOG_OUTPUT, true) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

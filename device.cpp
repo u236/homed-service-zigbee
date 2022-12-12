@@ -243,6 +243,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
+            action->setParent(endpoint.data());
             endpoint->actions().append(action);
             continue;
         }

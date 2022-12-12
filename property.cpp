@@ -13,6 +13,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Contact>                     ("contactProperty");
     qRegisterMetaType <Properties::PowerOnStatus>               ("powerOnStatusProperty");
     qRegisterMetaType <Properties::Level>                       ("levelProperty");
+    qRegisterMetaType <Properties::CoverPosition>               ("coverPositionProperty");
+    qRegisterMetaType <Properties::CoverTilt>                   ("coverTiltProperty");
     qRegisterMetaType <Properties::ColorHS>                     ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                     ("colorXYProperty");
     qRegisterMetaType <Properties::ColorTemperature>            ("colorTemperatureProperty");
@@ -50,6 +52,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::CoverPosition>           ("lumiCoverPositionProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>            ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
@@ -161,6 +164,22 @@ void Properties::Level::parseAttribte(quint16 attributeId, quint8 dataType, cons
         return;
 
     m_value = static_cast <quint8> (data.at(0));
+}
+
+void Properties::CoverPosition::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0008 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+        return;
+
+    m_value = deviceOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
+}
+
+void Properties::CoverTilt::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    if (attributeId != 0x0009 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+        return;
+
+    m_value = deviceOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
 }
 
 void Properties::ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -664,7 +683,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("energy", static_cast <double> (round(qFromLittleEndian(value) * 100)) / 100);
+            value = round(qFromLittleEndian(value) * 100) / 100;
+            map.insert("energy", value);
             break;
         }
 
@@ -676,7 +696,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            map.insert("voltage", static_cast <double> (round(qFromLittleEndian(value))) / 10 + deviceOption("voltageOffset").toDouble());
+            value = round(qFromLittleEndian(value)) / 10;
+            map.insert("voltage", value + deviceOption("voltageOffset").toDouble());
             break;
         }
 
@@ -688,7 +709,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            map.insert("current", static_cast <double> (round(qFromLittleEndian(value))) / 1000 + deviceOption("currentOffset").toDouble());
+            value = round(qFromLittleEndian(value)) / 1000;
+            map.insert("current", value + deviceOption("currentOffset").toDouble());
             break;
         }
 
@@ -700,7 +722,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("power", static_cast <double> (round(qFromLittleEndian(value) * 100)) / 100 + deviceOption("powerOffset").toDouble());
+            value = round(qFromLittleEndian(value) * 100) / 100;
+            map.insert("power", value + deviceOption("powerOffset").toDouble());
             break;
         }
     }
@@ -744,7 +767,20 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, quint8 dataType, 
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = static_cast <double> (round(qFromLittleEndian(value) * 100)) / 100 + deviceOption("powerOffset").toDouble();
+    value = round(qFromLittleEndian(value) * 100) / 100;
+    m_value = value + deviceOption("powerOffset").toDouble();
+}
+
+void PropertiesLUMI::CoverPosition::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    float value = 0;
+
+    if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    value = round(qFromLittleEndian(value));
+    m_value = static_cast <quint8> (deviceOption("invertCover").toBool() ? 100 - value : value);
 }
 
 void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

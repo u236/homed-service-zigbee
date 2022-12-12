@@ -74,8 +74,10 @@
 #define CLUSTER_LEVEL_CONTROL                       0x0008
 #define CLUSTER_TIME                                0x000A
 #define CLUSTER_ANALOG_INPUT                        0x000C
+#define CLUSTER_ANALOG_OUTPUT                       0x000D
 #define CLUSTER_MULTISTATE_INPUT                    0x0012
 #define CLUSTER_OTA_UPGRADE                         0x0019
+#define CLUSTER_WINDOW_COVERING                     0x0102
 #define CLUSTER_COLOR_CONTROL                       0x0300
 #define CLUSTER_ILLUMINANCE_MEASUREMENT             0x0400
 #define CLUSTER_TEMPERATURE_MEASUREMENT             0x0402

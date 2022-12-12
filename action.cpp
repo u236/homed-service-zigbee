@@ -1,6 +1,7 @@
 #include <QtEndian>
 #include "action.h"
 #include "color.h"
+#include "device.h"
 
 void ActionObject::registerMetaTypes(void)
 {
@@ -15,6 +16,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Count>                  ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
+    qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::Sensitivity>            ("lumiSensitivityAction");
     qRegisterMetaType <ActionsLUMI::DetectionMode>          ("lumiDetectionModeAction");
@@ -41,6 +43,12 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPerenio::VoltageMax>          ("perenioVoltageMaxAction");
     qRegisterMetaType <ActionsPerenio::PowerMax>            ("perenioPowerMaxAction");
     qRegisterMetaType <ActionsPerenio::EnergyLimit>         ("perenioEnergyLimitAction");
+}
+
+QVariant ActionObject::deviceOption(const QString &key)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
 }
 
 QByteArray Actions::Status::request(const QVariant &data)
@@ -195,6 +203,20 @@ QByteArray ActionsPTVO::Status::request(const QVariant &data)
 QByteArray ActionsPTVO::AnalogInput::request(const QVariant &data)
 {
     float value = qToLittleEndian(data.toFloat());
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::CoverPosition::request(const QVariant &data)
+{
+    float value = data.toFloat();
+
+    if (value > 100)
+        value = 100;
+
+    if (deviceOption("invertCover").toBool())
+        value = 100 - value;
+
+    value = qToLittleEndian(value);
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
