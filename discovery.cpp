@@ -5,6 +5,7 @@ void DiscoveryObject::registerMetaTypes(void)
 {
     qRegisterMetaType <LightObject>             ("lightDiscovery");
     qRegisterMetaType <SwitchObject>            ("switchDiscovery");
+    qRegisterMetaType <CoverObject>             ("coverDiscovery");
 
     qRegisterMetaType <Binary::Contact>         ("contactDiscovery");
     qRegisterMetaType <Binary::Gas>             ("gasDiscovery");
@@ -130,6 +131,23 @@ QJsonObject SwitchObject::reqest(void)
     json.insert("state_on",                     "on");
     json.insert("state_off",                    "off");
     json.insert("value_template",               "{{ value_json.status }}");
+
+    return json;
+}
+
+QJsonObject CoverObject::reqest(void)
+{
+    QJsonObject json;
+
+    json.insert("device_class",                 "curtain");
+    json.insert("payload_open",                 "{\"cover\":\"open\"}");
+    json.insert("payload_close",                "{\"cover\":\"close\"}");
+    json.insert("payload_stop",                 "{\"cover\":\"stop\"}");
+    json.insert("state_open",                   "open");
+    json.insert("state_closed",                 "closed");
+    json.insert("set_position_template",        "{\"position\":{{ position }}}");
+    json.insert("position_template",            "{{ value_json.position }}");
+    json.insert("value_template",               "{{ value_json.cover }}");
 
     return json;
 }

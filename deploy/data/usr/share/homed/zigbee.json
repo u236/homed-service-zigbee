@@ -252,7 +252,7 @@
       "endpointId":     21
     },
     {
-      "description":    "Aqara Curtain Motor ZNCLDJ11LM",
+      "description":    "Aqara Curtain Controller ZNCLDJ11LM",
       "modelNames":     ["lumi.curtain"],
       "properties":     ["lumiCover"],
       "actions":        ["coverStatus", "lumiCoverPosition"],

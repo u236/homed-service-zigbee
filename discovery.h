@@ -11,15 +11,14 @@ class DiscoveryObject
 
 public:
 
-    DiscoveryObject(const QString &component, const QString &name = QString(), bool control = true) :
-        m_component(component), m_name(name.isEmpty() ? component : name), m_control(control), m_parent(nullptr), m_multiple(false) {}
+    DiscoveryObject(const QString &component, const QString &name = QString()) :
+        m_component(component), m_name(name.isEmpty() ? component : name), m_parent(nullptr), m_multiple(false) {}
 
     virtual ~DiscoveryObject(void) {}
     virtual QJsonObject reqest(void) = 0;
 
     inline QString component(void) { return m_component; }
     inline QString name(void) { return m_name; }
-    inline bool control(void) { return m_control; }
 
     inline void setParent(QObject *value) { m_parent = value; }
 
@@ -31,7 +30,6 @@ public:
 protected:
 
     QString m_component, m_name;
-    bool m_control;
 
     QObject *m_parent;
     bool m_multiple;
@@ -45,7 +43,7 @@ class BinaryObject : public DiscoveryObject
 
 public:
 
-    BinaryObject(const QString &name = "alarm") : DiscoveryObject("binary_sensor", name, false) {}
+    BinaryObject(const QString &name = "alarm") : DiscoveryObject("binary_sensor", name) {}
     QJsonObject reqest(void) override;
 
 };
@@ -55,7 +53,7 @@ class SensorObject : public DiscoveryObject
 
 public:
 
-    SensorObject(const QString &name, const QString &unit = QString(), quint8 round = 0) : DiscoveryObject("sensor", name, false), m_unit(unit), m_round(round) {}
+    SensorObject(const QString &name, const QString &unit = QString(), quint8 round = 0) : DiscoveryObject("sensor", name), m_unit(unit), m_round(round) {}
     QJsonObject reqest(void) override;
 
 private:
@@ -85,12 +83,22 @@ public:
 
 };
 
+class CoverObject : public DiscoveryObject
+{
+
+public:
+
+    CoverObject(void) : DiscoveryObject("cover") {}
+    QJsonObject reqest(void) override;
+
+};
+
 class ButtonObject  : public DiscoveryObject
 {
 
 public:
 
-    ButtonObject(const QString &name, const QString &payload) : DiscoveryObject("button", name, true), m_payload(payload) {}
+    ButtonObject(const QString &name, const QString &payload) : DiscoveryObject("button", name), m_payload(payload) {}
     QJsonObject reqest(void) override;
 
 private:

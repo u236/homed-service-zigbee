@@ -47,11 +47,17 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                 availability.append(QJsonObject {{"topic", mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':'))}, {"value_template", "{{ value_json.status }}"}});
                 availability.append(QJsonObject {{"topic", mqttTopic("service/zigbee")}, {"value_template", "{{ value_json.status }}"}});
 
-                if (discovery->control())
+                if (discovery->component() != "binary_sensor" && discovery->component() != "sensor")
                     json.insert("command_topic", mqttTopic("td/zigbee/%1").arg(topic));
 
                 if (discovery->component() != "button")
                     json.insert("state_topic", mqttTopic("fd/zigbee/%1").arg(topic));
+
+                if (discovery->component() == "cover")
+                {
+                    json.insert("set_position_topic", mqttTopic("td/zigbee/%1").arg(topic));
+                    json.insert("position_topic", mqttTopic("fd/zigbee/%1").arg(topic));
+                }
 
                 json.insert("availability", availability);
                 json.insert("availability_mode", "all");
