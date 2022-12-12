@@ -8,6 +8,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::Status>                     ("statusAction");
     qRegisterMetaType <Actions::PowerOnStatus>              ("powerOnStatusAction");
     qRegisterMetaType <Actions::Level>                      ("levelAction");
+    qRegisterMetaType <Actions::CoverStatus>                ("coverStatusAction");
     qRegisterMetaType <Actions::ColorHS>                    ("colorHSAction");
     qRegisterMetaType <Actions::ColorXY>                    ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>           ("colorTemperatureAction");
@@ -53,8 +54,13 @@ QVariant ActionObject::deviceOption(const QString &key)
 
 QByteArray Actions::Status::request(const QVariant &data)
 {
-    QString status = data.toString();
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, status == "toggle" ? 0x02 : status == "on" ? 0x01 : 0x00);
+    QList <QString> list = {"off", "on", "toggle"};
+    qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (command < 0)
+        return QByteArray();
+
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
 QByteArray Actions::PowerOnStatus::request(const QVariant &data)
@@ -109,6 +115,17 @@ QByteArray Actions::Level::request(const QVariant &data)
         default:
             return QByteArray();
     }
+}
+
+QByteArray Actions::CoverStatus::request(const QVariant &data)
+{
+    QList <QString> list = {"open", "close", "stop"};
+    qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (command < 0)
+        return QByteArray();
+
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
 QByteArray Actions::ColorHS::request(const QVariant &data)

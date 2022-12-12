@@ -503,12 +503,22 @@ namespace PropertiesLUMI
 
     public:
 
-        Data(void) : PropertyObject("lumiData", CLUSTER_LUMI) {}
+        Data(void) : PropertyObject("data", CLUSTER_LUMI) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     private:
 
         void parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data, QMap <QString, QVariant> &map);
+
+    };
+
+    class Cover : public PropertyObject
+    {
+
+    public:
+
+        Cover(void) :  PropertyObject("cover", CLUSTER_ANALOG_OUTPUT, true) {}
+        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
 
@@ -528,16 +538,6 @@ namespace PropertiesLUMI
     public:
 
         Power(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
-
-    };
-
-    class CoverPosition : public PropertyObject
-    {
-
-    public:
-
-        CoverPosition(void) :  PropertyObject("position", CLUSTER_ANALOG_OUTPUT, true) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
@@ -590,7 +590,7 @@ namespace PropertiesTUYA
 
     public:
 
-        Data(void) : PropertyObject("tuyaData", CLUSTER_TUYA_DATA) {}
+        Data(void) : PropertyObject("data", CLUSTER_TUYA_DATA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     private:
@@ -696,7 +696,7 @@ namespace PropertiesOther
 
     public:
 
-        LifeControlAirQuality(void) : PropertyObject("lifeControlAirQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        LifeControlAirQuality(void) : PropertyObject("airQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };
@@ -706,7 +706,7 @@ namespace PropertiesOther
 
     public:
 
-        PerenioSmartPlug(void) : PropertyObject("perenioSmartPlug", CLUSTER_PERENIO) {}
+        PerenioSmartPlug(void) : PropertyObject("smartPlug", CLUSTER_PERENIO) {}
         void parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data) override;
 
     };

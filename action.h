@@ -75,6 +75,16 @@ namespace Actions
 
     };
 
+    class CoverStatus : public ActionObject
+    {
+
+    public:
+
+        CoverStatus(void) : ActionObject("cover", CLUSTER_WINDOW_COVERING) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
     class ColorHS : public ActionObject
     {
 
@@ -163,7 +173,7 @@ namespace ActionsLUMI
 
     public:
 
-        CoverPosition(void) : ActionObject("position", CLUSTER_ANALOG_OUTPUT, 0x115F, 0x0055) {}
+        CoverPosition(void) : ActionObject("position", CLUSTER_ANALOG_OUTPUT) {}
         QByteArray request(const QVariant &data) override;
 
     };

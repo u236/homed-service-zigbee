@@ -50,9 +50,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
+    qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
-    qRegisterMetaType <PropertiesLUMI::CoverPosition>           ("lumiCoverPositionProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>            ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
@@ -729,6 +729,23 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
     }
 }
 
+void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    float value = 0;
+
+    if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    value = round(qFromLittleEndian(value));
+
+    map.insert("cover", value < 100 ? "open" : "closed");
+    map.insert("position", deviceOption("invertCover").toBool() ? 100 - value : value);
+
+    m_value = map;
+}
+
 void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     switch (attributeId)
@@ -769,18 +786,6 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, quint8 dataType, 
     memcpy(&value, data.constData(), data.length());
     value = round(qFromLittleEndian(value) * 100) / 100;
     m_value = value + deviceOption("powerOffset").toDouble();
-}
-
-void PropertiesLUMI::CoverPosition::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
-{
-    float value = 0;
-
-    if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-    value = round(qFromLittleEndian(value));
-    m_value = static_cast <quint8> (deviceOption("invertCover").toBool() ? 100 - value : value);
 }
 
 void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)

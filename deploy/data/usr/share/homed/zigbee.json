@@ -254,8 +254,8 @@
     {
       "description":    "Aqara Curtain Motor ZNCLDJ11LM",
       "modelNames":     ["lumi.curtain"],
-      "properties":     ["lumiCurtainPosition"],
-      "actions":        ["lumiCurtainPosition"],
+      "properties":     ["lumiCover"],
+      "actions":        ["coverStatus", "lumiCoverPosition"],
       "discoveries":    ["cover"]
     },
     {
