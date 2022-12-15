@@ -1060,7 +1060,7 @@ void ZigBee::coordinatorReady(void)
 
     connect(m_requestTimer, &QTimer::timeout, this, &ZigBee::handleRequests, Qt::UniqueConnection);
     connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
-    connect(m_pingTimer, &QTimer::timeout, this, &ZigBee::pingRouters, Qt::UniqueConnection);
+    connect(m_pingTimer, &QTimer::timeout, this, &ZigBee::pingDevices, Qt::UniqueConnection);
 
     if (!m_requests.isEmpty())
         m_requestTimer->start();
@@ -1070,8 +1070,8 @@ void ZigBee::coordinatorReady(void)
 
     if (!m_pingTimer->isActive())
     {
-        m_pingTimer->start(PING_ROUTERS_INTERVAL);
-        pingRouters();
+        m_pingTimer->start(PING_DEVICES_INTERVAL);
+        pingDevices();
     }
 
     m_adapter->setPermitJoin(m_devices->permitJoin());
@@ -1451,7 +1451,7 @@ void ZigBee::updateNeighbors(void)
     }
 }
 
-void ZigBee::pingRouters(void)
+void ZigBee::pingDevices(void)
 {
     qint64 time = QDateTime::currentSecsSinceEpoch();
 
@@ -1459,7 +1459,7 @@ void ZigBee::pingRouters(void)
     {
         const Device &device = it.value();
 
-        if (it.value()->logicalType() != LogicalType::Router || time - device->lastSeen() < PING_ROUTERS_INTERVAL / 1000)
+        if (it.value()->batteryPowered() || time - device->lastSeen() < PING_DEVICES_INTERVAL / 1000)
             continue;
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
