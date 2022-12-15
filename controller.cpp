@@ -244,7 +244,7 @@ void Controller::updateAvailability(void)
             continue;
 
         if (!timeout)
-            timeout = it.value()->logicalType() != LogicalType::Router && it.value()->powerSource() != POWER_SOURCE_MAINS ? 28800 : 600;
+            timeout = it.value()->batteryPowered() ? 28800 : 600;
 
         it.value()->setAvailability(time - it.value()->lastSeen() <= timeout ? AvailabilityStatus::Online : AvailabilityStatus::Offline);
 

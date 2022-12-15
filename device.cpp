@@ -337,7 +337,7 @@ void DeviceList::recognizeDevice(const Device &device)
             {
                 case CLUSTER_POWER_CONFIGURATION:
 
-                    if (device->powerSource() == POWER_SOURCE_MAINS || device->powerSource() == POWER_SOURCE_DC)
+                    if (!device->batteryPowered())
                         break;
 
                     it.value()->properties().append(Property(new Properties::BatteryVoltage));
@@ -352,7 +352,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_ON_OFF:
 
-                    if (device->powerSource() == POWER_SOURCE_MAINS || device->powerSource() == POWER_SOURCE_DC)
+                    if (!device->batteryPowered())
                     {
                         it.value()->properties().append(Property(new Properties::Status));
                         it.value()->actions().append(Action(new Actions::Status));
@@ -365,7 +365,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_LEVEL_CONTROL:
 
-                    if (device->powerSource() == POWER_SOURCE_MAINS || device->powerSource() == POWER_SOURCE_DC)
+                    if (!device->batteryPowered())
                     {
                         QList <QVariant> options = device->options().value("light").toList();
                         it.value()->properties().append(Property(new Properties::Level));
@@ -380,7 +380,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_COLOR_CONTROL:
 
-                    if (it.value()->colorCapabilities() && (device->powerSource() == POWER_SOURCE_MAINS || device->powerSource() == POWER_SOURCE_DC))
+                    if (!device->batteryPowered() && it.value()->colorCapabilities())
                     {
                         QList <QVariant> options = device->options().value("light").toList();
 

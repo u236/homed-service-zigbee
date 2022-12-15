@@ -140,6 +140,7 @@ public:
     inline quint8 version(void) { return m_version; }
     inline void setVersion(quint8 value) { m_version = value; }
 
+    inline bool batteryPowered(void) { return m_powerSource != POWER_SOURCE_MAINS && m_powerSource != POWER_SOURCE_DC; }
     inline quint8 powerSource(void) { return m_powerSource; }
     inline void setPowerSource(quint8 value) { m_powerSource = value; }
 
