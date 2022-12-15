@@ -194,7 +194,7 @@ protected:
     QString m_bootPin, m_resetPin, m_reset;
     quint16 m_panId;
     quint8 m_channel;
-    bool m_debug, m_write;
+    bool m_write, m_debug;
 
     QString m_typeString, m_versionString;
     quint64 m_ieeeAddress;

@@ -164,10 +164,10 @@ private:
     Adapter *m_adapter;
 
     QMetaEnum m_events;
-    quint8  m_requestId;
+    quint8 m_requestId, m_interPanChannel;
 
     QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
-    quint8  m_interPanChannel;
+    bool m_debug;
 
     QMap <quint8, Request> m_requests;
 

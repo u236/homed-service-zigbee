@@ -45,8 +45,8 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
     m_panId = static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16));
     m_channel = static_cast <quint8> (config->value("zigbee/channel").toInt());
 
-    m_debug = config->value("zigbee/debug", false).toBool();
     m_write = config->value("zigbee/write", false).toBool();
+    m_debug = config->value("debug/adapter", false).toBool();
 
     if (m_channel < 11 || m_channel > 26)
         m_channel = 11;

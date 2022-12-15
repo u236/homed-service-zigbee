@@ -12,6 +12,7 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
+    m_debug = config->value("debug/zigbee", false).toBool();
 
     connect(m_devices, &DeviceList::pollRequest, this, &ZigBee::pollRequest);
     connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
@@ -503,6 +504,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
     Device device = endpoint->device();
     bool check = false;
 
+    if (m_debug)
+        logInfo << "Device" << device->name() << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "attribute" << QString::asprintf("0x%04X", attributeId) << "data received, type is" << QString::asprintf("0x%02X", dataType) << "and data is" << data.toHex(':');
+
     if (clusterId == CLUSTER_BASIC)
     {
         switch (attributeId)
@@ -652,6 +656,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 {
     Device device = endpoint->device();
     bool check = false;
+
+    if (m_debug)
+        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "cluster" << QString::asprintf("0x%04X", clusterId) << "command" << QString::asprintf("0x%02X", commandId) << "received, payload is" << payload.toHex(':');
 
     if (!device->interviewFinished() || device->options().value("ignoreClusters").toList().contains(clusterId))
         return;
