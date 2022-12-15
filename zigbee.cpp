@@ -560,7 +560,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         if (dataType == DATA_TYPE_16BIT_BITMAP)
         {
             quint16 value;
-            memcpy(&value, data.constData(), sizeof(value));
+            memcpy(&value, data.constData(), data.length());
             logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04X", value);
             endpoint->setColorCapabilities(value);
         }
@@ -596,7 +596,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
                 if (dataType != DATA_TYPE_16BIT_ENUM)
                     return;
 
-                memcpy(&value, data.constData(), sizeof(value));
+                memcpy(&value, data.constData(), data.length());
                 logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04X", value);
                 endpoint->setZoneType(value);
                 break;
@@ -631,7 +631,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         {
             QVariant value = property->value();
 
-            property->parseAttribte(attributeId, dataType, data);
+            property->parseAttribte(attributeId, data);
             check = true;
 
             if (property->singleShot())

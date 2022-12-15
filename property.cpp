@@ -102,55 +102,55 @@ quint8 PropertyObject::percentage(double min, double max, double value)
     return static_cast <quint8> ((value - min) / (max - min) * 100);
 }
 
-void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0020 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0020)
         return;
 
     m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
 }
 
-void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0021 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0021)
         return;
 
     m_value = static_cast <quint8> (data.at(0)) / (deviceOption("batteryUndivided").toBool() ? 1.0 : 2.0);
 }
 
-void Properties::DeviceTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::DeviceTemperature::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) + deviceOption("temperatureOffset").toDouble();
 }
 
-void Properties::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000 || (dataType != DATA_TYPE_BOOLEAN && dataType != DATA_TYPE_8BIT_UNSIGNED) || data.length() != 1)
+    if (attributeId != 0x0000)
         return;
 
     m_value = data.at(0) ? "on" : "off";
 }
 
-void Properties::Contact::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Contact::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+    if (attributeId != 0x0000)
         return;
 
     m_value = data.at(0) ? true : false;
 }
 
-void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x4003 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+    if (attributeId != 0x4003)
         return;
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (data.at(0))
     {
         case 0x00: m_value = "off"; break;
         case 0x01: m_value = "on"; break;
@@ -159,55 +159,47 @@ void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataTy
     }
 }
 
-void Properties::Level::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Level::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0000)
         return;
 
     m_value = static_cast <quint8> (data.at(0));
 }
 
-void Properties::CoverStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::CoverStatus::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0008 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0008)
         return;
 
     m_value = static_cast <quint8> (data.at(0)) < 100 ? "open" : "closed";
 }
 
-void Properties::CoverPosition::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::CoverPosition::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0008 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0008)
         return;
 
     m_value = deviceOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
 }
 
-void Properties::CoverTilt::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0009 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0009)
         return;
 
     m_value = deviceOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
 }
 
-void Properties::ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::ColorHS::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
     {
         case 0x0000:
-
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                return;
-
             m_colorH = static_cast <quint8> (data.at(0));
             break;
 
         case 0x0001:
-
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                return;
-
             m_colorS = static_cast <quint8> (data.at(0));
             break;
     }
@@ -219,33 +211,24 @@ void Properties::ColorHS::parseAttribte(quint16 attributeId, quint8 dataType, co
     }
 }
 
-void Properties::ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::ColorXY::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
+    quint16 value = 0;
+
+    if (static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
     switch (attributeId)
     {
         case 0x0003:
-        {
-            quint16 value = 0;
-
-            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
-                return;
-
             memcpy(&value, data.constData(), data.length());
             m_colorX = qFromLittleEndian(value);
             break;
-        }
 
         case 0x0004:
-        {
-            quint16 value = 0;
-
-            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
-                return;
-
             memcpy(&value, data.constData(), data.length());
             m_colorY = qFromLittleEndian(value);
             break;
-        }
     }
 
     if (m_colorX.isValid() || m_colorY.isValid())
@@ -255,53 +238,53 @@ void Properties::ColorXY::parseAttribte(quint16 attributeId, quint8 dataType, co
     }
 }
 
-void Properties::ColorTemperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::ColorTemperature::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0007 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0007 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value);
 }
 
-void Properties::Illuminance::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Illuminance::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0) + deviceOption("illuminanceOffset").toDouble();
 }
 
-void Properties::Temperature::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Temperature::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_SIGNED || data.length() != 2)
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble();
 }
 
-void Properties::Humidity::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / 100.0 + deviceOption("humidityOffset").toDouble();
 }
 
-void Properties::Occupancy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Occupancy::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_8BIT_BITMAP || data.length() != 1)
+    if (attributeId != 0x0000)
         return;
 
     m_value = data.at(0) ? true : false;
@@ -312,48 +295,48 @@ void Properties::Occupancy::resetValue(void)
     m_value = false;
 }
 
-void Properties::Energy::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Energy::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     double divider = deviceOption("energyDivider").toDouble();
     qint64 value = 0;
 
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_48BIT_UNSIGNED || data.length() != 6)
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / (divider ? divider : 1);
 }
 
-void Properties::Voltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Voltage::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     double divider = deviceOption("voltageDivider").toDouble();
     qint16 value = 0;
 
-    if (attributeId != 0x0505 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0505 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / (divider ? divider : 1) + deviceOption("voltageOffset").toDouble();
 }
 
-void Properties::Current::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Current::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     double divider = deviceOption("currentDivider").toDouble();
     qint16 value = 0;
 
-    if (attributeId != 0x0508 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0508 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / (divider ? divider : 1) + deviceOption("currentOffset").toDouble();
 }
 
-void Properties::Power::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     double divider = deviceOption("powerDivider").toDouble();
     qint16 value = 0;
 
-    if (attributeId != 0x050B || dataType != DATA_TYPE_16BIT_SIGNED || data.length() != 2)
+    if (attributeId != 0x050B || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -477,15 +460,15 @@ void PropertiesIAS::ZoneStatus::resetValue(void)
     m_value = map;
 }
 
-void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+    if (attributeId != 0x0000)
         return;
 
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -493,7 +476,7 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, quint8 data
         {
             float value = 0;
 
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;
 
             memcpy(&value, data.constData(), data.length());
@@ -505,7 +488,7 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, quint8 data
         {
             QList <QString> list = QString(data).split(',');
 
-            if (dataType != DATA_TYPE_CHARACTER_STRING || list.value(0) != m_unit)
+            if (list.value(0) != m_unit)
                 return;
 
             m_value = m_buffer;
@@ -514,23 +497,20 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, quint8 data
     }
 }
 
-void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
+    if (attributeId != 0x0055)
         return;
 
     m_value = data.at(0) ? "on" : "off";
 }
 
-void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
     if (attributeId == 0x00F7)
     {
-        if (dataType != DATA_TYPE_OCTET_STRING)
-            return;
-
         for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
         {
             quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
@@ -538,12 +518,12 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
             if (!size)
                 break;
 
-            parseData(data.at(i), itemType, data.mid(offset, size), map);
+            parseData(data.at(i), data.mid(offset, size), map);
             i += size + 1;
         }
     }
     else
-        parseData(attributeId, dataType, data, map);
+        parseData(attributeId, data, map);
 
     if (map.isEmpty())
         return;
@@ -551,7 +531,7 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, quint8 dataType, c
     m_value = map;
 }
 
-void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const QByteArray &data, QMap <QString, QVariant> &map)
+void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, QMap <QString, QVariant> &map)
 {
     QString modelName = deviceModelName();
 
@@ -560,21 +540,16 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0003:
         {
             if (modelName != "lumi.remote.b686opcn01" && modelName != "lumi.sen_ill.mgl01")
-            {
-                if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
-                    break;
-
                 map.insert("temperature", static_cast <qint8> (data.at(0)) + deviceOption("temperatureOffset").toDouble());
-            }
 
             break;
         }
 
         case 0x0005:
         {
-            quint16 value;
+            quint16 value = 0;
 
-            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(), data.length());
@@ -587,10 +562,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
             if (modelName == "lumi.remote.b686opcn01")
             {
                 QList <QString> list = {"command", "event"};
-
-                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                    break;
-
                 map.insert("mode", list.value(data.at(0), "unknown"));
             }
 
@@ -601,9 +572,9 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         {
             if (modelName == "lumi.sen_ill.mgl01")
             {
-                quint32 value;
+                quint32 value = 0;
 
-                if (dataType != DATA_TYPE_32BIT_UNSIGNED || data.length() != 4)
+                if (static_cast <size_t> (data.length()) > sizeof(value))
                     break;
 
                 memcpy(&value, data.constData(), data.length());
@@ -617,12 +588,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         case 0x0142:
         {
             if (modelName == "lumi.motion.ac01")
-            {
-                if (dataType != DATA_TYPE_8BIT_SIGNED || data.length() != 1)
-                    break;
-
                 map.insert("occupancy", data.at(0) ? true : false);
-            }
 
             break;
         }
@@ -633,9 +599,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         {
             if (modelName == "lumi.motion.ac01")
             {
-                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                    break;
-
                 if (dataPoint != 0x0066 ? dataPoint == 0x010C : deviceVersion() >= 50)
                 {
                     QList <QString> list = {"low", "medium", "high"};
@@ -658,10 +621,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
             if (modelName == "lumi.motion.ac01")
             {
                 QList <QString> list = {"undirected", "directed"};
-
-                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                    break;
-
                 map.insert("mode", list.value(data.at(0), "unknown"));
             }
 
@@ -674,10 +633,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
             if (modelName == "lumi.motion.ac01")
             {
                 QList <QString> list = {"far", "middle", "near"};
-
-                if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                    break;
-
                 map.insert("distance", list.value(data.at(0), "unknown"));
             }
 
@@ -688,7 +643,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         {
             float value = 0;
 
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(), data.length());
@@ -701,7 +656,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         {
             float value = 0;
 
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(),  data.length());
@@ -714,7 +669,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         {
             float value = 0;
 
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(),  data.length());
@@ -727,7 +682,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
         {
             float value = 0;
 
-            if (dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(), data.length());
@@ -738,12 +693,12 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, quint8 dataType, const Q
     }
 }
 
-void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     float value = 0;
 
-    if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+    if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -755,7 +710,7 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, quint8 dataType, 
     m_value = map;
 }
 
-void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -763,7 +718,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
         {
             quint16 value = 0;
 
-            if (dataType != DATA_TYPE_CHARACTER_STRING || data.length() < 4)
+            if (data.length() < 4)
                 break;
 
             memcpy(&value, data.constData() + 2, sizeof(value));
@@ -775,7 +730,7 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
         {
             quint16 value = 0;
 
-            if (dataType != DATA_TYPE_STRUCTURE || data.length() < 7)
+            if (data.length() < 7)
                 break;
 
             memcpy(&value, data.constData() + 5, sizeof(value));
@@ -785,11 +740,11 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, quint8 d
     }
 }
 
-void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -797,12 +752,12 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, quint8 dataType, 
     m_value = value + deviceOption("powerOffset").toDouble();
 }
 
-void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (((attributeId != 0x0000 || dataType != DATA_TYPE_BOOLEAN) && (attributeId != 0x8000 || dataType != DATA_TYPE_8BIT_UNSIGNED)) || data.length() != 1)
+    if (attributeId != 0x0000 && attributeId != 0x8000)
         return;
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (data.at(0))
     {
         case 0x00: m_value = "on"; break;               // TODO: singleClick
         case 0x01: m_value = "off"; break;              // TODO: release
@@ -813,11 +768,11 @@ void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, quint8 dat
     }
 }
 
-void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -832,22 +787,22 @@ void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, quint8 dat
     }
 }
 
-void PropertiesLUMI::CubeRotation::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::CubeRotation::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_SINGLE_PRECISION || data.length() != 4)
+    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) < 0 ? "rotateLeft" : "rotateRight";
 }
 
-void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0055 || dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -963,20 +918,20 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
     m_value = map;
 }
 
-void PropertiesTUYA::ChildLock::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::ChildLock::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x8000 || dataType != DATA_TYPE_BOOLEAN || data.length() != 1)
+    if (attributeId != 0x8000)
         return;
 
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesTUYA::BacklightMode::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::BacklightMode::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x8001 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+    if (attributeId != 0x8001)
         return;
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (data.at(0))
     {
         case 0x00: m_value = "low"; break;
         case 0x01: m_value = "medium"; break;
@@ -984,12 +939,12 @@ void PropertiesTUYA::BacklightMode::parseAttribte(quint16 attributeId, quint8 da
     }
 }
 
-void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x8001 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+    if (attributeId != 0x8001)
         return;
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (data.at(0))
     {
         case 0x00: m_value = "off"; break;
         case 0x01: m_value = "default"; break;
@@ -998,12 +953,12 @@ void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, quint8 da
     }
 }
 
-void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0xD030 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+    if (attributeId != 0xD030)
         return;
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (data.at(0))
     {
         case 0x00: m_value = "toggle"; break;
         case 0x01: m_value = "state"; break;
@@ -1011,12 +966,12 @@ void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, quint8 dataT
     }
 }
 
-void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x8002 || dataType != DATA_TYPE_8BIT_ENUM || data.length() != 1)
+    if (attributeId != 0x8002)
         return;
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (data.at(0))
     {
         case 0x00: m_value = "off"; break;
         case 0x01: m_value = "on"; break;
@@ -1024,12 +979,12 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, quint8 da
     }
 }
 
-void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000 && dataType != DATA_TYPE_BOOLEAN)
+    if (attributeId != 0x0000)
         return;
 
-    switch (static_cast <quint8> (data.at(0)))
+    switch (data.at(0))
     {
         case 0x80: m_value = "singleClick"; break;
         case 0x81: m_value = "doubleClick"; break;
@@ -1049,12 +1004,12 @@ void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const Q
     }
 }
 
-void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
-    qint16 value;
+    qint16 value = 0;
 
-    if ((dataType != DATA_TYPE_16BIT_UNSIGNED && dataType != DATA_TYPE_16BIT_SIGNED) || data.length() != 2)
+    if (static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -1073,7 +1028,7 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
     m_value = map;
 }
 
-void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, quint8 dataType, const QByteArray &data)
+void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -1082,32 +1037,24 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, quint
         case 0x0000:
         {
             QList <QString> list = {"off", "on", "prevoious"};
-
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                break;
-
             map.insert("powerOnStatus", list.value(data.at(0), "unknown"));
             break;
         }
 
         case 0x0001:
         {
-            if (dataType != DATA_TYPE_8BIT_UNSIGNED || data.length() != 1)
-                break;
-
             map.insert("alarmVoltateMin",  data.at(0) & 0x01 ? true : false);
             map.insert("alarmVoltateMax",  data.at(0) & 0x02 ? true : false);
             map.insert("alarmPowerMax",    data.at(0) & 0x04 ? true : false);
             map.insert("alarmEnergyLimit", data.at(0) & 0x08 ? true : false);
-
             break;
         }
 
         case 0x000E:
         {
-            quint32 value;
+            quint32 value = 0;
 
-            if (dataType != DATA_TYPE_32BIT_UNSIGNED || data.length() != 4)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(), data.length());
@@ -1117,9 +1064,9 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, quint
 
         default:
         {
-            quint16 value;
+            quint16 value = 0;
 
-            if (dataType != DATA_TYPE_16BIT_UNSIGNED || data.length() != 2)
+            if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(), data.length());
