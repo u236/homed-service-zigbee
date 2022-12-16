@@ -59,7 +59,7 @@ bool ZStack::setInterPanEndpointId(quint8 endpointId)
 
     if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) || m_replyData.at(0))
     {
-        logWarning << "Set Inter-PAN endpointId" << QString::asprintf("0x%02X", endpointId) << "request failed";
+        logWarning << "Set Inter-PAN endpointId" << QString::asprintf("0x%02x", endpointId) << "request failed";
         return false;
     }
 
@@ -93,7 +93,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     quint8 fcs = 0;
 
     if (m_debug)
-        logInfo << "-->" << QString::asprintf("%04X", command) << data.toHex(':');
+        logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     m_command = qToBigEndian(command);
 
@@ -112,7 +112,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
 {
     if (m_debug)
-        logInfo << "<--" << QString::asprintf("%04X", command) << data.toHex(':');
+        logInfo << "<--" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     if (command & 0x2000)
     {
@@ -171,7 +171,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
             if (message->srcAddressMode != 0x03)
             {
-                logWarning << "Unsupporned extended message address mode" << QString::asprintf("0x%02X", message->srcAddressMode);
+                logWarning << "Unsupporned extended message address mode" << QString::asprintf("0x%02x", message->srcAddressMode);
                 return;
             }
 
@@ -224,7 +224,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         }
 
         default:
-            logWarning << "Unrecognized Z-Stack command" << QString::asprintf("0x%04X", command) << "with data" << data.toHex(':');
+            logWarning << "Unrecognized Z-Stack command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
             break;
     }
 }
@@ -239,7 +239,7 @@ bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 
     if (!sendRequest(SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
-        logWarning << "NV item" << QString::asprintf("0x%04X", id) << "wtite request failed";
+        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "wtite request failed";
         return false;
     }
 
@@ -255,7 +255,7 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 
     if (!sendRequest(ZB_WRITE_CONFIGURATION, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
     {
-        logWarning << "NV item" << QString::asprintf("0x%04X", id) << "wtite request failed";
+        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "wtite request failed";
         return false;
     }
 
@@ -320,7 +320,7 @@ bool ZStack::startCoordinator(void)
 
                 if (!sendRequest(SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
                 {
-                    logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "read request failed";
+                    logWarning << "NV item" << QString::asprintf("0x%04x", it.key()) << "read request failed";
                     return false;
                 }
 
@@ -334,7 +334,7 @@ bool ZStack::startCoordinator(void)
 
                 if (!sendRequest(ZB_READ_CONFIGURATION, QByteArray(1, static_cast <char> (it.key()))))
                 {
-                    logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "read request failed";
+                    logWarning << "NV item" << QString::asprintf("0x%04x", it.key()) << "read request failed";
                     return false;
                 }
 
@@ -345,7 +345,7 @@ bool ZStack::startCoordinator(void)
 
             if (status || data != it.value())
             {
-                logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "value" << data.toHex(':') << "doesn't match configuration value" << it.value().toHex(':');
+                logWarning << "NV item" << QString::asprintf("0x%04x", it.key()) << "value" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "doesn't match configuration value" << it.value().toHex(':');
 
                 if (!m_write)
                 {
@@ -371,7 +371,7 @@ bool ZStack::startCoordinator(void)
 
         if (!sendRequest(SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(m_nvItems.value(ZCD_NV_MARKER))) || (m_replyData.at(0) && m_replyData.at(0) != 0x09))
         {
-            logWarning << "NV item" << QString::asprintf("0x%04X", ZCD_NV_MARKER) << "init request failed";
+            logWarning << "NV item" << QString::asprintf("0x%04x", ZCD_NV_MARKER) << "init request failed";
             return false;
         }
 
@@ -386,11 +386,11 @@ bool ZStack::startCoordinator(void)
             }
             else
             {
-                if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E636530390000000000000000")))
+                if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e636530390000000000000000")))
                     return false;
             }
 
-            logWarning << "NV item" << QString::asprintf("0x%04X", it.key()) << "value set to" << it.value().toHex(':');
+            logWarning << "NV item" << QString::asprintf("0x%04x", it.key()) << "value set to" << it.value().toHex(':');
         }
     }
 
@@ -403,7 +403,7 @@ bool ZStack::startCoordinator(void)
 
         if (!sendRequest(APP_CNF_BDB_SET_CHANNEL, QByteArray(reinterpret_cast <char*> (&channelRequest), sizeof(channelRequest))) || m_replyData.at(0))
         {
-            logWarning << "Set primary channel request failed" << m_replyData.toHex(':');
+            logWarning << "Set primary channel request failed";
             return false;
         }
 
@@ -423,7 +423,7 @@ bool ZStack::startCoordinator(void)
 
         if (!sendRequest(ZDO_MSG_CB_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
         {
-            logWarning << "APS cluster" << QString::asprintf("0x%04X", m_apsClusters.at(i)) << "callback register request failed";
+            logWarning << "APS cluster" << QString::asprintf("0x%04x", m_apsClusters.at(i)) << "callback register request failed";
             return false;
         }
     }
@@ -457,11 +457,11 @@ bool ZStack::startCoordinator(void)
 
         if (!sendRequest(AF_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         {
-            logWarning << "Endpoint" << QString::asprintf("0x%02X", it.key()) << "register request failed";
+            logWarning << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "register request failed";
             return false;
         }
 
-        logInfo << "Endpoint" << QString::asprintf("0x%02X", it.key()) << "registered successfully";
+        logInfo << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "registered successfully";
     }
 
     if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02)

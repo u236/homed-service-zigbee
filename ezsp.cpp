@@ -26,7 +26,7 @@ static const uint16_t crcTable[256] =
 EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0)
 {
     if (config->value("security/enabled", false).toBool())
-        m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090A0B0C0D0E0F").toString().remove("0x").toUtf8());
+        m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
 
     m_config.append({CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
     m_config.append({CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
@@ -122,7 +122,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
     if (version)
     {
         if (m_debug)
-            logInfo << "-->" << QString::asprintf("%02x", m_sequenceId) << "(legacy version request)";
+            logInfo << "-->" << QString::asprintf("0x%02x", m_sequenceId) << "(legacy version request)";
 
         payload.append(static_cast <char> (m_sequenceId));
         payload.append(2, 0x00);
@@ -137,7 +137,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
         header.frameId = qToLittleEndian(frameId);
 
         if (m_debug)
-            logInfo << "-->" << QString::asprintf("%02x", m_sequenceId) <<  QString::asprintf("%02X%02X", header.frameControlLow, header.frameControlHigh) << QString::asprintf("%04X", frameId) << data.toHex(':');
+            logInfo << "-->" << QString::asprintf("0x%02x", m_sequenceId) <<  QString::asprintf("0x%02x%02x", header.frameControlLow, header.frameControlHigh) << QString::asprintf("0x%04x", frameId) << data.toHex(':');
 
         payload.append(reinterpret_cast <char*> (&header), sizeof(header));
     }
@@ -198,7 +198,7 @@ void EZSP::parsePacket(const QByteArray &payload)
     QByteArray data = payload.mid(sizeof(ezspHeaderStruct));
 
     if (m_debug)
-        logInfo << "<--" << QString::asprintf("%02x", header->sequence) <<  QString::asprintf("%02X%02X", header->frameControlLow, header->frameControlHigh) << QString::asprintf("%04X", qFromLittleEndian(header->frameId)) << data.toHex(':');
+        logInfo << "<--" << QString::asprintf("0x%02x", header->sequence) <<  QString::asprintf("0x%02x%02x", header->frameControlLow, header->frameControlHigh) << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId)) << data.toHex(':');
 
     if (!(header->frameControlLow & 0x18) && header->sequence == m_sequenceId)
     {
@@ -315,7 +315,7 @@ bool EZSP::startNetwork(void)
 
         if (m_stackStatus != STACK_STATUS_NETWORK_DOWN)
         {
-            logWarning << "Unexpected stack status" << QString::asprintf("0x%02X", m_stackStatus) << "received";
+            logWarning << "Unexpected stack status" << QString::asprintf("0x%02x", m_stackStatus) << "received";
             return false;
         }
     }
@@ -374,7 +374,7 @@ bool EZSP::startNetwork(void)
     value.length = 0x00;
 
     if (!sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)).append(1, 0x01)) || m_replyData.at(0))
-        logWarning << "Set value" << QString::asprintf("0x%02X", VALUE_STACK_TOKEN_WRITING) << "request failed";
+        logWarning << "Set value" << QString::asprintf("0x%02x", VALUE_STACK_TOKEN_WRITING) << "request failed";
 
     if (!sendFrame(FRAME_NETWORK_STATUS))
     {
@@ -384,7 +384,7 @@ bool EZSP::startNetwork(void)
 
     if (m_replyData.at(0) != static_cast <char> (NETWORK_STATUS_JOINED))
     {
-        logWarning << "Unexpected network status" << QString::asprintf("0x%02X", m_replyData.at(0)) << "received";
+        logWarning << "Unexpected network status" << QString::asprintf("0x%02x", m_replyData.at(0)) << "received";
         return false;
     }
 
@@ -444,7 +444,7 @@ bool EZSP::startCoordinator(void)
         if (sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
             continue;
 
-        logWarning << "Set config" << QString::asprintf("0x%02X", request.id) << "request failed";
+        logWarning << "Set config" << QString::asprintf("0x%02x", request.id) << "request failed";
     }
 
     for (int i = 0; i < m_policy.length(); i++)
@@ -454,7 +454,7 @@ bool EZSP::startCoordinator(void)
         if (sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
             continue;
 
-        logWarning << "Set policy" << QString::asprintf("0x%02X", request.id) << "request failed";
+        logWarning << "Set policy" << QString::asprintf("0x%02x", request.id) << "request failed";
     }
 
     for (int i = 0; i < m_values.length(); i++)
@@ -464,7 +464,7 @@ bool EZSP::startCoordinator(void)
         if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), request.length + 2)) && !m_replyData.at(0))
             continue;
 
-        logWarning << "Set value" << QString::asprintf("0x%02X", request.id) << "request failed";
+        logWarning << "Set value" << QString::asprintf("0x%02x", request.id) << "request failed";
     }
 
     concentrator.enabled = 0x01;
@@ -513,11 +513,11 @@ bool EZSP::startCoordinator(void)
 
         if (!sendFrame(FRAME_REGISTER_ENDPOINT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         {
-            logWarning << "Endpoint" << QString::asprintf("0x%02X", it.key()) << "register request failed";
+            logWarning << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "register request failed";
             return false;
         }
 
-        logInfo << "Endpoint" << QString::asprintf("0x%02X", it.key()) << "registered successfully";
+        logInfo << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "registered successfully";
     }
 
     m_stackStatus = 0x00;
@@ -609,7 +609,7 @@ void EZSP::parseData(void)
         QByteArray data;
         quint16 length, crc;
 
-        if (buffer.startsWith(QByteArray::fromHex("1AC102")) || buffer.startsWith(QByteArray::fromHex("1AC202")))
+        if (buffer.startsWith(QByteArray::fromHex("1ac102")) || buffer.startsWith(QByteArray::fromHex("1ac202")))
             buffer.remove(0, 1);
 
         if (buffer.length() < ASH_MIN_LENGTH || !buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
@@ -659,7 +659,7 @@ bool EZSP::permitJoin(bool enabled)
     {
         setConfigStruct policy;
 
-        if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("FFFFFFFFFFFFFFFF5A6967426565416C6C69616E63653039")) || m_replyData.at(0))
+        if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e63653039")) || m_replyData.at(0))
         {
             logWarning << "Add transient key request failed";
             return false;
@@ -670,7 +670,7 @@ bool EZSP::permitJoin(bool enabled)
 
         if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
         {
-            logWarning << "Set policy item" << QString::asprintf("0x%02X", POLICY_TRUST_CENTER) << "request failed";
+            logWarning << "Set policy item" << QString::asprintf("0x%02x", POLICY_TRUST_CENTER) << "request failed";
             return false;
         }
     }

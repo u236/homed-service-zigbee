@@ -233,7 +233,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "property" << it->toString() << "unrecognized";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "property" << it->toString() << "unrecognized";
     }
 
     for (auto it = actions.begin(); it != actions.end(); it++)
@@ -248,7 +248,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "action" << it->toString() << "unrecognized";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "action" << it->toString() << "unrecognized";
     }
 
     for (auto it = bindings.begin(); it != bindings.end(); it++)
@@ -262,7 +262,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "binding" << it->toString() << "unrecognized";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "binding" << it->toString() << "unrecognized";
     }
 
     for (auto it = reportings.begin(); it != reportings.end(); it++)
@@ -276,7 +276,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "reporting" << it->toString() << "unrecognized";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "reporting" << it->toString() << "unrecognized";
     }
 
     for (auto it = polls.begin(); it != polls.end(); it++)
@@ -290,7 +290,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "poll" << it->toString() << "unrecognized";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "poll" << it->toString() << "unrecognized";
     }
 
     for (auto it = discoveries.begin(); it != discoveries.end(); it++)
@@ -306,7 +306,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", endpoint->id()) << "discovery" << it->toString() << "unrecognized";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "discovery" << it->toString() << "unrecognized";
     }
 
     if (!endpoint->polls().isEmpty())
@@ -491,7 +491,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(property->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", it.value()->id()) << "properties recognized:" << list.join(", ");
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "properties recognized:" << list.join(", ");
         }
 
         if (!it.value()->actions().isEmpty())
@@ -508,7 +508,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(action->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", it.value()->id()) << "actions recognized:" << list.join(", ");
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "actions recognized:" << list.join(", ");
         }
 
         if (!it.value()->discoveries().isEmpty())
@@ -528,7 +528,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(discovery->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02X", it.value()->id()) << "discoveries:" << list.join(", ");
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "discoveries:" << list.join(", ");
         }
     }
 }
