@@ -76,19 +76,21 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     m_devices->storeDatabase();
 }
 
-void ZigBee::setDeviceName(const QString &deviceName, const QString &name, bool store)
+void ZigBee::setDeviceName(const QString &deviceName, const QString &name)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->name() == name || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    emit deviceEvent(device, Event::deviceAboutToRename);
-    device->setName(name);
-    emit deviceEvent(device, Event::deviceUpdated);
-
-    if (!store)
-        return;
+    if (m_devices->byName(name).isNull())
+    {
+        emit deviceEvent(device, Event::deviceAboutToRename);
+        device->setName(name);
+        emit deviceEvent(device, Event::deviceUpdated);
+    }
+    else
+        emit deviceEvent(device, Event::deviceNameDuplicate);
 
     m_devices->storeDatabase();
 }

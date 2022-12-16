@@ -124,6 +124,7 @@ public:
         deviceJoined,
         deviceLeft,
         deviceRemoved,
+        deviceNameDuplicate,
         deviceAboutToRename,
         deviceUpdated,
         interviewFinished,
@@ -140,7 +141,7 @@ public:
     void setPermitJoin(bool enabled);
 
     void removeDevice(const QString &deviceName, bool force);
-    void setDeviceName(const QString &deviceName, const QString &name, bool store = true);
+    void setDeviceName(const QString &deviceName, const QString &name);
 
     void updateDevice(const QString &deviceName, bool reportings);
     void updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
