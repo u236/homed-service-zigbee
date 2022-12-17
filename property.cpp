@@ -150,7 +150,7 @@ void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteAr
     if (attributeId != 0x4003)
         return;
 
-    switch (data.at(0))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "off"; break;
         case 0x01: m_value = "on"; break;
@@ -757,7 +757,7 @@ void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByt
     if (attributeId != 0x0000 && attributeId != 0x8000)
         return;
 
-    switch (data.at(0))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "on"; break;               // TODO: singleClick
         case 0x01: m_value = "off"; break;              // TODO: release
@@ -931,7 +931,7 @@ void PropertiesTUYA::BacklightMode::parseAttribte(quint16 attributeId, const QBy
     if (attributeId != 0x8001)
         return;
 
-    switch (data.at(0))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "low"; break;
         case 0x01: m_value = "medium"; break;
@@ -944,7 +944,7 @@ void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, const QBy
     if (attributeId != 0x8001)
         return;
 
-    switch (data.at(0))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "off"; break;
         case 0x01: m_value = "default"; break;
@@ -958,7 +958,7 @@ void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, const QByteA
     if (attributeId != 0xD030)
         return;
 
-    switch (data.at(0))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "toggle"; break;
         case 0x01: m_value = "state"; break;
@@ -971,7 +971,7 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QBy
     if (attributeId != 0x8002)
         return;
 
-    switch (data.at(0))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "off"; break;
         case 0x01: m_value = "on"; break;
@@ -984,7 +984,7 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, cons
     if (attributeId != 0x0000)
         return;
 
-    switch (data.at(0))
+    switch (static_cast <quint8> (data.at(0)))
     {
         case 0x80: m_value = "singleClick"; break;
         case 0x81: m_value = "doubleClick"; break;

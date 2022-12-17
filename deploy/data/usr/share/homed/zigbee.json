@@ -18,6 +18,14 @@
       "discoveries":    ["battery", "contact"]
     },
     {
+      "description":    "Sonoff Motion Sensor SNZB-03",
+      "modelNames":     ["MS01"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "discoveries":    ["battery", "occupancy"]
+    },
+    {
       "description":    "Sonoff Wireless Button SNZB-01",
       "modelNames":     ["WB01", "WB-01"],
       "properties":     ["batteryPercentage", "sonoffButtonAction"],

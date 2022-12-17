@@ -78,19 +78,22 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
 
 void ZigBee::setDeviceName(const QString &deviceName, const QString &name)
 {
-    Device device = m_devices->byName(deviceName);
+    Device device = m_devices->byName(deviceName), other = m_devices->byName(name);
 
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    if (m_devices->byName(name).isNull())
+    if (!other.isNull() && other != device)
+    {
+        logWarning << "Device" << device->name() << "rename failed, name already in use";
+        emit deviceEvent(device, Event::deviceNameDuplicate);
+    }
+    else if (device->name() != name)
     {
         emit deviceEvent(device, Event::deviceAboutToRename);
         device->setName(name);
         emit deviceEvent(device, Event::deviceUpdated);
     }
-    else
-        emit deviceEvent(device, Event::deviceNameDuplicate);
 
     m_devices->storeDatabase();
 }
@@ -662,9 +665,6 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     if (m_debug)
         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
 
-    if (!device->interviewFinished() || device->options().value("ignoreClusters").toList().contains(clusterId))
-        return;
-
     if (clusterId == CLUSTER_GROUPS)
     {
         switch (commandId)
@@ -813,6 +813,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
         return;
     }
+
+    if (!device->interviewFinished() || device->options().value("ignoreClusters").toList().contains(clusterId))
+        return;
 
     for (int i = 0; i < endpoint->properties().count(); i++)
     {
@@ -1341,7 +1344,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         emit endpointUpdated(device, endpoint->id());
     }
 
-    if ((frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    if (!device->batteryPowered() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
         defaultResponseStruct response;
 
