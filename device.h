@@ -102,7 +102,7 @@ class DeviceObject : public QObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_version(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_version(0), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -137,12 +137,12 @@ public:
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
     inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
 
-    inline quint8 version(void) { return m_version; }
-    inline void setVersion(quint8 value) { m_version = value; }
-
     inline bool batteryPowered(void) { return m_powerSource != POWER_SOURCE_MAINS && m_powerSource != POWER_SOURCE_DC; }
     inline quint8 powerSource(void) { return m_powerSource; }
     inline void setPowerSource(quint8 value) { m_powerSource = value; }
+
+    inline quint8 version(void) { return m_version; }
+    inline void setVersion(quint8 value) { m_version = value; }
 
     inline QString manufacturerName(void) { return m_manufacturerName; }
     inline void setManufacturerName(const QString &value) { m_manufacturerName = value; }
@@ -180,7 +180,7 @@ private:
 
     LogicalType m_logicalType;
     quint16 m_manufacturerCode;
-    quint8 m_version, m_powerSource;
+    quint8 m_powerSource, m_version;
     QString m_manufacturerName, m_modelName;
 
     qint64 m_lastSeen;

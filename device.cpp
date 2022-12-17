@@ -692,12 +692,10 @@ QJsonArray DeviceList::serializeDevices(void)
                 json.insert("supported", device->supported());
                 json.insert("interviewFinished", device->interviewFinished());
                 json.insert("manufacturerCode", device->manufacturerCode());
+                json.insert("powerSource", device->powerSource());
 
                 if (device->version())
                     json.insert("version", device->version());
-
-                if (device->powerSource())
-                    json.insert("powerSource", device->powerSource());
 
                 if (!device->manufacturerName().isEmpty())
                     json.insert("manufacturerName", device->manufacturerName());
