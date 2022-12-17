@@ -820,6 +820,32 @@ QJsonObject DeviceList::serializeProperties(void)
     return json;
 }
 
+bool DeviceList::writeFile(QFile &file, const QByteArray &data)
+{
+    bool check = true;
+
+    if (!file.open(QFile::WriteOnly))
+    {
+        logWarning << "File" << file.fileName() << "open error:" << file.errorString();
+        return false;
+    }
+
+    if (file.write(data) != data.length())
+    {
+        logWarning << "File" << file.fileName() << "write error";
+        check = false;
+    }
+
+    if (fsync(file.handle()))
+    {
+        logWarning << "File" << file.fileName() << "synchronization failed, error code:" << errno;
+        check = false;
+    }
+
+    file.close();
+    return check;
+}
+
 void DeviceList::writeDatabase(void)
 {
     QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}, {"version", SERVICE_VERSION}};
@@ -827,13 +853,8 @@ void DeviceList::writeDatabase(void)
     m_databaseTimer->start(STORE_DATABASE_INTERVAL);
     emit statusUpdated(json);
 
-    if (m_databaseFile.open(QFile::WriteOnly))
-    {
-        m_databaseFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-        fsync(m_databaseFile.handle());
-        m_databaseFile.close();
+    if (writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
-    }
 
     logWarning << "Database not stored, file" << m_databaseFile.fileName() << "error:" << m_databaseFile.errorString();
 }
@@ -842,13 +863,8 @@ void DeviceList::writeProperties(void)
 {
     QJsonObject json = serializeProperties();
 
-    if (m_propertiesFile.open(QFile::WriteOnly))
-    {
-        m_propertiesFile.write(QJsonDocument(json).toJson(QJsonDocument::Compact));
-        fsync(m_propertiesFile.handle());
-        m_propertiesFile.close();
+    if (writeFile(m_propertiesFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
-    }
 
     logWarning << "Properties not stored, file" << m_propertiesFile.fileName() << "error:" << m_propertiesFile.errorString();
 }
