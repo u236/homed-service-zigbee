@@ -616,13 +616,14 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
                     device->neighbors().insert(static_cast <quint16> (json.value("networkAddress").toInt()), static_cast <quint8> (json.value("linkQuality").toInt()));
                 }
+
+                count++;
             }
 
             if (device->interviewFinished())
                 setupDevice(device);
 
             insert(device->ieeeAddress(), device);
-            count++;
         }
     }
 
