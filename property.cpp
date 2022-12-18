@@ -51,9 +51,12 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
-    qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
+    qRegisterMetaType <PropertiesLUMI::ButtonMode>              ("lumiButtonModeProperty");
+    qRegisterMetaType <PropertiesLUMI::LeftButtonMode>          ("lumiLeftButtonModeProperty");
+    qRegisterMetaType <PropertiesLUMI::RightButtonMode>         ("lumiRightButtonModeProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
+    qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>            ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
@@ -693,23 +696,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
     }
 }
 
-void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-    float value = 0;
-
-    if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-    value = round(qFromLittleEndian(value));
-
-    map.insert("cover", value < 100 ? "open" : "closed");
-    map.insert("position", deviceOption("invertCover").toBool() ? 100 - value : value);
-
-    m_value = map;
-}
-
 void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
@@ -740,6 +726,19 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, const QB
     }
 }
 
+void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != (m_name != "rightMode" ? 0xFF22 : 0xFF23))
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x12: m_value = m_name == "mode" ? "relay" : "leftRelay"; break;
+        case 0x22: m_value = "rightRelay"; break;
+        case 0xFE: m_value = "decoupled"; break;
+    }
+}
+
 void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
@@ -752,6 +751,23 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray 
     m_value = value + deviceOption("powerOffset").toDouble();
 }
 
+void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    float value = 0;
+
+    if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    value = round(qFromLittleEndian(value));
+
+    map.insert("cover", value < 100 ? "open" : "closed");
+    map.insert("position", deviceOption("invertCover").toBool() ? 100 - value : value);
+
+    m_value = map;
+}
+
 void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000 && attributeId != 0x8000)
@@ -759,8 +775,8 @@ void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByt
 
     switch (static_cast <quint8> (data.at(0)))
     {
-        case 0x00: m_value = "on"; break;               // TODO: singleClick
-        case 0x01: m_value = "off"; break;              // TODO: release
+        case 0x00: m_value = "on"; break;
+        case 0x01: m_value = "off"; break;
         case 0x02: m_value = "doubleClick"; break;
         case 0x03: m_value = "tripleClick"; break;
         case 0x04: m_value = "quadrupleClick"; break;

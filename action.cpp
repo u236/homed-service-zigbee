@@ -17,6 +17,9 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Count>                  ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
+    qRegisterMetaType <ActionsLUMI::ButtonMode>             ("lumiButtonModeAction");
+    qRegisterMetaType <ActionsLUMI::LeftButtonMode>         ("lumiLeftButtonModeAction");
+    qRegisterMetaType <ActionsLUMI::RightButtonMode>        ("lumiRightButtonModeAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::Sensitivity>            ("lumiSensitivityAction");
@@ -221,6 +224,37 @@ QByteArray ActionsPTVO::AnalogInput::request(const QVariant &data)
 {
     float value = qToLittleEndian(data.toFloat());
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::ButtonMode::request(const QVariant &data)
+{
+    qint8 value;
+
+    if (m_name != "mode")
+    {
+        QList <QString> list = {"leftRelay", "rightRelay", "decoupled"};
+
+        switch (list.indexOf(data.toString()))
+        {
+            case 0:  value = 0x12; break;
+            case 1:  value = 0x22; break;
+            case 2:  value = 0xFE; break;
+            default: return QByteArray();
+        }
+    }
+    else
+    {
+        QList <QString> list = {"relay", "decoupled"};
+
+        switch (list.indexOf(data.toString()))
+        {
+            case 0:  value = 0x12; break;
+            case 1:  value = 0xFE; break;
+            default: return QByteArray();
+        }
+    }
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.first(), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::CoverPosition::request(const QVariant &data)

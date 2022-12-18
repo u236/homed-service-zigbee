@@ -168,6 +168,34 @@ namespace ActionsPTVO
 
 namespace ActionsLUMI
 {
+    class ButtonMode : public ActionObject
+    {
+
+    public:
+
+        ButtonMode(const QString &name = "mode", quint16 attributeId = 0xFF22) : ActionObject(name, CLUSTER_BASIC, 0x115F, attributeId) {}
+        QByteArray request(const QVariant &data) override;
+
+    };
+
+    class LeftButtonMode : public ButtonMode
+    {
+
+    public:
+
+        LeftButtonMode(void) : ButtonMode("leftMode", 0xFF22) {}
+
+    };
+
+    class RightButtonMode : public ButtonMode
+    {
+
+    public:
+
+        RightButtonMode(void) : ButtonMode("rightMode", 0xFF23) {}
+
+    };
+
     class CoverPosition : public ActionObject
     {
 

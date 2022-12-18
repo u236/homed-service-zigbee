@@ -247,6 +247,48 @@
   "LUMI":
   [
     {
+      "description":    "Aqara 1-Channel Wall Switch QBKG04LM",
+      "modelNames":     ["lumi.ctrl_neutral1"],
+      "properties":     ["lumiButtonModeAction"],
+      "actions":        ["lumiButtonModeAction"],
+      "options":        {"actions": ["on", "off"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.ctrl_neutral1"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "discoveries":    ["switch"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["lumi.ctrl_neutral1"],
+      "properties":     ["lumiButtonAction"],
+      "discoveries":    ["action"],
+      "endpointId":     4
+    },
+    {
+      "description":    "Aqara 2-Channel Wall Switch QBKG03LM",
+      "modelNames":     ["lumi.ctrl_neutral2"],
+      "properties":     ["lumiLeftButtonMode", "lumiRightButtonMode"],
+      "actions":        ["lumiLeftButtonMode", "lumiRightButtonMode"],
+      "options":        {"actions": ["on", "off"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.ctrl_neutral2"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "discoveries":    ["switch"],
+      "endpointId":     [2, 3]
+    },
+    {
+      "modelNames":     ["lumi.ctrl_neutral2"],
+      "properties":     ["lumiButtonAction"],
+      "discoveries":    ["action"],
+      "endpointId":     [4, 5]
+    },
+    {
       "description":    "Aqara 10A Smart Plug SP-EUC01",
       "modelNames":     ["lumi.plug.maeu01"],
       "properties":     ["status", "lumiData"],
