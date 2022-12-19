@@ -153,8 +153,8 @@ public:
 
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
 
-    void deviceAction(const QString &deviceName, quint8 endpointId, const QString &actionName, const QVariant &actionData);
-    void groupAction(quint16 groupId, const QString &actionName, const QVariant &actionData);
+    void deviceAction(const QString &deviceName, quint8 endpointId, const QString &name, const QVariant &data);
+    void groupAction(quint16 groupId, const QString &name, const QVariant &data);
 
 private:
 

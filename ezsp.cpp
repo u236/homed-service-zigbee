@@ -49,43 +49,23 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
     m_values.append({VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
 }
 
-bool EZSP::extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
+bool EZSP::extendedDataRequest(quint8, const QByteArray &, quint8, quint16, quint8, quint16, const QByteArray &, bool)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(address)
-    Q_UNUSED(dstEndpointId)
-    Q_UNUSED(dstPanId)
-    Q_UNUSED(srcEndpointId)
-    Q_UNUSED(clusterId)
-    Q_UNUSED(payload)
-    Q_UNUSED(group)
-
     return true;
 }
 
-bool EZSP::extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
+bool EZSP::extendedDataRequest(quint8, quint16, quint8, quint16, quint8, quint16, const QByteArray &, bool)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(networkAddress)
-    Q_UNUSED(dstEndpointId)
-    Q_UNUSED(dstPanId)
-    Q_UNUSED(srcEndpointId)
-    Q_UNUSED(clusterId)
-    Q_UNUSED(data)
-    Q_UNUSED(group)
-
     return true;
 }
 
-bool EZSP::setInterPanEndpointId(quint8 endpointId)
+bool EZSP::setInterPanEndpointId(quint8)
 {
-    Q_UNUSED(endpointId)
     return true;
 }
 
-bool EZSP::setInterPanChannel(quint8 channel)
+bool EZSP::setInterPanChannel(quint8)
 {
-    Q_UNUSED(channel)
     return true;
 }
 

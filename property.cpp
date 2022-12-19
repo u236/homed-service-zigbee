@@ -45,16 +45,14 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::WaterLeak>               ("ptvoWaterLeakProperty");
     qRegisterMetaType <PropertiesPTVO::CO2>                     ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>             ("ptvoTemperatureProperty");
-    qRegisterMetaType <PropertiesPTVO::Temperature>             ("ptvoHumidityProperty");
+    qRegisterMetaType <PropertiesPTVO::Humidity>                ("ptvoHumidityProperty");
     qRegisterMetaType <PropertiesPTVO::Count>                   ("ptvoCountProperty");
     qRegisterMetaType <PropertiesPTVO::Pattern>                 ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
-    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonMode>              ("lumiButtonModeProperty");
-    qRegisterMetaType <PropertiesLUMI::LeftButtonMode>          ("lumiLeftButtonModeProperty");
-    qRegisterMetaType <PropertiesLUMI::RightButtonMode>         ("lumiRightButtonModeProperty");
+    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>            ("lumiButtonActionProperty");
@@ -357,20 +355,16 @@ void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload
     m_value = scene.isValid() ? scene : command->sceneId;
 }
 
-void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray &)
 {
-    Q_UNUSED(payload)
-
     if (commandId != 0x01)
         return;
 
     m_value = "identify";
 }
 
-void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &)
 {
-    Q_UNUSED(payload)
-
     switch (commandId)
     {
         case 0x00: m_value = "off"; break;
@@ -696,6 +690,31 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
     }
 }
 
+void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    bool check = deviceModelName() == "lumi.ctrl_neutral1";
+    QString value;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x12: value = check ? "relay" : "leftRelay"; break;
+        case 0x22: value = "rightRelay"; break;
+        case 0xFE: value = "decoupled"; break;
+    }
+
+    switch (attributeId)
+    {
+        case 0xFF22: map.insert(check ? "mode" : "leftMode", value); break;
+        case 0xFF23: map.insert("rightMode", value); break;
+    }
+
+    if (map.isEmpty())
+        return;
+
+    m_value = map;
+}
+
 void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
@@ -723,19 +742,6 @@ void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, const QB
             m_value = percentage(2850, 3200, qFromLittleEndian(value));
             break;
         }
-    }
-}
-
-void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != (m_name != "rightMode" ? 0xFF22 : 0xFF23))
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x12: m_value = m_name == "mode" ? "relay" : "leftRelay"; break;
-        case 0x22: m_value = "rightRelay"; break;
-        case 0xFE: m_value = "decoupled"; break;
     }
 }
 
@@ -1008,10 +1014,8 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, cons
     }
 }
 
-void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &)
 {
-    Q_UNUSED(payload)
-
     switch (commandId)
     {
         case 0x00: m_value = "hold"; break;

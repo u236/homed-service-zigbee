@@ -12,11 +12,11 @@ class PollObject
 
 public:
 
-    PollObject(const QString &name, quint16 clusterId, quint16 attributeId) :
-        m_name(name), m_clusterId(clusterId), m_attributes({attributeId}) {}
-
     PollObject(const QString &name, quint16 clusterId, QList <quint16> attributes) :
         m_name(name), m_clusterId(clusterId), m_attributes(attributes) {}
+
+    PollObject(const QString &name, quint16 clusterId, quint16 attributeId) :
+        m_name(name), m_clusterId(clusterId), m_attributes({attributeId}) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }

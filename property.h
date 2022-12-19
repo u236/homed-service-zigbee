@@ -527,26 +527,8 @@ namespace PropertiesLUMI
 
     public:
 
-        ButtonMode(const QString &name = "mode") : PropertyObject(name, CLUSTER_BASIC) {}
+        ButtonMode(const QString &name = "buttonMode") : PropertyObject(name, CLUSTER_BASIC) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class LeftButtonMode : public ButtonMode
-    {
-
-    public:
-
-        LeftButtonMode(void) : ButtonMode("leftMode") {}
-
-    };
-
-    class RightButtonMode : public ButtonMode
-    {
-
-    public:
-
-        RightButtonMode(void) : ButtonMode("rightMode") {}
 
     };
 

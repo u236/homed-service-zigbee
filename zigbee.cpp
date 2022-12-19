@@ -246,7 +246,7 @@ void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, boo
     }
 }
 
-void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QString &actionName, const QVariant &actionData)
+void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QString &name, const QVariant &data)
 {
     Device device = m_devices->byName(deviceName);
 
@@ -262,12 +262,12 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
         {
             const Action &action = it.value()->actions().at(i);
 
-            if (action->name() == actionName)
+            if (action->name() == name || action->actions().contains(name))
             {
-                QByteArray data = action->request(actionData);
+                QByteArray request = action->request(name, data);
 
-                if (!data.isEmpty() && !(actionData.type() == QVariant::String && actionData.toString().isEmpty()))
-                    enqueueDataRequest(device, it.key(), action->clusterId(), data, QString("%1 action").arg(action->name()));
+                if (!request.isEmpty() && !(data.type() == QVariant::String && data.toString().isEmpty()))
+                    enqueueDataRequest(device, it.key(), action->clusterId(), request, QString("%1 action").arg(name));
 
                 if (!action->attributes().isEmpty())
                     enqueueDataRequest(device, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes()));
@@ -278,19 +278,19 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
     }
 }
 
-void ZigBee::groupAction(quint16 groupId, const QString &actionName, const QVariant &actionData)
+void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &data)
 {
-    int type = QMetaType::type(QString(actionName).append("Action").toUtf8());
+    int type = QMetaType::type(QString(name).append("Action").toUtf8());
 
     if (type)
     {
         Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
-        QByteArray data = action->request(actionData);
+        QByteArray request = action->request(name, data);
 
-        if (data.isEmpty() || (actionData.type() == QVariant::String && actionData.toString().isEmpty()))
+        if (request.isEmpty() || (data.type() == QVariant::String && data.toString().isEmpty()))
             return;
 
-        m_adapter->extendedDataRequest(m_requestId, groupId, 0xFF, 0x0000, 0x01, action->clusterId(), data, true);
+        m_adapter->extendedDataRequest(m_requestId, groupId, 0xFF, 0x0000, 0x01, action->clusterId(), request, true);
     }
 }
 
@@ -1357,12 +1357,9 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 
 void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
 {
-    Q_UNUSED(endpointId)
-    Q_UNUSED(linkQuality)
-
     if (clusterId == CLUSTER_TOUCHLINK && data.at(2) == 0x01)
     {
-        logInfo << "TouchLink scan response received from device" << ieeeAddress.toHex(':') << "at channel" << m_interPanChannel;
+        logInfo << "TouchLink scan response received from device" << ieeeAddress.toHex(':') << "at channel" << m_interPanChannel << "with link quality" << linkQuality;
         return;
     }
 

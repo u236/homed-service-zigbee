@@ -17,36 +17,20 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Count>                  ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
 
+    qRegisterMetaType <ActionsLUMI::PresenceSensor>         ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>             ("lumiButtonModeAction");
-    qRegisterMetaType <ActionsLUMI::LeftButtonMode>         ("lumiLeftButtonModeAction");
-    qRegisterMetaType <ActionsLUMI::RightButtonMode>        ("lumiRightButtonModeAction");
-    qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
-    qRegisterMetaType <ActionsLUMI::Sensitivity>            ("lumiSensitivityAction");
-    qRegisterMetaType <ActionsLUMI::DetectionMode>          ("lumiDetectionModeAction");
-    qRegisterMetaType <ActionsLUMI::Distance>               ("lumiDistanceAction");
-    qRegisterMetaType <ActionsLUMI::ResetPresence>          ("lumiResetPresenceAction");
+    qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
 
-    qRegisterMetaType <ActionsTUYA::Volume>                 ("tuyaVolumeAction");
-    qRegisterMetaType <ActionsTUYA::Duration>               ("tuyaDurationAction");
-    qRegisterMetaType <ActionsTUYA::Alarm>                  ("tuyaAlarmAction");
-    qRegisterMetaType <ActionsTUYA::Melody>                 ("tuyaMelodyAction");
-    qRegisterMetaType <ActionsTUYA::Sensitivity>            ("tuyaSensitivityAction");
-    qRegisterMetaType <ActionsTUYA::DistanceMin>            ("tuyaDistanceMinAction");
-    qRegisterMetaType <ActionsTUYA::DistanceMax>            ("tuyaDistanceMaxAction");
-    qRegisterMetaType <ActionsTUYA::DetectionDelay>         ("tuyaDetectionDelayAction");
+    qRegisterMetaType <ActionsTUYA::NeoSiren>               ("tuyaNeoSirenAction");
+    qRegisterMetaType <ActionsTUYA::PresenceSensor>         ("tuyaPresenceSensorAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>              ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::BacklightMode>          ("tuyaBacklightModeAction");
     qRegisterMetaType <ActionsTUYA::IndicatorMode>          ("tuyaIndicatorModeAction");
     qRegisterMetaType <ActionsTUYA::SwitchMode>             ("tuyaSwitchModeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>          ("tuyaPowerOnStatusAction");
 
-    qRegisterMetaType <ActionsPerenio::PowerOnStatus>       ("perenioPowerOnStatusAction");
-    qRegisterMetaType <ActionsPerenio::ResetAlarms>         ("perenioResetAlarmsAction");
-    qRegisterMetaType <ActionsPerenio::VoltageMin>          ("perenioVoltageMinAction");
-    qRegisterMetaType <ActionsPerenio::VoltageMax>          ("perenioVoltageMaxAction");
-    qRegisterMetaType <ActionsPerenio::PowerMax>            ("perenioPowerMaxAction");
-    qRegisterMetaType <ActionsPerenio::EnergyLimit>         ("perenioEnergyLimitAction");
+    qRegisterMetaType <ActionsOther::PerenioSmartPlug>      ("perenioSmartPlugAction");
 }
 
 QVariant ActionObject::deviceOption(const QString &key)
@@ -55,7 +39,7 @@ QVariant ActionObject::deviceOption(const QString &key)
     return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
 }
 
-QByteArray Actions::Status::request(const QVariant &data)
+QByteArray Actions::Status::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"off", "on", "toggle"};
     qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
@@ -66,7 +50,7 @@ QByteArray Actions::Status::request(const QVariant &data)
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
-QByteArray Actions::PowerOnStatus::request(const QVariant &data)
+QByteArray Actions::PowerOnStatus::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"off", "on", "toggle", "previous"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -74,10 +58,10 @@ QByteArray Actions::PowerOnStatus::request(const QVariant &data)
     if (value < 0 || value > 2)
         value = 0xFF;
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x4003, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray Actions::Level::request(const QVariant &data)
+QByteArray Actions::Level::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -120,7 +104,7 @@ QByteArray Actions::Level::request(const QVariant &data)
     }
 }
 
-QByteArray Actions::CoverStatus::request(const QVariant &data)
+QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"open", "close", "stop"};
     qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
@@ -131,7 +115,7 @@ QByteArray Actions::CoverStatus::request(const QVariant &data)
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
-QByteArray Actions::ColorHS::request(const QVariant &data)
+QByteArray Actions::ColorHS::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -158,7 +142,7 @@ QByteArray Actions::ColorHS::request(const QVariant &data)
     }
 }
 
-QByteArray Actions::ColorXY::request(const QVariant &data)
+QByteArray Actions::ColorXY::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -185,7 +169,7 @@ QByteArray Actions::ColorXY::request(const QVariant &data)
     }
 }
 
-QByteArray Actions::ColorTemperature::request(const QVariant &data)
+QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -215,49 +199,109 @@ QByteArray Actions::ColorTemperature::request(const QVariant &data)
     }
 }
 
-QByteArray ActionsPTVO::Status::request(const QVariant &data)
+QByteArray ActionsPTVO::Status::request(const QString &, const QVariant &data)
 {
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, data.toBool() ? 0x01 : 0x00);
 }
 
-QByteArray ActionsPTVO::AnalogInput::request(const QVariant &data)
+QByteArray ActionsPTVO::AnalogInput::request(const QString &, const QVariant &data)
 {
     float value = qToLittleEndian(data.toFloat());
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::ButtonMode::request(const QVariant &data)
+QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVariant &data)
 {
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // sensitivity
+        {
+            QList <QString> list = {"low", "medium", "high"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()) + 1);
+
+            m_attributes = {0x010C};
+
+            if (value < 1)
+                return QByteArray();
+
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 1: // mode
+        {
+            QList <QString> list = {"undirected", "directed"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            m_attributes = {0x0144};
+
+            if (value < 0)
+                return QByteArray();
+
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 2: // distance
+        {
+            QList <QString> list = {"far", "middle", "near"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            m_attributes = {0x0146};
+
+            if (value < 0)
+                return QByteArray();
+
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 3: // resetPresence
+        {
+            m_attributes.clear();
+
+            if (!data.toBool())
+                return QByteArray();
+
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0157, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x01)); // TODO: check payload
+        }
+    }
+
+    return QByteArray();
+}
+
+QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant &data)
+{
+    QList <QString> list = {"relay", "leftRelay", "rightRelay", "decoupled"};
     qint8 value;
 
-    if (m_name != "mode")
+    switch (m_actions.indexOf(name))
     {
-        QList <QString> list = {"leftRelay", "rightRelay", "decoupled"};
-
-        switch (list.indexOf(data.toString()))
-        {
-            case 0:  value = 0x12; break;
-            case 1:  value = 0x22; break;
-            case 2:  value = 0xFE; break;
-            default: return QByteArray();
-        }
-    }
-    else
-    {
-        QList <QString> list = {"relay", "decoupled"};
-
-        switch (list.indexOf(data.toString()))
-        {
-            case 0:  value = 0x12; break;
-            case 1:  value = 0xFE; break;
-            default: return QByteArray();
-        }
+        case 2:  m_attributes = {0xFF23}; break; // rightMode
+        default: m_attributes = {0xFF22}; break; // mode, leftMode
     }
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.first(), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    switch (list.indexOf(data.toString()))
+    {
+        case 0:  value = 0x12; break;
+        case 1:  value = 0x12; break;
+        case 2:  value = 0x22; break;
+        case 3:  value = 0xFE; break;
+        default: return QByteArray();
+    }
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::CoverPosition::request(const QVariant &data)
+QByteArray ActionsLUMI::OperationMode::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"command", "event"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &data)
 {
     float value = data.toFloat();
 
@@ -269,59 +313,6 @@ QByteArray ActionsLUMI::CoverPosition::request(const QVariant &data)
 
     value = qToLittleEndian(value);
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsLUMI::OperationMode::request(const QVariant &data)
-{
-    QList <QString> list = {"command", "event"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0009, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsLUMI::Sensitivity::request(const QVariant &data)
-{
-    QList <QString> list = {"low", "medium", "high"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    value += 1;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x010C, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsLUMI::DetectionMode::request(const QVariant &data)
-{
-    QList <QString> list = {"undirected", "directed"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0144, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsLUMI::Distance::request(const QVariant &data)
-{
-    QList <QString> list = {"far", "middle", "near"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0146, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsLUMI::ResetPresence::request(const QVariant &data)
-{
-    if (!data.toBool())
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0157, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x01)); // TODO: check payload
 }
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)
@@ -352,95 +343,111 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
     return zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x00).append(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (data), header.length);
 }
 
-QByteArray ActionsTUYA::Volume::request(const QVariant &data)
+QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &data)
 {
-    QList <QString> list = {"low", "medium", "high"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // volume
+        {
+            QList <QString> list = {"low", "medium", "high"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
-    if (value < 0)
-        return QByteArray();
+            if (value < 0)
+                return QByteArray();
 
-    return makeRequest(m_transactionId++, 0x05, 0x04, &value);
+            return makeRequest(m_transactionId++, 0x05, 0x04, &value);
+        }
+
+        case 1: // duration
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value > 1800)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x07, 0x02, &value);
+        }
+
+        case 2: // alarm
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x0D, 0x01, &value);
+        }
+
+        case 3: // melody
+        {
+            quint8 value = static_cast <quint8> (data.toInt());
+
+            if (value < 1 || value > 18)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x15, 0x04, &value);
+        }
+    }
+
+    return QByteArray();
 }
 
-QByteArray ActionsTUYA::Duration::request(const QVariant &data)
+QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVariant &data)
 {
-    quint32 value = static_cast <quint32> (data.toInt());
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // sensitivity
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
 
-    if (value > 1800)
-        return QByteArray();
+            if (value > 9)
+                break;
 
-    value = qToBigEndian(value);
-    return makeRequest(m_transactionId++, 0x07, 0x02, &value);
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x02, 0x02, &value);
+        }
+
+        case 1: // distanceMin
+        {
+            quint32 value = static_cast <quint32> (data.toDouble() * 100);
+
+            if (value > 950)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x03, 0x02, &value);
+        }
+
+        case 2: // distanceMax
+        {
+            quint32 value = static_cast <quint32> (data.toDouble() * 100);
+
+            if (value > 950)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x04, 0x02, &value);
+        }
+
+        case 3: // detectionDelay
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value < 1 || value > 10)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x65, 0x02, &value);
+        }
+    }
+
+    return QByteArray();
 }
 
-QByteArray ActionsTUYA::Alarm::request(const QVariant &data)
-{
-    quint8 value = data.toBool() ? 0x01 : 0x00;
-    return makeRequest(m_transactionId++, 0x0D, 0x01, &value);
-}
-
-QByteArray ActionsTUYA::Melody::request(const QVariant &data)
-{
-    quint8 value = static_cast <quint8> (data.toInt());
-
-    if (value < 1 || value > 18)
-        return QByteArray();
-
-    return makeRequest(m_transactionId++, 0x15, 0x04, &value);
-}
-
-QByteArray ActionsTUYA::Sensitivity::request(const QVariant &data)
-{
-    quint32 value = static_cast <quint32> (data.toInt());
-
-    if (value > 9)
-        return QByteArray();
-
-    value = qToBigEndian(value);
-    return makeRequest(m_transactionId++, 0x02, 0x02, &value);
-}
-
-QByteArray ActionsTUYA::DistanceMin::request(const QVariant &data)
-{
-    quint32 value = static_cast <quint32> (data.toDouble() * 100);
-
-    if (value > 950)
-        return QByteArray();
-
-    value = qToBigEndian(value);
-    return makeRequest(m_transactionId++, 0x03, 0x02, &value);
-}
-
-QByteArray ActionsTUYA::DistanceMax::request(const QVariant &data)
-{
-    quint32 value = static_cast <quint32> (data.toDouble() * 100);
-
-    if (value > 950)
-        return QByteArray();
-
-    value = qToBigEndian(value);
-    return makeRequest(m_transactionId++, 0x04, 0x02, &value);
-}
-
-QByteArray ActionsTUYA::DetectionDelay::request(const QVariant &data)
-{
-    quint32 value = static_cast <quint32> (data.toInt());
-
-    if (value < 1 || value > 10)
-        return QByteArray();
-
-    value = qToBigEndian(value);
-    return makeRequest(m_transactionId++, 0x65, 0x02, &value);
-}
-
-QByteArray ActionsTUYA::ChildLock::request(const QVariant &data)
+QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data)
 {
     qint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8000, DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsTUYA::BacklightMode::request(const QVariant &data)
+QByteArray ActionsTUYA::BacklightMode::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"low", "medium", "high"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -448,10 +455,10 @@ QByteArray ActionsTUYA::BacklightMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8001, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsTUYA::IndicatorMode::request(const QVariant &data)
+QByteArray ActionsTUYA::IndicatorMode::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"off", "default", "inverted", "on"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -459,10 +466,10 @@ QByteArray ActionsTUYA::IndicatorMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8001, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsTUYA::SwitchMode::request(const QVariant &data)
+QByteArray ActionsTUYA::SwitchMode::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"toggle", "state", "momentary"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -470,10 +477,10 @@ QByteArray ActionsTUYA::SwitchMode::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xD030, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
+QByteArray ActionsTUYA::PowerOnStatus::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"off", "on", "previous"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -481,52 +488,50 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QVariant &data)
     if (value < 0)
         return QByteArray();
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x8002, DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsPerenio::PowerOnStatus::request(const QVariant &data)
+QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QVariant &data)
 {
-    QList <QString> list = {"off", "on", "previous"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // powerOnStatus
+        {
+            QList <QString> list = {"off", "on", "previous"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
-    if (value < 0)
-        return QByteArray();
+            m_attributes = {0x0000};
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0000, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
+            if (value < 0)
+                return QByteArray();
 
-QByteArray ActionsPerenio::ResetAlarms::request(const QVariant &data)
-{
-    if (!data.toBool())
-        return QByteArray();
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0001, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x00)); // TODO: check payload
-}
+        case 1: // resetAlarms
+        {
+            m_attributes = {0x0001};
 
-QByteArray ActionsPerenio::VoltageMin::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0004, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
+            if (!data.toBool())
+                return QByteArray();
 
-QByteArray ActionsPerenio::VoltageMax::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0005, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x00)); // TODO: check payload
+        }
 
-QByteArray ActionsPerenio::PowerMax::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000B, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
+        default:
+        {
+            quint16 value = qToLittleEndian(static_cast <quint16> (data.toInt()));
 
-QByteArray ActionsPerenio::EnergyLimit::request(const QVariant &data)
-{
-    quint16 value = static_cast <quint16> (data.toInt());
-    value = qToLittleEndian(value);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000F, DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            switch (m_actions.indexOf(name))
+            {
+                case 2:  m_attributes = {0x0004}; break; // voltageMin
+                case 3:  m_attributes = {0x0005}; break; // voltageMax
+                case 4:  m_attributes = {0x000B}; break; // powerMax
+                case 5:  m_attributes = {0x000F}; break; // energyLimit
+                default: return QByteArray();
+            }
+
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+    }
 }

@@ -13,28 +13,35 @@ class ActionObject
 
 public:
 
-    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId) :
-        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributes({attributeId}), m_transactionId(0) {}
-
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode = 0, QList <quint16> attributes = {}) :
         m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributes(attributes), m_transactionId(0) {}
 
+    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId) :
+        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributes({attributeId}), m_transactionId(0) {}
+
+    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, QList <QString> actions) :
+        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_actions(actions), m_transactionId(0) {}
+
     virtual ~ActionObject(void) {}
-    virtual QByteArray request(const QVariant &data) = 0;
+    virtual QByteArray request(const QString &name, const QVariant &data) = 0;
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
-    inline QList <quint16> &attributes(void) { return m_attributes; }
-    inline void setParent(QObject *value) { m_parent = value; }
 
+    inline QList <quint16> &attributes(void) { return m_attributes; }
+    inline QList <QString> &actions(void) { return m_actions; }
+
+    inline void setParent(QObject *value) { m_parent = value; }
     static void registerMetaTypes(void);
 
 protected:
 
     QString m_name;
     quint16 m_clusterId, m_manufacturerCode;
+
     QList <quint16> m_attributes;
+    QList <QString> m_actions;
 
     QObject *m_parent;
     quint8 m_transactionId;
@@ -51,7 +58,7 @@ namespace Actions
     public:
 
         Status(void) : ActionObject("status", CLUSTER_ON_OFF, 0x0000, 0x0000) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -61,7 +68,7 @@ namespace Actions
     public:
 
         PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x4003) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -71,7 +78,7 @@ namespace Actions
     public:
 
         Level(void) : ActionObject("level", CLUSTER_LEVEL_CONTROL, 0x0000, 0x0000) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -81,7 +88,7 @@ namespace Actions
     public:
 
         CoverStatus(void) : ActionObject("cover", CLUSTER_WINDOW_COVERING) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -91,7 +98,7 @@ namespace Actions
     public:
 
         ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0000, 0x0001}) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -101,7 +108,7 @@ namespace Actions
     public:
 
         ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0003, 0x0004}) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -111,7 +118,7 @@ namespace Actions
     public:
 
         ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0000, 0x0007) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 }
@@ -124,7 +131,7 @@ namespace ActionsPTVO
     public:
 
         Status(const QString &name) : ActionObject(name, CLUSTER_ON_OFF, 0x0000, 0x0000) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -134,7 +141,7 @@ namespace ActionsPTVO
     public:
 
         AnalogInput(const QString &name) : ActionObject(name, CLUSTER_ANALOG_INPUT, 0x0000, 0x0055) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -168,41 +175,23 @@ namespace ActionsPTVO
 
 namespace ActionsLUMI
 {
+    class PresenceSensor : public ActionObject
+    {
+
+    public:
+
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, 0x115F, {"sensitivity", "mode", "distance", "resetPresence"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class ButtonMode : public ActionObject
     {
 
     public:
 
-        ButtonMode(const QString &name = "mode", quint16 attributeId = 0xFF22) : ActionObject(name, CLUSTER_BASIC, 0x115F, attributeId) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class LeftButtonMode : public ButtonMode
-    {
-
-    public:
-
-        LeftButtonMode(void) : ButtonMode("leftMode", 0xFF22) {}
-
-    };
-
-    class RightButtonMode : public ButtonMode
-    {
-
-    public:
-
-        RightButtonMode(void) : ButtonMode("rightMode", 0xFF23) {}
-
-    };
-
-    class CoverPosition : public ActionObject
-    {
-
-    public:
-
-        CoverPosition(void) : ActionObject("position", CLUSTER_ANALOG_OUTPUT) {}
-        QByteArray request(const QVariant &data) override;
+        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, 0x115F, {"mode", "leftMode", "rightMode"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -212,47 +201,17 @@ namespace ActionsLUMI
     public:
 
         OperationMode(void) : ActionObject("mode", CLUSTER_LUMI, 0x115F, 0x0009) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
-    class Sensitivity : public ActionObject
+    class CoverPosition : public ActionObject
     {
 
     public:
 
-        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_LUMI, 0x115F, 0x010C) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class DetectionMode : public ActionObject
-    {
-
-    public:
-
-        DetectionMode(void) : ActionObject("mode", CLUSTER_LUMI, 0x115F, 0x0144) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class Distance : public ActionObject
-    {
-
-    public:
-
-        Distance(void) : ActionObject("distance", CLUSTER_LUMI, 0x115F, 0x0146) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class ResetPresence : public ActionObject
-    {
-
-    public:
-
-        ResetPresence(void) : ActionObject("resetPresence", CLUSTER_LUMI, 0x115F) {}
-        QByteArray request(const QVariant &data) override;
+        CoverPosition(void) : ActionObject("position", CLUSTER_ANALOG_OUTPUT) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 }
@@ -268,83 +227,23 @@ namespace ActionsTUYA
 
     };
 
-    class Volume : public Request, public ActionObject
+    class NeoSiren : public Request, public ActionObject
     {
 
     public:
 
-        Volume(void) : ActionObject("volume", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
+        NeoSiren(void) : ActionObject("neoSiren", CLUSTER_TUYA_DATA, 0x0000, {"volume", "duration", "alarm", "melody"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
-    class Duration : public Request, public ActionObject
+    class PresenceSensor : public Request, public ActionObject
     {
 
     public:
 
-        Duration(void) : ActionObject("duration", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class Alarm : public Request, public ActionObject
-    {
-
-    public:
-
-        Alarm(void) : ActionObject("alarm", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class Melody : public Request, public ActionObject
-    {
-
-    public:
-
-        Melody(void) : ActionObject("melody", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class Sensitivity : public Request, public ActionObject
-    {
-
-    public:
-
-        Sensitivity(void) : ActionObject("sensitivity", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class DistanceMin :  public Request, public ActionObject
-    {
-
-    public:
-
-        DistanceMin(void) : ActionObject("distanceMin", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class DistanceMax :  public Request, public ActionObject
-    {
-
-    public:
-
-        DistanceMax(void) : ActionObject("distanceMax", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class DetectionDelay : public Request, public ActionObject
-    {
-
-    public:
-
-        DetectionDelay(void) : ActionObject("detectionDelay", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QVariant &data) override;
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_TUYA_DATA, 0x0000, {"sensitivity", "distanceMin", "distanceMax", "detectionDelay"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -354,7 +253,7 @@ namespace ActionsTUYA
     public:
 
         ChildLock(void) : ActionObject("childLock", CLUSTER_ON_OFF, 0x0000, 0x8000) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -364,7 +263,7 @@ namespace ActionsTUYA
     public:
 
         BacklightMode(void) : ActionObject("backlightMode", CLUSTER_ON_OFF, 0x0000, 0x8001) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -374,7 +273,7 @@ namespace ActionsTUYA
     public:
 
         IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_ON_OFF, 0x0000, 0x8001) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -384,7 +283,7 @@ namespace ActionsTUYA
     public:
 
         SwitchMode(void) : ActionObject("switchMode", CLUSTER_TUYA_SWITCH_MODE, 0x0000, 0xD030) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -394,70 +293,20 @@ namespace ActionsTUYA
     public:
 
         PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x8002) {}
-        QByteArray request(const QVariant &data) override;
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 }
 
-namespace ActionsPerenio
+namespace ActionsOther
 {
-    class PowerOnStatus : public ActionObject
+    class PerenioSmartPlug : public ActionObject
     {
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_PERENIO, 0x0000, 0x0000) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class ResetAlarms : public ActionObject
-    {
-
-    public:
-
-        ResetAlarms(void) : ActionObject("resetAlarms", CLUSTER_PERENIO, 0x0000, 0x0001) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class VoltageMin : public ActionObject
-    {
-
-    public:
-
-        VoltageMin(void) : ActionObject("voltageMin", CLUSTER_PERENIO, 0x0000, 0x0004) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class VoltageMax : public ActionObject
-    {
-
-    public:
-
-        VoltageMax(void) : ActionObject("voltageMax", CLUSTER_PERENIO, 0x0000, 0x0005) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class PowerMax : public ActionObject
-    {
-
-    public:
-
-        PowerMax(void) : ActionObject("powerMax", CLUSTER_PERENIO, 0x0000, 0x000B) {}
-        QByteArray request(const QVariant &data) override;
-
-    };
-
-    class EnergyLimit : public ActionObject
-    {
-
-    public:
-
-        EnergyLimit(void) : ActionObject("energyLimit", CLUSTER_PERENIO, 0x0000, 0x000F) {}
-        QByteArray request(const QVariant &data) override;
+        PerenioSmartPlug(void) : ActionObject("perenioSmartPlug", CLUSTER_PERENIO, 0x0000, {"powerOnStatus", "resetAlarms", "voltageMin", "voltageMax", "powerMax", "energyLimit"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 }

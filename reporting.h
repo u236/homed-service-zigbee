@@ -12,11 +12,11 @@ class ReportingObject
 
 public:
 
-    ReportingObject(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint64 valueChange = 0) :
-        m_name(name), m_clusterId(clusterId), m_attributes({attributeId}), m_dataType(dataType), m_minInterval(minInterval), m_maxInterval(maxInterval), m_valueChange(valueChange) {}
-
     ReportingObject(const QString &name, quint16 clusterId, QList <quint16> attributes, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint16 valueChange = 0) :
         m_name(name), m_clusterId(clusterId), m_attributes(attributes), m_dataType(dataType), m_minInterval(minInterval), m_maxInterval(maxInterval), m_valueChange(valueChange) {}
+
+    ReportingObject(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint64 valueChange = 0) :
+        m_name(name), m_clusterId(clusterId), m_attributes({attributeId}), m_dataType(dataType), m_minInterval(minInterval), m_maxInterval(maxInterval), m_valueChange(valueChange) {}
 
     virtual ~ReportingObject(void) {}
 

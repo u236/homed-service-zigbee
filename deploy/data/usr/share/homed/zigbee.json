@@ -249,8 +249,8 @@
     {
       "description":    "Aqara 1-Channel Wall Switch QBKG04LM",
       "modelNames":     ["lumi.ctrl_neutral1"],
-      "properties":     ["lumiButtonModeAction"],
-      "actions":        ["lumiButtonModeAction"],
+      "properties":     ["lumiButtonMode"],
+      "actions":        ["lumiButtonMode"],
       "options":        {"actions": ["on", "off"]},
       "endpointId":     1
     },
@@ -270,8 +270,8 @@
     {
       "description":    "Aqara 2-Channel Wall Switch QBKG03LM",
       "modelNames":     ["lumi.ctrl_neutral2"],
-      "properties":     ["lumiLeftButtonMode", "lumiRightButtonMode"],
-      "actions":        ["lumiLeftButtonMode", "lumiRightButtonMode"],
+      "properties":     ["lumiButtonMode"],
+      "actions":        ["lumiButtonMode"],
       "options":        {"actions": ["on", "off"]},
       "endpointId":     1
     },
@@ -329,7 +329,7 @@
       "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
       "modelNames":     ["lumi.motion.ac01"],
       "properties":     ["lumiData"],
-      "actions":        ["lumiSensitivity", "lumiDetectionMode", "lumiDistance", "lumiResetPresence"],
+      "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
       "discoveries":    ["occupancy"]
     },
@@ -487,7 +487,7 @@
       "description":    "Perenio 16A Smart Plug PEHPL0X",
       "modelNames":     ["PEHPL0X"],
       "properties":     ["status", "perenioSmartPlug"],
-      "actions":        ["status", "perenioPowerOnStatus", "perenioResetAlarms", "perenioVoltageMin", "perenioVoltageMax", "perenioPowerMax", "perenioEnergyLimit"],
+      "actions":        ["status", "perenioSmartPlug"],
       "bindings":       ["status", "perenio"],
       "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
       "polls":          ["perenioSmartPlug"],
@@ -621,7 +621,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "discoveries":    ["switch", "energy", "voltage", "current", "power"],
-      "options":        {"ignoreClusters": [57344, 57345], "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
+      "options":        {"ignoreClusters": [0, 57344, 57345], "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
       "description":    "TUYA TS0121 Smart Plug With Power Monitoring",
@@ -636,20 +636,23 @@
       "description":    "TUYA TS0601 Neo Siren",
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaNeoSiren"],
-      "actions":        ["tuyaVolume", "tuyaDuration", "tuyaAlarm", "tuyaMelody"],
-      "discoveries":    []
+      "actions":        ["tuyaNeoSiren"],
+      "discoveries":    [],
+      "options":        {"ignoreClusters": [0]}
     },
     {
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
       "properties":     ["iasGas"],
-      "discoveries":    ["gas"]
+      "discoveries":    ["gas"],
+      "options":        {"ignoreClusters": [0]}
     },
     {
       "description":    "TUYA TS0205 Smoke Detector",
       "modelNames":     ["TS0205"],
       "properties":     ["batteryPercentage", "iasSmoke"],
-      "discoveries":    ["battery", "smoke"]
+      "discoveries":    ["battery", "smoke"],
+      "options":        {"ignoreClusters": [0]}
     },
     {
       "description":    "TUYA TS0203 Door and Window Sensor",
@@ -663,8 +666,9 @@
       "description":    "TUYA TS0601 Human Presence Detector",
       "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
       "properties":     ["tuyaPresenceSensor"],
-      "actions":        ["tuyaSensitivity", "tuyaDistanceMin", "tuyaDistanceMax", "tuyaDetectionDelay"],
-      "discoveries":    ["occupancy"]
+      "actions":        ["tuyaPresenceSensor"],
+      "discoveries":    ["occupancy"],
+      "options":        {"ignoreClusters": [0]}
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
@@ -672,7 +676,8 @@
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "discoveries":    ["battery", "occupancy"]
+      "discoveries":    ["battery", "occupancy"],
+      "options":        {"ignoreClusters": [0]}
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
@@ -681,13 +686,14 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "occupancy"],
-      "options":        {"timeout": 30}
+      "options":        {"ignoreClusters": [0], "timeout": 30}
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor (partially supported)",
       "modelNames":     ["_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_msl6wxk9"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
-      "discoveries":    ["battery", "occupancy"]
+      "discoveries":    ["battery", "occupancy"],
+      "options":        {"ignoreClusters": [0]}
     },
     {
       "description":    "TUYA TS0207 Water Leak Sensor",
