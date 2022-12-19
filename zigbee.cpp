@@ -653,8 +653,16 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         }
     }
 
-    if (!check)
-        logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+    if (endpoint->updated())
+    {
+        m_devices->storeProperties();
+        emit endpointUpdated(device, endpoint->id());
+    }
+
+    if (check)
+        return;
+
+    logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
 }
 
 void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, const QByteArray &payload)
@@ -838,8 +846,16 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         }
     }
 
-    if (!check)
-        logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+    if (endpoint->updated())
+    {
+        m_devices->storeProperties();
+        emit endpointUpdated(device, endpoint->id());
+    }
+
+    if (check)
+        return;
+
+    logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
 }
 
 void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -1330,19 +1346,13 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         payload = data.mid(3);
     }
 
+    device->setLinkQuality(linkQuality);
+    device->updateLastSeen();
+
     if (frameControl & FC_CLUSTER_SPECIFIC)
         clusterCommandReceived(endpoint, clusterId, transactionId, commandId, payload);
     else
         globalCommandReceived(endpoint, clusterId, transactionId, commandId, payload);
-
-    device->setLinkQuality(linkQuality);
-    device->updateLastSeen();
-
-    if (endpoint->updated())
-    {
-        m_devices->storeProperties();
-        emit endpointUpdated(device, endpoint->id());
-    }
 
     if (!device->batteryPowered() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
@@ -1510,10 +1520,11 @@ void ZigBee::deviceTimeout(void)
                 it.value()->setUpdated(true);
             }
 
-            if (!it.value()->updated())
-                continue;
-
-            emit endpointUpdated(device, it.key());
+            if (it.value()->updated())
+            {
+                m_devices->storeProperties();
+                emit endpointUpdated(device, it.key());
+            }
         }
     }
 }

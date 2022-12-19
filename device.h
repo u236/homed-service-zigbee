@@ -45,18 +45,12 @@ class EndpointObject : public EndpointDataObject
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-        EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_descriptorReceived(false), m_updated(false), m_colorCapabilities(0), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown) {}
+        EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_colorCapabilities(0), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown), m_descriptorReceived(false), m_updated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
 
     inline quint8 id(void) { return m_id; }
     inline Device device(void) { return m_device; }
-
-    inline bool descriptorReceived(void) { return m_descriptorReceived; }
-    inline void setDescriptorReceived(void) { m_descriptorReceived = true; }
-
-    inline bool updated(void) { return m_updated; }
-    inline void setUpdated(bool value) { m_updated = value; }
 
     inline quint16 colorCapabilities(void) { return m_colorCapabilities; }
     inline void setColorCapabilities(quint16 value) { m_colorCapabilities = value; }
@@ -66,6 +60,12 @@ public:
 
     inline ZoneStatus zoneStatus(void) { return m_zoneStatus; }
     inline void setZoneStatus(ZoneStatus value) { m_zoneStatus = value; }
+
+    inline bool descriptorReceived(void) { return m_descriptorReceived; }
+    inline void setDescriptorReceived(void) { m_descriptorReceived = true; }
+
+    inline bool updated(void) { return m_updated; }
+    inline void setUpdated(bool value) { m_updated = value; }
 
     inline QList <Property> &properties(void) { return m_properties; }
     inline QList <Action> &actions(void) { return m_actions; }
@@ -81,10 +81,10 @@ private:
     quint8 m_id;
     QWeakPointer <DeviceObject> m_device;
 
-    bool m_descriptorReceived, m_updated;
-
     quint16 m_colorCapabilities, m_zoneType;
     ZoneStatus m_zoneStatus;
+
+    bool m_descriptorReceived, m_updated;
 
     QList <Property> m_properties;
     QList <Action> m_actions;
