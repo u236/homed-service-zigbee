@@ -653,7 +653,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
         }
     }
 
-    if (endpoint->updated())
+    if (endpoint->updated() && !device->options().value("debounce").toInt())
     {
         m_devices->storeProperties();
         emit endpointUpdated(device, endpoint->id());
@@ -846,7 +846,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         }
     }
 
-    if (endpoint->updated())
+    if (endpoint->updated() && !device->options().value("debounce").toInt())
     {
         m_devices->storeProperties();
         emit endpointUpdated(device, endpoint->id());
@@ -1330,6 +1330,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     if (device.isNull() || device->removed())
         return;
 
+    device->setLinkQuality(linkQuality);
     endpoint = m_devices->endpoint(device, endpointId);
     blink(50);
 
@@ -1346,13 +1347,19 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         payload = data.mid(3);
     }
 
-    device->setLinkQuality(linkQuality);
-    device->updateLastSeen();
-
     if (frameControl & FC_CLUSTER_SPECIFIC)
         clusterCommandReceived(endpoint, clusterId, transactionId, commandId, payload);
     else
         globalCommandReceived(endpoint, clusterId, transactionId, commandId, payload);
+
+    if (device->lastSeen() + device->options().value("debounce").toInt() > QDateTime::currentSecsSinceEpoch())
+        return;
+
+    if (endpoint->updated())
+    {
+        m_devices->storeProperties();
+        emit endpointUpdated(device, endpoint->id());
+    }
 
     if (!device->batteryPowered() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
@@ -1363,6 +1370,8 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 
         enqueueDataRequest(device, endpoint->id(), clusterId, zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_DEFAULT_RESPONSE).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
     }
+
+    device->updateLastSeen();
 }
 
 void ZigBee::extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
