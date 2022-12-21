@@ -316,6 +316,16 @@ namespace ActionsTUYA
 
 namespace ActionsOther
 {
+    class EfektaReportingDelay : public ActionObject
+    {
+
+    public:
+
+        EfektaReportingDelay(void) : ActionObject("reportingDelay", CLUSTER_POWER_CONFIGURATION, 0x0000, 0x0201) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class PerenioSmartPlug : public ActionObject
     {
 

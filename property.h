@@ -239,6 +239,16 @@ namespace Properties
 
     };
 
+    class Moisture : public PropertyObject
+    {
+
+    public:
+
+        Moisture(void) : PropertyObject("moisture", CLUSTER_SOIL_MOISTURE) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Energy : public PropertyObject
     {
 
@@ -704,6 +714,16 @@ namespace PropertiesTUYA
 
 namespace PropertiesOther
 {
+    class EfektaReportingDelay : public PropertyObject
+    {
+
+    public:
+
+        EfektaReportingDelay(void) : PropertyObject("reportingDelay", CLUSTER_POWER_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class KonkeButtonAction : public PropertyObject
     {
 

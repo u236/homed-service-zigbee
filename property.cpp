@@ -69,6 +69,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::SwitchMode>              ("tuyaSwitchModeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
 
+    qRegisterMetaType <PropertiesOther::EfektaReportingDelay>   ("efektaReportingDelayProperty");
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>     ("sonoffButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>  ("lifeControlAirQualityProperty");
@@ -275,7 +276,7 @@ void Properties::Temperature::parseAttribte(quint16 attributeId, const QByteArra
 
 void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    qint16 value = 0;
+    quint16 value = 0;
 
     if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
@@ -290,6 +291,17 @@ void Properties::Occupancy::parseAttribte(quint16 attributeId, const QByteArray 
         return;
 
     m_value = data.at(0) ? true : false;
+}
+
+void Properties::Moisture::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    quint16 value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) / 100.0 + deviceOption("moistureOffset").toDouble();
 }
 
 void Properties::Occupancy::resetValue(void)
@@ -1067,6 +1079,17 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QBy
         case 0x01: m_value = "on"; break;
         case 0x02: m_value = "previous"; break;
     }
+}
+
+void PropertiesOther::EfektaReportingDelay::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    quint16 value;
+
+    if (attributeId != 0x0201 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
 }
 
 void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)

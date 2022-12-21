@@ -92,6 +92,15 @@ namespace Bindings
 
     };
 
+    class Moisture : public BindingObject
+    {
+
+    public:
+
+        Moisture(void) : BindingObject("moisture", CLUSTER_SOIL_MOISTURE) {}
+
+    };
+
     class Energy : public BindingObject
     {
 

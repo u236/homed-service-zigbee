@@ -27,6 +27,7 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Current>         ("currentDiscovery");
     qRegisterMetaType <Sensor::Power>           ("powerDiscovery");
 
+    qRegisterMetaType <Number::ReportingDelay>  ("reportingDelayDiscovery");
     qRegisterMetaType <Button::ResetCount>      ("resetCountDiscovery");
 }
 
@@ -81,6 +82,33 @@ QJsonObject SensorObject::reqest(void)
     return json;
 }
 
+QJsonObject NumberObject::reqest(void)
+{
+    QVariant min = deviceOption(QString("%1Min").arg(m_name)), max = deviceOption(QString("%1Max").arg(m_name));
+    QJsonObject json;
+
+    if (min.isValid())
+        json.insert("min",                      min.toInt());
+
+    if (max.isValid())
+        json.insert("max",                      max.toInt());
+
+    if (!m_unit.isEmpty())
+        json.insert("unit_of_measurement",      m_unit);
+
+    if (!m_icon.isEmpty())
+        json.insert("icon",                     m_icon);
+
+    json.insert("command_template",             QString("{\"%1\":{{ value }}}").arg(m_name));
+    json.insert("value_template",               QString("value_json.%1").arg(m_name));
+    return json;
+}
+
+QJsonObject ButtonObject::reqest(void)
+{
+    return {{"payload_press",                   m_payload}};
+}
+
 QJsonObject LightObject::reqest(void)
 {
     QList <QVariant> options = deviceOption("light").toList();
@@ -103,7 +131,7 @@ QJsonObject LightObject::reqest(void)
 
     if (options.contains("colorTemperature"))
     {
-        quint16 min = static_cast <quint16> (deviceOption("colorTemperatureMin").toInt()), max = static_cast <quint16> (deviceOption("colorTemperatureMax").toInt());
+        int min = deviceOption("colorTemperatureMin").toInt(), max = deviceOption("colorTemperatureMax").toInt();
 
         commandOnTemplate.append(               "{% if color_temp is defined %},\"colorTemperature\":{{ color_temp }}{% endif %}");
         json.insert("color_temp_template",      "{{ value_json.colorTemperature }}");
@@ -150,9 +178,4 @@ QJsonObject CoverObject::reqest(void)
     json.insert("value_template",               "{{ value_json.cover }}");
 
     return json;
-}
-
-QJsonObject ButtonObject::reqest(void)
-{
-    return {{"payload_press",                   m_payload}};
 }

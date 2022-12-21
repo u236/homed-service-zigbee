@@ -63,6 +63,34 @@ private:
 
 };
 
+class NumberObject : public DiscoveryObject
+{
+
+public:
+
+    NumberObject(const QString &name, const QString &unit = QString(), const QString &icon = QString()) : DiscoveryObject("number", name), m_unit(unit), m_icon(icon) {}
+    QJsonObject reqest(void) override;
+
+private:
+
+    QString m_unit, m_icon;
+
+};
+
+class ButtonObject : public DiscoveryObject
+{
+
+public:
+
+    ButtonObject(const QString &name, const QString &payload) : DiscoveryObject("button", name), m_payload(payload) {}
+    QJsonObject reqest(void) override;
+
+private:
+
+    QString m_payload;
+
+};
+
 class LightObject : public DiscoveryObject
 {
 
@@ -90,20 +118,6 @@ public:
 
     CoverObject(void) : DiscoveryObject("cover") {}
     QJsonObject reqest(void) override;
-
-};
-
-class ButtonObject  : public DiscoveryObject
-{
-
-public:
-
-    ButtonObject(const QString &name, const QString &payload) : DiscoveryObject("button", name), m_payload(payload) {}
-    QJsonObject reqest(void) override;
-
-private:
-
-    QString m_payload;
 
 };
 
@@ -271,6 +285,18 @@ namespace Sensor
     public:
 
         Power(void) : SensorObject("power", "W", 2) {}
+
+    };
+}
+
+namespace Number
+{
+    class ReportingDelay : public NumberObject
+    {
+
+    public:
+
+        ReportingDelay(void) : NumberObject("reportingDelay", "seconds", "mdi:clock") {}
 
     };
 }
