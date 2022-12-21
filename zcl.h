@@ -262,6 +262,13 @@ struct tuyaHeaderStruct
     quint8  length;
 };
 
+struct tuyaTimeStruct
+{
+    quint16 payloadSize;
+    quint32 utcTimestamp;
+    quint32 localTimestamp;
+};
+
 #pragma pack(pop)
 
 QByteArray zclHeader(quint8 frameControl, quint8 transactionId, quint8 commandId, quint16 manufacturerCode = 0);
