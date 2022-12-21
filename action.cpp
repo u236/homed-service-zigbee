@@ -22,6 +22,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
 
+    qRegisterMetaType <ActionsTUYA::MoesThermostat>         ("tuyaMoesThermostatAction");
     qRegisterMetaType <ActionsTUYA::NeoSiren>               ("tuyaNeoSirenAction");
     qRegisterMetaType <ActionsTUYA::PresenceSensor>         ("tuyaPresenceSensorAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>              ("tuyaChildLockAction");
@@ -37,6 +38,26 @@ QVariant ActionObject::deviceOption(const QString &key)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
     return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
+}
+
+Property ActionObject::endpointProperty(const QString &name)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+
+    if (endpoint)
+    {
+        for (int i = 0; i < endpoint->properties().count(); i++)
+        {
+            const Property &property = endpoint->properties().at(i);
+
+            if (property->name() != name)
+                continue;
+
+            return property;
+        }
+    }
+
+    return Property();
 }
 
 QByteArray Actions::Status::request(const QString &, const QVariant &data)
@@ -315,7 +336,7 @@ QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data)
+QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data, quint8 length = 0)
 {
     tuyaHeaderStruct header;
 
@@ -327,12 +348,16 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
 
     switch (header.dataType)
     {
-        case 0x01:
-        case 0x04:
+        case TUYA_TYPE_RAW:
+            header.length = length;
+            break;
+
+        case TUYA_TYPE_BOOL:
+        case TUYA_TYPE_ENUM:
             header.length = 1;
             break;
 
-        case 0x02:
+        case TUYA_TYPE_VALUE:
             header.length = 4;
             break;
 
@@ -341,6 +366,105 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
     }
 
     return zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x00).append(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (data), header.length);
+}
+
+QByteArray ActionsTUYA::MoesThermostat::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0: // status
+        {
+            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 1: // mode
+        {
+            quint8 value = data.toString() == "program" ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 2: // heatingPoint
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x10, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 3: // temperatureLimitMax
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x12, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 4: // deadZoneTemperature
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x14, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 5: // temperatureLimitMin
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x1A, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 6: // temperatureCalibration
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x1B, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 7: // childLock
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x28, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 8: // sensor
+        {
+            QList <QString> list = {"internal", "both", "external"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x2B, TUYA_TYPE_ENUM, &value);
+        }
+
+        default: // program
+        {
+            const Property &property = endpointProperty("data");
+            QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
+            QByteArray payload;
+
+            if (property.isNull())
+                return QByteArray();
+
+            if (m_data.isEmpty() || property->meta().value("programReceived").toBool())
+            {
+                m_data = property->value().toMap();
+                property->meta().insert("programReceived", false);
+            }
+
+            m_data.insert(name, static_cast <quint8> (data.toInt()));
+
+            for (int i = 0; i < 36; i++)
+            {
+                QString key = QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3));
+                quint8 value;
+
+                if (!m_data.contains(key))
+                    return QByteArray();
+
+                value = static_cast <quint8> (m_data.value(key).toInt());
+                payload.append(static_cast <char> ((i + 1) % 3 ? value : value * 2));
+            }
+
+            return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_RAW, payload.data(), 36);
+        }
+    }
 }
 
 QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &data)
@@ -355,7 +479,7 @@ QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &d
             if (value < 0)
                 return QByteArray();
 
-            return makeRequest(m_transactionId++, 0x05, 0x04, &value);
+            return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_ENUM, &value);
         }
 
         case 1: // duration
@@ -366,13 +490,13 @@ QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &d
                 return QByteArray();
 
             value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x07, 0x02, &value);
+            return makeRequest(m_transactionId++, 0x07, TUYA_TYPE_VALUE, &value);
         }
 
         case 2: // alarm
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
-            return makeRequest(m_transactionId++, 0x0D, 0x01, &value);
+            return makeRequest(m_transactionId++, 0x0D, TUYA_TYPE_BOOL, &value);
         }
 
         case 3: // melody
@@ -382,7 +506,7 @@ QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &d
             if (value < 1 || value > 18)
                 return QByteArray();
 
-            return makeRequest(m_transactionId++, 0x15, 0x04, &value);
+            return makeRequest(m_transactionId++, 0x15, TUYA_TYPE_ENUM, &value);
         }
     }
 
@@ -401,7 +525,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
                 break;
 
             value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x02, 0x02, &value);
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
         }
 
         case 1: // distanceMin
@@ -412,7 +536,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
                 return QByteArray();
 
             value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x03, 0x02, &value);
+            return makeRequest(m_transactionId++, 0x03, TUYA_TYPE_VALUE, &value);
         }
 
         case 2: // distanceMax
@@ -423,7 +547,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
                 return QByteArray();
 
             value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x04, 0x02, &value);
+            return makeRequest(m_transactionId++, 0x04, TUYA_TYPE_VALUE, &value);
         }
 
         case 3: // detectionDelay
@@ -434,7 +558,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
                 return QByteArray();
 
             value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x65, 0x02, &value);
+            return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_VALUE, &value);
         }
     }
 
@@ -493,7 +617,9 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QString &, const QVariant &
 
 QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QVariant &data)
 {
-    switch (m_actions.indexOf(name))
+    int index = m_actions.indexOf(name);
+
+    switch (index)
     {
         case 0: // powerOnStatus
         {
@@ -522,7 +648,7 @@ QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QV
         {
             quint16 value = qToLittleEndian(static_cast <quint16> (data.toInt()));
 
-            switch (m_actions.indexOf(name))
+            switch (index)
             {
                 case 2:  m_attributes = {0x0004}; break; // voltageMin
                 case 3:  m_attributes = {0x0005}; break; // voltageMax

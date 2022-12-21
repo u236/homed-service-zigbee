@@ -633,11 +633,17 @@
       "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
+      "description":    "TUYA TS0601 Moes Thermostat",
+      "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
+      "properties":     ["tuyaMoesThermostat"],
+      "actions":        ["tuyaMoesThermostat"],
+      "options":        {"ignoreClusters": [0], "debounce": 1}
+    },
+    {
       "description":    "TUYA TS0601 Neo Siren",
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaNeoSiren"],
       "actions":        ["tuyaNeoSiren"],
-      "discoveries":    [],
       "options":        {"ignoreClusters": [0]}
     },
     {

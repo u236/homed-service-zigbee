@@ -31,6 +31,8 @@ public:
     inline bool multiple(void) { return m_multiple; }
     inline void setMultiple(bool value) { m_multiple = value; }
 
+    inline QMap <QString, QVariant> &meta(void) { return m_meta; }
+
     inline QVariant value(void) { return m_value; }
     inline void setValue(const QVariant &value) { m_value = value; }
 
@@ -45,6 +47,7 @@ protected:
     QObject *m_parent;
     bool m_multiple;
 
+    QMap <QString, QVariant> m_meta;
     QVariant m_value;
 
     quint8 deviceVersion(void);
@@ -618,6 +621,15 @@ namespace PropertiesTUYA
 
         QVariant parseData(const tuyaHeaderStruct *header, const QByteArray &data);
         virtual void update(quint8 dataPoint, const QVariant &data) = 0;
+
+    };
+
+    class MoesThermostat : public Data
+    {
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
 
     };
 

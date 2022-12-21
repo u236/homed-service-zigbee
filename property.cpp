@@ -60,6 +60,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>            ("lumiCubeMovementProperty");
 
+    qRegisterMetaType <PropertiesTUYA::MoesThermostat>          ("tuyaMoesThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>               ("tuyaChildLockProperty");
@@ -866,14 +867,17 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
 {
     switch (header->dataType)
     {
-        case 0x01:
+        case TUYA_TYPE_RAW:
+            return data.mid(0, header->length);
+
+        case TUYA_TYPE_BOOL:
 
             if (header->length == 1)
                 return data.at(0) ? true : false;
 
             break;
 
-        case 0x02:
+        case TUYA_TYPE_VALUE:
 
             if (header->length == 4)
             {
@@ -884,7 +888,7 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
 
             break;
 
-        case 0x04:
+        case TUYA_TYPE_ENUM:
 
             if (header->length == 1)
                 return static_cast <quint8> (data.at(0));
@@ -893,6 +897,70 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
     }
 
     return QVariant();
+}
+
+void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
+        case 0x02: map.insert("mode", data.toInt() ? "program" : "manual"); break;
+        case 0x10: map.insert("heatingPoint", data.toInt()); break;
+        case 0x12: map.insert("temperatureLimitMax", data.toInt()); break;
+        case 0x13: map.insert("temperatureMax", data.toInt()); break;
+        case 0x14: map.insert("deadZoneTemperature", data.toInt()); break;
+
+        case 0x18:
+        {
+            QList <QString> list = {"_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"};
+            double value = static_cast <double> (data.toInt());
+            map.insert("localTemperature", list.contains(deviceModelName()) ? value : value / 10); break;
+            break;
+        }
+
+        case 0x1A: map.insert("temperatureLimitMin", data.toInt()); break;
+        case 0x1B: map.insert("temperatureCalibration", data.toInt()); break;
+        case 0x24: map.insert("heating", data.toInt() ? false : true); break;
+        case 0x28: map.insert("childLock", data.toBool()); break;
+
+        case 0x2B:
+        {
+            switch (data.toInt())
+            {
+                case 0:  map.insert("sensor", "internal"); break;
+                case 1:  map.insert("sensor", "both"); break;
+                case 2:  map.insert("sensor", "external"); break;
+                default: map.insert("sensor", "unsupported"); break;
+            }
+
+            break;
+        }
+
+        case 0x65:
+        {
+            QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
+            QByteArray program = data.toByteArray();
+
+            if (program.length() != 36)
+                break;
+
+            for (int i = 0; i < 36; i++)
+            {
+                quint8 value = static_cast <quint8> (program.at(i));
+                map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
+            }
+
+            m_meta.insert("programReceived", true);
+            break;
+        }
+    }
+
+    if (map.isEmpty())
+        return;
+
+    m_value = map;
 }
 
 void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)

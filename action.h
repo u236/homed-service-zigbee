@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <QVariant>
+#include "property.h"
 #include "zcl.h"
 
 class ActionObject;
@@ -47,6 +48,7 @@ protected:
     quint8 m_transactionId;
 
     QVariant deviceOption(const QString &key);
+    Property endpointProperty(const QString &name);
 
 };
 
@@ -223,7 +225,21 @@ namespace ActionsTUYA
 
     protected:
 
-        QByteArray makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data);
+        QByteArray makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data, quint8 length);
+
+    };
+
+    class MoesThermostat : public Request, public ActionObject
+    {
+
+    public:
+
+        MoesThermostat(void) : ActionObject("moesThermostat", CLUSTER_TUYA_DATA, 0x0000, {"status", "mode", "heatingPoint", "temperatureLimitMax", "deadZoneTemperature", "temperatureLimitMin", "temperatureCalibration", "childLock", "sensor", "weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "saturdayP1Hour", "saturdayP1Minute", "saturdayP1Temperature", "saturdayP2Hour", "saturdayP2Minute", "saturdayP2Temperature", "saturdayP3Hour", "saturdayP3Minute", "saturdayP3Temperature", "saturdayP4Hour", "saturdayP4Minute", "saturdayP4Temperature", "sundayP1Hour", "sundayP1Minute", "sundayP1Temperature", "sundayP2Hour", "sundayP2Minute", "sundayP2Temperature", "sundayP3Hour", "sundayP3Minute", "sundayP3Temperature", "sundayP4Hour", "sundayP4Minute", "sundayP4Temperature"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    private:
+
+        QMap <QString, QVariant> m_data;
 
     };
 

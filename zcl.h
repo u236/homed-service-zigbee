@@ -94,6 +94,11 @@
 #define CLUSTER_TUYA_DATA                           0xEF00
 #define CLUSTER_TUYA_SWITCH_MODE                    0xE001
 
+#define TUYA_TYPE_RAW                               0x00
+#define TUYA_TYPE_BOOL                              0x01
+#define TUYA_TYPE_VALUE                             0x02
+#define TUYA_TYPE_ENUM                              0x04
+
 #include <QByteArray>
 #include <QList>
 
