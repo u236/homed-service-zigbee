@@ -1,4 +1,17 @@
 {
+  "efekta.com":
+  [
+    {
+      "description":    "EFEKTA Plant Watering Sensor miniPWS",
+      "modelNames":     ["EFEKTA_miniPWS"],
+      "properties":     ["batteryPercentage", "moisture", "efektaReportingDelay"],
+      "actions":        ["efektaReportingDelay"],
+      "bindings":       ["battery", "moisture"],
+      "discoveries":    ["battery", "moisture", "reportingDelay"],
+      "options":        {"reportingDelayMin": 10, "reportingDelayMax": 3600}
+    }
+  ],
+
   "eWeLink":
   [
     {
@@ -714,19 +727,6 @@
       "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "discoveries":    ["battery", "temperature", "humidity"]
-    }
-  ],
-
-  "www.efekta.com":
-  [
-    {
-      "description":    "EFEKTA Plant Watering Sensor miniPWS",
-      "modelNames":     ["EFEKTA_miniPWS"],
-      "properties":     ["batteryPercentage", "moisture", "efektaReportingDelay"],
-      "actions":        ["efektaReportingDelay"],
-      "bindings":       ["battery", "moisture"],
-      "discoveries":    ["battery", "moisture", "reportingDelay"],
-      "options":        {"reportingDelayMin": 10, "reportingDelayMax": 3600}
     }
   ]
 }

@@ -449,18 +449,16 @@ QByteArray ActionsTUYA::MoesThermostat::request(const QString &name, const QVari
                 property->meta().insert("programReceived", false);
             }
 
-            m_data.insert(name, static_cast <quint8> (data.toInt()));
+            m_data.insert(name, data.toDouble());
 
             for (int i = 0; i < 36; i++)
             {
                 QString key = QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3));
-                quint8 value;
 
                 if (!m_data.contains(key))
                     return QByteArray();
 
-                value = static_cast <quint8> (m_data.value(key).toInt());
-                payload.append(static_cast <char> ((i + 1) % 3 ? value : value * 2));
+                payload.append(static_cast <char> ((i + 1) % 3 ? m_data.value(key).toDouble() : m_data.value(key).toDouble() * 2));
             }
 
             return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_RAW, payload.data(), 36);

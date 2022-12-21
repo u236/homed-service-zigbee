@@ -225,6 +225,24 @@ namespace Sensor
 
     };
 
+    class Moisture : public SensorObject
+    {
+
+    public:
+
+        Moisture(void) : SensorObject("moisture", "%", 1) {}
+
+    };
+
+    class Illuminance : public SensorObject
+    {
+
+    public:
+
+        Illuminance(void) : SensorObject("illuminance", "lux") {}
+
+    };
+
     class CO2 : public SensorObject
     {
 
@@ -240,15 +258,6 @@ namespace Sensor
     public:
 
         VOC(void) : SensorObject("voc", "ppb") {}
-
-    };
-
-    class Illuminance : public SensorObject
-    {
-
-    public:
-
-        Illuminance(void) : SensorObject("illuminance", "lux") {}
 
     };
 

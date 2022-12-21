@@ -320,7 +320,7 @@ void Adapter::parseMessage(quint16 networkAddress, quint16 clusterId, const QByt
 
         default:
         {
-            logInfo << "Unrecognized ZDO message received from cluster" << QString::asprintf("0x%04x", clusterId) << "wuth payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+            logWarning << "Unrecognized ZDO message received from cluster" << QString::asprintf("0x%04x", clusterId) << "with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
             break;
         }
     }

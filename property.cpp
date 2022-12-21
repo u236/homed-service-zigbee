@@ -960,7 +960,7 @@ void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &da
 
             for (int i = 0; i < 36; i++)
             {
-                quint8 value = static_cast <quint8> (program.at(i));
+                double value = static_cast <double> (program.at(i));
                 map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
             }
 

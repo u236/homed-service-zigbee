@@ -19,6 +19,7 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Battery>         ("batteryDiscovery");
     qRegisterMetaType <Sensor::Temperature>     ("temperatureDiscovery");
     qRegisterMetaType <Sensor::Humidity>        ("humidityDiscovery");
+    qRegisterMetaType <Sensor::Moisture>        ("moistureDiscovery");
     qRegisterMetaType <Sensor::CO2>             ("co2Discovery");
     qRegisterMetaType <Sensor::VOC>             ("vocDiscovery");
     qRegisterMetaType <Sensor::Illuminance>     ("illuminanceDiscovery");
