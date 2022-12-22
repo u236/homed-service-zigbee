@@ -4,6 +4,7 @@ void ReportingObject::registerMetaTypes(void)
 {
     qRegisterMetaType <Reportings::BatteryVoltage>      ("batteryVoltageReporting");
     qRegisterMetaType <Reportings::BatteryPercentage>   ("batteryPercentageReporting");
+    qRegisterMetaType <Reportings::DeviceTemperature>   ("deviceTemperatureReporting");
     qRegisterMetaType <Reportings::Status>              ("statusReporting");
     qRegisterMetaType <Reportings::Level>               ("levelReporting");
     qRegisterMetaType <Reportings::ColorHS>             ("colorHSReporting");

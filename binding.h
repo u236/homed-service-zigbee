@@ -38,6 +38,15 @@ namespace Bindings
 
     };
 
+    class DeviceTemperature : public BindingObject
+    {
+
+    public:
+
+        DeviceTemperature(void) : BindingObject("deviceTemperature", CLUSTER_TEMPERATURE_CONFIGURATION) {}
+
+    };
+
     class Status : public BindingObject
     {
 

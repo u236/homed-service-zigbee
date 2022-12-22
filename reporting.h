@@ -69,6 +69,15 @@ namespace Reportings
 
     };
 
+    class DeviceTemperature : public ReportingObject
+    {
+
+    public:
+
+        DeviceTemperature(void) : ReportingObject("deviceTemperature", CLUSTER_TEMPERATURE_CONFIGURATION, 0x0000, DATA_TYPE_16BIT_SIGNED, 30, 600, 10) {}
+
+    };
+
     class Status : public ReportingObject
     {
 
