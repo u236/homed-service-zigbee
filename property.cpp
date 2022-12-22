@@ -61,6 +61,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>            ("lumiCubeMovementProperty");
 
+    qRegisterMetaType <PropertiesTUYA::ElectricityMeter>        ("tuyaElectricityMeterProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostat>          ("tuyaMoesThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
@@ -940,7 +941,7 @@ void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &
         }
 
         case 0x10: map.insert("status", data.toBool() ? "on" : "off"); break;
-        case 0x67: map.insert("power", data.toInt() / 100.0); break;
+        case 0x67: map.insert("power", data.toInt() / 100.0 + deviceOption("powerOffset").toDouble()); break;
         case 0x69: map.insert("frequency", data.toInt() / 100.0); break;
         case 0x6F: map.insert("powerFactor", data.toInt() / 10.0); break;
     }
