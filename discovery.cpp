@@ -18,6 +18,7 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Count>           ("countDiscovery");
     qRegisterMetaType <Sensor::Battery>         ("batteryDiscovery");
     qRegisterMetaType <Sensor::Temperature>     ("temperatureDiscovery");
+    qRegisterMetaType <Sensor::Pressure>        ("pressureDiscovery");
     qRegisterMetaType <Sensor::Humidity>        ("humidityDiscovery");
     qRegisterMetaType <Sensor::Moisture>        ("moistureDiscovery");
     qRegisterMetaType <Sensor::CO2>             ("co2Discovery");
@@ -86,6 +87,7 @@ QJsonObject SensorObject::reqest(void)
 QJsonObject NumberObject::reqest(void)
 {
     QVariant min = deviceOption(QString("%1Min").arg(m_name)), max = deviceOption(QString("%1Max").arg(m_name));
+    QString unit = deviceOption(QString("%1Unit").arg(m_name)).toString();
     QJsonObject json;
 
     if (min.isValid())
@@ -94,8 +96,8 @@ QJsonObject NumberObject::reqest(void)
     if (max.isValid())
         json.insert("max",                      max.toInt());
 
-    if (!m_unit.isEmpty())
-        json.insert("unit_of_measurement",      m_unit);
+    if (!unit.isEmpty())
+        json.insert("unit_of_measurement",      unit);
 
     if (!m_icon.isEmpty())
         json.insert("icon",                     m_icon);

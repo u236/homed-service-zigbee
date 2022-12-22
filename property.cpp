@@ -21,6 +21,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::ColorTemperature>            ("colorTemperatureProperty");
     qRegisterMetaType <Properties::Illuminance>                 ("illuminanceProperty");
     qRegisterMetaType <Properties::Temperature>                 ("temperatureProperty");
+    qRegisterMetaType <Properties::Pressure>                    ("pressureProperty");
     qRegisterMetaType <Properties::Humidity>                    ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>                   ("occupancyProperty");
     qRegisterMetaType <Properties::Energy>                      ("energyProperty");
@@ -272,6 +273,17 @@ void Properties::Temperature::parseAttribte(quint16 attributeId, const QByteArra
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble();
+}
+
+void Properties::Pressure::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    qint16 value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) / 10.0 + deviceOption("pressureOffset").toDouble();
 }
 
 void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -909,6 +921,34 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
     }
 
     return QVariant();
+}
+
+#include "logger.h"
+void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x01: map.insert("energy", data.toInt() / 100.0); break;
+
+        case 0x06:
+        {
+            // TODO: parse voltage and current
+            logInfo << "Votage and current data:" << data.toByteArray().toHex(':');
+            break;
+        }
+
+        case 0x10: map.insert("status", data.toBool() ? "on" : "off"); break;
+        case 0x67: map.insert("power", data.toInt() / 100.0); break;
+        case 0x69: map.insert("frequency", data.toInt() / 100.0); break;
+        case 0x6F: map.insert("powerFactor", data.toInt() / 10.0); break;
+    }
+
+    if (map.isEmpty())
+        return;
+
+    m_value = map;
 }
 
 void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &data)

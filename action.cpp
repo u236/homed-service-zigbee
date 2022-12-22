@@ -22,6 +22,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
 
+    qRegisterMetaType <ActionsTUYA::ElectricityMeter>       ("tuyaElectricityMeterAction");
     qRegisterMetaType <ActionsTUYA::MoesThermostat>         ("tuyaMoesThermostatAction");
     qRegisterMetaType <ActionsTUYA::NeoSiren>               ("tuyaNeoSirenAction");
     qRegisterMetaType <ActionsTUYA::PresenceSensor>         ("tuyaPresenceSensorAction");
@@ -367,6 +368,12 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
     }
 
     return zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x00).append(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (data), header.length);
+}
+
+QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+    return makeRequest(m_transactionId++, 0x10, TUYA_TYPE_BOOL, &value);
 }
 
 QByteArray ActionsTUYA::MoesThermostat::request(const QString &name, const QVariant &data)

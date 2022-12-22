@@ -218,6 +218,16 @@ namespace Properties
 
     };
 
+    class Pressure : public PropertyObject
+    {
+
+    public:
+
+        Pressure(void) : PropertyObject("pressure", CLUSTER_PRESSURE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Humidity : public PropertyObject
     {
 
@@ -631,6 +641,15 @@ namespace PropertiesTUYA
 
         QVariant parseData(const tuyaHeaderStruct *header, const QByteArray &data);
         virtual void update(quint8 dataPoint, const QVariant &data) = 0;
+
+    };
+
+    class ElectricityMeter : public Data
+    {
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
 
     };
 

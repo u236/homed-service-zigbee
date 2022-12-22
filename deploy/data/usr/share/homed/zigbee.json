@@ -8,7 +8,7 @@
       "actions":        ["efektaReportingDelay"],
       "bindings":       ["battery", "moisture"],
       "discoveries":    ["battery", "moisture", "reportingDelay"],
-      "options":        {"reportingDelayMin": 10, "reportingDelayMax": 3600}
+      "options":        {"reportingDelayMin": 1, "reportingDelayMax": 180, "reportingDelayUnit": "minutes"}
     }
   ],
 
@@ -339,6 +339,13 @@
       "options":        {"timeout": 30}
     },
     {
+      "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
+      "modelNames":     ["lumi.sensor_motion.aq2"],
+      "properties":     ["lumiBatteryVoltage", "illuminance", "occupancy"],
+      "discoveries":    ["battery", "illuminance", "occupancy"],
+      "options":        {"timeout": 30}
+    },
+    {
       "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
       "modelNames":     ["lumi.motion.ac01"],
       "properties":     ["lumiData"],
@@ -351,6 +358,12 @@
       "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
       "properties":     ["lumiBatteryVoltage", "temperature", "humidity"],
       "discoveries":    ["battery", "temperature", "humidity"]
+    },
+    {
+      "description":    "Xiaomi Temperature, Humidity and Pressure Sensor WSDCGQ11LM",
+      "modelNames":     ["lumi.weather"],
+      "properties":     ["lumiBatteryVoltage", "temperature", "pressure", "humidity"],
+      "discoveries":    ["battery", "temperature", "pressure", "humidity"]
     },
     {
       "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
@@ -546,7 +559,7 @@
   [
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
-      "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
+      "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_prd023wy", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
       "properties":     ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
@@ -646,10 +659,19 @@
       "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
+      "description":    "TUYA TS0601 Electricity Meter",
+      "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE200_lsanae15"],
+      "properties":     ["tuyaElectricityMeter"],
+      "actions":        ["tuyaElectricityMeter"],
+      "discoveries":    [],
+      "options":        {"ignoreClusters": [0]}
+    },
+    {
       "description":    "TUYA TS0601 Moes Thermostat",
       "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
       "properties":     ["tuyaMoesThermostat"],
       "actions":        ["tuyaMoesThermostat"],
+      "discoveries":    [],
       "options":        {"ignoreClusters": [0], "debounce": 1}
     },
     {
@@ -657,6 +679,7 @@
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaNeoSiren"],
       "actions":        ["tuyaNeoSiren"],
+      "discoveries":    [],
       "options":        {"ignoreClusters": [0]}
     },
     {

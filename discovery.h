@@ -68,12 +68,12 @@ class NumberObject : public DiscoveryObject
 
 public:
 
-    NumberObject(const QString &name, const QString &unit = QString(), const QString &icon = QString()) : DiscoveryObject("number", name), m_unit(unit), m_icon(icon) {}
+    NumberObject(const QString &name, const QString &icon = QString()) : DiscoveryObject("number", name), m_icon(icon) {}
     QJsonObject reqest(void) override;
 
 private:
 
-    QString m_unit, m_icon;
+    QString m_icon;
 
 };
 
@@ -216,6 +216,15 @@ namespace Sensor
 
     };
 
+    class Pressure : public SensorObject
+    {
+
+    public:
+
+        Pressure(void) : SensorObject("pressure", "kPa", 1) {}
+
+    };
+
     class Humidity : public SensorObject
     {
 
@@ -305,7 +314,7 @@ namespace Number
 
     public:
 
-        ReportingDelay(void) : NumberObject("reportingDelay", "seconds", "mdi:clock") {}
+        ReportingDelay(void) : NumberObject("reportingDelay", "mdi:clock") {}
 
     };
 }
