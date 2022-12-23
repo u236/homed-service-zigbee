@@ -1340,6 +1340,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 {
     Device device = m_devices->byNetwork(networkAddress);
     Endpoint endpoint;
+    quint16 manufacturerCode = 0;
     quint8 frameControl = static_cast <quint8> (data.at(0)), transactionId, commandId;
     QByteArray payload;
 
@@ -1350,8 +1351,10 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
     endpoint = m_devices->endpoint(device, endpointId);
     blink(50);
 
-    if (frameControl & FC_MANUFACTURER_SPECIFIC)  // TODO: get manufacturerCode
+    if (frameControl & FC_MANUFACTURER_SPECIFIC)
     {
+        memcpy(&manufacturerCode, data.constData() + 1, sizeof(manufacturerCode));
+        manufacturerCode = qFromLittleEndian(manufacturerCode);
         transactionId = static_cast <quint8> (data.at(3));
         commandId = static_cast <quint8> (data.at(4));
         payload = data.mid(5);
@@ -1384,7 +1387,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         response.commandId = commandId;
         response.status = 0x00;
 
-        enqueueDataRequest(device, endpoint->id(), clusterId, zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_DEFAULT_RESPONSE).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
+        enqueueDataRequest(device, endpoint->id(), clusterId, zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_DEFAULT_RESPONSE, manufacturerCode).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
     }
 
     device->updateLastSeen();
