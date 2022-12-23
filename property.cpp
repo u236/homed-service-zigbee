@@ -56,6 +56,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
+    qRegisterMetaType <PropertiesLUMI::Illuminance>             ("lumiIlluminanceProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>            ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
@@ -799,6 +800,18 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray 
 
     m_value = map;
 }
+
+void PropertiesLUMI::Illuminance::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    quint16 value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) + deviceOption("illuminanceOffset").toDouble();
+}
+
 
 void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
 {

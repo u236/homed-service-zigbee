@@ -581,7 +581,17 @@ namespace PropertiesLUMI
 
     public:
 
-        Cover(void) :  PropertyObject("cover", CLUSTER_ANALOG_OUTPUT, true) {}
+        Cover(void) : PropertyObject("cover", CLUSTER_ANALOG_OUTPUT, true) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class Illuminance : public PropertyObject
+    {
+
+    public:
+
+        Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };

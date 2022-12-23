@@ -328,20 +328,20 @@
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
-      "properties":     ["lumiBatteryVoltage", "contact"],
+      "properties":     ["contact", "lumiBatteryVoltage"],
       "discoveries":    ["battery", "contact"]
     },
     {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
-      "properties":     ["lumiBatteryVoltage", "occupancy"],
+      "properties":     ["occupancy", "lumiBatteryVoltage"],
       "discoveries":    ["battery", "occupancy"],
       "options":        {"timeout": 30}
     },
     {
       "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
       "modelNames":     ["lumi.sensor_motion.aq2"],
-      "properties":     ["lumiBatteryVoltage", "illuminance", "occupancy"],
+      "properties":     ["occupancy", "lumiBatteryVoltage", "lumiIlluminance"],
       "discoveries":    ["battery", "illuminance", "occupancy"],
       "options":        {"timeout": 30}
     },
@@ -356,13 +356,13 @@
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
       "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
-      "properties":     ["lumiBatteryVoltage", "temperature", "humidity"],
+      "properties":     ["temperature", "humidity", "lumiBatteryVoltage"],
       "discoveries":    ["battery", "temperature", "humidity"]
     },
     {
       "description":    "Xiaomi Temperature, Humidity and Pressure Sensor WSDCGQ11LM",
       "modelNames":     ["lumi.weather"],
-      "properties":     ["lumiBatteryVoltage", "temperature", "pressure", "humidity"],
+      "properties":     ["temperature", "pressure", "humidity", "lumiBatteryVoltage"],
       "discoveries":    ["battery", "temperature", "pressure", "humidity"]
     },
     {
