@@ -105,13 +105,14 @@
       "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "discoveries":    ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"]},
+      "options":        {"light": ["level", "color", "colorTemperature"], "patternMin": 0, "patternMax": 62},
       "endpointId":     1
     },
     {
       "modelNames":     ["RGB Strip"],
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
+      "discoveries":    ["pattern"],
       "endpointId":     2
     },
     {

@@ -29,7 +29,9 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Current>         ("currentDiscovery");
     qRegisterMetaType <Sensor::Power>           ("powerDiscovery");
 
+    qRegisterMetaType <Number::Pattern>         ("patternDiscovery");
     qRegisterMetaType <Number::ReportingDelay>  ("reportingDelayDiscovery");
+
     qRegisterMetaType <Button::ResetCount>      ("resetCountDiscovery");
 }
 
@@ -103,7 +105,7 @@ QJsonObject NumberObject::reqest(void)
         json.insert("icon",                     m_icon);
 
     json.insert("command_template",             QString("{\"%1\":{{ value }}}").arg(m_name));
-    json.insert("value_template",               QString("value_json.%1").arg(m_name));
+    json.insert("value_template",               QString("{{ value_json.%1 }}").arg(m_name));
     return json;
 }
 

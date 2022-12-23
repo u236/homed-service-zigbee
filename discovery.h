@@ -309,6 +309,15 @@ namespace Sensor
 
 namespace Number
 {
+    class Pattern : public NumberObject
+    {
+
+    public:
+
+        Pattern(void) : NumberObject("pattern", "mdi:swap-horizontal-bold") {}
+
+    };
+
     class ReportingDelay : public NumberObject
     {
 
