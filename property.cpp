@@ -85,6 +85,12 @@ quint8 PropertyObject::deviceVersion(void)
     return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->version() : 0;
 }
 
+QString PropertyObject::deviceManufacturerName(void)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->manufacturerName() : QString();
+}
+
 QString PropertyObject::deviceModelName(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
@@ -937,26 +943,61 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
     return QVariant();
 }
 
-#include "logger.h"
 void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
-    switch (dataPoint)
+    if (deviceManufacturerName() == "_TZE200_lsanae15")
     {
-        case 0x01: map.insert("energy", data.toInt() / 100.0); break;
-
-        case 0x06:
+        switch (dataPoint)
         {
-            // TODO: parse voltage and current
-            logInfo << "Votage and current data:" << data.toByteArray().toHex(':');
-            break;
-        }
+            case 0x01: map.insert("energy", data.toInt() / 100.0); break;
 
-        case 0x10: map.insert("status", data.toBool() ? "on" : "off"); break;
-        case 0x67: map.insert("power", data.toInt() / 100.0 + deviceOption("powerOffset").toDouble()); break;
-        case 0x69: map.insert("frequency", data.toInt() / 100.0); break;
-        case 0x6F: map.insert("powerFactor", data.toInt() / 10.0); break;
+            case 0x06:
+            {
+                QByteArray payload = data.toByteArray();
+                quint16 value;
+
+                memcpy(&value, payload.constData(), sizeof(value));
+                map.insert("voltage", qFromBigEndian(value) / 10.0 + deviceOption("voltageOffset").toDouble());
+
+                memcpy(&value, payload.constData() + 3, sizeof(value));
+                map.insert("current", qFromBigEndian(value) / 1000.0 + deviceOption("currentOffset").toDouble());
+
+                memcpy(&value, payload.constData() + 6, sizeof(value));
+                map.insert("power", qFromBigEndian(value) + deviceOption("powerOffset").toDouble());
+
+                break;
+            }
+
+            case 0x10: map.insert("status", data.toBool() ? "on" : "off"); break;
+        }
+    }
+    else
+    {
+        switch (dataPoint)
+        {
+            case 0x01: map.insert("energy", data.toInt() / 100.0); break;
+
+            case 0x06:
+            {
+                QByteArray payload = data.toByteArray();
+                quint16 value;
+
+                memcpy(&value, payload.constData() + 11, sizeof(value));
+                map.insert("current", qFromBigEndian(value) / 1000.0 + deviceOption("currentOffset").toDouble());
+
+                memcpy(&value, payload.constData() + 13, sizeof(value));
+                map.insert("voltage", qFromBigEndian(value) / 10.0 + deviceOption("voltageOffset").toDouble());
+
+                break;
+            }
+
+            case 0x10: map.insert("status", data.toBool() ? "on" : "off"); break;
+            case 0x67: map.insert("power", data.toInt() / 100.0 + deviceOption("powerOffset").toDouble()); break;
+            case 0x69: map.insert("frequency", data.toInt() / 100.0); break;
+            case 0x6F: map.insert("powerFactor", data.toInt() / 10.0); break;
+        }
     }
 
     if (map.isEmpty())
