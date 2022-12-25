@@ -77,6 +77,9 @@
 #define CLUSTER_ANALOG_OUTPUT                       0x000D
 #define CLUSTER_MULTISTATE_INPUT                    0x0012
 #define CLUSTER_OTA_UPGRADE                         0x0019
+#define CLUSTER_POWER_PROFILE                       0x001A
+#define CLUSTER_POLL_CONTROL                        0x0020
+#define CLUSTER_GREEN_POWER                         0x0021
 #define CLUSTER_WINDOW_COVERING                     0x0102
 #define CLUSTER_COLOR_CONTROL                       0x0300
 #define CLUSTER_ILLUMINANCE_MEASUREMENT             0x0400

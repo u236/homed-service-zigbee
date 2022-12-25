@@ -361,7 +361,7 @@
       "discoveries":    ["battery", "temperature", "humidity"]
     },
     {
-      "description":    "Xiaomi Temperature, Humidity and Pressure Sensor WSDCGQ11LM",
+      "description":    "Aqara Temperature, Humidity and Pressure Sensor WSDCGQ11LM",
       "modelNames":     ["lumi.weather"],
       "properties":     ["temperature", "pressure", "humidity", "lumiBatteryVoltage"],
       "discoveries":    ["battery", "temperature", "pressure", "humidity"]

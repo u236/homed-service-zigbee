@@ -5,6 +5,7 @@
 #include "adapter.h"
 #include "gpio.h"
 #include "logger.h"
+#include "zcl.h"
 
 Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_socketTimer(new QTimer(this)), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_connected(false), m_permitJoin(false)
 {
@@ -57,10 +58,9 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
     m_endpointsData.insert(0x0C, EndpointData(new EndpointDataObject(PROFILE_ZLL, 0x0005)));
     m_endpointsData.insert(0xF2, EndpointData(new EndpointDataObject(PROFILE_GP,  0x0061)));
 
-    // TODO: use defines here or remove it after tests
-    m_endpointsData.value(0x01)->inClusters()  = {0x0000, 0x0003, 0x0006, 0x000A, 0x0019, 0x001A, 0x0300};
-    m_endpointsData.value(0x01)->outClusters() = {0x0000, 0x0003, 0x0004, 0x0005, 0x0006, 0x0008, 0x0020, 0x0300, 0x0400, 0x0402, 0x0405, 0x0406, 0x0500, 0x0B01, 0x0B03, 0x0B04, 0x0702, 0x1000, 0xFC01, 0xFC02};
-    m_endpointsData.value(0xF2)->outClusters() = {0x0021};
+    m_endpointsData.value(0x01)->inClusters()  = {CLUSTER_BASIC, CLUSTER_IDENTIFY, CLUSTER_ON_OFF, CLUSTER_TIME, CLUSTER_OTA_UPGRADE, CLUSTER_POWER_PROFILE, CLUSTER_COLOR_CONTROL};
+    m_endpointsData.value(0x01)->outClusters() = {CLUSTER_BASIC, CLUSTER_IDENTIFY, CLUSTER_GROUPS, CLUSTER_SCENES, CLUSTER_ON_OFF, CLUSTER_LEVEL_CONTROL, CLUSTER_POLL_CONTROL, CLUSTER_COLOR_CONTROL, CLUSTER_ILLUMINANCE_MEASUREMENT, CLUSTER_TEMPERATURE_MEASUREMENT, CLUSTER_PRESSURE_MEASUREMENT, CLUSTER_RELATIVE_HUMIDITY, CLUSTER_OCCUPANCY_SENSING, CLUSTER_SOIL_MOISTURE, CLUSTER_IAS_ZONE, CLUSTER_SMART_ENERGY_METERING, CLUSTER_ELECTRICAL_MEASUREMENT, CLUSTER_TOUCHLINK};
+    m_endpointsData.value(0xF2)->outClusters() = {CLUSTER_GREEN_POWER};
 
     connect(m_device, &QIODevice::readyRead, this, &Adapter::startTimer);
     connect(m_receiveTimer, &QTimer::timeout, this, &Adapter::readyRead);
