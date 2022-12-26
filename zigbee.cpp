@@ -117,7 +117,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
+            enqueueBindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
@@ -139,7 +139,7 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
             continue;
 
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
+            enqueueBindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
         {
@@ -176,7 +176,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             quint16 value = qToLittleEndian <quint16> (dstName.toInt());
 
             if (value)
-                enqueueBindingRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
+                enqueueBindRequest(device, endpointId, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
 
             break;
         }
@@ -186,7 +186,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             Device destination = m_devices->byName(deviceName);
 
             if (!destination.isNull() && !destination->removed())
-                enqueueBindingRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
+                enqueueBindRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
 
             break;
         }
@@ -294,9 +294,9 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
     }
 }
 
-void ZigBee::enqueueBindingRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
+void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
-    BindingRequest request(new BindingRequestObject(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind));
+    BindRequest request(new BindRequestObject(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind));
 
     if (!m_requestTimer->isActive())
         m_requestTimer->start();
@@ -456,7 +456,7 @@ void ZigBee::interviewFinished(const Device &device)
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            enqueueBindingRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
+            enqueueBindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
@@ -1150,7 +1150,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
     {
         case RequestType::Binding:
         {
-            BindingRequest request = qvariant_cast <BindingRequest> (it.value()->request());
+            BindRequest request = qvariant_cast <BindRequest> (it.value()->request());
 
             if (status)
             {
@@ -1415,7 +1415,7 @@ void ZigBee::handleRequests(void)
         {
             case RequestType::Binding:
             {
-                BindingRequest request = qvariant_cast <BindingRequest> (it.value()->request());
+                BindRequest request = qvariant_cast <BindRequest> (it.value()->request());
 
                 if (!m_adapter->bindRequest(it.key(), request->device()->networkAddress(), request->device()->ieeeAddress(), request->endpointId(), request->clusterId(), request->dstAddress(), request->dstEndpointId(), request->unbind()))
                 {

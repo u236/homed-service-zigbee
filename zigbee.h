@@ -9,8 +9,8 @@
 #include <QMetaEnum>
 #include "device.h"
 
-class BindingRequestObject;
-typedef QSharedPointer <BindingRequestObject> BindingRequest;
+class BindRequestObject;
+typedef QSharedPointer <BindRequestObject> BindRequest;
 
 class DataRequestObject;
 typedef QSharedPointer <DataRequestObject> DataRequest;
@@ -35,12 +35,12 @@ enum class RequestStatus
     Aborted
 };
 
-class BindingRequestObject
+class BindRequestObject
 {
 
 public:
 
-    BindingRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind) :
+    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind) :
         m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_dstAddress(dstAddress), m_dstEndpointId(dstEndpointId), m_unbind(unbind) {}
 
     inline Device device(void) { return m_device; }
@@ -50,7 +50,7 @@ public:
     inline quint8 dstEndpointId(void) { return m_dstEndpointId; }
     inline bool unbind(void) { return m_unbind; }
 
-    inline bool operator == (BindingRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId() && m_dstAddress == other.dstAddress() && m_dstEndpointId == other.dstEndpointId() && m_unbind == other.unbind(); }
+    inline bool operator == (BindRequestObject &other) { return m_device == other.device() && m_endpointId == other.endpointId() && m_clusterId == other.clusterId() && m_dstAddress == other.dstAddress() && m_dstEndpointId == other.dstEndpointId() && m_unbind == other.unbind(); }
 
 private:
 
@@ -172,7 +172,7 @@ private:
 
     QMap <quint8, Request> m_requests;
 
-    void enqueueBindingRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
+    void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
     void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
     void enqueueDeviceRequest(const Device &device, RequestType type);
 
@@ -227,7 +227,7 @@ signals:
 
 };
 
-Q_DECLARE_METATYPE(BindingRequest)
+Q_DECLARE_METATYPE(BindRequest)
 Q_DECLARE_METATYPE(DataRequest)
 
 #endif
