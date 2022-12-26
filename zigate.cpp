@@ -254,7 +254,6 @@ bool ZiGate::startCoordinator(bool clear)
 {
     networkStatusStruct networkStatus;
     quint32 channelList = qToBigEndian <quint32> (1 << m_channel);
-    quint16 version;
 
     if (!sendRequest(ZIGATE_SET_RAW_MODE, QByteArray(1, 0x01)) || m_replyStatus)
     {
@@ -268,11 +267,9 @@ bool ZiGate::startCoordinator(bool clear)
         return false;
     }
 
-    memcpy(&version, m_replyData.constData(), sizeof(version));
-
-    if (qFromBigEndian(version) != 3)
+    if (m_replyData.at(2) != 3 || m_replyData.at(3) < 0x1B)
     {
-        logWarning << "Unsupported ZiGate version, reply data:" << m_replyData.toHex(':');
+        logWarning << "Unsupported ZiGate version:" << m_replyData.toHex(':');
         return false;
     }
 
