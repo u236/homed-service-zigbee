@@ -1075,23 +1075,27 @@ void ZigBee::coordinatorReady(void)
 {
     quint64 adapterAddress = qToBigEndian(qFromLittleEndian(m_adapter->ieeeAddress()));
     QByteArray ieeeAddress(reinterpret_cast <char*> (&adapterAddress), sizeof(adapterAddress));
-    Device device(new DeviceObject(ieeeAddress, 0x0000, "HOMEd Coordinator"));
+    Device device = m_devices->value(ieeeAddress);
 
-    logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
+    if (device.isNull())
+    {
+        device = Device(new DeviceObject(ieeeAddress, 0x0000, "HOMEd Coordinator"));
+        device->setLogicalType(LogicalType::Coordinator);
+        device->setInterviewFinished();
+        m_devices->insert(ieeeAddress, device);
+    }
 
     for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
-        if (it.key() == ieeeAddress || it.value()->logicalType() == LogicalType::Coordinator)
+        if (it.value()->logicalType() == LogicalType::Coordinator && it.key() != ieeeAddress)
             m_devices->erase(it++);
 
         if (it == m_devices->end())
             break;
     }
 
-    device->setLogicalType(LogicalType::Coordinator);
-    device->setInterviewFinished();
+    logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
 
-    m_devices->insert(ieeeAddress, device);
     m_devices->setAdapterType(m_adapter->type());
     m_devices->setAdapterVersion(m_adapter->version());
 
