@@ -473,21 +473,21 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
     if (value & 0x0008)
         map.insert("batteryLow", true);
 
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesIAS::ZoneStatus::clearValue(void)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     map.remove(m_name);
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesIAS::ZoneStatus::resetValue(void)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     map.insert(m_name, false);
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -555,10 +555,7 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, const QByteArray &
     else
         parseData(attributeId, data, map);
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, QMap <QString, QVariant> &map)
@@ -742,10 +739,7 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteA
         case 0xFF23: map.insert("rightMode", value); break;
     }
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -804,7 +798,7 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray 
     map.insert("cover", value < 100 ? "open" : "closed");
     map.insert("position", deviceOption("invertCover").toBool() ? 100 - value : value);
 
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesLUMI::Illuminance::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1000,10 +994,7 @@ void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &
         }
     }
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &data)
@@ -1064,10 +1055,7 @@ void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &da
         }
     }
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
@@ -1089,10 +1077,7 @@ void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
         case 0x15: map.insert("melody", data.toInt()); break;
     }
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &data)
@@ -1109,10 +1094,7 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
         case 0x68: map.insert("illuminance", data.toInt() + deviceOption("illuminanceOffset").toDouble()); break;
     }
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesTUYA::ChildLock::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1228,10 +1210,7 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
         case 0x0003: map.insert("voc", qFromLittleEndian(value)); break;
     }
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1291,8 +1270,5 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, const
         }
     }
 
-    if (map.isEmpty())
-        return;
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
