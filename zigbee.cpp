@@ -5,6 +5,7 @@
 #include "gpio.h"
 #include "logger.h"
 #include "zcl.h"
+#include "zigate.h"
 #include "zigbee.h"
 #include "zstack.h"
 
@@ -30,13 +31,14 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 
 void ZigBee::init(void)
 {
-    QList <QString> list = {"ezsp", "znp"};
+    QList <QString> list = {"ezsp", "zigate", "znp"};
     QString adapterType = m_config->value("zigbee/adapter", "znp").toString();
 
     switch (list.indexOf(adapterType))
     {
         case 0:  m_adapter = new EZSP(m_config, this); break;
-        case 1:  m_adapter = new ZStack(m_config, this); break;
+        case 1:  m_adapter = new ZiGate(m_config, this); break;
+        case 2:  m_adapter = new ZStack(m_config, this); break;
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
 

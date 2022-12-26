@@ -171,13 +171,13 @@ public:
     void init(void);
     void setPermitJoin(bool enabled);
 
-    bool nodeDescriptorRequest(quint8 id, quint16 networkAddress);
-    bool simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId);
-    bool activeEndpointsRequest(quint8 id, quint16 networkAddress);
-    bool bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
-    bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index = 0);
-    bool leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress);
-    bool dataRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
+    virtual bool nodeDescriptorRequest(quint8 id, quint16 networkAddress);
+    virtual bool simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId);
+    virtual bool activeEndpointsRequest(quint8 id, quint16 networkAddress);
+    virtual bool bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
+    virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index = 0);
+    virtual bool leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress);
+    virtual bool dataRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
 
 protected:
 

@@ -14,6 +14,7 @@ HEADERS += \
     property.h \
     reporting.h \
     zcl.h \
+    zigate.h \
     zigbee.h \
     zstack.h
 
@@ -29,6 +30,7 @@ SOURCES += \
     property.cpp \
     reporting.cpp \
     zcl.cpp \
+    zigate.cpp \
     zigbee.cpp \
     zstack.cpp
 
