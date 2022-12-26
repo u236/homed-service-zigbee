@@ -301,18 +301,18 @@ void Adapter::parseMessage(quint16 networkAddress, quint16 clusterId, const QByt
         {
             const lqiResponseStruct *response = reinterpret_cast <const lqiResponseStruct*> (payload.constData());
 
-            if (!response->status)
+            if (!response->status && response->index + response->count <= response->total)
             {
                 for (quint8 i = 0; i < response->count; i++)
                 {
                     const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (payload.constData() + sizeof(lqiResponseStruct) + i * sizeof(neighborRecordStruct));
-                    emit neighborRecordReceived(networkAddress, qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !(response->index | i));
+                    emit neighborRecordReceived(networkAddress, qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality, !response->index && !i);
                 }
 
                 if (response->index + response->count >= response->total)
                     break;
 
-                lqiRequest(networkAddress, response->index + response->count);
+                lqiRequest(0, networkAddress, response->index + response->count); // TODO: use correct request id
             }
 
             break;

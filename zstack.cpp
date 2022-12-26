@@ -535,18 +535,18 @@ bool ZStack::permitJoin(bool enabled)
 
 bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
 {
-    dataRequestStruct data;
+    dataRequestStruct reqest;
 
-    data.networkAddress = qToLittleEndian(networkAddress);
-    data.dstEndpointId = dstEndPointId;
-    data.srcEndpointId = srcEndPointId;
-    data.clusterId = qToLittleEndian(clusterId);
-    data.transactionId = id;
-    data.options = AF_DISCV_ROUTE;
-    data.radius = AF_DEFAULT_RADIUS;
-    data.length = static_cast <quint8> (payload.length());
+    reqest.networkAddress = qToLittleEndian(networkAddress);
+    reqest.dstEndpointId = dstEndPointId;
+    reqest.srcEndpointId = srcEndPointId;
+    reqest.clusterId = qToLittleEndian(clusterId);
+    reqest.transactionId = id;
+    reqest.options = AF_DISCV_ROUTE;
+    reqest.radius = AF_DEFAULT_RADIUS;
+    reqest.length = static_cast <quint8> (payload.length());
 
-    return sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) && !m_replyData.at(0);
+    return sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&reqest), sizeof(reqest)).append(payload)) && !m_replyData.at(0);
 }
 
 void ZStack::handleQueue(void)
