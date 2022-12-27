@@ -1,6 +1,6 @@
 Package: homed-zigbee
 Version:
-Architecture: mips_24kc
+Architecture:
 Maintainer: u236 <mail@u236.org>
 Depends: libatomic, libstdcpp
 Section: misc

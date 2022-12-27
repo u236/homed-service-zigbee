@@ -55,6 +55,7 @@
   - "cp deploy/procd/homed-zigbee deploy/data/etc/init.d"
   - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/bin/homed-zigbee"
   - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/openwrt/control"
+  - "sed -i \"s+^Architecture:.*+Architecture: ${ARCHITECTURE}+g\" deploy/openwrt/control"
   - "echo \"2.0\" > debian-binary"
   - "chmod +x deploy/data/etc/init.d/homed-zigbee"
   - "chmod +x deploy/openwrt/postinst"
@@ -75,28 +76,35 @@ Build Linux Binary (x86_64):
   extends: .build
   variables:
     ARCHITECTURE: x86_64
-    QT_BUILD: qt-x86_64-5.15.4-static
+    QT_BUILD: qt-minimal-x86_64-linux-5.15.4-static
 
 Build Linux Binary (aarch64):
   extends: .build
   variables:
     ARCHITECTURE: aarch64
-    QT_BUILD: qt-aarch64-5.15.4-static
-    COMPILER: gcc-aarch64-linux-gnu
+    QT_BUILD: qt-minimal-aarch64-linux-5.15.4-static
+    COMPILER: gcc-aarch64-linux-gnu-8.3.0-linaro
 
 Build Linux Binary (armhf):
   extends: .build
   variables:
     ARCHITECTURE: armhf
-    QT_BUILD: qt-armhf-5.15.4-static
-    COMPILER: gcc-arm-linux-gnueabihf
+    QT_BUILD: qt-minimal-armhf-linux-5.15.4-static
+    COMPILER: gcc-arm-linux-gnueabihf-8.3.0-linaro
 
-Build OpenWRT Binary (mips):
+Build OpenWRT Binary (arm_cortex-a9_neon):
+  extends: .build
+  variables:
+    ARCHITECTURE: arm_cortex-a9_neon
+    QT_BUILD: qt-minimal-arm-openwrt-5.15.4-static
+    COMPILER: gcc-arm-openwrt-linux-11.2.0-musl
+
+Build OpenWRT Binary (mips_24kc):
   extends: .build
   variables:
     ARCHITECTURE: mips_24kc
-    QT_BUILD: qt-mips-5.15.4-static
-    COMPILER: gcc-mips-openwrt-linux
+    QT_BUILD: qt-minimal-mips-openwrt-5.15.4-static
+    COMPILER: gcc-mips-openwrt-linux-11.2.0-musl
 
 Deploy Docker Images:
   stage: deploy
@@ -125,7 +133,12 @@ Deploy APT Package (armhf):
   variables:
     ARCHITECTURE: armhf
 
-Deploy OpenWRT Package (mips):
+Deploy OpenWRT Package (arm_cortex-a9_neon):
+  extends: .deploy_ipk
+  variables:
+    ARCHITECTURE: arm_cortex-a9_neon
+
+Deploy OpenWRT Package (mips_24kc):
   extends: .deploy_ipk
   variables:
     ARCHITECTURE: mips_24kc
