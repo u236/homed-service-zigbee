@@ -536,6 +536,13 @@
   "SONOFF":
   [
     {
+      "description":    "Sonoff Relay/Switch ZBMINI-L or ZBMINI-L2",
+      "modelNames":     ["ZBMINI-L, ZBMINIL2"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "discoveries":    ["switch"]
+    },
+    {
       "description":    "Sonoff Relay/Switch ZBMINI",
       "modelNames":     ["01MINIZB"],
       "properties":     ["status"],
@@ -709,7 +716,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Detector",
-      "modelNames":     ["_TZE200_ikvncluo", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl"],
+      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
       "properties":     ["tuyaPresenceSensor"],
       "actions":        ["tuyaPresenceSensor"],
       "discoveries":    ["occupancy"],
