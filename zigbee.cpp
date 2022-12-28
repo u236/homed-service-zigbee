@@ -509,13 +509,13 @@ void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
     enqueueDataRequest(device, endpoint->id(), reporting->clusterId(), request, QString("%1 reporting configuration").arg(reporting->name()));
 }
 
-void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16 attributeId, quint8 dataType, const QByteArray &data)
+void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data)
 {
     Device device = endpoint->device();
     bool check = false;
 
     if (m_debug)
-        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
 
     if (clusterId == CLUSTER_BASIC && attributeId <= 0x4000)
     {
@@ -546,6 +546,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint16
 
                 if (device->manufacturerName().isEmpty() && device->modelName().startsWith("lumi.sensor")) // some LUMI devices send modelName attribute on join
                 {
+                    device->setManufacturerCode(0x115F);
                     device->setPowerSource(POWER_SOURCE_BATTERY);
                     device->setManufacturerName("LUMI");
                     interviewFinished(device);
@@ -676,7 +677,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     bool check = false;
 
     if (m_debug)
-        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':')) << "and transaction id" << transactionId;
 
     if (clusterId == CLUSTER_GROUPS)
     {
@@ -978,7 +979,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     return;
                 }
 
-                parseAttribute(endpoint, clusterId, attributeId, dataType, payload.mid(offset, size));
+                parseAttribute(endpoint, clusterId, transactionId, attributeId, dataType, payload.mid(offset, size));
                 payload.remove(0, offset + size);
             }
 
@@ -1393,7 +1394,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         emit endpointUpdated(device, endpoint->id());
     }
 
-    if (!device->batteryPowered() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    if (!device->interviewFinished() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
         defaultResponseStruct response;
 
