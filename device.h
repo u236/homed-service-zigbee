@@ -102,7 +102,7 @@ class DeviceObject : public QObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_version(0), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
+        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_version(0), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -150,6 +150,9 @@ public:
     inline QString modelName(void) { return m_modelName; }
     inline void setModelName(const QString &value) { m_modelName = value; }
 
+    inline qint64 joinTime(void) { return m_joinTime; }
+    inline void updateJoinTime(void) { m_joinTime = QDateTime::currentMSecsSinceEpoch(); }
+
     inline qint64 lastSeen(void) { return m_lastSeen; }
     inline void setLastSeen(qint64 value) { m_lastSeen = value; }
     inline void updateLastSeen(void) { m_lastSeen = QDateTime::currentSecsSinceEpoch(); }
@@ -183,7 +186,7 @@ private:
     quint8 m_powerSource, m_version;
     QString m_manufacturerName, m_modelName;
 
-    qint64 m_lastSeen;
+    qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
 
     AvailabilityStatus m_availability;

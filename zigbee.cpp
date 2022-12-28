@@ -1223,9 +1223,13 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         if (it.value()->removed())
             it.value()->setRemoved(false);
 
+        if (it.value()->joinTime() + DEVICE_REJOIN_TIMEOUT > QDateTime::currentMSecsSinceEpoch())
+            return;
+
         logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04x", networkAddress);
     }
 
+    it.value()->updateJoinTime();
     it.value()->updateLastSeen();
     blink(500);
 
