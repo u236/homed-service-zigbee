@@ -449,6 +449,9 @@ void ZigBee::interviewDevice(const Device &device)
 
 void ZigBee::interviewFinished(const Device &device)
 {
+    if (device->interviewFinished()) // TODO: figure out reasons for multiple interviewFinished calls
+        return;
+
     logInfo << "Device" << device->name() << "manufacturer name is" << device->manufacturerName() << "and model name is" << device->modelName();
     m_devices->setupDevice(device);
 
