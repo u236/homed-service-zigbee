@@ -268,7 +268,7 @@ namespace ActionsTUYA
 
     public:
 
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_TUYA_DATA, 0x0000, {"sensitivity", "distanceMin", "distanceMax", "detectionDelay"}) {}
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_TUYA_DATA, 0x0000, {"sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

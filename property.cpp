@@ -1090,7 +1090,9 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
         case 0x02: map.insert("sensitivity", data.toInt()); break;
         case 0x03: map.insert("distanceMin", data.toDouble() / 100); break;
         case 0x04: map.insert("distanceMax", data.toDouble() / 100); break;
-        case 0x65: map.insert("detectionDelay", data.toInt()); break;
+        case 0x09: map.insert("targetDistance", data.toDouble() / 100); break;
+        case 0x65: map.insert("detectionDelay", data.toDouble() / 10); break;
+        case 0x66: map.insert("fadingTime", data.toInt() / 10); break;
         case 0x68: map.insert("illuminance", data.toInt() + deviceOption("illuminanceOffset").toDouble()); break;
     }
 

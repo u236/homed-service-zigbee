@@ -558,13 +558,24 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
 
         case 3: // detectionDelay
         {
-            quint32 value = static_cast <quint32> (data.toInt());
+            quint32 value = static_cast <quint32> (data.toDouble() * 10);
 
-            if (value < 1 || value > 10)
+            if (value > 100)
                 return QByteArray();
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 4: // fadingTime
+        {
+            quint32 value = static_cast <quint32> (data.toInt() * 10);
+
+            if (value > 15000)
+                return QByteArray();
+
+            value = qToBigEndian(value );
+            return makeRequest(m_transactionId++, 0x66, TUYA_TYPE_VALUE, &value);
         }
     }
 
