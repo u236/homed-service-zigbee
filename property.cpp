@@ -378,7 +378,7 @@ void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &dat
     m_value = qFromLittleEndian(value) / (divider ? divider : 1) + deviceOption("powerOffset").toDouble();
 }
 
-void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
     QVariant scene = deviceOption("scenes").toMap().value(QString::number(command->sceneId));
@@ -389,7 +389,7 @@ void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload
     m_value = scene.isValid() ? scene : command->sceneId;
 }
 
-void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray &)
+void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray &, quint8)
 {
     if (commandId != 0x01)
         return;
@@ -397,7 +397,7 @@ void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray
     m_value = "identify";
 }
 
-void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &)
+void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &, quint8)
 {
     switch (commandId)
     {
@@ -407,7 +407,7 @@ void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &
     }
 }
 
-void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
 {
     switch (commandId)
     {
@@ -428,7 +428,7 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
     }
 }
 
-void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
 {
     switch (commandId)
     {
@@ -456,7 +456,7 @@ void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &p
     }
 }
 
-void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     quint16 value;
@@ -886,7 +886,7 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, const QByt
         m_value = "drop";
 }
 
-void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
     QVariant data;
@@ -1161,9 +1161,9 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QBy
     }
 }
 
-void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId)
 {
-    if (commandId != 0xFD)
+    if (commandId != 0xFD || m_transactionId == transactionId)
         return;
 
     switch (payload.at(0))
@@ -1172,6 +1172,8 @@ void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArr
         case 0x01: m_value = "doubleClick"; break;
         case 0x02: m_value = "hold"; break;
     }
+
+    m_transactionId = transactionId;
 }
 
 void PropertiesOther::EfektaReportingDelay::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1198,7 +1200,7 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, cons
     }
 }
 
-void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &)
+void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &, quint8)
 {
     switch (commandId)
     {

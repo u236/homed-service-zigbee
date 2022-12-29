@@ -782,7 +782,7 @@
       "description":    "TUYA TS0041 1-Button Wireless Switch",
       "modelNames":     ["TS0041"],
       "properties":     ["batteryPercentage", "tuyaButtonAction"],
-      "discoveries":    ["battery"],
+      "discoveries":    ["battery", "action"],
       "options":        {"actions": ["singleClick", "doubleClick", "hold"]}
     },
     {
@@ -796,6 +796,7 @@
     {
       "modelNames":     ["TS0043"],
       "properties":     ["tuyaButtonAction"],
+      "discoveries":    ["action"],
       "endpointId":     [1, 2]
     },
     {
@@ -809,6 +810,7 @@
     {
       "modelNames":     ["TS0043"],
       "properties":     ["tuyaButtonAction"],
+      "discoveries":    ["action"],
       "endpointId":     [1, 2, 3]
     },
     {
@@ -822,6 +824,7 @@
     {
       "modelNames":     ["TS0044"],
       "properties":     ["tuyaButtonAction"],
+      "discoveries":    ["action"],
       "endpointId":     [1, 2, 3, 4]
     }
   ]

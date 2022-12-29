@@ -855,7 +855,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         {
             QVariant value = property->value();
 
-            property->parseCommand(commandId, payload);
+            property->parseCommand(commandId, payload, transactionId);
             check = true;
 
             if (property->singleShot())
