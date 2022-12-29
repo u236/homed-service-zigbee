@@ -83,6 +83,7 @@ void DeviceList::updateIdentity(QString &manufacturerName, QString &modelName)
     {
         "TS0001", "TS0002", "TS0004", "TS0004", "TS0006",
         "TS0011", "TS0012", "TS0013", "TS0014", "TS011F", "TS0121",
+        "TS0041", "TS0042", "TS0043", "TS0044",
         "TS0201", "TS0202", "TS0203", "TS0204", "TS0205", "TS0207",
         "TS0601"
     };

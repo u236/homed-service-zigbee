@@ -740,6 +740,16 @@ namespace PropertiesTUYA
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class ButtonAction : public PropertyObject
+    {
+
+    public:
+
+        ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+
+    };
 }
 
 namespace PropertiesOther

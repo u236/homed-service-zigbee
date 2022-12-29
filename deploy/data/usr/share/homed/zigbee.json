@@ -15,6 +15,23 @@
   "eWeLink":
   [
     {
+      "description":    "Sonoff 1-Channel Relay/Switch ZB-SW02",
+      "modelNames":     ["ZB-SW01"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "discoveries":    ["switch"]
+    },
+    {
+      "description":    "Sonoff 2-Channel Relay/Switch ZB-SW02",
+      "modelNames":     ["ZB-SW02", "E220-KR2N0Z0-HA"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "discoveries":    ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02",
       "modelNames":     ["TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
@@ -536,14 +553,14 @@
   "SONOFF":
   [
     {
-      "description":    "Sonoff Relay/Switch ZBMINI-L or ZBMINI-L2",
+      "description":    "Sonoff 1-Channel Relay/Switch ZBMINI-L or ZBMINI-L2",
       "modelNames":     ["ZBMINI-L, ZBMINIL2"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
       "discoveries":    ["switch"]
     },
     {
-      "description":    "Sonoff Relay/Switch ZBMINI",
+      "description":    "Sonoff  1-Channel Relay/Switch ZBMINI",
       "modelNames":     ["01MINIZB"],
       "properties":     ["status"],
       "actions":        ["status"],
@@ -760,6 +777,52 @@
       "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "discoveries":    ["battery", "temperature", "humidity"]
+    },
+    {
+      "description":    "TUYA TS0041 1-Button Wireless Switch",
+      "modelNames":     ["TS0041"],
+      "properties":     ["batteryPercentage", "tuyaButtonAction"],
+      "discoveries":    ["battery"],
+      "options":        {"actions": ["singleClick", "doubleClick", "hold"]}
+    },
+    {
+      "description":    "TUYA TS0042 2-Button Wireless Switch",
+      "modelNames":     ["TS0042"],
+      "properties":     ["batteryPercentage"],
+      "discoveries":    ["battery"],
+      "options":        {"actions": ["singleClick", "doubleClick", "hold"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0043"],
+      "properties":     ["tuyaButtonAction"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TUYA TS0043 3-Button Wireless Switch",
+      "modelNames":     ["TS0043"],
+      "properties":     ["batteryPercentage"],
+      "discoveries":    ["battery"],
+      "options":        {"actions": ["singleClick", "doubleClick", "hold"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0043"],
+      "properties":     ["tuyaButtonAction"],
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "description":    "TUYA TS0044 4-Button Wireless Switch",
+      "modelNames":     ["TS0044"],
+      "properties":     ["batteryPercentage"],
+      "discoveries":    ["battery"],
+      "options":        {"actions": ["singleClick", "doubleClick", "hold"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0044"],
+      "properties":     ["tuyaButtonAction"],
+      "endpointId":     [1, 2, 3, 4]
     }
   ]
 }
