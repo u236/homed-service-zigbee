@@ -1525,10 +1525,11 @@ void ZigBee::pingDevices(void)
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
-            if (!it.value()->inClusters().contains(CLUSTER_BASIC))
-                continue;
-
-            enqueueDataRequest(device, it.key(), CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0000}));
+            if (it.value()->inClusters().contains(CLUSTER_BASIC))
+            {
+                enqueueDataRequest(device, it.key(), CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0000}));
+                break;
+            }
         }
     }
 }
