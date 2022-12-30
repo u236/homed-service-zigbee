@@ -117,6 +117,12 @@ void Controller::publishProperties(void)
     }
 }
 
+void Controller::quit(void)
+{
+    delete m_zigbee;
+    HOMEd::quit();
+}
+
 void Controller::mqttConnected(void)
 {
     logInfo << "MQTT connected";
@@ -267,10 +273,11 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
         case ZigBee::Event::deviceLeft:
         case ZigBee::Event::deviceRemoved:
         {
+            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
+
             if (m_discovery)
                 publishDiscovery(device, true);
 
-            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
             break;
         }
 
@@ -287,7 +294,7 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
 
         case ZigBee::Event::deviceUpdated:
         {
-            if (device->availability() != AvailabilityStatus::Unknown)
+            if (m_names && device->availability() != AvailabilityStatus::Unknown)
                 mqttPublish(mqttTopic("device/zigbee/%1").arg(device->name()), {{"status", device->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
 
             if (m_discovery)

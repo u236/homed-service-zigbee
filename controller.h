@@ -47,6 +47,10 @@ private:
     void publishDiscovery(const Device &device, bool remove = false);
     void publishProperties(void);
 
+public slots:
+
+    void quit(void) override;
+
 private slots:
 
     void mqttConnected(void) override;

@@ -29,6 +29,14 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     GPIO::setStatus(m_blinkLedPin, false);
 }
 
+ZigBee::~ZigBee(void)
+{
+    m_devices->storeDatabase();
+    m_adapter->setPermitJoin(false);
+    GPIO::setStatus(m_statusLedPin, false);
+    GPIO::setStatus(m_blinkLedPin, false);
+}
+
 void ZigBee::init(void)
 {
     QList <QString> list = {"ezsp", "zigate", "znp"};
@@ -1092,7 +1100,10 @@ void ZigBee::coordinatorReady(void)
     for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
         if (it.value()->logicalType() == LogicalType::Coordinator && it.key() != ieeeAddress)
+        {
+            logWarning << "Coordinator" << it.value()->ieeeAddress().toHex(':') << "removed";
             m_devices->erase(it++);
+        }
 
         if (it == m_devices->end())
             break;

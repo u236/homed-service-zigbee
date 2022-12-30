@@ -119,6 +119,7 @@ class ZigBee : public QObject
 public:
 
     ZigBee(QSettings *config, QObject *parent);
+    ~ZigBee(void);
 
     enum class Event
     {
