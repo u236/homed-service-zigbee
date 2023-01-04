@@ -72,11 +72,11 @@
   only:
     - /^\d.\d.\d+$/
 
-Build Linux Binary (x86_64):
+Build Linux Binary (amd64):
   extends: .build
   variables:
-    ARCHITECTURE: x86_64
-    QT_BUILD: qt-minimal-x86_64-linux-5.15.4-static
+    ARCHITECTURE: amd64
+    QT_BUILD: qt-minimal-amd64-linux-5.15.4-static
 
 Build Linux Binary (aarch64):
   extends: .build
@@ -106,12 +106,19 @@ Build OpenWRT Binary (mips_24kc):
     QT_BUILD: qt-minimal-mips-openwrt-5.15.4-static
     COMPILER: gcc-mips-openwrt-linux-11.2.0-musl
 
+Build OpenWRT Binary (mipsel_24kc):
+  extends: .build
+  variables:
+    ARCHITECTURE: mips_24kc
+    QT_BUILD: qt-minimal-mipsel-openwrt-5.15.4-static
+    COMPILER: gcc-mipsel-openwrt-linux-11.2.0-musl
+
 Deploy Docker Images:
   stage: deploy
   script:
-  - "cp homed-zigbee-x86_64 deploy/docker/homed-zigbee-amd64"
   - "cp homed-zigbee-aarch64 deploy/docker/homed-zigbee-arm64"
   - "cp homed-zigbee-armhf deploy/docker/homed-zigbee-arm"
+  - "cp homed-zigbee-amd64 deploy/docker/homed-zigbee-amd64"
   - "cp deploy/data/usr/share/homed/zigbee.json deploy/docker/"
   - "docker buildx create --driver-opt network=host --name job_${CI_JOB_ID} --use"
   - "docker buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --push --tag 127.0.0.1:5000/homed-zigbee:${CI_COMMIT_TAG} --tag 127.0.0.1:5000/homed-zigbee:latest deploy/docker/"
@@ -133,6 +140,11 @@ Deploy APT Package (armhf):
   variables:
     ARCHITECTURE: armhf
 
+Deploy APT Package (amd64):
+  extends: .deploy_apt
+  variables:
+    ARCHITECTURE: amd64
+
 Deploy OpenWRT Package (arm_cortex-a9_neon):
   extends: .deploy_ipk
   variables:
@@ -142,3 +154,8 @@ Deploy OpenWRT Package (mips_24kc):
   extends: .deploy_ipk
   variables:
     ARCHITECTURE: mips_24kc
+
+Deploy OpenWRT Package (mipsel_24kc):
+  extends: .deploy_ipk
+  variables:
+    ARCHITECTURE: mipsel_24kc
