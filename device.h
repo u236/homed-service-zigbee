@@ -235,7 +235,7 @@ private:
 
     QFile m_libraryFile, m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_externalDir;
-    bool m_offsets, m_permitJoin;
+    bool m_offsets, m_permitJoin, m_sync;
 
     QString m_adapterType, m_adapterVersion;
 
@@ -245,7 +245,7 @@ private:
     QJsonArray serializeDevices(void);
     QJsonObject serializeProperties(void);
 
-    bool writeFile(QFile &file, const QByteArray &data);
+    bool writeFile(QFile &file, const QByteArray &data, bool sync = false);
 
 private slots:
 

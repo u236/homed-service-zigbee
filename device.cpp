@@ -4,7 +4,7 @@
 #include "device.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
+DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false), m_sync(false)
 {
     PropertyObject::registerMetaTypes();
     ActionObject::registerMetaTypes();
@@ -547,6 +547,7 @@ void DeviceList::removeDevice(const Device &device)
 
 void DeviceList::storeDatabase(void)
 {
+    m_sync = true;
     m_databaseTimer->start(STORE_DATABASE_DELAY);
 }
 
@@ -819,7 +820,7 @@ QJsonObject DeviceList::serializeProperties(void)
     return json;
 }
 
-bool DeviceList::writeFile(QFile &file, const QByteArray &data)
+bool DeviceList::writeFile(QFile &file, const QByteArray &data, bool sync)
 {
     bool check = true;
 
@@ -835,13 +836,11 @@ bool DeviceList::writeFile(QFile &file, const QByteArray &data)
         check = false;
     }
 
-    if (fsync(file.handle()))
-    {
-        logWarning << "File" << file.fileName() << "synchronization failed, error code:" << errno;
-        check = false;
-    }
-
     file.close();
+
+    if (check && sync)
+        system("sync");
+
     return check;
 }
 
@@ -852,7 +851,12 @@ void DeviceList::writeDatabase(void)
     m_databaseTimer->start(STORE_DATABASE_INTERVAL);
     emit statusUpdated(json);
 
-    if (writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
+    if (!m_sync)
+        return;
+
+    m_sync = false;
+
+    if (writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact), true))
         return;
 
     logWarning << "Database not stored, file" << m_databaseFile.fileName() << "error:" << m_databaseFile.errorString();
