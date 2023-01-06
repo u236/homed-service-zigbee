@@ -326,6 +326,24 @@ namespace Number
         ReportingDelay(void) : NumberObject("reportingDelay", "mdi:clock") {}
 
     };
+
+    class Timeout : public NumberObject
+    {
+
+    public:
+
+        Timeout(void) : NumberObject("timeout", "mdi:clock") {}
+
+    };
+
+    class Threshold : public NumberObject
+    {
+
+    public:
+
+        Threshold(void) : NumberObject("threshold", "mdi:percent") {}
+
+    };
 }
 
 namespace Button

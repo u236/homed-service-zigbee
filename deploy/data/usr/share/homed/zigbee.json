@@ -720,8 +720,8 @@
       "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
       "properties":     ["tuyaWaterValve"],
       "actions":        ["tuyaWaterValve"],
-      "discoveries":    [],
-      "options":        {"ignoreClusters": [0]}
+      "discoveries":    ["switch", "timeout", "threshold"],
+      "options":        {"ignoreClusters": [0], "timeoutMin": 0, "timeoutMax": 600, "thresholdMin": 0, "thresholdMax": 100}
     },
     {
       "description":    "TUYA TS0204 Gas Detector",

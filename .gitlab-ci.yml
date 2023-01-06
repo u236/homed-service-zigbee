@@ -109,7 +109,7 @@ Build OpenWRT Binary (mips_24kc):
 Build OpenWRT Binary (mipsel_24kc):
   extends: .build
   variables:
-    ARCHITECTURE: mips_24kc
+    ARCHITECTURE: mipsel_24kc
     QT_BUILD: qt-minimal-mipsel-openwrt-5.15.4-static
     COMPILER: gcc-mipsel-openwrt-linux-11.2.0-musl
 

@@ -1089,7 +1089,7 @@ void PropertiesTUYA::WaterValve::update(quint8 dataPoint, const QVariant &data)
     switch (dataPoint)
     {
         case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
-        case 0x09: map.insert("timer", data.toInt() / 60); break;
+        case 0x09: map.insert("timeout", data.toInt() / 60); break;
         case 0x65: map.insert("threshold", data.toInt()); break;
     }
 

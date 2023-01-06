@@ -31,6 +31,8 @@ void DiscoveryObject::registerMetaTypes(void)
 
     qRegisterMetaType <Number::Pattern>         ("patternDiscovery");
     qRegisterMetaType <Number::ReportingDelay>  ("reportingDelayDiscovery");
+    qRegisterMetaType <Number::Timeout>         ("timeoutDiscovery");
+    qRegisterMetaType <Number::Threshold>       ("thresholdDiscovery");
 
     qRegisterMetaType <Button::ResetCount>      ("resetCountDiscovery");
 }

@@ -268,7 +268,7 @@ namespace ActionsTUYA
 
     public:
 
-        WaterValve(void) : ActionObject("waterValve", CLUSTER_TUYA_DATA, 0x0000, {"status", "timer", "threshold"}) {}
+        WaterValve(void) : ActionObject("waterValve", CLUSTER_TUYA_DATA, 0x0000, {"status", "timeout", "threshold"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

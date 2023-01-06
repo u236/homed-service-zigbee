@@ -530,7 +530,7 @@ QByteArray ActionsTUYA::WaterValve::request(const QString &name, const QVariant 
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
 
-        case 1: // timer
+        case 1: // timeout
         {
             quint32 value = qToBigEndian <quint32> (data.toInt() * 60);
 
