@@ -682,6 +682,15 @@ namespace PropertiesTUYA
 
     };
 
+    class WaterValve : public Data
+    {
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class PresenceSensor : public Data
     {
 

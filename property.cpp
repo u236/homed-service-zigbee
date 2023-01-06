@@ -65,6 +65,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::ElectricityMeter>        ("tuyaElectricityMeterProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostat>          ("tuyaMoesThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
+    qRegisterMetaType <PropertiesTUYA::WaterValve>              ("tuyaWaterValveProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>               ("tuyaChildLockProperty");
     qRegisterMetaType <PropertiesTUYA::BacklightMode>           ("tuyaBacklightModeProperty");
@@ -1076,6 +1077,20 @@ void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
         case 0x0D: map.insert("alarm", data.toBool()); break;
         case 0x0F: map.insert("battery", data.toInt()); break;
         case 0x15: map.insert("melody", data.toInt()); break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::WaterValve::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
+        case 0x09: map.insert("timer", data.toInt() / 60); break;
+        case 0x65: map.insert("threshold", data.toInt()); break;
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

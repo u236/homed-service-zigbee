@@ -263,6 +263,16 @@ namespace ActionsTUYA
 
     };
 
+    class WaterValve : public Request, public ActionObject
+    {
+
+    public:
+
+        WaterValve(void) : ActionObject("waterValve", CLUSTER_TUYA_DATA, 0x0000, {"status", "timer", "threshold"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class PresenceSensor : public Request, public ActionObject
     {
 

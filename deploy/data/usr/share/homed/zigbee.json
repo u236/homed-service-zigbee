@@ -716,6 +716,14 @@
       "options":        {"ignoreClusters": [0]}
     },
     {
+      "description":    "TUYA TS0601 Smart Water Valve",
+      "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
+      "properties":     ["tuyaWaterValve"],
+      "actions":        ["tuyaWaterValve"],
+      "discoveries":    [],
+      "options":        {"ignoreClusters": [0]}
+    },
+    {
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
       "properties":     ["iasGas"],

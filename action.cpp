@@ -25,6 +25,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::ElectricityMeter>       ("tuyaElectricityMeterAction");
     qRegisterMetaType <ActionsTUYA::MoesThermostat>         ("tuyaMoesThermostatAction");
     qRegisterMetaType <ActionsTUYA::NeoSiren>               ("tuyaNeoSirenAction");
+    qRegisterMetaType <ActionsTUYA::WaterValve>             ("tuyaWaterValveAction");
     qRegisterMetaType <ActionsTUYA::PresenceSensor>         ("tuyaPresenceSensorAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>              ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::BacklightMode>          ("tuyaBacklightModeAction");
@@ -513,6 +514,40 @@ QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &d
                 return QByteArray();
 
             return makeRequest(m_transactionId++, 0x15, TUYA_TYPE_ENUM, &value);
+        }
+    }
+
+    return QByteArray();
+}
+
+QByteArray ActionsTUYA::WaterValve::request(const QString &name, const QVariant &data)
+{
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // status
+        {
+            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 1: // timer
+        {
+            quint32 value = qToBigEndian <quint32> (data.toInt() * 60);
+
+            if (value > 36000)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x09, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 2: // threshold
+        {
+            quint32 value = qToBigEndian <quint32> (data.toInt());
+
+            if (value > 100)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_VALUE, &value);
         }
     }
 
