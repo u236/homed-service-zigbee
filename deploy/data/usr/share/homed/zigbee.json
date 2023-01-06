@@ -398,8 +398,8 @@
       "discoveries":    ["battery", "illuminance"]
     },
     {
-      "description":    "Xiaomi Wireless Button WXKG01LM",
-      "modelNames":     ["lumi.sensor_switch"],
+      "description":    "Xiaomi Wireless Button WXKG01LM or WXKG11LM",
+      "modelNames":     ["lumi.sensor_switch", "lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
       "properties":     ["lumiBatteryVoltage", "lumiButtonAction"],
       "discoveries":    ["battery", "action"],
       "options":        {"actions": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
