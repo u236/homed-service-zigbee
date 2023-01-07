@@ -62,7 +62,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "action"],
-      "options":        {"actions": ["singleClick", "doubleClick", "hold"]}
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
     }
   ],
 
@@ -99,14 +99,14 @@
       "modelNames":     ["Button"],
       "properties":     ["batteryPercentage", "ptvoSwitchAction"],
       "discoveries":    ["battery", "action"],
-      "options":        {"actions": ["on", "off"]}
+      "options":        {"action": ["on", "off"]}
     },
     {
       "description":    "PTVO Firmware Based CO2 Sensor",
       "modelNames":     ["CO2 Sensor"],
       "properties":     ["ptvoTemperature", "ptvoCO2", "ptvoSwitchAction"],
       "discoveries":    ["action", "temperature", "co2"],
-      "options":        {"actions": ["on", "off"]}
+      "options":        {"action": ["on", "off"]}
     },
     {
       "description":    "PTVO Firmware Based Smart Plug",
@@ -122,7 +122,7 @@
       "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "discoveries":    ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"], "patternMin": 0, "patternMax": 62},
+      "options":        {"light": ["level", "color", "colorTemperature"]},
       "endpointId":     1
     },
     {
@@ -130,12 +130,14 @@
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "discoveries":    ["pattern"],
+      "options":        {"patternMin": 0, "patternMax": 62},
       "endpointId":     2
     },
     {
       "modelNames":     ["RGB Strip"],
       "properties":     ["ptvoCount"],
       "actions":        ["ptvoCount"],
+      "discoveries":    [],
       "endpointId":     3
     }
   ],
@@ -171,7 +173,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "action"],
-      "options":        {"batteryUndivided": true, "actions": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
+      "options":        {"batteryUndivided": true, "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
     }
   ],
 
@@ -228,14 +230,14 @@
       "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
       "properties":     ["batteryPercentage", "konkeButtonAction"],
       "discoveries":    ["battery", "action"],
-      "options":        {"ignoreClusters": [64704], "actions": ["singleClick", "doubleClick", "hold"]}
+      "options":        {"ignoreClusters": [64704], "action": ["singleClick", "doubleClick", "hold"]}
     },
     {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
       "discoveries":    ["battery", "scene"],
-      "options":        {"scenes": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}},
+      "options":        {"scene": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}},
       "endpointId":     1
     },
     {
@@ -282,7 +284,6 @@
       "modelNames":     ["lumi.ctrl_neutral1"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
-      "options":        {"actions": ["on", "off"]},
       "endpointId":     1
     },
     {
@@ -296,6 +297,7 @@
       "modelNames":     ["lumi.ctrl_neutral1"],
       "properties":     ["lumiButtonAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["on", "off"]},
       "endpointId":     4
     },
     {
@@ -303,7 +305,6 @@
       "modelNames":     ["lumi.ctrl_neutral2"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
-      "options":        {"actions": ["on", "off"]},
       "endpointId":     1
     },
     {
@@ -317,6 +318,7 @@
       "modelNames":     ["lumi.ctrl_neutral2"],
       "properties":     ["lumiButtonAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["on", "off"]},
       "endpointId":     [4, 5]
     },
     {
@@ -326,13 +328,14 @@
       "actions":        ["status"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "discoveries":    ["switch", "energy", "voltage", "power"],
+      "discoveries":    ["switch", "energy", "voltage"],
       "options":        {"switch": "outlet"},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.plug.maeu01"],
       "properties":     ["lumiPower"],
+      "discoveries":    ["power"],
       "endpointId":     21
     },
     {
@@ -402,7 +405,7 @@
       "modelNames":     ["lumi.sensor_switch", "lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
       "properties":     ["lumiBatteryVoltage", "lumiButtonAction"],
       "discoveries":    ["battery", "action"],
-      "options":        {"actions": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
+      "options":        {"action": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
     },
     {
       "description":    "Aqara Opple 2-band Wireless Switch WXCJKG11LM",
@@ -411,13 +414,13 @@
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status"],
       "discoveries":    ["battery"],
-      "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.remote.b286opcn01"],
       "properties":     ["lumiSwitchAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     [1, 2]
     },
     {
@@ -427,13 +430,13 @@
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "discoveries":    ["battery"],
-      "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.remote.b486opcn01"],
       "properties":     ["lumiSwitchAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     [1, 2, 3, 4]
     },
     {
@@ -443,13 +446,13 @@
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "discoveries":    ["battery"],
-      "options":        {"actions": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.remote.b686opcn01"],
       "properties":     ["lumiSwitchAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
@@ -457,7 +460,7 @@
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBatteryVoltage"],
       "discoveries":    ["action"],
-      "options":        {"actions": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"]},
+      "options":        {"action": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"]},
       "endpointId":     1
     },
     {
@@ -797,20 +800,20 @@
       "modelNames":     ["TS0041"],
       "properties":     ["batteryPercentage", "tuyaButtonAction"],
       "discoveries":    ["battery", "action"],
-      "options":        {"actions": ["singleClick", "doubleClick", "hold"]}
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
     },
     {
       "description":    "TUYA TS0042 2-Button Wireless Switch",
       "modelNames":     ["TS0042"],
       "properties":     ["batteryPercentage"],
       "discoveries":    ["battery"],
-      "options":        {"actions": ["singleClick", "doubleClick", "hold"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["TS0043"],
       "properties":     ["tuyaButtonAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
       "endpointId":     [1, 2]
     },
     {
@@ -818,13 +821,13 @@
       "modelNames":     ["TS0043"],
       "properties":     ["batteryPercentage"],
       "discoveries":    ["battery"],
-      "options":        {"actions": ["singleClick", "doubleClick", "hold"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["TS0043"],
       "properties":     ["tuyaButtonAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
       "endpointId":     [1, 2, 3]
     },
     {
@@ -832,13 +835,13 @@
       "modelNames":     ["TS0044"],
       "properties":     ["batteryPercentage"],
       "discoveries":    ["battery"],
-      "options":        {"actions": ["singleClick", "doubleClick", "hold"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["TS0044"],
       "properties":     ["tuyaButtonAction"],
       "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
       "endpointId":     [1, 2, 3, 4]
     }
   ]

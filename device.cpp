@@ -117,7 +117,9 @@ void DeviceList::setupDevice(const Device &device)
     QJsonArray array;
 
     updateIdentity(manufacturerName, modelName);
+
     device->setSupported(false);
+    device->options().clear();
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
@@ -179,7 +181,7 @@ void DeviceList::setupDevice(const Device &device)
                     device->setDescription(json.value("description").toString());
 
                 if (json.contains("options"))
-                    device->options() = json.value("options").toObject().toVariantMap();
+                    device->options().insert(json.value("options").toObject().toVariantMap());
 
                 if (m_optionsFile.open(QFile::ReadOnly))
                 {
@@ -197,10 +199,13 @@ void DeviceList::setupDevice(const Device &device)
                     m_optionsFile.close();
                 }
 
+                if(!json.contains("properties"))
+                    continue;
+
                 for (int i = 0; i < list.count(); i++)
                     setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
 
-                check = true;
+                check = true; // TODO: recognize if all device endpoints has no properties
             }
         }
 

@@ -118,9 +118,15 @@ QJsonObject ButtonObject::reqest(void)
 
 QJsonObject LightObject::reqest(void)
 {
-    QList <QVariant> options = deviceOption("light").toList();
+    QList <QString> options;
     QString commandOnTemplate = "\"status\":\"on\"";
     QJsonObject json;
+
+    if (m_parent)
+        options = deviceOption(QString("light-%1").arg(reinterpret_cast <EndpointObject*> (m_parent)->id())).toStringList();
+
+    if (options.isEmpty())
+        options = deviceOption("light").toStringList();
 
     if (options.contains("level"))
     {

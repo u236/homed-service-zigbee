@@ -25,12 +25,14 @@ Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(ge
 
 void Controller::publishDiscovery(const Device &device, bool remove)
 {
+    QMap <QString, QVariant> endpointNames = device->options().value("endpointNames").toMap();
+
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->discoveries().count(); i++)
         {
             const Discovery &discovery = it.value()->discoveries().at(i);
-            QString id = discovery->multiple() ? QString::number(it.key()) : QString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
+            QString id = discovery->multiple() ? QString::number(it.key()) : QString(), name = endpointNames.value(id).toString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
             QList <QString> object = {discovery->name()};
             QJsonObject json, node;
             QJsonArray availability;
@@ -67,13 +69,13 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                 json.insert("availability", availability);
                 json.insert("availability_mode", "all");
                 json.insert("device", node);
-                json.insert("name", QString("%1 %2").arg(device->name(), object.join(' ')));
+                json.insert("name", QString("%1 %2").arg(device->name(), name.isEmpty() ? object.join(' ') : name));
                 json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
             }
 
             if (discovery->name() == "action" || discovery->name() == "scene")
             {
-                QList <QString> list = discovery->name() == "action" ? device->options().value("actions").toStringList() : QVariant(device->options().value("scenes").toMap().values()).toStringList();
+                QList <QString> list = discovery->name() == "action" ? device->options().value("action").toStringList() : QVariant(device->options().value("scene").toMap().values()).toStringList();
 
                 for (int i = 0; i < list.count(); i++)
                 {
@@ -88,7 +90,7 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                         item.insert("automation_type", "trigger");
                         item.insert("device", node);
                         item.insert("payload", event.at(0));
-                        item.insert("subtype", event.join(' '));
+                        item.insert("subtype", name.isEmpty() ? event.join(' ') : QString("%1 %2").arg(name, list.at(i)));
                         item.insert("topic", mqttTopic("fd/zigbee/%1").arg(topic));
                         item.insert("type", discovery->name());
                         item.insert("value_template", QString("{{ value_json.%1 }}").arg(discovery->name()));
