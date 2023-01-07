@@ -381,7 +381,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_COLOR_CONTROL:
 
-                    if (!device->batteryPowered() && it.value()->colorCapabilities())
+                    if (!device->batteryPowered() && it.value()->colorCapabilities() && it.value()->colorCapabilities() <= 0x001F)
                     {
                         QList <QVariant> options = device->options().value("light").toList();
 

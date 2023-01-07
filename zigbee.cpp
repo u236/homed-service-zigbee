@@ -580,14 +580,16 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
     if (clusterId == CLUSTER_COLOR_CONTROL && attributeId == 0x400A)
     {
+        quint16 value = 0xFFFF;
+
         if (dataType == DATA_TYPE_16BIT_BITMAP)
         {
-            quint16 value;
             memcpy(&value, data.constData(), data.length());
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", value);
-            endpoint->setColorCapabilities(value);
+            value = qFromLittleEndian(value);
         }
 
+        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", value);
+        endpoint->setColorCapabilities(value);
         interviewDevice(device);
         return;
     }
@@ -620,6 +622,8 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                     return;
 
                 memcpy(&value, data.constData(), data.length());
+                value = qFromLittleEndian(value);
+
                 logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", value);
                 endpoint->setZoneType(value);
                 break;
