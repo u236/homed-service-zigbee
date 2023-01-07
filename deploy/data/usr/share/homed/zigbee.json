@@ -66,6 +66,31 @@
     }
   ],
 
+  "GLEDOPTO":
+  [
+    {
+      "description":    "GLEDOPTO RGBW Led Controller GL-C-007",
+      "modelNames":     ["GL-C-007"],
+      "options":        {"endpointNames": {"11": "RGB", "15": "White"}}
+    },
+    {
+      "modelNames":     ["GL-C-007"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "discoveries":    ["light"],
+      "options":        {"light-11": ["level", "color", "colorTemperature"]},
+      "endpointId":     [11]
+    },
+    {
+      "modelNames":     ["GL-C-007"],
+      "properties":     ["status", "level"],
+      "actions":        ["status", "level"],
+      "discoveries":    ["light"],
+      "options":        {"light-15": ["level"]},
+      "endpointId":     [15]
+    }
+  ],
+
   "HaiPaiTech":
   [
     {
@@ -302,6 +327,10 @@
     },
     {
       "description":    "Aqara 2-Channel Wall Switch QBKG03LM",
+      "modelNames":     ["lumi.ctrl_neutral2"],
+      "options":        {"endpointNames": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}}
+    },
+    {
       "modelNames":     ["lumi.ctrl_neutral2"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
