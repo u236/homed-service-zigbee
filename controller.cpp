@@ -75,7 +75,13 @@ void Controller::publishDiscovery(const Device &device, bool remove)
 
             if (discovery->name() == "action" || discovery->name() == "scene")
             {
-                QList <QString> list = discovery->name() == "action" ? device->options().value("action").toStringList() : QVariant(device->options().value("scene").toMap().values()).toStringList();
+                QVariant data = device->options().value(QString("%1-%2").arg(discovery->name(), QString::number(it.key())));
+                QList <QString> list;
+
+                if (!data.isValid())
+                    data = device->options().value(discovery->name());
+
+                list = discovery->name() == "action" ? data.toStringList() : QVariant(data.toMap().values()).toStringList();
 
                 for (int i = 0; i < list.count(); i++)
                 {

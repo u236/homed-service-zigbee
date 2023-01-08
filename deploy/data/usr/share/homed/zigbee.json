@@ -78,7 +78,7 @@
       "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "discoveries":    ["light"],
-      "options":        {"light-11": ["level", "color", "colorTemperature"]},
+      "options":        {"light": ["level", "color", "colorTemperature"]},
       "endpointId":     [11]
     },
     {
@@ -86,7 +86,7 @@
       "properties":     ["status", "level"],
       "actions":        ["status", "level"],
       "discoveries":    ["light"],
-      "options":        {"light-15": ["level"]},
+      "options":        {"light": ["level"]},
       "endpointId":     [15]
     }
   ],

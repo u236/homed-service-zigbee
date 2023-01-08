@@ -165,8 +165,6 @@ void DeviceList::setupDevice(const Device &device)
 
     if (!array.isEmpty())
     {
-        bool check = false;
-
         for (auto it = array.begin(); it != array.end(); it++)
         {
             QJsonObject json = it->toObject();
@@ -181,44 +179,50 @@ void DeviceList::setupDevice(const Device &device)
                     device->setDescription(json.value("description").toString());
 
                 if (json.contains("options"))
-                    device->options().insert(json.value("options").toObject().toVariantMap());
-
-                if (m_optionsFile.open(QFile::ReadOnly))
                 {
-                    QString key = device->ieeeAddress().toHex(':');
-                    QJsonObject json = QJsonDocument::fromJson(m_optionsFile.readAll()).object(), item = json.value(json.contains(key) ? key : device->name()).toObject();
+                    QJsonObject options = json.value("options").toObject();
 
-                    for (auto it = item.begin(); it != item.end(); it++)
-                    {
-                        if (!m_offsets && it.key().contains("Offset"))
-                            continue;
-
-                        device->options().insert(it.key(), it.value().toVariant());
-                    }
-
-                    m_optionsFile.close();
+                    if (endpoinId.type() == QJsonValue::Array)
+                        for (auto it = options.begin(); it != options.end(); it++)
+                            for (int i = 0; i < list.count(); i++)
+                                device->options().insert(QString("%1-%2").arg(it.key(), list.at(i).toString()), it.value().toVariant());
+                    else
+                        device->options().insert(options.toVariantMap());
                 }
 
-                if(!json.contains("properties"))
-                    continue;
+                if (json.contains("properties"))
+                {
+                    for (int i = 0; i < list.count(); i++)
+                        setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
 
-                for (int i = 0; i < list.count(); i++)
-                    setupEndpoint(endpoint(device, static_cast <quint8> (list.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
-
-                check = true; // TODO: recognize if all device endpoints has no properties
+                    device->setSupported(true);
+                }
             }
-        }
-
-        if (check)
-        {
-            device->setSupported(true);
-            return;
         }
     }
 
-    logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "unrecognized";
-    device->setDescription(QString("Unsupported Device %1/%2").arg(device->manufacturerName(), device->modelName()));
-    recognizeDevice(device);
+    if (m_optionsFile.open(QFile ::ReadOnly))
+    {
+        QString key = device->ieeeAddress().toHex(':');
+        QJsonObject data = QJsonDocument::fromJson(m_optionsFile.readAll()).object(), options = data.value(data.contains(key) ? key : device->name()).toObject();
+
+        for (auto it = options.begin(); it != options.end(); it++)
+        {
+            if (!m_offsets && it.key().contains("Offset"))
+                continue;
+
+            device->options().insert(it.key(), it.value().toVariant());
+        }
+
+        m_optionsFile.close();
+    }
+
+    if (!device->supported()) // TODO: recognize if all device endpoints has no properties
+    {
+        logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "unrecognized";
+        device->setDescription(QString("Unsupported Device %1/%2").arg(device->manufacturerName(), device->modelName()));
+        recognizeDevice(device);
+    }
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
