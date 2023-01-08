@@ -76,17 +76,12 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
     return it.value();
 }
 
-void DeviceList::updateIdentity(QString &manufacturerName, QString &modelName)
+void DeviceList::updateIdentity(const Device &device, QString &manufacturerName, QString &modelName)
 {
     QList <QString> lumi = {"aqara", "XIAOMI"}, orvibo = {"\u4e2d\u6027", "\u6b27\u745e", "\u94fe\u878d"};
-    QList <QString> tuya =
-    {
-        "TS0001", "TS0002", "TS0004", "TS0004", "TS0006",
-        "TS0011", "TS0012", "TS0013", "TS0014", "TS011F", "TS0121",
-        "TS0041", "TS0042", "TS0043", "TS0044",
-        "TS0201", "TS0202", "TS0203", "TS0204", "TS0205", "TS0207",
-        "TS0601"
-    };
+
+    manufacturerName = device->manufacturerName();
+    modelName = device->modelName();
 
     if (lumi.contains(manufacturerName))
     {
@@ -100,7 +95,24 @@ void DeviceList::updateIdentity(QString &manufacturerName, QString &modelName)
         return;
     }
 
-    if (tuya.contains(modelName))
+    if (manufacturerName == "GLEDOPTO" && modelName == "GL-C-007")
+    {
+        QMap <quint8, quint16> map;
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+            map.insert(it.key(), it.value()->deviceId());
+
+        if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {13, 0x0210}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {12, 0x0102}, {13, 0xE15E}})
+            modelName = "GL-C-007-1ID";
+        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {13, 0xE15E}, {15, 0x0100}})
+            modelName = "GL-C-007-2ID";
+        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {13, 0x0210}, {15, 0x0220}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {12, 0x0102}, {13, 0xE15E}, {15, 0x0100}})
+            modelName = "GL-C-008-2ID";
+
+        return;
+    }
+
+    if (QRegExp("^TS\\d{3}[0-9F]$").exactMatch(modelName))
     {
         QList <QString> list = {"TS0001", "TS0011", "TS011F", "TS0201", "TS0202", "TS0207", "TS0601"};
 
@@ -113,10 +125,10 @@ void DeviceList::updateIdentity(QString &manufacturerName, QString &modelName)
 
 void DeviceList::setupDevice(const Device &device)
 {
-    QString manufacturerName = device->manufacturerName(), modelName = device->modelName();
+    QString manufacturerName, modelName;
     QJsonArray array;
 
-    updateIdentity(manufacturerName, modelName);
+    updateIdentity(device, manufacturerName, modelName);
 
     device->setSupported(false);
     device->options().clear();
@@ -201,7 +213,7 @@ void DeviceList::setupDevice(const Device &device)
         }
     }
 
-    if (m_optionsFile.open(QFile ::ReadOnly))
+    if (m_optionsFile.open(QFile::ReadOnly))
     {
         QString key = device->ieeeAddress().toHex(':');
         QJsonObject data = QJsonDocument::fromJson(m_optionsFile.readAll()).object(), options = data.value(data.contains(key) ? key : device->name()).toObject();
