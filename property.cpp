@@ -414,18 +414,26 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
     {
         case 0x01:
         case 0x05:
-            m_value = payload.at(0) ? "moveLevelDown" : "moveLevelUp";
+        {
+            const moveLevelStruct *data = reinterpret_cast <const moveLevelStruct*> (payload.constData());
+            m_value = QMap <QString, QVariant> ({{"action", data->mode ? "moveLevelDown" : "moveLevelUp"}, {"moveRate", data->rate}});
             break;
+        }
 
         case 0x02:
         case 0x06:
-            m_value = payload.at(0) ? "stepLevelDown" : "stepLevelUp";
+        {
+            const stepLevelStruct *data = reinterpret_cast <const stepLevelStruct*> (payload.constData());
+            m_value = QMap <QString, QVariant> ({{"action", data->mode ? "stepLevelDown" : "stepLevelUp"}, {"stepSize", data->size}});
             break;
+        }
 
         case 0x03:
         case 0x07:
+        {
             m_value = "stopLevel";
             break;
+        }
     }
 }
 
@@ -433,27 +441,59 @@ void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &p
 {
     switch (commandId)
     {
-        case 0x4B:
+        case 0x01:
+        {
+            const moveHueStruct *data = reinterpret_cast <const moveHueStruct*> (payload.constData());
 
-            switch (payload.at(0))
-            {
-                case 0x00: m_value = "stopColorTemperature"; break;
-                case 0x01: m_value = "moveColorTemperatureUp"; break;
-                case 0x03: m_value = "moveColorTemperatureDown"; break;
-            }
+            if (data->mode)
+                m_value = QMap <QString, QVariant> ({{"action", data->mode == 0x01 ? "moveHueUp" : "moveHueDown"}, {"moveRate", data->rate}});
+            else
+                m_value = "stopHue";
 
             break;
+        }
 
+        case 0x04:
+        {
+            const moveSaturationStruct *data = reinterpret_cast <const moveSaturationStruct*> (payload.constData());
+
+            if (data->mode)
+                m_value = QMap <QString, QVariant> ({{"action", data->mode == 0x01 ? "moveSaturationUp" : "moveSaturationDown"}, {"moveRate", data->rate}});
+            else
+                m_value = "stopSaturation";
+
+            break;
+        }
+
+        case 0x47:
+        {
+            m_value = "stopColor";
+            break;
+        }
+
+        case 0x4B:
+        {
+            const moveColorTemperatureStruct *data = reinterpret_cast <const moveColorTemperatureStruct*> (payload.constData());
+
+            if (data->mode)
+                m_value = QMap <QString, QVariant> ({{"action", data->mode == 0x01 ? "moveColorTemperatureUp" : "moveColorTemperatureDown"}, {"moveRate", qFromLittleEndian(data->rate)}});
+            else
+                m_value = "stopColorTemperature";
+
+            break;
+        }
 
         case 0x4C:
+        {
+            const stepColorTemperatureStruct *data = reinterpret_cast <const stepColorTemperatureStruct*> (payload.constData());
 
-            switch (payload.at(0))
-            {
-                case 0x01: m_value = "stepColorTemperatureUp"; break;
-                case 0x03: m_value = "stepColorTemperatureDown"; break;
-            }
+            if (data->mode)
+                m_value = QMap <QString, QVariant> ({{"action", data->mode == 0x01 ? "stepColorTemperatureUp" : "stepColorTemperatureDown"}, {"stepSize", qFromLittleEndian(data->size)}});
+            else
+                m_value = "stopColorTemperature";
 
             break;
+        }
     }
 }
 

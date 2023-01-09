@@ -102,11 +102,11 @@ void DeviceList::updateIdentity(const Device &device, QString &manufacturerName,
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             map.insert(it.key(), it.value()->deviceId());
 
-        if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {13, 0x0210}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {12, 0x0102}, {13, 0xE15E}})
+        if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0x0210}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0C, 0x0102}, {0x0D, 0xE15E}})
             modelName = "GL-C-007-1ID";
-        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {13, 0xE15E}, {15, 0x0100}})
+        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0xE15E}, {0x0F, 0x0100}})
             modelName = "GL-C-007-2ID";
-        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {13, 0x0210}, {15, 0x0220}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {12, 0x0102}, {13, 0xE15E}, {15, 0x0100}})
+        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0xE15E}, {0x0F, 0x0220}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0C, 0x0102}, {0x0D, 0xE15E}, {0x0F, 0x0100}})
             modelName = "GL-C-008-2ID";
 
         return;

@@ -149,6 +149,19 @@ struct moveToLevelStruct
     quint16 time;
 };
 
+struct moveLevelStruct
+{
+    quint8  mode;
+    quint8  rate;
+};
+
+struct stepLevelStruct
+{
+    quint8  mode;
+    quint8  size;
+    quint16 time;
+};
+
 struct otaFileHeaderStruct
 {
     quint32 fileIdentifier;
@@ -193,7 +206,7 @@ struct otaImageBlockRequestStruct
     quint16 imageType;
     quint32 fileVersion;
     quint32 fileOffset;
-    quint8  dataSizeMax;
+    quint8  maxDataSize;
 };
 
 struct otaImageBlockResponseStruct
@@ -223,6 +236,18 @@ struct otaUpgradeEndResponseStruct
     quint32 upgradeTime;
 };
 
+struct moveHueStruct
+{
+    quint8  mode;
+    quint8  rate;
+};
+
+struct moveSaturationStruct
+{
+    quint8  mode;
+    quint8  rate;
+};
+
 struct moveToColorXYStruct
 {
     quint16 colorX;
@@ -241,6 +266,23 @@ struct moveToColorTemperatureStruct
 {
     quint16 temperature;
     quint16 time;
+};
+
+struct moveColorTemperatureStruct
+{
+    quint8  mode;
+    quint16 rate;
+    quint16 minMireds;
+    quint16 maxMireds;
+};
+
+struct stepColorTemperatureStruct
+{
+    quint8  mode;
+    quint16 size;
+    quint16 time;
+    quint16 minMireds;
+    quint16 maxMireds;
 };
 
 struct iasZoneEnrollResponseStruct

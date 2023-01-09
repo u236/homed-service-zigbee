@@ -789,7 +789,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 }
 
                 file.seek(qFromLittleEndian(request->fileOffset));
-                block = file.read(request->dataSizeMax);
+                block = file.read(request->maxDataSize);
 
                 // TODO: use percentage here
                 logInfo << "Device" << device->name() << "OTA upgrade writing" << block.length() << "bytes with offset" << QString::asprintf("0x%04x", qFromLittleEndian(request->fileOffset));
