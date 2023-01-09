@@ -1,10 +1,11 @@
 .build:
   stage: build
   script:
-  - "[ ! -z \"${COMPILER}\" ] && export PATH=\"$PATH:/opt/${COMPILER}/bin\""
-  - "[ ! -z \"${COMPILER}\" ] && export STAGING_DIR=\"/opt/${COMPILER}\""
+  - "export PATH=\"$PATH:/opt/${COMPILER}/bin\""
+  - "export STAGING_DIR=\"/opt/${COMPILER}\""
   - "/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro"
   - "make -j8"
+  after_script:
   - "cp homed-zigbee homed-zigbee-${ARCHITECTURE}"
   artifacts:
     paths:
@@ -77,6 +78,8 @@ Build Linux Binary (amd64):
   variables:
     ARCHITECTURE: amd64
     QT_BUILD: qt-minimal-amd64-linux-5.15.4-static
+  script:
+    - "docker run --rm -v /opt/${QT_BUILD}:/opt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j8\""
 
 Build Linux Binary (aarch64):
   extends: .build
