@@ -494,7 +494,7 @@ bool EZSP::startCoordinator(void)
         if (!sendFrame(FRAME_REGISTER_ENDPOINT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
         {
             logWarning << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "register request failed";
-            return false;
+            continue;
         }
 
         logInfo << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "registered successfully";

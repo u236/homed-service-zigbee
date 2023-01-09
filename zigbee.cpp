@@ -846,7 +846,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         quint32 value = now.toTime_t();
         tuyaTimeStruct response;
 
-        logInfo << "Device" << device->name() << "requested TUYA time synchronization";
+        if (m_debug)
+            logInfo << "Device" << device->name() << "requested TUYA time synchronization";
 
         response.payloadSize = qToLittleEndian <quint16> (8);
         response.utcTimestamp = qToBigEndian(value);
@@ -924,19 +925,28 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     switch (attributeId)
                     {
                         case 0x0000:
-                            logInfo << "Device" << device->name() << "requested UTC time";
+
+                            if (m_debug)
+                                logInfo << "Device" << device->name() << "requested UTC time";
+
                             value = qToLittleEndian <quint32> (now.toTime_t() - 946684800);
                             response.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0002:
-                            logInfo << "Device" << device->name() << "requested time zone";
+
+                            if (m_debug)
+                                logInfo << "Device" << device->name() << "requested time zone";
+
                             value = qToLittleEndian <quint32> (now.offsetFromUtc());
                             response.append(1, static_cast <char> (DATA_TYPE_32BIT_SIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0007:
-                            logInfo << "Device" << device->name() << "requested local time";
+
+                            if (m_debug)
+                                logInfo << "Device" << device->name() << "requested local time";
+
                             value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - 946684800);
                             response.append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
