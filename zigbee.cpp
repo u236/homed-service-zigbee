@@ -552,16 +552,6 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                     return;
 
                 device->setModelName(QString(data).trimmed());
-
-                if (device->manufacturerName().isEmpty() && device->modelName().startsWith("lumi.sensor")) // some LUMI devices send modelName attribute on join
-                {
-                    device->setManufacturerCode(0x115F);
-                    device->setPowerSource(POWER_SOURCE_BATTERY);
-                    device->setManufacturerName("LUMI");
-                    interviewFinished(device);
-                    return;
-                }
-
                 break;
 
             case 0x0007:
@@ -1571,6 +1561,15 @@ void ZigBee::deviceTimeout(void)
 
     if (!device->interviewFinished())
     {
+        if (device->modelName().startsWith("lumi")) // some LUMI devices send modelName attribute on join
+        {
+            device->setManufacturerCode(0x1037);
+            device->setPowerSource(POWER_SOURCE_BATTERY);
+            device->setManufacturerName("LUMI");
+            interviewFinished(device);
+            return;
+        }
+
         logWarning << "Device" << device->name() << "interview timed out";
         emit deviceEvent(device, Event::interviewTimeout);
         return;

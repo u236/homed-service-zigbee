@@ -3,8 +3,8 @@
 
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define PING_DEVICES_INTERVAL           300000
-#define DEVICE_REJOIN_TIMEOUT           10000
-#define DEVICE_INTERVIEW_TIMEOUT        15000
+#define DEVICE_REJOIN_TIMEOUT           5000
+#define DEVICE_INTERVIEW_TIMEOUT        10000
 #define STATUS_LED_TIMEOUT              500
 
 #include <QMetaEnum>
