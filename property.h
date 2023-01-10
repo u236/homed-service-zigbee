@@ -57,7 +57,8 @@ protected:
     quint8 deviceVersion(void);
     QString deviceManufacturerName(void);
     QString deviceModelName(void);
-    QVariant deviceOption(const QString &key);
+
+    QVariant endpointOption(const QString &name);
 
 };
 

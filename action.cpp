@@ -38,10 +38,16 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>      ("perenioSmartPlugAction");
 }
 
-QVariant ActionObject::deviceOption(const QString &key)
+QVariant ActionObject::endpointOption(const QString &name)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
+    QVariant value;
+
+    if (!endpoint || endpoint->device().isNull())
+        return value;
+
+    value = endpoint->device()->options().value(QString("%1-%2").arg(name, QString::number(endpoint->id())));
+    return value.isValid() ? value : endpoint->device()->options().value(name);
 }
 
 Property ActionObject::endpointProperty(const QString &name)
@@ -333,7 +339,7 @@ QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &
     if (value > 100)
         value = 100;
 
-    if (deviceOption("invertCover").toBool())
+    if (endpointOption("invertCover").toBool())
         value = 100 - value;
 
     value = qToLittleEndian(value);

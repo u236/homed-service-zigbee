@@ -34,7 +34,7 @@ protected:
     QObject *m_parent;
     bool m_multiple;
 
-    QVariant deviceOption(const QString &key);
+    QVariant endpointOption(const QString &name);
 
 };
 

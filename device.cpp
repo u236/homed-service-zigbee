@@ -524,6 +524,8 @@ void DeviceList::recognizeDevice(const Device &device)
             {
                 const Action &action = it.value()->actions().at(i);
 
+                action->setParent(it.value().data());
+
                 if (list.contains(action->name()))
                     continue;
 

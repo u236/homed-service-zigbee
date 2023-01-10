@@ -37,10 +37,16 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Button::ResetCount>      ("resetCountDiscovery");
 }
 
-QVariant DiscoveryObject::deviceOption(const QString &key)
+QVariant DiscoveryObject::endpointOption(const QString &name)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
+    QVariant value;
+
+    if (!endpoint || endpoint->device().isNull())
+        return value;
+
+    value = endpoint->device()->options().value(QString("%1-%2").arg(name, QString::number(endpoint->id())));
+    return value.isValid() ? value : endpoint->device()->options().value(name);
 }
 
 QJsonObject BinaryObject::reqest(void)
@@ -51,7 +57,7 @@ QJsonObject BinaryObject::reqest(void)
     switch (list.indexOf(m_name))
     {
         case 0:  break;
-        case 1:  json.insert("device_class",    deviceOption("contact").toString() == "window" ? "window" : "door"); break;
+        case 1:  json.insert("device_class",    endpointOption("contact").toString() == "window" ? "window" : "door"); break;
         case 2:  json.insert("device_class",    "moisture"); break;
         default: json.insert("device_class",    m_name); break;
     }
@@ -90,8 +96,8 @@ QJsonObject SensorObject::reqest(void)
 
 QJsonObject NumberObject::reqest(void)
 {
-    QVariant min = deviceOption(QString("%1Min").arg(m_name)), max = deviceOption(QString("%1Max").arg(m_name));
-    QString unit = deviceOption(QString("%1Unit").arg(m_name)).toString();
+    QVariant min = endpointOption(QString("%1Min").arg(m_name)), max = endpointOption(QString("%1Max").arg(m_name));
+    QString unit = endpointOption(QString("%1Unit").arg(m_name)).toString();
     QJsonObject json;
 
     if (min.isValid())
@@ -118,23 +124,17 @@ QJsonObject ButtonObject::reqest(void)
 
 QJsonObject LightObject::reqest(void)
 {
-    QList <QString> options;
+    QList <QString> list = endpointOption("light").toStringList();
     QString commandOnTemplate = "\"status\":\"on\"";
     QJsonObject json;
 
-    if (m_parent)
-        options = deviceOption(QString("light-%1").arg(reinterpret_cast <EndpointObject*> (m_parent)->id())).toStringList();
-
-    if (options.isEmpty())
-        options = deviceOption("light").toStringList();
-
-    if (options.contains("level"))
+    if (list.contains("level"))
     {
         commandOnTemplate.append(               "{% if brightness is defined %},\"level\":{{ brightness }}{% endif %}");
         json.insert("brightness_template",      "{{ value_json.level }}");
     }
 
-    if (options.contains("color"))
+    if (list.contains("color"))
     {
         commandOnTemplate.append(               "{% if red is defined and green is defined and blue is defined %},\"color\":[{{ red }},{{ green }},{{ blue }}]{% endif %}");
         json.insert("red_template",             "{{ value_json.color[0] }}");
@@ -142,9 +142,9 @@ QJsonObject LightObject::reqest(void)
         json.insert("blue_template",            "{{ value_json.color[2] }}");
     }
 
-    if (options.contains("colorTemperature"))
+    if (list.contains("colorTemperature"))
     {
-        int min = deviceOption("colorTemperatureMin").toInt(), max = deviceOption("colorTemperatureMax").toInt();
+        int min = endpointOption("colorTemperatureMin").toInt(), max = endpointOption("colorTemperatureMax").toInt();
 
         commandOnTemplate.append(               "{% if color_temp is defined %},\"colorTemperature\":{{ color_temp }}{% endif %}");
         json.insert("color_temp_template",      "{{ value_json.colorTemperature }}");
@@ -166,7 +166,7 @@ QJsonObject SwitchObject::reqest(void)
 {
     QJsonObject json;
 
-    json.insert("device_class",                 deviceOption("switch").toString() == "outlet" ? "outlet" : "switch");
+    json.insert("device_class",                 endpointOption("switch").toString() == "outlet" ? "outlet" : "switch");
     json.insert("payload_on",                   "{\"status\":\"on\"}");
     json.insert("payload_off",                  "{\"status\":\"off\"}");
     json.insert("state_on",                     "on");

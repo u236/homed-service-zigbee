@@ -164,7 +164,7 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
             case 0x1A: buffer.append(0x7D).append(0x3A); break;
             case 0x7D: buffer.append(0x7D).append(0x5D); break;
             case 0x7E: buffer.append(0x7D).append(0x5E); break;
-            default: buffer.append(request.at(i)); break;
+            default:   buffer.append(request.at(i)); break;
         }
     }
 

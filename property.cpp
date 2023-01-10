@@ -120,10 +120,16 @@ QString PropertyObject::deviceModelName(void)
     return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->modelName() : QString();
 }
 
-QVariant PropertyObject::deviceOption(const QString &key)
+QVariant PropertyObject::endpointOption(const QString &name)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
+    QVariant value;
+
+    if (!endpoint || endpoint->device().isNull())
+        return value;
+
+    value = endpoint->device()->options().value(QString("%1-%2").arg(name, QString::number(endpoint->id())));
+    return value.isValid() ? value : endpoint->device()->options().value(name);
 }
 
 void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -139,7 +145,7 @@ void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, const QBy
     if (attributeId != 0x0021)
         return;
 
-    m_value = static_cast <quint8> (data.at(0)) / (deviceOption("batteryUndivided").toBool() ? 1.0 : 2.0);
+    m_value = static_cast <quint8> (data.at(0)) / (endpointOption("batteryUndivided").toBool() ? 1.0 : 2.0);
 }
 
 void Properties::DeviceTemperature::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -150,7 +156,7 @@ void Properties::DeviceTemperature::parseAttribte(quint16 attributeId, const QBy
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) + deviceOption("temperatureOffset").toDouble();
+    m_value = qFromLittleEndian(value) + endpointOption("temperatureOffset").toDouble();
 }
 
 void Properties::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -204,7 +210,7 @@ void Properties::CoverPosition::parseAttribte(quint16 attributeId, const QByteAr
     if (attributeId != 0x0008)
         return;
 
-    m_value = deviceOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
+    m_value = endpointOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
 }
 
 void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -212,7 +218,7 @@ void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray 
     if (attributeId != 0x0009)
         return;
 
-    m_value = deviceOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
+    m_value = endpointOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
 }
 
 void Properties::ColorHS::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -281,7 +287,7 @@ void Properties::Illuminance::parseAttribte(quint16 attributeId, const QByteArra
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0) + deviceOption("illuminanceOffset").toDouble();
+    m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0) + endpointOption("illuminanceOffset").toDouble();
 }
 
 void Properties::Temperature::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -292,7 +298,7 @@ void Properties::Temperature::parseAttribte(quint16 attributeId, const QByteArra
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble();
+    m_value = qFromLittleEndian(value) / 100.0 + endpointOption("temperatureOffset").toDouble();
 }
 
 void Properties::Pressure::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -303,7 +309,7 @@ void Properties::Pressure::parseAttribte(quint16 attributeId, const QByteArray &
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 10.0 + deviceOption("pressureOffset").toDouble();
+    m_value = qFromLittleEndian(value) / 10.0 + endpointOption("pressureOffset").toDouble();
 }
 
 void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -314,7 +320,7 @@ void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0 + deviceOption("humidityOffset").toDouble();
+    m_value = qFromLittleEndian(value) / 100.0 + endpointOption("humidityOffset").toDouble();
 }
 
 void Properties::Occupancy::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -333,7 +339,7 @@ void Properties::Moisture::parseAttribte(quint16 attributeId, const QByteArray &
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0 + deviceOption("moistureOffset").toDouble();
+    m_value = qFromLittleEndian(value) / 100.0 + endpointOption("moistureOffset").toDouble();
 }
 
 void Properties::Occupancy::resetValue(void)
@@ -343,7 +349,7 @@ void Properties::Occupancy::resetValue(void)
 
 void Properties::Energy::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    double divider = deviceOption("energyDivider").toDouble();
+    double divider = endpointOption("energyDivider").toDouble();
     qint64 value = 0;
 
     if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
@@ -355,44 +361,44 @@ void Properties::Energy::parseAttribte(quint16 attributeId, const QByteArray &da
 
 void Properties::Voltage::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    double divider = deviceOption("voltageDivider").toDouble();
+    double divider = endpointOption("voltageDivider").toDouble();
     qint16 value = 0;
 
     if (attributeId != 0x0505 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / (divider ? divider : 1) + deviceOption("voltageOffset").toDouble();
+    m_value = qFromLittleEndian(value) / (divider ? divider : 1) + endpointOption("voltageOffset").toDouble();
 }
 
 void Properties::Current::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    double divider = deviceOption("currentDivider").toDouble();
+    double divider = endpointOption("currentDivider").toDouble();
     qint16 value = 0;
 
     if (attributeId != 0x0508 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / (divider ? divider : 1) + deviceOption("currentOffset").toDouble();
+    m_value = qFromLittleEndian(value) / (divider ? divider : 1) + endpointOption("currentOffset").toDouble();
 }
 
 void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    double divider = deviceOption("powerDivider").toDouble();
+    double divider = endpointOption("powerDivider").toDouble();
     qint16 value = 0;
 
     if (attributeId != 0x050B || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / (divider ? divider : 1) + deviceOption("powerOffset").toDouble();
+    m_value = qFromLittleEndian(value) / (divider ? divider : 1) + endpointOption("powerOffset").toDouble();
 }
 
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
-    QVariant scene = deviceOption("scenes").toMap().value(QString::number(command->sceneId));
+    QVariant scene = endpointOption("scenes").toMap().value(QString::number(command->sceneId));
 
     if (commandId != 0x05)
         return;
@@ -562,7 +568,7 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, const QByte
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            (m_unit.isEmpty() ? m_value : m_buffer) = qFromLittleEndian(value) + deviceOption(QString(m_name).append("Offset")).toDouble();
+            (m_unit.isEmpty() ? m_value : m_buffer) = qFromLittleEndian(value) + endpointOption(QString(m_name).append("Offset")).toDouble();
             break;
         }
 
@@ -619,7 +625,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0x0003:
         {
             if (modelName != "lumi.remote.b686opcn01" && modelName != "lumi.sen_ill.mgl01")
-                map.insert("temperature", static_cast <qint8> (data.at(0)) + deviceOption("temperatureOffset").toDouble());
+                map.insert("temperature", static_cast <qint8> (data.at(0)) + endpointOption("temperatureOffset").toDouble());
 
             break;
         }
@@ -660,7 +666,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                     break;
 
                 memcpy(&value, data.constData(), data.length());
-                map.insert("illuminance", qFromLittleEndian(value) + deviceOption("illuminanceOffset").toDouble());
+                map.insert("illuminance", qFromLittleEndian(value) + endpointOption("illuminanceOffset").toDouble());
             }
 
             break;
@@ -764,7 +770,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             memcpy(&value, data.constData(),  data.length());
             value = round(qFromLittleEndian(value)) / 10;
-            map.insert("voltage", value + deviceOption("voltageOffset").toDouble());
+            map.insert("voltage", value + endpointOption("voltageOffset").toDouble());
             break;
         }
 
@@ -777,7 +783,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             memcpy(&value, data.constData(),  data.length());
             value = round(qFromLittleEndian(value)) / 1000;
-            map.insert("current", value + deviceOption("currentOffset").toDouble());
+            map.insert("current", value + endpointOption("currentOffset").toDouble());
             break;
         }
 
@@ -790,7 +796,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             memcpy(&value, data.constData(), data.length());
             value = round(qFromLittleEndian(value) * 100) / 100;
-            map.insert("power", value + deviceOption("powerOffset").toDouble());
+            map.insert("power", value + endpointOption("powerOffset").toDouble());
             break;
         }
     }
@@ -857,7 +863,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray 
 
     memcpy(&value, data.constData(), data.length());
     value = round(qFromLittleEndian(value) * 100) / 100;
-    m_value = value + deviceOption("powerOffset").toDouble();
+    m_value = value + endpointOption("powerOffset").toDouble();
 }
 
 void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -872,7 +878,7 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray 
     value = round(qFromLittleEndian(value));
 
     map.insert("cover", value < 100 ? "open" : "closed");
-    map.insert("position", deviceOption("invertCover").toBool() ? 100 - value : value);
+    map.insert("position", endpointOption("invertCover").toBool() ? 100 - value : value);
 
     m_value = map.isEmpty() ? QVariant() : map;
 }
@@ -885,7 +891,7 @@ void PropertiesLUMI::Illuminance::parseAttribte(quint16 attributeId, const QByte
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) + deviceOption("illuminanceOffset").toDouble();
+    m_value = qFromLittleEndian(value) + endpointOption("illuminanceOffset").toDouble();
 }
 
 
@@ -1029,13 +1035,13 @@ void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &
                 quint16 value;
 
                 memcpy(&value, payload.constData(), sizeof(value));
-                map.insert("voltage", qFromBigEndian(value) / 10.0 + deviceOption("voltageOffset").toDouble());
+                map.insert("voltage", qFromBigEndian(value) / 10.0 + endpointOption("voltageOffset").toDouble());
 
                 memcpy(&value, payload.constData() + 3, sizeof(value));
-                map.insert("current", qFromBigEndian(value) / 1000.0 + deviceOption("currentOffset").toDouble());
+                map.insert("current", qFromBigEndian(value) / 1000.0 + endpointOption("currentOffset").toDouble());
 
                 memcpy(&value, payload.constData() + 6, sizeof(value));
-                map.insert("power", qFromBigEndian(value) + deviceOption("powerOffset").toDouble());
+                map.insert("power", qFromBigEndian(value) + endpointOption("powerOffset").toDouble());
 
                 break;
             }
@@ -1055,16 +1061,16 @@ void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &
                 quint16 value;
 
                 memcpy(&value, payload.constData() + 11, sizeof(value));
-                map.insert("current", qFromBigEndian(value) / 1000.0 + deviceOption("currentOffset").toDouble());
+                map.insert("current", qFromBigEndian(value) / 1000.0 + endpointOption("currentOffset").toDouble());
 
                 memcpy(&value, payload.constData() + 13, sizeof(value));
-                map.insert("voltage", qFromBigEndian(value) / 10.0 + deviceOption("voltageOffset").toDouble());
+                map.insert("voltage", qFromBigEndian(value) / 10.0 + endpointOption("voltageOffset").toDouble());
 
                 break;
             }
 
             case 0x10: map.insert("status", data.toBool() ? "on" : "off"); break;
-            case 0x67: map.insert("power", data.toInt() / 100.0 + deviceOption("powerOffset").toDouble()); break;
+            case 0x67: map.insert("power", data.toInt() / 100.0 + endpointOption("powerOffset").toDouble()); break;
             case 0x69: map.insert("frequency", data.toInt() / 100.0); break;
             case 0x6F: map.insert("powerFactor", data.toInt() / 10.0); break;
         }
@@ -1188,7 +1194,7 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
         case 0x09: map.insert("targetDistance", data.toDouble() / 100); break;
         case 0x65: map.insert("detectionDelay", data.toDouble() / 10); break;
         case 0x66: map.insert("fadingTime", data.toInt() / 10); break;
-        case 0x68: map.insert("illuminance", data.toInt() + deviceOption("illuminanceOffset").toDouble()); break;
+        case 0x68: map.insert("illuminance", data.toInt() + endpointOption("illuminanceOffset").toDouble()); break;
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
@@ -1343,8 +1349,8 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
 
     switch (attributeId)
     {
-        case 0x0000: map.insert("temperature", qFromLittleEndian(value) / 100.0 + deviceOption("temperatureOffset").toDouble()); break;
-        case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0 + deviceOption("humidityOffset").toDouble()); break;
+        case 0x0000: map.insert("temperature", qFromLittleEndian(value) / 100.0 + endpointOption("temperatureOffset").toDouble()); break;
+        case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0 + endpointOption("humidityOffset").toDouble()); break;
         case 0x0002: map.insert("co2", qFromLittleEndian(value)); break;
         case 0x0003: map.insert("voc", qFromLittleEndian(value)); break;
     }
