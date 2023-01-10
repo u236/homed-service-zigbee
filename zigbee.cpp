@@ -50,6 +50,7 @@ void ZigBee::init(void)
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
 
+    connect(m_adapter, &Adapter::adapterReset, this, &ZigBee::adapterReset);
     connect(m_adapter, &Adapter::coordinatorReady, this, &ZigBee::coordinatorReady);
     connect(m_adapter, &Adapter::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
     connect(m_adapter, &Adapter::requestFinished, this, &ZigBee::requestFinished);
@@ -1095,6 +1096,11 @@ void ZigBee::blink(quint16 timeout)
 
     GPIO::setStatus(m_blinkLedPin, true);
     QTimer::singleShot(timeout, this, &ZigBee::updateBlinkLed);
+}
+
+void ZigBee::adapterReset(void)
+{
+    m_requestTimer->stop();
 }
 
 void ZigBee::coordinatorReady(void)

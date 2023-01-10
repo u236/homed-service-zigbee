@@ -198,6 +198,7 @@ void Adapter::reset(void)
     m_resetTimer->start(ADAPTER_RESET_TIMEOUT);
 
     logInfo << "Resetting adapter" << QString("(%1)").arg(list.contains(m_reset) ? m_reset : "soft").toUtf8().constData();
+    emit adapterReset();
 
     switch (list.indexOf(m_reset))
     {

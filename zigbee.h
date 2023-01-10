@@ -198,6 +198,7 @@ private:
 
 private slots:
 
+    void adapterReset(void);
     void coordinatorReady(void);
     void permitJoinUpdated(bool enabled);
     void requestFinished(quint8 id, quint8 status);
