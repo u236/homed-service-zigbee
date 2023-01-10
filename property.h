@@ -710,6 +710,16 @@ namespace PropertiesTUYA
 
     };
 
+    class OperationMode : public PropertyObject
+    {
+
+    public:
+
+        OperationMode(void) : PropertyObject("mode", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class BacklightMode : public PropertyObject
     {
 

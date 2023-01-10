@@ -114,7 +114,7 @@ void DeviceList::updateIdentity(const Device &device, QString &manufacturerName,
 
     if (QRegExp("^TS\\d{3}[0-9F]$").exactMatch(modelName))
     {
-        QList <QString> list = {"TS0001", "TS0011", "TS011F", "TS0201", "TS0202", "TS0207", "TS0601"};
+        QList <QString> list = {"TS0001", "TS0011", "TS004F", "TS011F", "TS0201", "TS0202", "TS0207", "TS0601"};
 
         if (list.contains(modelName))
             modelName = manufacturerName;

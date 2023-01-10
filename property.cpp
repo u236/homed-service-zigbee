@@ -68,6 +68,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::WaterValve>              ("tuyaWaterValveProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>               ("tuyaChildLockProperty");
+    qRegisterMetaType <PropertiesTUYA::OperationMode>           ("tuyaOperationModeProperty");
     qRegisterMetaType <PropertiesTUYA::BacklightMode>           ("tuyaBacklightModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>           ("tuyaIndicatorModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchMode>              ("tuyaSwitchModeProperty");
@@ -628,7 +629,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0009:
         {
-            if (modelName == "lumi.remote.b686opcn01")
+            if (modelName == "lumi.remote.b286opcn01" || modelName == "lumi.remote.b486opcn01" || modelName == "lumi.remote.b686opcn01")
             {
                 QList <QString> list = {"command", "event"};
                 map.insert("mode", list.value(data.at(0), "unknown"));
@@ -1161,6 +1162,18 @@ void PropertiesTUYA::ChildLock::parseAttribte(quint16 attributeId, const QByteAr
         return;
 
     m_value = data.at(0) ? true : false;
+}
+
+void PropertiesTUYA::OperationMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x8004)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "command"; break;
+        case 0x01: m_value = "event"; break;
+    }
 }
 
 void PropertiesTUYA::BacklightMode::parseAttribte(quint16 attributeId, const QByteArray &data)

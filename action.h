@@ -293,6 +293,16 @@ namespace ActionsTUYA
 
     };
 
+    class OperationMode : public ActionObject
+    {
+
+    public:
+
+        OperationMode(void) : ActionObject("mode", CLUSTER_ON_OFF, 0x0000, 0x8004) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class BacklightMode : public ActionObject
     {
 
