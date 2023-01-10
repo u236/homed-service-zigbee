@@ -82,6 +82,26 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>       ("perenioSmartPlugProperty");
 }
 
+quint8 PropertyObject::percentage(double min, double max, double value)
+{
+    if (value < min)
+        value = min;
+
+    if (value > max)
+        value = max;
+
+    return static_cast <quint8> ((value - min) / (max - min) * 100);
+}
+
+bool PropertyObject::checkTransactionId(quint8 transactionId)
+{
+    if (m_transactionId == transactionId)
+        return false;
+
+    m_transactionId = transactionId;
+    return true;
+}
+
 quint8 PropertyObject::deviceVersion(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
@@ -104,17 +124,6 @@ QVariant PropertyObject::deviceOption(const QString &key)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
     return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->options().value(key) : QVariant();
-}
-
-quint8 PropertyObject::percentage(double min, double max, double value)
-{
-    if (value < min)
-        value = min;
-
-    if (value > max)
-        value = max;
-
-    return static_cast <quint8> ((value - min) / (max - min) * 100);
 }
 
 void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -629,10 +638,13 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0009:
         {
-            if (modelName == "lumi.remote.b286opcn01" || modelName == "lumi.remote.b486opcn01" || modelName == "lumi.remote.b686opcn01")
+            if (modelName != "lumi.remote.b286opcn01" && modelName != "lumi.remote.b486opcn01" && modelName != "lumi.remote.b686opcn01")
+                break;
+
+            switch (static_cast <quint8> (data.at(0)))
             {
-                QList <QString> list = {"command", "event"};
-                map.insert("mode", list.value(data.at(0), "unknown"));
+                case 0x00: map.insert("mode", "command"); break;
+                case 0x01: map.insert("mode", "event"); break;
             }
 
             break;
@@ -667,19 +679,33 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0x010C:
         case 0x0143:
         {
-            if (modelName == "lumi.motion.ac01")
+            if (modelName != "lumi.motion.ac01")
+                break;
+
+            if (dataPoint != 0x0066 ? dataPoint == 0x010C : deviceVersion() >= 50)
             {
-                if (dataPoint != 0x0066 ? dataPoint == 0x010C : deviceVersion() >= 50)
+                switch (static_cast <quint8> (data.at(0)))
                 {
-                    QList <QString> list = {"low", "medium", "high"};
-                    map.insert("sensitivity", list.value(data.at(0) - 1, "unknown"));
+                    case 0x01: map.insert("sensitivity", "low"); break;
+                    case 0x02: map.insert("sensitivity", "medium"); break;
+                    case 0x03: map.insert("sensitivity", "high"); break;
                 }
-                else
+            }
+            else
+            {
+                switch (static_cast <quint8> (data.at(0)))
                 {
-                    QList <QString> list = {"enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"};
-                    map.insert("event", list.value(data.at(0), "unknown"));
-                    map.insert("occupancy", data.at(0) != 0x01 ? true : false);
+                    case 0x00: map.insert("event", "enter"); break;
+                    case 0x01: map.insert("event", "leave"); break;
+                    case 0x02: map.insert("event", "enterLeft"); break;
+                    case 0x03: map.insert("event", "leaveRight"); break;
+                    case 0x04: map.insert("event", "enterRight"); break;
+                    case 0x05: map.insert("event", "leaveLeft"); break;
+                    case 0x06: map.insert("event", "approach"); break;
+                    case 0x07: map.insert("event", "absent"); break;
                 }
+
+                map.insert("occupancy", data.at(0) != 0x01 ? true : false);
             }
 
             break;
@@ -688,10 +714,13 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0x0067:
         case 0x0144:
         {
-            if (modelName == "lumi.motion.ac01")
+            if (modelName != "lumi.motion.ac01")
+                break;
+
+            switch (static_cast <quint8> (data.at(0)))
             {
-                QList <QString> list = {"undirected", "directed"};
-                map.insert("mode", list.value(data.at(0), "unknown"));
+                case 0x00: map.insert("mode", "undirected"); break;
+                case 0x01: map.insert("mode", "directed"); break;
             }
 
             break;
@@ -700,10 +729,14 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0x0069:
         case 0x0146:
         {
-            if (modelName == "lumi.motion.ac01")
+            if (modelName != "lumi.motion.ac01")
+                break;
+
+            switch (static_cast <quint8> (data.at(0)))
             {
-                QList <QString> list = {"far", "middle", "near"};
-                map.insert("distance", list.value(data.at(0), "unknown"));
+                case 0x00: map.insert("distance", "far"); break;
+                case 0x01: map.insert("distance", "middle"); break;
+                case 0x02: map.insert("distance", "near"); break;
             }
 
             break;
@@ -1109,8 +1142,13 @@ void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
     {
         case 0x05:
         {
-            QList <QString> list = {"low", "medium", "high"};
-            map.insert("volume", list.at(data.toInt()));
+            switch (data.toInt())
+            {
+                case 0:  map.insert("volume", "low"); break;
+                case 1:  map.insert("volume", "medium"); break;
+                case 2:  map.insert("volume", "high"); break;
+            }
+
             break;
         }
 
@@ -1231,7 +1269,7 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QBy
 
 void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId)
 {
-    if (commandId != 0xFD || m_transactionId == transactionId)
+    if (commandId != 0xFD || !checkTransactionId(transactionId))
         return;
 
     switch (payload.at(0))
@@ -1240,8 +1278,6 @@ void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArr
         case 0x01: m_value = "doubleClick"; break;
         case 0x02: m_value = "hold"; break;
     }
-
-    m_transactionId = transactionId;
 }
 
 void PropertiesOther::EfektaReportingDelay::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1307,8 +1343,13 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, const
     {
         case 0x0000:
         {
-            QList <QString> list = {"off", "on", "prevoious"};
-            map.insert("powerOnStatus", list.value(data.at(0), "unknown"));
+            switch (static_cast <quint8> (data.at(0)))
+            {
+                case 0x00: map.insert("powerOnStatus", "off"); break;
+                case 0x01: map.insert("powerOnStatus", "on"); break;
+                case 0x02: map.insert("powerOnStatus", "prevoious"); break;
+            }
+
             break;
         }
 

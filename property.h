@@ -14,7 +14,7 @@ class PropertyObject
 public:
 
     PropertyObject(const QString &name, quint16 clusterId, bool singleShot = false) :
-        m_name(name), m_clusterId(clusterId), m_singleShot(singleShot), m_parent(nullptr), m_multiple(false) {}
+        m_name(name), m_clusterId(clusterId), m_singleShot(singleShot), m_parent(nullptr), m_multiple(false), m_transactionId(0) {}
 
     virtual ~PropertyObject(void) {}
     virtual void parseAttribte(quint16, const QByteArray &) {}
@@ -47,15 +47,17 @@ protected:
     QObject *m_parent;
     bool m_multiple;
 
+    quint8 m_transactionId;
     QMap <QString, QVariant> m_meta;
     QVariant m_value;
+
+    quint8 percentage(double min, double max, double value);
+    bool checkTransactionId(quint8 transactionId);
 
     quint8 deviceVersion(void);
     QString deviceManufacturerName(void);
     QString deviceModelName(void);
     QVariant deviceOption(const QString &key);
-
-    quint8 percentage(double min, double max, double value);
 
 };
 
@@ -765,12 +767,8 @@ namespace PropertiesTUYA
 
     public:
 
-        ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true), m_transactionId(0) {}
+        ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
         void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
-
-    private:
-
-        quint8 m_transactionId;
 
     };
 }
