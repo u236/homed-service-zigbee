@@ -12,10 +12,10 @@
     - "homed-zigbee-${ARCHITECTURE}"
     expire_in: 1 day
   except:
-    - branches
+  - branches
   only:
-    - /^\d.\d.\d+$/
-    - dev
+  - /^\d.\d.\d+$/
+  - dev
 
 .deploy_apt:
   stage: deploy
@@ -41,9 +41,9 @@
     - ${PACKAGE_FILE}
     expire_in: never
   except:
-    - branches
+  - branches
   only:
-    - /^\d.\d.\d+$/
+  - /^\d.\d.\d+$/
 
 .deploy_ipk:
   stage: deploy
@@ -69,9 +69,9 @@
     - ${PACKAGE_FILE}
     expire_in: never
   except:
-    - branches
+  - branches
   only:
-    - /^\d.\d.\d+$/
+  - /^\d.\d.\d+$/
 
 Build Linux Binary (amd64):
   extends: .build
@@ -79,7 +79,7 @@ Build Linux Binary (amd64):
     ARCHITECTURE: amd64
     QT_BUILD: qt-minimal-amd64-linux-5.15.4-static
   script:
-    - "docker run --rm -v /opt/${QT_BUILD}:/opt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j8\""
+  - "docker run --rm -v /opt/${QT_BUILD}:/opt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j8\""
 
 Build Linux Binary (aarch64):
   extends: .build
@@ -128,10 +128,10 @@ Deploy Docker Images:
   - "docker buildx prune -af"
   - "docker buildx rm"
   except:
-    - branches
+  - branches
   only:
-    - /^\d.\d.\d+$/
-    - dev
+  - /^\d.\d.\d+$/
+  - dev
 
 Deploy APT Package (aarch64):
   extends: .deploy_apt
