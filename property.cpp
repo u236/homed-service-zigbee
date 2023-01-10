@@ -1269,14 +1269,31 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QBy
 
 void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId)
 {
-    if (commandId != 0xFD || !checkTransactionId(transactionId))
+    if (!checkTransactionId(transactionId))
         return;
 
-    switch (payload.at(0))
+    switch (commandId)
     {
-        case 0x00: m_value = "singleClick"; break;
-        case 0x01: m_value = "doubleClick"; break;
-        case 0x02: m_value = "hold"; break;
+        case 0xFC:
+
+            switch (payload.at(0))
+            {
+                case 0x00: m_value = "rotateRight"; break;
+                case 0x01: m_value = "rotateLeft"; break;
+            }
+
+            break;
+
+        case 0xFD:
+
+            switch (payload.at(0))
+            {
+                case 0x00: m_value = "singleClick"; break;
+                case 0x01: m_value = "doubleClick"; break;
+                case 0x02: m_value = "hold"; break;
+            }
+
+            break;
     }
 }
 
