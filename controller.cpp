@@ -73,7 +73,7 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                 json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
             }
 
-            if (discovery->name() == "action" || discovery->name() == "scene")
+            if (discovery->name() == "action" || discovery->name() == "event" || discovery->name() == "scene")
             {
                 QVariant data = device->options().value(QString("%1-%2").arg(discovery->name(), QString::number(it.key())));
                 QList <QString> list;
@@ -81,7 +81,7 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                 if (!data.isValid())
                     data = device->options().value(discovery->name());
 
-                list = discovery->name() == "action" ? data.toStringList() : QVariant(data.toMap().values()).toStringList();
+                list = discovery->name() != "scene" ? data.toStringList() : QVariant(data.toMap().values()).toStringList();
 
                 for (int i = 0; i < list.count(); i++)
                 {

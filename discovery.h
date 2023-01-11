@@ -167,6 +167,15 @@ namespace Binary
         WaterLeak(void) : BinaryObject("waterLeak") {}
 
     };
+
+    class Vibration : public BinaryObject
+    {
+
+    public:
+
+        Vibration(void) : BinaryObject("vibration") {}
+
+    };
 }
 
 namespace Sensor
@@ -177,6 +186,15 @@ namespace Sensor
     public:
 
         Action(void) : SensorObject("action") {}
+
+    };
+
+    class Event : public SensorObject
+    {
+
+    public:
+
+        Event(void) : SensorObject("event") {}
 
     };
 

@@ -80,6 +80,7 @@
 #define CLUSTER_POWER_PROFILE                       0x001A
 #define CLUSTER_POLL_CONTROL                        0x0020
 #define CLUSTER_GREEN_POWER                         0x0021
+#define CLUSTER_DOOR_LOCK                           0x0101
 #define CLUSTER_WINDOW_COVERING                     0x0102
 #define CLUSTER_COLOR_CONTROL                       0x0300
 #define CLUSTER_ILLUMINANCE_MEASUREMENT             0x0400

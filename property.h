@@ -540,12 +540,21 @@ namespace PropertiesLUMI
 
     public:
 
-        Data(void) : PropertyObject("data", CLUSTER_LUMI) {}
+        Data(const quint16 cluster = CLUSTER_LUMI) : PropertyObject("data", cluster) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     private:
 
         void parseData(quint16 dataPoint, const QByteArray &data, QMap <QString, QVariant> &map);
+
+    };
+
+    class Basic : public Data
+    {
+
+    public:
+
+        Basic(void) : Data(CLUSTER_BASIC) {}
 
     };
 
@@ -555,16 +564,6 @@ namespace PropertiesLUMI
     public:
 
         ButtonMode(const QString &name = "buttonMode") : PropertyObject(name, CLUSTER_BASIC) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class BatteryVoltage : public PropertyObject
-    {
-
-    public:
-
-        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_BASIC) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -579,13 +578,12 @@ namespace PropertiesLUMI
 
     };
 
-
     class Cover : public PropertyObject
     {
 
     public:
 
-        Cover(void) : PropertyObject("cover", CLUSTER_ANALOG_OUTPUT, true) {}
+        Cover(void) : PropertyObject("cover", CLUSTER_ANALOG_OUTPUT) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -637,6 +635,17 @@ namespace PropertiesLUMI
 
         CubeMovement(void) :  PropertyObject("action", CLUSTER_MULTISTATE_INPUT, true) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class Vibration : public PropertyObject
+    {
+
+    public:
+
+        Vibration(void) :  PropertyObject("vibration", CLUSTER_DOOR_LOCK) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void resetValue(void) override;
 
     };
 }

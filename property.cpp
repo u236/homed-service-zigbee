@@ -52,8 +52,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
+    qRegisterMetaType <PropertiesLUMI::Basic>                   ("lumiBasicProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonMode>              ("lumiButtonModeProperty");
-    qRegisterMetaType <PropertiesLUMI::BatteryVoltage>          ("lumiBatteryVoltageProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::Illuminance>             ("lumiIlluminanceProperty");
@@ -61,6 +61,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>            ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>            ("lumiCubeMovementProperty");
+    qRegisterMetaType <PropertiesLUMI::Vibration>               ("lumiVibrationProperty");
 
     qRegisterMetaType <PropertiesTUYA::ElectricityMeter>        ("tuyaElectricityMeterProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostat>          ("tuyaMoesThermostatProperty");
@@ -597,11 +598,11 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, const QByteArray &
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
-    if (attributeId == 0x00F7)
+    if (attributeId == 0x00F7 || attributeId == 0xFF01)
     {
         for (quint8 i = 0; i < static_cast <quint8> (data.length()); i++)
         {
-            quint8 itemType = static_cast <quint8> (data.at(i + 1)), offset = i + 2, size = zclDataSize(itemType, data, &offset);
+            quint8 offset = i + 2, size = zclDataSize(static_cast <quint8> (data.at(i + 1)), data, &offset);
 
             if (!size)
                 break;
@@ -622,6 +623,19 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
     switch (dataPoint)
     {
+        case 0x0001:
+        {
+            quint16 value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert("battery", percentage(2850, 3200, qFromLittleEndian(value)));
+            break;
+        }
+
+
         case 0x0003:
         {
             if (modelName != "lumi.remote.b686opcn01" && modelName != "lumi.sen_ill.mgl01")
@@ -782,7 +796,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            value = round(qFromLittleEndian(value)) / 1000;
+            value = deviceModelName() == "lumi.relay.c2acn01" ? qFromLittleEndian(value) : round(qFromLittleEndian(value)) / 1000;
             map.insert("current", value + endpointOption("currentOffset").toDouble());
             break;
         }
@@ -797,6 +811,18 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             memcpy(&value, data.constData(), data.length());
             value = round(qFromLittleEndian(value) * 100) / 100;
             map.insert("power", value + endpointOption("powerOffset").toDouble());
+            break;
+        }
+
+        case 0xFF02:
+        {
+            quint16 value = 0;
+
+            if (data.length() < 7)
+                break;
+
+            memcpy(&value, data.constData() + 5, sizeof(value));
+            map.insert("battery", percentage(2850, 3200, qFromLittleEndian(value)));
             break;
         }
     }
@@ -822,36 +848,6 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteA
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void PropertiesLUMI::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    switch (attributeId)
-    {
-        case 0xFF01:
-        {
-            quint16 value = 0;
-
-            if (data.length() < 4)
-                break;
-
-            memcpy(&value, data.constData() + 2, sizeof(value));
-            m_value = percentage(2850, 3200, qFromLittleEndian(value));
-            break;
-        }
-
-        case 0xFF02:
-        {
-            quint16 value = 0;
-
-            if (data.length() < 7)
-                break;
-
-            memcpy(&value, data.constData() + 5, sizeof(value));
-            m_value = percentage(2850, 3200, qFromLittleEndian(value));
-            break;
-        }
-    }
 }
 
 void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -965,6 +961,87 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, const QByt
         m_value = "flip";
     else if (value >= 64)
         m_value = "drop";
+}
+
+void PropertiesLUMI::Vibration::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            quint16 value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            value = qFromLittleEndian(value);
+
+            switch (value)
+            {
+                case 0x0001: map.insert("event", "vibration"); break;
+                case 0x0002: map.insert("event", "tilt"); break;
+                case 0x0003: map.insert("event", "drop"); break;
+            }
+
+            if (value == 0x0001)
+                map.insert("vibration", true);
+
+            break;
+        }
+
+        case 0x0503:
+        {
+            quint16 value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert("angle", qFromLittleEndian(value));
+            break;
+        }
+
+        case 0x0505:
+        {
+            quint16 value = 0;
+            memcpy(&value, data.constData(), sizeof(value));
+            map.insert("strength", qFromBigEndian(value));
+            break;
+        }
+
+        case 0x0508:
+        {
+            quint64 value;
+            qint16 x, y, z;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            value = qFromLittleEndian(value);
+
+            x = static_cast <qint16> (value & 0xFFFF);
+            y = static_cast <qint16> (value >> 16 & 0xFFFF);
+            z = static_cast <qint16> (value >> 32 & 0xFFFF);
+
+            map.insert("x", round(atan(x / sqrt(pow(y, 2) + pow(z, 2))) * 180 / M_PI));
+            map.insert("y", round(atan(y / sqrt(pow(x, 2) + pow(z, 2))) * 180 / M_PI));
+            map.insert("z", round(atan(z / sqrt(pow(x, 2) + pow(y, 2))) * 180 / M_PI));
+            break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesLUMI::Vibration::resetValue(void)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    map.insert("vibration", false);
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload, quint8)

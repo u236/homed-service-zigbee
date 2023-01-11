@@ -12,8 +12,10 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Binary::Occupancy>       ("occupancyDiscovery");
     qRegisterMetaType <Binary::Smoke>           ("smokeDiscovery");
     qRegisterMetaType <Binary::WaterLeak>       ("waterLeakDiscovery");
+    qRegisterMetaType <Binary::Vibration>       ("vibrationDiscovery");
 
     qRegisterMetaType <Sensor::Action>          ("actionDiscovery");
+    qRegisterMetaType <Sensor::Event>           ("eventDiscovery");
     qRegisterMetaType <Sensor::Scene>           ("sceneDiscovery");
     qRegisterMetaType <Sensor::Count>           ("countDiscovery");
     qRegisterMetaType <Sensor::Battery>         ("batteryDiscovery");
@@ -71,16 +73,17 @@ QJsonObject BinaryObject::reqest(void)
 
 QJsonObject SensorObject::reqest(void)
 {
-    QList <QString> list = {"action", "scene", "count", "co2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
+    QList <QString> list = {"action", "event", "scene", "count", "co2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
     {
         case 0:  json.insert("icon",            "mdi:gesture-double-tap"); break;
-        case 1:  json.insert("icon",            "mdi:gesture-tap-button"); break;
-        case 2:  json.insert("icon",            "mdi:counter"); break;
-        case 3:  json.insert("device_class",    "carbon_dioxide"); break;
-        case 4:  json.insert("device_class",    "volatile_organic_compounds"); break;
+        case 1:  json.insert("icon",            "mdi:bell"); break;
+        case 2:  json.insert("icon",            "mdi:gesture-tap-button"); break;
+        case 3:  json.insert("icon",            "mdi:counter"); break;
+        case 4:  json.insert("device_class",    "carbon_dioxide"); break;
+        case 5:  json.insert("device_class",    "volatile_organic_compounds"); break;
         default: json.insert("device_class",    m_name); break;
     }
 

@@ -221,7 +221,7 @@
     },
     {
       "description":    "TRADFRI Dimmable Bulb",
-      "modelNames":     ["TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
+      "modelNames":     ["TRADFRI bulb E14 W op/ch 400lm", "TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
       "bindings":       ["status", "level"],
@@ -256,18 +256,11 @@
       "discoveries":    ["battery", "contact"]
     },
     {
-      "description":    "Konke Motion Sensor 2AJZ4KPBS",
-      "modelNames":     ["3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
+      "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
+      "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "discoveries":    ["battery", "occupancy"],
       "options":        {"ignoreClusters": [64704], "timeout": 120}
-    },
-    {
-      "description":    "Konke Motion Sensor KK-BS-J01W",
-      "modelNames":     ["3AFE07010402100D", "3AFE08010402100D"],
-      "properties":     ["batteryPercentage", "iasOccupancy"],
-      "discoveries":    ["battery", "occupancy"],
-      "options":        {"ignoreClusters": [64704], "timeout": 30}
     },
     {
       "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",
@@ -390,6 +383,20 @@
       "endpointId":     [4, 5]
     },
     {
+      "description":    "Aqara 2-Channel Relay LLKZMK11LM",
+      "modelNames":     ["lumi.relay.c2acn01"],
+      "properties":     ["lumiData", "lumiPower"],
+      "discoveries":    ["energy", "voltage", "power"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.relay.c2acn01"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "discoveries":    ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
       "description":    "Aqara 10A Smart Plug SP-EUC01",
       "modelNames":     ["lumi.plug.maeu01"],
       "properties":     ["status", "lumiData"],
@@ -417,22 +424,22 @@
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
-      "properties":     ["contact", "lumiBatteryVoltage"],
+      "properties":     ["contact", "lumiBasic"],
       "discoveries":    ["battery", "contact"]
     },
     {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
-      "properties":     ["occupancy", "lumiBatteryVoltage"],
+      "properties":     ["occupancy", "lumiBasic"],
       "discoveries":    ["battery", "occupancy"],
-      "options":        {"timeout": 30}
+      "options":        {"timeout": 60}
     },
     {
       "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
       "modelNames":     ["lumi.sensor_motion.aq2"],
-      "properties":     ["occupancy", "lumiBatteryVoltage", "lumiIlluminance"],
+      "properties":     ["occupancy", "lumiBasic", "lumiIlluminance"],
       "discoveries":    ["battery", "illuminance", "occupancy"],
-      "options":        {"timeout": 30}
+      "options":        {"timeout": 60}
     },
     {
       "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
@@ -440,24 +447,32 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
-      "discoveries":    ["occupancy"]
+      "discoveries":    ["occupancy", "event"],
+      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"]}
+    },
+    {
+      "description":    "Aqara Vibration Sensor DJT11LM",
+      "modelNames":     ["lumi.vibration.aq1"],
+      "properties":     ["lumiBasic", "lumiVibration"],
+      "discoveries":    ["battery", "vibration", "event"],
+      "options":        {"event": ["vibration", "tilt", "drop"], "timeout": 60}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM",
       "modelNames":     ["lumi.sensor_wleak.aq1"],
-      "properties":     ["iasWaterLeak", "lumiBatteryVoltage"],
+      "properties":     ["iasWaterLeak", "lumiBasic"],
       "discoveries":    ["battery", "waterLeak"]
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
       "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
-      "properties":     ["temperature", "humidity", "lumiBatteryVoltage"],
+      "properties":     ["temperature", "humidity", "lumiBasic"],
       "discoveries":    ["battery", "temperature", "humidity"]
     },
     {
       "description":    "Aqara Temperature, Humidity and Pressure Sensor WSDCGQ11LM",
       "modelNames":     ["lumi.weather"],
-      "properties":     ["temperature", "pressure", "humidity", "lumiBatteryVoltage"],
+      "properties":     ["temperature", "pressure", "humidity", "lumiBasic"],
       "discoveries":    ["battery", "temperature", "pressure", "humidity"]
     },
     {
@@ -471,14 +486,14 @@
     {
       "description":    "Xiaomi Wireless Button WXKG01LM or WXKG11LM",
       "modelNames":     ["lumi.sensor_switch", "lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
-      "properties":     ["lumiBatteryVoltage", "lumiButtonAction"],
+      "properties":     ["lumiBasic", "lumiButtonAction"],
       "discoveries":    ["battery", "action"],
       "options":        {"action": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
     },
     {
       "description":    "Aqara Opple 2-band Wireless Switch WXCJKG11LM",
       "modelNames":     ["lumi.remote.b286opcn01"],
-      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "lumiData"],
+      "properties":     ["identifyAction", "switchAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status"],
       "discoveries":    ["battery"],
@@ -494,7 +509,7 @@
     {
       "description":    "Aqara Opple 4-band Wireless Switch WXCJKG12LM",
       "modelNames":     ["lumi.remote.b486opcn01"],
-      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "properties":     ["identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "discoveries":    ["battery"],
@@ -510,7 +525,7 @@
     {
       "description":    "Aqara Opple 6-band Wireless Switch WXCJKG13LM",
       "modelNames":     ["lumi.remote.b686opcn01"],
-      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "properties":     ["identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "discoveries":    ["battery"],
@@ -526,7 +541,7 @@
     {
       "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "properties":     ["lumiBatteryVoltage"],
+      "properties":     ["lumiBasic"],
       "discoveries":    ["action"],
       "options":        {"action": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"]},
       "endpointId":     1
@@ -594,7 +609,7 @@
       "modelNames":     ["131c854783bc45c9b2ac58088d09571c", "585fdfb8c2304119a2432e9845cf2623", "b2e57a0f606546cd879a1a54790827d6"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "discoveries":    ["battery", "occupancy"],
-      "options":        {"timeout": 30}
+      "options":        {"timeout": 60}
     },
     {
       "description":    "ORVIBO Water Leak Sensor SW21 or SW30",
@@ -840,7 +855,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "discoveries":    ["battery", "occupancy"],
-      "options":        {"ignoreClusters": [0], "timeout": 30}
+      "options":        {"ignoreClusters": [0], "timeout": 60}
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor (partially supported)",
