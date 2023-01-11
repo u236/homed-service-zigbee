@@ -607,7 +607,7 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, const QByteArray &
             if (!size)
                 break;
 
-            parseData(data.at(i), data.mid(offset, size), map);
+            parseData(static_cast <quint8> (data.at(i)), data.mid(offset, size), map);
             i += size + 1;
         }
     }

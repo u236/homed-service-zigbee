@@ -385,7 +385,7 @@
     {
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
       "modelNames":     ["lumi.relay.c2acn01"],
-      "properties":     ["lumiData", "lumiPower"],
+      "properties":     ["lumiBasic", "lumiPower"],
       "discoveries":    ["energy", "voltage", "power"],
       "endpointId":     1
     },

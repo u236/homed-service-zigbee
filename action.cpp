@@ -103,7 +103,7 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
             payload.level = static_cast <quint8> (data.toInt() < 0xFE ? data.toInt() : 0xFE);
             payload.time = 0;
 
-            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x04).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         case QVariant::List:
@@ -114,20 +114,30 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
             payload.level = static_cast <quint8> (list.value(0).toInt() < 0xFE ? list.value(0).toInt() : 0xFE);
             payload.time = qToLittleEndian <quint16> (list.value(1).toInt());
 
-            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x04).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         case QVariant::String:
         {
+            QList <QString> list {"moveLevelUp", "moveLevelDown", "stopLevel"}; // TODO: add step actions
             QString action = data.toString();
 
-            if (action != "stopLevel") // TODO: add step actions
+            switch (list.indexOf(data.toString()))
             {
-                quint8 payload[2] = {static_cast <quint8> (action == "moveLevelUp" ? 0x00 : 0x01), 0x55}; // TODO: check this
-                return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x01).append(reinterpret_cast <char*> (&payload), sizeof(payload));
-            }
+                case 0:
+                case 1:
+                {
+                    moveLevelStruct payload;
 
-            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x07);
+                    payload.mode = action == "moveLevelUp" ? 0x00 : 0x01;
+                    payload.rate = 0x55;
+
+                    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, "moveLevelUp" ? 0x05 : 0x01).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+                }
+
+                case 2:  return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x07);
+                default: return QByteArray();
+            }
         }
 
         default:
