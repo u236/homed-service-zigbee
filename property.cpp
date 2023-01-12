@@ -10,7 +10,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::BatteryPercentage>           ("batteryPercentageProperty");
     qRegisterMetaType <Properties::DeviceTemperature>           ("deviceTemperatureProperty");
     qRegisterMetaType <Properties::Status>                      ("statusProperty");
-    qRegisterMetaType <Properties::Contact>                     ("contactProperty");
     qRegisterMetaType <Properties::PowerOnStatus>               ("powerOnStatusProperty");
     qRegisterMetaType <Properties::Level>                       ("levelProperty");
     qRegisterMetaType <Properties::CoverStatus>                 ("coverStatusProperty");
@@ -54,6 +53,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::Basic>                   ("lumiBasicProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonMode>              ("lumiButtonModeProperty");
+    qRegisterMetaType <PropertiesLUMI::Contact>                 ("lumiContactProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::Illuminance>             ("lumiIlluminanceProperty");
@@ -166,14 +166,6 @@ void Properties::Status::parseAttribte(quint16 attributeId, const QByteArray &da
         return;
 
     m_value = data.at(0) ? "on" : "off";
-}
-
-void Properties::Contact::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0000)
-        return;
-
-    m_value = data.at(0) ? true : false;
 }
 
 void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -848,6 +840,14 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteA
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesLUMI::Contact::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0000)
+        return;
+
+    m_value = data.at(0) ? true : false;
 }
 
 void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray &data)

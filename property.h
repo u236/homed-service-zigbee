@@ -104,16 +104,6 @@ namespace Properties
 
     };
 
-    class Contact : public PropertyObject
-    {
-
-    public:
-
-        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF, true) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class PowerOnStatus : public PropertyObject
     {
 
@@ -564,6 +554,16 @@ namespace PropertiesLUMI
     public:
 
         ButtonMode(const QString &name = "buttonMode") : PropertyObject(name, CLUSTER_BASIC) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class Contact : public PropertyObject
+    {
+
+    public:
+
+        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF, true) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };

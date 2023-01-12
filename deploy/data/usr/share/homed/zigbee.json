@@ -15,8 +15,8 @@
   "eWeLink":
   [
     {
-      "description":    "Sonoff 1-Channel Relay/Switch ZB-SW02",
-      "modelNames":     ["ZB-SW01"],
+      "description":    "Sonoff 1-Channel Relay/Switch SWITCH-ZR02 or ZB-SW02",
+      "modelNames":     ["SWITCH-ZR02", "ZB-SW01"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -24,7 +24,7 @@
     },
     {
       "description":    "Sonoff 2-Channel Relay/Switch ZB-SW02",
-      "modelNames":     ["ZB-SW02", "E220-KR2N0Z0-HA"],
+      "modelNames":     ["E220-KR2N0Z0-HA", "ZB-SW02"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -397,13 +397,19 @@
       "endpointId":     [1, 2]
     },
     {
+      "description":    "Xiaomi 10A Smart Plug ZNCZ02LM or ZNCZ03LM",
+      "modelNames":     ["lumi.plug", "lumi.plug.mitw01"],
+      "properties":     ["status", "lumiBasic", "lumiPower"],
+      "actions":        ["status"],
+      "discoveries":    ["switch", "energy", "power"],
+      "options":        {"switch": "outlet"}
+    },
+    {
       "description":    "Aqara 10A Smart Plug SP-EUC01",
       "modelNames":     ["lumi.plug.maeu01"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status"],
-      "bindings":       ["status"],
-      "reportings":     ["status"],
-      "discoveries":    ["switch", "energy", "voltage"],
+      "discoveries":    ["switch", "energy", "voltage", "current"],
       "options":        {"switch": "outlet"},
       "endpointId":     1
     },
@@ -422,9 +428,9 @@
       "options":        {"ignoreClusters": [258]}
     },
     {
-      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
-      "modelNames":     ["lumi.sensor_magnet"],
-      "properties":     ["contact", "lumiBasic"],
+      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM or MCCGQ11LM",
+      "modelNames":     ["lumi.sensor_magnet", "lumi.sensor_magnet.aq2"],
+      "properties":     ["lumiBasic", "lumiContact"],
       "discoveries":    ["battery", "contact"]
     },
     {
@@ -674,6 +680,28 @@
     }
   ],
 
+  "Trust International B.V.":
+  [
+    {
+      "description":    "Trust Dimmable Bulb with Changable Color Temperature ZLED-TUNE9",
+      "modelNames":     ["ZLL-ColorTempera", "ZLL-ColorTemperature"],
+      "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
+      "polls":          ["status", "level", "colorTemperature"],
+      "discoveries":    ["light"],
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperatureMin": 153, "colorTemperatureMax": 500}
+    },
+    {
+      "description":    "Trust Dimmable Bulb ZLED-2709",
+      "modelNames":     ["ZLL-DimmableLigh"],
+      "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "polls":          ["status", "level"],
+      "discoveries":    ["light"],
+      "options":        {"light": ["level"]}
+    }
+  ],
+
   "TUYA":
   [
     {
@@ -893,7 +921,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["TS0043"],
+      "modelNames":     ["TS0042"],
       "properties":     ["tuyaButtonAction"],
       "discoveries":    ["action"],
       "options":        {"action": ["singleClick", "doubleClick", "hold"]},
