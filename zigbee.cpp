@@ -1069,6 +1069,29 @@ void ZigBee::touchLinkScan(void)
     logInfo << "TouchLink scan finished successfully";
 }
 
+void ZigBee::interviewTimeoutHandler(const Device &device)
+{
+    if (device->modelName().startsWith("lumi")) // some LUMI devices send modelName attribute on join
+    {
+        device->setManufacturerCode(0x1037);
+        device->setPowerSource(POWER_SOURCE_BATTERY);
+        device->setManufacturerName("LUMI");
+        interviewFinished(device);
+        return;
+    }
+
+    logWarning << "Device" << device->name() << "interview timed out";
+    emit deviceEvent(device, Event::interviewTimeout);
+}
+
+void ZigBee::rejoinHandler(const Device &device)
+{
+    if (device->manufacturerName() == "IKEA of Sweden" && !device->batteryPowered())
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+            for (int i = 0; i < it.value()->reportings().count(); i++)
+                configureReporting(it.value(), it.value()->reportings().at(i));
+}
+
 void ZigBee::startDeviceTimer(const Device &device, quint32 timeout)
 {
     if (!timeout)
@@ -1252,6 +1275,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
             return;
 
         logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04x", networkAddress);
+        rejoinHandler(it.value());
     }
 
     it.value()->updateJoinTime();
@@ -1561,17 +1585,7 @@ void ZigBee::deviceTimeout(void)
 
     if (!device->interviewFinished())
     {
-        if (device->modelName().startsWith("lumi")) // some LUMI devices send modelName attribute on join
-        {
-            device->setManufacturerCode(0x1037);
-            device->setPowerSource(POWER_SOURCE_BATTERY);
-            device->setManufacturerName("LUMI");
-            interviewFinished(device);
-            return;
-        }
-
-        logWarning << "Device" << device->name() << "interview timed out";
-        emit deviceEvent(device, Event::interviewTimeout);
+        interviewTimeoutHandler(device);
         return;
     }
 
