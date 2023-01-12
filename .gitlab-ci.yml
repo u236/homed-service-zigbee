@@ -1,77 +1,76 @@
 .build:
   stage: build
   script:
-  - "export PATH=\"$PATH:/opt/${COMPILER}/bin\""
-  - "export STAGING_DIR=\"/opt/${COMPILER}\""
-  - "/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro"
+  - "export PATH=\"$PATH:/opt/$COMPILER/bin\""
+  - "export STAGING_DIR=\"/opt/$COMPILER\""
+  - "/opt/$QT_BUILD/bin/qmake homed-zigbee.pro"
   - "make -j8"
   after_script:
-  - "cp homed-zigbee homed-zigbee-${ARCHITECTURE}"
+  - "cp homed-zigbee homed-zigbee-$ARCHITECTURE"
   artifacts:
     paths:
-    - "homed-zigbee-${ARCHITECTURE}"
+    - "homed-zigbee-$ARCHITECTURE"
     expire_in: 1 day
-  except:
-  - branches
-  only:
-  - /^\d.\d.\d+$/
-  - dev
+  rules:
+  - if: $CI_COMMIT_TAG =~ /^\d.\d.\d+$/ || $CI_COMMIT_TAG == "dev"
+    when: always
+  - when: never
 
 .deploy_apt:
   stage: deploy
   variables:
-    PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.deb
+    PACKAGE_FILE: homed-zigbee_$CI_COMMIT_TAG_$ARCHITECTURE.deb
   script:
   - "mkdir -p deploy/data/lib/systemd/system"
   - "mkdir -p deploy/data/opt/homed-zigbee"
   - "mkdir -p deploy/data/usr/local/bin"
   - "cp -r deploy/debian deploy/data/DEBIAN"
   - "cp deploy/systemd/homed-zigbee.service deploy/data/lib/systemd/system"
-  - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/local/bin/homed-zigbee"
+  - "cp homed-zigbee-$ARCHITECTURE deploy/data/usr/local/bin/homed-zigbee"
   - "md5deep -lr deploy/data | grep -v DEBIAN | sed \"s+deploy/data/++g\" | sort -k2 > deploy/data/DEBIAN/md5sums"
-  - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/data/DEBIAN/control"
-  - "sed -i \"s+^Architecture:.*+Architecture: ${ARCHITECTURE}+g\" deploy/data/DEBIAN/control"
+  - "sed -i \"s+^Version:.*+Version: $CI_COMMIT_TAG+g\" deploy/data/DEBIAN/control"
+  - "sed -i \"s+^Architecture:.*+Architecture: $ARCHITECTURE+g\" deploy/data/DEBIAN/control"
   - "chmod +x deploy/data/DEBIAN/postinst"
   - "chmod +x deploy/data/DEBIAN/prerm"
   - "fakeroot dpkg-deb --build deploy/data"
-  - "mv deploy/data.deb ${PACKAGE_FILE}"
-  - "reprepro -b /var/lib/apt -C main includedeb debian ${PACKAGE_FILE}"
+  - "mv deploy/data.deb $PACKAGE_FILE"
+  - "reprepro -b /var/lib/apt -C main includedeb debian $PACKAGE_FILE"
   artifacts:
     paths:
-    - ${PACKAGE_FILE}
+    - $PACKAGE_FILE
     expire_in: never
-  except:
-  - branches
-  only:
-  - /^\d.\d.\d+$/
+  rules:
+  - if: $CI_COMMIT_TAG =~ /^\d.\d.\d+$/
+    when: always
+  - when: never
 
 .deploy_ipk:
   stage: deploy
   variables:
-    PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.ipk
+    PACKAGE_FILE: homed-zigbee_$CI_COMMIT_TAG_$ARCHITECTURE.ipk
   script:
   - "mkdir -p deploy/data/etc/init.d"
   - "mkdir -p deploy/data/opt/homed-zigbee"
   - "mkdir -p deploy/data/usr/bin"
   - "cp deploy/procd/homed-zigbee deploy/data/etc/init.d"
-  - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/bin/homed-zigbee"
-  - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/openwrt/control"
-  - "sed -i \"s+^Architecture:.*+Architecture: ${ARCHITECTURE}+g\" deploy/openwrt/control"
+  - "cp homed-zigbee-$ARCHITECTURE deploy/data/usr/bin/homed-zigbee"
+  - "sed -i \"s+^Version:.*+Version: $CI_COMMIT_TAG+g\" deploy/openwrt/control"
+  - "sed -i \"s+^Architecture:.*+Architecture: $ARCHITECTURE+g\" deploy/openwrt/control"
   - "echo \"2.0\" > debian-binary"
   - "chmod +x deploy/data/etc/init.d/homed-zigbee"
   - "chmod +x deploy/openwrt/postinst"
   - "chmod +x deploy/openwrt/prerm"
   - "fakeroot tar -czf control.tar.gz -C deploy/openwrt ."
   - "fakeroot tar -czf data.tar.gz -C deploy/data ."
-  - "fakeroot tar -czf ${PACKAGE_FILE} control.tar.gz data.tar.gz debian-binary"
+  - "fakeroot tar -czf $PACKAGE_FILE control.tar.gz data.tar.gz debian-binary"
   artifacts:
     paths:
-    - ${PACKAGE_FILE}
+    - $PACKAGE_FILE
     expire_in: never
-  except:
-  - branches
-  only:
-  - /^\d.\d.\d+$/
+  rules:
+  - if: $CI_COMMIT_TAG =~ /^\d.\d.\d+$/ || $CI_COMMIT_TAG == "dev"
+    when: always
+  - when: never
 
 Build Linux Binary (amd64):
   extends: .build
@@ -79,7 +78,7 @@ Build Linux Binary (amd64):
     ARCHITECTURE: amd64
     QT_BUILD: qt-minimal-amd64-linux-5.15.4-static
   script:
-  - "docker run --rm -v /opt/${QT_BUILD}:/opt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j8\""
+  - "docker run --rm -v /opt/$QT_BUILD:/opt/$QT_BUILD -v $PWD/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/$QT_BUILD/bin/qmake homed-zigbee.pro; make -j8\""
 
 Build Linux Binary (aarch64):
   extends: .build
@@ -123,15 +122,14 @@ Deploy Docker Images:
   - "cp homed-zigbee-armhf deploy/docker/homed-zigbee-arm"
   - "cp homed-zigbee-amd64 deploy/docker/homed-zigbee-amd64"
   - "cp deploy/data/usr/share/homed/zigbee.json deploy/docker/"
-  - "docker buildx create --driver-opt network=host --name job_${CI_JOB_ID} --use"
-  - "docker buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --push --tag 127.0.0.1:5000/homed-zigbee:${CI_COMMIT_TAG} --tag 127.0.0.1:5000/homed-zigbee:latest deploy/docker/"
+  - "docker buildx create --driver-opt network=host --name job_$CI_JOB_ID --use"
+  - "docker buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --push --tag 127.0.0.1:5000/homed-zigbee:$CI_COMMIT_TAG --tag 127.0.0.1:5000/homed-zigbee:latest deploy/docker/"
   - "docker buildx prune -af"
   - "docker buildx rm"
-  except:
-  - branches
-  only:
-  - /^\d.\d.\d+$/
-  - dev
+  rules:
+  - if: $CI_COMMIT_TAG =~ /^\d.\d.\d+$/ || $CI_COMMIT_TAG == "dev"
+    when: always
+  - when: never
 
 Deploy APT Package (aarch64):
   extends: .deploy_apt
