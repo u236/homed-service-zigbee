@@ -852,8 +852,8 @@
       "options":        {"ignoreClusters": [0]}
     },
     {
-      "description":    "TUYA TS0203 Door and Window Sensor",
-      "modelNames":     ["TS0203"],
+      "description":    "TUYA RH3001 or TS0203 Door and Window Sensor",
+      "modelNames":     ["RH3001", "TS0203"],
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
