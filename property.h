@@ -588,6 +588,16 @@ namespace PropertiesLUMI
 
     };
 
+    class Interlock : public PropertyObject
+    {
+
+    public:
+
+        Interlock(void) : PropertyObject("lock", CLUSTER_BINARY_OUTPUT) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Illuminance : public PropertyObject
     {
 

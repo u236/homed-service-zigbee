@@ -56,6 +56,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Contact>                 ("lumiContactProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");
+    qRegisterMetaType <PropertiesLUMI::Interlock>               ("lumiInterlockProperty");
     qRegisterMetaType <PropertiesLUMI::Illuminance>             ("lumiIlluminanceProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>            ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>            ("lumiSwitchActionProperty");
@@ -877,6 +878,14 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray 
     map.insert("position", endpointOption("invertCover").toBool() ? 100 - value : value);
 
     m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesLUMI::Interlock::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0xFF06)
+        return;
+
+    m_value = data.at(0) ? true : false;
 }
 
 void PropertiesLUMI::Illuminance::parseAttribte(quint16 attributeId, const QByteArray &data)

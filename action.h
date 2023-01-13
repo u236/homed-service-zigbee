@@ -197,6 +197,16 @@ namespace ActionsLUMI
 
     };
 
+    class Interlock : public ActionObject
+    {
+
+    public:
+
+        Interlock(void) : ActionObject("lock", CLUSTER_BINARY_OUTPUT, 0x115F, 0xFF06) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class OperationMode : public ActionObject
     {
 

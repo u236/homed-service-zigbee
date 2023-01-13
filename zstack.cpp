@@ -139,6 +139,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case ZDO_SRC_RTG_IND:
         case ZDO_CONCENTRATOR_IND:
         case ZDO_TC_DEV_IND:
+        case ZDO_PERMIT_JOIN_IND:
             break;
 
         case SYS_RESET_IND:

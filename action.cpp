@@ -19,6 +19,7 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsLUMI::PresenceSensor>         ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>             ("lumiButtonModeAction");
+    qRegisterMetaType <ActionsLUMI::Interlock>              ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
 
@@ -329,6 +330,12 @@ QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant 
     }
 
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::Interlock::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::OperationMode::request(const QString &, const QVariant &data)

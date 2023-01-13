@@ -61,6 +61,7 @@
 #define ZDO_CONCENTRATOR_IND                        0x45C8
 #define ZDO_LEAVE_IND                               0x45C9
 #define ZDO_TC_DEV_IND                              0x45CA
+#define ZDO_PERMIT_JOIN_IND                         0x45CB
 #define ZDO_MSG_CB_INCOMING                         0x45FF
 #define APP_CNF_BDB_COMMISSIONING_NOTIFICATION      0x4F80
 

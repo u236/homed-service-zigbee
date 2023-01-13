@@ -72,6 +72,7 @@
 #define CLUSTER_SCENES                              0x0005
 #define CLUSTER_ON_OFF                              0x0006
 #define CLUSTER_LEVEL_CONTROL                       0x0008
+#define CLUSTER_BINARY_OUTPUT                       0x0010
 #define CLUSTER_TIME                                0x000A
 #define CLUSTER_ANALOG_INPUT                        0x000C
 #define CLUSTER_ANALOG_OUTPUT                       0x000D
