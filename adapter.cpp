@@ -127,19 +127,19 @@ void Adapter::setPermitJoin(bool enabled)
 bool Adapter::nodeDescriptorRequest(quint8 id, quint16 networkAddress)
 {
     quint16 data = qToLittleEndian(networkAddress);
-    return unicastRequest(id, networkAddress, APS_NODE_DESCRIPTOR, 0x00, 0x00, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&data), sizeof(data)));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, APS_NODE_DESCRIPTOR, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&data), sizeof(data)));
 }
 
 bool Adapter::simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId)
 {
     quint16 data = qToLittleEndian(networkAddress);
-    return unicastRequest(id, networkAddress, APS_SIMPLE_DESCRIPTOR, 0x00, 0x00, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (endpointId)));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, APS_SIMPLE_DESCRIPTOR, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (endpointId)));
 }
 
 bool Adapter::activeEndpointsRequest(quint8 id, quint16 networkAddress)
 {
     quint16 data = qToLittleEndian(networkAddress);
-    return unicastRequest(id, networkAddress, APS_ACTIVE_ENDPOINTS, 0x00, 0x00, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&data), sizeof(data)));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, APS_ACTIVE_ENDPOINTS, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&data), sizeof(data)));
 }
 
 bool Adapter::bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
@@ -167,12 +167,12 @@ bool Adapter::bindRequest(quint8 id, quint16 networkAddress, const QByteArray &s
     request.clusterId = qToLittleEndian(clusterId);
     request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
 
-    return unicastRequest(id, networkAddress, unbind ? APS_UNBIND : APS_BIND, 0x00, 0x00, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, unbind ? APS_UNBIND : APS_BIND, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)));
 }
 
 bool Adapter::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
 {
-    return unicastRequest(id, networkAddress, APS_LQI, 0x00, 0x00, QByteArray(1, static_cast <char> (id)).append(1, static_cast <char> (index)));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, APS_LQI, QByteArray(1, static_cast <char> (id)).append(1, static_cast <char> (index)));
 }
 
 bool Adapter::leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress)
@@ -182,7 +182,7 @@ bool Adapter::leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &
     memcpy(&address, ieeeAddress.constData(), sizeof(address));
     address = qToLittleEndian(qFromBigEndian(address));
 
-    return unicastRequest(id, networkAddress, APS_LEAVE, 0x00, 0x00, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&address), sizeof(address)).append(1, 0x00));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, APS_LEAVE, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&address), sizeof(address)).append(1, 0x00));
 }
 
 void Adapter::reset(void)

@@ -7,6 +7,7 @@
   - "make -j8"
   after_script:
   - "cp homed-zigbee homed-zigbee-${ARCHITECTURE}"
+  - "cp homed-zigbee-${ARCHITECTURE} /var/www/sandbox.u236.org/homed-zigbee"
   artifacts:
     paths:
     - "homed-zigbee-${ARCHITECTURE}"
