@@ -185,11 +185,6 @@ bool Adapter::leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &
     return unicastRequest(id, networkAddress, APS_LEAVE, 0x00, 0x00, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&address), sizeof(address)).append(1, 0x00));
 }
 
-bool Adapter::dataRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &payload)
-{
-    return unicastRequest(id, networkAddress, clusterId, 0x01, endpointId, payload);
-}
-
 void Adapter::reset(void)
 {
     QList <QString> list = {"gpio", "flow"};

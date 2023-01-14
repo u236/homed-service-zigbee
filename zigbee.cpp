@@ -301,7 +301,7 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
         if (request.isEmpty() || (data.type() == QVariant::String && data.toString().isEmpty()))
             return;
 
-        m_adapter->extendedDataRequest(m_requestId, groupId, 0xFF, 0x0000, 0x01, action->clusterId(), request, true);
+        m_adapter->multicastRequest(m_requestId, groupId, 0x01, 0xFF, action->clusterId(), request);
     }
 }
 
@@ -373,7 +373,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             if (it.value()->inClusters().contains(CLUSTER_BASIC))
             {
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001, 0x0004, 0x0005, 0x0007})))
+                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001, 0x0004, 0x0005, 0x0007})))
                     return true;
 
                 interviewError(device, "read basic attributes request failed");
@@ -389,7 +389,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
     {
         if (!device->batteryPowered() && it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) && !it.value()->colorCapabilities())
         {
-            if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
+            if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
                 return true;
 
             interviewError(device, "read color capabilities request failed");
@@ -403,7 +403,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             case ZoneStatus::Unknown:
             {
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0001, 0x0010})))
+                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0001, 0x0010})))
                     return true;
 
                 interviewError(device, "read current IAS zone status request failed");
@@ -414,7 +414,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
             {
                 quint64 ieeeAddress = m_adapter->ieeeAddress();
 
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
+                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
                     return true;
 
                 interviewError(device, "write IAS zone CIE address request failed");
@@ -428,7 +428,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
                 payload.responseCode = 0x00;
                 payload.zoneId = 0x42;
 
-                if (m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload))) && m_adapter->dataRequest(id, device->networkAddress(), it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010})))
+                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload))) && m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010})))
                     return true;
 
                 interviewError(device, "enroll IAS zone request failed");
@@ -1489,7 +1489,7 @@ void ZigBee::handleRequests(void)
             {
                 DataRequest request = qvariant_cast <DataRequest> (it.value()->request());
 
-                if (!m_adapter->dataRequest(it.key(), request->device()->networkAddress(), request->endpointId(), request->clusterId(), request->data()))
+                if (!m_adapter->unicastRequest(it.key(), request->device()->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()))
                 {
                     logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "aborted";
                     it.value()->setStatus(RequestStatus::Aborted);

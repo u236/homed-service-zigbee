@@ -25,6 +25,7 @@
 #define FRAME_GET_IEEE_ADDRESS                                  0x0026
 #define FRAME_GET_NETWORK_PARAMETERS                            0x0028
 #define FRAME_SEND_UNICAST                                      0x0034
+#define FRAME_SEND_MULTICAST                                    0x0038
 #define FRAME_MESSAGE_SENT_HANDLER                              0x003F
 #define FRAME_INCOMING_MESSAGE_HANDLER                          0x0045
 #define FRAME_SET_CONFIG                                        0x0053
@@ -169,6 +170,21 @@ struct sendUnicastStruct
     quint8  length;
 };
 
+struct sendMulticastStruct
+{
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint8  hops;
+    quint8  radius;
+    quint8  tag;
+    quint8  length;
+};
+
 struct messageSentHandlerStruct
 {
     quint8  type;
@@ -243,6 +259,9 @@ public:
 
     EZSP(QSettings *config, QObject *parent);
 
+    bool unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) override;
+    bool multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) override;
+
     bool extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
     bool extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
 
@@ -275,7 +294,6 @@ private:
     void softReset(void) override;
     void parseData(void) override;
     bool permitJoin(bool enabled) override;
-    bool unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) override;
 
 private slots:
 

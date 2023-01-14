@@ -8,6 +8,16 @@ ZiGate::ZiGate(QSettings *config, QObject *parent) : Adapter(config, parent)
     m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
 }
 
+bool ZiGate::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
+{
+    return apsRequest(id, ADDRESS_MODE_16_BIT, networkAddress, srcEndPointId, dstEndPointId, clusterId, payload);
+}
+
+bool ZiGate::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
+{
+    return apsRequest(id, ADDRESS_MODE_GROUP, groupId, srcEndPointId, dstEndPointId, clusterId, payload);
+}
+
 bool ZiGate::extendedDataRequest(quint8, const QByteArray &, quint8, quint16, quint8, quint16, const QByteArray &, bool)
 {
     return true;
@@ -325,6 +335,23 @@ bool ZiGate::startCoordinator(bool clear)
     return true;
 }
 
+bool ZiGate::apsRequest(quint8 id, quint8 addressMode, quint16 address, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
+{
+    apsRequestStruct request;
+
+    request.addressMode = addressMode;
+    request.address = qToBigEndian(address);
+    request.srcEndpointId = srcEndPointId;
+    request.dstEndpointId = dstEndPointId;
+    request.clusterId = qToBigEndian(clusterId);
+    request.profileId = qToBigEndian <quint16> (PROFILE_HA);
+    request.securityMode = ZIGATE_SECURITY_MODE;
+    request.radius = ZIGATE_RADIUS;
+    request.length = static_cast <quint8> (payload.length());
+
+    return sendRequest(ZIGATE_APS_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id) && !m_replyStatus;
+}
+
 void ZiGate::softReset(void)
 {
     sendRequest(ZIGATE_RESET);
@@ -361,23 +388,6 @@ bool ZiGate::permitJoin(bool enabled)
     }
 
     return true;
-}
-
-bool ZiGate::unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
-{
-    apsRequestStruct request;
-
-    request.addressMode = ADDRESS_MODE_16_BIT;
-    request.networkAddress = qToBigEndian(networkAddress);
-    request.srcEndpointId = srcEndPointId;
-    request.dstEndpointId = dstEndPointId;
-    request.clusterId = qToBigEndian(clusterId);
-    request.profileId = qToBigEndian <quint16> (PROFILE_HA);
-    request.securityMode = ZIGATE_SECURITY_MODE;
-    request.radius = ZIGATE_RADIUS;
-    request.length = static_cast <quint8> (payload.length());
-
-    return sendRequest(ZIGATE_APS_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id) && !m_replyStatus;
 }
 
 void ZiGate::handleQueue(void)

@@ -49,6 +49,47 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_vers
     m_values.append({VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
 }
 
+bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
+{
+    sendUnicastStruct request;
+
+    request.type = MESSAGE_TYPE_DIRECT;
+    request.networkAddress = qToLittleEndian(networkAddress);
+    request.profileId = qToLittleEndian <quint16> (m_endpointsData.contains(srcEndPointId) ? m_endpointsData.value(srcEndPointId)->profileId() : 0x0000);
+    request.clusterId = qToLittleEndian(clusterId);
+    request.srcEndpointId = srcEndPointId;
+    request.dstEndpointId = dstEndPointId;
+    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+    request.groupId = 0x0000;
+    request.sequence = m_sequenceId;
+    request.tag = id;
+    request.length = static_cast <quint8> (payload.length());
+
+    if (sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) && !m_replyData.at(0))
+        sendFrame(FRAME_SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
+
+    return sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
+}
+
+bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
+{
+    sendMulticastStruct request;
+
+    request.profileId = qToLittleEndian <quint16> (m_endpointsData.contains(srcEndPointId) ? m_endpointsData.value(srcEndPointId)->profileId() : 0x0000);
+    request.clusterId = qToLittleEndian(clusterId);
+    request.srcEndpointId = srcEndPointId;
+    request.dstEndpointId = dstEndPointId;
+    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+    request.groupId = qToLittleEndian(groupId);
+    request.sequence = m_sequenceId;
+    request.hops = 0x00;
+    request.radius = 0x07;
+    request.tag = id;
+    request.length = static_cast <quint8> (payload.length());
+
+    return sendFrame(FRAME_SEND_MULTICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
+}
+
 bool EZSP::extendedDataRequest(quint8, const QByteArray &, quint8, quint16, quint8, quint16, const QByteArray &, bool)
 {
     return true;
@@ -662,28 +703,6 @@ bool EZSP::permitJoin(bool enabled)
     }
 
     return true;
-}
-
-bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
-{
-    sendUnicastStruct request;
-
-    request.type = MESSAGE_TYPE_DIRECT;
-    request.networkAddress = qToLittleEndian(networkAddress);
-    request.profileId = qToLittleEndian <quint16> (m_endpointsData.contains(srcEndPointId) ? m_endpointsData.value(srcEndPointId)->profileId() : 0x0000);
-    request.clusterId = qToLittleEndian(clusterId);
-    request.srcEndpointId = srcEndPointId;
-    request.dstEndpointId = dstEndPointId;
-    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
-    request.groupId = 0x0000;
-    request.sequence = m_sequenceId;
-    request.tag = id;
-    request.length = static_cast <quint8> (payload.length());
-
-    if (sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) && !m_replyData.at(0))
-        sendFrame(FRAME_SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
-
-    return sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
 }
 
 void EZSP::handleQueue(void)

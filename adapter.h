@@ -157,6 +157,9 @@ public:
     Adapter(QSettings *config, QObject *parent);
     ~Adapter(void);
 
+    virtual bool unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) = 0;
+    virtual bool multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) = 0;
+
     virtual bool extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
     virtual bool extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
 
@@ -177,7 +180,6 @@ public:
     virtual bool bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
     virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index = 0);
     virtual bool leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress);
-    virtual bool dataRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &data);
 
 protected:
 
@@ -213,7 +215,6 @@ private:
     virtual void softReset(void) = 0;
     virtual void parseData(void) = 0;
     virtual bool permitJoin(bool enabled) = 0;
-    virtual bool unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload) = 0;
 
 private slots:
 

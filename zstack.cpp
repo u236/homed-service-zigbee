@@ -18,6 +18,27 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_apsClusters = {APS_NODE_DESCRIPTOR, APS_SIMPLE_DESCRIPTOR, APS_ACTIVE_ENDPOINTS, APS_BIND, APS_UNBIND, APS_LQI, APS_LEAVE};
 }
 
+bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
+{
+    dataRequestStruct reqest;
+
+    reqest.networkAddress = qToLittleEndian(networkAddress);
+    reqest.dstEndpointId = dstEndPointId;
+    reqest.srcEndpointId = srcEndPointId;
+    reqest.clusterId = qToLittleEndian(clusterId);
+    reqest.transactionId = id;
+    reqest.options = AF_DISCV_ROUTE;
+    reqest.radius = AF_DEFAULT_RADIUS;
+    reqest.length = static_cast <quint8> (payload.length());
+
+    return sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&reqest), sizeof(reqest)).append(payload)) && !m_replyData.at(0);
+}
+
+bool ZStack::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
+{
+    return extendedDataRequest(id, groupId, dstEndPointId, 0x0000, srcEndPointId, clusterId, payload, true); // TODO: refactor this
+}
+
 bool ZStack::extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
     extendedDataRequestStruct data;
@@ -532,22 +553,6 @@ bool ZStack::permitJoin(bool enabled)
     }
 
     return true;
-}
-
-bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint16 clusterId, quint8 srcEndPointId, quint8 dstEndPointId, const QByteArray &payload)
-{
-    dataRequestStruct reqest;
-
-    reqest.networkAddress = qToLittleEndian(networkAddress);
-    reqest.dstEndpointId = dstEndPointId;
-    reqest.srcEndpointId = srcEndPointId;
-    reqest.clusterId = qToLittleEndian(clusterId);
-    reqest.transactionId = id;
-    reqest.options = AF_DISCV_ROUTE;
-    reqest.radius = AF_DEFAULT_RADIUS;
-    reqest.length = static_cast <quint8> (payload.length());
-
-    return sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&reqest), sizeof(reqest)).append(payload)) && !m_replyData.at(0);
 }
 
 void ZStack::handleQueue(void)
