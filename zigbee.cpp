@@ -302,6 +302,7 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
             return;
 
         m_adapter->multicastRequest(m_requestId, groupId, 0x01, 0xFF, action->clusterId(), request);
+        logInfo << "Group" << groupId << action->name().toUtf8().constData() << "action request sent";
     }
 }
 
