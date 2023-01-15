@@ -63,15 +63,29 @@ bool ZiGate::activeEndpointsRequest(quint8 id, quint16 networkAddress)
 bool ZiGate::bindRequest(quint8 id, quint16, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
     bindRequestStruct request;
-    quint64 address = m_ieeeAddress;
+    quint64 address = qToBigEndian(m_ieeeAddress);
     QTimer timer;
 
     if (!dstAddress.isEmpty())
     {
-        if (dstAddress.length() != 2 && dstAddress.length() != 8)
-            return false;
+        switch (dstAddress.length())
+        {
+            case 2:
+            {
+                quint16 value = qToBigEndian <quint16> (*(reinterpret_cast <const quint16*> (dstAddress.constData())));
+                memcpy(&address, &value, sizeof(value));
+                break;
+            }
 
-        memcpy(&address, dstAddress.constData(), dstAddress.length());
+            case 8:
+            {
+                address = qToBigEndian <quint64> (*(reinterpret_cast <const quint64*> (dstAddress.constData())));
+                break;
+            }
+
+            default:
+                return false;
+        }
     }
 
     memcpy(&request.srcAddress, srcAddress.constData(), sizeof(request.srcAddress));
@@ -288,6 +302,15 @@ bool ZiGate::startCoordinator(bool clear)
 
     logInfo << "Adapter type: ZiGate" << m_versionString.toUtf8().constData();
 
+    if (!sendRequest(ZIGATE_GET_NETWORK_STATUS) || m_replyStatus)
+    {
+        logWarning << "Network status request failed";
+        return false;
+    }
+
+    memcpy(&networkStatus, m_replyData.constData(), sizeof(networkStatus));
+    m_ieeeAddress = qFromBigEndian(networkStatus.ieeeAddress);
+
     if (clear && (!sendRequest(ZIGATE_SET_EXTENDED_PANID, QByteArray(reinterpret_cast <char*> (&networkStatus.ieeeAddress), sizeof(networkStatus.ieeeAddress))) || m_replyStatus))
     {
         logWarning << "Set extended PAN ID request failed";
@@ -320,14 +343,11 @@ bool ZiGate::startCoordinator(bool clear)
 
     // TODO: check ZIGATE_START_NETWORK reply here
 
-    if (!sendRequest(ZIGATE_GET_NETWORK_STATUS) || m_replyStatus)
+    if (clear && sendRequest(ZIGATE_GET_NETWORK_STATUS) && !m_replyStatus)
     {
-        logWarning << "Adapter address request failed";
-        return false;
+        memcpy(&networkStatus, m_replyData.constData(), sizeof(networkStatus));
+        logInfo << "New network started";
     }
-
-    memcpy(&networkStatus, m_replyData.constData(), sizeof(networkStatus));
-    m_ieeeAddress = qFromBigEndian(networkStatus.ieeeAddress);
 
     logInfo << "ZiGate managed PAN ID:" << QString::asprintf("0x%04x", qFromBigEndian(networkStatus.panId));
     emit coordinatorReady();
