@@ -733,6 +733,9 @@ QJsonArray DeviceList::serializeDevices(void)
 
                 if (device->linkQuality())
                     json.insert("linkQuality", device->linkQuality());
+
+                if (!device->description().isEmpty())
+                    json.insert("description", device->description());
             }
 
             if (!device->endpoints().isEmpty())

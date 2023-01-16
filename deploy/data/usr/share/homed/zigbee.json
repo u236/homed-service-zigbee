@@ -751,6 +751,7 @@
       "modelNames":     ["TS0002", "TS0012"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "polls":          ["tuyaMagic"],
       "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
@@ -767,6 +768,7 @@
       "modelNames":     ["TS0003", "TS0013"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "polls":          ["tuyaMagic"],
       "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
@@ -783,6 +785,7 @@
       "modelNames":     ["TS0004", "TS0014"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "polls":          ["tuyaMagic"],
       "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
@@ -799,6 +802,7 @@
       "modelNames":     ["TS0006"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "polls":          ["tuyaMagic"],
       "options":        {"ignoreClusters": [57344]},
       "endpointId":     1
     },
@@ -816,6 +820,7 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
+      "polls":          ["tuyaMagic"],
       "discoveries":    ["switch"],
       "endpointId":     [1, 2, 3, 4, 5]
     },

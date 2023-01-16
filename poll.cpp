@@ -13,5 +13,6 @@ void PollObject::registerMetaTypes(void)
     qRegisterMetaType <Polls::Power>                    ("powerPoll");
 
     qRegisterMetaType <PollsOther::LumiPresenceSensor>  ("lumiPresenceSensorPoll");
+    qRegisterMetaType <PollsOther::TuyaMagic>           ("tuyaMagicPoll");
     qRegisterMetaType <PollsOther::PerenioSmartPlug>    ("perenioSmartPlugPoll");
 }
