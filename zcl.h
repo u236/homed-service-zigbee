@@ -106,6 +106,9 @@
 #define TUYA_TYPE_VALUE                             0x02
 #define TUYA_TYPE_ENUM                              0x04
 
+#define MANUFACTURER_CODE_SILABS                    0x1049
+#define MANUFACTURER_CODE_LUMI                      0x115F
+
 #include <QByteArray>
 #include <QList>
 

@@ -2,6 +2,7 @@
 #include <QRandomGenerator>
 #include "ezsp.h"
 #include "logger.h"
+#include "zcl.h"
 
 static const uint16_t crcTable[256] =
 {
@@ -23,8 +24,11 @@ static const uint16_t crcTable[256] =
     0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_version(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0)
 {
+    connect(m_timer, &QTimer::timeout, this, &EZSP::resetManufacturerCode);
+    m_timer->setSingleShot(true);
+
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
 
@@ -292,9 +296,16 @@ void EZSP::parsePacket(const QByteArray &payload)
             if (qFromLittleEndian(message->clusterId) == APS_DEVICE_ANNOUNCE)
             {
                 const deviceAnnounceStruct *announce = reinterpret_cast <const deviceAnnounceStruct*> (payload.constData() + 1);
-                quint64 ieeeAddress;
-                ieeeAddress = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
-                emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(announce->networkAddress));
+                quint64 address = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
+                QByteArray ieeeAddress(reinterpret_cast <char*> (&address), sizeof(address));
+
+                if (ieeeAddress.startsWith(QByteArray::fromHex("04cffc")) || ieeeAddress.startsWith(QByteArray::fromHex("54ef44")))
+                {
+                    setManufacturerCore(MANUFACTURER_CODE_LUMI);
+                    m_timer->start(20000);
+                }
+
+                emit deviceJoined(ieeeAddress, qFromLittleEndian(announce->networkAddress));
                 break;
             }
 
@@ -596,14 +607,19 @@ bool EZSP::startCoordinator(void)
         }
     }
 
-    if (!sendFrame(FRAME_SET_MANUFACTURER_CODE, QByteArray::fromHex("4910")))
-    {
-        logWarning << "Set manufacturer code request failed";
-        return false;
-    }
-
+    setManufacturerCore(MANUFACTURER_CODE_SILABS);
     emit coordinatorReady();
     return true;
+}
+
+void EZSP::setManufacturerCore(quint16 value)
+{
+    value = qToLittleEndian(value);
+
+    if (sendFrame(FRAME_SET_MANUFACTURER_CODE, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))))
+        return;
+
+    logWarning << "Set manufacturer code request failed";
 }
 
 void EZSP::handleError(const QString &reason)
@@ -703,6 +719,11 @@ bool EZSP::permitJoin(bool enabled)
     }
 
     return true;
+}
+
+void EZSP::resetManufacturerCode(void)
+{
+    setManufacturerCore(MANUFACTURER_CODE_SILABS);
 }
 
 void EZSP::handleQueue(void)

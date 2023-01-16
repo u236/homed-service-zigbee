@@ -271,6 +271,8 @@ public:
 
 private:
 
+    QTimer *m_timer;
+
     QByteArray m_networkKey;
     quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId;
 
@@ -289,6 +291,8 @@ private:
 
     bool startNetwork(void);
     bool startCoordinator(void);
+
+    void setManufacturerCore(quint16 value);
     void handleError(const QString &reason);
 
     void softReset(void) override;
@@ -297,6 +301,7 @@ private:
 
 private slots:
 
+    void resetManufacturerCode(void);
     void handleQueue(void) override;
 
 signals:

@@ -182,7 +182,7 @@ namespace ActionsLUMI
 
     public:
 
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, 0x115F, {"sensitivity", "detectionMode", "distance", "resetPresence"}) {}
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, {"sensitivity", "detectionMode", "distance", "resetPresence"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -192,7 +192,7 @@ namespace ActionsLUMI
 
     public:
 
-        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, 0x115F, {"buttonMode", "leftMode", "rightMode"}) {}
+        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, {"buttonMode", "leftMode", "rightMode"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -202,7 +202,7 @@ namespace ActionsLUMI
 
     public:
 
-        SwitchMode(void) : ActionObject("switchMode", CLUSTER_LUMI, 0x115F, 0x0200) {}
+        SwitchMode(void) : ActionObject("switchMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0200) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -212,7 +212,7 @@ namespace ActionsLUMI
 
     public:
 
-        IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_LUMI, 0x115F, 0x00F0) {}
+        IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x00F0) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -222,7 +222,7 @@ namespace ActionsLUMI
 
     public:
 
-        OperationMode(void) : ActionObject("operationMode", CLUSTER_LUMI, 0x115F, 0x0009) {}
+        OperationMode(void) : ActionObject("operationMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0009) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -232,7 +232,7 @@ namespace ActionsLUMI
 
     public:
 
-        Interlock(void) : ActionObject("lock", CLUSTER_BINARY_OUTPUT, 0x115F, 0xFF06) {}
+        Interlock(void) : ActionObject("lock", CLUSTER_BINARY_OUTPUT, MANUFACTURER_CODE_LUMI, 0xFF06) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
