@@ -742,16 +742,6 @@ namespace PropertiesTUYA
 
     };
 
-    class BacklightMode : public PropertyObject
-    {
-
-    public:
-
-        BacklightMode(void) : PropertyObject("backlightMode", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class IndicatorMode : public PropertyObject
     {
 

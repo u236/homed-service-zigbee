@@ -333,16 +333,6 @@ namespace ActionsTUYA
 
     };
 
-    class BacklightMode : public ActionObject
-    {
-
-    public:
-
-        BacklightMode(void) : ActionObject("backlightMode", CLUSTER_ON_OFF, 0x0000, 0x8001) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class IndicatorMode : public ActionObject
     {
 

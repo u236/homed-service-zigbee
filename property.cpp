@@ -71,7 +71,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>               ("tuyaChildLockProperty");
     qRegisterMetaType <PropertiesTUYA::OperationMode>           ("tuyaOperationModeProperty");
-    qRegisterMetaType <PropertiesTUYA::BacklightMode>           ("tuyaBacklightModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>           ("tuyaIndicatorModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchMode>              ("tuyaSwitchModeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
@@ -1331,19 +1330,6 @@ void PropertiesTUYA::OperationMode::parseAttribte(quint16 attributeId, const QBy
     {
         case 0x00: m_value = "command"; break;
         case 0x01: m_value = "event"; break;
-    }
-}
-
-void PropertiesTUYA::BacklightMode::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x8001)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "low"; break;
-        case 0x01: m_value = "medium"; break;
-        case 0x02: m_value = "high"; break;
     }
 }
 

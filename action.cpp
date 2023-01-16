@@ -32,7 +32,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::PresenceSensor>         ("tuyaPresenceSensorAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>              ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::OperationMode>          ("tuyaOperationModeAction");
-    qRegisterMetaType <ActionsTUYA::BacklightMode>          ("tuyaBacklightModeAction");
     qRegisterMetaType <ActionsTUYA::IndicatorMode>          ("tuyaIndicatorModeAction");
     qRegisterMetaType <ActionsTUYA::SwitchMode>             ("tuyaSwitchModeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>          ("tuyaPowerOnStatusAction");
@@ -674,17 +673,6 @@ QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data
 QByteArray ActionsTUYA::OperationMode::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"command", "event"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
-}
-
-QByteArray ActionsTUYA::BacklightMode::request(const QString &, const QVariant &data)
-{
-    QList <QString> list = {"low", "medium", "high"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)
