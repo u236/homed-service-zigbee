@@ -383,6 +383,39 @@
       "endpointId":     [4, 5]
     },
     {
+      "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
+      "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
+      "properties":     ["status", "lumiData"],
+      "actions":        ["status", "lumiSwitchMode", "lumiIndicatorMode"],
+      "discoveries":    ["switch", "action"],
+      "options":        {"action": ["singleClick", "doubleClick"]}
+    },
+    {
+      "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
+      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "options":        {"endpointNames": {"1": "Left", "2": "Right", "41": "Left", "42": "Right", "51": "Both"}}
+    },
+    {
+      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "properties":     ["lumiData"],
+      "actions":        ["lumiIndicatorMode"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "properties":     ["status", "lumiData"],
+      "actions":        ["status", "lumiSwitchMode"],
+      "discoveries":    ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "properties":     ["lumiSwitchAction"],
+      "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick"]},
+      "endpointId":     [41, 42, 51]
+    },
+    {
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
       "modelNames":     ["lumi.relay.c2acn01"],
       "properties":     ["lumiBasic", "lumiPower"],
@@ -448,7 +481,7 @@
       "options":        {"timeout": 60}
     },
     {
-      "description":    "Aqara Presence Detector FP1 (RTCZCGQ11LM)",
+      "description":    "Aqara FP1 Presence Detector RTCZCGQ11LM",
       "modelNames":     ["lumi.motion.ac01"],
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],

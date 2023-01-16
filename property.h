@@ -737,7 +737,7 @@ namespace PropertiesTUYA
 
     public:
 
-        OperationMode(void) : PropertyObject("mode", CLUSTER_ON_OFF) {}
+        OperationMode(void) : PropertyObject("operationMode", CLUSTER_ON_OFF) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };

@@ -182,7 +182,7 @@ namespace ActionsLUMI
 
     public:
 
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, 0x115F, {"sensitivity", "mode", "distance", "resetPresence"}) {}
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, 0x115F, {"sensitivity", "detectionMode", "distance", "resetPresence"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -192,7 +192,37 @@ namespace ActionsLUMI
 
     public:
 
-        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, 0x115F, {"mode", "leftMode", "rightMode"}) {}
+        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, 0x115F, {"buttonMode", "leftMode", "rightMode"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class SwitchMode : public ActionObject
+    {
+
+    public:
+
+        SwitchMode(void) : ActionObject("switchMode", CLUSTER_LUMI, 0x115F, 0x0200) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class IndicatorMode : public ActionObject
+    {
+
+    public:
+
+        IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_LUMI, 0x115F, 0x00F0) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class OperationMode : public ActionObject
+    {
+
+    public:
+
+        OperationMode(void) : ActionObject("operationMode", CLUSTER_LUMI, 0x115F, 0x0009) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -203,16 +233,6 @@ namespace ActionsLUMI
     public:
 
         Interlock(void) : ActionObject("lock", CLUSTER_BINARY_OUTPUT, 0x115F, 0xFF06) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class OperationMode : public ActionObject
-    {
-
-    public:
-
-        OperationMode(void) : ActionObject("mode", CLUSTER_LUMI, 0x115F, 0x0009) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -254,7 +274,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesThermostat(void) : ActionObject("moesThermostat", CLUSTER_TUYA_DATA, 0x0000, {"status", "mode", "heatingPoint", "temperatureLimitMax", "deadZoneTemperature", "temperatureLimitMin", "temperatureCalibration", "childLock", "sensor", "weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "saturdayP1Hour", "saturdayP1Minute", "saturdayP1Temperature", "saturdayP2Hour", "saturdayP2Minute", "saturdayP2Temperature", "saturdayP3Hour", "saturdayP3Minute", "saturdayP3Temperature", "saturdayP4Hour", "saturdayP4Minute", "saturdayP4Temperature", "sundayP1Hour", "sundayP1Minute", "sundayP1Temperature", "sundayP2Hour", "sundayP2Minute", "sundayP2Temperature", "sundayP3Hour", "sundayP3Minute", "sundayP3Temperature", "sundayP4Hour", "sundayP4Minute", "sundayP4Temperature"}) {}
+        MoesThermostat(void) : ActionObject("moesThermostat", CLUSTER_TUYA_DATA, 0x0000, {"status", "operationMode", "heatingPoint", "temperatureLimitMax", "deadZoneTemperature", "temperatureLimitMin", "temperatureCalibration", "childLock", "sensor", "weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "saturdayP1Hour", "saturdayP1Minute", "saturdayP1Temperature", "saturdayP2Hour", "saturdayP2Minute", "saturdayP2Temperature", "saturdayP3Hour", "saturdayP3Minute", "saturdayP3Temperature", "saturdayP4Hour", "saturdayP4Minute", "saturdayP4Temperature", "sundayP1Hour", "sundayP1Minute", "sundayP1Temperature", "sundayP2Hour", "sundayP2Minute", "sundayP2Temperature", "sundayP3Hour", "sundayP3Minute", "sundayP3Temperature", "sundayP4Hour", "sundayP4Minute", "sundayP4Temperature"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     private:
@@ -308,7 +328,7 @@ namespace ActionsTUYA
 
     public:
 
-        OperationMode(void) : ActionObject("mode", CLUSTER_ON_OFF, 0x0000, 0x8004) {}
+        OperationMode(void) : ActionObject("operationMode", CLUSTER_ON_OFF, 0x0000, 0x8004) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

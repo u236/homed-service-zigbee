@@ -19,8 +19,10 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsLUMI::PresenceSensor>         ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>             ("lumiButtonModeAction");
-    qRegisterMetaType <ActionsLUMI::Interlock>              ("lumiInterlockAction");
+    qRegisterMetaType <ActionsLUMI::SwitchMode>             ("lumiSwitchModeAction");
+    qRegisterMetaType <ActionsLUMI::IndicatorMode>          ("lumiIndicatorModeAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
+    qRegisterMetaType <ActionsLUMI::Interlock>              ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
 
     qRegisterMetaType <ActionsTUYA::ElectricityMeter>       ("tuyaElectricityMeterAction");
@@ -269,7 +271,7 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
             return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
         }
 
-        case 1: // mode
+        case 1: // detectionMode
         {
             QList <QString> list = {"undirected", "directed"};
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -332,10 +334,26 @@ QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant 
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::Interlock::request(const QString &, const QVariant &data)
+QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &data)
 {
-    quint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    QList <QString> list = {"decoupled", "relay"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::IndicatorMode::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"default", "inverted"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::OperationMode::request(const QString &, const QVariant &data)
@@ -347,6 +365,12 @@ QByteArray ActionsLUMI::OperationMode::request(const QString &, const QVariant &
         return QByteArray();
 
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::Interlock::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &data)

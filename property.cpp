@@ -614,6 +614,9 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 {
     QString modelName = deviceModelName();
 
+    if (m_multiple && dataPoint != 0x0200)
+        return;
+
     switch (dataPoint)
     {
         case 0x0001:
@@ -656,8 +659,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             switch (static_cast <quint8> (data.at(0)))
             {
-                case 0x00: map.insert("mode", "command"); break;
-                case 0x01: map.insert("mode", "event"); break;
+                case 0x00: map.insert("operationMode", "command"); break;
+                case 0x01: map.insert("operationMode", "event"); break;
             }
 
             break;
@@ -732,8 +735,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             switch (static_cast <quint8> (data.at(0)))
             {
-                case 0x00: map.insert("mode", "undirected"); break;
-                case 0x01: map.insert("mode", "directed"); break;
+                case 0x00: map.insert("detectionMode", "undirected"); break;
+                case 0x01: map.insert("detectionMode", "directed"); break;
             }
 
             break;
@@ -807,6 +810,31 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x00F0:
+        {
+            switch (static_cast <quint8> (data.at(0)))
+            {
+                case 0x00: map.insert("indicatorMode", "default"); break;
+                case 0x01: map.insert("indicatorMode", "inverted"); break;
+            }
+
+            break;
+        }
+
+        case 0x0200:
+        {
+            if (!m_multiple && (modelName == "lumi.switch.b2nc01" || modelName == "lumi.switch.b2lc04"))
+                break;
+
+            switch (static_cast <quint8> (data.at(0)))
+            {
+                case 0x00: map.insert("switchMode", "decoupled"); break;
+                case 0x01: map.insert("switchMode", "relay"); break;
+            }
+
+            break;
+        }
+
         case 0xFF02:
         {
             quint16 value = 0;
@@ -836,7 +864,7 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteA
 
     switch (attributeId)
     {
-        case 0xFF22: map.insert(check ? "mode" : "leftMode", value); break;
+        case 0xFF22: map.insert(check ? "buttonMode" : "leftMode", value); break;
         case 0xFF23: map.insert("rightMode", value); break;
     }
 
@@ -1172,7 +1200,7 @@ void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &da
     switch (dataPoint)
     {
         case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
-        case 0x02: map.insert("mode", data.toInt() ? "program" : "manual"); break;
+        case 0x02: map.insert("operationMode", data.toInt() ? "program" : "manual"); break;
         case 0x10: map.insert("heatingPoint", data.toInt()); break;
         case 0x12: map.insert("temperatureLimitMax", data.toInt()); break;
         case 0x13: map.insert("temperatureMax", data.toInt()); break;
