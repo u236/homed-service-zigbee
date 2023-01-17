@@ -76,7 +76,7 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
     return it.value();
 }
 
-void DeviceList::updateIdentity(const Device &device, QString &manufacturerName, QString &modelName)
+void DeviceList::identityHandler(const Device &device, QString &manufacturerName, QString &modelName)
 {
     QList <QString> lumi = {"aqara", "XIAOMI"}, orvibo = {"\u4e2d\u6027", "\u6b27\u745e", "\u94fe\u878d"};
 
@@ -112,13 +112,20 @@ void DeviceList::updateIdentity(const Device &device, QString &manufacturerName,
         return;
     }
 
-    if (QRegExp("^TS\\d{3}[0-9F]$").exactMatch(modelName) || manufacturerName.startsWith("TUYATEC"))
+    if (manufacturerName == "Konke")
+    {
+        device->options().insert("ignoreClusters", QList <QVariant> {0xFCC0});
+        return;
+    }
+
+    if (QRegExp("^TS\\d{3}[0-9F]$").exactMatch(modelName) || manufacturerName.startsWith("TUYA"))
     {
         QList <QString> list = {"TS0001", "TS0011", "TS004F", "TS011F", "TS0201", "TS0202", "TS0207", "TS0601"};
 
         if (list.contains(modelName))
             modelName = manufacturerName;
 
+        device->options().insert("ignoreClusters", QList <QVariant> {0x0000, 0xE000, 0xE001});
         manufacturerName = "TUYA";
     }
 }
@@ -128,7 +135,7 @@ void DeviceList::setupDevice(const Device &device)
     QString manufacturerName, modelName;
     QJsonArray array;
 
-    updateIdentity(device, manufacturerName, modelName);
+    identityHandler(device, manufacturerName, modelName);
 
     device->setSupported(false);
     device->options().clear();
@@ -595,7 +602,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
             {
                 QJsonArray endpointsArray = json.value("endpoints").toArray(), neighborsArray = json.value("neighbors").toArray();
 
-                if (json.value("interviewFinished").toBool() || json.value("ineterviewFinished").toBool()) // TODO: fix this few releases later
+                if (json.value("interviewFinished").toBool())
                     device->setInterviewFinished();
 
                 device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));

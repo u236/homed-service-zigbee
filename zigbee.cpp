@@ -1440,7 +1440,7 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
         emit endpointUpdated(device, endpoint->id());
     }
 
-    if (!device->interviewFinished() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    if (device->interviewFinished() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
         defaultResponseStruct response;
 
