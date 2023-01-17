@@ -135,8 +135,6 @@ void DeviceList::setupDevice(const Device &device)
     QString manufacturerName, modelName;
     QJsonArray array;
 
-    identityHandler(device, manufacturerName, modelName);
-
     device->setSupported(false);
     device->options().clear();
 
@@ -150,6 +148,8 @@ void DeviceList::setupDevice(const Device &device)
         it.value()->polls().clear();
         it.value()->discoveries().clear();
     }
+
+    identityHandler(device, manufacturerName, modelName);
 
     if (m_externalDir.exists())
     {

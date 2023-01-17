@@ -153,6 +153,7 @@ public:
     void removeAllGroups(const QString &deviceName, quint8 endpointId);
     void otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName);
 
+    void clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global);
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
 
     void deviceAction(const QString &deviceName, quint8 endpointId, const QString &name, const QVariant &data);

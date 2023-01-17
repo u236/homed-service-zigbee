@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION                 "3.1.10"
+#define SERVICE_VERSION                 "3.1.11"
 #define UPDATE_AVAILABILITY_INTERVAL    10000
 
 #include "homed.h"
@@ -28,6 +28,8 @@ public:
         removeGroup,
         removeAllGroups,
         otaUpgrade,
+        clusterRequest,
+        globalRequest,
         touchLinkScan,
         touchLinkReset
     };

@@ -215,7 +215,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
         return;
 
     groupId = qFromLittleEndian(groupId);
-    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
+    enqueueDataRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
 }
 
 void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
@@ -225,7 +225,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04), QString("remove all groups request"));
+    enqueueDataRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04), QString("remove all groups request"));
 }
 
 void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName)
@@ -241,7 +241,21 @@ void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QStr
     payload.type = 0x00;
     payload.jitter = 0x64; // TODO: check this
 
-    enqueueDataRequest(device, endpointId ? endpointId : 1, CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT, m_requestId, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+    enqueueDataRequest(device, endpointId ? endpointId : 0x01, CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT, m_requestId, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+}
+
+void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global)
+{
+    Device device = m_devices->byName(deviceName);
+    QByteArray request;
+
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+        return;
+
+    request = zclHeader(global ? 0x00 : FC_CLUSTER_SPECIFIC, m_requestId, commandId, manufacturerCode).append(payload);
+    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId ? endpointId : 0x01) << "cluster" << QString::asprintf("0x%04x", clusterId) << "request" << m_requestId << "enqued with data" << request.toHex(':');
+
+    enqueueDataRequest(device, endpointId ? endpointId : 0x01, clusterId, request, QString("request %1").arg(m_requestId));
 }
 
 void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
