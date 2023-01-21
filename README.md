@@ -5,4 +5,4 @@
 https://github.com/u236/homed-service-common
 
 Документация:\
-https://wiki.u236.org/page/ZigBee
+https://wiki.homed.dev/page/ZigBee
