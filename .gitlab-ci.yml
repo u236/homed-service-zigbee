@@ -1,9 +1,9 @@
 .build:
   stage: build
   script:
-  - "export PATH=\"${PATH}:/opt/${COMPILER}/bin\""
-  - "export STAGING_DIR=\"/opt/${COMPILER}\""
-  - "/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro"
+  - "export PATH=\"${PATH}:/opt/gcc/${COMPILER}/bin\""
+  - "export STAGING_DIR=\"/opt/gcc/${COMPILER}\""
+  - "/opt/qt/${QT_BUILD}/bin/qmake homed-zigbee.pro"
   - "make -j8"
   after_script:
   - "cp homed-zigbee homed-zigbee-${ARCHITECTURE}"
@@ -77,44 +77,51 @@ Build Linux Binary (amd64):
   extends: .build
   variables:
     ARCHITECTURE: amd64
-    QT_BUILD: qt-minimal-amd64-linux-5.15.4-static
+    QT_BUILD: qt-amd64-linux-5.15.4-static
   script:
-  - "docker run --rm -v /opt/${QT_BUILD}:/opt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j8\""
+  - "docker run --rm -v /opt/qt/${QT_BUILD}:/opt/qt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/qt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j8\""
 
 Build Linux Binary (aarch64):
   extends: .build
   variables:
     ARCHITECTURE: aarch64
-    QT_BUILD: qt-minimal-aarch64-linux-5.15.4-static
+    QT_BUILD: qt-aarch64-linux-gnu-5.15.4-static
     COMPILER: gcc-aarch64-linux-gnu-8.3.0-linaro
 
 Build Linux Binary (armhf):
   extends: .build
   variables:
     ARCHITECTURE: armhf
-    QT_BUILD: qt-minimal-armhf-linux-5.15.4-static
+    QT_BUILD: qt-arm-linux-gnueabihf-5.15.4-static
     COMPILER: gcc-arm-linux-gnueabihf-8.3.0-linaro
+
+Build OpenWRT Binary (arm_cortex-a7_neon-vfpv4):
+  extends: .build
+  variables:
+    ARCHITECTURE: arm_cortex-a7_neon-vfpv4
+    QT_BUILD: qt-arm_cortex-a7_neon-vfpv4-openwrt-linux-5.15.4-static
+    COMPILER: gcc-arm_cortex-a7_neon-vfpv4-openwrt-linux-11.2.0-musl
 
 Build OpenWRT Binary (arm_cortex-a9_neon):
   extends: .build
   variables:
     ARCHITECTURE: arm_cortex-a9_neon
-    QT_BUILD: qt-minimal-arm-openwrt-5.15.4-static
-    COMPILER: gcc-arm-openwrt-linux-11.2.0-musl
+    QT_BUILD: qt-arm_cortex-a9_neon-openwrt-linux-5.15.4-static
+    COMPILER: gcc-arm_cortex-a9_neon-openwrt-linux-11.2.0-musl
 
 Build OpenWRT Binary (mips_24kc):
   extends: .build
   variables:
     ARCHITECTURE: mips_24kc
-    QT_BUILD: qt-minimal-mips-openwrt-5.15.4-static
-    COMPILER: gcc-mips-openwrt-linux-11.2.0-musl
+    QT_BUILD: qt-mips_24kc-openwrt-linux-5.15.4-static
+    COMPILER: gcc-mips_24kc-openwrt-linux-11.2.0-musl
 
 Build OpenWRT Binary (mipsel_24kc):
   extends: .build
   variables:
     ARCHITECTURE: mipsel_24kc
-    QT_BUILD: qt-minimal-mipsel-openwrt-5.15.4-static
-    COMPILER: gcc-mipsel-openwrt-linux-11.2.0-musl
+    QT_BUILD: qt-mipsel_24kc-openwrt-linux-5.15.4-static
+    COMPILER: gcc-mipsel_24kc-openwrt-linux-11.2.0-musl
 
 Deploy Docker Images:
   stage: deploy
@@ -146,6 +153,11 @@ Deploy APT Package (amd64):
   extends: .deploy_apt
   variables:
     ARCHITECTURE: amd64
+
+Deploy OpenWRT Package (arm_cortex-a7_neon-vfpv4):
+  extends: .deploy_ipk
+  variables:
+    ARCHITECTURE: arm_cortex-a7_neon-vfpv4
 
 Deploy OpenWRT Package (arm_cortex-a9_neon):
   extends: .deploy_ipk
