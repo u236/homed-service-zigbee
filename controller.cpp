@@ -25,14 +25,14 @@ Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(ge
 
 void Controller::publishDiscovery(const Device &device, bool remove)
 {
-    QMap <QString, QVariant> endpointNames = device->options().value("endpointNames").toMap();
+    QMap <QString, QVariant> endpointName = device->options().value("endpointName").toMap();
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->discoveries().count(); i++)
         {
             const Discovery &discovery = it.value()->discoveries().at(i);
-            QString id = discovery->multiple() ? QString::number(it.key()) : QString(), name = endpointNames.value(id).toString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
+            QString id = discovery->multiple() ? QString::number(it.key()) : QString(), name = endpointName.value(id).toString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
             QList <QString> object = {discovery->name()};
             QJsonObject json, node;
             QJsonArray availability;

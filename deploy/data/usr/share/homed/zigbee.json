@@ -80,7 +80,7 @@
     {
       "description":    "GLEDOPTO RGBW Led Controller GL-C-007 (2ID)",
       "modelNames":     ["GL-C-007-2ID"],
-      "options":        {"endpointNames": {"11": "RGB", "15": "White"}}
+      "options":        {"endpointName": {"11": "RGB", "15": "White"}}
     },
     {
       "modelNames":     ["GL-C-007-2ID"],
@@ -110,7 +110,7 @@
     {
       "description":    "GLEDOPTO RGB+ССT Led Controller GL-C-008 (2ID)",
       "modelNames":     ["GL-C-008-2ID"],
-      "options":        {"endpointNames": {"11": "RGB", "15": "CCT"}}
+      "options":        {"endpointName": {"11": "RGB", "15": "CCT"}}
     },
     {
       "modelNames":     ["GL-C-008-2ID"],
@@ -360,7 +360,7 @@
     {
       "description":    "Aqara 2-Channel Wall Switch QBKG03LM",
       "modelNames":     ["lumi.ctrl_neutral2"],
-      "options":        {"endpointNames": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}}
+      "options":        {"endpointName": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}}
     },
     {
       "modelNames":     ["lumi.ctrl_neutral2"],

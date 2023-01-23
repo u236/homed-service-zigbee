@@ -563,7 +563,7 @@ namespace PropertiesLUMI
 
     public:
 
-        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF, true) {}
+        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
