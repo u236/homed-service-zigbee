@@ -159,11 +159,13 @@
   "HOMEd":
   [
     {
-      "description":    "PTVO Firmware Based Button",
-      "modelNames":     ["Button"],
-      "properties":     ["batteryVoltage", "ptvoSwitchAction"],
-      "discoveries":    ["battery", "action"],
-      "options":        {"action": ["on", "off"]}
+      "description":    "ESP32C6 Light Example",
+      "modelNames":     ["ESP Light"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "discoveries":    ["light"]
     },
     {
       "description":    "PTVO Firmware Based CO2 Sensor",
@@ -203,6 +205,13 @@
       "actions":        ["ptvoCount"],
       "discoveries":    [],
       "endpointId":     3
+    },
+    {
+      "description":    "PTVO Firmware Based Button",
+      "modelNames":     ["Button"],
+      "properties":     ["batteryVoltage", "ptvoSwitchAction"],
+      "discoveries":    ["battery", "action"],
+      "options":        {"action": ["on", "off"]}
     }
   ],
 
