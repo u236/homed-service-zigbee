@@ -101,7 +101,7 @@ namespace Reportings
 
     public:
 
-        ColorHS(void) : ReportingObject("colorHue", CLUSTER_COLOR_CONTROL, {0x0000, 0x0001}, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
+        ColorHS(void) : ReportingObject("colorHS", CLUSTER_COLOR_CONTROL, {0x0000, 0x0001}, DATA_TYPE_8BIT_UNSIGNED, 0, 600) {}
 
     };
 
@@ -110,7 +110,7 @@ namespace Reportings
 
     public:
 
-        ColorXY(void) : ReportingObject("colorX", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
+        ColorXY(void) : ReportingObject("colorXY", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}, DATA_TYPE_16BIT_UNSIGNED, 0, 600) {}
 
     };
 
