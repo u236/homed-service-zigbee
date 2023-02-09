@@ -539,7 +539,7 @@
       "options":        {"action": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
     },
     {
-      "description":    "Aqara Opple 2-band Wireless Switch WXCJKG11LM",
+      "description":    "Aqara Opple 2-Key Wireless Switch WXCJKG11LM",
       "modelNames":     ["lumi.remote.b286opcn01"],
       "properties":     ["identifyAction", "switchAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
@@ -555,7 +555,7 @@
       "endpointId":     [1, 2]
     },
     {
-      "description":    "Aqara Opple 4-band Wireless Switch WXCJKG12LM",
+      "description":    "Aqara Opple 4-Key Wireless Switch WXCJKG12LM",
       "modelNames":     ["lumi.remote.b486opcn01"],
       "properties":     ["identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
@@ -571,7 +571,7 @@
       "endpointId":     [1, 2, 3, 4]
     },
     {
-      "description":    "Aqara Opple 6-band Wireless Switch WXCJKG13LM",
+      "description":    "Aqara Opple 6-Key Wireless Switch WXCJKG13LM",
       "modelNames":     ["lumi.remote.b686opcn01"],
       "properties":     ["identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
@@ -585,6 +585,31 @@
       "discoveries":    ["action"],
       "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     [1, 2, 3, 4, 5, 6]
+    },
+    {
+      "description":    "Aqara D1 1-Key Wireless Switch WXKG06LM",
+      "modelNames":     ["lumi.remote.b186acn02"],
+      "properties":     ["lumiBasic", "lumiSwitchAction"],
+      "discoveries":    ["battery", "action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
+    },
+    {
+      "description":    "Aqara D1 2-Key Wireless Switch WXKG07LM",
+      "modelNames":     ["lumi.remote.b286acn02"],
+      "options":        {"endpointNames": {"1": "Left", "2": "Right", "3": "Both"}}
+    },
+    {
+      "modelNames":     ["lumi.remote.b286acn02"],
+      "properties":     ["lumiBasic"],
+      "discoveries":    ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.remote.b286acn02"],
+      "properties":     ["lumiSwitchAction"],
+      "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
+      "endpointId":     [1, 2, 3]
     },
     {
       "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
