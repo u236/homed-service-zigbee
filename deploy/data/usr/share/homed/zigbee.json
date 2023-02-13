@@ -171,11 +171,12 @@
     {
       "description":    "ESP32C6 Light Example",
       "modelNames":     ["ESP Light"],
-      "properties":     ["status"],
-      "actions":        ["status"],
-      "bindings":       ["status"],
-      "reportings":     ["status"],
-      "discoveries":    ["light"]
+      "properties":     ["status", "level", "colorXY"],
+      "actions":        ["status", "level", "colorXY"],
+      "bindings":       ["status", "level", "colorXY"],
+      "reportings":     ["status", "level", "colorXY"],
+      "discoveries":    ["light"],
+      "options":        {"light": ["level", "color"]}
     },
     {
       "description":    "PTVO Firmware Based CO2 Sensor",
