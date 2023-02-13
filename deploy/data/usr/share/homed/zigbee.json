@@ -130,6 +130,16 @@
     }
   ],
 
+  "GS":
+  [
+    {
+      "description":    "Heiman Water Leak Sensor SWHM-I1",
+      "modelNames":     ["SWHM-I1"],
+      "properties":     ["iasWaterLeak"],
+      "discoveries":    ["waterLeak"]
+    }
+  ],
+
   "HaiPaiTech":
   [
     {
