@@ -521,9 +521,13 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
 
     if (value & 0x0004)
         map.insert("tamper", true);
+    else
+        map.remove("tamper");
 
     if (value & 0x0008)
         map.insert("batteryLow", true);
+    else
+        map.remove("batteryLow");
 
     m_value = map.isEmpty() ? QVariant() : map;
 }
