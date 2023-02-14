@@ -238,7 +238,7 @@ void DeviceList::setupDevice(const Device &device)
 
     if (!device->supported())
     {
-        logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "properties not found in library";
+        logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
         device->setDescription(QString("%1/%2").arg(device->manufacturerName(), device->modelName()));
         recognizeDevice(device);
     }

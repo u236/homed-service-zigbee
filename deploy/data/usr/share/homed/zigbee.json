@@ -458,8 +458,8 @@
       "options":        {"switch": "outlet"}
     },
     {
-      "description":    "Aqara 10A Smart Plug SP-EUC01",
-      "modelNames":     ["lumi.plug.maeu01"],
+      "description":    "Aqara 10A Smart Plug SP-EUC01, ZNCZ04LM or ZNCZ12LM",
+      "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status"],
       "discoveries":    ["switch", "energy", "voltage", "current"],
@@ -467,7 +467,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.plug.maeu01"],
+      "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["lumiPower"],
       "discoveries":    ["power"],
       "endpointId":     21
@@ -676,6 +676,18 @@
       "bindings":       ["deviceTemperature"],
       "reportings":     ["deviceTemperature"],
       "discoveries":    ["temperature"]
+    }
+  ],
+
+  "Openlumi":
+  [
+    {
+      "description":    "OpenLumi Router Bulb (HML004)",
+      "modelNames":     ["HML004"],
+      "properties":     ["status", "level", "colorHS", "colorTemperature"],
+      "actions":        ["status", "level", "colorHS", "colorTemperature"],
+      "discoveries":    ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"]}
     }
   ],
 
