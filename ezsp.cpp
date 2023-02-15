@@ -626,20 +626,14 @@ void EZSP::setManufacturerCore(quint16 value)
     logWarning << "Set manufacturer code request failed";
 }
 
-void EZSP::handleError(const QString &reason, bool retry)
+void EZSP::handleError(const QString &reason)
 {
     logWarning << reason.toUtf8().constData();
 
     m_errorReceived = true;
     emit dataReceived();
 
-    if (!retry)
-    {
-        reset();
-        return;
-    }
-
-    sendRequest(ASH_CONTROL_NAK | m_acknowledgeId);
+    reset();
 }
 
 void EZSP::softReset(void)
@@ -787,11 +781,11 @@ void EZSP::handleQueue(void)
 
         if (control == ASH_CONTROL_ERROR)
         {
-            handleError("Received ERROR frame", false);
+            handleError("Received ERROR frame");
             break;
         }
 
-        handleError(QString("Received unrecognized ASH frame:").arg(QString(packet.toHex(':'))), false);
+        handleError(QString("Received unrecognized ASH frame:").arg(QString(packet.toHex(':'))));
     }
 
     m_queue.clear();

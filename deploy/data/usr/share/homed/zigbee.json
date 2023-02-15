@@ -173,7 +173,7 @@
       "modelNames":     ["ESP Light"],
       "properties":     ["status", "level", "colorXY"],
       "actions":        ["status", "level", "colorXY"],
-      "bindings":       ["status", "level", "colorXY"],
+      "bindings":       ["status", "level", "color"],
       "reportings":     ["status", "level", "colorXY"],
       "discoveries":    ["light"],
       "options":        {"light": ["level", "color"]}
@@ -235,7 +235,6 @@
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "bindings":       ["status", "level", "color"],
       "reportings":     ["status", "level", "colorTemperature"],
-      "polls":          ["status", "level", "colorTemperature"],
       "discoveries":    ["light"],
       "options":        {"light": ["level", "colorTemperature"], "colorTemperatureMin": 250, "colorTemperatureMax": 454}
     },
@@ -246,7 +245,6 @@
       "actions":        ["status", "powerOnStatus", "level"],
       "bindings":       ["status", "level"],
       "reportings":     ["status", "level"],
-      "polls":          ["status", "level"],
       "discoveries":    ["light"],
       "options":        {"light": ["level"]}
     },
@@ -777,7 +775,6 @@
       "modelNames":     ["ZLL-ColorTempera", "ZLL-ColorTemperature"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
-      "polls":          ["status", "level", "colorTemperature"],
       "discoveries":    ["light"],
       "options":        {"light": ["level", "colorTemperature"], "colorTemperatureMin": 153, "colorTemperatureMax": 500}
     },
@@ -786,7 +783,6 @@
       "modelNames":     ["ZLL-DimmableLigh"],
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
-      "polls":          ["status", "level"],
       "discoveries":    ["light"],
       "options":        {"light": ["level"]}
     }

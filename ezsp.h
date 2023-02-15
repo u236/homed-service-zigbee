@@ -297,7 +297,7 @@ private:
     bool startCoordinator(void);
 
     void setManufacturerCore(quint16 value);
-    void handleError(const QString &reason, bool retry = true);
+    void handleError(const QString &reason);
 
     void softReset(void) override;
     void parseData(void) override;
