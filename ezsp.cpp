@@ -32,25 +32,29 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
 
-    m_config.append({CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
-    m_config.append({CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
     m_config.append({CONFIG_PACKET_BUFFER_COUNT,                  qToLittleEndian <quint16> (0x00FF)});
+    m_config.append({CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
+    m_config.append({CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
+    m_config.append({CONFIG_INDIRECT_TRANSMISSION_TIMEOUT,        qToLittleEndian <quint16> (0x1E00)});
+    m_config.append({CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x000E)});
+    m_config.append({CONFIG_FRAGMENT_DELAY_MS,                    qToLittleEndian <quint16> (0x0032)});
+    m_config.append({CONFIG_FRAGMENT_WINDOW_SIZE,                 qToLittleEndian <quint16> (0x0001)});
 
+    m_policy.append({POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS)});
     m_policy.append({POLICY_BINDING_MODIFICATION,                 qToLittleEndian <quint16> (DECISION_DISALLOW_BINDING_MODIFICATION)});
     m_policy.append({POLICY_UNICAST_REPLIES,                      qToLittleEndian <quint16> (DECISION_HOST_WILL_NOT_SUPPLY_REPLY)});
     m_policy.append({POLICY_POLL_HANDLER,                         qToLittleEndian <quint16> (DECISION_POLL_HANDLER_IGNORE)});
     m_policy.append({POLICY_MESSAGE_CONTENTS_IN_CALLBACK,         qToLittleEndian <quint16> (DECISION_MESSAGE_TAG_ONLY_IN_CALLBACK)});
+    m_policy.append({POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (DECISION_ALLOW_TC_KEY_REQUESTS)});
+    m_policy.append({POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (DECISION_ALLOW_APP_KEY_REQUESTS)});
     m_policy.append({POLICY_PACKET_VALIDATE_LIBRARY,              qToLittleEndian <quint16> (DECISION_PACKET_VALIDATE_LIBRARY_CHECKS_DISABLED)});
     m_policy.append({POLICY_ZLL,                                  qToLittleEndian <quint16> (DECISION_ALLOW_JOINS)});
     m_policy.append({POLICY_TC_REJOINS_USING_WELL_KNOWN_KEY,      qToLittleEndian <quint16> (DECISION_ALLOW_JOINS)});
-    m_policy.append({POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (DECISION_ALLOW_APP_KEY_REQUESTS)});
-    m_policy.append({POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (DECISION_ALLOW_TC_KEY_REQUESTS)});
-    m_policy.append({POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS)});
 
-    m_values.append({VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
     m_values.append({VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
-    m_values.append({VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, 1, qToLittleEndian <quint16> (0x0003)});
+    m_values.append({VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
     m_values.append({VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
+    m_values.append({VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, 1, qToLittleEndian <quint16> (0x0003)});
 }
 
 bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
@@ -83,7 +87,7 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
     request.clusterId = qToLittleEndian(clusterId);
     request.srcEndpointId = srcEndPointId;
     request.dstEndpointId = dstEndPointId;
-    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+    request.options = qToLittleEndian <quint16> (APS_OPTION_ENABLE_ROUTE_DISCOVERY);
     request.groupId = qToLittleEndian(groupId);
     request.sequence = m_sequenceId;
     request.hops = 0x00;
@@ -505,7 +509,7 @@ bool EZSP::startCoordinator(void)
     concentrator.maxTime = qToLittleEndian <quint16> (CONCENTRATOR_MAX_TIME);
     concentrator.routeErrorThreshold = CONCENTRATOR_ROUTE_ERROR_THRESHOLD;
     concentrator.deliveryFailureThreshold = CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD;
-    concentrator.maxHops = 0;
+    concentrator.maxHops = 0x00;
 
     if (!sendFrame(FRAME_SET_CONCENTRATOR, QByteArray(reinterpret_cast <char*> (&concentrator), sizeof(concentrator))) || m_replyData.at(0))
     {
@@ -622,14 +626,20 @@ void EZSP::setManufacturerCore(quint16 value)
     logWarning << "Set manufacturer code request failed";
 }
 
-void EZSP::handleError(const QString &reason)
+void EZSP::handleError(const QString &reason, bool retry)
 {
     logWarning << reason.toUtf8().constData();
 
     m_errorReceived = true;
     emit dataReceived();
 
-    reset();
+    if (!retry)
+    {
+        reset();
+        return;
+    }
+
+    sendRequest(ASH_CONTROL_NAK | m_acknowledgeId);
 }
 
 void EZSP::softReset(void)
@@ -777,11 +787,11 @@ void EZSP::handleQueue(void)
 
         if (control == ASH_CONTROL_ERROR)
         {
-            handleError("Received ERROR frame");
+            handleError("Received ERROR frame", false);
             break;
         }
 
-        handleError(QString("Received unrecognized ASH frame:").arg(QString(packet.toHex(':'))));
+        handleError(QString("Received unrecognized ASH frame:").arg(QString(packet.toHex(':'))), false);
     }
 
     m_queue.clear();

@@ -46,6 +46,10 @@
 #define CONFIG_PACKET_BUFFER_COUNT                              0x01
 #define CONFIG_STACK_PROFILE                                    0x0C
 #define CONFIG_SECURITY_LEVEL                                   0x0D
+#define CONFIG_INDIRECT_TRANSMISSION_TIMEOUT                    0x12
+#define CONFIG_END_DEVICE_POLL_TIMEOUT                          0x13
+#define CONFIG_FRAGMENT_WINDOW_SIZE                             0x1C
+#define CONFIG_FRAGMENT_DELAY_MS                                0x1D
 
 #define POLICY_TRUST_CENTER                                     0x00
 #define POLICY_BINDING_MODIFICATION                             0x01
@@ -293,7 +297,7 @@ private:
     bool startCoordinator(void);
 
     void setManufacturerCore(quint16 value);
-    void handleError(const QString &reason);
+    void handleError(const QString &reason, bool retry = true);
 
     void softReset(void) override;
     void parseData(void) override;

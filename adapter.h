@@ -2,7 +2,7 @@
 #define ADAPTER_H
 
 #define SOCKET_RECONNECT_INTERVAL       5000
-#define DEVICE_RECEIVE_TIMEOUT          20
+#define DEVICE_RECEIVE_TIMEOUT          10
 
 #define ADAPTER_RESET_DELAY             100
 #define ADAPTER_RESET_TIMEOUT           10000
