@@ -113,7 +113,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     QByteArray request;
     quint8 fcs = 0;
 
-    if (m_debug)
+    if (m_adapterDebug)
         logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     m_command = qToBigEndian(command);
@@ -126,13 +126,13 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     for (int i = 1; i < request.length(); i++)
         fcs ^= request[i];
 
-    m_device->write(request.append(static_cast <char> (fcs)));
+    sendData(request.append(static_cast <char> (fcs)));
     return waitForSignal(this, SIGNAL(dataReceived()), ZSTACK_REQUEST_TIMEOUT);
 }
 
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
 {
-    if (m_debug)
+    if (m_adapterDebug)
         logInfo << "<--" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     if (command & 0x2000)
@@ -500,15 +500,13 @@ bool ZStack::startCoordinator(void)
 
 void ZStack::softReset(void)
 {
-    m_device->write(QByteArray(1, ZSTACK_SKIP_BOOTLOADER));
+    sendData(QByteArray(1, ZSTACK_SKIP_BOOTLOADER));
     QThread::msleep(ADAPTER_RESET_DELAY);
     sendRequest(SYS_RESET_REQ, QByteArray(1, 0x01));
 }
 
-void ZStack::parseData(void)
+void ZStack::parseData(QByteArray &buffer)
 {
-    QByteArray buffer = m_device->readAll();
-
     while (!buffer.isEmpty())
     {
         quint8 length = static_cast <quint8> (buffer.at(1)), fcs = 0;
@@ -522,12 +520,15 @@ void ZStack::parseData(void)
         if (buffer.length() < 5 || buffer.length() < length + 5)
             break;
 
+        if (m_portDebug)
+            logInfo << "Packet received:" << buffer.mid(0, length + 5).toHex(':');
+
         for (quint8 i = 1; i < length + 4; i++)
             fcs ^= buffer.at(i);
 
         if (fcs != static_cast <quint8> (buffer.at(length + 4)))
         {
-            logWarning << "Packet" << buffer.left(length + 5).toHex(':') << "FCS mismatch";
+            logWarning << "Packet" << buffer.mid(0, length + 5).toHex(':') << "FCS mismatch";
             buffer.clear();
             break;
         }

@@ -142,7 +142,7 @@ private:
     bool apsRequest(quint8 id, quint8 addressMode, quint16 address, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload);
 
     void softReset(void) override;
-    void parseData(void) override;
+    void parseData(QByteArray &buffer) override;
     bool permitJoin(bool enabled) override;
 
 private slots:

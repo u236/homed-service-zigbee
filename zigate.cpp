@@ -140,7 +140,7 @@ bool ZiGate::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     zigateHeaderStruct header;
     QByteArray payload;
 
-    if (m_debug)
+    if (m_adapterDebug)
         logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     m_commandReply = data.isEmpty();
@@ -156,7 +156,7 @@ bool ZiGate::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     header.length = qToBigEndian <quint16> (payload.length());
     header.checksum = getChecksum(&header, payload);
 
-    m_device->write(encodeFrame(QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload)));
+    sendData(encodeFrame(QByteArray(reinterpret_cast <char*> (&header), sizeof(header)).append(payload)));
 
     if (command == ZIGATE_RESET || command == ZIGATE_ERASE_PERSISTENT_DATA)
         return true;
@@ -166,7 +166,7 @@ bool ZiGate::sendRequest(quint16 command, const QByteArray &data, quint8 id)
 
 void ZiGate::parsePacket(quint16 command, const QByteArray &payload)
 {
-    if (m_debug)
+    if (m_adapterDebug)
         logInfo << "<--" << QString::asprintf("0x%04x", command) << payload.toHex(':');
 
     if (command == (m_command | 0x8000))
@@ -377,10 +377,8 @@ void ZiGate::softReset(void)
     sendRequest(ZIGATE_RESET);
 }
 
-void ZiGate::parseData(void)
+void ZiGate::parseData(QByteArray &buffer)
 {
-    QByteArray buffer = m_device->readAll();
-
     while (!buffer.isEmpty())
     {
         int length = buffer.indexOf(0x03);
@@ -388,6 +386,9 @@ void ZiGate::parseData(void)
 
         if (!buffer.startsWith(0x01) || length < 6)
             return;
+
+        if (m_portDebug)
+            logInfo << "Packet received:" << buffer.mid(0, length + 1).toHex(':');
 
         frame = buffer.mid(1, length - 1);
 

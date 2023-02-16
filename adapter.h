@@ -196,7 +196,7 @@ protected:
     QString m_bootPin, m_resetPin, m_reset;
     quint16 m_panId;
     quint8 m_channel;
-    bool m_write, m_debug;
+    bool m_write, m_portDebug, m_adapterDebug;
 
     QString m_typeString, m_versionString;
     quint64 m_ieeeAddress;
@@ -207,13 +207,14 @@ protected:
     QMap <quint8, EndpointData> m_endpointsData;
 
     void reset(void);
+    void sendData(const QByteArray &buffer);
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
     void parseMessage(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
 
 private:
 
     virtual void softReset(void) = 0;
-    virtual void parseData(void) = 0;
+    virtual void parseData(QByteArray &buffer) = 0;
     virtual bool permitJoin(bool enabled) = 0;
 
 private slots:

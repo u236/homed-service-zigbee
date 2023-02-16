@@ -47,7 +47,8 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
     m_channel = static_cast <quint8> (config->value("zigbee/channel").toInt());
 
     m_write = config->value("zigbee/write", false).toBool();
-    m_debug = config->value("debug/adapter", false).toBool();
+    m_portDebug = config->value("debug/port", false).toBool();
+    m_adapterDebug = config->value("debug/adapter", false).toBool();
 
     if (m_channel < 11 || m_channel > 26)
         m_channel = 11;
@@ -217,6 +218,14 @@ void Adapter::reset(void)
     }
 }
 
+void Adapter::sendData(const QByteArray &buffer)
+{
+    if (m_portDebug)
+        logInfo << "Serial data sent:" << buffer.toHex(':');
+
+    m_device->write(buffer);
+}
+
 bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
 {
     QEventLoop loop;
@@ -348,7 +357,12 @@ void Adapter::startTimer(void)
 
 void Adapter::readyRead(void)
 {
-    parseData();
+    QByteArray buffer = m_device->readAll();
+
+    if (m_portDebug)
+        logInfo << "Serial data received:" << buffer.toHex(':');
+
+    parseData(buffer);
     QTimer::singleShot(0, this, &Adapter::handleQueue);
 }
 

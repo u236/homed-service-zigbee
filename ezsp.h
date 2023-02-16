@@ -2,6 +2,7 @@
 #define EZSP_H
 
 #define ASH_REQUEST_TIMEOUT                                     2000
+#define ASH_REQUEST_RETRIES                                     3
 #define ASH_MIN_LENGTH                                          4
 #define ASH_FLAG_BYTE                                           0x7E
 
@@ -300,7 +301,7 @@ private:
     void handleError(const QString &reason);
 
     void softReset(void) override;
-    void parseData(void) override;
+    void parseData(QByteArray &buffer) override;
     bool permitJoin(bool enabled) override;
 
 private slots:

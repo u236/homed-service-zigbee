@@ -150,7 +150,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 
     if (version)
     {
-        if (m_debug)
+        if (m_adapterDebug)
             logInfo << "-->" << QString::asprintf("0x%02x", m_sequenceId) << "(legacy version request)";
 
         payload.append(static_cast <char> (m_sequenceId));
@@ -165,7 +165,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
         header.frameControlHigh = 0x01;
         header.frameId = qToLittleEndian(frameId);
 
-        if (m_debug)
+        if (m_adapterDebug)
             logInfo << "-->" << QString::asprintf("0x%02x", m_sequenceId) <<  QString::asprintf("0x%02x%02x", header.frameControlLow, header.frameControlHigh) << QString::asprintf("0x%04x", frameId) << data.toHex(':');
 
         payload.append(reinterpret_cast <char*> (&header), sizeof(header));
@@ -173,7 +173,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 
     randomize(payload.append(data));
 
-    for (quint8 i = 0; i < 3; i ++)
+    for (quint8 i = 0; i < ASH_REQUEST_RETRIES; i ++)
     {
         m_replyData.clear();
         m_replyReceived = false;
@@ -218,7 +218,7 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
     }
 
     m_errorReceived = false;
-    m_device->write(buffer.append(static_cast <char> (ASH_FLAG_BYTE)));
+    sendData(buffer.append(static_cast <char> (ASH_FLAG_BYTE)));
 }
 
 void EZSP::parsePacket(const QByteArray &payload)
@@ -226,7 +226,7 @@ void EZSP::parsePacket(const QByteArray &payload)
     const ezspHeaderStruct *header = reinterpret_cast <const ezspHeaderStruct*> (payload.constData());
     QByteArray data = payload.mid(sizeof(ezspHeaderStruct));
 
-    if (m_debug)
+    if (m_adapterDebug)
         logInfo << "<--" << QString::asprintf("0x%02x", header->sequence) <<  QString::asprintf("0x%02x%02x", header->frameControlLow, header->frameControlHigh) << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId)) << data.toHex(':');
 
     if (!(header->frameControlLow & 0x18) && header->sequence == m_sequenceId)
@@ -316,6 +316,13 @@ void EZSP::parsePacket(const QByteArray &payload)
             parseMessage(qFromLittleEndian(message->networkAddress), qFromLittleEndian(message->clusterId), payload.mid(1));
             break;
         }
+
+        default:
+
+            if (m_adapterDebug)
+                logInfo << "Unrecognozed frame id:" << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId));
+
+            break;
     }
 }
 
@@ -351,7 +358,7 @@ bool EZSP::startNetwork(void)
 
         if (m_stackStatus != STACK_STATUS_NETWORK_DOWN)
         {
-            logWarning << "Unexpected stack status" << QString::asprintf("0x%02x", m_stackStatus) << "received";
+            logWarning << "Unexpected stack status:" << QString::asprintf("0x%02x", m_stackStatus);
             return false;
         }
     }
@@ -420,7 +427,7 @@ bool EZSP::startNetwork(void)
 
     if (m_replyData.at(0) != static_cast <char> (NETWORK_STATUS_JOINED))
     {
-        logWarning << "Unexpected network status" << QString::asprintf("0x%02x", m_replyData.at(0)) << "received";
+        logWarning << "Unexpected network status:" << QString::asprintf("0x%02x", m_replyData.at(0));
         return false;
     }
 
@@ -641,10 +648,8 @@ void EZSP::softReset(void)
     sendRequest(ASH_CONTROL_RST);
 }
 
-void EZSP::parseData(void)
+void EZSP::parseData(QByteArray &buffer)
 {
-    QByteArray buffer = m_device->readAll();
-
     while (!buffer.isEmpty())
     {
         QByteArray data;
@@ -657,6 +662,9 @@ void EZSP::parseData(void)
             return;
 
         length = static_cast <quint16> (buffer.indexOf(ASH_FLAG_BYTE));
+
+        if (m_portDebug)
+            logInfo << "Packet received:" << buffer.mid(0, length + 1).toHex(':');
 
         for (int i = 0; i < length; i++)
         {
@@ -711,7 +719,7 @@ bool EZSP::permitJoin(bool enabled)
 
         if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
         {
-            logWarning << "Set policy item" << QString::asprintf("0x%02x", POLICY_TRUST_CENTER) << "request failed";
+            logWarning << "Set policy" << QString::asprintf("0x%02x", POLICY_TRUST_CENTER) << "request failed";
             return false;
         }
     }
@@ -759,7 +767,7 @@ void EZSP::handleQueue(void)
 
         if ((control & 0xE0) == ASH_CONTROL_NAK)
         {
-            if (m_debug)
+            if (m_adapterDebug)
                 logWarning << "Received NAK frame:" << QString::asprintf("%d, %d", m_acknowledgeId, control & 0x07).toUtf8().constData();
 
             emit dataReceived();
