@@ -668,6 +668,9 @@ void EZSP::parseData(QByteArray &buffer)
 
         for (int i = 0; i < length; i++)
         {
+            if (buffer.at(i) == 0x11 || buffer.at(i) == 0x13)
+                continue;
+
             if (buffer.at(i) != static_cast <char> (0x7D))
             {
                 data.append(buffer.at(i));
@@ -684,8 +687,14 @@ void EZSP::parseData(QByteArray &buffer)
                 case 0x5E: data.append(0x7E); break;
 
                 default:
-                    handleError(QString("Packet %1 unstaffing failed at position %2").arg(QString(buffer.toHex(':'))).arg(i));
-                    return;
+
+                    if (buffer.at(i) != 0x11 && buffer.at(i) != 0x13)
+                    {
+                        handleError(QString("Packet %1 unstaffing failed at position %2").arg(QString(buffer.toHex(':'))).arg(i));
+                        return;
+                    }
+
+                    break;
             }
         }
 
