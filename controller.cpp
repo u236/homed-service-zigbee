@@ -264,7 +264,7 @@ void Controller::updateAvailability(void)
         AvailabilityStatus check = it.value()->availability();
         qint64 timeout = it.value()->options().value("availability").toInt();
 
-        if (it.value()->logicalType() == LogicalType::Coordinator)
+        if (it.value()->removed() || it.value()->logicalType() == LogicalType::Coordinator)
             continue;
 
         if (!timeout)

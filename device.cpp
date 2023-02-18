@@ -4,7 +4,7 @@
 #include "device.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false), m_sync(false)
+DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false), m_sync(false)
 {
     PropertyObject::registerMetaTypes();
     ActionObject::registerMetaTypes();
@@ -25,6 +25,14 @@ DeviceList::DeviceList(QSettings *config) : m_databaseTimer(new QTimer(this)), m
 
     m_databaseTimer->setSingleShot(true);
     m_propertiesTimer->setSingleShot(true);
+}
+
+DeviceList::~DeviceList(void)
+{
+    m_sync = true;
+
+    writeDatabase();
+    writeProperties();
 }
 
 void DeviceList::init(void)

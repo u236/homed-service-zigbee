@@ -204,7 +204,8 @@ class DeviceList : public QObject, public QMap <QByteArray, Device>
 
 public:
 
-    DeviceList(QSettings *config);
+    DeviceList(QSettings *config, QObject *parent);
+    ~DeviceList(void);
 
     inline bool permitJoin(void) { return m_permitJoin; }
     inline void setPermitJoin(bool value) { m_permitJoin = value; }

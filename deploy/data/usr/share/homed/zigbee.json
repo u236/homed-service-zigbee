@@ -135,7 +135,9 @@
     {
       "description":    "GS Water Leak Sensor SWHM-I1",
       "modelNames":     ["SWHM-I1"],
-      "properties":     ["iasWaterLeak"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
       "discoveries":    ["waterLeak"]
     }
   ],
@@ -924,7 +926,9 @@
     {
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
-      "properties":     ["iasGas"],
+      "properties":     ["batteryPercentage", "iasGas"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
       "discoveries":    ["gas"]
     },
     {
