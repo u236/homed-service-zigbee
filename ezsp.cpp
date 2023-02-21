@@ -297,7 +297,7 @@ void EZSP::parsePacket(const QByteArray &payload)
                 break;
             }
 
-            if (qFromLittleEndian(message->clusterId) == APS_DEVICE_ANNOUNCE)
+            if (qFromLittleEndian(message->clusterId) == ZDO_DEVICE_ANNOUNCE)
             {
                 const deviceAnnounceStruct *announce = reinterpret_cast <const deviceAnnounceStruct*> (payload.constData() + 1);
                 quint64 address = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
@@ -313,7 +313,7 @@ void EZSP::parsePacket(const QByteArray &payload)
                 break;
             }
 
-            parseMessage(qFromLittleEndian(message->networkAddress), qFromLittleEndian(message->clusterId), payload.mid(1));
+            emit zdoMessageReveived(qFromLittleEndian(message->networkAddress), qFromLittleEndian(message->clusterId), payload.mid(1));
             break;
         }
 

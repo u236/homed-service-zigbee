@@ -209,10 +209,7 @@ private slots:
 
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);
     void deviceLeft(const QByteArray &ieeeAddress);
-    void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
-    void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
-    void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
-    void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start);
+    void zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 

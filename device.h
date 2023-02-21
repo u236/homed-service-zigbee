@@ -158,7 +158,10 @@ public:
     inline void updateLastSeen(void) { m_lastSeen = QDateTime::currentSecsSinceEpoch(); }
 
     inline quint8 linkQuality(void) { return m_linkQuality; }
-    inline void setLinkQuality(qint64 value) { m_linkQuality = value; }
+    inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
+
+    inline quint8 lqiIndex(void) { return m_lqiIndex; }
+    inline void setLqiIndex(quint8 value) { m_lqiIndex = value; }
 
     inline AvailabilityStatus availability(void) { return m_availability; }
     inline void setAvailability(AvailabilityStatus value) { m_availability = value; }
@@ -187,7 +190,7 @@ private:
     QString m_manufacturerName, m_modelName;
 
     qint64 m_joinTime, m_lastSeen;
-    quint8 m_linkQuality;
+    quint8 m_linkQuality, m_lqiIndex;
 
     AvailabilityStatus m_availability;
     QString m_description;

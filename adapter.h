@@ -19,14 +19,14 @@
 #define PROFILE_GP                      0xA1E0 // ZigBee Green Power
 #define PROFILE_ZLL                     0xC05E // ZigBee Light Link
 
-#define APS_NODE_DESCRIPTOR             0x0002
-#define APS_SIMPLE_DESCRIPTOR           0x0004
-#define APS_ACTIVE_ENDPOINTS            0x0005
-#define APS_DEVICE_ANNOUNCE             0x0013
-#define APS_BIND                        0x0021
-#define APS_UNBIND                      0x0022
-#define APS_LQI                         0x0031
-#define APS_LEAVE                       0x0034
+#define ZDO_DEVICE_ANNOUNCE             0x0013
+#define ZDO_NODE_DESCRIPTOR_REQUEST     0x0002
+#define ZDO_SIMPLE_DESCRIPTOR_REQUEST   0x0004
+#define ZDO_ACTIVE_ENDPOINTS_REQUEST    0x0005
+#define ZDO_BIND_REQUEST                0x0021
+#define ZDO_UNBIND_REQUEST              0x0022
+#define ZDO_LQI_REQUEST                 0x0031
+#define ZDO_LEAVE_REQUEST               0x0034
 
 #define ADDRESS_MODE_NOT_PRESENT        0x00
 #define ADDRESS_MODE_GROUP              0x01
@@ -105,7 +105,7 @@ struct neighborRecordStruct
     quint64 ieeeAddress;
     quint16 networkAddress;
     quint8  options;
-    quint8  permitJoining;
+    quint8  permitJoin;
     quint8  depth;
     quint8  linkQuality;
 };
@@ -178,7 +178,7 @@ public:
     virtual bool simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId);
     virtual bool activeEndpointsRequest(quint8 id, quint16 networkAddress);
     virtual bool bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
-    virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index = 0);
+    virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index);
     virtual bool leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress);
 
 protected:
@@ -209,7 +209,6 @@ protected:
     void reset(void);
     void sendData(const QByteArray &buffer);
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
-    void parseMessage(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
 
 private:
 
@@ -240,10 +239,7 @@ signals:
 
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);
     void deviceLeft(const QByteArray &ieeeAddress);
-    void nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode);
-    void activeEndpointsReceived(quint16 networkAddress, const QByteArray data);
-    void simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList <quint16> &inClusters, const QList <quint16> &outClusters);
-    void neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start);
+    void zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
     void messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
     void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 

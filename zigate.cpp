@@ -226,7 +226,7 @@ void ZiGate::parsePacket(quint16 command, const QByteArray &payload)
                     m_requests.erase(it);
                 }
 
-                parseMessage(qFromBigEndian(networkAddress), qFromBigEndian(message->clusterId), payload.mid(offset));
+                emit zdoMessageReveived(qFromBigEndian(networkAddress), qFromBigEndian(message->clusterId), payload.mid(offset));
                 break;
             }
 

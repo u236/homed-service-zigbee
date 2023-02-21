@@ -15,7 +15,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_nvItems.insert(ZCD_NV_LOGICAL_TYPE,      QByteArray(1, 0x00));
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB,     QByteArray(1, 0x01));
 
-    m_apsClusters = {APS_NODE_DESCRIPTOR, APS_SIMPLE_DESCRIPTOR, APS_ACTIVE_ENDPOINTS, APS_BIND, APS_UNBIND, APS_LQI, APS_LEAVE};
+    m_zdoClusters = {ZDO_NODE_DESCRIPTOR_REQUEST, ZDO_SIMPLE_DESCRIPTOR_REQUEST, ZDO_ACTIVE_ENDPOINTS_REQUEST, ZDO_BIND_REQUEST, ZDO_UNBIND_REQUEST, ZDO_LQI_REQUEST, ZDO_LEAVE_REQUEST};
 }
 
 bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
@@ -232,8 +232,8 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         {
             const zdoMessageStruct *message = reinterpret_cast <const zdoMessageStruct*> (data.constData());
             QByteArray payload = data.mid(sizeof(zdoMessageStruct));
-            parseMessage(qFromLittleEndian(message->srcAddress), qFromLittleEndian(message->clusterId), payload);
             emit requestFinished(message->transactionId, static_cast <quint8> (payload.at(0)));
+            emit zdoMessageReveived(qFromLittleEndian(message->srcAddress), qFromLittleEndian(message->clusterId), payload);
             break;
         }
 
@@ -439,13 +439,13 @@ bool ZStack::startCoordinator(void)
         }
     }
 
-    for (int i = 0; i < m_apsClusters.count(); i++)
+    for (int i = 0; i < m_zdoClusters.count(); i++)
     {
-        quint16 request = qToLittleEndian(m_apsClusters.at(i) | 0x8000);
+        quint16 request = qToLittleEndian(m_zdoClusters.at(i) | 0x8000);
 
         if (!sendRequest(ZDO_MSG_CB_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
         {
-            logWarning << "APS cluster" << QString::asprintf("0x%04x", m_apsClusters.at(i)) << "callback register request failed";
+            logWarning << "ZDO cluster" << QString::asprintf("0x%04x", m_zdoClusters.at(i)) << "callback register request failed";
             return false;
         }
     }

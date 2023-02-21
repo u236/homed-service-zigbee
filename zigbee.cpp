@@ -1164,10 +1164,7 @@ void ZigBee::coordinatorReady(void)
 
     connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::deviceLeft, this, &ZigBee::deviceLeft, Qt::UniqueConnection);
-    connect(m_adapter, &Adapter::nodeDescriptorReceived, this, &ZigBee::nodeDescriptorReceived, Qt::UniqueConnection);
-    connect(m_adapter, &Adapter::activeEndpointsReceived, this, &ZigBee::activeEndpointsReceived, Qt::UniqueConnection);
-    connect(m_adapter, &Adapter::simpleDescriptorReceived, this, &ZigBee::simpleDescriptorReceived, Qt::UniqueConnection);
-    connect(m_adapter, &Adapter::neighborRecordReceived, this, &ZigBee::neighborRecordReceived, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::zdoMessageReveived, this, &ZigBee::zdoMessageReveived, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::messageReveived, this, &ZigBee::messageReveived, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::extendedMessageReveived, this, &ZigBee::extendedMessageReveived, Qt::UniqueConnection);
 
@@ -1329,84 +1326,153 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     m_devices->storeDatabase();
 }
 
-void ZigBee::nodeDescriptorReceived(quint16 networkAddress, LogicalType logicalType, quint16 manufacturerCode)
-{
-    Device device = m_devices->byNetwork(networkAddress);
-
-    if (device.isNull() || device->removed() || device->interviewFinished())
-        return;
-
-    logInfo << "Device" << device->name() << "node descriptor received, manufacturer code is" << QString::asprintf("0x%04x", manufacturerCode) << "and logical type is" << QString(logicalType == LogicalType::Router ? "router" : "end device");
-
-    device->setLogicalType(logicalType);
-    device->setManufacturerCode(manufacturerCode);
-    device->setDescriptorReceived();
-    device->updateLastSeen();
-
-    interviewDevice(device);
-}
-
-void ZigBee::activeEndpointsReceived(quint16 networkAddress, const QByteArray data)
-{
-    Device device = m_devices->byNetwork(networkAddress);
-    QList <QString> list;
-
-    if (device.isNull() || device->removed() || device->interviewFinished())
-        return;
-
-    for (int i = 0; i < data.length(); i++)
-    {
-        quint8 endpointId = static_cast <quint8> (data.at(i));
-
-        if (device->endpoints().find(endpointId) == device->endpoints().end())
-            device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
-
-        list.append(QString::asprintf("0x%02x", endpointId));
-    }
-
-    logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");
-
-    device->setEndpointsReceived();
-    device->updateLastSeen();
-
-    interviewDevice(device);
-}
-
-void ZigBee::simpleDescriptorReceived(quint16 networkAddress, quint8 endpointId, quint16 profileId, quint16 deviceId, const QList<quint16> &inClusters, const QList<quint16> &outClusters)
-{
-    Device device = m_devices->byNetwork(networkAddress);
-    Endpoint endpoint;
-
-    if (device.isNull() || device->removed() || device->interviewFinished())
-        return;
-
-    endpoint = m_devices->endpoint(device, endpointId ? endpointId : device->interviewEndpointId());
-    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "simple descriptor received";
-
-    endpoint->setProfileId(profileId);
-    endpoint->setDeviceId(deviceId);
-    endpoint->inClusters() = inClusters;
-    endpoint->outClusters() = outClusters;
-    endpoint->setDescriptorReceived();
-
-    device->updateLastSeen();
-    interviewDevice(device);
-}
-
-void ZigBee::neighborRecordReceived(quint16 networkAddress, quint16 neighborAddress, quint8 linkQuality, bool start)
+void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const QByteArray &payload)
 {
     Device device = m_devices->byNetwork(networkAddress);
 
     if (device.isNull() || device->removed())
         return;
 
-    if (start)
+    switch (clusterId & 0x00FF)
     {
-        logInfo << "Device" << device->name() << "neighbors list received";
-        device->neighbors().clear();
+        case ZDO_BIND_REQUEST:
+        case ZDO_UNBIND_REQUEST:
+        case ZDO_LEAVE_REQUEST:
+            // TODO: check response status here
+            break;
+
+        case ZDO_NODE_DESCRIPTOR_REQUEST:
+        {
+            const nodeDescriptorResponseStruct *response = reinterpret_cast <const nodeDescriptorResponseStruct*> (payload.constData());
+
+            if (device->interviewFinished())
+                break;
+
+            if (!response->status)
+            {
+                device->setLogicalType(static_cast <LogicalType> (response->logicalType & 0x03));
+                device->setManufacturerCode(qFromLittleEndian(response->manufacturerCode));
+                device->setDescriptorReceived();
+
+                logInfo << "Device" << device->name() << "node descriptor received, manufacturer code is" << QString::asprintf("0x%04x", device->manufacturerCode()) << "and logical type is" << QString(device->logicalType() == LogicalType::Router ? "router" : "end device");
+                interviewDevice(device);
+                break;
+            }
+
+            // here error
+            break;
+        }
+
+        case ZDO_SIMPLE_DESCRIPTOR_REQUEST:
+        {
+            const simpleDescriptorResponseStruct *response = reinterpret_cast <const simpleDescriptorResponseStruct*> (payload.constData());
+            Endpoint endpoint = m_devices->endpoint(device, response->status ? device->interviewEndpointId() : response->endpointId);
+
+            if (device->interviewFinished())
+                break;
+
+            if (!response->status)
+            {
+                QByteArray clusterData = payload.mid(sizeof(simpleDescriptorResponseStruct));
+                quint16 clusterId;
+
+                endpoint->inClusters().clear();
+                endpoint->outClusters().clear();
+
+                for (quint8 i = 0; i < static_cast <quint8> (clusterData.at(0)); i++)
+                {
+                    memcpy(&clusterId, clusterData.constData() + i * sizeof(clusterId) + 1, sizeof(clusterId));
+                    endpoint->inClusters().append(qFromLittleEndian(clusterId));
+                }
+
+                clusterData.remove(0, clusterData.at(0) * sizeof(clusterId) + 1);
+
+                for (quint8 i = 0; i < static_cast <quint8> (clusterData.at(0)); i++)
+                {
+                    memcpy(&clusterId, clusterData.constData() + i * sizeof(clusterId) + 1, sizeof(clusterId));
+                    endpoint->outClusters().append(qFromLittleEndian(clusterId));
+                }
+
+                endpoint->setProfileId(qFromLittleEndian(response->profileId));
+                endpoint->setDeviceId(qFromLittleEndian(response->deviceId));
+                endpoint->setDescriptorReceived();
+                break;
+            }
+
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "simple descriptor received";
+            interviewDevice(device);
+            break;
+        }
+
+        case ZDO_ACTIVE_ENDPOINTS_REQUEST:
+        {
+            const activeEndpointsResponseStruct *response = reinterpret_cast <const activeEndpointsResponseStruct*> (payload.constData());
+
+            if (device->interviewFinished())
+                break;
+
+            if (!response->status)
+            {
+                QByteArray data = payload.mid(sizeof(activeEndpointsResponseStruct), response->count);
+                QList <QString> list;
+
+                for (int i = 0; i < data.length(); i++)
+                {
+                    quint8 endpointId = static_cast <quint8> (data.at(i));
+
+                    if (device->endpoints().find(endpointId) == device->endpoints().end())
+                        device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
+
+                    list.append(QString::asprintf("0x%02x", endpointId));
+                }
+
+                device->setEndpointsReceived();
+
+                logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");
+                interviewDevice(device);
+                break;
+            }
+
+            // here error
+            break;
+        }
+
+        case ZDO_LQI_REQUEST:
+        {
+            const lqiResponseStruct *response = reinterpret_cast <const lqiResponseStruct*> (payload.constData());
+
+            if (!response->status)
+            {
+                if (!response->index)
+                {
+                    logInfo << "Device" << device->name() << "neighbors list received";
+                    device->neighbors().clear();
+                }
+
+                for (quint8 i = 0; i < response->count; i++)
+                {
+                    const neighborRecordStruct *neighbor = reinterpret_cast <const neighborRecordStruct*> (payload.constData() + sizeof(lqiResponseStruct) + i * sizeof(neighborRecordStruct));
+                    device->neighbors().insert(qFromLittleEndian(neighbor->networkAddress), neighbor->linkQuality);
+                }
+
+                if (response->total > response->index + response->count)
+                {
+                    device->setLqiIndex(response->index + response->count);
+                    enqueueDeviceRequest(device, RequestType::LQI);
+                }
+            }
+
+            // here error
+            break;
+        }
+
+        default:
+        {
+            logWarning << "Unrecognized ZDO message" << QString::asprintf("0x%04x", clusterId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+            break;
+        }
     }
 
-    device->neighbors().insert(neighborAddress, linkQuality);
     device->updateLastSeen();
 }
 
@@ -1528,7 +1594,9 @@ void ZigBee::handleRequests(void)
 
             case RequestType::LQI:
             {
-                if (!m_adapter->lqiRequest(it.key(), qvariant_cast <Device> (it.value()->request())->networkAddress()))
+                Device device = qvariant_cast <Device> (it.value()->request());
+
+                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiIndex()))
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;
@@ -1568,6 +1636,7 @@ void ZigBee::updateNeighbors(void)
         if (it.value()->logicalType() == LogicalType::EndDevice)
             continue;
 
+        it.value()->setLqiIndex(0);
         enqueueDeviceRequest(it.value(), RequestType::LQI);
     }
 }

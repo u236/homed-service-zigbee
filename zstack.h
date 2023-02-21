@@ -266,7 +266,7 @@ private:
     QByteArray m_replyData;
 
     QMap <quint16, QByteArray> m_nvItems;
-    QList <quint16> m_apsClusters;
+    QList <quint16> m_zdoClusters;
 
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
     void parsePacket(quint16 command, const QByteArray &data);
