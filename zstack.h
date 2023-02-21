@@ -177,6 +177,13 @@ struct writeConfigurationRequestStruct
     quint8  length;
 };
 
+struct dataConfirmStruct
+{
+    quint8  status;
+    quint8  endpointId;
+    quint8  transactionId;
+};
+
 struct incomingMessageStruct
 {
     quint16 groupId;

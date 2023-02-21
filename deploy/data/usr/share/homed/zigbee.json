@@ -756,7 +756,7 @@
       "discoveries":    ["switch"]
     },
     {
-      "description":    "Sonoff  1-Channel Relay/Switch ZBMINI",
+      "description":    "Sonoff 1-Channel Relay/Switch ZBMINI",
       "modelNames":     ["01MINIZB"],
       "properties":     ["status"],
       "actions":        ["status"],

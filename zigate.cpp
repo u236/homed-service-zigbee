@@ -230,7 +230,7 @@ void ZiGate::parsePacket(quint16 command, const QByteArray &payload)
                 break;
             }
 
-            emit messageReveived(qFromBigEndian(networkAddress), message->srcEndpointId, qFromBigEndian(message->clusterId), static_cast <quint8> (payload.back()), payload.mid(offset));
+            emit zclMessageReveived(qFromBigEndian(networkAddress), message->srcEndpointId, qFromBigEndian(message->clusterId), static_cast <quint8> (payload.back()), payload.mid(offset));
             break;
         }
 

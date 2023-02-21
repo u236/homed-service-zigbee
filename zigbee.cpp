@@ -31,6 +31,7 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 
 ZigBee::~ZigBee(void)
 {
+    disconnect(m_adapter, &Adapter::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
     m_adapter->setPermitJoin(false);
 
     GPIO::setStatus(m_statusLedPin, false);
@@ -594,8 +595,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
             value = qFromLittleEndian(value);
         }
 
-        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", value);
         endpoint->setColorCapabilities(value);
+
+        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", endpoint->colorCapabilities());
         interviewDevice(device);
         return;
     }
@@ -628,10 +630,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                     return;
 
                 memcpy(&value, data.constData(), data.length());
-                value = qFromLittleEndian(value);
+                endpoint->setZoneType(qFromLittleEndian(value));
 
-                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", value);
-                endpoint->setZoneType(value);
+                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", endpoint->zoneType());
                 break;
             }
 
@@ -1165,7 +1166,7 @@ void ZigBee::coordinatorReady(void)
     connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::deviceLeft, this, &ZigBee::deviceLeft, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::zdoMessageReveived, this, &ZigBee::zdoMessageReveived, Qt::UniqueConnection);
-    connect(m_adapter, &Adapter::messageReveived, this, &ZigBee::messageReveived, Qt::UniqueConnection);
+    connect(m_adapter, &Adapter::zclMessageReveived, this, &ZigBee::zclMessageReveived, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::extendedMessageReveived, this, &ZigBee::extendedMessageReveived, Qt::UniqueConnection);
 
     connect(m_requestTimer, &QTimer::timeout, this, &ZigBee::handleRequests, Qt::UniqueConnection);
@@ -1359,7 +1360,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 break;
             }
 
-            // here error
+            interviewError(device, QString::asprintf("node descriptor response error %0x02x", response->status));
             break;
         }
 
@@ -1375,6 +1376,9 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
             {
                 QByteArray clusterData = payload.mid(sizeof(simpleDescriptorResponseStruct));
                 quint16 clusterId;
+
+                endpoint->setProfileId(qFromLittleEndian(response->profileId));
+                endpoint->setDeviceId(qFromLittleEndian(response->deviceId));
 
                 endpoint->inClusters().clear();
                 endpoint->outClusters().clear();
@@ -1392,14 +1396,11 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                     memcpy(&clusterId, clusterData.constData() + i * sizeof(clusterId) + 1, sizeof(clusterId));
                     endpoint->outClusters().append(qFromLittleEndian(clusterId));
                 }
-
-                endpoint->setProfileId(qFromLittleEndian(response->profileId));
-                endpoint->setDeviceId(qFromLittleEndian(response->deviceId));
-                endpoint->setDescriptorReceived();
-                break;
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "simple descriptor received";
+            endpoint->setDescriptorReceived();
+
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "simple descriptor" << (response->status ? "unavailable" : "received");
             interviewDevice(device);
             break;
         }
@@ -1433,7 +1434,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 break;
             }
 
-            // here error
+            interviewError(device, QString::asprintf("active endpoints response error %0x02x", response->status));
             break;
         }
 
@@ -1457,12 +1458,14 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
 
                 if (response->total > response->index + response->count)
                 {
-                    device->setLqiIndex(response->index + response->count);
+                    device->setLqiRequestIndex(response->index + response->count);
                     enqueueDeviceRequest(device, RequestType::LQI);
                 }
+
+                break;
             }
 
-            // here error
+            logWarning << "Device" << device->name() << "neighbors list response error:" << QString::asprintf("0x%02x", response->status);
             break;
         }
 
@@ -1476,13 +1479,13 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
     device->updateLastSeen();
 }
 
-void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data)
+void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &payload)
 {
     Device device = m_devices->byNetwork(networkAddress);
     Endpoint endpoint;
     quint16 manufacturerCode = 0;
-    quint8 frameControl = static_cast <quint8> (data.at(0)), transactionId, commandId;
-    QByteArray payload;
+    quint8 frameControl = static_cast <quint8> (payload.at(0)), transactionId, commandId;
+    QByteArray data;
 
     if (device.isNull() || device->removed())
         return;
@@ -1493,23 +1496,23 @@ void ZigBee::messageReveived(quint16 networkAddress, quint8 endpointId, quint16 
 
     if (frameControl & FC_MANUFACTURER_SPECIFIC)
     {
-        memcpy(&manufacturerCode, data.constData() + 1, sizeof(manufacturerCode));
+        memcpy(&manufacturerCode, payload.constData() + 1, sizeof(manufacturerCode));
         manufacturerCode = qFromLittleEndian(manufacturerCode);
-        transactionId = static_cast <quint8> (data.at(3));
-        commandId = static_cast <quint8> (data.at(4));
-        payload = data.mid(5);
+        transactionId = static_cast <quint8> (payload.at(3));
+        commandId = static_cast <quint8> (payload.at(4));
+        data = payload.mid(5);
     }
     else
     {
-        transactionId = static_cast <quint8> (data.at(1));
-        commandId = static_cast <quint8> (data.at(2));
-        payload = data.mid(3);
+        transactionId = static_cast <quint8> (payload.at(1));
+        commandId = static_cast <quint8> (payload.at(2));
+        data = payload.mid(3);
     }
 
     if (frameControl & FC_CLUSTER_SPECIFIC)
-        clusterCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, payload);
+        clusterCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, data);
     else
-        globalCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, payload);
+        globalCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, data);
 
     if (device->lastSeen() + device->options().value("debounce").toInt() > QDateTime::currentSecsSinceEpoch())
         return;
@@ -1596,7 +1599,7 @@ void ZigBee::handleRequests(void)
             {
                 Device device = qvariant_cast <Device> (it.value()->request());
 
-                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiIndex()))
+                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()))
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;
@@ -1636,7 +1639,7 @@ void ZigBee::updateNeighbors(void)
         if (it.value()->logicalType() == LogicalType::EndDevice)
             continue;
 
-        it.value()->setLqiIndex(0);
+        it.value()->setLqiRequestIndex(0);
         enqueueDeviceRequest(it.value(), RequestType::LQI);
     }
 }

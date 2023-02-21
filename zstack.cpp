@@ -175,14 +175,15 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case AF_DATA_CONFIRM:
         {
-            emit requestFinished(static_cast <quint8> (data.at(2)), static_cast <quint8> (data.at(0)));
+            const dataConfirmStruct *message = reinterpret_cast <const dataConfirmStruct*> (data.constData());
+            emit requestFinished(message->transactionId, message->status);
             break;
         }
 
         case AF_INCOMING_MSG:
         {
             const incomingMessageStruct *message = reinterpret_cast <const incomingMessageStruct*> (data.constData());
-            emit messageReveived(qFromLittleEndian(message->srcAddress), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(incomingMessageStruct), message->length));
+            emit zclMessageReveived(qFromLittleEndian(message->srcAddress), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(incomingMessageStruct), message->length));
             break;
         }
 
@@ -214,16 +215,16 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_END_DEVICE_ANNCE_IND:
         {
-            const deviceAnnounceStruct *announce = reinterpret_cast <const deviceAnnounceStruct*> (data.constData() + 2);
-            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(announce->ieeeAddress));
-            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(announce->networkAddress));
+            const deviceAnnounceStruct *message = reinterpret_cast <const deviceAnnounceStruct*> (data.constData() + 2);
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
+            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->networkAddress));
             break;
         }
 
         case ZDO_LEAVE_IND:
         {
-            const deviceLeaveStruct *leave = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
-            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(leave->ieeeAddress));
+            const deviceLeaveStruct *message = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
             emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
             break;
         }

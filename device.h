@@ -131,6 +131,9 @@ public:
     inline quint8 interviewEndpointId(void) { return m_interviewEndpointId; }
     inline void setInterviewEndpointId(quint8 value) { m_interviewEndpointId = value; }
 
+    inline quint8 lqiRequestIndex(void) { return m_lqiRequestIndex; }
+    inline void setLqiRequestIndex(quint8 value) { m_lqiRequestIndex = value; }
+
     inline LogicalType logicalType(void) { return m_logicalType; }
     inline void setLogicalType(LogicalType value) { m_logicalType = value; }
 
@@ -160,9 +163,6 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
 
-    inline quint8 lqiIndex(void) { return m_lqiIndex; }
-    inline void setLqiIndex(quint8 value) { m_lqiIndex = value; }
-
     inline AvailabilityStatus availability(void) { return m_availability; }
     inline void setAvailability(AvailabilityStatus value) { m_availability = value; }
 
@@ -182,7 +182,7 @@ private:
     QString m_name;
 
     bool m_removed, m_supported, m_descriptorReceived, m_endpointsReceived, m_interviewFinished;
-    quint8 m_interviewEndpointId;
+    quint8 m_interviewEndpointId, m_lqiRequestIndex;
 
     LogicalType m_logicalType;
     quint16 m_manufacturerCode;
@@ -190,7 +190,7 @@ private:
     QString m_manufacturerName, m_modelName;
 
     qint64 m_joinTime, m_lastSeen;
-    quint8 m_linkQuality, m_lqiIndex;
+    quint8 m_linkQuality;
 
     AvailabilityStatus m_availability;
     QString m_description;
