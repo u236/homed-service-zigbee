@@ -317,6 +317,8 @@ bool ZStack::startCoordinator(void)
 
     if (!m_clear)
     {
+        quint64 ieeeAddress;
+
         m_versionString = QString::number(qFromLittleEndian(version.build));
         logInfo << QString("Adapter type: %1 (%2)").arg(m_typeString, m_versionString).toUtf8().constData();
 
@@ -326,7 +328,9 @@ bool ZStack::startCoordinator(void)
             return false;
         }
 
-        memcpy(&m_ieeeAddress, m_replyData.constData() + 1, sizeof(m_ieeeAddress));
+        memcpy(&ieeeAddress, m_replyData.constData() + 1, sizeof(ieeeAddress));
+        ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
+        m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
         for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {

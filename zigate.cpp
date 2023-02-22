@@ -62,37 +62,22 @@ bool ZiGate::activeEndpointsRequest(quint8 id, quint16 networkAddress)
 
 bool ZiGate::bindRequest(quint8 id, quint16, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
+    QByteArray buffer = dstAddress.isEmpty() ? m_ieeeAddress : dstAddress;
     bindRequestStruct request;
-    quint64 address = qToBigEndian(m_ieeeAddress);
-    QTimer timer;
-
-    if (!dstAddress.isEmpty())
-    {
-        switch (dstAddress.length())
-        {
-            case 2:
-            {
-                quint16 value = qToBigEndian <quint16> (*(reinterpret_cast <const quint16*> (dstAddress.constData())));
-                memcpy(&address, &value, sizeof(value));
-                break;
-            }
-
-            case 8:
-            {
-                address = qToBigEndian <quint64> (*(reinterpret_cast <const quint64*> (dstAddress.constData())));
-                break;
-            }
-
-            default:
-                return false;
-        }
-    }
+    quint64 address;
 
     memcpy(&request.srcAddress, srcAddress.constData(), sizeof(request.srcAddress));
+    memcpy(&address, buffer.constData(), sizeof(address));
 
     request.srcEndpointId = srcEndpointId;
     request.clusterId = qToBigEndian(clusterId);
-    request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
+    request.dstAddressMode = buffer.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
+
+    if (request.dstAddressMode == ADDRESS_MODE_GROUP)
+    {
+        quint16 value = qToBigEndian <quint16> (qFromLittleEndian(address));
+        memcpy(&address, &value, sizeof(value));
+    }
 
     return sendRequest(unbind ? ZIGATE_UNBIND_REQUEST : ZIGATE_BIND_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&address), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)), id) && !m_replyStatus;
 }
@@ -309,9 +294,9 @@ bool ZiGate::startCoordinator(bool clear)
     }
 
     memcpy(&networkStatus, m_replyData.constData(), sizeof(networkStatus));
-    m_ieeeAddress = qFromBigEndian(networkStatus.ieeeAddress);
+    m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&networkStatus.ieeeAddress), sizeof(networkStatus.ieeeAddress));
 
-    if (clear && (!sendRequest(ZIGATE_SET_EXTENDED_PANID, QByteArray(reinterpret_cast <char*> (&networkStatus.ieeeAddress), sizeof(networkStatus.ieeeAddress))) || m_replyStatus))
+    if (clear && (!sendRequest(ZIGATE_SET_EXTENDED_PANID, m_ieeeAddress) || m_replyStatus))
     {
         logWarning << "Set extended PAN ID request failed";
         return false;

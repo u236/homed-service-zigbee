@@ -145,30 +145,22 @@ bool Adapter::activeEndpointsRequest(quint8 id, quint16 networkAddress)
 
 bool Adapter::bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
 {
+    QByteArray buffer = dstAddress.isEmpty() ? m_ieeeAddress : dstAddress;
     bindRequestStruct request;
-    quint64 src, dst = m_ieeeAddress;
-    QTimer timer;
+    quint64 address;
 
-    if (!dstAddress.isEmpty())
-    {
-        memcpy(&dst, dstAddress.constData(), sizeof(dst));
+    memcpy(&request.srcAddress, srcAddress.constData(), sizeof(request.srcAddress));
+    memcpy(&address, buffer.constData(), sizeof(address));
 
-        switch (dstAddress.length())
-        {
-            case 2:  break;
-            case 8:  dst = qToLittleEndian(qFromBigEndian(dst)); break;
-            default: return false;
-        }
-    }
-
-    memcpy(&src, srcAddress.constData(), sizeof(src));
-
-    request.srcAddress = qToLittleEndian(qFromBigEndian(src));
+    request.srcAddress = qToLittleEndian(qFromBigEndian(request.srcAddress));
     request.srcEndpointId = srcEndpointId;
     request.clusterId = qToLittleEndian(clusterId);
-    request.dstAddressMode = dstAddress.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
+    request.dstAddressMode = buffer.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
 
-    return unicastRequest(id, networkAddress, 0x00, 0x00, unbind ? ZDO_UNBIND_REQUEST : ZDO_BIND_REQUEST, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dst), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)));
+    if (request.dstAddressMode != ADDRESS_MODE_GROUP)
+        address = qToLittleEndian(qFromBigEndian(address));
+
+    return unicastRequest(id, networkAddress, 0x00, 0x00, unbind ? ZDO_UNBIND_REQUEST : ZDO_BIND_REQUEST, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&address), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)));
 }
 
 bool Adapter::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)

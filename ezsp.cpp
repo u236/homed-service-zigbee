@@ -326,7 +326,7 @@ void EZSP::parsePacket(const QByteArray &payload)
     }
 }
 
-bool EZSP::startNetwork(void)
+bool EZSP::startNetwork(quint64 extendedPanId)
 {
     setInitialSecurityStateStruct security;
     networkParametersStruct network;
@@ -401,7 +401,7 @@ bool EZSP::startNetwork(void)
 
     memset(&network, 0, sizeof(network));
 
-    network.extendedPanId = m_ieeeAddress;
+    network.extendedPanId = extendedPanId;
     network.panId = qToLittleEndian(m_panId);
     network.txPower = 0x05;
     network.channel = m_channel;
@@ -439,6 +439,7 @@ bool EZSP::startCoordinator(void)
     setConcentratorStruct concentrator;
     networkParametersStruct network;
     versionInfoStruct version;
+    quint64 ieeeAddress;
     bool check = false;
 
     if (!sendFrame(FRAME_VERSION, QByteArray(), true))
@@ -472,13 +473,13 @@ bool EZSP::startCoordinator(void)
 
     logInfo << QString("Adapter type: %1 (%2)").arg(m_typeString, m_versionString).toUtf8().constData();
 
-    if (!sendFrame(FRAME_GET_IEEE_ADDRESS) || m_replyData.length() != sizeof(m_ieeeAddress))
+    if (!sendFrame(FRAME_GET_IEEE_ADDRESS) || m_replyData.length() != sizeof(ieeeAddress))
     {
         logWarning << "Adapter address request failed";
         return false;
     }
 
-    memcpy(&m_ieeeAddress, m_replyData.constData(), sizeof(m_ieeeAddress));
+    memcpy(&ieeeAddress, m_replyData.constData(), sizeof(ieeeAddress));
 
     for (int i = 0; i < m_config.length(); i++)
     {
@@ -585,7 +586,7 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&network, m_replyData.constData() + 2, sizeof(network));
 
-    if (m_replyData.at(1) != 0x01 || network.extendedPanId != m_ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != STACK_STATUS_NETWORK_UP)
+    if (m_replyData.at(1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != STACK_STATUS_NETWORK_UP)
     {
         logWarning << "Adapter network parameters doesn't match configuration";
         check = true;
@@ -611,12 +612,15 @@ bool EZSP::startCoordinator(void)
             return false;
         }
 
-        if (!startNetwork())
+        if (!startNetwork(ieeeAddress))
         {
             logWarning << "Network starup failed";
             return false;
         }
     }
+
+    ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
+    m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
     setManufacturerCore(MANUFACTURER_CODE_SILABS);
     emit coordinatorReady();

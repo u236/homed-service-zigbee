@@ -169,7 +169,7 @@ public:
 
     inline QString type(void) { return m_typeString; }
     inline QString version(void) { return m_versionString; }
-    inline quint64 ieeeAddress(void) { return m_ieeeAddress; }
+    inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
     void init(void);
     void setPermitJoin(bool enabled);
@@ -199,7 +199,7 @@ protected:
     bool m_write, m_portDebug, m_adapterDebug;
 
     QString m_typeString, m_versionString;
-    quint64 m_ieeeAddress;
+    QByteArray m_ieeeAddress;
 
     bool m_permitJoin;
 

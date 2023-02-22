@@ -195,7 +195,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
 
         case QVariant::String:
         {
-            Device destination = m_devices->byName(deviceName);
+            Device destination = m_devices->byName(dstName.toString());
 
             if (!destination.isNull() && !destination->removed())
                 enqueueBindRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
@@ -428,7 +428,10 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             case ZoneStatus::SetAddress:
             {
-                quint64 ieeeAddress = m_adapter->ieeeAddress();
+                quint64 ieeeAddress;
+
+                memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
+                ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
 
                 if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
                     return true;
@@ -638,10 +641,13 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
             case 0x0010:
             {
-                quint64 ieeeAddress = m_adapter->ieeeAddress();
+                quint64 ieeeAddress;
 
                 if (dataType != DATA_TYPE_IEEE_ADDRESS)
                     return;
+
+                memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
+                ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
 
                 if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
                     endpoint->setZoneStatus(ZoneStatus::SetAddress);
@@ -1134,21 +1140,19 @@ void ZigBee::adapterReset(void)
 
 void ZigBee::coordinatorReady(void)
 {
-    quint64 adapterAddress = qToBigEndian(qFromLittleEndian(m_adapter->ieeeAddress()));
-    QByteArray ieeeAddress(reinterpret_cast <char*> (&adapterAddress), sizeof(adapterAddress));
-    Device device = m_devices->value(ieeeAddress);
+    Device device = m_devices->value(m_adapter->ieeeAddress());
 
     if (device.isNull())
     {
-        device = Device(new DeviceObject(ieeeAddress, 0x0000, "HOMEd Coordinator"));
+        device = Device(new DeviceObject(m_adapter->ieeeAddress(), 0x0000, "HOMEd Coordinator"));
         device->setLogicalType(LogicalType::Coordinator);
         device->setInterviewFinished();
-        m_devices->insert(ieeeAddress, device);
+        m_devices->insert(device->ieeeAddress(), device);
     }
 
     for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
-        if (it.value()->logicalType() == LogicalType::Coordinator && it.key() != ieeeAddress)
+        if (it.value()->logicalType() == LogicalType::Coordinator && it.key() != device->ieeeAddress())
         {
             logWarning << "Coordinator" << it.value()->ieeeAddress().toHex(':') << "removed";
             m_devices->erase(it++);
@@ -1158,7 +1162,7 @@ void ZigBee::coordinatorReady(void)
             break;
     }
 
-    logInfo << "Coordinator ready, address:" << ieeeAddress.toHex(':').constData();
+    logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':').constData();
 
     m_devices->setAdapterType(m_adapter->type());
     m_devices->setAdapterVersion(m_adapter->version());

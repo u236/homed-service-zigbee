@@ -294,7 +294,7 @@ private:
     void sendRequest(quint8 control, const QByteArray &payload = QByteArray());
     void parsePacket(const QByteArray &payload);
 
-    bool startNetwork(void);
+    bool startNetwork(quint64 extendedPanId);
     bool startCoordinator(void);
 
     void setManufacturerCore(quint16 value);
