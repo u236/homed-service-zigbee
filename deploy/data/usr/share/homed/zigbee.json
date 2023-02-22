@@ -438,10 +438,18 @@
     {
       "description":    "Aqara T1 1-Channel Relay SSM-U01",
       "modelNames":     ["lumi.switch.n0agl1"],
-      "properties":     ["status", "lumiData", "lumiPower"],
+      "properties":     ["status", "lumiData"],
+      "actions":        ["status"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "discoveries":    ["energy", "voltage", "current", "power"]
+      "discoveries":    ["switch", "energy", "voltage", "current"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.n0agl1"],
+      "properties":     ["lumiPower"],
+      "discoveries":    ["power"],
+      "endpointId":     21
     },
     {
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
