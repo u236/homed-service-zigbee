@@ -170,6 +170,7 @@ public:
     inline QString type(void) { return m_typeString; }
     inline QString version(void) { return m_versionString; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
+    inline void setRequestAddress(const QByteArray &value) { m_requestAddress = value; }
 
     void init(void);
     void setPermitJoin(bool enabled);
@@ -177,9 +178,9 @@ public:
     virtual bool nodeDescriptorRequest(quint8 id, quint16 networkAddress);
     virtual bool simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId);
     virtual bool activeEndpointsRequest(quint8 id, quint16 networkAddress);
-    virtual bool bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false);
+    virtual bool bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind = false);
     virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index);
-    virtual bool leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress);
+    virtual bool leaveRequest(quint8 id, quint16 networkAddress);
 
 protected:
 
@@ -199,7 +200,7 @@ protected:
     bool m_write, m_portDebug, m_adapterDebug;
 
     QString m_typeString, m_versionString;
-    QByteArray m_ieeeAddress;
+    QByteArray m_ieeeAddress, m_requestAddress;
 
     bool m_permitJoin;
 

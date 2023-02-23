@@ -32,7 +32,6 @@
 #define FRAME_SET_CONFIG                                        0x0053
 #define FRAME_SET_POLICY                                        0x0055
 #define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
-#define FRAME_LOOKUP_IEEE_ADDRESS                               0x0061
 #define FRAME_SET_INITIAL_SECURITY_STATE                        0x0068
 #define FRAME_GET_GEY                                           0x006A
 #define FRAME_CLEAR_TRANSIENT_LINK_KEYS                         0x006B

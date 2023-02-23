@@ -77,7 +77,7 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
 
     if (!force)
     {
-        enqueueDeviceRequest(device, RequestType::Remove);
+        enqueueRequest(device, RequestType::Remove);
         return;
     }
 
@@ -316,20 +316,16 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
         if (request.isEmpty() || (data.type() == QVariant::String && data.toString().isEmpty()))
             return;
 
-        m_adapter->multicastRequest(m_requestId, groupId, 0x01, 0xFF, action->clusterId(), request);
+        if (!m_adapter->multicastRequest(m_requestId, groupId, 0x01, 0xFF, action->clusterId(), request))
+        {
+            logWarning << "Group" << groupId << action->name().toUtf8().constData() << "action request aborted";
+            return;
+        }
+
         logInfo << "Group" << groupId << action->name().toUtf8().constData() << "action request sent";
     }
 }
 
-void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind)
-{
-    BindRequest request(new BindRequestObject(device, endpointId, clusterId, dstAddress, dstEndpointId, unbind));
-
-    if (!m_requestTimer->isActive())
-        m_requestTimer->start();
-
-    m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(request), RequestType::Binding)));
-}
 
 void ZigBee::enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name)
 {
@@ -341,7 +337,17 @@ void ZigBee::enqueueDataRequest(const Device &device, quint8 endpointId, quint16
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(request), RequestType::Data)));
 }
 
-void ZigBee::enqueueDeviceRequest(const Device &device, RequestType type)
+void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
+{
+    BindRequest request(new BindRequestObject(device, endpointId, clusterId, address, dstEndpointId, unbind));
+
+    if (!m_requestTimer->isActive())
+        m_requestTimer->start();
+
+    m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(request), RequestType::Binding)));
+}
+
+void ZigBee::enqueueRequest(const Device &device, RequestType type)
 {
     if (!m_requestTimer->isActive())
         m_requestTimer->start();
@@ -471,7 +477,7 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->interviewFinished())
         return;
 
-    enqueueDeviceRequest(device, RequestType::Interview);
+    enqueueRequest(device, RequestType::Interview);
     startDeviceTimer(device, DEVICE_INTERVIEW_TIMEOUT);
 }
 
@@ -1463,7 +1469,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 if (response->total > response->index + response->count)
                 {
                     device->setLqiRequestIndex(response->index + response->count);
-                    enqueueDeviceRequest(device, RequestType::LQI);
+                    enqueueRequest(device, RequestType::LQI);
                 }
 
                 break;
@@ -1560,24 +1566,14 @@ void ZigBee::handleRequests(void)
 
         switch (it.value()->type())
         {
-            case RequestType::Binding:
-            {
-                BindRequest request = qvariant_cast <BindRequest> (it.value()->request());
-
-                if (!m_adapter->bindRequest(it.key(), request->device()->networkAddress(), request->device()->ieeeAddress(), request->endpointId(), request->clusterId(), request->dstAddress(), request->dstEndpointId(), request->unbind()))
-                {
-                    logWarning << "Device" << request->device()->name() << (request->unbind() ? "unbinding" : "binding") << "aborted";
-                    it.value()->setStatus(RequestStatus::Aborted);
-                }
-
-                break;
-            }
-
             case RequestType::Data:
             {
-                DataRequest request = qvariant_cast <DataRequest> (it.value()->request());
+                const DataRequest &request = qvariant_cast <DataRequest> (it.value()->request());
+                const Device &device = request->device();
 
-                if (!m_adapter->unicastRequest(it.key(), request->device()->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()))
+                m_adapter->setRequestAddress(device->ieeeAddress());
+
+                if (!m_adapter->unicastRequest(it.key(), device->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()))
                 {
                     logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "aborted";
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1586,11 +1582,29 @@ void ZigBee::handleRequests(void)
                 break;
             }
 
+            case RequestType::Binding:
+            {
+                const BindRequest &request = qvariant_cast <BindRequest> (it.value()->request());
+                const Device &device = request->device();
+
+                m_adapter->setRequestAddress(device->ieeeAddress());
+
+                if (!m_adapter->bindRequest(it.key(), device->networkAddress(), request->endpointId(), request->clusterId(), request->dstAddress(), request->dstEndpointId(), request->unbind()))
+                {
+                    logWarning << "Device" << request->device()->name() << (request->unbind() ? "unbinding" : "binding") << "aborted";
+                    it.value()->setStatus(RequestStatus::Aborted);
+                }
+
+                break;
+            }
+
             case RequestType::Remove:
             {
-                Device device = qvariant_cast <Device> (it.value()->request());
+                const Device &device = qvariant_cast <Device> (it.value()->request());
 
-                if (!m_adapter->leaveRequest(it.key(), device->networkAddress(), device->ieeeAddress()))
+                m_adapter->setRequestAddress(device->ieeeAddress());
+
+                if (!m_adapter->leaveRequest(it.key(), device->networkAddress()))
                 {
                     logWarning << "Device" << device->name() << "leave request aborted";
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1601,7 +1615,9 @@ void ZigBee::handleRequests(void)
 
             case RequestType::LQI:
             {
-                Device device = qvariant_cast <Device> (it.value()->request());
+                const Device &device = qvariant_cast <Device> (it.value()->request());
+
+                m_adapter->setRequestAddress(device->ieeeAddress());
 
                 if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()))
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1611,7 +1627,11 @@ void ZigBee::handleRequests(void)
 
             case RequestType::Interview:
             {
-                if (!interviewRequest(it.key(), qvariant_cast <Device> (it.value()->request())))
+                const Device &device = qvariant_cast <Device> (it.value()->request());
+
+                m_adapter->setRequestAddress(device->ieeeAddress());
+
+                if (!interviewRequest(it.key(), device))
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;
@@ -1644,7 +1664,7 @@ void ZigBee::updateNeighbors(void)
             continue;
 
         it.value()->setLqiRequestIndex(0);
-        enqueueDeviceRequest(it.value(), RequestType::LQI);
+        enqueueRequest(it.value(), RequestType::LQI);
     }
 }
 

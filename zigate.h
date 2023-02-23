@@ -115,9 +115,9 @@ public:
     bool nodeDescriptorRequest(quint8 id, quint16 networkAddress) override;
     bool simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId) override;
     bool activeEndpointsRequest(quint8 id, quint16 networkAddress) override;
-    bool bindRequest(quint8 id, quint16 networkAddress, const QByteArray &srcAddress, quint8 srcEndpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind = false) override;
+    bool bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind = false) override;
     bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index) override;
-    bool leaveRequest(quint8 id, quint16 networkAddress, const QByteArray &ieeeAddress) override;
+    bool leaveRequest(quint8 id, quint16 networkAddress) override;
 
 private:
 

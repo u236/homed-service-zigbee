@@ -60,6 +60,7 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
 bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
     sendUnicastStruct request;
+    quint64 ieeeAddress;
 
     request.type = MESSAGE_TYPE_DIRECT;
     request.networkAddress = qToLittleEndian(networkAddress);
@@ -73,8 +74,9 @@ bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointI
     request.tag = id;
     request.length = static_cast <quint8> (payload.length());
 
-    if (sendFrame(FRAME_LOOKUP_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&request.networkAddress), sizeof(request.networkAddress))) && !m_replyData.at(0))
-        sendFrame(FRAME_SET_EXTENDED_TIMEOUT, m_replyData.mid(1).append(1, 0x01));
+    memcpy(&ieeeAddress, m_requestAddress.constData(), sizeof(ieeeAddress));
+    ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
+    sendFrame(FRAME_SET_EXTENDED_TIMEOUT, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)).append(1, 0x01));
 
     return sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
 }
