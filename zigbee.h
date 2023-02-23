@@ -65,13 +65,13 @@ class BindRequestObject
 
 public:
 
-    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &dstAddress, quint8 dstEndpointId, bool unbind) :
-        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_dstAddress(dstAddress), m_dstEndpointId(dstEndpointId), m_unbind(unbind) {}
+    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind) :
+        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_address(address), m_dstEndpointId(dstEndpointId), m_unbind(unbind) {}
 
     inline Device device(void) { return m_device; }
     inline quint8 endpointId(void) { return m_endpointId; }
     inline quint16 clusterId(void) { return m_clusterId; }
-    inline QByteArray dstAddress(void) { return m_dstAddress; }
+    inline QByteArray dstAddress(void) { return m_address; }
     inline quint8 dstEndpointId(void) { return m_dstEndpointId; }
     inline bool unbind(void) { return m_unbind; }
 
@@ -80,7 +80,7 @@ private:
     Device m_device;
     quint8 m_endpointId;
     quint16 m_clusterId;
-    QByteArray m_dstAddress;
+    QByteArray m_address;
     quint8 m_dstEndpointId;
     bool m_unbind;
 

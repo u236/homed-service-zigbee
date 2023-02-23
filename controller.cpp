@@ -285,44 +285,30 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
     {
         case ZigBee::Event::deviceLeft:
         case ZigBee::Event::deviceRemoved:
-        {
-            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
+        case ZigBee::Event::deviceAboutToRename:
 
             if (m_discovery)
                 publishDiscovery(device, true);
 
+            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
             break;
-        }
-
-        case ZigBee::Event::deviceAboutToRename:
-        {
-            QString ieeeAddress = device->ieeeAddress().toHex(':');
-
-            if (m_names && device->name() != ieeeAddress)
-                mqttPublish(mqttTopic("device/zigbee/%1").arg(device->name()), QJsonObject(), true);
-
-            mqttPublish(mqttTopic("device/zigbee/%1").arg(ieeeAddress), QJsonObject(), true);
-            break;
-        }
 
         case ZigBee::Event::deviceUpdated:
-        {
-            if (m_names && device->availability() != AvailabilityStatus::Unknown)
-                mqttPublish(mqttTopic("device/zigbee/%1").arg(device->name()), {{"status", device->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
 
             if (m_discovery)
                 publishDiscovery(device);
 
+            if (device->availability() != AvailabilityStatus::Unknown)
+                mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
+
             break;
-        }
 
         case ZigBee::Event::interviewFinished:
-        {
+
             if (m_discovery)
                 publishDiscovery(device);
 
             break;
-        }
 
         default:
             break;
