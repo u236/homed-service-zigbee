@@ -357,50 +357,50 @@
   "LUMI":
   [
     {
-      "description":    "Aqara 1-Channel Wall Switch QBKG04LM",
-      "modelNames":     ["lumi.ctrl_neutral1"],
+      "description":    "Aqara D1 1-Channel Wall Switch QBKG04LM or QBKG21LM",
+      "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "options":        {"logicalType": 2}
     },
     {
-      "modelNames":     ["lumi.ctrl_neutral1"],
+      "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.ctrl_neutral1"],
+      "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "properties":     ["status"],
       "actions":        ["status"],
       "discoveries":    ["switch"],
       "endpointId":     2
     },
     {
-      "modelNames":     ["lumi.ctrl_neutral1"],
+      "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "properties":     ["lumiButtonAction"],
       "discoveries":    ["action"],
       "options":        {"action": ["on", "off"]},
       "endpointId":     4
     },
     {
-      "description":    "Aqara 2-Channel Wall Switch QBKG03LM",
-      "modelNames":     ["lumi.ctrl_neutral2"],
+      "description":    "Aqara D1 2-Channel Wall Switch QBKG03LM or QBKG22LM",
+      "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "options":        {"logicalType": 2, "endpointName": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}}
     },
     {
-      "modelNames":     ["lumi.ctrl_neutral2"],
+      "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.ctrl_neutral2"],
+      "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "properties":     ["status"],
       "actions":        ["status"],
       "discoveries":    ["switch"],
       "endpointId":     [2, 3]
     },
     {
-      "modelNames":     ["lumi.ctrl_neutral2"],
+      "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "properties":     ["lumiButtonAction"],
       "discoveries":    ["action"],
       "options":        {"action": ["on", "off"]},
@@ -971,7 +971,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Detector",
-      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
+      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lu01t0zl", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
       "properties":     ["tuyaPresenceSensor"],
       "actions":        ["tuyaPresenceSensor"],
       "discoveries":    ["occupancy"]
