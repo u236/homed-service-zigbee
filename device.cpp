@@ -244,6 +244,12 @@ void DeviceList::setupDevice(const Device &device)
         m_optionsFile.close();
     }
 
+    if (device->options().contains("logicalType"))
+        device->setLogicalType(static_cast <LogicalType> (device->options().value("logicalType").toInt()));
+
+    if (device->options().contains("powerSource"))
+        device->setPowerSource(static_cast <quint8> (device->options().value("powerSource").toInt()));
+
     if (!device->supported())
     {
         logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";

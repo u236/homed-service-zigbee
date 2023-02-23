@@ -359,6 +359,10 @@
     {
       "description":    "Aqara 1-Channel Wall Switch QBKG04LM",
       "modelNames":     ["lumi.ctrl_neutral1"],
+      "options":        {"logicalType": 2}
+    },
+    {
+      "modelNames":     ["lumi.ctrl_neutral1"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
       "endpointId":     1
@@ -380,7 +384,7 @@
     {
       "description":    "Aqara 2-Channel Wall Switch QBKG03LM",
       "modelNames":     ["lumi.ctrl_neutral2"],
-      "options":        {"endpointName": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}}
+      "options":        {"logicalType": 2, "endpointName": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}}
     },
     {
       "modelNames":     ["lumi.ctrl_neutral2"],
@@ -437,6 +441,10 @@
     },
     {
       "description":    "Aqara T1 1-Channel Relay SSM-U01",
+      "modelNames":     ["lumi.switch.n0agl1"],
+      "options":        {"powerSource": 1}
+    },
+    {
       "modelNames":     ["lumi.switch.n0agl1"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status"],
