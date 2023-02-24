@@ -31,6 +31,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::NeoSiren>               ("tuyaNeoSirenAction");
     qRegisterMetaType <ActionsTUYA::WaterValve>             ("tuyaWaterValveAction");
     qRegisterMetaType <ActionsTUYA::PresenceSensor>         ("tuyaPresenceSensorAction");
+    qRegisterMetaType <ActionsTUYA::RadarSensor>            ("tuyaRadarSensorAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>              ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::OperationMode>          ("tuyaOperationModeAction");
     qRegisterMetaType <ActionsTUYA::IndicatorMode>          ("tuyaIndicatorModeAction");
@@ -741,6 +742,64 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
 
             value = qToBigEndian(value );
             return makeRequest(m_transactionId++, 0x66, TUYA_TYPE_VALUE, &value);
+        }
+    }
+
+    return QByteArray();
+}
+
+QByteArray ActionsTUYA::RadarSensor::request(const QString &name, const QVariant &data)
+{
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // radarSensitivity
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value > 10)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 1: // tumbleSwitch
+        {
+            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 2: // tumbleAlarmTime
+        {
+            quint32 value = static_cast <quint32> (data.toInt() - 1);
+
+            if (value < 1 || value > 5)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x6A, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 3: // radarScene
+        {
+            QList <QString> list = {"default", "area", "toilet", "bedroom", "parlour", "office", "hotel"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x70, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 4: // fallSensitivity
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value < 1 || value > 10)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x76, TUYA_TYPE_VALUE, &value);
         }
     }
 

@@ -323,6 +323,16 @@ namespace ActionsTUYA
 
     };
 
+    class RadarSensor : public Request, public ActionObject
+    {
+
+    public:
+
+        RadarSensor(void) : ActionObject("radarSensor", CLUSTER_TUYA_DATA, 0x0000, {"radarSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene", "fallSensitivity"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class ChildLock : public ActionObject
     {
 

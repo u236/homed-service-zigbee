@@ -731,6 +731,15 @@ namespace PropertiesTUYA
 
     };
 
+    class RadarSensor : public Data
+    {
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class ChildLock : public PropertyObject
     {
 

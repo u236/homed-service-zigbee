@@ -71,6 +71,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::WaterValve>              ("tuyaWaterValveProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
+    qRegisterMetaType <PropertiesTUYA::RadarSensor>             ("tuyaRadarSensorProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>               ("tuyaChildLockProperty");
     qRegisterMetaType <PropertiesTUYA::OperationMode>           ("tuyaOperationModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>           ("tuyaIndicatorModeProperty");
@@ -1152,9 +1153,9 @@ void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
         {
             switch (data.toInt())
             {
-                case 0:  map.insert("lightType", "led"); break;
-                case 1:  map.insert("lightType", "incandescent"); break;
-                case 2:  map.insert("lightType", "halogen"); break;
+                case 0: map.insert("lightType", "led"); break;
+                case 1: map.insert("lightType", "incandescent"); break;
+                case 2: map.insert("lightType", "halogen"); break;
             }
 
             break;
@@ -1167,9 +1168,9 @@ void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
         {
             switch (data.toInt())
             {
-                case 0:  map.insert("powerOnStatus", "off"); break;
-                case 1:  map.insert("powerOnStatus", "on"); break;
-                case 2:  map.insert("powerOnStatus", "previous"); break;
+                case 0: map.insert("powerOnStatus", "off"); break;
+                case 1: map.insert("powerOnStatus", "on"); break;
+                case 2: map.insert("powerOnStatus", "previous"); break;
             }
 
             break;
@@ -1310,9 +1311,9 @@ void PropertiesTUYA::NeoSiren::update(quint8 dataPoint, const QVariant &data)
         {
             switch (data.toInt())
             {
-                case 0:  map.insert("volume", "low"); break;
-                case 1:  map.insert("volume", "medium"); break;
-                case 2:  map.insert("volume", "high"); break;
+                case 0: map.insert("volume", "low"); break;
+                case 1: map.insert("volume", "medium"); break;
+                case 2: map.insert("volume", "high"); break;
             }
 
             break;
@@ -1355,6 +1356,68 @@ void PropertiesTUYA::PresenceSensor::update(quint8 dataPoint, const QVariant &da
         case 0x65: map.insert("detectionDelay", data.toDouble() / 10); break;
         case 0x66: map.insert("fadingTime", data.toInt() / 10); break;
         case 0x68: map.insert("illuminance", data.toInt() + endpointOption("illuminanceOffset").toDouble()); break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::RadarSensor::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x01: map.insert("occupancy", data.toBool()); break;
+        case 0x02: map.insert("radarSensitivity", data.toInt()); break;
+        case 0x66: map.insert("motion", data.toInt() != 0x01 ? true : false); break;
+        case 0x67: map.insert("illuminance", data.toInt() + endpointOption("illuminanceOffset").toDouble()); break;
+        case 0x69: map.insert("tumbleSwitch", data.toBool() ? "on" : "off"); break;
+        case 0x6A: map.insert("tumbleAlarmTime", data.toInt() + 1); break;
+
+        case 0x70:
+        {
+            switch (data.toInt())
+            {
+                case 0: map.insert("radarScene", "default"); break;
+                case 1: map.insert("radarScene", "area"); break;
+                case 2: map.insert("radarScene", "toilet"); break;
+                case 3: map.insert("radarScene", "bedroom"); break;
+                case 4: map.insert("radarScene", "parlour"); break;
+                case 5: map.insert("radarScene", "office"); break;
+                case 6: map.insert("radarScene", "hotel"); break;
+            }
+
+            break;
+        }
+
+        case 0x72:
+        {
+            switch (data.toInt())
+            {
+                case 0: map.insert("motionDirection", "standingStill"); break;
+                case 1: map.insert("motionDirection", "movingForward"); break;
+                case 2: map.insert("motionDirection", "movingBackward"); break;
+            }
+
+            break;
+        }
+
+        case 0x73: map.insert("motionSpeed", data.toInt()); break;
+
+        case 0x74:
+        {
+            switch (data.toInt())
+            {
+                case 0: map.insert("fallDown", "none"); break;
+                case 1: map.insert("fallDown", "maybe"); break;
+                case 2: map.insert("fallDown", "fall"); break;
+            }
+
+            break;
+        }
+
+        case 0x75: map.insert("staticDwellAlarm", data.toInt()); break;
+        case 0x76: map.insert("fallSensitivity", data.toInt()); break;
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

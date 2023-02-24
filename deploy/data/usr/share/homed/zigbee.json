@@ -987,10 +987,17 @@
       "discoveries":    ["battery", "contact"]
     },
     {
-      "description":    "TUYA TS0601 Human Presence Detector",
-      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lu01t0zl", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
+      "description":    "TUYA TS0601 Human Presence Sensor",
+      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
       "properties":     ["tuyaPresenceSensor"],
       "actions":        ["tuyaPresenceSensor"],
+      "discoveries":    ["occupancy"]
+    },
+    {
+      "description":    "TUYA TS0601 Human Presence Sensor with Fall Detector",
+      "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
+      "properties":     ["tuyaRadarSensor"],
+      "actions":        ["tuyaRadarSensor"],
       "discoveries":    ["occupancy"]
     },
     {
