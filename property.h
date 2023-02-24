@@ -677,6 +677,15 @@ namespace PropertiesTUYA
 
     };
 
+    class LightDimmer : public Data
+    {
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class ElectricityMeter : public Data
     {
 

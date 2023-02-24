@@ -25,6 +25,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::Interlock>              ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
 
+    qRegisterMetaType <ActionsTUYA::LightDimmer>            ("tuyaLightDimmerAction");
     qRegisterMetaType <ActionsTUYA::ElectricityMeter>       ("tuyaElectricityMeterAction");
     qRegisterMetaType <ActionsTUYA::MoesThermostat>         ("tuyaMoesThermostatAction");
     qRegisterMetaType <ActionsTUYA::NeoSiren>               ("tuyaNeoSirenAction");
@@ -418,6 +419,86 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
     return zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x00).append(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (data), header.length);
 }
 
+QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant &data)
+{
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // status
+        {
+            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 1: // level
+        {
+            quint32 value = static_cast <quint32> (data.toInt() * 1000.0 / 0xFE);
+
+            if (value > 1000)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 2: // levelMin
+        {
+            quint32 value = static_cast <quint32> (data.toInt() * 1000.0 / 0xFE);
+
+            if (value > 1000)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x03, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 3: // lightType
+        {
+            QList <QString> list = {"led", "incandescent", "halogen"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x04, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 4: // levelMax
+        {
+            quint32 value = static_cast <quint32> (data.toInt() * 1000.0 / 0xFE);
+
+            if (value > 1000)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 5: // countdown
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value > 43200)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x06, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 6: // powerOnStatus
+        {
+            QList <QString> list = {"off", "on", "previous"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x0E, TUYA_TYPE_ENUM, &value);
+        }
+    }
+
+    return QByteArray();
+}
+
 QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toString() == "on" ? 0x01 : 0x00;
@@ -579,21 +660,23 @@ QByteArray ActionsTUYA::WaterValve::request(const QString &name, const QVariant 
 
         case 1: // timeout
         {
-            quint32 value = qToBigEndian <quint32> (data.toInt() * 60);
+            quint32 value = static_cast <quint32> (data.toInt() * 60);
 
             if (value > 36000)
                 return QByteArray();
 
+            value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x09, TUYA_TYPE_VALUE, &value);
         }
 
         case 2: // threshold
         {
-            quint32 value = qToBigEndian <quint32> (data.toInt());
+            quint32 value = static_cast <quint32> (data.toInt());
 
             if (value > 100)
                 return QByteArray();
 
+            value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_VALUE, &value);
         }
     }

@@ -259,6 +259,16 @@ namespace ActionsTUYA
 
     };
 
+    class LightDimmer : public Request, public ActionObject
+    {
+
+    public:
+
+        LightDimmer(void) : ActionObject("lightDimmer", CLUSTER_TUYA_DATA, 0x0000, {"status", "level", "levelMin", "lightType", "levelMax", "countdown", "powerOnStatus"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class ElectricityMeter : public Request, public ActionObject
     {
 

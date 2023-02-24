@@ -65,6 +65,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::CubeMovement>            ("lumiCubeMovementProperty");
     qRegisterMetaType <PropertiesLUMI::Vibration>               ("lumiVibrationProperty");
 
+    qRegisterMetaType <PropertiesTUYA::LightDimmer>             ("tuyaLightDimmerProperty");
     qRegisterMetaType <PropertiesTUYA::ElectricityMeter>        ("tuyaElectricityMeterProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostat>          ("tuyaMoesThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
@@ -1135,6 +1136,47 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
     }
 
     return QVariant();
+}
+
+void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
+        case 0x02: map.insert("level", static_cast <quint8> (round(data.toInt() * 0xFE / 1000.0))); break;
+        case 0x03: map.insert("levelMin", static_cast <quint8> (round(data.toInt() * 0xFE / 1000.0))); break;
+
+        case 0x04:
+        {
+            switch (data.toInt())
+            {
+                case 0:  map.insert("lightType", "led"); break;
+                case 1:  map.insert("lightType", "incandescent"); break;
+                case 2:  map.insert("lightType", "halogen"); break;
+            }
+
+            break;
+        }
+
+        case 0x05: map.insert("levelMax", static_cast <quint8> (round(data.toInt() * 0xFE / 1000.0))); break;
+        case 0x06: map.insert("countdown", data.toInt());
+
+        case 0x0E:
+        {
+            switch (data.toInt())
+            {
+                case 0:  map.insert("powerOnStatus", "off"); break;
+                case 1:  map.insert("powerOnStatus", "on"); break;
+                case 2:  map.insert("powerOnStatus", "previous"); break;
+            }
+
+            break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &data)
