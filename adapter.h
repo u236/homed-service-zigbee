@@ -175,11 +175,8 @@ public:
     void init(void);
     void setPermitJoin(bool enabled);
 
-    virtual bool nodeDescriptorRequest(quint8 id, quint16 networkAddress);
-    virtual bool simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId);
-    virtual bool activeEndpointsRequest(quint8 id, quint16 networkAddress);
+    virtual bool zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data = QByteArray());
     virtual bool bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind = false);
-    virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index);
     virtual bool leaveRequest(quint8 id, quint16 networkAddress);
 
 protected:

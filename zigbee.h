@@ -24,8 +24,8 @@ enum class RequestType
     Data,
     Binding,
     Remove,
-    LQI,
-    Interview
+    Interview,
+    LQI
 };
 
 enum class RequestStatus

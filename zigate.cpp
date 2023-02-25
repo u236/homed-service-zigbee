@@ -42,22 +42,20 @@ void ZiGate::resetInterPan(void)
 {
 }
 
-bool ZiGate::nodeDescriptorRequest(quint8 id, quint16 networkAddress)
+bool ZiGate::zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data)
 {
-    quint16 data = qToBigEndian(networkAddress);
-    return sendRequest(ZIGATE_NODE_DESCRIPTOR_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)), id) && !m_replyStatus;
-}
+    quint16 command, dstAddress = qToBigEndian(networkAddress);
 
-bool ZiGate::simpleDescriptorRequest(quint8 id, quint16 networkAddress, quint8 endpointId)
-{
-    quint16 data = qToBigEndian(networkAddress);
-    return sendRequest(ZIGATE_SIMPLE_DESCRIPTOR_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (endpointId)), id) && !m_replyStatus;
-}
+    switch (clusterId)
+    {
+        case ZDO_NODE_DESCRIPTOR_REQUEST:   command = ZIGATE_NODE_DESCRIPTOR_REQUEST; break;
+        case ZDO_SIMPLE_DESCRIPTOR_REQUEST: command = ZIGATE_SIMPLE_DESCRIPTOR_REQUEST; break;
+        case ZDO_ACTIVE_ENDPOINTS_REQUEST:  command = ZIGATE_ACTIVE_ENDPOINTS_REQUEST; break;
+        case ZDO_LQI_REQUEST:               command = ZIGATE_LQI_REQUEST; break;
+        default:                            return false;
+    }
 
-bool ZiGate::activeEndpointsRequest(quint8 id, quint16 networkAddress)
-{
-    quint16 data = qToBigEndian(networkAddress);
-    return sendRequest(ZIGATE_ACTIVE_ENDPOINTS_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)), id) && !m_replyStatus;
+    return sendRequest(command, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(data), id) && !m_replyStatus;
 }
 
 bool ZiGate::bindRequest(quint8 id, quint16, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
@@ -82,16 +80,10 @@ bool ZiGate::bindRequest(quint8 id, quint16, quint8 endpointId, quint16 clusterI
     return sendRequest(unbind ? ZIGATE_UNBIND_REQUEST : ZIGATE_BIND_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dstAddress), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)), id) && !m_replyStatus;
 }
 
-bool ZiGate::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
-{
-    quint16 data = qToBigEndian(networkAddress);
-    return sendRequest(ZIGATE_LQI_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (index)), id) && !m_replyStatus;
-}
-
 bool ZiGate::leaveRequest(quint8 id, quint16 networkAddress)
 {
-    quint16 data = qToBigEndian(networkAddress);
-    return sendRequest(ZIGATE_LEAVE_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(m_requestAddress).append(2, 0x00), id) && !m_replyStatus;
+    quint16 dstAddress = qToBigEndian(networkAddress);
+    return sendRequest(ZIGATE_LEAVE_REQUEST, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(m_requestAddress).append(2, 0x00), id) && !m_replyStatus;
 }
 
 quint8 ZiGate::getChecksum(const zigateHeaderStruct *header, const QByteArray &payload)

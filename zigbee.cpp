@@ -361,7 +361,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
     {
         if (!device->descriptorReceived())
         {
-            if (m_adapter->nodeDescriptorRequest(id, device->networkAddress()))
+            if (m_adapter->zdoRequest(id, device->networkAddress(), ZDO_NODE_DESCRIPTOR_REQUEST))
                 return true;
 
             interviewError(device, "node descriptor request failed");
@@ -370,7 +370,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
         if (!device->endpointsReceived())
         {
-            if (m_adapter->activeEndpointsRequest(id, device->networkAddress()))
+            if (m_adapter->zdoRequest(id, device->networkAddress(), ZDO_ACTIVE_ENDPOINTS_REQUEST))
                 return true;
 
             interviewError(device, "active endpoints request failed");
@@ -383,7 +383,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
             {
                 device->setInterviewEndpointId(it.key());
 
-                if (m_adapter->simpleDescriptorRequest(id, device->networkAddress(), it.key()))
+                if (m_adapter->zdoRequest(id, device->networkAddress(), ZDO_SIMPLE_DESCRIPTOR_REQUEST, QByteArray(1, static_cast <char> (it.key()))))
                     return true;
 
                 interviewError(device, QString::asprintf("endpoint 0x%02x simple descriptor request failed", it.key()));
@@ -1613,18 +1613,6 @@ void ZigBee::handleRequests(void)
                 break;
             }
 
-            case RequestType::LQI:
-            {
-                const Device &device = qvariant_cast <Device> (it.value()->request());
-
-                m_adapter->setRequestAddress(device->ieeeAddress());
-
-                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()))
-                    it.value()->setStatus(RequestStatus::Aborted);
-
-                break;
-            }
-
             case RequestType::Interview:
             {
                 const Device &device = qvariant_cast <Device> (it.value()->request());
@@ -1632,6 +1620,18 @@ void ZigBee::handleRequests(void)
                 m_adapter->setRequestAddress(device->ieeeAddress());
 
                 if (!interviewRequest(it.key(), device))
+                    it.value()->setStatus(RequestStatus::Aborted);
+
+                break;
+            }
+
+            case RequestType::LQI:
+            {
+                const Device &device = qvariant_cast <Device> (it.value()->request());
+
+                m_adapter->setRequestAddress(device->ieeeAddress());
+
+                if (!m_adapter->zdoRequest(it.key(), device->networkAddress(), ZDO_LQI_REQUEST, QByteArray(1, static_cast <char> (device->lqiRequestIndex()))))
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;
