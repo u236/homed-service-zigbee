@@ -415,6 +415,58 @@
       "endpointId":     [4, 5]
     },
     {
+      "description":    "Aqara D1 1-Channel Wall Switch QBKG23LM",
+      "modelNames":     ["lumi.switch.b1nacn02"],
+      "properties":     ["status", "lumiButtonMode"],
+      "actions":        ["status", "lumiButtonMode"],
+      "discoveries":    ["switch"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.b1nacn02"],
+      "properties":     ["lumiPower"],
+      "discoveries":    ["power"],
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["lumi.switch.b1nacn02"],
+      "properties":     ["lumiSwitchAction"],
+      "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick"]},
+      "endpointId":     5
+    },
+    {
+      "description":    "Aqara D1 2-Channel Wall Switch QBKG24LM",
+      "modelNames":     ["lumi.switch.b2nacn02"],
+      "options":        {"endpointName": {"1": "Left", "2": "Right", "5": "Left", "6": "Right", "7": "Both"}}
+    },
+    {
+      "modelNames":     ["lumi.switch.b2nacn02"],
+      "properties":     ["lumiButtonMode"],
+      "actions":        ["lumiButtonMode"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.b2nacn02"],
+      "properties":     ["lumiPower"],
+      "discoveries":    ["power"],
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["lumi.switch.b2nacn02"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "discoveries":    ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "modelNames":     ["lumi.switch.b2nacn02"],
+      "properties":     ["lumiSwitchAction"],
+      "discoveries":    ["action"],
+      "options":        {"action": ["singleClick", "doubleClick"]},
+      "endpointId":     [5, 6, 7]
+    },
+    {
       "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
       "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
       "properties":     ["status", "lumiData"],
