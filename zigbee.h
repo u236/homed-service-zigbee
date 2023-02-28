@@ -5,6 +5,7 @@
 #define PING_DEVICES_INTERVAL           300000
 #define DEVICE_REJOIN_TIMEOUT           5000
 #define DEVICE_INTERVIEW_TIMEOUT        10000
+#define INTER_PAN_CHANNEL_TIMEOUT       100
 #define STATUS_LED_TIMEOUT              500
 
 #include <QMetaEnum>
@@ -207,7 +208,7 @@ private slots:
     void deviceLeft(const QByteArray &ieeeAddress);
     void zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
     void zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &payload);
-    void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void rawMessageReveived(const QByteArray &ieeeAddress, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
     void handleRequests(void);
     void updateNeighbors(void);

@@ -18,24 +18,19 @@ bool ZiGate::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, 
     return apsRequest(id, ADDRESS_MODE_GROUP, groupId, srcEndPointId, dstEndPointId, clusterId, payload);
 }
 
-bool ZiGate::extendedDataRequest(quint8, const QByteArray &, quint8, quint16, quint8, quint16, const QByteArray &, bool)
+bool ZiGate::unicastInterPanRequest(quint8, const QByteArray &, quint16, const QByteArray &)
 {
-    return true;
+    return false;
 }
 
-bool ZiGate::extendedDataRequest(quint8, quint16, quint8, quint16, quint8, quint16, const QByteArray &, bool)
+bool ZiGate::broadcastInterPanRequest(quint8, quint16, const QByteArray &)
 {
-    return true;
-}
-
-bool ZiGate::setInterPanEndpointId(quint8)
-{
-    return true;
+    return false;
 }
 
 bool ZiGate::setInterPanChannel(quint8)
 {
-    return true;
+    return false;
 }
 
 void ZiGate::resetInterPanChannel(void)

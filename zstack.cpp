@@ -36,10 +36,39 @@ bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPoin
 
 bool ZStack::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
-    return extendedDataRequest(id, groupId, dstEndPointId, 0x0000, srcEndPointId, clusterId, payload, true); // TODO: refactor this
+    return extendedRequest(id, groupId, dstEndPointId, 0x0000, srcEndPointId, clusterId, payload, true);
 }
 
-bool ZStack::extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
+bool ZStack::unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quint16 clusterId, const QByteArray &payload)
+{
+    return extendedRequest(id, ieeeAddress, 0xFE, 0xFFFF, 0x0C, clusterId, payload);
+}
+
+bool ZStack::broadcastInterPanRequest(quint8 id, quint16 clusterId, const QByteArray &payload)
+{
+    return extendedRequest(id, 0xFFFF, 0xFE, 0xFFFF, 0x0C, clusterId, payload);
+}
+
+bool ZStack::setInterPanChannel(quint8 channel)
+{
+    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(1, 0x01).append(static_cast <char> (channel))) || m_replyData.at(0))
+    {
+        logWarning << "Set Inter-PAN channel" << channel << "request failed";
+        return false;
+    }
+
+    return true;
+}
+
+void ZStack::resetInterPanChannel(void)
+{
+    if (sendRequest(AF_INTER_PAN_CTL, QByteArray(1, 0x00)) && !m_replyData.at(0))
+        return;
+
+    logWarning << "Reset Inter-PAN request failed";
+}
+
+bool ZStack::extendedRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
     extendedDataRequestStruct data;
 
@@ -68,44 +97,10 @@ bool ZStack::extendedDataRequest(quint8 id, const QByteArray &address, quint8 ds
     return sendRequest(AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) && !m_replyData.at(0);
 }
 
-bool ZStack::extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group)
+bool ZStack::extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &paylaod, bool group)
 {
-    networkAddress = qToLittleEndian(networkAddress);
-    return extendedDataRequest(id, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
-}
-
-bool ZStack::setInterPanEndpointId(quint8 endpointId) // TODO: move to coordinator startup
-{
-    quint8 data[2] = {0x02, endpointId};
-
-    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) || m_replyData.at(0))
-    {
-        logWarning << "Set Inter-PAN endpointId" << QString::asprintf("0x%02x", endpointId) << "request failed";
-        return false;
-    }
-
-    return true;
-}
-
-bool ZStack::setInterPanChannel(quint8 channel)
-{
-    quint8 data[2] = {0x01, channel};
-
-    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(reinterpret_cast <char*> (&data), sizeof(data))) || m_replyData.at(0))
-    {
-        logWarning << "Set Inter-PAN channel" << channel << "request failed";
-        return false;
-    }
-
-    return true;
-}
-
-void ZStack::resetInterPanChannel(void)
-{
-    if (sendRequest(AF_INTER_PAN_CTL, QByteArray(1, 0x00)) && !m_replyData.at(0))
-        return;
-
-    logWarning << "Reset Inter-PAN request failed";
+    address = qToLittleEndian(address);
+    return extendedRequest(id, QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, paylaod, group);
 }
 
 bool ZStack::sendRequest(quint16 command, const QByteArray &data)
@@ -190,15 +185,15 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         case AF_INCOMING_MSG_EXT:
         {
             const extendedIncomingMessageStruct *message = reinterpret_cast <const extendedIncomingMessageStruct*> (data.constData());
-            quint64 srcAddress = qToBigEndian(qFromLittleEndian(message->srcAddress));
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->srcAddress));
 
             if (message->srcAddressMode != 0x03)
             {
-                logWarning << "Unsupporned extended message address mode" << QString::asprintf("0x%02x", message->srcAddressMode);
+                logWarning << "Unsupported extended message address mode" << QString::asprintf("0x%02x", message->srcAddressMode);
                 return;
             }
 
-            emit extendedMessageReveived(QByteArray(reinterpret_cast <char*> (&srcAddress), sizeof(srcAddress)), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(extendedIncomingMessageStruct), message->length));
+            emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(extendedIncomingMessageStruct), message->length));
             break;
         }
 
@@ -489,6 +484,12 @@ bool ZStack::startCoordinator(void)
         }
 
         logInfo << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "registered successfully";
+    }
+
+    if (!sendRequest(AF_INTER_PAN_CTL, QByteArray(1, 0x02).append(0x0C)) || m_replyData.at(0))
+    {
+        logWarning << "Set Inter-PAN endpoint request failed";
+        return false;
     }
 
     if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02)

@@ -70,7 +70,7 @@ bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointI
     request.dstEndpointId = dstEndPointId;
     request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY | APS_OPTION_ENABLE_ADDRESS_DISCOVERY);
     request.groupId = 0x0000;
-    request.sequence = m_sequenceId;
+    request.sequence = id;
     request.tag = id;
     request.length = static_cast <quint8> (payload.length());
 
@@ -91,7 +91,7 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
     request.dstEndpointId = dstEndPointId;
     request.options = qToLittleEndian <quint16> (APS_OPTION_ENABLE_ROUTE_DISCOVERY | APS_OPTION_ENABLE_ADDRESS_DISCOVERY);
     request.groupId = qToLittleEndian(groupId);
-    request.sequence = m_sequenceId;
+    request.sequence = id;
     request.hops = 0x00;
     request.radius = 0x07;
     request.tag = id;
@@ -100,28 +100,64 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
     return sendFrame(FRAME_SEND_MULTICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
 }
 
-bool EZSP::extendedDataRequest(quint8, const QByteArray &, quint8, quint16, quint8, quint16, const QByteArray &, bool)
+bool EZSP::unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quint16 clusterId, const QByteArray &payload)
 {
-    return true;
+    sendIeeeRawStruct request;
+
+    memcpy(&request.dstAddress, ieeeAddress.constData(), sizeof(request.dstAddress));
+    memcpy(&request.srcAddress, m_ieeeAddress.constData(), sizeof(request.srcAddress));
+
+    request.ieeeFrameControl = qToLittleEndian <quint16> (0xCC21);
+    request.sequence = id;
+    request.dstPanId = 0xFFFF;
+    request.dstAddress = qToLittleEndian(qFromBigEndian(request.dstAddress));
+    request.srcPanId = qToLittleEndian(m_panId);
+    request.srcAddress = qToLittleEndian(qFromBigEndian(request.srcAddress));
+    request.networkFrameControl = qToLittleEndian <quint16> (0x000B);
+    request.appFrameControl = 0x03;
+    request.clusterId = qToLittleEndian (clusterId);
+    request.profileId = qToLittleEndian <quint16> (PROFILE_ZLL);
+
+    return sendFrame(FRAME_SEND_RAW, QByteArray(1, static_cast <char> (sizeof(request) + payload.length())).append(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
 }
 
-bool EZSP::extendedDataRequest(quint8, quint16, quint8, quint16, quint8, quint16, const QByteArray &, bool)
+bool EZSP::broadcastInterPanRequest(quint8 id, quint16 clusterId, const QByteArray &payload)
 {
-    return true;
+    sendRawStruct request;
+
+    memcpy(&request.srcAddress, m_ieeeAddress.constData(), sizeof(request.srcAddress));
+
+    request.ieeeFrameControl = qToLittleEndian <quint16> (0xC801);
+    request.sequence = id;
+    request.dstPanId = 0xFFFF;
+    request.dstAddress = 0xFFFF;
+    request.srcPanId = qToLittleEndian(m_panId);
+    request.srcAddress = qToLittleEndian(qFromBigEndian(request.srcAddress));
+    request.networkFrameControl = qToLittleEndian <quint16> (0x000B);
+    request.appFrameControl = 0x0B;
+    request.clusterId = qToLittleEndian (clusterId);
+    request.profileId = qToLittleEndian <quint16> (PROFILE_ZLL);
+
+    return sendFrame(FRAME_SEND_RAW, QByteArray(1, static_cast <char> (sizeof(request) + payload.length())).append(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
 }
 
-bool EZSP::setInterPanEndpointId(quint8)
+bool EZSP::setInterPanChannel(quint8 channel)
 {
-    return true;
-}
+    if (!sendFrame(FRAME_SET_CHANNEL, QByteArray(1, static_cast <char> (channel))) || m_replyData.at(0))
+    {
+        logWarning << "Set Inter-PAN channel" << channel << "request failed";
+        return false;
+    }
 
-bool EZSP::setInterPanChannel(quint8)
-{
     return true;
 }
 
 void EZSP::resetInterPanChannel(void)
 {
+    if (sendFrame(FRAME_SET_CHANNEL, QByteArray(1, static_cast <char> (m_channel))) && !m_replyData.at(0))
+        return;
+
+    logWarning << "Reset Inter-PAN request failed";
 }
 
 quint16 EZSP::getCRC(quint8 *data, quint32 length)
@@ -319,12 +355,21 @@ void EZSP::parsePacket(const QByteArray &payload)
             break;
         }
 
-        default:
+        case FRAME_MAC_FILTER_MATCH_MESSAGE_HANDLER:
+        {
+            const macFilterMatchMessageHandlerStruct *message = reinterpret_cast <const macFilterMatchMessageHandlerStruct*> (data.constData());
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->srcAddress));
+            emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(macFilterMatchMessageHandlerStruct)));
+            break;
+        }
 
+        default:
+        {
             if (m_adapterDebug)
                 logInfo << "Unrecognozed frame id:" << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId));
 
             break;
+        }
     }
 }
 

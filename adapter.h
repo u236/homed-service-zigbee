@@ -160,10 +160,9 @@ public:
     virtual bool unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) = 0;
     virtual bool multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) = 0;
 
-    virtual bool extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
-    virtual bool extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) = 0;
+    virtual bool unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quint16 clusterId, const QByteArray &payload) = 0;
+    virtual bool broadcastInterPanRequest(quint8 id, quint16 clusterId, const QByteArray &payload) = 0;
 
-    virtual bool setInterPanEndpointId(quint8 endpointId) = 0;
     virtual bool setInterPanChannel(quint8 channel) = 0;
     virtual void resetInterPanChannel(void) = 0;
 
@@ -240,7 +239,7 @@ signals:
     void deviceLeft(const QByteArray &ieeeAddress);
     void zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
     void zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
-    void extendedMessageReveived(const QByteArray &ieeeAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void rawMessageReveived(const QByteArray &ieeeAddress, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
 
 };
 

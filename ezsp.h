@@ -29,6 +29,7 @@
 #define FRAME_SEND_MULTICAST                                    0x0038
 #define FRAME_MESSAGE_SENT_HANDLER                              0x003F
 #define FRAME_INCOMING_MESSAGE_HANDLER                          0x0045
+#define FRAME_MAC_FILTER_MATCH_MESSAGE_HANDLER                  0x0046
 #define FRAME_SET_CONFIG                                        0x0053
 #define FRAME_SET_POLICY                                        0x0055
 #define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
@@ -38,6 +39,7 @@
 #define FRAME_FIND_KEY_TABLE_ENTRY                              0x0075
 #define FRAME_ERASE_KEY_TABLE_ENTRY                             0x0076
 #define FRAME_SET_EXTENDED_TIMEOUT                              0x007E
+#define FRAME_SEND_RAW                                          0x0096
 #define FRAME_GET_VALUE                                         0x00AA
 #define FRAME_SET_VALUE                                         0x00AB
 #define FRAME_ADD_TRANSIENT_LINK_KEY                            0x00AF
@@ -160,7 +162,6 @@ struct networkParametersStruct
     quint32 channelList;
 };
 
-
 struct sendUnicastStruct
 {
     quint8  type;
@@ -189,6 +190,34 @@ struct sendMulticastStruct
     quint8  radius;
     quint8  tag;
     quint8  length;
+};
+
+struct sendIeeeRawStruct
+{
+    quint16 ieeeFrameControl;
+    quint8  sequence;
+    quint16 dstPanId;
+    quint64 dstAddress;
+    quint16 srcPanId;
+    quint64 srcAddress;
+    quint16 networkFrameControl;
+    quint8  appFrameControl;
+    quint16 clusterId;
+    quint16 profileId;
+};
+
+struct sendRawStruct
+{
+    quint16 ieeeFrameControl;
+    quint8  sequence;
+    quint16 dstPanId;
+    quint16 dstAddress;
+    quint16 srcPanId;
+    quint64 srcAddress;
+    quint16 networkFrameControl;
+    quint8  appFrameControl;
+    quint16 clusterId;
+    quint16 profileId;
 };
 
 struct messageSentHandlerStruct
@@ -223,6 +252,25 @@ struct incomingMessageHandlerStruct
     quint8  bindingIndex;
     quint8  addressIndex;
     quint8  length;
+};
+
+struct macFilterMatchMessageHandlerStruct
+{
+    quint8  index;
+    quint8  type;
+    quint8  linkQuality;
+    quint8  rssi;
+    quint8  length;
+    quint16 ieeeFrameControl;
+    quint8  sequence;
+    quint16 dstPanId;
+    quint64 dstAddress;
+    quint16 srcPanId;
+    quint64 srcAddress;
+    quint16 networkFrameControl;
+    quint8  appFrameControl;
+    quint16 clusterId;
+    quint16 profileId;
 };
 
 struct setConfigStruct
@@ -268,10 +316,9 @@ public:
     bool unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) override;
     bool multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) override;
 
-    bool extendedDataRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false) override;
-    bool extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &data, bool group = false) override;
+    bool unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quint16 clusterId, const QByteArray &payload) override;
+    bool broadcastInterPanRequest(quint8 id, quint16 clusterId, const QByteArray &payload) override;
 
-    bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPanChannel(void) override;
 
