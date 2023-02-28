@@ -42,6 +42,7 @@
 #define FRAME_SET_VALUE                                         0x00AB
 #define FRAME_ADD_TRANSIENT_LINK_KEY                            0x00AF
 #define FRAME_CLEAR_KEY_TABLE                                   0x00B1
+#define FRAME_SET_CHANNEL                                       0x00B9
 
 #define CONFIG_PACKET_BUFFER_COUNT                              0x01
 #define CONFIG_STACK_PROFILE                                    0x0C
@@ -100,6 +101,7 @@
 
 #define APS_OPTION_RETRY                                        0x0040
 #define APS_OPTION_ENABLE_ROUTE_DISCOVERY                       0x0100
+#define APS_OPTION_ENABLE_ADDRESS_DISCOVERY                     0x1000
 
 #define NETWORK_STATUS_JOINED                                   0x02
 #define CURRENT_NETWORK_KEY                                     0x03
@@ -271,7 +273,7 @@ public:
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
-    void resetInterPan(void) override;
+    void resetInterPanChannel(void) override;
 
 private:
 

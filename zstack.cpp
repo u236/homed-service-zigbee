@@ -74,7 +74,7 @@ bool ZStack::extendedDataRequest(quint8 id, quint16 networkAddress, quint8 dstEn
     return extendedDataRequest(id, QByteArray(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress)), dstEndpointId, dstPanId, srcEndpointId, clusterId, data, group);
 }
 
-bool ZStack::setInterPanEndpointId(quint8 endpointId)
+bool ZStack::setInterPanEndpointId(quint8 endpointId) // TODO: move to coordinator startup
 {
     quint8 data[2] = {0x02, endpointId};
 
@@ -100,9 +100,9 @@ bool ZStack::setInterPanChannel(quint8 channel)
     return true;
 }
 
-void ZStack::resetInterPan(void)
+void ZStack::resetInterPanChannel(void)
 {
-    if (sendRequest(AF_INTER_PAN_CTL, QByteArray(1, 0x00)) || m_replyData.at(0))
+    if (sendRequest(AF_INTER_PAN_CTL, QByteArray(1, 0x00)) && !m_replyData.at(0))
         return;
 
     logWarning << "Reset Inter-PAN request failed";

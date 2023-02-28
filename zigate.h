@@ -110,11 +110,12 @@ public:
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
-    void resetInterPan(void) override;
+    void resetInterPanChannel(void) override;
 
     bool zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data = QByteArray()) override;
     bool bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind = false) override;
     bool leaveRequest(quint8 id, quint16 networkAddress) override;
+    bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index) override;
 
 private:
 

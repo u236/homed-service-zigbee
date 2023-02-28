@@ -260,7 +260,7 @@ public:
 
     bool setInterPanEndpointId(quint8 endpointId) override;
     bool setInterPanChannel(quint8 channel) override;
-    void resetInterPan(void) override;
+    void resetInterPanChannel(void) override;
 
 private:
 

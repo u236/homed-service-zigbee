@@ -38,7 +38,7 @@ bool ZiGate::setInterPanChannel(quint8)
     return true;
 }
 
-void ZiGate::resetInterPan(void)
+void ZiGate::resetInterPanChannel(void)
 {
 }
 
@@ -84,6 +84,12 @@ bool ZiGate::leaveRequest(quint8 id, quint16 networkAddress)
 {
     quint16 dstAddress = qToBigEndian(networkAddress);
     return sendRequest(ZIGATE_LEAVE_REQUEST, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(m_requestAddress).append(2, 0x00), id) && !m_replyStatus;
+}
+
+bool ZiGate::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
+{
+    quint16 data = qToBigEndian(networkAddress);
+    return sendRequest(ZIGATE_LQI_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (index)), id) && !m_replyStatus;
 }
 
 quint8 ZiGate::getChecksum(const zigateHeaderStruct *header, const QByteArray &payload)

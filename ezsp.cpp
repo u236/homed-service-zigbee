@@ -68,7 +68,7 @@ bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointI
     request.clusterId = qToLittleEndian(clusterId);
     request.srcEndpointId = srcEndPointId;
     request.dstEndpointId = dstEndPointId;
-    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+    request.options = qToLittleEndian <quint16> (APS_OPTION_RETRY | APS_OPTION_ENABLE_ROUTE_DISCOVERY | APS_OPTION_ENABLE_ADDRESS_DISCOVERY);
     request.groupId = 0x0000;
     request.sequence = m_sequenceId;
     request.tag = id;
@@ -89,7 +89,7 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
     request.clusterId = qToLittleEndian(clusterId);
     request.srcEndpointId = srcEndPointId;
     request.dstEndpointId = dstEndPointId;
-    request.options = qToLittleEndian <quint16> (APS_OPTION_ENABLE_ROUTE_DISCOVERY);
+    request.options = qToLittleEndian <quint16> (APS_OPTION_ENABLE_ROUTE_DISCOVERY | APS_OPTION_ENABLE_ADDRESS_DISCOVERY);
     request.groupId = qToLittleEndian(groupId);
     request.sequence = m_sequenceId;
     request.hops = 0x00;
@@ -120,7 +120,7 @@ bool EZSP::setInterPanChannel(quint8)
     return true;
 }
 
-void EZSP::resetInterPan(void)
+void EZSP::resetInterPanChannel(void)
 {
 }
 

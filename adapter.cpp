@@ -161,6 +161,11 @@ bool Adapter::leaveRequest(quint8 id, quint16 networkAddress)
     return unicastRequest(id, networkAddress, 0x00, 0x00, ZDO_LEAVE_REQUEST, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(1, 0x00));
 }
 
+bool Adapter::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
+{
+    return unicastRequest(id, networkAddress, 0x00, 0x00, ZDO_LQI_REQUEST, QByteArray(1, static_cast <char> (id)).append(1, static_cast <char> (index)));
+}
+
 void Adapter::reset(void)
 {
     QList <QString> list = {"gpio", "flow"};

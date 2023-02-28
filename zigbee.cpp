@@ -268,7 +268,7 @@ void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, boo
         else
             touchLinkScan();
 
-        m_adapter->resetInterPan();
+        m_adapter->resetInterPanChannel();
     }
 }
 
@@ -1613,6 +1613,18 @@ void ZigBee::handleRequests(void)
                 break;
             }
 
+            case RequestType::LQI:
+            {
+                const Device &device = qvariant_cast <Device> (it.value()->request());
+
+                m_adapter->setRequestAddress(device->ieeeAddress());
+
+                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()))
+                    it.value()->setStatus(RequestStatus::Aborted);
+
+                break;
+            }
+
             case RequestType::Interview:
             {
                 const Device &device = qvariant_cast <Device> (it.value()->request());
@@ -1620,18 +1632,6 @@ void ZigBee::handleRequests(void)
                 m_adapter->setRequestAddress(device->ieeeAddress());
 
                 if (!interviewRequest(it.key(), device))
-                    it.value()->setStatus(RequestStatus::Aborted);
-
-                break;
-            }
-
-            case RequestType::LQI:
-            {
-                const Device &device = qvariant_cast <Device> (it.value()->request());
-
-                m_adapter->setRequestAddress(device->ieeeAddress());
-
-                if (!m_adapter->zdoRequest(it.key(), device->networkAddress(), ZDO_LQI_REQUEST, QByteArray(1, static_cast <char> (device->lqiRequestIndex()))))
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;

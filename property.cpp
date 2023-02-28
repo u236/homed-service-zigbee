@@ -1162,7 +1162,7 @@ void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
         }
 
         case 0x05: map.insert("levelMax", static_cast <quint8> (round(data.toInt() * 0xFE / 1000.0))); break;
-        case 0x06: map.insert("countdown", data.toInt());
+        case 0x06: map.insert("countdown", data.toInt()); break;
 
         case 0x0E:
         {

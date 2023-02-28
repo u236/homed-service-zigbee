@@ -165,7 +165,7 @@ public:
 
     virtual bool setInterPanEndpointId(quint8 endpointId) = 0;
     virtual bool setInterPanChannel(quint8 channel) = 0;
-    virtual void resetInterPan(void) = 0;
+    virtual void resetInterPanChannel(void) = 0;
 
     inline QString type(void) { return m_typeString; }
     inline QString version(void) { return m_versionString; }
@@ -178,6 +178,7 @@ public:
     virtual bool zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data = QByteArray());
     virtual bool bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind = false);
     virtual bool leaveRequest(quint8 id, quint16 networkAddress);
+    virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index);
 
 protected:
 
