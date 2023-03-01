@@ -166,6 +166,7 @@ private:
 
     QMetaEnum m_events;
     quint8 m_requestId, m_interPanChannel;
+    bool m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
     bool m_debug;

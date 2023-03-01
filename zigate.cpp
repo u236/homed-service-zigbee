@@ -35,6 +35,7 @@ bool ZiGate::setInterPanChannel(quint8)
 
 void ZiGate::resetInterPanChannel(void)
 {
+
 }
 
 bool ZiGate::zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data)

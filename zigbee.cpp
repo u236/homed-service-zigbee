@@ -10,7 +10,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config, this)), m_adapter(nullptr), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config, this)), m_adapter(nullptr), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0), m_interPanLock(false)
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
@@ -260,14 +260,24 @@ void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint1
     enqueueDataRequest(device, endpointId ? endpointId : 0x01, clusterId, request, QString("request %1").arg(m_requestId));
 }
 
-void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset) // TODO: add touchlink lock/unlock
+void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
 {
+    if (m_interPanLock)
+        return;
+
+    m_interPanLock = true;
+
     if (reset)
         touchLinkReset(ieeeAddress, channel);
     else
         touchLinkScan();
 
     m_adapter->resetInterPanChannel();
+
+    if (!m_requests.isEmpty())
+        m_requestTimer->start();
+
+    m_interPanLock = false;
 }
 
 void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QString &name, const QVariant &data)
@@ -324,12 +334,11 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
     }
 }
 
-
 void ZigBee::enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name)
 {
     DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name));
 
-    if (!m_requestTimer->isActive())
+    if (!m_requestTimer->isActive() && !m_interPanLock)
         m_requestTimer->start();
 
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(request), RequestType::Data)));
@@ -339,7 +348,7 @@ void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16
 {
     BindRequest request(new BindRequestObject(device, endpointId, clusterId, address, dstEndpointId, unbind));
 
-    if (!m_requestTimer->isActive())
+    if (!m_requestTimer->isActive() && !m_interPanLock)
         m_requestTimer->start();
 
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(request), RequestType::Binding)));
@@ -347,7 +356,7 @@ void ZigBee::enqueueBindRequest(const Device &device, quint8 endpointId, quint16
 
 void ZigBee::enqueueRequest(const Device &device, RequestType type)
 {
-    if (!m_requestTimer->isActive())
+    if (!m_requestTimer->isActive() && !m_interPanLock)
         m_requestTimer->start();
 
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(device), type)));
