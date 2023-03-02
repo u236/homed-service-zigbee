@@ -1005,18 +1005,17 @@
       "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
       "properties":     ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
-      "discoveries":    [],
-      "options":        {"debounce": 1}
+      "discoveries":    ["thermostat"],
+      "options":        {"debounce": 1, "thermostat": ["status"], "operationMode": ["manual", "program"]}
     },
-
     {
       "description":    "TUYA TS0601 Moes Radiator Thermostat",
       "modelNames":     ["_TZE200_b6wax7g0"],
       "properties":     ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
-      "discoveries":    []
+      "discoveries":    ["thermostat"],
+      "options":        {"operationMode": ["manual", "program", "temporary", "holiday"]}
     },
-
     {
       "description":    "TUYA TS0601 Neo Siren",
       "modelNames":     ["_TZE200_t1blo2bj"],

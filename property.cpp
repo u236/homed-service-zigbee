@@ -1322,7 +1322,14 @@ void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVar
         case 0x6D: map.insert("temperatureLimitMin", data.toInt()); break;
     }
 
-    m_value = map.isEmpty() ? QVariant() : map;
+    if (map.isEmpty())
+    {
+        m_value = QVariant();
+        return;
+    }
+
+    map.insert("status", "on");
+    m_value = map;
 }
 
 void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVariant &data)

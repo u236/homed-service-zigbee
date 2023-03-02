@@ -20,6 +20,8 @@ public:
     inline QString component(void) { return m_component; }
     inline QString name(void) { return m_name; }
 
+    inline void setStateTopic(const QString &value) { m_stateTopic = value; }
+    inline void setCommandTopic(const QString &value) { m_commandTopic = value; }
     inline void setParent(QObject *value) { m_parent = value; }
 
     inline bool multiple(void) { return m_multiple; }
@@ -29,7 +31,7 @@ public:
 
 protected:
 
-    QString m_component, m_name;
+    QString m_component, m_name, m_stateTopic, m_commandTopic;
 
     QObject *m_parent;
     bool m_multiple;
@@ -117,6 +119,16 @@ class CoverObject : public DiscoveryObject
 public:
 
     CoverObject(void) : DiscoveryObject("cover") {}
+    QJsonObject reqest(void) override;
+
+};
+
+class ThermostatObject : public DiscoveryObject
+{
+
+public:
+
+    ThermostatObject(void) : DiscoveryObject("climate") {}
     QJsonObject reqest(void) override;
 
 };
