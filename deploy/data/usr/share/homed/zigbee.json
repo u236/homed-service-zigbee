@@ -627,11 +627,18 @@
       "discoveries":    ["battery", "illuminance"]
     },
     {
-      "description":    "Xiaomi Wireless Button WXKG01LM or WXKG11LM",
-      "modelNames":     ["lumi.sensor_switch", "lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
+      "description":    "Xiaomi Wireless Button WXKG01LM",
+      "modelNames":     ["lumi.sensor_switch"],
       "properties":     ["lumiBasic", "lumiButtonAction"],
       "discoveries":    ["battery", "action"],
       "options":        {"action": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
+    },
+    {
+      "description":    "Aqara Wireless Button WXKG11LM",
+      "modelNames":     ["lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
+      "properties":     ["lumiBasic", "lumiSwitchAction"],
+      "discoveries":    ["battery", "action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold", "release"]}
     },
     {
       "description":    "Aqara Opple 2-Key Wireless Switch WXCJKG11LM",
