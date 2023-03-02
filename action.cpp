@@ -5,41 +5,43 @@
 
 void ActionObject::registerMetaTypes(void)
 {
-    qRegisterMetaType <Actions::Status>                     ("statusAction");
-    qRegisterMetaType <Actions::PowerOnStatus>              ("powerOnStatusAction");
-    qRegisterMetaType <Actions::Level>                      ("levelAction");
-    qRegisterMetaType <Actions::CoverStatus>                ("coverStatusAction");
-    qRegisterMetaType <Actions::ColorHS>                    ("colorHSAction");
-    qRegisterMetaType <Actions::ColorXY>                    ("colorXYAction");
-    qRegisterMetaType <Actions::ColorTemperature>           ("colorTemperatureAction");
+    qRegisterMetaType <Actions::Status>                         ("statusAction");
+    qRegisterMetaType <Actions::PowerOnStatus>                  ("powerOnStatusAction");
+    qRegisterMetaType <Actions::Level>                          ("levelAction");
+    qRegisterMetaType <Actions::CoverStatus>                    ("coverStatusAction");
+    qRegisterMetaType <Actions::ColorHS>                        ("colorHSAction");
+    qRegisterMetaType <Actions::ColorXY>                        ("colorXYAction");
+    qRegisterMetaType <Actions::ColorTemperature>               ("colorTemperatureAction");
 
-    qRegisterMetaType <ActionsPTVO::ChangePattern>          ("ptvoChangePatternAction");
-    qRegisterMetaType <ActionsPTVO::Count>                  ("ptvoCountAction");
-    qRegisterMetaType <ActionsPTVO::Pattern>                ("ptvoPatternAction");
+    qRegisterMetaType <ActionsPTVO::ChangePattern>              ("ptvoChangePatternAction");
+    qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");
+    qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
 
-    qRegisterMetaType <ActionsLUMI::PresenceSensor>         ("lumiPresenceSensorAction");
-    qRegisterMetaType <ActionsLUMI::ButtonMode>             ("lumiButtonModeAction");
-    qRegisterMetaType <ActionsLUMI::SwitchMode>             ("lumiSwitchModeAction");
-    qRegisterMetaType <ActionsLUMI::IndicatorMode>          ("lumiIndicatorModeAction");
-    qRegisterMetaType <ActionsLUMI::OperationMode>          ("lumiOperationModeAction");
-    qRegisterMetaType <ActionsLUMI::Interlock>              ("lumiInterlockAction");
-    qRegisterMetaType <ActionsLUMI::CoverPosition>          ("lumiCoverPositionAction");
+    qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
+    qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");
+    qRegisterMetaType <ActionsLUMI::SwitchMode>                 ("lumiSwitchModeAction");
+    qRegisterMetaType <ActionsLUMI::IndicatorMode>              ("lumiIndicatorModeAction");
+    qRegisterMetaType <ActionsLUMI::OperationMode>              ("lumiOperationModeAction");
+    qRegisterMetaType <ActionsLUMI::Interlock>                  ("lumiInterlockAction");
+    qRegisterMetaType <ActionsLUMI::CoverPosition>              ("lumiCoverPositionAction");
 
-    qRegisterMetaType <ActionsTUYA::LightDimmer>            ("tuyaLightDimmerAction");
-    qRegisterMetaType <ActionsTUYA::ElectricityMeter>       ("tuyaElectricityMeterAction");
-    qRegisterMetaType <ActionsTUYA::MoesThermostat>         ("tuyaMoesThermostatAction");
-    qRegisterMetaType <ActionsTUYA::NeoSiren>               ("tuyaNeoSirenAction");
-    qRegisterMetaType <ActionsTUYA::WaterValve>             ("tuyaWaterValveAction");
-    qRegisterMetaType <ActionsTUYA::PresenceSensor>         ("tuyaPresenceSensorAction");
-    qRegisterMetaType <ActionsTUYA::RadarSensor>            ("tuyaRadarSensorAction");
-    qRegisterMetaType <ActionsTUYA::ChildLock>              ("tuyaChildLockAction");
-    qRegisterMetaType <ActionsTUYA::OperationMode>          ("tuyaOperationModeAction");
-    qRegisterMetaType <ActionsTUYA::IndicatorMode>          ("tuyaIndicatorModeAction");
-    qRegisterMetaType <ActionsTUYA::SwitchMode>             ("tuyaSwitchModeAction");
-    qRegisterMetaType <ActionsTUYA::PowerOnStatus>          ("tuyaPowerOnStatusAction");
+    qRegisterMetaType <ActionsTUYA::LightDimmer>                ("tuyaLightDimmerAction");
+    qRegisterMetaType <ActionsTUYA::ElectricityMeter>           ("tuyaElectricityMeterAction");
+    qRegisterMetaType <ActionsTUYA::MoesElectricThermostat>     ("tuyaMoesElectricThermostatAction");
+    qRegisterMetaType <ActionsTUYA::MoesRadiatorThermostat>     ("tuyaMoesRadiatorThermostatAction");
+    qRegisterMetaType <ActionsTUYA::MoesThermostatProgram>      ("tuyaMoesThermostatProgramAction");
+    qRegisterMetaType <ActionsTUYA::NeoSiren>                   ("tuyaNeoSirenAction");
+    qRegisterMetaType <ActionsTUYA::WaterValve>                 ("tuyaWaterValveAction");
+    qRegisterMetaType <ActionsTUYA::PresenceSensor>             ("tuyaPresenceSensorAction");
+    qRegisterMetaType <ActionsTUYA::RadarSensor>                ("tuyaRadarSensorAction");
+    qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");
+    qRegisterMetaType <ActionsTUYA::OperationMode>              ("tuyaOperationModeAction");
+    qRegisterMetaType <ActionsTUYA::IndicatorMode>              ("tuyaIndicatorModeAction");
+    qRegisterMetaType <ActionsTUYA::SwitchMode>                 ("tuyaSwitchModeAction");
+    qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
 
-    qRegisterMetaType <ActionsOther::EfektaReportingDelay>  ("efektaReportingDelayAction");
-    qRegisterMetaType <ActionsOther::PerenioSmartPlug>      ("perenioSmartPlugAction");
+    qRegisterMetaType <ActionsOther::EfektaReportingDelay>      ("efektaReportingDelayAction");
+    qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
 
 QVariant ActionObject::endpointOption(const QString &name)
@@ -506,7 +508,7 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
     return makeRequest(m_transactionId++, 0x10, TUYA_TYPE_BOOL, &value);
 }
 
-QByteArray ActionsTUYA::MoesThermostat::request(const QString &name, const QVariant &data)
+QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -518,7 +520,7 @@ QByteArray ActionsTUYA::MoesThermostat::request(const QString &name, const QVari
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
 
-        case 1: // mode
+        case 1: // operationMode
         {
             quint8 value = data.toString() == "program" ? 0x01 : 0x00;
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_ENUM, &value);
@@ -570,37 +572,120 @@ QByteArray ActionsTUYA::MoesThermostat::request(const QString &name, const QVari
 
             return makeRequest(m_transactionId++, 0x2B, TUYA_TYPE_ENUM, &value);
         }
+    }
 
-        default: // program
+    return QByteArray();
+}
+
+QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0: // operationMode
         {
-            const Property &property = endpointProperty("data");
-            QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
-            QByteArray payload;
+            QList <QString> list = {"program", "manual", "temporary", "holiday"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
-            if (property.isNull())
+            if (value < 0)
                 return QByteArray();
 
-            if (m_data.isEmpty() || property->meta().value("programReceived").toBool())
-            {
-                m_data = property->value().toMap();
-                property->meta().insert("programReceived", false);
-            }
+            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
+        }
 
-            m_data.insert(name, data.toDouble());
+        case 1: // heatingPoint
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
+        }
 
-            for (int i = 0; i < 36; i++)
-            {
-                QString key = QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3));
+        case 2: // boost
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x04, TUYA_TYPE_BOOL, &value);
+        }
 
-                if (!m_data.contains(key))
-                    return QByteArray();
+        case 3: // windowDetection
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x08, TUYA_TYPE_BOOL, &value);
+        }
 
-                payload.append(static_cast <char> ((i + 1) % 3 ? m_data.value(key).toDouble() : m_data.value(key).toDouble() * 2));
-            }
+        case 4: // childLock
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x0D, TUYA_TYPE_BOOL, &value);
+        }
 
-            return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_RAW, payload.data(), 36);
+        case 5: // boostTimeout
+        {
+            quint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x67, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 6: // temperatureCalibration
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 7: // ecoMode
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x6A, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 8: // ecoModeTemperature
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x6B, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 9: // temperatureLimitMax
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x6C, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 10: // temperatureLimitMin
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x6D, TUYA_TYPE_VALUE, &value);
         }
     }
+
+    return QByteArray();
+}
+
+QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)
+{
+    const Property &property = endpointProperty(m_name);
+    QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
+    QByteArray payload;
+
+    if (property.isNull())
+        return QByteArray();
+
+    if (m_data.isEmpty() || property->meta().value("programReceived").toBool())
+    {
+        m_data = property->value().toMap();
+        property->meta().insert("programReceived", false);
+    }
+
+    m_data.insert(name, data.toDouble());
+
+    for (int i = 0; i < 36; i++)
+    {
+        QString key = QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3));
+
+        if (!m_data.contains(key))
+            return QByteArray();
+
+        payload.append(static_cast <char> ((i + 1) % 3 ? m_data.value(key).toDouble() : m_data.value(key).toDouble() * 2));
+    }
+
+    return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_RAW, payload.data(), 36);
 }
 
 QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &data)
@@ -765,7 +850,7 @@ QByteArray ActionsTUYA::RadarSensor::request(const QString &name, const QVariant
 
         case 1: // tumbleSwitch
         {
-            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            quint8 value = data.toBool() ? 0x01 : 0x00;
             return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_BOOL, &value);
         }
 

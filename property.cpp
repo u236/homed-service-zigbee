@@ -67,7 +67,9 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesTUYA::LightDimmer>             ("tuyaLightDimmerProperty");
     qRegisterMetaType <PropertiesTUYA::ElectricityMeter>        ("tuyaElectricityMeterProperty");
-    qRegisterMetaType <PropertiesTUYA::MoesThermostat>          ("tuyaMoesThermostatProperty");
+    qRegisterMetaType <PropertiesTUYA::MoesElectricThermostat>  ("tuyaMoesElectricThermostatProperty");
+    qRegisterMetaType <PropertiesTUYA::MoesRadiatorThermostat>  ("tuyaMoesRadiatorThermostatProperty");
+    qRegisterMetaType <PropertiesTUYA::MoesThermostatProgram>   ("tuyaMoesThermostatProgramProperty");
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::WaterValve>              ("tuyaWaterValveProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
@@ -1162,7 +1164,7 @@ void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
         }
 
         case 0x05: map.insert("levelMax", static_cast <quint8> (round(data.toInt() * 0xFE / 1000.0))); break;
-        case 0x06: map.insert("countdown", data.toInt()); break;
+        case 0x06: map.insert("timeout", data.toInt()); break;
 
         case 0x0E:
         {
@@ -1240,7 +1242,7 @@ void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &data)
+void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -1257,7 +1259,7 @@ void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &da
         {
             QList <QString> list = {"_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"};
             double value = static_cast <double> (data.toInt());
-            map.insert("localTemperature", list.contains(deviceModelName()) ? value : value / 10); break;
+            map.insert("localTemperature", list.contains(deviceManufacturerName()) ? value : value / 10);
             break;
         }
 
@@ -1278,24 +1280,67 @@ void PropertiesTUYA::MoesThermostat::update(quint8 dataPoint, const QVariant &da
 
             break;
         }
+    }
 
-        case 0x65:
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x01:
         {
-            QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
-            QByteArray program = data.toByteArray();
-
-            if (program.length() != 36)
-                break;
-
-            for (int i = 0; i < 36; i++)
+            switch (data.toInt())
             {
-                double value = static_cast <double> (program.at(i));
-                map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
+                case 0:  map.insert("operationMode", "program"); break;
+                case 1:  map.insert("operationMode", "manual"); break;
+                case 2:  map.insert("operationMode", "temporary"); break;
+                default: map.insert("operationMode", "holiday"); break;
             }
 
-            m_meta.insert("programReceived", true);
             break;
         }
+
+        case 0x02: map.insert("heatingPoint", data.toInt()); break;
+        case 0x03: map.insert("localTemperature", data.toInt() / 10); break;
+        case 0x04: map.insert("boost", data.toBool()); break;
+        case 0x05: map.insert("boostCountdown", data.toInt()); break;
+        case 0x07: map.insert("heating", data.toInt() ? false : true); break;
+        case 0x08: map.insert("windowDetection", data.toBool()); break;
+        case 0x09: map.insert("windowOpen", data.toInt() ? false : true); break;
+        case 0x0D: map.insert("childLock", data.toBool()); break;
+        case 0x0E: map.insert("battery", data.toInt()); break;
+        case 0x67: map.insert("boostTimeout", data.toInt()); break;
+        case 0x68: map.insert("valvePosition", data.toInt()); break;
+        case 0x69: map.insert("temperatureCalibration", data.toInt()); break;
+        case 0x6A: map.insert("ecoMode", data.toBool()); break;
+        case 0x6B: map.insert("ecoModeTemperature", data.toInt()); break;
+        case 0x6C: map.insert("temperatureLimitMax", data.toInt()); break;
+        case 0x6D: map.insert("temperatureLimitMin", data.toInt()); break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    if (dataPoint == 0x65)
+    {
+        QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
+        QByteArray program = data.toByteArray();
+
+        for (int i = 0; i < 36; i++)
+        {
+            double value = static_cast <double> (program.at(i));
+            map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
+        }
+
+        m_meta.insert("programReceived", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
@@ -1371,7 +1416,7 @@ void PropertiesTUYA::RadarSensor::update(quint8 dataPoint, const QVariant &data)
         case 0x02: map.insert("radarSensitivity", data.toInt()); break;
         case 0x66: map.insert("motion", data.toInt() != 0x01 ? true : false); break;
         case 0x67: map.insert("illuminance", data.toInt() + endpointOption("illuminanceOffset").toDouble()); break;
-        case 0x69: map.insert("tumbleSwitch", data.toBool() ? "on" : "off"); break;
+        case 0x69: map.insert("tumbleSwitch", data.toBool()); break;
         case 0x6A: map.insert("tumbleAlarmTime", data.toInt() + 1); break;
 
         case 0x70:

@@ -530,7 +530,7 @@ namespace PropertiesLUMI
 
     public:
 
-        Data(const quint16 cluster = CLUSTER_LUMI) : PropertyObject("data", cluster) {}
+        Data(const quint16 cluster = CLUSTER_LUMI) : PropertyObject("lumiData", cluster) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     private:
@@ -667,7 +667,7 @@ namespace PropertiesTUYA
 
     public:
 
-        Data(void) : PropertyObject("data", CLUSTER_TUYA_DATA) {}
+        Data(const QString &name) : PropertyObject(name, CLUSTER_TUYA_DATA) {}
         void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
 
     private:
@@ -680,6 +680,10 @@ namespace PropertiesTUYA
     class LightDimmer : public Data
     {
 
+    public:
+
+        LightDimmer(void) : Data("lightDimmer") {}
+
     private:
 
         void update(quint8 dataPoint, const QVariant &data) override;
@@ -689,14 +693,48 @@ namespace PropertiesTUYA
     class ElectricityMeter : public Data
     {
 
+    public:
+
+        ElectricityMeter(void) : Data("electricityMeter") {}
+
     private:
 
         void update(quint8 dataPoint, const QVariant &data) override;
 
     };
 
-    class MoesThermostat : public Data
+    class MoesElectricThermostat : public Data
     {
+
+    public:
+
+        MoesElectricThermostat(void) : Data("moesElectricThermostat") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
+    class MoesRadiatorThermostat : public Data
+    {
+
+    public:
+
+        MoesRadiatorThermostat(void) : Data("moesRadiatorThermostat") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
+    class MoesThermostatProgram : public Data
+    {
+
+    public:
+
+        MoesThermostatProgram(void) : Data("moesThermostatProgram") {}
 
     private:
 
@@ -709,12 +747,20 @@ namespace PropertiesTUYA
 
     public:
 
+        NeoSiren(void) : Data("neoSiren") {}
+
+    public:
+
         void update(quint8 dataPoint, const QVariant &data) override;
 
     };
 
     class WaterValve : public Data
     {
+
+    public:
+
+        WaterValve(void) : Data("waterValve") {}
 
     private:
 
@@ -725,6 +771,10 @@ namespace PropertiesTUYA
     class PresenceSensor : public Data
     {
 
+    public:
+
+        PresenceSensor(void) : Data("presenceSensor") {}
+
     private:
 
         void update(quint8 dataPoint, const QVariant &data) override;
@@ -733,6 +783,10 @@ namespace PropertiesTUYA
 
     class RadarSensor : public Data
     {
+
+    public:
+
+        RadarSensor(void) : Data("radarSensor") {}
 
     private:
 
