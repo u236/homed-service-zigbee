@@ -27,6 +27,7 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsTUYA::LightDimmer>                ("tuyaLightDimmerAction");
     qRegisterMetaType <ActionsTUYA::ElectricityMeter>           ("tuyaElectricityMeterAction");
+    qRegisterMetaType <ActionsTUYA::Cover>                      ("tuyaCoverAction");
     qRegisterMetaType <ActionsTUYA::MoesElectricThermostat>     ("tuyaMoesElectricThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesRadiatorThermostat>     ("tuyaMoesRadiatorThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesThermostatProgram>      ("tuyaMoesThermostatProgramAction");
@@ -506,6 +507,42 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
 {
     quint8 value = data.toString() == "on" ? 0x01 : 0x00;
     return makeRequest(m_transactionId++, 0x10, TUYA_TYPE_BOOL, &value);
+}
+
+QByteArray ActionsTUYA::Cover::request(const QString &name, const QVariant &data)
+{
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // cover
+        {
+            QList <QString> list = {"open", "stop", "close"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 1: // reverse
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 2: // speed
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value > 255)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
+        }
+    }
+
+    return QByteArray();
 }
 
 QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, const QVariant &data)

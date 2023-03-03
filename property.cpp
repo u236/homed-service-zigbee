@@ -67,6 +67,7 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesTUYA::LightDimmer>             ("tuyaLightDimmerProperty");
     qRegisterMetaType <PropertiesTUYA::ElectricityMeter>        ("tuyaElectricityMeterProperty");
+    qRegisterMetaType <PropertiesTUYA::Cover>                   ("tuyaCoverProperty");
     qRegisterMetaType <PropertiesTUYA::MoesElectricThermostat>  ("tuyaMoesElectricThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::MoesRadiatorThermostat>  ("tuyaMoesRadiatorThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostatProgram>   ("tuyaMoesThermostatProgramProperty");
@@ -1240,6 +1241,30 @@ void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &
             case 0x69: map.insert("frequency", data.toInt() / 100.0); break;
             case 0x6F: map.insert("powerFactor", data.toInt() / 10.0); break;
         }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::Cover::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x02:
+        case 0x03:
+        {
+            quint8 value = static_cast <quint8> (endpointOption("invertCover").toBool() ? 100 - data.toInt() : data.toInt());
+
+            map.insert("cover", value ? "open" : "closed");
+            map.insert("position", static_cast <quint8> (value));
+
+            break;
+        }
+
+        case 0x05:  map.insert("reverse", data.toBool()); break;
+        case 0x69:  map.insert("speed", data.toInt()); break;
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

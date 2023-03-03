@@ -703,6 +703,19 @@ namespace PropertiesTUYA
 
     };
 
+    class Cover : public Data
+    {
+
+    public:
+
+        Cover(void) : Data("cover") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class MoesElectricThermostat : public Data
     {
 

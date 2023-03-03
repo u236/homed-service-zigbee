@@ -279,6 +279,16 @@ namespace ActionsTUYA
 
     };
 
+    class Cover : public Request, public ActionObject
+    {
+
+    public:
+
+        Cover(void) : ActionObject("cover", CLUSTER_TUYA_DATA, 0x0000, {"cover", "reverse", "speed"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class MoesElectricThermostat : public Request, public ActionObject
     {
 
