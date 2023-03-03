@@ -697,7 +697,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         }
     }
 
-    if (endpoint->updated() && !device->options().value("debounce").toInt())
+    if (endpoint->updated())
     {
         m_devices->storeProperties();
         emit endpointUpdated(device, endpoint->id());
@@ -907,7 +907,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         }
     }
 
-    if (endpoint->updated() && !device->options().value("debounce").toInt())
+    if (endpoint->updated())
     {
         m_devices->storeProperties();
         emit endpointUpdated(device, endpoint->id());
@@ -1536,15 +1536,6 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
         clusterCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, data);
     else
         globalCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, data);
-
-    if (device->lastSeen() + device->options().value("debounce").toInt() > QDateTime::currentSecsSinceEpoch())
-        return;
-
-    if (endpoint->updated())
-    {
-        m_devices->storeProperties();
-        emit endpointUpdated(device, endpoint->id());
-    }
 
     if (device->interviewFinished() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {

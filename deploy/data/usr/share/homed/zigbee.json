@@ -1006,7 +1006,7 @@
       "properties":     ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
       "discoveries":    ["thermostat"],
-      "options":        {"debounce": 1, "thermostat": ["status"], "operationMode": ["manual", "program"]}
+      "options":        {"operationMode": ["manual", "program"], "thermostat": ["status"]}
     },
     {
       "description":    "TUYA TS0601 Moes Radiator Thermostat",
