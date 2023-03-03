@@ -956,6 +956,16 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
+      "description":    "TUYA TS011F 2-Channel Relay MS-104BZ",
+      "modelNames":     ["_TZ3000_pmz6mjyu"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "discoveries":    ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
       "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
       "properties":     ["status"],
@@ -1023,7 +1033,7 @@
       "options":        {"cover": "blind"}
     },
     {
-      "description":    "TUYA TS0601 Moes Electric Thermostat",
+      "description":    "TUYA TS0601 MOES Electric Thermostat",
       "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
       "properties":     ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
@@ -1031,7 +1041,7 @@
       "options":        {"operationMode": ["manual", "program"], "thermostat": ["status"]}
     },
     {
-      "description":    "TUYA TS0601 Moes Radiator Thermostat",
+      "description":    "TUYA TS0601 MOES Radiator Thermostat",
       "modelNames":     ["_TZE200_b6wax7g0"],
       "properties":     ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
