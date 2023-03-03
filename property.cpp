@@ -200,7 +200,7 @@ void Properties::CoverStatus::parseAttribte(quint16 attributeId, const QByteArra
     if (attributeId != 0x0008)
         return;
 
-    m_value = static_cast <quint8> (data.at(0)) < 100 ? "open" : "closed";
+    m_value = static_cast <quint8> (endpointOption("invertCover").toBool() ? 100 - data.at(0) : data.at(0)) ? "open" : "closed";
 }
 
 void Properties::CoverPosition::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -208,7 +208,7 @@ void Properties::CoverPosition::parseAttribte(quint16 attributeId, const QByteAr
     if (attributeId != 0x0008)
         return;
 
-    m_value = endpointOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
+    m_value = static_cast <quint8> (endpointOption("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
 }
 
 void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -216,7 +216,7 @@ void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray 
     if (attributeId != 0x0009)
         return;
 
-    m_value = endpointOption("invertCover").toBool() ? 100 - static_cast <quint8> (data.at(0)) : static_cast <quint8> (data.at(0));
+    m_value = static_cast <quint8> (endpointOption("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
 }
 
 void Properties::ColorHS::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -901,7 +901,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray 
 
 void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    QMap <QString, QVariant> map = m_value.toMap();
+    QMap <QString, QVariant> map;
     float value = 0;
 
     if (deviceModelName() == "ZNCLDJ12LM" || attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
@@ -910,10 +910,13 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray 
     memcpy(&value, data.constData(), data.length());
     value = round(qFromLittleEndian(value));
 
-    map.insert("cover", value < 100 ? "open" : "closed");
-    map.insert("position", endpointOption("invertCover").toBool() ? 100 - value : value);
+    if (endpointOption("invertCover").toBool())
+        value = 100 - value;
 
-    m_value = map.isEmpty() ? QVariant() : map;
+    map.insert("cover", value ? "open" : "closed");
+    map.insert("position", value);
+
+    m_value = map;
 }
 
 void PropertiesLUMI::Interlock::parseAttribte(quint16 attributeId, const QByteArray &data)

@@ -204,7 +204,7 @@ QJsonObject CoverObject::reqest(void)
 {
     QJsonObject json;
 
-    json.insert("device_class",                     "curtain");
+    json.insert("device_class",                     endpointOption("cover").toString() == "blind" ? "blind" : "curtain");
 
     json.insert("value_template",                   "{{ value_json.cover }}");
     json.insert("state_open",                       "open");

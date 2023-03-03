@@ -293,8 +293,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesRadiatorThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000,
-        {"operationMode", "heatingPoint", "boost", "windowDetection", "childLock", "boostTimeout", "temperatureCalibration", "ecoMode", "ecoModeTemperature", "temperatureLimitMax", "temperatureLimitMin"}) {}
+        MoesRadiatorThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, {"operationMode", "heatingPoint", "boost", "windowDetection", "childLock", "boostTimeout", "temperatureCalibration", "ecoMode", "ecoModeTemperature", "temperatureLimitMax", "temperatureLimitMin"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
