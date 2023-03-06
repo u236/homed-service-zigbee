@@ -52,8 +52,6 @@ void DeviceList::init(void)
 
     unserializeProperties(QJsonDocument::fromJson(m_propertiesFile.readAll()).object());
     m_propertiesFile.close();
-
-    logInfo << "Properties restored";
 }
 
 Device DeviceList::byName(const QString &name)
@@ -679,6 +677,8 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
 void DeviceList::unserializeProperties(const QJsonObject &properties)
 {
+    bool check = false;
+
     for (auto it = begin(); it != end(); it++)
     {
         const Device &device = it.value();
@@ -704,9 +704,13 @@ void DeviceList::unserializeProperties(const QJsonObject &properties)
                     continue;
 
                 property->setValue(value);
+                check = true;
             }
         }
     }
+
+    if (check)
+        logInfo << "Properties restored";
 }
 
 QJsonArray DeviceList::serializeDevices(void)

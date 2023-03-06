@@ -397,7 +397,7 @@ void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &dat
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
-    QVariant scene = endpointOption("scenes").toMap().value(QString::number(command->sceneId));
+    QVariant scene = endpointOption("scene").toMap().value(QString::number(command->sceneId));
 
     if (commandId != 0x05)
         return;
