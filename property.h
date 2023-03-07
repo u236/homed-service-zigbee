@@ -868,18 +868,31 @@ namespace PropertiesTUYA
     };
 }
 
-namespace PropertiesOther
+namespace PropertiesEfekta
 {
-    class EfektaReportingDelay : public PropertyObject
+    class ReportingDelay : public PropertyObject
     {
 
     public:
 
-        EfektaReportingDelay(void) : PropertyObject("reportingDelay", CLUSTER_POWER_CONFIGURATION) {}
+        ReportingDelay(void) : PropertyObject("reportingDelay", CLUSTER_POWER_CONFIGURATION) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
 
+    class TemperatureOffset : public PropertyObject
+    {
+
+    public:
+
+        TemperatureOffset(void) : PropertyObject("temperatureOffset", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+}
+
+namespace PropertiesOther
+{
     class KonkeButtonAction : public PropertyObject
     {
 

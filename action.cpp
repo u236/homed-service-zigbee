@@ -41,7 +41,9 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::SwitchMode>                 ("tuyaSwitchModeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
 
-    qRegisterMetaType <ActionsOther::EfektaReportingDelay>      ("efektaReportingDelayAction");
+    qRegisterMetaType <ActionsEfekta::ReportingDelay>           ("efektaReportingDelayAction");
+    qRegisterMetaType <ActionsEfekta::TemperatureOffset>        ("efektaTemperatureOffsetAction");
+
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
 
@@ -978,10 +980,16 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QString &, const QVariant &
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsOther::EfektaReportingDelay::request(const QString &, const QVariant &data)
+QByteArray ActionsEfekta::ReportingDelay::request(const QString &, const QVariant &data)
 {
     quint16 value = static_cast <quint16> (data.toInt());
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsEfekta::TemperatureOffset::request(const QString &, const QVariant &data)
+{
+    qint16 value = static_cast <qint16> (data.toDouble() * 10);
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QVariant &data)

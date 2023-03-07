@@ -1,14 +1,14 @@
 {
-  "efekta.com":
+  "efektalab.com":
   [
     {
       "description":    "EFEKTA Plant Watering Sensor miniPWS",
       "modelNames":     ["EFEKTA_miniPWS"],
-      "properties":     ["batteryPercentage", "moisture", "efektaReportingDelay"],
-      "actions":        ["efektaReportingDelay"],
-      "bindings":       ["battery", "moisture"],
-      "discoveries":    ["battery", "moisture", "reportingDelay"],
-      "options":        {"reportingDelayMin": 1, "reportingDelayMax": 180, "reportingDelayUnit": "minutes"}
+      "properties":     ["batteryPercentage", "temperature", "moisture", "efektaReportingDelay", "efektaTemperatureOffset"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureOffset"],
+      "bindings":       ["battery", "temperature", "moisture"],
+      "discoveries":    ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
+      "options":        {"ignoreClusters": [3], "reportingDelayMin": 1, "reportingDelayMax": 180, "reportingDelayUnit": "min", "temperatureOffsetMin": -50, "temperatureOffsetMax": 50, "temperatureOffsetStep": 0.1, "temperatureOffsetUnit": "°C"}
     }
   ],
 
@@ -1060,8 +1060,8 @@
       "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
       "properties":     ["tuyaWaterValve"],
       "actions":        ["tuyaWaterValve"],
-      "discoveries":    ["switch", "timeout", "threshold"],
-      "options":        {"timeoutMin": 0, "timeoutMax": 600, "thresholdMin": 0, "thresholdMax": 100}
+      "discoveries":    ["switch", "timer", "threshold"],
+      "options":        {"timerMin": 0, "timerMax": 600, "timerUnit": "min", "thresholdMin": 0, "thresholdMax": 100, "thresholdUnit": "%"}
     },
     {
       "description":    "TUYA TS0204 Gas Detector",

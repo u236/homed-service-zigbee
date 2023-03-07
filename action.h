@@ -413,18 +413,32 @@ namespace ActionsTUYA
     };
 }
 
-namespace ActionsOther
+
+namespace ActionsEfekta
 {
-    class EfektaReportingDelay : public ActionObject
+    class ReportingDelay : public ActionObject
     {
 
     public:
 
-        EfektaReportingDelay(void) : ActionObject("reportingDelay", CLUSTER_POWER_CONFIGURATION, 0x0000, 0x0201) {}
+        ReportingDelay(void) : ActionObject("reportingDelay", CLUSTER_POWER_CONFIGURATION, 0x0000, 0x0201) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
+    class TemperatureOffset : public ActionObject
+    {
+
+    public:
+
+        TemperatureOffset(void) : ActionObject("temperatureOffset", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, 0x0410) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+}
+
+namespace ActionsOther
+{
     class PerenioSmartPlug : public ActionObject
     {
 

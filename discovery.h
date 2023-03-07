@@ -357,12 +357,21 @@ namespace Number
 
     };
 
-    class Timeout : public NumberObject
+    class TemperatureOffset : public NumberObject
     {
 
     public:
 
-        Timeout(void) : NumberObject("timeout", "mdi:clock") {}
+        TemperatureOffset(void) : NumberObject("temperatureOffset", "mdi:thermometer") {}
+
+    };
+
+    class Timer : public NumberObject
+    {
+
+    public:
+
+        Timer(void) : NumberObject("timer", "mdi:clock") {}
 
     };
 

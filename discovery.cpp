@@ -34,7 +34,8 @@ void DiscoveryObject::registerMetaTypes(void)
 
     qRegisterMetaType <Number::Pattern>             ("patternDiscovery");
     qRegisterMetaType <Number::ReportingDelay>      ("reportingDelayDiscovery");
-    qRegisterMetaType <Number::Timeout>             ("timeoutDiscovery");
+    qRegisterMetaType <Number::TemperatureOffset>   ("temperatureOffsetDiscovery");
+    qRegisterMetaType <Number::Timer>               ("timerDiscovery");
     qRegisterMetaType <Number::Threshold>           ("thresholdDiscovery");
 
     qRegisterMetaType <Button::ResetCount>          ("resetCountDiscovery");
@@ -103,15 +104,18 @@ QJsonObject SensorObject::reqest(void)
 
 QJsonObject NumberObject::reqest(void)
 {
-    QVariant min = endpointOption(QString("%1Min").arg(m_name)), max = endpointOption(QString("%1Max").arg(m_name));
+    QVariant min = endpointOption(QString("%1Min").arg(m_name)), max = endpointOption(QString("%1Max").arg(m_name)), step = endpointOption(QString("%1Step").arg(m_name));
     QString unit = endpointOption(QString("%1Unit").arg(m_name)).toString();
     QJsonObject json;
 
     if (min.isValid())
-        json.insert("min",                          min.toInt());
+        json.insert("min",                          min.toDouble());
 
     if (max.isValid())
-        json.insert("max",                          max.toInt());
+        json.insert("max",                          max.toDouble());
+
+    if (step.isValid())
+        json.insert("step",                         step.toDouble());
 
     if (!unit.isEmpty())
         json.insert("unit_of_measurement",          unit);

@@ -82,7 +82,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
     qRegisterMetaType <PropertiesTUYA::ButtonAction>            ("tuyaButtonActionProperty");
 
-    qRegisterMetaType <PropertiesOther::EfektaReportingDelay>   ("efektaReportingDelayProperty");
+    qRegisterMetaType <PropertiesEfekta::ReportingDelay>        ("efektaReportingDelayProperty");
+    qRegisterMetaType <PropertiesEfekta::TemperatureOffset>     ("efektaTemperatureOffsetProperty");
+
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>     ("sonoffButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>  ("lifeControlAirQualityProperty");
@@ -1593,7 +1595,7 @@ void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArr
     }
 }
 
-void PropertiesOther::EfektaReportingDelay::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::ReportingDelay::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     quint16 value;
 
@@ -1602,6 +1604,17 @@ void PropertiesOther::EfektaReportingDelay::parseAttribte(quint16 attributeId, c
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value);
+}
+
+void PropertiesEfekta::TemperatureOffset::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    qint16 value;
+
+    if (attributeId != 0x0410 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) / 10.0;
 }
 
 void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
