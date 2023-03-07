@@ -526,13 +526,24 @@ QByteArray ActionsTUYA::Cover::request(const QString &name, const QVariant &data
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
         }
 
-        case 1: // reverse
+        case 1: // position
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value > 100)
+                return QByteArray();
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 2: // reverse
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
             return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_BOOL, &value);
         }
 
-        case 2: // speed
+        case 3: // speed
         {
             quint32 value = static_cast <quint32> (data.toInt());
 
@@ -982,13 +993,13 @@ QByteArray ActionsTUYA::PowerOnStatus::request(const QString &, const QVariant &
 
 QByteArray ActionsEfekta::ReportingDelay::request(const QString &, const QVariant &data)
 {
-    quint16 value = static_cast <quint16> (data.toInt());
+    quint16 value = qToLittleEndian <quint16> (data.toInt());
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsEfekta::TemperatureOffset::request(const QString &, const QVariant &data)
 {
-    qint16 value = static_cast <qint16> (data.toDouble() * 10);
+    qint16 value = qToLittleEndian <qint16> (data.toDouble() * 10);
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
@@ -1023,7 +1034,7 @@ QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QV
 
         default:
         {
-            quint16 value = qToLittleEndian(static_cast <quint16> (data.toInt()));
+            quint16 value = qToLittleEndian <quint16> (data.toInt());
 
             switch (index)
             {

@@ -284,7 +284,7 @@ namespace ActionsTUYA
 
     public:
 
-        Cover(void) : ActionObject("cover", CLUSTER_TUYA_DATA, 0x0000, {"cover", "reverse", "speed"}) {}
+        Cover(void) : ActionObject("cover", CLUSTER_TUYA_DATA, 0x0000, {"cover", "position", "reverse", "speed"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
