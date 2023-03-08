@@ -18,8 +18,8 @@ public:
     enum class Command
     {
         setPermitJoin,
-        setDeviceName,
         removeDevice,
+        setDeviceName,
         updateDevice,
         updateReporting,
         bindDevice,
@@ -28,6 +28,7 @@ public:
         removeGroup,
         removeAllGroups,
         otaUpgrade,
+        getProperties,
         clusterRequest,
         globalRequest,
         touchLinkScan,

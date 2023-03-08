@@ -246,6 +246,17 @@ void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QStr
     enqueueDataRequest(device, endpointId ? endpointId : 0x01, CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT, m_requestId, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
 }
 
+void ZigBee::getProperties(const QString &deviceName)
+{
+    Device device = m_devices->byName(deviceName);
+
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+        return;
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        emit endpointUpdated(device, it.key());
+}
+
 void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global)
 {
     Device device = m_devices->byName(deviceName);

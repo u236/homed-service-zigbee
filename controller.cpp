@@ -164,12 +164,12 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->setPermitJoin(json.value("enabled").toBool());
                 break;
 
-            case Command::removeDevice:
-                m_zigbee->removeDevice(json.value("device").toString(), json.value("force").toBool());
-                break;
-
             case Command::setDeviceName:
                 m_zigbee->setDeviceName(json.value("device").toString(), json.value("name").toString());
+                break;
+
+            case Command::removeDevice:
+                m_zigbee->removeDevice(json.value("device").toString(), json.value("force").toBool());
                 break;
 
             case Command::updateDevice:
@@ -196,6 +196,10 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
             case Command::otaUpgrade:
                 m_zigbee->otaUpgrade(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString());
+                break;
+
+            case  Command::getProperties:
+                m_zigbee->getProperties(json.value("device").toString());
                 break;
 
             case Command::clusterRequest:

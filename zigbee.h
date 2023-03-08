@@ -148,7 +148,9 @@ public:
     void bindingControl(const QString &deviceName, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind);
     void groupControl(const QString &deviceName, quint8 endpointId, quint16 groupId, bool remove);
     void removeAllGroups(const QString &deviceName, quint8 endpointId);
+
     void otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName);
+    void getProperties(const QString &deviceName);
 
     void clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global);
     void touchLinkRequest(const QByteArray &ieeeAddress = QByteArray(), quint8 channel = 11, bool reset = false);
