@@ -49,8 +49,8 @@ QVariant DiscoveryObject::endpointOption(const QString &name)
     if (!endpoint || endpoint->device().isNull())
         return value;
 
-    value = endpoint->device()->options().value(QString("%1-%2").arg(name, QString::number(endpoint->id())));
-    return value.isValid() ? value : endpoint->device()->options().value(name);
+    value = endpoint->device()->options().value(QString("%1-%2").arg(name.isEmpty() ? m_name : name, QString::number(endpoint->id())));
+    return value.isValid() ? value : endpoint->device()->options().value(name.isEmpty() ? m_name : name);
 }
 
 QJsonObject BinaryObject::reqest(void)
@@ -61,7 +61,7 @@ QJsonObject BinaryObject::reqest(void)
     switch (list.indexOf(m_name))
     {
         case 0:  break;
-        case 1:  json.insert("device_class",        endpointOption("contact").toString() == "window" ? "window" : "door"); break;
+        case 1:  json.insert("device_class",        endpointOption().toString() == "window" ? "window" : "door"); break;
         case 2:  json.insert("device_class",        "moisture"); break;
         default: json.insert("device_class",        m_name); break;
     }
@@ -104,21 +104,20 @@ QJsonObject SensorObject::reqest(void)
 
 QJsonObject NumberObject::reqest(void)
 {
-    QVariant min = endpointOption(QString("%1Min").arg(m_name)), max = endpointOption(QString("%1Max").arg(m_name)), step = endpointOption(QString("%1Step").arg(m_name));
-    QString unit = endpointOption(QString("%1Unit").arg(m_name)).toString();
+    QMap <QString, QVariant> options = endpointOption().toMap();
     QJsonObject json;
 
-    if (min.isValid())
-        json.insert("min",                          min.toDouble());
+    if (options.contains("min"))
+        json.insert("min",                          options.value("min").toDouble());
 
-    if (max.isValid())
-        json.insert("max",                          max.toDouble());
+    if (options.contains("max"))
+        json.insert("max",                          options.value("max").toDouble());
 
-    if (step.isValid())
-        json.insert("step",                         step.toDouble());
+    if (options.contains("step"))
+        json.insert("step",                         options.value("step").toDouble());
 
-    if (!unit.isEmpty())
-        json.insert("unit_of_measurement",          unit);
+    if (options.contains("unit"))
+        json.insert("unit_of_measurement",          options.value("unit").toString());
 
     if (!m_icon.isEmpty())
         json.insert("icon",                         m_icon);
@@ -144,7 +143,7 @@ QJsonObject ButtonObject::reqest(void)
 
 QJsonObject LightObject::reqest(void)
 {
-    QList <QString> options = endpointOption("light").toStringList();
+    QList <QString> options = endpointOption().toStringList();
     QString commandOnTemplate = "\"status\":\"on\"";
     QJsonObject json;
 
@@ -164,12 +163,12 @@ QJsonObject LightObject::reqest(void)
 
     if (options.contains("colorTemperature"))
     {
-        int min = endpointOption("colorTemperatureMin").toInt(), max = endpointOption("colorTemperatureMax").toInt();
+        QMap <QString, QVariant> colorTemperature = endpointOption("colorTemperature").toMap();
 
         commandOnTemplate.append(                   "{% if color_temp is defined %},\"colorTemperature\":{{ color_temp }}{% endif %}");
         json.insert("color_temp_template",          "{{ value_json.colorTemperature }}");
-        json.insert("min_mireds",                   min ? min : 150);
-        json.insert("max_mireds",                   max ? max : 500);
+        json.insert("min_mireds",                   colorTemperature.value("min", 150).toInt());
+        json.insert("max_mireds",                   colorTemperature.value("max", 500).toInt());
     }
 
     json.insert("schema",                           "template");
@@ -190,7 +189,7 @@ QJsonObject SwitchObject::reqest(void)
 {
     QJsonObject json;
 
-    json.insert("device_class",                     endpointOption("switch").toString() == "outlet" ? "outlet" : "switch");
+    json.insert("device_class",                     endpointOption().toString() == "outlet" ? "outlet" : "switch");
 
     json.insert("value_template",                   "{{ value_json.status }}");
     json.insert("state_on",                         "on");
@@ -208,7 +207,7 @@ QJsonObject CoverObject::reqest(void)
 {
     QJsonObject json;
 
-    json.insert("device_class",                     endpointOption("cover").toString() == "blind" ? "blind" : "curtain");
+    json.insert("device_class",                     endpointOption().toString() == "blind" ? "blind" : "curtain");
 
     json.insert("value_template",                   "{{ value_json.cover }}");
     json.insert("state_open",                       "open");
@@ -231,12 +230,12 @@ QJsonObject CoverObject::reqest(void)
 
 QJsonObject ThermostatObject::reqest(void)
 {
-    QList <QString> operationMode = endpointOption("operationMode").toStringList(), options = endpointOption("thermostat").toStringList();
+    QMap <QString, QVariant> options = endpointOption().toMap();
     QJsonObject json;
 
-    if (!operationMode.isEmpty())
+    if (options.contains("operationMode"))
     {
-        json.insert("preset_modes",                 QJsonArray::fromStringList(operationMode));
+        json.insert("preset_modes",                 QJsonArray::fromStringList(options.value("operationMode").toStringList()));
 
         json.insert("preset_mode_value_template",   "{{ value_json.operationMode }}");
         json.insert("preset_mode_state_topic",      m_stateTopic);
@@ -245,7 +244,7 @@ QJsonObject ThermostatObject::reqest(void)
         json.insert("preset_mode_command_topic",    m_commandTopic);
     }
 
-    json.insert("modes",                            options.contains("status") ? QJsonArray {"off", "heat"} : QJsonArray {"heat"});
+    json.insert("modes",                            options.value("status").toBool() ? QJsonArray {"off", "heat"} : QJsonArray {"heat"});
 
     json.insert("mode_state_template",              "{{ \"heat\" if value_json.status == \"on\" else \"off\" }}");
     json.insert("mode_state_topic",                 m_stateTopic);

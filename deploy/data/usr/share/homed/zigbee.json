@@ -8,7 +8,7 @@
       "actions":        ["efektaReportingDelay", "efektaTemperatureOffset"],
       "bindings":       ["battery", "temperature", "moisture"],
       "discoveries":    ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
-      "options":        {"ignoreClusters": [3], "reportingDelayMin": 1, "reportingDelayMax": 180, "reportingDelayUnit": "min", "temperatureOffsetMin": -50, "temperatureOffsetMax": 50, "temperatureOffsetStep": 0.1, "temperatureOffsetUnit": "°C"}
+      "options":        {"ignoreClusters": [3], "reportingDelay": {"min": 1, "max": 180, "unit": "min"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}}
     }
   ],
 
@@ -217,7 +217,7 @@
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "discoveries":    ["pattern"],
-      "options":        {"patternMin": 0, "patternMax": 62},
+      "options":        {"pattern": {"min": 0, "max": 62}},
       "endpointId":     2
     },
     {
@@ -246,7 +246,7 @@
       "bindings":       ["status", "level", "color"],
       "reportings":     ["status", "level", "colorTemperature"],
       "discoveries":    ["light"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperatureMin": 250, "colorTemperatureMax": 454}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 250, "max": 454}}
     },
     {
       "description":    "TRADFRI Dimmable Bulb",
@@ -477,7 +477,7 @@
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
-      "options":        {"endpointNames": {"1": "Left", "2": "Right", "41": "Left", "42": "Right", "51": "Both"}}
+      "options":        {"endpointName": {"1": "Left", "2": "Right", "41": "Left", "42": "Right", "51": "Both"}}
     },
     {
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
@@ -698,7 +698,7 @@
     {
       "description":    "Aqara D1 2-Key Wireless Switch WXKG07LM",
       "modelNames":     ["lumi.remote.b286acn02"],
-      "options":        {"endpointNames": {"1": "Left", "2": "Right", "3": "Both"}}
+      "options":        {"endpointName": {"1": "Left", "2": "Right", "3": "Both"}}
     },
     {
       "modelNames":     ["lumi.remote.b286acn02"],
@@ -869,7 +869,7 @@
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "discoveries":    ["light"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperatureMin": 153, "colorTemperatureMax": 500}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 500}}
     },
     {
       "description":    "Trust Dimmable Bulb ZLED-2709",
@@ -1038,7 +1038,7 @@
       "properties":     ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
       "discoveries":    ["thermostat"],
-      "options":        {"operationMode": ["manual", "program"], "thermostat": ["status"]}
+      "options":        {"thermostat": {"operationMode": ["manual", "program"], "status": true}}
     },
     {
       "description":    "TUYA TS0601 MOES Radiator Thermostat",
@@ -1046,7 +1046,7 @@
       "properties":     ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
       "discoveries":    ["thermostat"],
-      "options":        {"operationMode": ["manual", "program", "temporary", "holiday"]}
+      "options":        {"thermostat": {"operationMode": ["manual", "program", "temporary", "holiday"]}}
     },
     {
       "description":    "TUYA TS0601 Neo Siren",
@@ -1061,7 +1061,7 @@
       "properties":     ["tuyaWaterValve"],
       "actions":        ["tuyaWaterValve"],
       "discoveries":    ["switch", "timer", "threshold"],
-      "options":        {"timerMin": 0, "timerMax": 600, "timerUnit": "min", "thresholdMin": 0, "thresholdMax": 100, "thresholdUnit": "%"}
+      "options":        {"timer": {"min": 0, "max": 600, "unit": "min"}, "threshold": {"min": 0, "max": 100, "unit": "%"}}
     },
     {
       "description":    "TUYA TS0204 Gas Detector",

@@ -29,14 +29,14 @@ public:
 
     static void registerMetaTypes(void);
 
+    QVariant endpointOption(const QString &name = QString());
+
 protected:
 
     QString m_component, m_name, m_stateTopic, m_commandTopic;
 
     QObject *m_parent;
     bool m_multiple;
-
-    QVariant endpointOption(const QString &name);
 
 };
 
