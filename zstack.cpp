@@ -450,7 +450,7 @@ bool ZStack::startCoordinator(void)
         }
     }
 
-    for (auto it = m_endpointsData.begin(); it != m_endpointsData.end(); it++)
+    for (auto it = m_endpoints.begin(); it != m_endpoints.end(); it++)
     {
         registerEndpointRequestStruct request;
         QByteArray data;

@@ -64,7 +64,7 @@ bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointI
 
     request.type = MESSAGE_TYPE_DIRECT;
     request.networkAddress = qToLittleEndian(networkAddress);
-    request.profileId = qToLittleEndian <quint16> (m_endpointsData.contains(srcEndPointId) ? m_endpointsData.value(srcEndPointId)->profileId() : 0x0000);
+    request.profileId = qToLittleEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
     request.clusterId = qToLittleEndian(clusterId);
     request.srcEndpointId = srcEndPointId;
     request.dstEndpointId = dstEndPointId;
@@ -85,7 +85,7 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
 {
     sendMulticastStruct request;
 
-    request.profileId = qToLittleEndian <quint16> (m_endpointsData.contains(srcEndPointId) ? m_endpointsData.value(srcEndPointId)->profileId() : 0x0000);
+    request.profileId = qToLittleEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
     request.clusterId = qToLittleEndian(clusterId);
     request.srcEndpointId = srcEndPointId;
     request.dstEndpointId = dstEndPointId;
@@ -578,7 +578,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    for (auto it = m_endpointsData.begin(); it != m_endpointsData.end(); it++)
+    for (auto it = m_endpoints.begin(); it != m_endpoints.end(); it++)
     {
         registerEndpointStruct request;
         QByteArray data;

@@ -202,7 +202,7 @@ protected:
     bool m_permitJoin;
 
     QQueue <QByteArray> m_queue;
-    QMap <quint8, EndpointData> m_endpointsData;
+    QMap <quint8, EndpointData> m_endpoints;
 
     void reset(void);
     void sendData(const QByteArray &buffer);
