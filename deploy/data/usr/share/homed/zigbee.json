@@ -138,7 +138,7 @@
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "discoveries":    ["waterLeak"]
+      "discoveries":    ["battery", "waterLeak"]
     },
     {
       "description":    "GS Temperature and Humidity Sensor STHM-I1H",
@@ -192,7 +192,7 @@
       "description":    "PTVO Firmware Based CO2 Sensor",
       "modelNames":     ["CO2 Sensor"],
       "properties":     ["ptvoTemperature", "ptvoCO2", "ptvoSwitchAction"],
-      "discoveries":    ["action", "temperature", "co2"],
+      "discoveries":    ["temperature", "co2", "action"],
       "options":        {"action": ["on", "off"]}
     },
     {
@@ -224,7 +224,8 @@
       "modelNames":     ["RGB Strip"],
       "properties":     ["ptvoCount"],
       "actions":        ["ptvoCount"],
-      "discoveries":    [],
+      "discoveries":    ["count"],
+      "options":        {"count": {"min": 1, "max": 200}},
       "endpointId":     3
     },
     {
@@ -245,7 +246,7 @@
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "bindings":       ["status", "level", "color"],
       "reportings":     ["status", "level", "colorTemperature"],
-      "discoveries":    ["light"],
+      "discoveries":    ["light", "powerOnStatus"],
       "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 250, "max": 454}}
     },
     {
@@ -255,7 +256,7 @@
       "actions":        ["status", "powerOnStatus", "level"],
       "bindings":       ["status", "level"],
       "reportings":     ["status", "level"],
-      "discoveries":    ["light"],
+      "discoveries":    ["light", "powerOnStatus"],
       "options":        {"light": ["level"]}
     },
     {
@@ -307,8 +308,8 @@
     {
       "description":    "Konke Temperature, Humidity and Illuminance Sensor KK-ES-J01W",
       "modelNames":     ["3AFE090103021000"],
-      "properties":     ["batteryPercentage", "temperature", "humidity", "illuminance"],
-      "discoveries":    ["battery", "temperature", "humidity", "illuminance"]
+      "properties":     ["batteryPercentage", "illuminance", "temperature", "humidity"],
+      "discoveries":    ["battery", "illuminance", "temperature", "humidity"]
     },
     {
       "description":    "Konke Wireless Button 2AJZ4KPKEY",
@@ -373,6 +374,8 @@
       "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
+      "discoveries":    ["buttonMode"],
+      "options":        {"buttonMode": ["relay", "decoupled"]},
       "endpointId":     1
     },
     {
@@ -398,6 +401,8 @@
       "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
+      "discoveries":    ["leftMode", "rightMode"],
+      "options":        {"leftMode": ["leftRelay", "rightRelay", "decoupled"], "rightMode": ["leftRelay", "rightRelay", "decoupled"]},
       "endpointId":     1
     },
     {
@@ -419,7 +424,8 @@
       "modelNames":     ["lumi.switch.b1nacn02"],
       "properties":     ["status", "lumiButtonMode"],
       "actions":        ["status", "lumiButtonMode"],
-      "discoveries":    ["switch"],
+      "discoveries":    ["switch", "buttonMode"],
+      "options":        {"buttonMode": ["relay", "decoupled"]},
       "endpointId":     1
     },
     {
@@ -444,6 +450,8 @@
       "modelNames":     ["lumi.switch.b2nacn02"],
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
+      "discoveries":    ["leftMode", "rightMode"],
+      "options":        {"leftMode": ["leftRelay", "rightRelay", "decoupled"], "rightMode": ["leftRelay", "rightRelay", "decoupled"]},
       "endpointId":     1
     },
     {
@@ -469,10 +477,10 @@
     {
       "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
       "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
-      "properties":     ["status", "lumiData"],
-      "actions":        ["status", "lumiSwitchMode", "lumiIndicatorMode"],
-      "discoveries":    ["switch", "action"],
-      "options":        {"action": ["singleClick", "doubleClick"]}
+      "properties":     ["status", "lumiData", "lumiSwitchAction"],
+      "actions":        ["status", "tempetature", "lumiIndicatorMode", "lumiSwitchMode"],
+      "discoveries":    ["switch", "tempetature", "action", "indicatorMode", "switchMode"],
+      "options":        {"action": ["singleClick", "doubleClick"], "switchMode": ["relay", "decoupled"], "indicatorMode": ["default", "inverted"]}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
@@ -482,14 +490,17 @@
     {
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["lumiData"],
-      "actions":        ["lumiIndicatorMode"],
+      "actions":        ["tempetature", "lumiIndicatorMode"],
+      "discoveries":    ["tempetature", "indicatorMode"],
+      "options":        {"indicatorMode": ["default", "inverted"]},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchMode"],
-      "discoveries":    ["switch"],
+      "discoveries":    ["switch", "switchMode"],
+      "options":        {"switchMode": ["relay", "decoupled"]},
       "endpointId":     [1, 2]
     },
     {
@@ -510,7 +521,7 @@
       "actions":        ["status"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "discoveries":    ["switch", "energy", "voltage", "current"],
+      "discoveries":    ["switch", "temperature", "energy", "voltage", "current"],
       "endpointId":     1
     },
     {
@@ -523,7 +534,7 @@
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
       "modelNames":     ["lumi.relay.c2acn01"],
       "properties":     ["lumiBasic", "lumiPower"],
-      "discoveries":    ["energy", "voltage", "current", "power"],
+      "discoveries":    ["temperature", "energy", "voltage", "current", "power"],
       "endpointId":     1
     },
     {
@@ -538,7 +549,7 @@
       "modelNames":     ["lumi.plug", "lumi.plug.mitw01"],
       "properties":     ["status", "lumiBasic", "lumiPower"],
       "actions":        ["status"],
-      "discoveries":    ["switch", "energy", "power"],
+      "discoveries":    ["switch", "temperature", "energy", "power"],
       "options":        {"switch": "outlet"}
     },
     {
@@ -546,7 +557,7 @@
       "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status"],
-      "discoveries":    ["switch", "energy", "voltage", "current"],
+      "discoveries":    ["switch", "temperature", "energy", "voltage", "current"],
       "options":        {"switch": "outlet"},
       "endpointId":     1
     },
@@ -581,7 +592,7 @@
       "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
       "modelNames":     ["lumi.sensor_motion.aq2"],
       "properties":     ["occupancy", "lumiBasic", "lumiIlluminance"],
-      "discoveries":    ["battery", "illuminance", "occupancy"],
+      "discoveries":    ["battery", "illuminance", "temperature", "occupancy"],
       "options":        {"timeout": 60}
     },
     {
@@ -590,21 +601,21 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
-      "discoveries":    ["occupancy", "event"],
-      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"]}
+      "discoveries":    ["temperature", "event", "occupancy", "sensitivityMode", "detectionMode", "distanceMode"],
+      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "sensitivityMode": ["low", "medium", "high"], "detectionMode": ["undirected", "directed"], "distanceMode": ["far", "middle", "near"]}
     },
     {
       "description":    "Aqara Vibration Sensor DJT11LM",
       "modelNames":     ["lumi.vibration.aq1"],
       "properties":     ["lumiBasic", "lumiVibration"],
-      "discoveries":    ["battery", "vibration", "event"],
+      "discoveries":    ["battery", "temperature", "event", "vibration"],
       "options":        {"event": ["vibration", "tilt", "drop"], "timeout": 60}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM",
       "modelNames":     ["lumi.sensor_wleak.aq1"],
       "properties":     ["iasWaterLeak", "lumiBasic"],
-      "discoveries":    ["battery", "waterLeak"]
+      "discoveries":    ["battery", "temperature", "waterLeak"]
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
@@ -637,7 +648,7 @@
       "description":    "Aqara Wireless Button WXKG11LM",
       "modelNames":     ["lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
       "properties":     ["lumiBasic", "lumiSwitchAction"],
-      "discoveries":    ["battery", "action"],
+      "discoveries":    ["battery", "temperature", "action"],
       "options":        {"action": ["singleClick", "doubleClick", "hold", "release"]}
     },
     {
@@ -646,7 +657,8 @@
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status"],
-      "discoveries":    ["battery"],
+      "discoveries":    ["battery", "operationMode"],
+      "options":        {"operationMode": ["command", "event"]},
       "endpointId":     1
     },
     {
@@ -662,7 +674,8 @@
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
-      "discoveries":    ["battery"],
+      "discoveries":    ["battery", "operationMode"],
+      "options":        {"operationMode": ["command", "event"]},
       "endpointId":     1
     },
     {
@@ -678,7 +691,8 @@
       "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
-      "discoveries":    ["battery"],
+      "discoveries":    ["battery", "operationMode"],
+      "options":        {"operationMode": ["command", "event"]},
       "endpointId":     1
     },
     {
@@ -717,7 +731,7 @@
       "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBasic"],
-      "discoveries":    ["action"],
+      "discoveries":    ["battery", "temperature", "action"],
       "options":        {"action": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"]},
       "endpointId":     1
     },
@@ -753,7 +767,7 @@
       "description":    "Life Control Air Quality Sensor MCLH-08",
       "modelNames":     ["VOC_Sensor"],
       "properties":     ["batteryPercentage", "lifeControlAirQuality"],
-      "discoveries":    ["battery", "temperature", "humidity", "co2", "voc"],
+      "discoveries":    ["battery", "temperature", "humidity", "eco2", "voc"],
       "options":        {"batteryUndivided": true}
     }
   ],
@@ -836,7 +850,7 @@
       "modelNames":     ["ZBMINI-L, ZBMINIL2"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
-      "discoveries":    ["switch"]
+      "discoveries":    ["switch", "powerOnStatus"]
     },
     {
       "description":    "Sonoff 1-Channel Relay/Switch ZBMINI",
@@ -868,7 +882,7 @@
       "modelNames":     ["ZLL-ColorTempera", "ZLL-ColorTemperature"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
-      "discoveries":    ["light"],
+      "discoveries":    ["light", "powerOnStatus"],
       "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 500}}
     },
     {
@@ -876,7 +890,7 @@
       "modelNames":     ["ZLL-DimmableLigh"],
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
-      "discoveries":    ["light"],
+      "discoveries":    ["light", "powerOnStatus"],
       "options":        {"light": ["level"]}
     }
   ],
@@ -889,7 +903,7 @@
       "properties":     ["status", "tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
-      "discoveries":    ["switch"]
+      "discoveries":    ["switch", "powerOnStatus"]
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
@@ -897,6 +911,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
+      "discoveries":    ["powerOnStatus"],
       "endpointId":     1
     },
     {
@@ -913,6 +928,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
+      "discoveries":    ["powerOnStatus"],
       "endpointId":     1
     },
     {
@@ -929,6 +945,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
+      "discoveries":    ["powerOnStatus"],
       "endpointId":     1
     },
     {
@@ -945,6 +962,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
+      "discoveries":    ["powerOnStatus"],
       "endpointId":     1
     },
     {
@@ -982,7 +1000,7 @@
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "discoveries":    ["switch", "energy", "voltage", "current", "power"],
+      "discoveries":    ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
       "options":        {"energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
@@ -991,7 +1009,7 @@
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["energy", "voltage", "current", "power"],
-      "discoveries":    ["switch", "energy", "voltage", "current", "power"],
+      "discoveries":    ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
       "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
@@ -1008,7 +1026,7 @@
       "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE200_lsanae15"],
       "properties":     ["tuyaElectricityMeter"],
       "actions":        ["tuyaElectricityMeter"],
-      "discoveries":    []
+      "discoveries":    ["energy", "voltage", "current", "power"]
     },
     {
       "description":    "TUYA TS0601 Curtain Motor",
@@ -1069,7 +1087,7 @@
       "properties":     ["batteryPercentage", "iasGas"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "discoveries":    ["gas"]
+      "discoveries":    ["battery", "gas"]
     },
     {
       "description":    "TUYA TS0205 Smoke Detector",
@@ -1192,8 +1210,8 @@
       "actions":        ["tuyaOperationMode"],
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
-      "discoveries":    ["battery", "action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}
+      "discoveries":    ["battery", "operationMode", "action"],
+      "options":        {"operationMode": ["command", "event"], "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}
     }
   ]
 }
