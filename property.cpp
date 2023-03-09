@@ -713,9 +713,9 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             {
                 switch (static_cast <quint8> (data.at(0)))
                 {
-                    case 0x01: map.insert("sensitivity", "low"); break;
-                    case 0x02: map.insert("sensitivity", "medium"); break;
-                    case 0x03: map.insert("sensitivity", "high"); break;
+                    case 0x01: map.insert("sensitivityMode", "low"); break;
+                    case 0x02: map.insert("sensitivityMode", "medium"); break;
+                    case 0x03: map.insert("sensitivityMode", "high"); break;
                 }
             }
             else
@@ -761,9 +761,9 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             switch (static_cast <quint8> (data.at(0)))
             {
-                case 0x00: map.insert("distance", "far"); break;
-                case 0x01: map.insert("distance", "middle"); break;
-                case 0x02: map.insert("distance", "near"); break;
+                case 0x00: map.insert("distanceMode", "far"); break;
+                case 0x01: map.insert("distanceMode", "middle"); break;
+                case 0x02: map.insert("distanceMode", "near"); break;
             }
 
             break;

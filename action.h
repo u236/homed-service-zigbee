@@ -182,7 +182,7 @@ namespace ActionsLUMI
 
     public:
 
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, {"sensitivity", "detectionMode", "distance", "resetPresence"}) {}
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, {"sensitivityMode", "detectionMode", "distanceMode", "resetPresence"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -197,22 +197,22 @@ namespace ActionsLUMI
 
     };
 
-    class SwitchMode : public ActionObject
-    {
-
-    public:
-
-        SwitchMode(void) : ActionObject("switchMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0200) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class IndicatorMode : public ActionObject
     {
 
     public:
 
         IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x00F0) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class SwitchMode : public ActionObject
+    {
+
+    public:
+
+        SwitchMode(void) : ActionObject("switchMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0200) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

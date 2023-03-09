@@ -19,8 +19,8 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");
-    qRegisterMetaType <ActionsLUMI::SwitchMode>                 ("lumiSwitchModeAction");
     qRegisterMetaType <ActionsLUMI::IndicatorMode>              ("lumiIndicatorModeAction");
+    qRegisterMetaType <ActionsLUMI::SwitchMode>                 ("lumiSwitchModeAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>              ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::Interlock>                  ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>              ("lumiCoverPositionAction");
@@ -264,7 +264,7 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
 {
     switch (m_actions.indexOf(name))
     {
-        case 0: // sensitivity
+        case 0: // sensitivityMode
         {
             QList <QString> list = {"low", "medium", "high"};
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()) + 1);
@@ -290,7 +290,7 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
             return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
         }
 
-        case 2: // distance
+        case 2: // distanceMode
         {
             QList <QString> list = {"far", "middle", "near"};
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -325,7 +325,7 @@ QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant 
     switch (m_actions.indexOf(name))
     {
         case 2:  m_attributes = {0xFF23}; break; // rightMode
-        default: m_attributes = {0xFF22}; break; // mode, leftMode
+        default: m_attributes = {0xFF22}; break; // leftMode, buttonMode
     }
 
     switch (list.indexOf(data.toString()))
@@ -340,9 +340,9 @@ QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant 
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &data)
+QByteArray ActionsLUMI::IndicatorMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"decoupled", "relay"};
+    QList <QString> list = {"default", "inverted"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)
@@ -351,9 +351,9 @@ QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &dat
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::IndicatorMode::request(const QString &, const QVariant &data)
+QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"default", "inverted"};
+    QList <QString> list = {"decoupled", "relay"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)

@@ -192,42 +192,6 @@ namespace Binary
 
 namespace Sensor
 {
-    class Action : public SensorObject
-    {
-
-    public:
-
-        Action(void) : SensorObject("action") {}
-
-    };
-
-    class Event : public SensorObject
-    {
-
-    public:
-
-        Event(void) : SensorObject("event") {}
-
-    };
-
-    class Scene : public SensorObject
-    {
-
-    public:
-
-        Scene(void) : SensorObject("scene") {}
-
-    };
-
-    class Count : public SensorObject
-    {
-
-    public:
-
-        Count(void) : SensorObject("count") {}
-
-    };
-
     class Battery : public SensorObject
     {
 
@@ -335,6 +299,42 @@ namespace Sensor
         Power(void) : SensorObject("power", "W", 2) {}
 
     };
+
+    class Count : public SensorObject
+    {
+
+    public:
+
+        Count(void) : SensorObject("count") {}
+
+    };
+
+    class Action : public SensorObject
+    {
+
+    public:
+
+        Action(void) : SensorObject("action") {}
+
+    };
+
+    class Event : public SensorObject
+    {
+
+    public:
+
+        Event(void) : SensorObject("event") {}
+
+    };
+
+    class Scene : public SensorObject
+    {
+
+    public:
+
+        Scene(void) : SensorObject("scene") {}
+
+    };
 }
 
 namespace Number
@@ -345,24 +345,6 @@ namespace Number
     public:
 
         Pattern(void) : NumberObject("pattern", "mdi:swap-horizontal-bold") {}
-
-    };
-
-    class ReportingDelay : public NumberObject
-    {
-
-    public:
-
-        ReportingDelay(void) : NumberObject("reportingDelay", "mdi:clock") {}
-
-    };
-
-    class TemperatureOffset : public NumberObject
-    {
-
-    public:
-
-        TemperatureOffset(void) : NumberObject("temperatureOffset", "mdi:thermometer") {}
 
     };
 
@@ -381,6 +363,24 @@ namespace Number
     public:
 
         Threshold(void) : NumberObject("threshold", "mdi:percent") {}
+
+    };
+
+    class ReportingDelay : public NumberObject
+    {
+
+    public:
+
+        ReportingDelay(void) : NumberObject("reportingDelay", "mdi:clock") {}
+
+    };
+
+    class TemperatureOffset : public NumberObject
+    {
+
+    public:
+
+        TemperatureOffset(void) : NumberObject("temperatureOffset", "mdi:thermometer") {}
 
     };
 }

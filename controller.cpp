@@ -35,7 +35,6 @@ void Controller::publishDiscovery(const Device &device, bool remove)
             QString id = discovery->multiple() ? QString::number(it.key()) : QString(), name = endpointName.value(id).toString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
             QList <QString> object = {discovery->name()};
             QJsonObject json, node;
-            QJsonArray availability;
 
             if (!id.isEmpty())
             {
@@ -45,6 +44,8 @@ void Controller::publishDiscovery(const Device &device, bool remove)
 
             if (!remove)
             {
+                QJsonArray availability;
+
                 discovery->setStateTopic(mqttTopic("fd/zigbee/%1").arg(topic));
                 discovery->setCommandTopic(mqttTopic("td/zigbee/%1").arg(topic));
 
@@ -64,15 +65,11 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                 json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
             }
 
+            mqttPublish(QString("%1/%2/%3/%4/config").arg(m_discoveryPrefix, discovery->component(), device->ieeeAddress().toHex(), object.join('_')), json, true);
+
             if (discovery->name() == "action" || discovery->name() == "event" || discovery->name() == "scene")
             {
-                QVariant data = device->options().value(QString("%1-%2").arg(discovery->name(), QString::number(it.key())));
-                QList <QString> list;
-
-                if (!data.isValid())
-                    data = device->options().value(discovery->name());
-
-                list = discovery->name() != "scene" ? data.toStringList() : QVariant(data.toMap().values()).toStringList();
+                QList <QString> list = discovery->name() != "scene" ? discovery->endpointOption().toStringList() : QVariant(discovery->endpointOption().toMap().values()).toStringList();
 
                 for (int i = 0; i < list.count(); i++)
                 {
@@ -96,8 +93,6 @@ void Controller::publishDiscovery(const Device &device, bool remove)
                     mqttPublish(QString("%1/device_automation/%2/%3/config").arg(m_discoveryPrefix, device->ieeeAddress().toHex(), event.join('_')), item, true);
                 }
             }
-
-            mqttPublish(QString("%1/%2/%3/%4/config").arg(m_discoveryPrefix, discovery->component(), device->ieeeAddress().toHex(), object.join('_')), json, true);
         }
     }
 }

@@ -15,10 +15,6 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Binary::WaterLeak>           ("waterLeakDiscovery");
     qRegisterMetaType <Binary::Vibration>           ("vibrationDiscovery");
 
-    qRegisterMetaType <Sensor::Action>              ("actionDiscovery");
-    qRegisterMetaType <Sensor::Event>               ("eventDiscovery");
-    qRegisterMetaType <Sensor::Scene>               ("sceneDiscovery");
-    qRegisterMetaType <Sensor::Count>               ("countDiscovery");
     qRegisterMetaType <Sensor::Battery>             ("batteryDiscovery");
     qRegisterMetaType <Sensor::Temperature>         ("temperatureDiscovery");
     qRegisterMetaType <Sensor::Pressure>            ("pressureDiscovery");
@@ -31,12 +27,16 @@ void DiscoveryObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Voltage>             ("voltageDiscovery");
     qRegisterMetaType <Sensor::Current>             ("currentDiscovery");
     qRegisterMetaType <Sensor::Power>               ("powerDiscovery");
+    qRegisterMetaType <Sensor::Count>               ("countDiscovery");
+    qRegisterMetaType <Sensor::Action>              ("actionDiscovery");
+    qRegisterMetaType <Sensor::Event>               ("eventDiscovery");
+    qRegisterMetaType <Sensor::Scene>               ("sceneDiscovery");
 
     qRegisterMetaType <Number::Pattern>             ("patternDiscovery");
-    qRegisterMetaType <Number::ReportingDelay>      ("reportingDelayDiscovery");
-    qRegisterMetaType <Number::TemperatureOffset>   ("temperatureOffsetDiscovery");
     qRegisterMetaType <Number::Timer>               ("timerDiscovery");
     qRegisterMetaType <Number::Threshold>           ("thresholdDiscovery");
+    qRegisterMetaType <Number::ReportingDelay>      ("reportingDelayDiscovery");
+    qRegisterMetaType <Number::TemperatureOffset>   ("temperatureOffsetDiscovery");
 
     qRegisterMetaType <Button::ResetCount>          ("resetCountDiscovery");
 }

@@ -478,8 +478,8 @@
       "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
       "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
-      "actions":        ["status", "tempetature", "lumiIndicatorMode", "lumiSwitchMode"],
-      "discoveries":    ["switch", "tempetature", "action", "indicatorMode", "switchMode"],
+      "actions":        ["status", "temperature", "lumiIndicatorMode", "lumiSwitchMode"],
+      "discoveries":    ["switch", "temperature", "action", "indicatorMode", "switchMode"],
       "options":        {"action": ["singleClick", "doubleClick"], "switchMode": ["relay", "decoupled"], "indicatorMode": ["default", "inverted"]}
     },
     {
@@ -490,8 +490,8 @@
     {
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["lumiData"],
-      "actions":        ["tempetature", "lumiIndicatorMode"],
-      "discoveries":    ["tempetature", "indicatorMode"],
+      "actions":        ["temperature", "lumiIndicatorMode"],
+      "discoveries":    ["temperature", "indicatorMode"],
       "options":        {"indicatorMode": ["default", "inverted"]},
       "endpointId":     1
     },
@@ -767,7 +767,7 @@
       "description":    "Life Control Air Quality Sensor MCLH-08",
       "modelNames":     ["VOC_Sensor"],
       "properties":     ["batteryPercentage", "lifeControlAirQuality"],
-      "discoveries":    ["battery", "temperature", "humidity", "eco2", "voc"],
+      "discoveries":    ["battery", "temperature", "humidity", "co2", "voc"],
       "options":        {"batteryUndivided": true}
     }
   ],
