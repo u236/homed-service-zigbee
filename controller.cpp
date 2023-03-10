@@ -10,9 +10,9 @@ Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(ge
     logInfo << "Starting version" << SERVICE_VERSION;
 
     m_names = getConfig()->value("mqtt/names", false).toBool();
-    m_discovery = getConfig()->value("discovery/enabled", false).toBool();
-    m_discoveryPrefix = getConfig()->value("discovery/prefix", "homeassistant").toString();
-    m_discoveryStatus = getConfig()->value("discovery/status", "homeassistant/status").toString();
+    m_homeassistant = getConfig()->value("homeassistant/enabled", false).toBool();
+    m_homeassistantPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
+    m_homeassistantStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
 
     connect(m_timer, &QTimer::timeout, this, &Controller::updateAvailability);
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
@@ -23,78 +23,117 @@ Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(ge
     m_zigbee->init();
 }
 
-void Controller::publishDiscovery(const Device &device, bool remove)
+void Controller::publishExposes(const Device &device, bool remove)
 {
-    QMap <QString, QVariant> endpointName = device->options().value("endpointName").toMap();
+    QMap <QString, QVariant> data, endpointName = device->options().value("endpointName").toMap();
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        for (int i = 0; i < it.value()->discoveries().count(); i++)
-        {
-            const Discovery &discovery = it.value()->discoveries().at(i);
-            QString id = discovery->multiple() ? QString::number(it.key()) : QString(), name = endpointName.value(id).toString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
-            QList <QString> object = {discovery->name()};
-            QJsonObject json, node;
+        QString name = QString::number(it.key());
 
-            if (!id.isEmpty())
+        if (endpointName.contains(name))
+            name = endpointName.value(name).toString();
+
+        for (int i = 0; i < it.value()->exposes().count(); i++)
+        {
+            const Expose &expose = it.value()->exposes().at(i);
+            QVariant option = expose->endpointOption();
+
+            if (m_homeassistant && expose->homeassistant())
             {
-                topic.append("/").append(id);
-                object.append(id);
+                QString id = expose->multiple() ? QString::number(it.key()) : QString(), name = endpointName.value(id).toString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
+                QList <QString> object = {expose->name()};
+                QJsonObject json, identity;
+                QJsonArray availability;
+
+                if (!id.isEmpty())
+                {
+                    topic.append("/").append(id);
+                    object.append(id);
+                }
+
+                if (!remove)
+                {
+                    expose->setStateTopic(mqttTopic("fd/zigbee/%1").arg(topic));
+                    expose->setCommandTopic(mqttTopic("td/zigbee/%1").arg(topic));
+
+                    json = expose->reqest();
+
+                    identity.insert("identifiers", QJsonArray {QString(device->ieeeAddress().toHex())});
+                    identity.insert("model", device->description());
+                    identity.insert("name", device->name());
+
+                    availability.append(QJsonObject {{"topic", mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':'))}, {"value_template", "{{ value_json.status }}"}});
+                    availability.append(QJsonObject {{"topic", mqttTopic("service/zigbee")}, {"value_template", "{{ value_json.status }}"}});
+
+                    json.insert("availability", availability);
+                    json.insert("availability_mode", "all");
+                    json.insert("device", identity);
+                    json.insert("name", QString("%1 %2").arg(device->name(), name.isEmpty() ? object.join(' ') : name));
+                    json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
+                }
+
+                mqttPublish(QString("%1/%2/%3/%4/config").arg(m_homeassistantPrefix, expose->component(), device->ieeeAddress().toHex(), object.join('_')), json, true);
+
+                if (expose->name() == "action" || expose->name() == "event" || expose->name() == "scene")
+                {
+                    QList <QString> list = expose->name() != "scene" ? option.toStringList() : QVariant(option.toMap().values()).toStringList();
+
+                    for (int i = 0; i < list.count(); i++)
+                    {
+                        QList <QString> event = {list.at(i)};
+                        QJsonObject item;
+
+                        if (!id.isEmpty())
+                            event.append(id);
+
+                        if (!remove)
+                        {
+                            item.insert("automation_type", "trigger");
+                            item.insert("device", identity);
+                            item.insert("payload", event.at(0));
+                            item.insert("subtype", name.isEmpty() ? event.join(' ') : QString("%1 %2").arg(name, list.at(i)));
+                            item.insert("topic", mqttTopic("fd/zigbee/%1").arg(topic));
+                            item.insert("type", expose->name());
+                            item.insert("value_template", QString("{{ value_json.%1 }}").arg(expose->name()));
+                        }
+
+                        mqttPublish(QString("%1/device_automation/%2/%3/config").arg(m_homeassistantPrefix, device->ieeeAddress().toHex(), event.join('_')), item, true);
+                    }
+                }
             }
 
             if (!remove)
             {
-                QJsonArray availability;
+                QString key = expose->multiple() ? name : "common";
+                QMap <QString, QVariant> map = data.value(key).toMap(), options = map.value("options").toMap();
+                QList <QString> items = map.value("items").toStringList();
 
-                discovery->setStateTopic(mqttTopic("fd/zigbee/%1").arg(topic));
-                discovery->setCommandTopic(mqttTopic("td/zigbee/%1").arg(topic));
+                items.append(expose->name());
+                map.insert("items", QVariant(items));
 
-                json = discovery->reqest();
-
-                node.insert("identifiers", QJsonArray {QString(device->ieeeAddress().toHex())});
-                node.insert("model", device->description());
-                node.insert("name", device->name());
-
-                availability.append(QJsonObject {{"topic", mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':'))}, {"value_template", "{{ value_json.status }}"}});
-                availability.append(QJsonObject {{"topic", mqttTopic("service/zigbee")}, {"value_template", "{{ value_json.status }}"}});
-
-                json.insert("availability", availability);
-                json.insert("availability_mode", "all");
-                json.insert("device", node);
-                json.insert("name", QString("%1 %2").arg(device->name(), name.isEmpty() ? object.join(' ') : name));
-                json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
-            }
-
-            mqttPublish(QString("%1/%2/%3/%4/config").arg(m_discoveryPrefix, discovery->component(), device->ieeeAddress().toHex(), object.join('_')), json, true);
-
-            if (discovery->name() == "action" || discovery->name() == "event" || discovery->name() == "scene")
-            {
-                QList <QString> list = discovery->name() != "scene" ? discovery->endpointOption().toStringList() : QVariant(discovery->endpointOption().toMap().values()).toStringList();
-
-                for (int i = 0; i < list.count(); i++)
+                if (option.isValid())
                 {
-                    QList <QString> event = {list.at(i)};
-                    QJsonObject item;
-
-                    if (!id.isEmpty())
-                        event.append(id);
-
-                    if (!remove)
+                    if (expose->name() == "light" && option.toStringList().contains("colorTemperature"))
                     {
-                        item.insert("automation_type", "trigger");
-                        item.insert("device", node);
-                        item.insert("payload", event.at(0));
-                        item.insert("subtype", name.isEmpty() ? event.join(' ') : QString("%1 %2").arg(name, list.at(i)));
-                        item.insert("topic", mqttTopic("fd/zigbee/%1").arg(topic));
-                        item.insert("type", discovery->name());
-                        item.insert("value_template", QString("{{ value_json.%1 }}").arg(discovery->name()));
+                        QVariant colorTemperature = expose->endpointOption("colorTemperature");
+
+                        if (colorTemperature.isValid())
+                            options.insert("colorTemperature", colorTemperature);
                     }
 
-                    mqttPublish(QString("%1/device_automation/%2/%3/config").arg(m_discoveryPrefix, device->ieeeAddress().toHex(), event.join('_')), item, true);
+                    options.insert(expose->name(), option);
                 }
+
+                if (!options.isEmpty())
+                    map.insert("options", options);
+
+                data.insert(key, map);
             }
         }
     }
+
+    mqttPublish(mqttTopic("expose/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(data), true);
 }
 
 void Controller::publishProperties(void)
@@ -103,8 +142,7 @@ void Controller::publishProperties(void)
     {
         const Device &device = it.value();
 
-        if (m_discovery)
-            publishDiscovery(device);
+        publishExposes(device);
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             endpointUpdated(device, it.key());
@@ -125,8 +163,8 @@ void Controller::mqttConnected(void)
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
 
-    if (m_discovery)
-        mqttSubscribe(m_discoveryStatus);
+    if (m_homeassistant)
+        mqttSubscribe(m_homeassistantStatus);
 
     publishProperties();
 }
@@ -236,7 +274,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
             }
         }
     }
-    else if (topic.name() == m_discoveryStatus)
+    else if (topic.name() == m_homeassistantStatus)
     {
         if (message != "online")
             return;
@@ -276,28 +314,20 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
         case ZigBee::Event::deviceLeft:
         case ZigBee::Event::deviceRemoved:
         case ZigBee::Event::deviceAboutToRename:
-
-            if (m_discovery)
-                publishDiscovery(device, true);
-
             mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
+            publishExposes(device, true);
             break;
 
         case ZigBee::Event::deviceUpdated:
 
-            if (m_discovery)
-                publishDiscovery(device);
-
             if (device->availability() != AvailabilityStatus::Unknown)
                 mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
 
+            publishExposes(device);
             break;
 
         case ZigBee::Event::interviewFinished:
-
-            if (m_discovery)
-                publishDiscovery(device);
-
+            publishExposes(device);
             break;
 
         default:

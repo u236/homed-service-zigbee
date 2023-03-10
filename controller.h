@@ -44,10 +44,10 @@ private:
 
     QMetaEnum m_commands;
 
-    bool m_names, m_discovery;
-    QString m_discoveryPrefix, m_discoveryStatus;
+    bool m_names, m_homeassistant;
+    QString m_homeassistantPrefix, m_homeassistantStatus;
 
-    void publishDiscovery(const Device &device, bool remove = false);
+    void publishExposes(const Device &device, bool remove = false);
     void publishProperties(void);
 
 public slots:

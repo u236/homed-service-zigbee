@@ -11,7 +11,7 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     BindingObject::registerMetaTypes();
     ReportingObject::registerMetaTypes();
     PollObject::registerMetaTypes();
-    DiscoveryObject::registerMetaTypes();
+    ExposeObject::registerMetaTypes();
 
     m_libraryFile.setFileName(config->value("device/library", "/usr/share/homed/zigbee.json").toString());
     m_databaseFile.setFileName(config->value("device/database", "/opt/homed-zigbee/database.json").toString());
@@ -152,7 +152,7 @@ void DeviceList::setupDevice(const Device &device)
         it.value()->bindings().clear();
         it.value()->reportings().clear();
         it.value()->polls().clear();
-        it.value()->discoveries().clear();
+        it.value()->exposes().clear();
     }
 
     identityHandler(device, manufacturerName, modelName);
@@ -258,7 +258,7 @@ void DeviceList::setupDevice(const Device &device)
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
 {
     Device device = endpoint->device();
-    QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), bindings = json.value("bindings").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), discoveries = json.value("discoveries").toArray();
+    QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), bindings = json.value("bindings").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), exposes = json.value("exposes").toArray();
 
     for (auto it = properties.begin(); it != properties.end(); it++)
     {
@@ -333,20 +333,14 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "poll" << it->toString() << "unrecognized";
     }
 
-    for (auto it = discoveries.begin(); it != discoveries.end(); it++)
+    for (auto it = exposes.begin(); it != exposes.end(); it++)
     {
-        int type = QMetaType::type(QString(it->toString()).append("Discovery").toUtf8());
+        int type = QMetaType::type(QString(it->toString()).append("Expose").toUtf8());
+        Expose expose(type ? reinterpret_cast <ExposeObject*> (QMetaType::create(type)) : new ExposeObject(it->toString()));
 
-        if (type)
-        {
-            Discovery discovery(reinterpret_cast <DiscoveryObject*> (QMetaType::create(type)));
-            discovery->setParent(endpoint.data());
-            discovery->setMultiple(multiple);
-            endpoint->discoveries().append(discovery);
-            continue;
-        }
-
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "discovery" << it->toString() << "unrecognized";
+        expose->setParent(endpoint.data());
+        expose->setMultiple(multiple);
+        endpoint->exposes().append(expose);
     }
 
     if (!endpoint->polls().isEmpty())
@@ -382,12 +376,12 @@ void DeviceList::recognizeDevice(const Device &device)
 
                     it.value()->properties().append(Property(new Properties::BatteryVoltage));
                     it.value()->properties().append(Property(new Properties::BatteryPercentage));
-                    it.value()->discoveries().append(Discovery(new Sensor::Battery));
+                    it.value()->exposes().append(Expose(new Sensor::Battery));
                     break;
 
                 case CLUSTER_TEMPERATURE_CONFIGURATION:
                     it.value()->properties().append(Property(new Properties::DeviceTemperature));
-                    it.value()->discoveries().append(Discovery(new Sensor::Temperature));
+                    it.value()->exposes().append(Expose(new Sensor::Temperature));
                     break;
 
                 case CLUSTER_ON_OFF:
@@ -396,7 +390,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     {
                         it.value()->properties().append(Property(new Properties::Status));
                         it.value()->actions().append(Action(new Actions::Status));
-                        it.value()->discoveries().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Discovery(new LightObject) : Discovery(new SwitchObject));
+                        it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
                         break;
                     }
 
@@ -453,36 +447,36 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_ILLUMINANCE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Illuminance));
-                    it.value()->discoveries().append(Discovery(new Sensor::Illuminance));
+                    it.value()->exposes().append(Expose(new Sensor::Illuminance));
                     break;
 
                 case CLUSTER_TEMPERATURE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Temperature));
-                    it.value()->discoveries().append(Discovery(new Sensor::Temperature));
+                    it.value()->exposes().append(Expose(new Sensor::Temperature));
                     break;
 
                 case CLUSTER_RELATIVE_HUMIDITY:
                     it.value()->properties().append(Property(new Properties::Humidity));
-                    it.value()->discoveries().append(Discovery(new Sensor::Humidity));
+                    it.value()->exposes().append(Expose(new Sensor::Humidity));
                     break;
 
                 case CLUSTER_OCCUPANCY_SENSING:
                     it.value()->properties().append(Property(new Properties::Occupancy));
-                    it.value()->discoveries().append(Discovery(new Binary::Occupancy));
+                    it.value()->exposes().append(Expose(new Binary::Occupancy));
                     break;
 
                 case CLUSTER_SMART_ENERGY_METERING:
                     it.value()->properties().append(Property(new Properties::Energy));
-                    it.value()->discoveries().append(Discovery(new Sensor::Energy));
+                    it.value()->exposes().append(Expose(new Sensor::Energy));
                     break;
 
                 case CLUSTER_ELECTRICAL_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Voltage));
                     it.value()->properties().append(Property(new Properties::Current));
                     it.value()->properties().append(Property(new Properties::Power));
-                    it.value()->discoveries().append(Discovery(new Sensor::Voltage));
-                    it.value()->discoveries().append(Discovery(new Sensor::Current));
-                    it.value()->discoveries().append(Discovery(new Sensor::Power));
+                    it.value()->exposes().append(Expose(new Sensor::Voltage));
+                    it.value()->exposes().append(Expose(new Sensor::Current));
+                    it.value()->exposes().append(Expose(new Sensor::Power));
                     break;
 
                 case CLUSTER_IAS_ZONE:
@@ -491,22 +485,22 @@ void DeviceList::recognizeDevice(const Device &device)
                     {
                         case 0x000D:
                             it.value()->properties().append(Property(new PropertiesIAS::Occupancy));
-                            it.value()->discoveries().append(Discovery(new Binary::Occupancy));
+                            it.value()->exposes().append(Expose(new Binary::Occupancy));
                             break;
 
                         case 0x0015:
                             it.value()->properties().append(Property(new PropertiesIAS::Contact));
-                            it.value()->discoveries().append(Discovery(new Binary::Contact));
+                            it.value()->exposes().append(Expose(new Binary::Contact));
                             break;
 
                         case 0x0028:
                             it.value()->properties().append(Property(new PropertiesIAS::WaterLeak));
-                            it.value()->discoveries().append(Discovery(new Binary::WaterLeak));
+                            it.value()->exposes().append(Expose(new Binary::WaterLeak));
                             break;
 
                         default:
                             it.value()->properties().append(Property(new PropertiesIAS::ZoneStatus));
-                            it.value()->discoveries().append(Discovery(new BinaryObject));
+                            it.value()->exposes().append(Expose(new BinaryObject));
                             break;
                     }
 
@@ -553,24 +547,24 @@ void DeviceList::recognizeDevice(const Device &device)
             logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "actions recognized:" << list.join(", ");
         }
 
-        if (!it.value()->discoveries().isEmpty())
+        if (!it.value()->exposes().isEmpty())
         {
             QList <QString> list;
 
-            for (int i = 0; i < it.value()->discoveries().count(); i++)
+            for (int i = 0; i < it.value()->exposes().count(); i++)
             {
-                const Discovery &discovery = it.value()->discoveries().at(i);
+                const Expose &expose = it.value()->exposes().at(i);
 
-                discovery->setParent(it.value().data());
-                discovery->setMultiple(discovery->name() != "battery");
+                expose->setParent(it.value().data());
+                expose->setMultiple(expose->name() != "battery");
 
-                if (list.contains(discovery->name()))
+                if (list.contains(expose->name()))
                     continue;
 
-                list.append(discovery->name());
+                list.append(expose->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "discoveries:" << list.join(", ");
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "exposes:" << list.join(", ");
         }
     }
 }

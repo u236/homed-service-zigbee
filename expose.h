@@ -1,24 +1,27 @@
-#ifndef DISCOVERY_H
-#define DISCOVERY_H
+#ifndef EXPOSE_H
+#define EXPOSE_H
 
 #include <QJsonObject>
 
-class DiscoveryObject;
-typedef QSharedPointer <DiscoveryObject> Discovery;
+class ExposeObject;
+typedef QSharedPointer <ExposeObject> Expose;
 
-class DiscoveryObject
+class ExposeObject
 {
 
 public:
 
-    DiscoveryObject(const QString &component, const QString &name = QString()) :
-        m_component(component), m_name(name.isEmpty() ? component : name), m_parent(nullptr), m_multiple(false) {}
+    ExposeObject(const QString &name, const QString &component) :
+        m_name(name), m_component(component), m_parent(nullptr), m_multiple(false), m_homeassistant(true) {}
 
-    virtual ~DiscoveryObject(void) {}
-    virtual QJsonObject reqest(void) = 0;
+    ExposeObject(const QString &name) :
+        m_name(name), m_parent(nullptr), m_multiple(false), m_homeassistant(false) {}
 
-    inline QString component(void) { return m_component; }
+    virtual ~ExposeObject(void) {}
+    virtual QJsonObject reqest(void) { return QJsonObject(); };
+
     inline QString name(void) { return m_name; }
+    inline QString component(void) { return m_component; }
 
     inline void setStateTopic(const QString &value) { m_stateTopic = value; }
     inline void setCommandTopic(const QString &value) { m_commandTopic = value; }
@@ -27,35 +30,36 @@ public:
     inline bool multiple(void) { return m_multiple; }
     inline void setMultiple(bool value) { m_multiple = value; }
 
+    inline bool homeassistant(void) { return m_homeassistant; }
     static void registerMetaTypes(void);
 
     QVariant endpointOption(const QString &name = QString());
 
 protected:
 
-    QString m_component, m_name, m_stateTopic, m_commandTopic;
+    QString m_name, m_component, m_stateTopic, m_commandTopic;
 
     QObject *m_parent;
-    bool m_multiple;
+    bool m_multiple, m_homeassistant;
 
 };
 
-class BinaryObject : public DiscoveryObject
+class BinaryObject : public ExposeObject
 {
 
 public:
 
-    BinaryObject(const QString &name = "alarm") : DiscoveryObject("binary_sensor", name) {}
+    BinaryObject(const QString &name = "alarm") : ExposeObject(name, "binary_sensor") {}
     QJsonObject reqest(void) override;
 
 };
 
-class SensorObject : public DiscoveryObject
+class SensorObject : public ExposeObject
 {
 
 public:
 
-    SensorObject(const QString &name, const QString &unit = QString(), quint8 round = 0) : DiscoveryObject("sensor", name), m_unit(unit), m_round(round) {}
+    SensorObject(const QString &name, const QString &unit = QString(), quint8 round = 0) : ExposeObject(name, "sensor"), m_unit(unit), m_round(round) {}
     QJsonObject reqest(void) override;
 
 private:
@@ -65,12 +69,12 @@ private:
 
 };
 
-class NumberObject : public DiscoveryObject
+class NumberObject : public ExposeObject
 {
 
 public:
 
-    NumberObject(const QString &name, const QString &icon = QString()) : DiscoveryObject("number", name), m_icon(icon) {}
+    NumberObject(const QString &name, const QString &icon = QString()) : ExposeObject(name, "number"), m_icon(icon) {}
     QJsonObject reqest(void) override;
 
 private:
@@ -79,12 +83,12 @@ private:
 
 };
 
-class ButtonObject : public DiscoveryObject
+class ButtonObject : public ExposeObject
 {
 
 public:
 
-    ButtonObject(const QString &name, const QString &payload) : DiscoveryObject("button", name), m_payload(payload) {}
+    ButtonObject(const QString &name, const QString &payload) : ExposeObject(name, "button"), m_payload(payload) {}
     QJsonObject reqest(void) override;
 
 private:
@@ -93,42 +97,42 @@ private:
 
 };
 
-class LightObject : public DiscoveryObject
+class LightObject : public ExposeObject
 {
 
 public:
 
-    LightObject(void) : DiscoveryObject("light") {}
+    LightObject(void) : ExposeObject("light", "light") {}
     QJsonObject reqest(void) override;
 
 };
 
-class SwitchObject : public DiscoveryObject
+class SwitchObject : public ExposeObject
 {
 
 public:
 
-    SwitchObject(void) : DiscoveryObject("switch") {}
+    SwitchObject(void) : ExposeObject("switch", "switch") {}
     QJsonObject reqest(void) override;
 
 };
 
-class CoverObject : public DiscoveryObject
+class CoverObject : public ExposeObject
 {
 
 public:
 
-    CoverObject(void) : DiscoveryObject("cover") {}
+    CoverObject(void) : ExposeObject("cover", "cover") {}
     QJsonObject reqest(void) override;
 
 };
 
-class ThermostatObject : public DiscoveryObject
+class ThermostatObject : public ExposeObject
 {
 
 public:
 
-    ThermostatObject(void) : DiscoveryObject("climate") {}
+    ThermostatObject(void) : ExposeObject("climate", "climate") {}
     QJsonObject reqest(void) override;
 
 };
@@ -363,24 +367,6 @@ namespace Number
     public:
 
         Threshold(void) : NumberObject("threshold", "mdi:percent") {}
-
-    };
-
-    class ReportingDelay : public NumberObject
-    {
-
-    public:
-
-        ReportingDelay(void) : NumberObject("reportingDelay", "mdi:clock") {}
-
-    };
-
-    class TemperatureOffset : public NumberObject
-    {
-
-    public:
-
-        TemperatureOffset(void) : NumberObject("temperatureOffset", "mdi:thermometer") {}
 
     };
 }

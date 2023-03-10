@@ -8,7 +8,7 @@ HEADERS += \
     binding.h \
     controller.h \
     device.h \
-    discovery.h \
+    expose.h \
     ezsp.h \
     poll.h \
     property.h \
@@ -24,7 +24,7 @@ SOURCES += \
     binding.cpp \
     controller.cpp \
     device.cpp \
-    discovery.cpp \
+    expose.cpp \
     ezsp.cpp \
     poll.cpp \
     property.cpp \

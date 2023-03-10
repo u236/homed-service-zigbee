@@ -1,47 +1,45 @@
 #include "device.h"
-#include "discovery.h"
+#include "expose.h"
 
-void DiscoveryObject::registerMetaTypes(void)
+void ExposeObject::registerMetaTypes(void)
 {
-    qRegisterMetaType <LightObject>                 ("lightDiscovery");
-    qRegisterMetaType <SwitchObject>                ("switchDiscovery");
-    qRegisterMetaType <CoverObject>                 ("coverDiscovery");
-    qRegisterMetaType <ThermostatObject>            ("thermostatDiscovery");
+    qRegisterMetaType <LightObject>                 ("lightExpose");
+    qRegisterMetaType <SwitchObject>                ("switchExpose");
+    qRegisterMetaType <CoverObject>                 ("coverExpose");
+    qRegisterMetaType <ThermostatObject>            ("thermostatExpose");
 
-    qRegisterMetaType <Binary::Contact>             ("contactDiscovery");
-    qRegisterMetaType <Binary::Gas>                 ("gasDiscovery");
-    qRegisterMetaType <Binary::Occupancy>           ("occupancyDiscovery");
-    qRegisterMetaType <Binary::Smoke>               ("smokeDiscovery");
-    qRegisterMetaType <Binary::WaterLeak>           ("waterLeakDiscovery");
-    qRegisterMetaType <Binary::Vibration>           ("vibrationDiscovery");
+    qRegisterMetaType <Binary::Contact>             ("contactExpose");
+    qRegisterMetaType <Binary::Gas>                 ("gasExpose");
+    qRegisterMetaType <Binary::Occupancy>           ("occupancyExpose");
+    qRegisterMetaType <Binary::Smoke>               ("smokeExpose");
+    qRegisterMetaType <Binary::WaterLeak>           ("waterLeakExpose");
+    qRegisterMetaType <Binary::Vibration>           ("vibrationExpose");
 
-    qRegisterMetaType <Sensor::Battery>             ("batteryDiscovery");
-    qRegisterMetaType <Sensor::Temperature>         ("temperatureDiscovery");
-    qRegisterMetaType <Sensor::Pressure>            ("pressureDiscovery");
-    qRegisterMetaType <Sensor::Humidity>            ("humidityDiscovery");
-    qRegisterMetaType <Sensor::Moisture>            ("moistureDiscovery");
-    qRegisterMetaType <Sensor::CO2>                 ("co2Discovery");
-    qRegisterMetaType <Sensor::VOC>                 ("vocDiscovery");
-    qRegisterMetaType <Sensor::Illuminance>         ("illuminanceDiscovery");
-    qRegisterMetaType <Sensor::Energy>              ("energyDiscovery");
-    qRegisterMetaType <Sensor::Voltage>             ("voltageDiscovery");
-    qRegisterMetaType <Sensor::Current>             ("currentDiscovery");
-    qRegisterMetaType <Sensor::Power>               ("powerDiscovery");
-    qRegisterMetaType <Sensor::Count>               ("countDiscovery");
-    qRegisterMetaType <Sensor::Action>              ("actionDiscovery");
-    qRegisterMetaType <Sensor::Event>               ("eventDiscovery");
-    qRegisterMetaType <Sensor::Scene>               ("sceneDiscovery");
+    qRegisterMetaType <Sensor::Battery>             ("batteryExpose");
+    qRegisterMetaType <Sensor::Temperature>         ("temperatureExpose");
+    qRegisterMetaType <Sensor::Pressure>            ("pressureExpose");
+    qRegisterMetaType <Sensor::Humidity>            ("humidityExpose");
+    qRegisterMetaType <Sensor::Moisture>            ("moistureExpose");
+    qRegisterMetaType <Sensor::CO2>                 ("co2Expose");
+    qRegisterMetaType <Sensor::VOC>                 ("vocExpose");
+    qRegisterMetaType <Sensor::Illuminance>         ("illuminanceExpose");
+    qRegisterMetaType <Sensor::Energy>              ("energyExpose");
+    qRegisterMetaType <Sensor::Voltage>             ("voltageExpose");
+    qRegisterMetaType <Sensor::Current>             ("currentExpose");
+    qRegisterMetaType <Sensor::Power>               ("powerExpose");
+    qRegisterMetaType <Sensor::Count>               ("countExpose");
+    qRegisterMetaType <Sensor::Action>              ("actionExpose");
+    qRegisterMetaType <Sensor::Event>               ("eventExpose");
+    qRegisterMetaType <Sensor::Scene>               ("sceneExpose");
 
-    qRegisterMetaType <Number::Pattern>             ("patternDiscovery");
-    qRegisterMetaType <Number::Timer>               ("timerDiscovery");
-    qRegisterMetaType <Number::Threshold>           ("thresholdDiscovery");
-    qRegisterMetaType <Number::ReportingDelay>      ("reportingDelayDiscovery");
-    qRegisterMetaType <Number::TemperatureOffset>   ("temperatureOffsetDiscovery");
+    qRegisterMetaType <Number::Pattern>             ("patternExpose");
+    qRegisterMetaType <Number::Timer>               ("timerExpose");
+    qRegisterMetaType <Number::Threshold>           ("thresholdExpose");
 
-    qRegisterMetaType <Button::ResetCount>          ("resetCountDiscovery");
+    qRegisterMetaType <Button::ResetCount>          ("resetCountExpose");
 }
 
-QVariant DiscoveryObject::endpointOption(const QString &name)
+QVariant ExposeObject::endpointOption(const QString &name)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
     QVariant value;
