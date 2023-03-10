@@ -601,7 +601,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
-      "exposes":        ["temperature", "event", "occupancy", "sensitivityMode", "detectionMode", "distanceMode"],
+      "exposes":        ["event", "occupancy", "sensitivityMode", "distanceMode", "detectionMode"],
       "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "sensitivityMode": ["low", "medium", "high"], "detectionMode": ["undirected", "directed"], "distanceMode": ["far", "middle", "near"]}
     },
     {
