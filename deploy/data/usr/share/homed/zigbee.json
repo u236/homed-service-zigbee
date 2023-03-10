@@ -511,12 +511,12 @@
       "endpointId":     [41, 42, 51]
     },
     {
-      "description":    "Aqara T1 1-Channel Relay SSM-U01",
+      "description":    "Aqara T1 1-Channel Relay DLKZMK11LM or SSM-U01",
       "modelNames":     ["lumi.switch.n0agl1"],
       "options":        {"powerSource": 1}
     },
     {
-      "modelNames":     ["lumi.switch.n0agl1"],
+      "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -525,7 +525,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.switch.n0agl1"],
+      "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "properties":     ["lumiPower"],
       "exposes":        ["power"],
       "endpointId":     21
