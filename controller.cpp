@@ -29,11 +29,6 @@ void Controller::publishExposes(const Device &device, bool remove)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        QString name = QString::number(it.key());
-
-        if (endpointName.contains(name))
-            name = endpointName.value(name).toString();
-
         for (int i = 0; i < it.value()->exposes().count(); i++)
         {
             const Expose &expose = it.value()->exposes().at(i);
@@ -104,8 +99,8 @@ void Controller::publishExposes(const Device &device, bool remove)
             }
 
             if (!remove)
-            {
-                QString key = expose->multiple() ? name : "common";
+            {                
+                QString id = QString::number(it.key()), key = expose->multiple() ? id : "common";
                 QMap <QString, QVariant> map = data.value(key).toMap(), options = map.value("options").toMap();
                 QList <QString> items = map.value("items").toStringList();
 
@@ -124,6 +119,9 @@ void Controller::publishExposes(const Device &device, bool remove)
 
                     options.insert(expose->name(), option);
                 }
+
+                if (endpointName.contains(id))
+                    options.insert("name", endpointName.value(id));
 
                 if (!options.isEmpty())
                     map.insert("options", options);
