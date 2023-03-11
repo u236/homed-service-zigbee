@@ -402,12 +402,12 @@ namespace ActionsTUYA
 
     };
 
-    class SwitchMode : public ActionObject
+    class SwitchType : public ActionObject
     {
 
     public:
 
-        SwitchMode(void) : ActionObject("switchMode", CLUSTER_TUYA_SWITCH_MODE, 0x0000, 0xD030) {}
+        SwitchType(void) : ActionObject("switchMode", CLUSTER_TUYA_SWITCH_MODE, 0x0000, 0xD030) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

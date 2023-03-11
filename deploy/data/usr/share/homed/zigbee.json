@@ -897,16 +897,16 @@
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
       "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_prd023wy", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
-      "properties":     ["status", "tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
-      "actions":        ["status", "tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "properties":     ["status", "tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
       "exposes":        ["switch", "powerOnStatus"]
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
       "modelNames":     ["TS0002", "TS0012"],
-      "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
       "endpointId":     1
@@ -922,8 +922,8 @@
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay/Switch",
       "modelNames":     ["TS0003", "TS0013"],
-      "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
       "endpointId":     1
@@ -939,8 +939,8 @@
     {
       "description":    "TUYA TS0004/TS0014 4-Channel Relay/Switch",
       "modelNames":     ["TS0004", "TS0014"],
-      "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
       "endpointId":     1
@@ -956,8 +956,8 @@
     {
       "description":    "TUYA TS0006 6-Channel Relay/Switch",
       "modelNames":     ["TS0006"],
-      "properties":     ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaIndicatorMode", "tuyaSwitchMode", "tuyaPowerOnStatus"],
+      "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
       "endpointId":     1
@@ -997,7 +997,7 @@
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
       "options":        {"energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
@@ -1052,7 +1052,7 @@
       "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
       "properties":     ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
-      "exposes":        ["thermostat"],
+      "exposes":        ["thermostat", "childLock"],
       "options":        {"thermostat": {"operationMode": ["manual", "program"], "status": true}}
     },
     {
@@ -1060,7 +1060,7 @@
       "modelNames":     ["_TZE200_b6wax7g0"],
       "properties":     ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaMoesRadiatorThermostat", "tuyaMoesThermostatProgram"],
-      "exposes":        ["thermostat"],
+      "exposes":        ["thermostat", "childLock"],
       "options":        {"thermostat": {"operationMode": ["manual", "program", "temporary", "holiday"]}}
     },
     {

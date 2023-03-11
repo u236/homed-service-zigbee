@@ -39,7 +39,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::OperationMode>              ("tuyaOperationModeAction");
     qRegisterMetaType <ActionsTUYA::IndicatorMode>              ("tuyaIndicatorModeAction");
-    qRegisterMetaType <ActionsTUYA::SwitchMode>                 ("tuyaSwitchModeAction");
+    qRegisterMetaType <ActionsTUYA::SwitchType>                 ("tuyaSwitchTypeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
 
     qRegisterMetaType <ActionsEfekta::ReportingDelay>           ("efektaReportingDelayAction");
@@ -976,9 +976,9 @@ QByteArray ActionsTUYA::IndicatorMode::request(const QString &, const QVariant &
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsTUYA::SwitchMode::request(const QString &, const QVariant &data)
+QByteArray ActionsTUYA::SwitchType::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"toggle", "state", "momentary"};
+    QList <QString> list = {"toggle", "static", "momentary"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)

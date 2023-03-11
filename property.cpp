@@ -77,7 +77,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::ChildLock>               ("tuyaChildLockProperty");
     qRegisterMetaType <PropertiesTUYA::OperationMode>           ("tuyaOperationModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>           ("tuyaIndicatorModeProperty");
-    qRegisterMetaType <PropertiesTUYA::SwitchMode>              ("tuyaSwitchModeProperty");
+    qRegisterMetaType <PropertiesTUYA::SwitchType>              ("tuyaSwitchTypeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>           ("tuyaPowerOnStatusProperty");
     qRegisterMetaType <PropertiesTUYA::ButtonAction>            ("tuyaButtonActionProperty");
 
@@ -1536,7 +1536,7 @@ void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, const QBy
     }
 }
 
-void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::SwitchType::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0xD030)
         return;
@@ -1544,7 +1544,7 @@ void PropertiesTUYA::SwitchMode::parseAttribte(quint16 attributeId, const QByteA
     switch (static_cast <quint8> (data.at(0)))
     {
         case 0x00: m_value = "toggle"; break;
-        case 0x01: m_value = "state"; break;
+        case 0x01: m_value = "static"; break;
         case 0x02: m_value = "momentary"; break;
     }
 }
