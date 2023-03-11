@@ -846,6 +846,12 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x0201:
+        {
+            map.insert("statusMemory", data.at(0) ? true : false);
+            break;
+        }
+
         case 0xFF02:
         {
             quint16 value = 0;
@@ -890,6 +896,14 @@ void PropertiesLUMI::Contact::parseAttribte(quint16 attributeId, const QByteArra
     m_value = data.at(0) ? true : false;
 }
 
+void PropertiesLUMI::Interlock::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0xFF06)
+        return;
+
+    m_value = data.at(0) ? true : false;
+}
+
 void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
@@ -920,14 +934,6 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray 
     map.insert("position", value);
 
     m_value = map;
-}
-
-void PropertiesLUMI::Interlock::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0xFF06)
-        return;
-
-    m_value = data.at(0) ? true : false;
 }
 
 void PropertiesLUMI::Illuminance::parseAttribte(quint16 attributeId, const QByteArray &data)

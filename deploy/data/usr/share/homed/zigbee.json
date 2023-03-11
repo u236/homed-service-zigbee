@@ -224,8 +224,6 @@
       "modelNames":     ["RGB Strip"],
       "properties":     ["ptvoCount"],
       "actions":        ["ptvoCount"],
-      "exposes":        ["count"],
-      "options":        {"count": {"min": 1, "max": 200}},
       "endpointId":     3
     },
     {
@@ -478,8 +476,8 @@
       "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
       "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
-      "actions":        ["status", "temperature", "lumiIndicatorMode", "lumiSwitchMode"],
-      "exposes":        ["switch", "temperature", "action", "indicatorMode", "switchMode"],
+      "actions":        ["status", "temperature", "lumiIndicatorMode", "lumiSwitchMode", "lumiStatusMemory"],
+      "exposes":        ["switch", "temperature", "action", "indicatorMode", "switchMode", "statusMemory"],
       "options":        {"action": ["singleClick", "doubleClick"], "switchMode": ["relay", "decoupled"], "indicatorMode": ["default", "inverted"]}
     },
     {
@@ -490,8 +488,8 @@
     {
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["lumiData"],
-      "actions":        ["temperature", "lumiIndicatorMode"],
-      "exposes":        ["temperature", "indicatorMode"],
+      "actions":        ["temperature", "lumiIndicatorMode", "lumiStatusMemory"],
+      "exposes":        ["temperature", "indicatorMode", "statusMemory"],
       "options":        {"indicatorMode": ["default", "inverted"]},
       "endpointId":     1
     },
@@ -518,23 +516,23 @@
     {
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "properties":     ["status", "lumiData"],
-      "actions":        ["status"],
+      "actions":        ["status", "lumiStatusMemory"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "temperature", "energy", "voltage", "current"],
+      "exposes":        ["switch", "temperature", "energy", "voltage", "current", "power", "statusMemory"],
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "properties":     ["lumiPower"],
-      "exposes":        ["power"],
       "endpointId":     21
     },
     {
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
       "modelNames":     ["lumi.relay.c2acn01"],
-      "properties":     ["lumiBasic", "lumiPower"],
-      "exposes":        ["temperature", "energy", "voltage", "current", "power"],
+      "properties":     ["lumiBasic", "lumiPower", "lumiInterlock"],
+      "actions":        ["lumiInterlock"],
+      "exposes":        ["temperature", "energy", "voltage", "current", "power", "interlock"],
       "endpointId":     1
     },
     {
@@ -556,15 +554,14 @@
       "description":    "Aqara 10A Smart Plug SP-EUC01, ZNCZ04LM or ZNCZ12LM",
       "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["status", "lumiData"],
-      "actions":        ["status"],
-      "exposes":        ["switch", "temperature", "energy", "voltage", "current"],
+      "actions":        ["status", "lumiStatusMemory"],
+      "exposes":        ["switch", "temperature", "energy", "voltage", "current", "power", "statusMemory"],
       "options":        {"switch": "outlet"},
       "endpointId":     1
     },
     {
       "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["lumiPower"],
-      "exposes":        ["power"],
       "endpointId":     21
     },
     {

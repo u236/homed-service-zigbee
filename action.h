@@ -197,6 +197,16 @@ namespace ActionsLUMI
 
     };
 
+    class OperationMode : public ActionObject
+    {
+
+    public:
+
+        OperationMode(void) : ActionObject("operationMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0009) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class IndicatorMode : public ActionObject
     {
 
@@ -217,12 +227,12 @@ namespace ActionsLUMI
 
     };
 
-    class OperationMode : public ActionObject
+    class StatusMemory : public ActionObject
     {
 
     public:
 
-        OperationMode(void) : ActionObject("operationMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0009) {}
+        StatusMemory(void) : ActionObject("statusMemory", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0201) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -232,7 +242,7 @@ namespace ActionsLUMI
 
     public:
 
-        Interlock(void) : ActionObject("lock", CLUSTER_BINARY_OUTPUT, MANUFACTURER_CODE_LUMI, 0xFF06) {}
+        Interlock(void) : ActionObject("interlock", CLUSTER_BINARY_OUTPUT, MANUFACTURER_CODE_LUMI, 0xFF06) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
