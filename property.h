@@ -303,16 +303,6 @@ namespace Properties
 
     };
 
-    class IdentifyAction : public PropertyObject
-    {
-
-    public:
-
-        IdentifyAction(void) : PropertyObject("action", CLUSTER_IDENTIFY, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
-
-    };
-
     class SwitchAction : public PropertyObject
     {
 

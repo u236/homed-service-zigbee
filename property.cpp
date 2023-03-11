@@ -29,7 +29,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Current>                     ("currentProperty");
     qRegisterMetaType <Properties::Power>                       ("powerProperty");
     qRegisterMetaType <Properties::Scene>                       ("sceneProperty");
-    qRegisterMetaType <Properties::IdentifyAction>              ("identifyActionProperty");
     qRegisterMetaType <Properties::SwitchAction>                ("switchActionProperty");
     qRegisterMetaType <Properties::LevelAction>                 ("levelActionProperty");
     qRegisterMetaType <Properties::ColorAction>                 ("colorActionProperty");
@@ -405,14 +404,6 @@ void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload
         return;
 
     m_value = scene.isValid() ? scene : command->sceneId;
-}
-
-void Properties::IdentifyAction::parseCommand(quint8 commandId, const QByteArray &, quint8)
-{
-    if (commandId != 0x01)
-        return;
-
-    m_value = "identify";
 }
 
 void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &, quint8)

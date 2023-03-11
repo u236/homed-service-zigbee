@@ -728,6 +728,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     if (m_debug)
         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':')) << "and transaction id" << transactionId;
 
+    if (clusterId == CLUSTER_IDENTIFY)
+        return;
+
     if (clusterId == CLUSTER_GROUPS)
     {
         switch (commandId)

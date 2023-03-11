@@ -260,7 +260,7 @@
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
       "modelNames":     ["TRADFRI on/off switch"],
-      "properties":     ["batteryPercentage", "identifyAction", "switchAction", "levelAction"],
+      "properties":     ["batteryPercentage", "switchAction", "levelAction"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
@@ -629,7 +629,7 @@
     {
       "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
       "modelNames":     ["lumi.sen_ill.mgl01"],
-      "properties":     ["batteryVoltage", "identifyAction", "illuminance", "lumiData"],
+      "properties":     ["batteryVoltage", "illuminance", "lumiData"],
       "bindings":       ["battery", "illuminance"],
       "reportings":     ["batteryVoltage", "illuminance"],
       "exposes":        ["battery", "illuminance"]
@@ -651,7 +651,7 @@
     {
       "description":    "Aqara Opple 2-Key Wireless Switch WXCJKG11LM",
       "modelNames":     ["lumi.remote.b286opcn01"],
-      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "lumiData"],
+      "properties":     ["batteryVoltage", "switchAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status"],
       "exposes":        ["battery", "operationMode"],
@@ -668,7 +668,7 @@
     {
       "description":    "Aqara Opple 4-Key Wireless Switch WXCJKG12LM",
       "modelNames":     ["lumi.remote.b486opcn01"],
-      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "properties":     ["batteryVoltage", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "exposes":        ["battery", "operationMode"],
@@ -685,7 +685,7 @@
     {
       "description":    "Aqara Opple 6-Key Wireless Switch WXCJKG13LM",
       "modelNames":     ["lumi.remote.b686opcn01"],
-      "properties":     ["batteryVoltage", "identifyAction", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "properties":     ["batteryVoltage", "switchAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "exposes":        ["battery", "operationMode"],
