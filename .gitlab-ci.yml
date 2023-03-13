@@ -95,6 +95,13 @@ Build Linux Binary (armhf):
     QT_BUILD: qt-arm-linux-gnueabihf-5.15.4-static
     COMPILER: gcc-arm-linux-gnueabihf-8.3.0-linaro
 
+Build OpenWRT Binary (aarch64_generic):
+  extends: .build
+  variables:
+    ARCHITECTURE: aarch64_generic
+    QT_BUILD: qt-aarch64_generic-openwrt-linux-5.15.4-static
+    COMPILER: gcc-aarch64_generic-openwrt-linux-11.2.0-musl
+
 Build OpenWRT Binary (arm_cortex-a7_neon-vfpv4):
   extends: .build
   variables:
@@ -153,6 +160,11 @@ Deploy APT Package (amd64):
   extends: .deploy_apt
   variables:
     ARCHITECTURE: amd64
+
+Deploy OpenWRT Package (aarch64_generic):
+  extends: .deploy_ipk
+  variables:
+    ARCHITECTURE: aarch64_generic
 
 Deploy OpenWRT Package (arm_cortex-a7_neon-vfpv4):
   extends: .deploy_ipk
