@@ -1105,7 +1105,8 @@
       "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
       "properties":     ["tuyaPresenceSensor"],
       "actions":        ["tuyaPresenceSensor"],
-      "exposes":        ["occupancy"]
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
+      "options":        {"sensitivity": {"min": 0, "max": 9}, "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"}, "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"}, "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec"}, "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec"}}
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor with Fall Detector",
