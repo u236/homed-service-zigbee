@@ -169,9 +169,10 @@ void Controller::mqttConnected(void)
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
+    QString subTopic = topic.name().replace(mqttTopic(), QString());
     QJsonObject json = QJsonDocument::fromJson(message).object();
 
-    if (topic.name() == mqttTopic("config/zigbee") && json.contains("devices"))
+    if (subTopic == "config/zigbee" && json.contains("devices"))
     {
         QJsonArray array = json.value("devices").toArray();
 
@@ -185,7 +186,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->setDeviceName(item.value("ieeeAddress").toString(), item.value("deviceName").toString());
         }
     }
-    else if (topic.name() == mqttTopic("command/zigbee") && json.contains("action"))
+    else if (subTopic == "command/zigbee" && json.contains("action"))
     {
         Command command = static_cast <Command> (m_commands.keyToValue(json.value("action").toString().toUtf8().constData()));
 
@@ -247,18 +248,18 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 break;
         }
     }
-    else if (topic.name().startsWith(mqttTopic("td/zigbee/")))
+    else if (subTopic.startsWith("td/zigbee/"))
     {
-        QList <QString> list = topic.name().split('/');
+        QList <QString> list = subTopic.split('/');
 
-        if (list.value(3) != "group")
+        if (list.value(2) != "group")
         {
             for (auto it = json.begin(); it != json.end(); it++)
             {
                 if (!it.value().toVariant().isValid())
                     continue;
 
-                m_zigbee->deviceAction(list.value(3), static_cast <quint8> (list.value(4).toInt()), it.key(), it.value().toVariant());
+                m_zigbee->deviceAction(list.value(2), static_cast <quint8> (list.value(3).toInt()), it.key(), it.value().toVariant());
             }
         }
         else
@@ -268,7 +269,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 if (!it.value().toVariant().isValid())
                     continue;
 
-                m_zigbee->groupAction(static_cast <quint16> (list.value(4).toInt()), it.key(), it.value().toVariant());
+                m_zigbee->groupAction(static_cast <quint16> (list.value(3).toInt()), it.key(), it.value().toVariant());
             }
         }
     }
