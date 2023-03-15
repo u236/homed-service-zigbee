@@ -44,7 +44,7 @@ private:
 
     QMetaEnum m_commands;
 
-    bool m_names, m_homeassistant;
+    bool m_homeassistant;
     QString m_homeassistantPrefix, m_homeassistantStatus;
 
     void publishExposes(const Device &device, bool remove = false);

@@ -4,7 +4,7 @@
 #include "device.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false), m_sync(false)
+DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
 {
     PropertyObject::registerMetaTypes();
     ActionObject::registerMetaTypes();
@@ -890,7 +890,7 @@ bool DeviceList::writeFile(QFile &file, const QByteArray &data, bool sync)
 
 void DeviceList::writeDatabase(void)
 {
-    QJsonObject json = {{"devices", serializeDevices()}, {"permitJoin", m_permitJoin}, {"version", SERVICE_VERSION}};
+    QJsonObject json = {{"devices", serializeDevices()}, {"names", m_names}, {"permitJoin", m_permitJoin}, {"version", SERVICE_VERSION}};
 
     m_databaseTimer->start(STORE_DATABASE_INTERVAL);
     emit statusUpdated(json);
