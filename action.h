@@ -47,6 +47,8 @@ protected:
     QObject *m_parent;
     quint8 m_transactionId;
 
+    QString deviceManufacturerName(void);
+
     QVariant endpointOption(const QString &name);
     Property endpointProperty(const QString &name);
 

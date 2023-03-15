@@ -1020,10 +1020,10 @@
     },
     {
       "description":    "TUYA TS0601 Electricity Meter",
-      "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE200_lsanae15"],
+      "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_byzdayie", "_TZE200_eaac7dkw", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01", "_TZE200_lsanae15"],
       "properties":     ["tuyaElectricityMeter"],
       "actions":        ["tuyaElectricityMeter"],
-      "exposes":        ["energy", "voltage", "current", "power"]
+      "exposes":        ["switch", "energy", "voltage", "current", "power"]
     },
     {
       "description":    "TUYA TS0601 Curtain Motor",

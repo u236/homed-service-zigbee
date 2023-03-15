@@ -48,6 +48,12 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
 
+QString ActionObject::deviceManufacturerName(void)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->manufacturerName() : QString();
+}
+
 QVariant ActionObject::endpointOption(const QString &name)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
@@ -514,8 +520,9 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
 
 QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVariant &data)
 {
+    QList <QString> list = {"_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"};
     quint8 value = data.toString() == "on" ? 0x01 : 0x00;
-    return makeRequest(m_transactionId++, 0x10, TUYA_TYPE_BOOL, &value);
+    return makeRequest(m_transactionId++, list.contains(deviceManufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
 }
 
 QByteArray ActionsTUYA::Cover::request(const QString &name, const QVariant &data)

@@ -1187,9 +1187,21 @@ void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
 
 void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &data)
 {
+    QList <QString> list = {"_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"};
     QMap <QString, QVariant> map = m_value.toMap();
 
-    if (deviceManufacturerName() == "_TZE200_lsanae15")
+    if (list.contains(deviceManufacturerName()))
+    {
+        switch (dataPoint)
+        {
+            case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
+            case 0x11: map.insert("energy", data.toInt() / 100.0); break;
+            case 0x12: map.insert("current", data.toInt() / 1000.0 + endpointOption("currentOffset").toDouble()); break;
+            case 0x13: map.insert("power", data.toInt() / 10.0 + endpointOption("powerOffset").toDouble()); break;
+            case 0x14: map.insert("voltage", data.toInt() / 10.0 + endpointOption("voltageOffset").toDouble()); break;
+        }
+    }
+    else if (deviceManufacturerName() == "_TZE200_lsanae15")
     {
         switch (dataPoint)
         {
