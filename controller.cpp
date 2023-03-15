@@ -9,7 +9,6 @@ Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(ge
 
     logInfo << "Starting version" << SERVICE_VERSION;
 
-    m_names = getConfig()->value("mqtt/names", false).toBool();
     m_homeassistant = getConfig()->value("homeassistant/enabled", false).toBool();
     m_homeassistantPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
     m_homeassistantStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
@@ -20,6 +19,8 @@ Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(ge
     connect(m_zigbee, &ZigBee::statusUpdated, this, &Controller::statusUpdated);
 
     m_timer->start(UPDATE_AVAILABILITY_INTERVAL);
+
+    m_zigbee->devices()->setNames(getConfig()->value("mqtt/names", false).toBool());
     m_zigbee->init();
 }
 
@@ -36,7 +37,7 @@ void Controller::publishExposes(const Device &device, bool remove)
 
             if (m_homeassistant && expose->homeassistant())
             {
-                QString id = expose->multiple() ? QString::number(it.key()) : QString(), name = endpointName.value(id).toString(), topic = m_names ? device->name() : device->ieeeAddress().toHex(':');
+                QString id = expose->multiple() ? QString::number(it.key()) : QString(), name = endpointName.value(id).toString(), topic = m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':');
                 QList <QString> object = {expose->name()};
                 QJsonObject json, identity;
                 QJsonArray availability;
@@ -58,7 +59,7 @@ void Controller::publishExposes(const Device &device, bool remove)
                     identity.insert("model", device->description());
                     identity.insert("name", device->name());
 
-                    availability.append(QJsonObject {{"topic", mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':'))}, {"value_template", "{{ value_json.status }}"}});
+                    availability.append(QJsonObject {{"topic", mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':'))}, {"value_template", "{{ value_json.status }}"}});
                     availability.append(QJsonObject {{"topic", mqttTopic("service/zigbee")}, {"value_template", "{{ value_json.status }}"}});
 
                     json.insert("availability", availability);
@@ -131,7 +132,7 @@ void Controller::publishExposes(const Device &device, bool remove)
         }
     }
 
-    mqttPublish(mqttTopic("expose/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(data), true);
+    mqttPublish(mqttTopic("expose/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(data), true);
 }
 
 void Controller::publishProperties(void)
@@ -301,7 +302,7 @@ void Controller::updateAvailability(void)
         if (it.value()->availability() == check)
             continue;
 
-        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"status", it.value()->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
+        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"status", it.value()->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
     }
 }
 
@@ -312,14 +313,14 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
         case ZigBee::Event::deviceLeft:
         case ZigBee::Event::deviceRemoved:
         case ZigBee::Event::deviceAboutToRename:
-            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
+            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
             publishExposes(device, true);
             break;
 
         case ZigBee::Event::deviceUpdated:
 
             if (device->availability() != AvailabilityStatus::Unknown)
-                mqttPublish(mqttTopic("device/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
+                mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
 
             publishExposes(device);
             break;
@@ -365,10 +366,10 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
     }
 
     if (!endpointMap.isEmpty())
-        mqttPublish(mqttTopic("fd/zigbee/%1/%2").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')).arg(endpointId), QJsonObject::fromVariantMap(endpointMap), retain);
+        mqttPublish(mqttTopic("fd/zigbee/%1/%2").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')).arg(endpointId), QJsonObject::fromVariantMap(endpointMap), retain);
 
     deviceMap.insert("linkQuality", device->linkQuality());
-    mqttPublish(mqttTopic("fd/zigbee/%1").arg(m_names ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(deviceMap), retain);
+    mqttPublish(mqttTopic("fd/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(deviceMap), retain);
 }
 
 void Controller::statusUpdated(const QJsonObject &json)

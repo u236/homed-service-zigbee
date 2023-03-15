@@ -210,6 +210,9 @@ public:
     DeviceList(QSettings *config, QObject *parent);
     ~DeviceList(void);
 
+    inline bool names(void) { return m_names; }
+    inline void setNames(bool value) { m_names = value; }
+
     inline bool permitJoin(void) { return m_permitJoin; }
     inline void setPermitJoin(bool value) { m_permitJoin = value; }
 
@@ -239,7 +242,7 @@ private:
 
     QFile m_libraryFile, m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_externalDir;
-    bool m_offsets, m_permitJoin, m_sync;
+    bool m_offsets, m_names, m_permitJoin, m_sync;
 
     QString m_adapterType, m_adapterVersion;
 
