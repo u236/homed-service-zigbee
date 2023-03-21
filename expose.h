@@ -132,7 +132,7 @@ class ThermostatObject : public ExposeObject
 
 public:
 
-    ThermostatObject(void) : ExposeObject("thremostat", "climate") {}
+    ThermostatObject(void) : ExposeObject("thermostat", "climate") {}
     QJsonObject reqest(void) override;
 
 };
