@@ -515,15 +515,17 @@ void ZStack::parseData(QByteArray &buffer)
 {
     while (!buffer.isEmpty())
     {
-        quint8 length = static_cast <quint8> (buffer.at(1)), fcs = 0;
+        quint8 length, fcs = 0;
 
-        if (buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG))
+        if (buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG) || buffer.length() < 5)
         {
             buffer.clear();
             break;
         }
 
-        if (buffer.length() < 5 || buffer.length() < length + 5)
+        length = static_cast <quint8> (buffer.at(1));
+
+        if (buffer.length() < length + 5)
             break;
 
         if (m_portDebug)
