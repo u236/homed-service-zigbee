@@ -320,7 +320,7 @@ void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0 + endpointOption("humidityOffset").toDouble();
+    m_value = qFromLittleEndian(value) / (deviceManufacturerName() != "_TZ3000_ywagc4rj" ? 100.0 : 10.0) + endpointOption("humidityOffset").toDouble();
 }
 
 void Properties::Occupancy::parseAttribte(quint16 attributeId, const QByteArray &data)

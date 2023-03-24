@@ -1140,7 +1140,7 @@
     },
     {
       "description":    "TUYA TS0207 Water Leak Sensor",
-      "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_qhozxs2b", "_TZ3000_upgcbody"],
+      "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_kyb656no", "_TZ3000_qhozxs2b", "_TZ3000_upgcbody"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -1148,7 +1148,7 @@
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor",
-      "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y"],
+      "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y", "_TZ3000_ywagc4rj"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"]
     },

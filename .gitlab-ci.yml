@@ -35,7 +35,7 @@
   - "chmod +x deploy/data/DEBIAN/prerm"
   - "fakeroot dpkg-deb --build deploy/data"
   - "mv deploy/data.deb ${PACKAGE_FILE}"
-  - "reprepro -b /var/lib/apt -C main includedeb debian ${PACKAGE_FILE}"
+  - "reprepro -b /var/www/apt.homed.dev -C main includedeb debian ${PACKAGE_FILE}"
   artifacts:
     paths:
     - ${PACKAGE_FILE}
@@ -49,6 +49,7 @@
   stage: deploy
   variables:
     PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.ipk
+    FEED_DIR: /var/www/opkg.homed.dev/${ARCHITECTURE}
   script:
   - "mkdir -p deploy/data/etc/init.d"
   - "mkdir -p deploy/data/opt/homed-zigbee"
@@ -64,6 +65,12 @@
   - "fakeroot tar -czf control.tar.gz -C deploy/openwrt ."
   - "fakeroot tar -czf data.tar.gz -C deploy/data ."
   - "fakeroot tar -czf ${PACKAGE_FILE} control.tar.gz data.tar.gz debian-binary"
+  - "mkdir -p ${FEED_DIR}"
+  - "rm -f ${FEED_DIR}/homed-zigbee*"
+  - "cp ${PACKAGE_FILE} ${FEED_DIR}"
+  - "/opt/scripts/opkgIndex.sh ${FEED_DIR} > ${FEED_DIR}/Packages"
+  - "/opt/opkg/usign -S -m ${FEED_DIR}/Packages -s /opt/opkg/opkg.key -x ${FEED_DIR}/Packages.sig"
+  - "gzip -fk ${FEED_DIR}/Packages"
   artifacts:
     paths:
     - ${PACKAGE_FILE}
