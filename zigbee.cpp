@@ -510,6 +510,11 @@ void ZigBee::interviewFinished(const Device &device)
     if (!device->description().isEmpty())
         logInfo << "Device" << device->name() << "identified as" << device->description();
 
+    if (device->options().value("tuyaMagic").toBool())
+        enqueueDataRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
+
+    // TODO: add IKEA buttons binding here
+
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->bindings().count(); i++)

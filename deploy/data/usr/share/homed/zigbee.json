@@ -907,8 +907,8 @@
       "modelNames":     ["TS0002", "TS0012"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
+      "options":        {"tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -924,8 +924,8 @@
       "modelNames":     ["TS0003", "TS0013"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
+      "options":        {"tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -941,8 +941,8 @@
       "modelNames":     ["TS0004", "TS0014"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
+      "options":        {"tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -958,8 +958,8 @@
       "modelNames":     ["TS0006"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "polls":          ["tuyaMagic"],
       "exposes":        ["powerOnStatus"],
+      "options":        {"tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -983,10 +983,13 @@
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
       "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
+      "options":        {"tuyaMagic": true}
+    },
+    {
+      "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
-      "polls":          ["tuyaMagic"],
       "exposes":        ["switch"],
       "endpointId":     [1, 2, 3, 4, 5]
     },
@@ -1014,9 +1017,8 @@
       "modelNames":     ["_TZE200_1agwnems", "_TZE200_579lguh2", "_TZE200_ip2akl4w", "_TZE200_la2c2uo9", "_TZE200_vucankjx"],
       "properties":     ["tuyaLightDimmer"],
       "actions":        ["tuyaLightDimmer"],
-      "polls":          ["tuyaMagic"],
       "exposes":        ["light"],
-      "options":        {"light": ["level"]}
+      "options":        {"light": ["level"], "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0601 Electricity Meter",
@@ -1215,7 +1217,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": ["command", "event"], "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}
+      "options":        {"operationMode": ["command", "event"], "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"], "tuyaMagic": true}
     }
   ]
 }

@@ -128,15 +128,6 @@ namespace PollsOther
 
     };
 
-    class TuyaMagic : public PollObject
-    {
-
-    public:
-
-        TuyaMagic(void) : PollObject("tuyaMagic", CLUSTER_BASIC, {0x0000, 0x0001, 0x0004, 0x0005, 0x0007, 0xFFFE}) {}
-
-    };
-
     class PerenioSmartPlug : public PollObject
     {
 
