@@ -513,7 +513,11 @@ void ZigBee::interviewFinished(const Device &device)
     if (device->options().value("tuyaMagic").toBool())
         enqueueDataRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
 
-    // TODO: add IKEA buttons binding here
+    if (device->manufacturerName() == "IKEA of Sweden" && device->batteryPowered())
+    {
+        quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
+        enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF);
+    }
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {

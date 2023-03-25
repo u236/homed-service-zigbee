@@ -320,17 +320,30 @@ bool ZiGate::startCoordinator(bool clear)
         return false;
     }
 
-    // TODO: check ZIGATE_START_NETWORK reply here
-
     if (clear && sendRequest(ZIGATE_GET_NETWORK_STATUS) && !m_replyStatus)
     {
         memcpy(&networkStatus, m_replyData.constData(), sizeof(networkStatus));
         logInfo << "New network started";
     }
 
+    for (int i = 0; i < m_multicast.length(); i++)
+    {
+        addGroupStruct request;
+
+        request.addressMode = ADDRESS_MODE_16_BIT;
+        request.address = 0x0000;
+        request.srcEndpointId = 0x01;
+        request.dstEndpointId = 0x01;
+        request.groupId = qToBigEndian(m_multicast.at(i));
+
+        if (sendRequest(ZIGATE_ADD_GROUP, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || !m_replyStatus)
+            continue;
+
+        logWarning << "Add group" << QString::asprintf("0x%04x", m_multicast.at(i)) << "request failed";
+    }
+
     logInfo << "ZiGate managed PAN ID:" << QString::asprintf("0x%04x", qFromBigEndian(networkStatus.panId));
     emit coordinatorReady();
-
     return true;
 }
 

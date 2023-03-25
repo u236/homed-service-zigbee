@@ -23,6 +23,7 @@
 #define ZIGATE_LEAVE_REQUEST                0x0047
 #define ZIGATE_LQI_REQUEST                  0x004E
 #define ZIGATE_SET_PERMIT_JOIN              0x0049
+#define ZIGATE_ADD_GROUP                    0x0060
 #define ZIGATE_APS_REQUEST                  0x0530
 
 #define ZIGATE_STATUS                       0x8000
@@ -77,6 +78,15 @@ struct dataAckStruct
     quint8  endpointId;
     quint16 clusterId;
     quint8  sequence;
+};
+
+struct addGroupStruct
+{
+    quint8  addressMode;
+    quint16 address;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 groupId;
 };
 
 struct apsRequestStruct

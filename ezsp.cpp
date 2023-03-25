@@ -666,6 +666,20 @@ bool EZSP::startCoordinator(void)
         }
     }
 
+    for (int i = 0; i < m_multicast.length(); i++)
+    {
+        setMulticastStruct request;
+
+        request.groupId = qToLittleEndian(m_multicast.at(i));
+        request.endpointId = 0x01;
+        request.index = 0x00;
+
+        if (sendFrame(FRAME_SET_MULTICAST_TABLE_ENTRY, QByteArray(1, static_cast <char> (i)).append(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+            continue;
+
+        logWarning << "Add group" << QString::asprintf("0x%04x", m_multicast.at(i)) << "request failed";
+    }
+
     ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 

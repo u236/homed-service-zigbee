@@ -4,6 +4,9 @@
 #define SOCKET_RECONNECT_INTERVAL       5000
 #define DEVICE_RECEIVE_TIMEOUT          20
 
+#define DEFAULT_GROUP                   0x0000
+#define IKEA_GROUP                      0x0385
+
 #define ADAPTER_RESET_DELAY             100
 #define ADAPTER_RESET_TIMEOUT           10000
 
@@ -201,8 +204,9 @@ protected:
 
     bool m_permitJoin;
 
-    QQueue <QByteArray> m_queue;
     QMap <quint8, EndpointData> m_endpoints;
+    QList <quint16> m_multicast;
+    QQueue <QByteArray> m_queue;
 
     void reset(void);
     void sendData(const QByteArray &buffer);

@@ -63,6 +63,9 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
     m_endpoints.value(0x01)->outClusters() = {CLUSTER_BASIC, CLUSTER_GROUPS, CLUSTER_SCENES, CLUSTER_ON_OFF, CLUSTER_LEVEL_CONTROL, CLUSTER_POLL_CONTROL, CLUSTER_COLOR_CONTROL, CLUSTER_ILLUMINANCE_MEASUREMENT, CLUSTER_TEMPERATURE_MEASUREMENT, CLUSTER_PRESSURE_MEASUREMENT, CLUSTER_RELATIVE_HUMIDITY, CLUSTER_OCCUPANCY_SENSING, CLUSTER_SOIL_MOISTURE, CLUSTER_IAS_ZONE, CLUSTER_SMART_ENERGY_METERING, CLUSTER_ELECTRICAL_MEASUREMENT, CLUSTER_TOUCHLINK};
     m_endpoints.value(0xF2)->outClusters() = {CLUSTER_GREEN_POWER};
 
+    m_multicast.append(DEFAULT_GROUP);
+    m_multicast.append(IKEA_GROUP);
+
     connect(m_device, &QIODevice::readyRead, this, &Adapter::startTimer);
     connect(m_receiveTimer, &QTimer::timeout, this, &Adapter::readyRead);
     connect(m_resetTimer, &QTimer::timeout, this, &Adapter::resetTimeout);
