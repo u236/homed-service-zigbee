@@ -186,7 +186,7 @@ void ZiGate::parsePacket(quint16 command, const QByteArray &payload)
             quint8 offset = static_cast <quint8> (sizeof(dataIndicatonStruct));
             quint16 networkAddress;
 
-            if (payload.at(offset) != ADDRESS_MODE_16_BIT || payload.at(offset + 3) != ADDRESS_MODE_16_BIT)
+            if (payload.at(offset) != ADDRESS_MODE_16_BIT || (payload.at(offset + 3) != ADDRESS_MODE_GROUP && payload.at(offset + 3) != ADDRESS_MODE_16_BIT))
             {
                 logWarning << "Unsupported address mode in incoming message:" << payload.toHex(':');
                 break;
