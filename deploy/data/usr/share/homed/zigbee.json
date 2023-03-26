@@ -1013,6 +1013,14 @@
       "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
+      "description":    "TUYA TS0501 Dimmable Bulb or Light Dimmer",
+      "modelNames":     ["TS0501A", "TS0501B"],
+      "properties":     ["status", "level"],
+      "actions":        ["status", "level"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level"]}
+    },
+    {
       "description":    "TUYA TS0601 1-Channel Light Dimmer",
       "modelNames":     ["_TZE200_1agwnems", "_TZE200_579lguh2", "_TZE200_ip2akl4w", "_TZE200_la2c2uo9", "_TZE200_vucankjx"],
       "properties":     ["tuyaLightDimmer"],
