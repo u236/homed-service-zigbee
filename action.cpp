@@ -458,7 +458,7 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
             quint32 value = static_cast <quint32> (data.toInt() * 1000.0 / 0xFE);
 
             if (value > 1000)
-                return QByteArray();
+                value = 1000;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
@@ -469,7 +469,7 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
             quint32 value = static_cast <quint32> (data.toInt() * 1000.0 / 0xFE);
 
             if (value > 1000)
-                return QByteArray();
+                value = 1000;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x03, TUYA_TYPE_VALUE, &value);
@@ -491,7 +491,7 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
             quint32 value = static_cast <quint32> (data.toInt() * 1000.0 / 0xFE);
 
             if (value > 1000)
-                return QByteArray();
+                value = 1000;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_VALUE, &value);
@@ -532,7 +532,7 @@ QByteArray ActionsTUYA::Cover::request(const QString &name, const QVariant &data
             quint32 value = static_cast <quint32> (data.toInt());
 
             if (value > 100)
-                return QByteArray();
+                value = 100;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
@@ -549,7 +549,7 @@ QByteArray ActionsTUYA::Cover::request(const QString &name, const QVariant &data
             quint32 value = static_cast <quint32> (data.toInt());
 
             if (value > 255)
-                return QByteArray();
+                value = 255;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
@@ -764,7 +764,7 @@ QByteArray ActionsTUYA::NeoSiren::request(const QString &name, const QVariant &d
             quint32 value = static_cast <quint32> (data.toInt());
 
             if (value > 1800)
-                return QByteArray();
+                value = 1800;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x07, TUYA_TYPE_VALUE, &value);
@@ -810,7 +810,7 @@ QByteArray ActionsTUYA::WaterValve::request(const QString &name, const QVariant 
             quint32 value = static_cast <quint32> (data.toInt() * 60);
 
             if (value > 36000)
-                return QByteArray();
+                value = 36000;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x09, TUYA_TYPE_VALUE, &value);
@@ -821,7 +821,7 @@ QByteArray ActionsTUYA::WaterValve::request(const QString &name, const QVariant 
             quint32 value = static_cast <quint32> (data.toInt());
 
             if (value > 100)
-                return QByteArray();
+                value = 100;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_VALUE, &value);
@@ -840,7 +840,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
             quint32 value = static_cast <quint32> (data.toInt());
 
             if (value > 9)
-                break;
+                value = 9;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
@@ -851,7 +851,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
             quint32 value = static_cast <quint32> (data.toDouble() * 100);
 
             if (value > 950)
-                return QByteArray();
+                value = 950;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x03, TUYA_TYPE_VALUE, &value);
@@ -862,7 +862,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
             quint32 value = static_cast <quint32> (data.toDouble() * 100);
 
             if (value > 950)
-                return QByteArray();
+                value = 950;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x04, TUYA_TYPE_VALUE, &value);
@@ -873,7 +873,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
             quint32 value = static_cast <quint32> (data.toDouble() * 10);
 
             if (value > 100)
-                return QByteArray();
+                value = 100;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_VALUE, &value);
@@ -884,7 +884,7 @@ QByteArray ActionsTUYA::PresenceSensor::request(const QString &name, const QVari
             quint32 value = static_cast <quint32> (data.toInt() * 10);
 
             if (value > 15000)
-                return QByteArray();
+                value = 15000;
 
             value = qToBigEndian(value );
             return makeRequest(m_transactionId++, 0x66, TUYA_TYPE_VALUE, &value);
@@ -903,7 +903,7 @@ QByteArray ActionsTUYA::RadarSensor::request(const QString &name, const QVariant
             quint32 value = static_cast <quint32> (data.toInt());
 
             if (value > 10)
-                return QByteArray();
+                value = 10;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
