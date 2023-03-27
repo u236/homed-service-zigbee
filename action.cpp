@@ -444,7 +444,12 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
     {
         case 0: // status
         {
-            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            QList <QString> list = {"off", "on"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
 
@@ -491,28 +496,6 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_VALUE, &value);
         }
-
-        case 5: // countdown
-        {
-            quint32 value = static_cast <quint32> (data.toInt());
-
-            if (value > 43200)
-                return QByteArray();
-
-            value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x06, TUYA_TYPE_VALUE, &value);
-        }
-
-        case 6: // powerOnStatus
-        {
-            QList <QString> list = {"off", "on", "previous"};
-            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-            if (value < 0)
-                return QByteArray();
-
-            return makeRequest(m_transactionId++, 0x0E, TUYA_TYPE_ENUM, &value);
-        }
     }
 
     return QByteArray();
@@ -520,9 +503,13 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
 
 QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"};
-    quint8 value = data.toString() == "on" ? 0x01 : 0x00;
-    return makeRequest(m_transactionId++, list.contains(deviceManufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
+    QList <QString> actionList = {"off", "on"}, modelList = {"_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"};
+    qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
+
+    if (value < 0)
+        value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+
+    return makeRequest(m_transactionId++, modelList.contains(deviceManufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
 }
 
 QByteArray ActionsTUYA::Cover::request(const QString &name, const QVariant &data)
@@ -580,7 +567,12 @@ QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, con
     {
         case 0: // status
         {
-            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            QList <QString> list = {"off", "on"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
 
@@ -804,7 +796,12 @@ QByteArray ActionsTUYA::WaterValve::request(const QString &name, const QVariant 
     {
         case 0: // status
         {
-            quint8 value = data.toString() == "on" ? 0x01 : 0x00;
+            QList <QString> list = {"off", "on"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
 

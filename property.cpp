@@ -1167,19 +1167,6 @@ void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
         }
 
         case 0x05: map.insert("levelMax", static_cast <quint8> (round(data.toInt() * 0xFE / 1000.0))); break;
-        case 0x06: map.insert("timeout", data.toInt()); break;
-
-        case 0x0E:
-        {
-            switch (data.toInt())
-            {
-                case 0: map.insert("powerOnStatus", "off"); break;
-                case 1: map.insert("powerOnStatus", "on"); break;
-                case 2: map.insert("powerOnStatus", "previous"); break;
-            }
-
-            break;
-        }
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

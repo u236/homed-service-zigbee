@@ -276,7 +276,7 @@ namespace ActionsTUYA
 
     public:
 
-        LightDimmer(void) : ActionObject("lightDimmer", CLUSTER_TUYA_DATA, 0x0000, {"status", "level", "levelMin", "lightType", "levelMax", "countdown", "powerOnStatus"}) {}
+        LightDimmer(void) : ActionObject("lightDimmer", CLUSTER_TUYA_DATA, 0x0000, {"status", "level", "levelMin", "lightType", "levelMax"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
