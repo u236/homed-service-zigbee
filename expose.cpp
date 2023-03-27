@@ -185,9 +185,13 @@ QJsonObject LightObject::reqest(void)
 
 QJsonObject SwitchObject::reqest(void)
 {
+    QString option = endpointOption().toString();
     QJsonObject json;
 
-    json.insert("device_class",                     endpointOption().toString() == "outlet" ? "outlet" : "switch");
+    if (option == "valve")
+        json.insert("icon",                         "mdi:pipe-valve");
+
+    json.insert("device_class",                     option == "outlet" ? "outlet" : "switch");
 
     json.insert("value_template",                   "{{ value_json.status }}");
     json.insert("state_on",                         "on");
@@ -203,9 +207,10 @@ QJsonObject SwitchObject::reqest(void)
 
 QJsonObject CoverObject::reqest(void)
 {
+    QString option = endpointOption().toString();
     QJsonObject json;
 
-    json.insert("device_class",                     endpointOption().toString() == "blind" ? "blind" : "curtain");
+    json.insert("device_class",                     option == "blind" ? "blind" : "curtain");
 
     json.insert("value_template",                   "{{ value_json.cover }}");
     json.insert("state_open",                       "open");
