@@ -1,17 +1,16 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
-#define SOCKET_RECONNECT_INTERVAL       5000
-#define DEVICE_RECEIVE_TIMEOUT          20
+#define RECEIVE_TIMEOUT                 20
 
-#define DEFAULT_GROUP                   0x0000
-#define IKEA_GROUP                      0x0385
-
-#define ADAPTER_RESET_DELAY             100
-#define ADAPTER_RESET_TIMEOUT           10000
+#define RESET_TIMEOUT                   10000
+#define RESET_DELAY                     100
 
 #define PERMIT_JOIN_TIMEOUT             60000
 #define NETWORK_REQUEST_TIMEOUT         10000
+
+#define DEFAULT_GROUP                   0x0000
+#define IKEA_GROUP                      0x0385
 
 #define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
 #define PROFILE_HA                      0x0104 // Home Automation
@@ -188,7 +187,7 @@ protected:
     QTcpSocket *m_socket;
     QIODevice *m_device;
 
-    QTimer *m_socketTimer, *m_receiveTimer, *m_resetTimer, *m_permitJoinTimer;
+    QTimer *m_receiveTimer, *m_resetTimer, *m_permitJoinTimer;
 
     QHostAddress m_adddress;
     quint16 m_port;
@@ -222,9 +221,9 @@ private slots:
 
     virtual void handleQueue(void) = 0;
 
-    void socketConnected(void);
+    void serialError(QSerialPort::SerialPortError error);
     void socketError(QTcpSocket::SocketError error);
-    void socketReconnect(void);
+    void socketConnected(void);
 
     void startTimer(void);
     void readyRead(void);

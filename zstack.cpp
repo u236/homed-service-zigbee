@@ -507,7 +507,7 @@ bool ZStack::startCoordinator(void)
 void ZStack::softReset(void)
 {
     sendData(QByteArray(1, ZSTACK_SKIP_BOOTLOADER));
-    QThread::msleep(ADAPTER_RESET_DELAY);
+    QThread::msleep(RESET_DELAY);
     sendRequest(SYS_RESET_REQ, QByteArray(1, 0x01));
 }
 

@@ -7,7 +7,7 @@
 #include "logger.h"
 #include "zcl.h"
 
-Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_socketTimer(new QTimer(this)), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_connected(false), m_permitJoin(false)
+Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_connected(false), m_permitJoin(false)
 {
     QString portName = config->value("zigbee/port", "/dev/ttyUSB0").toString();
 
@@ -27,6 +27,8 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
 
         GPIO::direction(m_bootPin, GPIO::Output);
         GPIO::direction(m_resetPin, GPIO::Output);
+
+        connect(m_serial, &QSerialPort::errorOccurred, this, &Adapter::serialError);
     }
     else
     {
@@ -36,11 +38,8 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_serial
         m_adddress = QHostAddress(list.value(0));
         m_port = static_cast <quint16> (list.value(1).toInt());
 
-        connect(m_socket, &QTcpSocket::connected, this, &Adapter::socketConnected);
         connect(m_socket, &QTcpSocket::errorOccurred, this, &Adapter::socketError);
-        connect(m_socketTimer, &QTimer::timeout, this, &Adapter::socketReconnect);
-
-        m_socketTimer->setSingleShot(true);
+        connect(m_socket, &QTcpSocket::connected, this, &Adapter::socketConnected);
     }
 
     m_panId = static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16));
@@ -85,28 +84,28 @@ void Adapter::init(void)
 {
     if (m_device == m_serial)
     {
-        m_serial->close();
+        if (m_serial->isOpen())
+            m_serial->close();
 
-        if (!m_serial->open(QIODevice::ReadWrite))
+        if (m_serial->open(QIODevice::ReadWrite))
         {
-            logWarning << "Can't open port" << m_serial->portName();
+            logInfo << "Port" << m_serial->portName() << "opened successfully";
+            reset();
+        }
+    }
+    else
+    {
+        if (m_adddress.isNull() && !m_port)
+        {
+            logWarning << "Invalid connection address or port number";
             return;
         }
 
-        reset();
-        return;
+        if (m_connected)
+            m_socket->disconnectFromHost();
+
+        m_socket->connectToHost(m_adddress, m_port);
     }
-
-    if (m_adddress.isNull() && !m_port)
-    {
-        logWarning << "Invalid connection address or port number";
-        return;
-    }
-
-    if (m_connected)
-        m_socket->disconnectFromHost();
-
-    m_socket->connectToHost(m_adddress, m_port);
 }
 
 void Adapter::setPermitJoin(bool enabled)
@@ -174,7 +173,7 @@ void Adapter::reset(void)
     QList <QString> list = {"gpio", "flow"};
 
     m_device->readAll();
-    m_resetTimer->start(ADAPTER_RESET_TIMEOUT);
+    m_resetTimer->start(RESET_TIMEOUT);
 
     logInfo << "Resetting adapter" << QString("(%1)").arg(list.contains(m_reset) ? m_reset : "soft").toUtf8().constData();
     emit adapterReset();
@@ -184,14 +183,14 @@ void Adapter::reset(void)
         case 0:
             GPIO::setStatus(m_bootPin, true);
             GPIO::setStatus(m_resetPin, false);
-            QThread::msleep(ADAPTER_RESET_DELAY);
+            QThread::msleep(RESET_DELAY);
             GPIO::setStatus(m_resetPin, true);
             break;
 
         case 1:
             m_serial->setDataTerminalReady(false);
             m_serial->setRequestToSend(true);
-            QThread::msleep(ADAPTER_RESET_DELAY);
+            QThread::msleep(RESET_DELAY);
             m_serial->setRequestToSend(false);
             break;
 
@@ -224,6 +223,22 @@ bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiome
     return timer.isActive();
 }
 
+void Adapter::serialError(QSerialPort::SerialPortError error)
+{
+    if (error == QSerialPort::SerialPortError::NoError)
+        return;
+
+    logWarning << "Serial port error:" << error;
+    m_resetTimer->start(RESET_TIMEOUT);
+}
+
+void Adapter::socketError(QTcpSocket::SocketError error)
+{
+    logWarning << "Connection error:" << error;
+    m_connected = false;
+    m_resetTimer->start(RESET_TIMEOUT);
+}
+
 void Adapter::socketConnected(void)
 {
     logInfo << "Successfully connected to" << m_adddress.toString();
@@ -231,21 +246,9 @@ void Adapter::socketConnected(void)
     reset();
 }
 
-void Adapter::socketError(QAbstractSocket::SocketError error)
-{
-    logWarning << "Connection error:" << error;
-    m_connected = false;
-    m_socketTimer->start(SOCKET_RECONNECT_INTERVAL);
-}
-
-void Adapter::socketReconnect(void)
-{
-    m_socket->connectToHost(m_adddress, m_port);
-}
-
 void Adapter::startTimer(void)
 {
-    m_receiveTimer->start(DEVICE_RECEIVE_TIMEOUT);
+    m_receiveTimer->start(RECEIVE_TIMEOUT);
 }
 
 void Adapter::readyRead(void)
@@ -261,7 +264,9 @@ void Adapter::readyRead(void)
 
 void Adapter::resetTimeout(void)
 {
-    logWarning << "Adapter reset timed out";
+    if (m_serial->isOpen() || m_connected)
+        logWarning << "Adapter reset timed out";
+
     init();
 }
 
