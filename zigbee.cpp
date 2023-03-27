@@ -693,7 +693,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         return;
     }
 
-    if (!device->interviewFinished() || device->options().value("ignoreClusters").toList().contains(clusterId))
+    if (!device->interviewFinished())
         return;
 
     for (int i = 0; i < endpoint->properties().count(); i++)
@@ -723,7 +723,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         emit endpointUpdated(device, endpoint->id());
     }
 
-    if (check)
+    if (!m_debug || check)
         return;
 
     logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
@@ -906,7 +906,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         return;
     }
 
-    if (!device->interviewFinished() || device->options().value("ignoreClusters").toList().contains(clusterId))
+    if (!device->interviewFinished())
         return;
 
     for (int i = 0; i < endpoint->properties().count(); i++)
@@ -936,7 +936,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         emit endpointUpdated(device, endpoint->id());
     }
 
-    if (check)
+    if (!m_debug || check)
         return;
 
     logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));

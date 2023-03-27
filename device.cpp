@@ -118,12 +118,6 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         return;
     }
 
-    if (manufacturerName == "Konke")
-    {
-        device->options().insert("ignoreClusters", QList <QVariant> {0xFCC0});
-        return;
-    }
-
     if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || manufacturerName.startsWith("TUYA"))
     {
         QList <QString> list = {"TS0001", "TS0011", "TS004F", "TS011F", "TS0201", "TS0202", "TS0207", "TS0501A", "TS0501B", "TS0601"};
@@ -131,7 +125,6 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         if (list.contains(modelName))
             modelName = manufacturerName;
 
-        device->options().insert("ignoreClusters", QList <QVariant> {CLUSTER_BASIC, CLUSTER_TUYA_UNKNOWN});
         manufacturerName = "TUYA";
     }
 }

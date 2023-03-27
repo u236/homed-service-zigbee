@@ -8,7 +8,7 @@
       "actions":        ["efektaReportingDelay", "efektaTemperatureOffset"],
       "bindings":       ["battery", "temperature", "moisture"],
       "exposes":        ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
-      "options":        {"ignoreClusters": [3], "reportingDelay": {"min": 1, "max": 180, "unit": "min"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}}
+      "options":        {"reportingDelay": {"min": 1, "max": 180, "unit": "min"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}}
     }
   ],
 
@@ -569,8 +569,7 @@
       "modelNames":     ["lumi.curtain"],
       "properties":     ["lumiCover"],
       "actions":        ["coverStatus", "lumiCoverPosition"],
-      "exposes":        ["cover"],
-      "options":        {"ignoreClusters": [258]}
+      "exposes":        ["cover"]
     },
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM or MCCGQ11LM",
@@ -799,8 +798,7 @@
       "description":    "ORVIBO Door and Window Sensor SM10ZW",
       "modelNames":     ["75a4bfe8ef9c4350830a25d13e3ab068", "c670e231d1374dbc9e3c6a9fffbd0ae6", "e70f96b3773a4c9283c6862dbafb6a99", "fdd76effa0e146b4bdafa0c203a37192"],
       "properties":     ["batteryPercentage", "iasContact"],
-      "exposes":        ["battery", "contact"],
-      "options":        {"ignoreClusters": [3]}
+      "exposes":        ["battery", "contact"]
     },
     {
       "description":    "ORVIBO Motion Sensor SN10ZW",

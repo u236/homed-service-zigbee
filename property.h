@@ -832,7 +832,7 @@ namespace PropertiesTUYA
 
     public:
 
-        SwitchType(void) : PropertyObject("switchMode", CLUSTER_TUYA_SWITCH_MODE) {}
+        SwitchType(void) : PropertyObject("switchType", CLUSTER_TUYA_SWITCH_MODE) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
