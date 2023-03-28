@@ -9,6 +9,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::PowerOnStatus>                  ("powerOnStatusAction");
     qRegisterMetaType <Actions::Level>                          ("levelAction");
     qRegisterMetaType <Actions::CoverStatus>                    ("coverStatusAction");
+    qRegisterMetaType <Actions::CoverPosition>                  ("coverPositionAction");
+    qRegisterMetaType <Actions::CoverTilt>                      ("coverTiltAction");
     qRegisterMetaType <Actions::ColorHS>                        ("colorHSAction");
     qRegisterMetaType <Actions::ColorXY>                        ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>               ("colorTemperatureAction");
@@ -28,7 +30,6 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsTUYA::LightDimmer>                ("tuyaLightDimmerAction");
     qRegisterMetaType <ActionsTUYA::ElectricityMeter>           ("tuyaElectricityMeterAction");
-    qRegisterMetaType <ActionsTUYA::Cover>                      ("tuyaCoverAction");
     qRegisterMetaType <ActionsTUYA::MoesElectricThermostat>     ("tuyaMoesElectricThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesRadiatorThermostat>     ("tuyaMoesRadiatorThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesThermostatProgram>      ("tuyaMoesThermostatProgramAction");
@@ -36,6 +37,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::WaterValve>                 ("tuyaWaterValveAction");
     qRegisterMetaType <ActionsTUYA::PresenceSensor>             ("tuyaPresenceSensorAction");
     qRegisterMetaType <ActionsTUYA::RadarSensor>                ("tuyaRadarSensorAction");
+    qRegisterMetaType <ActionsTUYA::CoverMotor>                 ("tuyaCoverMotorAction");
+    qRegisterMetaType <ActionsTUYA::CoverSwitch>                ("tuyaCoverSwitchAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::OperationMode>              ("tuyaOperationModeAction");
     qRegisterMetaType <ActionsTUYA::IndicatorMode>              ("tuyaIndicatorModeAction");
@@ -163,13 +166,39 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
 
 QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"open", "close", "stop"};
+    QList <QString> list = endpointOption("invertCover").toBool() ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};
     qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (command < 0)
         return QByteArray();
 
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
+}
+
+QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data)
+{
+    quint8 value = static_cast <qint8> (data.toInt());
+
+    if (value > 100)
+        value = 100;
+
+    if (endpointOption("invertCover").toBool())
+        value = 100 - value;
+
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(reinterpret_cast <char*> (&value), sizeof(value));
+}
+
+QByteArray Actions::CoverTilt::request(const QString &, const QVariant &data)
+{
+    quint8 value = static_cast <qint8> (data.toInt());
+
+    if (value > 100)
+        value = 100;
+
+    if (endpointOption("invertCover").toBool())
+        value = 100 - value;
+
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x08).append(reinterpret_cast <char*> (&value), sizeof(value));
 }
 
 QByteArray Actions::ColorHS::request(const QString &, const QVariant &data)
@@ -510,53 +539,6 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
         value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
 
     return makeRequest(m_transactionId++, modelList.contains(deviceManufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
-}
-
-QByteArray ActionsTUYA::Cover::request(const QString &name, const QVariant &data)
-{
-    switch (m_actions.indexOf(name))
-    {
-        case 0: // cover
-        {
-            QList <QString> list = {"open", "stop", "close"};
-            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-            if (value < 0)
-                return QByteArray();
-
-            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
-        }
-
-        case 1: // position
-        {
-            quint32 value = static_cast <quint32> (data.toInt());
-
-            if (value > 100)
-                value = 100;
-
-            value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
-        }
-
-        case 2: // reverse
-        {
-            quint8 value = data.toBool() ? 0x01 : 0x00;
-            return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_BOOL, &value);
-        }
-
-        case 3: // speed
-        {
-            quint32 value = static_cast <quint32> (data.toInt());
-
-            if (value > 255)
-                value = 255;
-
-            value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
-        }
-    }
-
-    return QByteArray();
 }
 
 QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, const QVariant &data)
@@ -950,6 +932,69 @@ QByteArray ActionsTUYA::RadarSensor::request(const QString &name, const QVariant
     }
 
     return QByteArray();
+}
+
+QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant &data)
+{
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // cover
+        {
+            QList <QString> list = endpointOption("invertCover").toBool() ? QList <QString> {"close", "stop", "open"} : QList <QString> {"open", "stop", "close"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 1: // position
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value > 100)
+                value = 100;
+
+            if (endpointOption("invertCover").toBool())
+                value = 100 -value;
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 2: // reverse
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 3: // speed
+        {
+            quint32 value = static_cast <quint32> (data.toInt());
+
+            if (value > 255)
+                value = 255;
+
+            value = qToBigEndian(value);
+            return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
+        }
+    }
+
+    return QByteArray();
+}
+
+QByteArray ActionsTUYA::CoverSwitch::request(const QString &name, const QVariant &data)
+{
+    qint8 value;
+
+    switch (m_actions.indexOf(name))
+    {
+        case 0: m_attributes = {0xF001}; value = data.toBool() ? 0x00 : 0x01; break; // calibration
+        case 1: m_attributes = {0xF002}; value = data.toBool() ? 0x01 : 0x00; break; // reverse
+    }
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data)

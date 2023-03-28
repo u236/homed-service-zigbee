@@ -693,19 +693,6 @@ namespace PropertiesTUYA
 
     };
 
-    class Cover : public Data
-    {
-
-    public:
-
-        Cover(void) : Data("cover") {}
-
-    private:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
     class MoesElectricThermostat : public Data
     {
 
@@ -794,6 +781,29 @@ namespace PropertiesTUYA
     private:
 
         void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
+    class CoverMotor : public Data
+    {
+
+    public:
+
+        CoverMotor(void) : Data("coverMotor") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
+    class CoverSwitch : public PropertyObject
+    {
+
+    public:
+
+        CoverSwitch(void) : PropertyObject("coverSwitch", CLUSTER_WINDOW_COVERING) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
 

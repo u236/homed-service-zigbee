@@ -1044,24 +1044,31 @@
       "exposes":        ["switch", "energy", "voltage", "current", "power"]
     },
     {
+      "description":    "TUYA TS130F Cover Switch",
+      "modelNames":     ["TS130F"],
+      "properties":     ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
+      "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
+      "exposes":        ["cover", "calibration", "reverse"]
+    },
+    {
       "description":    "TUYA TS0601 Curtain Motor",
       "modelNames":     ["_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_b2u1drdv", "_TZE200_cf1sl3tj", "_TZE200_fdtjuw7u", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_tvrvdj6o", "_TZE200_xaabybja", "_TZE200_xuzcvlku", "_TZE200_zpzndjez", "_TZE204_r0jdjrvi"],
-      "properties":     ["tuyaCover"],
-      "actions":        ["tuyaCover"],
+      "properties":     ["tuyaCoverMotor"],
+      "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"]
     },
     {
       "description":    "TUYA TS0601 Tubular Motor",
       "modelNames":     ["_TZE200_5sbebbzs", "_TZE200_udank5zs", "_TZE200_zuz7f94z", "_TZE200_68nvbio9", "_TZE200_3ylew7b4", "_TZE200_llm0epxg"],
-      "properties":     ["tuyaCover"],
-      "actions":        ["tuyaCover"],
+      "properties":     ["tuyaCoverMotor"],
+      "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"]
     },
     {
       "description":    "TUYA TS0601 Roller Blind",
       "modelNames":     ["_TZE200_fctwhugx", "_TZE200_zah67ekd", "_TZE200_hsgrhjpf", "_TZE200_pw7mji0l"],
-      "properties":     ["tuyaCover"],
-      "actions":        ["tuyaCover"],
+      "properties":     ["tuyaCoverMotor"],
+      "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"],
       "options":        {"cover": "blind"}
     },

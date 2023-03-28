@@ -96,6 +96,26 @@ namespace Actions
 
     };
 
+    class CoverPosition : public ActionObject
+    {
+
+    public:
+
+        CoverPosition(void) : ActionObject("position", CLUSTER_WINDOW_COVERING, 0x0000, 0x0008) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class CoverTilt : public ActionObject
+    {
+
+    public:
+
+        CoverTilt(void) : ActionObject("tilt", CLUSTER_WINDOW_COVERING, 0x0000, 0x0009) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class ColorHS : public ActionObject
     {
 
@@ -291,16 +311,6 @@ namespace ActionsTUYA
 
     };
 
-    class Cover : public Request, public ActionObject
-    {
-
-    public:
-
-        Cover(void) : ActionObject("cover", CLUSTER_TUYA_DATA, 0x0000, {"cover", "position", "reverse", "speed"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class MoesElectricThermostat : public Request, public ActionObject
     {
 
@@ -374,6 +384,26 @@ namespace ActionsTUYA
 
     };
 
+    class CoverMotor : public Request, public ActionObject
+    {
+
+    public:
+
+        CoverMotor(void) : ActionObject("coverMotor", CLUSTER_TUYA_DATA, 0x0000, {"cover", "position", "reverse", "speed"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class CoverSwitch : public ActionObject
+    {
+
+    public:
+
+        CoverSwitch(void) : ActionObject("coverSwitch", CLUSTER_WINDOW_COVERING, 0x0000, QList <QString> {"calibration", "reverse"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class ChildLock : public ActionObject
     {
 
@@ -424,7 +454,6 @@ namespace ActionsTUYA
 
     };
 }
-
 
 namespace ActionsEfekta
 {
