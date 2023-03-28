@@ -102,15 +102,6 @@ quint8 PropertyObject::percentage(double min, double max, double value)
     return static_cast <quint8> ((value - min) / (max - min) * 100);
 }
 
-bool PropertyObject::checkTransactionId(quint8 transactionId)
-{
-    if (m_transactionId == transactionId)
-        return false;
-
-    m_transactionId = transactionId;
-    return true;
-}
-
 quint8 PropertyObject::deviceVersion(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
@@ -396,7 +387,7 @@ void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &dat
     m_value = qFromLittleEndian(value) / (divider ? divider : 1) + endpointOption("powerOffset").toDouble();
 }
 
-void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
+void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
     QVariant scene = endpointOption("scene").toMap().value(QString::number(command->sceneId));
@@ -407,7 +398,7 @@ void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload
     m_value = scene.isValid() ? scene : command->sceneId;
 }
 
-void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &, quint8)
+void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &)
 {
     switch (commandId)
     {
@@ -417,7 +408,7 @@ void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &
     }
 }
 
-void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
+void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
     {
@@ -446,7 +437,7 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
     }
 }
 
-void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
+void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
     {
@@ -506,7 +497,7 @@ void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &p
     }
 }
 
-void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
+void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     quint16 value;
@@ -1093,7 +1084,7 @@ void PropertiesLUMI::Vibration::resetValue(void)
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload, quint8)
+void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
     QVariant data;
@@ -1575,11 +1566,8 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QBy
     }
 }
 
-void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId)
+void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArray &payload)
 {
-    if (!checkTransactionId(transactionId))
-        return;
-
     switch (commandId)
     {
         case 0xFC:
@@ -1640,7 +1628,7 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, cons
     }
 }
 
-void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &, quint8)
+void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &)
 {
     switch (commandId)
     {

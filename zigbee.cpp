@@ -704,6 +704,10 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         {
             QVariant value = property->value();
 
+            if (property->transactionId() == transactionId)
+                continue;
+
+            property->setTransactionId(transactionId);
             property->parseAttribte(attributeId, data);
             check = true;
 
@@ -917,7 +921,11 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         {
             QVariant value = property->value();
 
-            property->parseCommand(commandId, payload, transactionId);
+            if (property->transactionId() == transactionId)
+                continue;
+
+            property->setTransactionId(transactionId);
+            property->parseCommand(commandId, payload);
             check = true;
 
             if (property->singleShot())

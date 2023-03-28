@@ -18,7 +18,7 @@ public:
 
     virtual ~PropertyObject(void) {}
     virtual void parseAttribte(quint16, const QByteArray &) {}
-    virtual void parseCommand(quint8, const QByteArray &, quint8) {}
+    virtual void parseCommand(quint8, const QByteArray &) {}
     virtual void clearValue(void) { m_value = QVariant(); }
     virtual void resetValue(void) {}
 
@@ -32,6 +32,9 @@ public:
     inline void setMultiple(bool value) { m_multiple = value; }
 
     inline QMap <QString, QVariant> &meta(void) { return m_meta; }
+
+    inline quint8 transactionId(void) { return m_transactionId; }
+    inline void setTransactionId(quint8 value) { m_transactionId = value; }
 
     inline QVariant value(void) { return m_value; }
     inline void setValue(const QVariant &value) { m_value = value; }
@@ -47,12 +50,11 @@ protected:
     QObject *m_parent;
     bool m_multiple;
 
-    quint8 m_transactionId;
     QMap <QString, QVariant> m_meta;
+    quint8 m_transactionId;
     QVariant m_value;
 
     quint8 percentage(double min, double max, double value);
-    bool checkTransactionId(quint8 transactionId);
 
     quint8 deviceVersion(void);
     QString deviceManufacturerName(void);
@@ -299,7 +301,7 @@ namespace Properties
     public:
 
         Scene(void) : PropertyObject("scene", CLUSTER_SCENES, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -309,7 +311,7 @@ namespace Properties
     public:
 
         SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -319,7 +321,7 @@ namespace Properties
     public:
 
         LevelAction(void) : PropertyObject("action", CLUSTER_LEVEL_CONTROL, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -329,7 +331,7 @@ namespace Properties
     public:
 
         ColorAction(void) : PropertyObject("action", CLUSTER_COLOR_CONTROL, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 }
@@ -342,7 +344,7 @@ namespace PropertiesIAS
     public:
 
         ZoneStatus(const QString &name = "alarm") : PropertyObject(name, CLUSTER_IAS_ZONE, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
         void clearValue(void) override;
         void resetValue(void) override;
 
@@ -658,7 +660,7 @@ namespace PropertiesTUYA
     public:
 
         Data(const QString &name) : PropertyObject(name, CLUSTER_TUYA_DATA) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     private:
 
@@ -863,7 +865,7 @@ namespace PropertiesTUYA
     public:
 
         ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 }
@@ -909,7 +911,7 @@ namespace PropertiesOther
     public:
 
         SonoffButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF, true) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload, quint8 transactionId) override;
+        void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };
 
