@@ -177,7 +177,10 @@ QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 
 QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data)
 {
+    const Property &property = endpointProperty(m_name);
     quint8 value = static_cast <qint8> (data.toInt());
+
+    property->meta().insert("lastValue", property->value());
 
     if (value > 100)
         value = 100;
@@ -190,7 +193,10 @@ QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data
 
 QByteArray Actions::CoverTilt::request(const QString &, const QVariant &data)
 {
+    const Property &property = endpointProperty(m_name);
     quint8 value = static_cast <qint8> (data.toInt());
+
+    property->meta().insert("lastValue", property->value());
 
     if (value > 100)
         value = 100;
