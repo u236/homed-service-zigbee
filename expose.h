@@ -2,30 +2,29 @@
 #define EXPOSE_H
 
 #include <QJsonObject>
+#include "meta.h"
 
 class ExposeObject;
 typedef QSharedPointer <ExposeObject> Expose;
 
-class ExposeObject
+class ExposeObject : public MetaObject
 {
 
 public:
 
     ExposeObject(const QString &name, const QString &component) :
-        m_name(name), m_component(component), m_parent(nullptr), m_multiple(false), m_homeassistant(true) {}
+        MetaObject(name), m_component(component), m_multiple(false), m_homeassistant(true) {}
 
     ExposeObject(const QString &name) :
-        m_name(name), m_parent(nullptr), m_multiple(false), m_homeassistant(false) {}
+        MetaObject(name), m_multiple(false), m_homeassistant(false) {}
 
     virtual ~ExposeObject(void) {}
     virtual QJsonObject reqest(void) { return QJsonObject(); };
 
-    inline QString name(void) { return m_name; }
     inline QString component(void) { return m_component; }
 
     inline void setStateTopic(const QString &value) { m_stateTopic = value; }
     inline void setCommandTopic(const QString &value) { m_commandTopic = value; }
-    inline void setParent(QObject *value) { m_parent = value; }
 
     inline bool multiple(void) { return m_multiple; }
     inline void setMultiple(bool value) { m_multiple = value; }
@@ -33,13 +32,9 @@ public:
     inline bool homeassistant(void) { return m_homeassistant; }
     static void registerMetaTypes(void);
 
-    QVariant endpointOption(const QString &name = QString());
-
 protected:
 
-    QString m_name, m_component, m_stateTopic, m_commandTopic;
-
-    QObject *m_parent;
+    QString m_component, m_stateTopic, m_commandTopic;
     bool m_multiple, m_homeassistant;
 
 };

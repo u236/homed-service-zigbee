@@ -1,4 +1,4 @@
-#include "device.h"
+#include <QJsonArray>
 #include "expose.h"
 
 void ExposeObject::registerMetaTypes(void)
@@ -37,18 +37,6 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <Number::Threshold>           ("thresholdExpose");
 
     qRegisterMetaType <Button::ResetCount>          ("resetCountExpose");
-}
-
-QVariant ExposeObject::endpointOption(const QString &name)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    QVariant value;
-
-    if (!endpoint || endpoint->device().isNull())
-        return value;
-
-    value = endpoint->device()->options().value(QString("%1-%2").arg(name.isEmpty() ? m_name : name, QString::number(endpoint->id())));
-    return value.isValid() ? value : endpoint->device()->options().value(name.isEmpty() ? m_name : name);
 }
 
 QJsonObject BinaryObject::reqest(void)

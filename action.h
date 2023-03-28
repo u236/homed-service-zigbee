@@ -9,48 +9,40 @@
 class ActionObject;
 typedef QSharedPointer <ActionObject> Action;
 
-class ActionObject
+class ActionObject : public MetaObject
 {
 
 public:
 
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode = 0, QList <quint16> attributes = {}) :
-        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributes(attributes), m_transactionId(0) {}
+        MetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_attributes(attributes) {}
 
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId) :
-        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_attributes({attributeId}), m_transactionId(0) {}
+        MetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_attributes({attributeId}) {}
 
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, QList <QString> actions) :
-        m_name(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_actions(actions), m_transactionId(0) {}
+        MetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_actions(actions) {}
 
     virtual ~ActionObject(void) {}
     virtual QByteArray request(const QString &name, const QVariant &data) = 0;
 
-    inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
 
     inline QList <quint16> &attributes(void) { return m_attributes; }
     inline QList <QString> &actions(void) { return m_actions; }
 
-    inline void setParent(QObject *value) { m_parent = value; }
     static void registerMetaTypes(void);
 
 protected:
 
-    QString m_name;
     quint16 m_clusterId, m_manufacturerCode;
+    quint8 m_transactionId;
 
     QList <quint16> m_attributes;
     QList <QString> m_actions;
 
-    QObject *m_parent;
-    quint8 m_transactionId;
-
-    QString deviceManufacturerName(void);
-
-    QVariant endpointOption(const QString &name);
-    Property endpointProperty(const QString &name);
+    Property endpointProperty(const QString &name = QString());
 
 };
 
@@ -121,7 +113,7 @@ namespace Actions
 
     public:
 
-        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0000, 0x0001}) {}
+        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0000, 0x0001}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -131,7 +123,7 @@ namespace Actions
 
     public:
 
-        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0003, 0x0004}) {}
+        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0003, 0x0004}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -204,7 +196,7 @@ namespace ActionsLUMI
 
     public:
 
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, {"sensitivityMode", "detectionMode", "distanceMode", "resetPresence"}) {}
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"sensitivityMode", "detectionMode", "distanceMode", "resetPresence"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -214,7 +206,7 @@ namespace ActionsLUMI
 
     public:
 
-        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, {"buttonMode", "leftMode", "rightMode"}) {}
+        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, QList <QString> {"buttonMode", "leftMode", "rightMode"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -296,7 +288,7 @@ namespace ActionsTUYA
 
     public:
 
-        LightDimmer(void) : ActionObject("lightDimmer", CLUSTER_TUYA_DATA, 0x0000, {"status", "level", "levelMin", "lightType", "levelMax"}) {}
+        LightDimmer(void) : ActionObject("lightDimmer", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status", "level", "levelMin", "lightType", "levelMax"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -316,7 +308,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesElectricThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, {"status", "operationMode", "heatingPoint", "temperatureLimitMax", "deadZoneTemperature", "temperatureLimitMin", "temperatureCalibration", "childLock", "sensor"}) {}
+        MoesElectricThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status", "operationMode", "heatingPoint", "temperatureLimitMax", "deadZoneTemperature", "temperatureLimitMin", "temperatureCalibration", "childLock", "sensor"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
     };
 
@@ -325,7 +317,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesRadiatorThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, {"operationMode", "heatingPoint", "boost", "windowDetection", "childLock", "boostTimeout", "temperatureCalibration", "ecoMode", "ecoModeTemperature", "temperatureLimitMax", "temperatureLimitMin"}) {}
+        MoesRadiatorThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"operationMode", "heatingPoint", "boost", "windowDetection", "childLock", "boostTimeout", "temperatureCalibration", "ecoMode", "ecoModeTemperature", "temperatureLimitMax", "temperatureLimitMin"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -335,7 +327,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesThermostatProgram(void) : ActionObject("moesThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, {"weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "saturdayP1Hour", "saturdayP1Minute", "saturdayP1Temperature", "saturdayP2Hour", "saturdayP2Minute", "saturdayP2Temperature", "saturdayP3Hour", "saturdayP3Minute", "saturdayP3Temperature", "saturdayP4Hour", "saturdayP4Minute", "saturdayP4Temperature", "sundayP1Hour", "sundayP1Minute", "sundayP1Temperature", "sundayP2Hour", "sundayP2Minute", "sundayP2Temperature", "sundayP3Hour", "sundayP3Minute", "sundayP3Temperature", "sundayP4Hour", "sundayP4Minute", "sundayP4Temperature"}) {}
+        MoesThermostatProgram(void) : ActionObject("moesThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "saturdayP1Hour", "saturdayP1Minute", "saturdayP1Temperature", "saturdayP2Hour", "saturdayP2Minute", "saturdayP2Temperature", "saturdayP3Hour", "saturdayP3Minute", "saturdayP3Temperature", "saturdayP4Hour", "saturdayP4Minute", "saturdayP4Temperature", "sundayP1Hour", "sundayP1Minute", "sundayP1Temperature", "sundayP2Hour", "sundayP2Minute", "sundayP2Temperature", "sundayP3Hour", "sundayP3Minute", "sundayP3Temperature", "sundayP4Hour", "sundayP4Minute", "sundayP4Temperature"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     private:
@@ -349,7 +341,7 @@ namespace ActionsTUYA
 
     public:
 
-        NeoSiren(void) : ActionObject("neoSiren", CLUSTER_TUYA_DATA, 0x0000, {"volume", "duration", "alarm", "melody"}) {}
+        NeoSiren(void) : ActionObject("neoSiren", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"volume", "duration", "alarm", "melody"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -359,7 +351,7 @@ namespace ActionsTUYA
 
     public:
 
-        WaterValve(void) : ActionObject("waterValve", CLUSTER_TUYA_DATA, 0x0000, {"status", "timeout", "threshold"}) {}
+        WaterValve(void) : ActionObject("waterValve", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status", "timeout", "threshold"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -369,7 +361,7 @@ namespace ActionsTUYA
 
     public:
 
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_TUYA_DATA, 0x0000, {"sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"}) {}
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -379,7 +371,7 @@ namespace ActionsTUYA
 
     public:
 
-        RadarSensor(void) : ActionObject("radarSensor", CLUSTER_TUYA_DATA, 0x0000, {"radarSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene", "fallSensitivity"}) {}
+        RadarSensor(void) : ActionObject("radarSensor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"radarSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene", "fallSensitivity"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -389,7 +381,7 @@ namespace ActionsTUYA
 
     public:
 
-        CoverMotor(void) : ActionObject("coverMotor", CLUSTER_TUYA_DATA, 0x0000, {"cover", "position", "reverse", "speed"}) {}
+        CoverMotor(void) : ActionObject("coverMotor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"cover", "position", "reverse", "speed"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -485,7 +477,7 @@ namespace ActionsOther
 
     public:
 
-        PerenioSmartPlug(void) : ActionObject("perenioSmartPlug", CLUSTER_PERENIO, 0x0000, {"powerOnStatus", "resetAlarms", "voltageMin", "voltageMax", "powerMax", "energyLimit"}) {}
+        PerenioSmartPlug(void) : ActionObject("perenioSmartPlug", CLUSTER_PERENIO, 0x0000, QList <QString> {"powerOnStatus", "resetAlarms", "voltageMin", "voltageMax", "powerMax", "energyLimit"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

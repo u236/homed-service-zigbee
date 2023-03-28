@@ -1,7 +1,6 @@
 #include <math.h>
 #include <QtEndian>
 #include "color.h"
-#include "device.h"
 #include "property.h"
 
 void PropertyObject::registerMetaTypes(void)
@@ -100,36 +99,6 @@ quint8 PropertyObject::percentage(double min, double max, double value)
         value = max;
 
     return static_cast <quint8> ((value - min) / (max - min) * 100);
-}
-
-quint8 PropertyObject::deviceVersion(void)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->version() : 0;
-}
-
-QString PropertyObject::deviceManufacturerName(void)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->manufacturerName() : QString();
-}
-
-QString PropertyObject::deviceModelName(void)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->modelName() : QString();
-}
-
-QVariant PropertyObject::endpointOption(const QString &name)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    QVariant value;
-
-    if (!endpoint || endpoint->device().isNull())
-        return value;
-
-    value = endpoint->device()->options().value(QString("%1-%2").arg(name, QString::number(endpoint->id())));
-    return value.isValid() ? value : endpoint->device()->options().value(name);
 }
 
 void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)

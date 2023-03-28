@@ -10,6 +10,7 @@ HEADERS += \
     device.h \
     expose.h \
     ezsp.h \
+    meta.h \
     poll.h \
     property.h \
     reporting.h \
@@ -26,6 +27,7 @@ SOURCES += \
     device.cpp \
     expose.cpp \
     ezsp.cpp \
+    meta.cpp \
     poll.cpp \
     property.cpp \
     reporting.cpp \

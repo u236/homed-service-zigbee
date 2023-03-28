@@ -51,27 +51,10 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
 
-QString ActionObject::deviceManufacturerName(void)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    return (endpoint && !endpoint->device().isNull()) ? endpoint->device()->manufacturerName() : QString();
-}
-
-QVariant ActionObject::endpointOption(const QString &name)
-{
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
-    QVariant value;
-
-    if (!endpoint || endpoint->device().isNull())
-        return value;
-
-    value = endpoint->device()->options().value(QString("%1-%2").arg(name, QString::number(endpoint->id())));
-    return value.isValid() ? value : endpoint->device()->options().value(name);
-}
-
 Property ActionObject::endpointProperty(const QString &name)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    QString propertyName = name.isEmpty() ? m_name : name;
 
     if (endpoint)
     {
@@ -79,7 +62,7 @@ Property ActionObject::endpointProperty(const QString &name)
         {
             const Property &property = endpoint->properties().at(i);
 
-            if (property->name() != name)
+            if (property->name() != propertyName)
                 continue;
 
             return property;
@@ -177,7 +160,7 @@ QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 
 QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data)
 {
-    const Property &property = endpointProperty(m_name);
+    const Property &property = endpointProperty();
     quint8 value = static_cast <qint8> (data.toInt());
 
     property->meta().insert("lastValue", property->value());
@@ -193,7 +176,7 @@ QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data
 
 QByteArray Actions::CoverTilt::request(const QString &, const QVariant &data)
 {
-    const Property &property = endpointProperty(m_name);
+    const Property &property = endpointProperty();
     quint8 value = static_cast <qint8> (data.toInt());
 
     property->meta().insert("lastValue", property->value());
@@ -483,7 +466,7 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
             if (value < 0)
-                value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+                value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
 
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
@@ -542,7 +525,7 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
     qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
 
     if (value < 0)
-        value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+        value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
 
     return makeRequest(m_transactionId++, modelList.contains(deviceManufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
 }
@@ -559,7 +542,7 @@ QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, con
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
             if (value < 0)
-                value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+                value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
 
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
@@ -704,7 +687,7 @@ QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, con
 
 QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)
 {
-    const Property &property = endpointProperty(m_name);
+    const Property &property = endpointProperty();
     QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
     QByteArray payload;
 
@@ -788,7 +771,7 @@ QByteArray ActionsTUYA::WaterValve::request(const QString &name, const QVariant 
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
             if (value < 0)
-                value = endpointProperty(m_name)->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+                value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
 
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }

@@ -3,18 +3,19 @@
 
 #include <QSharedPointer>
 #include <QVariant>
+#include "meta.h"
 #include "zcl.h"
 
 class PropertyObject;
 typedef QSharedPointer <PropertyObject> Property;
 
-class PropertyObject
+class PropertyObject : public MetaObject
 {
 
 public:
 
     PropertyObject(const QString &name, quint16 clusterId, bool singleShot = false) :
-        m_name(name), m_clusterId(clusterId), m_singleShot(singleShot), m_parent(nullptr), m_multiple(false), m_transactionId(0) {}
+        MetaObject(name), m_clusterId(clusterId), m_singleShot(singleShot), m_multiple(false), m_transactionId(0) {}
 
     virtual ~PropertyObject(void) {}
     virtual void parseAttribte(quint16, const QByteArray &) {}
@@ -22,11 +23,8 @@ public:
     virtual void clearValue(void) { m_value = QVariant(); }
     virtual void resetValue(void) {}
 
-    inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
     inline bool singleShot(void) { return m_singleShot; }
-
-    inline void setParent(QObject *value) { m_parent = value; }
 
     inline bool multiple(void) { return m_multiple; }
     inline void setMultiple(bool value) { m_multiple = value; }
@@ -43,24 +41,14 @@ public:
 
 protected:
 
-    QString m_name;
     quint16 m_clusterId;
-    bool m_singleShot;
-
-    QObject *m_parent;
-    bool m_multiple;
+    bool m_singleShot, m_multiple;
 
     QMap <QString, QVariant> m_meta;
     quint8 m_transactionId;
     QVariant m_value;
 
     quint8 percentage(double min, double max, double value);
-
-    quint8 deviceVersion(void);
-    QString deviceManufacturerName(void);
-    QString deviceModelName(void);
-
-    QVariant endpointOption(const QString &name);
 
 };
 
