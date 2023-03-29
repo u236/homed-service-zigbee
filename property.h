@@ -748,6 +748,19 @@ namespace PropertiesTUYA
 
     };
 
+    class SmokeDetector : public Data
+    {
+
+    public:
+
+        SmokeDetector(void) : Data("SmokeDetector") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class PresenceSensor : public Data
     {
 

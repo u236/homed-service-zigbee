@@ -70,6 +70,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::MoesThermostatProgram>   ("tuyaMoesThermostatProgramProperty");
     qRegisterMetaType <PropertiesTUYA::NeoSiren>                ("tuyaNeoSirenProperty");
     qRegisterMetaType <PropertiesTUYA::WaterValve>              ("tuyaWaterValveProperty");
+    qRegisterMetaType <PropertiesTUYA::SmokeDetector>           ("tuyaSmokeDetectorProperty");
     qRegisterMetaType <PropertiesTUYA::PresenceSensor>          ("tuyaPresenceSensorProperty");
     qRegisterMetaType <PropertiesTUYA::RadarSensor>             ("tuyaRadarSensorProperty");
     qRegisterMetaType <PropertiesTUYA::CoverMotor>              ("tuyaCoverMotorProperty");
@@ -1378,6 +1379,22 @@ void PropertiesTUYA::WaterValve::update(quint8 dataPoint, const QVariant &data)
         case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
         case 0x09: map.insert("timeout", data.toInt() / 60); break;
         case 0x65: map.insert("threshold", data.toInt()); break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::SmokeDetector::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (dataPoint)
+    {
+        case 0x01: map.insert("smoke", data.toInt() ? false : true); break;
+        case 0x02: map.insert("smokeConcentration", data.toDouble() / 10); break;
+        case 0x0B: map.insert("fault", data.toBool()); break;
+        case 0x0F: map.insert("battery", data.toInt()); break;
+        case 0x65: map.insert("test", data.toBool()); break;
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

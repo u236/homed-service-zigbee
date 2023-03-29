@@ -1120,6 +1120,12 @@
       "exposes":        ["battery", "gas"]
     },
     {
+      "description":    "TUYA TS0601 Smoke Detector",
+      "modelNames":     ["_TZE200_m9skfctm"],
+      "properties":     ["batteryPercentage", "tuyaSmokeDetector"],
+      "exposes":        ["battery", "smoke", "smokeConcentration", "test", "fault"]
+    },
+    {
       "description":    "TUYA TS0205 Smoke Detector",
       "modelNames":     ["TS0205"],
       "properties":     ["batteryPercentage", "iasSmoke"],
