@@ -112,6 +112,16 @@ public:
 
 };
 
+class LockObject : public ExposeObject
+{
+
+public:
+
+    LockObject(void) : ExposeObject("lock", "lock") {}
+    QJsonObject reqest(void) override;
+
+};
+
 class CoverObject : public ExposeObject
 {
 

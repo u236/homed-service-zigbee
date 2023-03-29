@@ -5,6 +5,7 @@ void ExposeObject::registerMetaTypes(void)
 {
     qRegisterMetaType <LightObject>                 ("lightExpose");
     qRegisterMetaType <SwitchObject>                ("switchExpose");
+    qRegisterMetaType <LockObject>                  ("lockExpose");
     qRegisterMetaType <CoverObject>                 ("coverExpose");
     qRegisterMetaType <ThermostatObject>            ("thermostatExpose");
 
@@ -173,13 +174,9 @@ QJsonObject LightObject::reqest(void)
 
 QJsonObject SwitchObject::reqest(void)
 {
-    QString option = endpointOption().toString();
     QJsonObject json;
 
-    if (option == "valve")
-        json.insert("icon",                         "mdi:pipe-valve");
-
-    json.insert("device_class",                     option == "outlet" ? "outlet" : "switch");
+    json.insert("device_class",                     endpointOption().toString() == "outlet" ? "outlet" : "switch");
 
     json.insert("value_template",                   "{{ value_json.status }}");
     json.insert("state_on",                         "on");
@@ -188,6 +185,26 @@ QJsonObject SwitchObject::reqest(void)
 
     json.insert("payload_on",                       "{\"status\":\"on\"}");
     json.insert("payload_off",                      "{\"status\":\"off\"}");
+    json.insert("command_topic",                    m_commandTopic);
+
+    return json;
+}
+
+QJsonObject LockObject::reqest(void)
+{
+    QString option = endpointOption().toString();
+    QJsonObject json;
+
+    if (option == "valve")
+        json.insert("icon",                         "mdi:pipe-valve");
+
+    json.insert("value_template",                   "{{ value_json.status }}");
+    json.insert("state_locked",                     "off");
+    json.insert("state_unlocked",                   "on");
+    json.insert("state_topic",                      m_stateTopic);
+
+    json.insert("payload_lock",                     "{\"status\":\"off\"}");
+    json.insert("payload_unlock",                   "{\"status\":\"on\"}");
     json.insert("command_topic",                    m_commandTopic);
 
     return json;

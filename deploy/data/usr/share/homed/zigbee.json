@@ -1100,16 +1100,16 @@
       "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
       "properties":     ["tuyaWaterValve"],
       "actions":        ["tuyaWaterValve"],
-      "exposes":        ["switch", "timer", "threshold"],
-      "options":        {"switch": "valve", "timer": {"min": 0, "max": 600, "unit": "min"}, "threshold": {"min": 0, "max": 100, "unit": "%"}}
+      "exposes":        ["lock", "timer", "threshold"],
+      "options":        {"lock": "valve", "timer": {"min": 0, "max": 600, "unit": "min"}, "threshold": {"min": 0, "max": 100, "unit": "%"}}
     },
     {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve",
       "modelNames":     ["_TZ3000_h3noz0a5", "_TZ3000_iedbgyxt", "_TZ3000_o4cjetlm", "_TYZB01_4tlksk8a", "_TYZB01_rifa0wlb"],
       "properties":     ["status", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaPowerOnStatus"],
-      "exposes":        ["switch", "powerOnStatus"],
-      "options":        {"switch": "valve"}
+      "exposes":        ["lock", "powerOnStatus"],
+      "options":        {"lock": "valve"}
     },
     {
       "description":    "TUYA TS0204 Gas Detector",
