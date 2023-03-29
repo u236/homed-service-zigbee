@@ -4,7 +4,7 @@
   - "export PATH=\"${PATH}:/opt/gcc/${COMPILER}/bin\""
   - "export STAGING_DIR=\"/opt/gcc/${COMPILER}\""
   - "/opt/qt/${QT_BUILD}/bin/qmake homed-zigbee.pro"
-  - "make -j8"
+  - "make -j $(nproc)"
   after_script:
   - "cp homed-zigbee homed-zigbee-${ARCHITECTURE}"
   - "cp homed-zigbee-${ARCHITECTURE} /var/www/sandbox.u236.org/homed-zigbee"

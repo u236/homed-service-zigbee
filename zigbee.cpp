@@ -1196,8 +1196,6 @@ void ZigBee::coordinatorReady(void)
     if (device.isNull())
     {
         device = Device(new DeviceObject(m_adapter->ieeeAddress(), 0x0000, "HOMEd Coordinator"));
-        device->setLogicalType(LogicalType::Coordinator);
-        device->setInterviewFinished();
         m_devices->insert(device->ieeeAddress(), device);
     }
 
@@ -1214,6 +1212,10 @@ void ZigBee::coordinatorReady(void)
     }
 
     logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':').constData();
+
+    device->setInterviewFinished();
+    device->setRemoved(false);
+    device->setLogicalType(LogicalType::Coordinator);
 
     m_devices->setAdapterType(m_adapter->type());
     m_devices->setAdapterVersion(m_adapter->version());

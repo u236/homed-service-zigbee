@@ -510,7 +510,7 @@
     },
     {
       "description":    "Aqara T1 1-Channel Relay DLKZMK11LM or SSM-U01",
-      "modelNames":     ["lumi.switch.n0agl1"],
+      "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "options":        {"powerSource": 1}
     },
     {
