@@ -120,7 +120,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
 
     if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || manufacturerName.startsWith("TUYA"))
     {
-        QList <QString> list = {"TS0001", "TS0011", "TS004F", "TS011F", "TS0201", "TS0202", "TS0207", "TS0501A", "TS0501B", "TS0601"};
+        QList <QString> list = {"TS0001", "TS0011", "TS004F", "TS011F", "TS0201", "TS0202", "TS0207", "TS0601", "TS1101"};
 
         if (list.contains(modelName))
             modelName = manufacturerName;
@@ -394,11 +394,11 @@ void DeviceList::recognizeDevice(const Device &device)
 
                     if (!device->batteryPowered())
                     {
-                        QList <QVariant> options = device->options().value("light").toList();
+                        QList <QVariant> options = device->options().value(QString("light-%1").arg(it.key())).toList();
                         it.value()->properties().append(Property(new Properties::Level));
                         it.value()->actions().append(Action(new Actions::Level));
                         options.append("level");
-                        device->options().insert("light", options);
+                        device->options().insert(QString("light-%1").arg(it.key()), options);
                         break;
                     }
 
@@ -409,7 +409,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                     if (!device->batteryPowered() && it.value()->colorCapabilities() && it.value()->colorCapabilities() <= 0x001F)
                     {
-                        QList <QVariant> options = device->options().value("light").toList();
+                        QList <QVariant> options = device->options().value(QString("light-%1").arg(it.key())).toList();
 
                         if (it.value()->colorCapabilities() & 0x0001)
                         {
@@ -431,7 +431,7 @@ void DeviceList::recognizeDevice(const Device &device)
                             options.append("colorTemperature");
                         }
 
-                        device->options().insert("light", options);
+                        device->options().insert(QString("light-%1").arg(it.key()), options);
                         break;
                     }
 
