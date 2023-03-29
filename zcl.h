@@ -254,13 +254,6 @@ struct moveSaturationStruct
     quint8  rate;
 };
 
-struct moveToColorXYStruct
-{
-    quint16 colorX;
-    quint16 colorY;
-    quint16 time;
-};
-
 struct moveToColorHSStruct
 {
     quint8  colorH;
@@ -268,9 +261,16 @@ struct moveToColorHSStruct
     quint16 time;
 };
 
+struct moveToColorXYStruct
+{
+    quint16 colorX;
+    quint16 colorY;
+    quint16 time;
+};
+
 struct moveToColorTemperatureStruct
 {
-    quint16 temperature;
+    quint16 colorTemperature;
     quint16 time;
 };
 

@@ -252,7 +252,7 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
         {
             moveToColorTemperatureStruct payload;
 
-            payload.temperature = qToLittleEndian <quint16> (data.toInt() < 0xFEFF ? data.toInt() : 0xFEFF);
+            payload.colorTemperature = qToLittleEndian <quint16> (data.toInt() < 0xFEFF ? data.toInt() : 0xFEFF);
             payload.time = 0;
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
@@ -263,7 +263,7 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
             QList <QVariant> list = data.toList();
             moveToColorTemperatureStruct payload;
 
-            payload.temperature = qToLittleEndian <quint16> (list.value(0).toInt() < 0xFEFF ? list.value(0).toInt() : 0xFEFF);
+            payload.colorTemperature = qToLittleEndian <quint16> (list.value(0).toInt() < 0xFEFF ? list.value(0).toInt() : 0xFEFF);
             payload.time = qToLittleEndian <quint16> (list.value(1).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
