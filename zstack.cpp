@@ -314,6 +314,7 @@ bool ZStack::startCoordinator(void)
     {
         quint64 ieeeAddress;
 
+        m_manufacturerName = "Texas Instruments";
         m_firmware = QString::number(qFromLittleEndian(version.build));
         logInfo << QString("Adapter type: %1 (%2)").arg(m_modelName, m_firmware).toUtf8().constData();
 

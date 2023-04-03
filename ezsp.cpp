@@ -515,6 +515,7 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&version, m_replyData.constData() + 2, sizeof(version));
 
+    m_manufacturerName = "Silicon Labs";
     m_modelName = QString::asprintf("EZSP v%d", m_version);
     m_firmware = QString::asprintf("%d.%d.%d-%d", version.major, version.minor, version.patch, qFromLittleEndian(version.build));
 

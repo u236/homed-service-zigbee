@@ -276,6 +276,7 @@ bool ZiGate::startCoordinator(bool clear)
         return false;
     }
 
+    m_manufacturerName = "NXP";
     m_modelName = "ZiGate";
     m_firmware = QString::asprintf("%x.%x", m_replyData.at(2), m_replyData.at(3));
 

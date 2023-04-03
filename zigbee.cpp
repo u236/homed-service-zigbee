@@ -508,7 +508,7 @@ void ZigBee::interviewFinished(const Device &device)
     m_devices->setupDevice(device);
 
     if (!device->firmware().isEmpty())
-        logInfo << "Device" << device->name() << "firmware version is" << device->firmware();
+        logInfo << "Device" << device->name() << "firmware is" << device->firmware();
 
     if (!device->description().isEmpty())
         logInfo << "Device" << device->name() << "identified as" << device->description();
@@ -1234,6 +1234,7 @@ void ZigBee::coordinatorReady(void)
     device->setInterviewFinished();
     device->setRemoved(false);
     device->setLogicalType(LogicalType::Coordinator);
+    device->setManufacturerName(m_adapter->manufacturerName());
     device->setModelName(m_adapter->modelName());
     device->setFirmware(m_adapter->firmware());
 

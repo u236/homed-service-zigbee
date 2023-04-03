@@ -606,6 +606,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
                 device->setManufacturerName(json.value("manufacturerName").toString());
                 device->setModelName(json.value("modelName").toString());
+                device->setFirmware(json.value("firmware").toString());
                 device->setLastSeen(json.value("lastSeen").toInt());
                 device->setLinkQuality(json.value("linkQuality").toInt());
 
@@ -725,16 +726,7 @@ QJsonArray DeviceList::serializeDevices(void)
                 json.insert("modelName", device->modelName());
 
             if (!device->firmware().isEmpty())
-                json.insert("firmware", device->modelName());
-
-            if (device->lastSeen())
-                json.insert("lastSeen", device->lastSeen());
-
-            if (device->linkQuality())
-                json.insert("linkQuality", device->linkQuality());
-
-            if (!device->description().isEmpty())
-                json.insert("description", device->description());
+                json.insert("firmware", device->firmware());
 
             if (device->logicalType() != LogicalType::Coordinator)
             {
@@ -742,6 +734,15 @@ QJsonArray DeviceList::serializeDevices(void)
                 json.insert("interviewFinished", device->interviewFinished());
                 json.insert("manufacturerCode", device->manufacturerCode());
                 json.insert("powerSource", device->powerSource());
+
+                if (device->lastSeen())
+                    json.insert("lastSeen", device->lastSeen());
+
+                if (device->linkQuality())
+                    json.insert("linkQuality", device->linkQuality());
+
+                if (!device->description().isEmpty())
+                    json.insert("description", device->description());
             }
 
             if (!device->endpoints().isEmpty())
