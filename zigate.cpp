@@ -276,10 +276,10 @@ bool ZiGate::startCoordinator(bool clear)
         return false;
     }
 
-    m_typeString = "ZiGate";
-    m_versionString = QString::asprintf("%x.%x", m_replyData.at(2), m_replyData.at(3));
+    m_modelName = "ZiGate";
+    m_firmware = QString::asprintf("%x.%x", m_replyData.at(2), m_replyData.at(3));
 
-    logInfo << "Adapter type: ZiGate" << m_versionString.toUtf8().constData();
+    logInfo << "Adapter type: ZiGate" << m_firmware.toUtf8().constData();
 
     if (!sendRequest(ZIGATE_GET_NETWORK_STATUS) || m_replyStatus)
     {

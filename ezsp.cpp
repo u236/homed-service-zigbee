@@ -515,10 +515,10 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&version, m_replyData.constData() + 2, sizeof(version));
 
-    m_typeString = QString::asprintf("EZSP v%d", m_version);
-    m_versionString = QString::asprintf("%d.%d.%d-%d", version.major, version.minor, version.patch, qFromLittleEndian(version.build));
+    m_modelName = QString::asprintf("EZSP v%d", m_version);
+    m_firmware = QString::asprintf("%d.%d.%d-%d", version.major, version.minor, version.patch, qFromLittleEndian(version.build));
 
-    logInfo << QString("Adapter type: %1 (%2)").arg(m_typeString, m_versionString).toUtf8().constData();
+    logInfo << QString("Adapter type: %1 (%2)").arg(m_modelName, m_firmware).toUtf8().constData();
 
     if (!sendFrame(FRAME_GET_IEEE_ADDRESS) || m_replyData.length() != sizeof(ieeeAddress))
     {

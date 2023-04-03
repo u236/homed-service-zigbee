@@ -413,7 +413,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             if (it.value()->inClusters().contains(CLUSTER_BASIC))
             {
-                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001, 0x0004, 0x0005, 0x0007})))
+                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001, 0x0004, 0x0005, 0x0007, 0x4000})))
                     return true;
 
                 interviewError(device, "read basic attributes request failed");
@@ -507,6 +507,9 @@ void ZigBee::interviewFinished(const Device &device)
     logInfo << "Device" << device->name() << "manufacturer name is" << device->manufacturerName() << "and model name is" << device->modelName();
     m_devices->setupDevice(device);
 
+    if (!device->firmware().isEmpty())
+        logInfo << "Device" << device->name() << "firmware version is" << device->firmware();
+
     if (!device->description().isEmpty())
         logInfo << "Device" << device->name() << "identified as" << device->description();
 
@@ -515,8 +518,15 @@ void ZigBee::interviewFinished(const Device &device)
 
     if (device->manufacturerName() == "IKEA of Sweden" && device->batteryPowered())
     {
-        quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
-        enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF);
+        QList <QString> list = device->firmware().split('.');
+
+        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75))
+        {
+            quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
+            enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF);
+        }
+        else
+            enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF);
     }
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -612,6 +622,14 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                     return;
 
                 device->setPowerSource(static_cast <quint8> (data.at(0)));
+                break;
+
+            case 0x4000:
+
+                if (dataType != DATA_TYPE_CHARACTER_STRING)
+                    return;
+
+                device->setFirmware(QString(data).trimmed());
                 break;
         }
 
@@ -1216,9 +1234,8 @@ void ZigBee::coordinatorReady(void)
     device->setInterviewFinished();
     device->setRemoved(false);
     device->setLogicalType(LogicalType::Coordinator);
-
-    m_devices->setAdapterType(m_adapter->type());
-    m_devices->setAdapterVersion(m_adapter->version());
+    device->setModelName(m_adapter->modelName());
+    device->setFirmware(m_adapter->firmware());
 
     connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::deviceLeft, this, &ZigBee::deviceLeft, Qt::UniqueConnection);

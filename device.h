@@ -153,6 +153,9 @@ public:
     inline QString modelName(void) { return m_modelName; }
     inline void setModelName(const QString &value) { m_modelName = value; }
 
+    inline QString firmware(void) { return m_firmware; }
+    inline void setFirmware(const QString &value) { m_firmware = value; }
+
     inline qint64 joinTime(void) { return m_joinTime; }
     inline void updateJoinTime(void) { m_joinTime = QDateTime::currentMSecsSinceEpoch(); }
 
@@ -187,7 +190,7 @@ private:
     LogicalType m_logicalType;
     quint16 m_manufacturerCode;
     quint8 m_powerSource, m_version;
-    QString m_manufacturerName, m_modelName;
+    QString m_manufacturerName, m_modelName, m_firmware;
 
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
@@ -216,9 +219,6 @@ public:
     inline bool permitJoin(void) { return m_permitJoin; }
     inline void setPermitJoin(bool value) { m_permitJoin = value; }
 
-    inline void setAdapterType(const QString &value) { m_adapterType = value; }
-    inline void setAdapterVersion(const QString &value) { m_adapterVersion = value; }
-
     void init(void);
 
     Device byName(const QString &name);
@@ -243,8 +243,6 @@ private:
     QFile m_libraryFile, m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_externalDir;
     bool m_offsets, m_names, m_permitJoin, m_sync;
-
-    QString m_adapterType, m_adapterVersion;
 
     void unserializeDevices(const QJsonArray &devices);
     void unserializeProperties(const QJsonObject &properties);

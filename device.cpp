@@ -710,43 +710,38 @@ QJsonArray DeviceList::serializeDevices(void)
 
         if (!device->removed())
         {
+            json.insert("logicalType", static_cast <quint8> (device->logicalType()));
+
             if (device->name() != device->ieeeAddress().toHex(':'))
                 json.insert("name", device->name());
 
-            json.insert("logicalType", static_cast <quint8> (device->logicalType()));
+            if (device->version())
+                json.insert("version", device->version());
 
-            if (device->logicalType() == LogicalType::Coordinator)
-            {
-                if (!m_adapterType.isEmpty())
-                    json.insert("type", m_adapterType);
+            if (!device->manufacturerName().isEmpty())
+                json.insert("manufacturerName", device->manufacturerName());
 
-                if (!m_adapterVersion.isEmpty())
-                    json.insert("version", m_adapterVersion);
-            }
-            else
+            if (!device->modelName().isEmpty())
+                json.insert("modelName", device->modelName());
+
+            if (!device->firmware().isEmpty())
+                json.insert("firmware", device->modelName());
+
+            if (device->lastSeen())
+                json.insert("lastSeen", device->lastSeen());
+
+            if (device->linkQuality())
+                json.insert("linkQuality", device->linkQuality());
+
+            if (!device->description().isEmpty())
+                json.insert("description", device->description());
+
+            if (device->logicalType() != LogicalType::Coordinator)
             {
                 json.insert("supported", device->supported());
                 json.insert("interviewFinished", device->interviewFinished());
                 json.insert("manufacturerCode", device->manufacturerCode());
                 json.insert("powerSource", device->powerSource());
-
-                if (device->version())
-                    json.insert("version", device->version());
-
-                if (!device->manufacturerName().isEmpty())
-                    json.insert("manufacturerName", device->manufacturerName());
-
-                if (!device->modelName().isEmpty())
-                    json.insert("modelName", device->modelName());
-
-                if (device->lastSeen())
-                    json.insert("lastSeen", device->lastSeen());
-
-                if (device->linkQuality())
-                    json.insert("linkQuality", device->linkQuality());
-
-                if (!device->description().isEmpty())
-                    json.insert("description", device->description());
             }
 
             if (!device->endpoints().isEmpty())

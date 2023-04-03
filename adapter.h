@@ -168,8 +168,8 @@ public:
     virtual bool setInterPanChannel(quint8 channel) = 0;
     virtual void resetInterPanChannel(void) = 0;
 
-    inline QString type(void) { return m_typeString; }
-    inline QString version(void) { return m_versionString; }
+    inline QString modelName(void) { return m_modelName; }
+    inline QString firmware(void) { return m_firmware; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
     inline void setRequestAddress(const QByteArray &value) { m_requestAddress = value; }
 
@@ -198,7 +198,7 @@ protected:
     quint8 m_channel;
     bool m_write, m_portDebug, m_adapterDebug;
 
-    QString m_typeString, m_versionString;
+    QString m_modelName, m_firmware;
     QByteArray m_ieeeAddress, m_requestAddress;
 
     bool m_permitJoin;

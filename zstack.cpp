@@ -295,17 +295,17 @@ bool ZStack::startCoordinator(void)
     switch (version.product)
     {
         case 0x01:
-            m_typeString = "Z-Stack 3.x.0";
+            m_modelName = "Z-Stack 3.x.0";
             m_version = ZStackVersion::ZStack3x0;
             break;
 
         case 0x02:
-            m_typeString = "Z-Stack 3.0.x";
+            m_modelName = "Z-Stack 3.0.x";
             m_version = ZStackVersion::ZStack30x;
             break;
 
         default:
-            m_typeString = "Z-Stack 1.2.x";
+            m_modelName = "Z-Stack 1.2.x";
             m_version = ZStackVersion::ZStack12x;
             break;
     }
@@ -314,8 +314,8 @@ bool ZStack::startCoordinator(void)
     {
         quint64 ieeeAddress;
 
-        m_versionString = QString::number(qFromLittleEndian(version.build));
-        logInfo << QString("Adapter type: %1 (%2)").arg(m_typeString, m_versionString).toUtf8().constData();
+        m_firmware = QString::number(qFromLittleEndian(version.build));
+        logInfo << QString("Adapter type: %1 (%2)").arg(m_modelName, m_firmware).toUtf8().constData();
 
         if (!sendRequest(UTIL_GET_DEVICE_INFO) || m_replyData.at(0))
         {
