@@ -1731,7 +1731,7 @@ void ZigBee::pingDevices(void)
     {
         const Device &device = it.value();
 
-        if (it.value()->batteryPowered() || time - device->lastSeen() < PING_DEVICES_INTERVAL / 1000)
+        if (it.value()->removed() || it.value()->batteryPowered() || time - device->lastSeen() < PING_DEVICES_INTERVAL / 1000)
             continue;
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)

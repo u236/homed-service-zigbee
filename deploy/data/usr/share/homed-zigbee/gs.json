@@ -2,6 +2,16 @@
   "GS":
   [
     {
+      "description":    "GS 16A Smart Plug SKHMP30-I1",
+      "modelNames":     ["SKHMP30-I1"],
+      "properties":     ["status", "voltage", "current", "power"],
+      "actions":        ["status"],
+      "bindings":       ["status", "power"],
+      "reportings":     ["status", "voltage", "current", "power"],
+      "exposes":        ["switch", "voltage", "current", "power"],
+      "options":        {"voltageDivider": 100, "currentDivider": 100, "powerDivider": 10}
+    },
+    {
       "description":    "GS Smoke Detector SSHM-I1",
       "modelNames":     ["SSHM-I1"],
       "properties":     ["batteryPercentage", "iasSmoke"],
