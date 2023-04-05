@@ -1,0 +1,73 @@
+{
+  "eWeLink":
+  [
+    {
+      "description":    "Sonoff 1-Channel Relay/Switch SWITCH-ZR02 or ZB-SW02",
+      "modelNames":     ["SWITCH-ZR02", "ZB-SW01"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"]
+    },
+    {
+      "description":    "Sonoff 2-Channel Relay/Switch ZB-SW02",
+      "modelNames":     ["E220-KR2N0Z0-HA", "ZB-SW02"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02",
+      "modelNames":     ["TH01"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity"]
+    },
+    {
+      "description":    "Sonoff Door and Window Sensor SNZB-04",
+      "modelNames":     ["DS01"],
+      "properties":     ["batteryPercentage", "iasContact"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "contact"]
+    },
+    {
+      "description":    "Sonoff Motion Sensor SNZB-03",
+      "modelNames":     ["MS01"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "occupancy"]
+    },
+    {
+      "description":    "Sonoff Wireless Button SNZB-01",
+      "modelNames":     ["WB01", "WB-01"],
+      "properties":     ["batteryPercentage", "sonoffButtonAction"],
+      "bindings":       ["battery", "status"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
+    }
+  ],
+
+  "SONOFF":
+  [
+    {
+      "description":    "Sonoff 1-Channel Relay/Switch ZBMINI-L or ZBMINI-L2",
+      "modelNames":     ["ZBMINI-L, ZBMINIL2"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "exposes":        ["switch", "powerOnStatus"]
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay/Switch ZBMINI",
+      "modelNames":     ["01MINIZB"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"]
+    }
+  ]
+}

@@ -13,11 +13,11 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     PollObject::registerMetaTypes();
     ExposeObject::registerMetaTypes();
 
-    m_libraryFile.setFileName(config->value("device/library", "/usr/share/homed/zigbee.json").toString());
     m_databaseFile.setFileName(config->value("device/database", "/opt/homed-zigbee/database.json").toString());
     m_propertiesFile.setFileName(config->value("device/properties", "/opt/homed-zigbee/properties.json").toString());
     m_optionsFile.setFileName(config->value("device/options", "/opt/homed-zigbee/options.json").toString());
     m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
+    m_libraryDir.setPath(config->value("device/library", "/usr/share/homed-zigbee").toString());
     m_offsets = config->value("device/offsets", true).toBool();
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
@@ -131,6 +131,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
 
 void DeviceList::setupDevice(const Device &device)
 {
+    QList <QDir> list = {m_externalDir, m_libraryDir};
     QString manufacturerName, modelName;
     QJsonArray array;
 
@@ -150,13 +151,13 @@ void DeviceList::setupDevice(const Device &device)
 
     identityHandler(device, manufacturerName, modelName);
 
-    if (m_externalDir.exists())
+    for (auto it = list.begin(); it != list.end() && array.isEmpty(); it++)
     {
-        QList <QString> list = m_externalDir.entryList(QDir::Files);
+        QList <QString> list = it->entryList(QDir::Files);
 
         for (int i = 0; i < list.count(); i++)
         {
-            QFile file(QString("%1/%2").arg(m_externalDir.path(), list.at(i)));
+            QFile file(QString("%1/%2").arg(it->path(), list.at(i)));
 
             if (!file.open(QFile::ReadOnly))
                 continue;
@@ -166,18 +167,6 @@ void DeviceList::setupDevice(const Device &device)
 
             if (!array.isEmpty())
                 break;
-        }
-    }
-
-    if (array.isEmpty())
-    {
-        if (!m_libraryFile.open(QFile::ReadOnly))
-            logWarning << "Library file" << m_libraryFile.fileName() << "error:" << m_libraryFile.errorString();
-
-        if (m_libraryFile.isOpen())
-        {
-            array = QJsonDocument::fromJson(m_libraryFile.readAll()).object().value(manufacturerName).toArray();
-            m_libraryFile.close();
         }
     }
 

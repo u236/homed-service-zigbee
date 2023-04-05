@@ -1,0 +1,54 @@
+{
+  "HaiPaiTech":
+  [
+    {
+      "description":    "Life Control Smart Bulb MCLH-02",
+      "modelNames":     ["vivi ZLight"],
+      "properties":     ["status", "level", "colorHS"],
+      "actions":        ["status", "level", "colorHS"],
+      "polls":          ["status", "level", "colorHS"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color"]},
+      "endpointId":     11
+    }
+  ],
+
+  "Nexturn":
+  [
+    {
+      "description":    "Life Control Door and Window Sensor MCLH-04",
+      "modelNames":     ["Door_Sensor"],
+      "properties":     ["batteryPercentage", "iasContact"],
+      "exposes":        ["battery", "contact"],
+      "options":        {"batteryUndivided": true}
+    },
+    {
+      "description":    "Life Control Water Leak Sensor MCLH-07",
+      "modelNames":     ["Leak_Sensor"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "exposes":        ["battery", "waterLeak"],
+      "options":        {"batteryUndivided": true}
+    },
+    {
+      "description":    "Life Control Air Quality Sensor MCLH-08",
+      "modelNames":     ["VOC_Sensor"],
+      "properties":     ["batteryPercentage", "lifeControlAirQuality"],
+      "exposes":        ["battery", "temperature", "humidity", "co2", "voc"],
+      "options":        {"batteryUndivided": true}
+    }
+  ],
+
+  "TexasInstruments":
+  [
+    {
+      "description":    "Life Control 10A Smart Plug MCLH-03",
+      "modelNames":     ["RICI01"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch"],
+      "options":        {"switch": "outlet"}
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "LDS":
+  [
+    {
+      "description":    "Perenio Door and Window Sensor PECWS01",
+      "modelNames":     ["ZHA-DoorLockSensor"],
+      "properties":     ["batteryPercentage", "iasContact"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "contact"]
+    },
+    {
+      "description":    "Perenio Motion Sensor PECMS01",
+      "modelNames":     ["ZHA-PirSensor"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "occupancy"]
+    }
+  ],
+
+  "Perenio":
+  [
+    {
+      "description":    "Perenio 16A Smart Plug PEHPL0X",
+      "modelNames":     ["PEHPL0X"],
+      "properties":     ["status", "perenioSmartPlug"],
+      "actions":        ["status", "perenioSmartPlug"],
+      "bindings":       ["status", "perenio"],
+      "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
+      "polls":          ["perenioSmartPlug"],
+      "exposes":        ["switch", "energy", "voltage", "power"],
+      "options":        {"switch": "outlet"}
+    },
+    {
+      "description":    "Perenio Water Leak Sensor PECLS01",
+      "modelNames":     ["PECLS01"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak"]
+    }
+  ]
+}

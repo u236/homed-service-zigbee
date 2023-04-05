@@ -1,0 +1,60 @@
+{
+  "HOMEd":
+  [
+    {
+      "description":    "ESP32C6 Light Example",
+      "modelNames":     ["ESP Light"],
+      "properties":     ["status", "level", "colorXY"],
+      "actions":        ["status", "level", "colorXY"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorXY"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color"]}
+    },
+    {
+      "description":    "PTVO Firmware Based CO2 Sensor",
+      "modelNames":     ["CO2 Sensor"],
+      "properties":     ["ptvoTemperature", "ptvoCO2", "ptvoSwitchAction"],
+      "exposes":        ["temperature", "co2", "action"],
+      "options":        {"action": ["on", "off"]}
+    },
+    {
+      "description":    "PTVO Firmware Based Smart Plug",
+      "modelNames":     ["LC Outlet"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"],
+      "options":        {"switch": "outlet"}
+    },
+    {
+      "description":    "PTVO Firmware Based RGB Led Controller",
+      "modelNames":     ["RGB Strip"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["RGB Strip"],
+      "properties":     ["ptvoChangePattern", "ptvoPattern"],
+      "actions":        ["ptvoChangePattern", "ptvoPattern"],
+      "exposes":        ["pattern"],
+      "options":        {"pattern": {"min": 0, "max": 62}},
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["RGB Strip"],
+      "properties":     ["ptvoCount"],
+      "actions":        ["ptvoCount"],
+      "endpointId":     3
+    },
+    {
+      "description":    "PTVO Firmware Based Button",
+      "modelNames":     ["Button"],
+      "properties":     ["batteryVoltage", "ptvoSwitchAction"],
+      "exposes":        ["battery", "action"],
+      "options":        {"action": ["on", "off"]}
+    }
+  ]
+}

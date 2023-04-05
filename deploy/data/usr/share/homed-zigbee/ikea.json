@@ -1,0 +1,34 @@
+{
+  "IKEA of Sweden":
+  [
+    {
+      "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
+      "modelNames":     ["TRADFRI bulb E14 WS 470lm"],
+      "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorTemperature"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 250, "max": 454}}
+    },
+    {
+      "description":    "TRADFRI Dimmable Bulb",
+      "modelNames":     ["TRADFRI bulb E14 W op/ch 400lm", "TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
+      "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "bindings":       ["status", "level"],
+      "reportings":     ["status", "level"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level"]}
+    },
+    {
+      "description":    "TRADFRI Wireless Dimmer E1743",
+      "modelNames":     ["TRADFRI on/off switch"],
+      "properties":     ["batteryPercentage", "switchAction", "levelAction"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"],
+      "options":        {"batteryUndivided": true, "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
+    }
+  ]
+}

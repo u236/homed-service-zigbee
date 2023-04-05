@@ -1,0 +1,70 @@
+{
+  "efektalab.com":
+  [
+    {
+      "description":    "EFEKTA Plant Watering Sensor miniPWS",
+      "modelNames":     ["EFEKTA_miniPWS"],
+      "properties":     ["batteryPercentage", "temperature", "moisture", "efektaReportingDelay", "efektaTemperatureOffset"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureOffset"],
+      "bindings":       ["battery", "temperature", "moisture"],
+      "exposes":        ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
+      "options":        {"reportingDelay": {"min": 1, "max": 180, "unit": "min"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}}
+    }
+  ],
+
+  "HEIMAN":
+  [
+    {
+      "description":    "Heiman Smoke Detector HS1SA",
+      "modelNames":     ["SmokeSensor-EM", "SmokeSensor-N"],
+      "properties":     ["batteryPercentage", "iasSmoke"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "smoke"]
+    }
+  ],
+
+  "NXP":
+  [
+    {
+      "description":    "OpenLumi Router (JN5169)",
+      "modelNames":     ["openlumi.gw_router.jn5169"],
+      "properties":     ["deviceTemperature"],
+      "bindings":       ["deviceTemperature"],
+      "reportings":     ["deviceTemperature"],
+      "exposes":        ["temperature"]
+    }
+  ],
+
+  "Openlumi":
+  [
+    {
+      "description":    "OpenLumi Router Bulb (HML004)",
+      "modelNames":     ["HML004"],
+      "properties":     ["status", "level", "colorHS", "colorTemperature"],
+      "actions":        ["status", "level", "colorHS", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"]}
+    }
+  ],
+
+  "Trust International B.V.":
+  [
+    {
+      "description":    "Trust Dimmable Bulb with Changable Color Temperature ZLED-TUNE9",
+      "modelNames":     ["ZLL-ColorTempera", "ZLL-ColorTemperature"],
+      "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 500}}
+    },
+    {
+      "description":    "Trust Dimmable Bulb ZLED-2709",
+      "modelNames":     ["ZLL-DimmableLigh"],
+      "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level"]}
+    }
+  ]
+}

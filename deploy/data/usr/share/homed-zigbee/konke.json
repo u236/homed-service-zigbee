@@ -1,0 +1,74 @@
+{
+  "Konke":
+  [
+    {
+      "description":    "Konke Smoke Detector KK-SA-H03",
+      "modelNames":     ["3AFE010104020028"],
+      "properties":     ["batteryPercentage", "iasSmoke"],
+      "exposes":        ["battery", "smoke"]
+    },
+    {
+      "description":    "Konke Door and Window Sensor 2AJZ4KPDR or KK-DS-J01W",
+      "modelNames":     ["3AFE130104020015", "3AFE221004021015", "3AFE270104020015", "3AFE280104020015"],
+      "properties":     ["batteryPercentage", "iasContact"],
+      "exposes":        ["battery", "contact"]
+    },
+    {
+      "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
+      "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "exposes":        ["battery", "occupancy"],
+      "options":        {"timeout": 120}
+    },
+    {
+      "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",
+      "modelNames":     ["3AFE21100402102A", "LH07321"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "exposes":        ["battery", "waterLeak"]
+    },
+    {
+      "description":    "Konke Temperature and Humidity Sensor 2AJZ4KPFT",
+      "modelNames":     ["3AFE140103020000", "3AFE220103020000"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity"]
+    },
+    {
+      "description":    "Konke Temperature, Humidity and Illuminance Sensor KK-ES-J01W",
+      "modelNames":     ["3AFE090103021000"],
+      "properties":     ["batteryPercentage", "illuminance", "temperature", "humidity"],
+      "exposes":        ["battery", "illuminance", "temperature", "humidity"]
+    },
+    {
+      "description":    "Konke Wireless Button 2AJZ4KPKEY",
+      "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
+      "properties":     ["batteryPercentage", "konkeButtonAction"],
+      "exposes":        ["battery", "action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
+    },
+    {
+      "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "exposes":        ["battery", "scene"],
+      "options":        {"scene": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["3AFE241000040002"],
+      "properties":     ["batteryPercentage", "scene"],
+      "endpointId":     4
+    }
+  ]
+}

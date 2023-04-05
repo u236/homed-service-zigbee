@@ -1,0 +1,37 @@
+{
+  "GS":
+  [
+    {
+      "description":    "GS Smoke Detector SSHM-I1",
+      "modelNames":     ["SSHM-I1"],
+      "properties":     ["batteryPercentage", "iasSmoke"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "smoke"]
+    },
+    {
+      "description":    "GS Motion Sensor SMHM-I1",
+      "modelNames":     ["SMHM-I1"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "occupancy"]
+    },
+    {
+      "description":    "GS Water Leak Sensor SWHM-I1",
+      "modelNames":     ["SWHM-I1"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak"]
+    },
+    {
+      "description":    "GS Temperature and Humidity Sensor STHM-I1H",
+      "modelNames":     ["STHM-I1H"],
+      "properties":     ["batteryVoltage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryVoltage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity"]
+    }
+  ]
+}
