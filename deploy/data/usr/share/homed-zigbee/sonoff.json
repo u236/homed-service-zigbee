@@ -2,7 +2,7 @@
   "eWeLink":
   [
     {
-      "description":    "Sonoff 1-Channel Relay/Switch SWITCH-ZR02 or ZB-SW02",
+      "description":    "Sonoff 1-Channel Relay SWITCH-ZR02 or ZB-SW01",
       "modelNames":     ["SWITCH-ZR02", "ZB-SW01"],
       "properties":     ["status"],
       "actions":        ["status"],
@@ -10,7 +10,7 @@
       "exposes":        ["switch"]
     },
     {
-      "description":    "Sonoff 2-Channel Relay/Switch ZB-SW02",
+      "description":    "Sonoff 2-Channel Relay ZB-SW02",
       "modelNames":     ["E220-KR2N0Z0-HA", "ZB-SW02"],
       "properties":     ["status"],
       "actions":        ["status"],
@@ -56,18 +56,18 @@
   "SONOFF":
   [
     {
-      "description":    "Sonoff 1-Channel Relay/Switch ZBMINI-L or ZBMINI-L2",
-      "modelNames":     ["ZBMINI-L, ZBMINIL2"],
-      "properties":     ["status", "powerOnStatus"],
-      "actions":        ["status", "powerOnStatus"],
-      "exposes":        ["switch", "powerOnStatus"]
-    },
-    {
-      "description":    "Sonoff 1-Channel Relay/Switch ZBMINI",
+      "description":    "Sonoff 1-Channel Relay ZBMINI",
       "modelNames":     ["01MINIZB"],
       "properties":     ["status"],
       "actions":        ["status"],
       "exposes":        ["switch"]
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay ZBMINI-L or ZBMINI-L2",
+      "modelNames":     ["ZBMINI-L", "ZBMINIL2"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "exposes":        ["switch", "powerOnStatus"]
     }
   ]
 }

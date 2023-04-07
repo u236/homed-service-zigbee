@@ -32,7 +32,7 @@
       "endpointId":     [15]
     },
     {
-      "description":    "GLEDOPTO RGB+ССT Led Controller GL-C-008 (1ID)",
+      "description":    "GLEDOPTO RGB+CCT Led Controller GL-C-008 (1ID)",
       "modelNames":     ["GL-C-008", "GL-C-008P", "GL-C-008S"],
       "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
@@ -41,7 +41,7 @@
       "endpointId":     11
     },
     {
-      "description":    "GLEDOPTO RGB+ССT Led Controller GL-C-008 (2ID)",
+      "description":    "GLEDOPTO RGB+CCT Led Controller GL-C-008 (2ID)",
       "modelNames":     ["GL-C-008-2ID"],
       "options":        {"endpointName": {"11": "RGB", "15": "CCT"}}
     },
