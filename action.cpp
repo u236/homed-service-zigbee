@@ -521,7 +521,7 @@ QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant
 
 QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVariant &data)
 {
-    QList <QString> actionList = {"off", "on"}, modelList = {"_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"};
+    QList <QString> modelList = {"_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"}, actionList = {"off", "on"};
     qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
 
     if (value < 0)
@@ -929,8 +929,13 @@ QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant 
     {
         case 0: // cover
         {
-            QList <QString> list = endpointOption("invertCover").toBool() ? QList <QString> {"close", "stop", "open"} : QList <QString> {"open", "stop", "close"};
-            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+            QList <QString> modelList = {"_TYST11_cowvfni3", "_TZE200_cowvfni3", "_TZE200_wmcdj3aq", "_TZE204_r0jdjrvi"}, actionList = modelList.contains(deviceManufacturerName()) ? QList <QString> {"close", "stop", "open"} : QList <QString> {"open", "stop", "close"};
+            qint8 value;
+
+            if (endpointOption("invertCover").toBool())
+                actionList = QList <QString> (actionList.rbegin(), actionList.rend());
+
+            value = static_cast <qint8> (actionList.indexOf(data.toString()));
 
             if (value < 0)
                 return QByteArray();

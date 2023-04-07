@@ -53,6 +53,6 @@ DISTFILES += \
 QT += serialport
 
 deploy.files = $${DISTFILES}
-deploy.path = /usr/share/homed
+deploy.path = /usr/share/homed-zigbee
 
 INSTALLS += deploy
