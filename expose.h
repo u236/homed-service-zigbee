@@ -153,6 +153,15 @@ namespace Binary
 
     };
 
+    class BatteryLow : public BinaryObject
+    {
+
+    public:
+
+        BatteryLow(void) : BinaryObject("batteryLow") {}
+
+    };
+
     class Gas : public BinaryObject
     {
 
@@ -177,6 +186,15 @@ namespace Binary
     public:
 
         Smoke(void) : BinaryObject("smoke") {}
+
+    };
+
+    class Tamper : public BinaryObject
+    {
+
+    public:
+
+        Tamper(void) : BinaryObject("tamper") {}
 
     };
 

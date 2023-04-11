@@ -19,14 +19,14 @@
       "description":    "Life Control Door and Window Sensor MCLH-04",
       "modelNames":     ["Door_Sensor"],
       "properties":     ["batteryPercentage", "iasContact"],
-      "exposes":        ["battery", "contact"],
+      "exposes":        ["battery", "contact", "batteryLow", "tamper"],
       "options":        {"batteryUndivided": true}
     },
     {
       "description":    "Life Control Water Leak Sensor MCLH-07",
       "modelNames":     ["Leak_Sensor"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
-      "exposes":        ["battery", "waterLeak"],
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"],
       "options":        {"batteryUndivided": true}
     },
     {

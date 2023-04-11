@@ -17,7 +17,7 @@
       "properties":     ["batteryPercentage", "iasSmoke"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "smoke"]
+      "exposes":        ["battery", "smoke", "batteryLow", "tamper"]
     },
     {
       "description":    "GS Motion Sensor SMHM-I1",
@@ -25,7 +25,7 @@
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy"]
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
     },
     {
       "description":    "GS Water Leak Sensor SWHM-I1",
@@ -33,7 +33,7 @@
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "waterLeak"]
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
     },
     {
       "description":    "GS Temperature and Humidity Sensor STHM-I1H",

@@ -10,9 +10,11 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <ThermostatObject>            ("thermostatExpose");
 
     qRegisterMetaType <Binary::Contact>             ("contactExpose");
+    qRegisterMetaType <Binary::BatteryLow>          ("batteryLowExpose");
     qRegisterMetaType <Binary::Gas>                 ("gasExpose");
     qRegisterMetaType <Binary::Occupancy>           ("occupancyExpose");
     qRegisterMetaType <Binary::Smoke>               ("smokeExpose");
+    qRegisterMetaType <Binary::Tamper>              ("tamperExpose");
     qRegisterMetaType <Binary::WaterLeak>           ("waterLeakExpose");
     qRegisterMetaType <Binary::Vibration>           ("vibrationExpose");
 
@@ -42,14 +44,15 @@ void ExposeObject::registerMetaTypes(void)
 
 QJsonObject BinaryObject::reqest(void)
 {
-    QList <QString> list = {"alarm", "contact", "waterLeak"};
+    QList <QString> list = {"alarm", "contact", "batteryLow", "waterLeak"};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
     {
         case 0:  break;
         case 1:  json.insert("device_class",        endpointOption().toString() == "window" ? "window" : "door"); break;
-        case 2:  json.insert("device_class",        "moisture"); break;
+        case 2:  json.insert("device_class",        "battery"); break;
+        case 3:  json.insert("device_class",        "moisture"); break;
         default: json.insert("device_class",        m_name); break;
     }
 

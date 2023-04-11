@@ -84,7 +84,25 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
 
 void DeviceList::identityHandler(const Device &device, QString &manufacturerName, QString &modelName)
 {
-    QList <QString> lumi = {"aqara", "XIAOMI"}, orvibo = {"\u4e2d\u6027", "\u6b27\u745e", "\u94fe\u878d"};
+    QList <QString> lumi =
+    {
+        "aqara",
+        "XIAOMI"
+    };
+
+    QList <QString> orvibo =
+    {
+        "131c854783bc45c9b2ac58088d09571c",
+        "585fdfb8c2304119a2432e9845cf2623",
+        "52debf035a1b4a66af56415474646c02",
+        "75a4bfe8ef9c4350830a25d13e3ab068",
+        "b2e57a0f606546cd879a1a54790827d6",
+        "b7e305eb329f497384e966fe3fb0ac69",
+        "c670e231d1374dbc9e3c6a9fffbd0ae6",
+        "da2edf1ded0d44e1815d06f45ce02029",
+        "e70f96b3773a4c9283c6862dbafb6a99",
+        "fdd76effa0e146b4bdafa0c203a37192"
+    };
 
     manufacturerName = device->manufacturerName();
     modelName = device->modelName();
@@ -95,7 +113,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         return;
     }
 
-    if (orvibo.contains(manufacturerName))
+    if (orvibo.contains(modelName))
     {
         manufacturerName = "ORVIBO";
         return;

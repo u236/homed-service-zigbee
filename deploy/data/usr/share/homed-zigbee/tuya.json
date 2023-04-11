@@ -303,13 +303,13 @@
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
       "properties":     ["batteryPercentage", "iasGas"],
-      "exposes":        ["battery", "gas"]
+      "exposes":        ["battery", "gas", "batteryLow", "tamper"]
     },
     {
       "description":    "TUYA TS0205 Smoke Detector",
       "modelNames":     ["TS0205"],
       "properties":     ["batteryPercentage", "iasSmoke"],
-      "exposes":        ["battery", "smoke"]
+      "exposes":        ["battery", "smoke", "batteryLow", "tamper"]
     },
     {
       "description":    "TUYA TS0601 Smoke Detector",
@@ -323,7 +323,7 @@
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "contact"]
+      "exposes":        ["battery", "contact", "batteryLow", "tamper"]
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor",
@@ -346,7 +346,7 @@
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy"]
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
     },
     {
       "description":    "TUYA TS0202 Motion Sensor with Timeout",
@@ -354,14 +354,14 @@
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy"],
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"],
       "options":        {"timeout": 60}
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor",
       "modelNames":     ["_TZ3000_6ygjfyll", "_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_fwxuzcf4", "_TZ3040_msl6wxk9"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
-      "exposes":        ["battery", "occupancy"]
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
     },
     {
       "description":    "TUYA TS0207 Water Leak Sensor",
@@ -369,7 +369,7 @@
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "waterLeak"]
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor",

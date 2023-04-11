@@ -32,7 +32,7 @@
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "contact"]
+      "exposes":        ["battery", "contact", "batteryLow", "tamper"]
     },
     {
       "description":    "Sonoff Motion Sensor SNZB-03",
@@ -40,7 +40,7 @@
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy"]
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
     },
     {
       "description":    "Sonoff Wireless Button SNZB-01",

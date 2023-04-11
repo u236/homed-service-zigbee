@@ -20,7 +20,7 @@
       "properties":     ["batteryPercentage", "iasSmoke"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "smoke"]
+      "exposes":        ["battery", "smoke", "batteryLow", "tamper"]
     }
   ],
 

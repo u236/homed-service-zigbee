@@ -5,26 +5,26 @@
       "description":    "Konke Smoke Detector KK-SA-H03",
       "modelNames":     ["3AFE010104020028"],
       "properties":     ["batteryPercentage", "iasSmoke"],
-      "exposes":        ["battery", "smoke"]
+      "exposes":        ["battery", "smoke", "batteryLow", "tamper"]
     },
     {
       "description":    "Konke Door and Window Sensor 2AJZ4KPDR or KK-DS-J01W",
       "modelNames":     ["3AFE130104020015", "3AFE221004021015", "3AFE270104020015", "3AFE280104020015"],
       "properties":     ["batteryPercentage", "iasContact"],
-      "exposes":        ["battery", "contact"]
+      "exposes":        ["battery", "contact", "batteryLow", "tamper"]
     },
     {
       "description":    "Konke Motion Sensor 2AJZ4KPBS or KK-BS-J01W",
       "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
-      "exposes":        ["battery", "occupancy"],
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"],
       "options":        {"timeout": 120}
     },
     {
       "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",
       "modelNames":     ["3AFE21100402102A", "LH07321"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
-      "exposes":        ["battery", "waterLeak"]
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
     },
     {
       "description":    "Konke Temperature and Humidity Sensor 2AJZ4KPFT",
