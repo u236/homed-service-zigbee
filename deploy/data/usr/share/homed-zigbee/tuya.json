@@ -149,6 +149,16 @@
       "options":        {"energyDivider": 100, "currentDivider": 1000}
     },
     {
+      "description":    "TUYA TS011F 1-Channel Relay LoraTap RR400ZB",
+      "modelNames":     ["_TZ3000_oiymh3qu"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch"],
+      "options":        {"tuyaMagic": true}
+    },
+    {
       "description":    "TUYA TS011F 2-Channel Relay MOES MS-104BZ",
       "modelNames":     ["_TZ3000_pmz6mjyu"],
       "properties":     ["status"],
