@@ -120,9 +120,9 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
 
     if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || manufacturerName.startsWith("TUYA"))
     {
-        QList <QString> list = {"TS0001", "TS0011", "TS004F", "TS011F", "TS0201", "TS0202", "TS0207", "TS0601", "TS1101"};
+        QList <QString> list = {"TS0041", "TS0042", "TS0043", "TS0044", "TS0052", "TS0121", "TS0204", "TS0205", "TS0501A", "TS0501B"};
 
-        if (list.contains(modelName))
+        if (!list.contains(modelName))
             modelName = manufacturerName;
 
         manufacturerName = "TUYA";

@@ -2,24 +2,34 @@
   "TUYA":
   [
     {
-      "description":    "TUYA TS0001/TS0011 1-Channel Relay/Switch",
-      "modelNames":     ["_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_ark8nv4y", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_l8fsgo6p", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_prd023wy", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_xkap8wtb"],
-      "properties":     ["status", "tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "actions":        ["status", "tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "description":    "TUYA TS0001/TS0011 1-Channel Relay",
+      "modelNames":     ["_TZ3000_3a9beq8a", "_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_6axxqqi2", "_TZ3000_ark8nv4y", "_TZ3000_gjrubzje", "_TZ3000_ji4araar", "_TZ3000_m9af2l6g", "_TZ3000_majwnphg", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_zw7yf6yk"],
+      "properties":     ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
-      "exposes":        ["switch", "powerOnStatus"]
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"tuyaMagic": true}
     },
     {
-      "description":    "TUYA TS0002/TS0012 2-Channel Relay/Switch",
-      "modelNames":     ["TS0002", "TS0012"],
-      "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "description":    "TUYA TS0001/TS0011 1-Channel Switch",
+      "modelNames":     ["_TYZB01_4vgantdz", "_TYZB01_reyozfcg", "_TZ3000_hhiodade", "_TZ3000_l8fsgo6p", "_TZ3000_wrhhi5h2"],
+      "properties":     ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "bindings":       ["status"],
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"tuyaMagic": true}
+    },
+    {
+      "description":    "TUYA TS0002/TS0012 2-Channel Relay",
+      "modelNames":     ["_TZ3000_bvrlqyj7", "_TZ3000_01gpyda5", "_TZ3000_4zf0crgo", "_TZ3000_5gey1ohx", "_TZ3000_7ed9cqgi", "_TZ3000_fisb3ajo", "_TZ3000_jl7qyupf", "_TZ3000_nPGIPl5D", "_TZ3000_zmy4lslw"],
+      "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
       "options":        {"tuyaMagic": true},
       "endpointId":     1
     },
     {
-      "modelNames":     ["TS0002", "TS0012"],
+      "modelNames":     ["_TZ3000_bvrlqyj7", "_TZ3000_01gpyda5", "_TZ3000_4zf0crgo", "_TZ3000_5gey1ohx", "_TZ3000_7ed9cqgi", "_TZ3000_fisb3ajo", "_TZ3000_jl7qyupf", "_TZ3000_nPGIPl5D", "_TZ3000_zmy4lslw"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -27,16 +37,33 @@
       "endpointId":     [1, 2]
     },
     {
-      "description":    "TUYA TS0003/TS0013 3-Channel Relay/Switch",
-      "modelNames":     ["TS0003", "TS0013"],
-      "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "description":    "TUYA TS0002/TS0012 2-Channel Switch",
+      "modelNames":     ["_TZ3000_18ejxno0"],
+      "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
       "options":        {"tuyaMagic": true},
       "endpointId":     1
     },
     {
-      "modelNames":     ["TS0003", "TS0013"],
+      "modelNames":     ["_TZ3000_18ejxno0"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TUYA TS0003/TS0013 3-Channel Relay",
+      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
+      "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
+      "exposes":        ["powerOnStatus"],
+      "options":        {"tuyaMagic": true},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -44,16 +71,33 @@
       "endpointId":     [1, 2, 3]
     },
     {
-      "description":    "TUYA TS0004/TS0014 4-Channel Relay/Switch",
-      "modelNames":     ["TS0004", "TS0014"],
-      "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "description":    "TUYA TS0003/TS0013 3-Channel Switch",
+      "modelNames":     ["_TZ3000_f09j9qjb", "_TZ3000_khtlvdfc", "_TZ3000_vjhcenzo"],
+      "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
       "options":        {"tuyaMagic": true},
       "endpointId":     1
     },
     {
-      "modelNames":     ["TS0004", "TS0014"],
+      "modelNames":     ["_TZ3000_f09j9qjb", "_TZ3000_khtlvdfc", "_TZ3000_vjhcenzo"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "description":    "TUYA TS0004/TS0014 4-Channel Relay",
+      "modelNames":     ["_TZ3000_ltt60asa"],
+      "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
+      "exposes":        ["powerOnStatus"],
+      "options":        {"tuyaMagic": true},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TZ3000_ltt60asa"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -61,8 +105,25 @@
       "endpointId":     [1, 2, 3, 4]
     },
     {
-      "description":    "TUYA TS0006 6-Channel Relay/Switch",
-      "modelNames":     ["TS0006"],
+      "description":    "TUYA TS0004/TS0014 4-Channel Switch",
+      "modelNames":     ["_TYZB01_bagt1e4o", "_TYZB01_dvakyzhd", "_TZ3000_fxjdcikv", "_TZ3000_jr2atpww", "_TZ3000_mrduubod", "_TZ3000_q6vxaod1", "_TZ3000_r0pmi2p3", "_TZ3210_w3hl6rao"],
+      "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "exposes":        ["powerOnStatus"],
+      "options":        {"tuyaMagic": true},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TYZB01_bagt1e4o", "_TYZB01_dvakyzhd", "_TZ3000_fxjdcikv", "_TZ3000_jr2atpww", "_TZ3000_mrduubod", "_TZ3000_q6vxaod1", "_TZ3000_r0pmi2p3", "_TZ3210_w3hl6rao"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "TUYA TS0006 6-Channel Switch",
+      "modelNames":     ["_TYZB01_ltundz9m", "_TZ3000_jyupj3fw"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
@@ -70,7 +131,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["TS0006"],
+      "modelNames":     ["_TYZB01_ltundz9m", "_TZ3000_jyupj3fw"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -88,7 +149,7 @@
       "options":        {"energyDivider": 100, "currentDivider": 1000}
     },
     {
-      "description":    "TUYA TS011F 2-Channel Relay MS-104BZ",
+      "description":    "TUYA TS011F 2-Channel Relay MOES MS-104BZ",
       "modelNames":     ["_TZ3000_pmz6mjyu"],
       "properties":     ["status"],
       "actions":        ["status"],
@@ -110,7 +171,7 @@
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
       "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
-      "options":        {"tuyaMagic": true}
+      "options":        {"tuyaMagic": true, "endpointName": {"5": "USB"}}
     },
     {
       "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
@@ -130,7 +191,7 @@
       "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
-      "description":    "TUYA TS0501/TS1101 Dimmable Bulb or Dimmer",
+      "description":    "TUYA TS0501/TS1101 Dimmable Bulb or Led Dimmer",
       "modelNames":     ["TS0501A", "TS0501B", "_TZ3000_xfs39dbf"],
       "properties":     ["status", "level"],
       "actions":        ["status", "level"],
@@ -162,8 +223,8 @@
       "exposes":        ["switch", "energy", "voltage", "current", "power"]
     },
     {
-      "description":    "TUYA TS130F Cover Switch",
-      "modelNames":     ["TS130F"],
+      "description":    "TUYA TS130F Cover Relay/Switch",
+      "modelNames":     ["_TZ3000_1dd0d5yi", "_TZ3000_egq7y6pr", "_TZ3000_fccpjz5z", "_TZ3000_fvhunhxb", "_TZ3000_vd43bbfq", "_TZ3000_zirycpws", "_TZ3210_dwytrmda"],
       "properties":     ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "exposes":        ["cover", "calibration", "reverse"]
@@ -183,7 +244,7 @@
       "exposes":        ["cover", "reverse"]
     },
     {
-      "description":    "TUYA TS0601 Roller Blind",
+      "description":    "TUYA TS0601 Roller Blind Motor",
       "modelNames":     ["_TZE200_fctwhugx", "_TZE200_zah67ekd", "_TZE200_hsgrhjpf", "_TZE200_pw7mji0l"],
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
@@ -210,8 +271,7 @@
       "description":    "TUYA TS0601 Neo Siren",
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaNeoSiren"],
-      "actions":        ["tuyaNeoSiren"],
-      "exposes":        []
+      "actions":        ["tuyaNeoSiren"]
     },
     {
       "description":    "TUYA TS0601 Smart Water Valve",
@@ -222,8 +282,8 @@
       "options":        {"lock": "valve", "timer": {"min": 0, "max": 600, "unit": "min"}, "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%"}}
     },
     {
-      "description":    "TUYA TS0001/TS0011 Gas/Water Valve",
-      "modelNames":     ["_TZ3000_h3noz0a5", "_TZ3000_iedbgyxt", "_TZ3000_o4cjetlm", "_TYZB01_4tlksk8a", "_TYZB01_rifa0wlb"],
+      "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",
+      "modelNames":     ["_TYZB01_4tlksk8a", "_TYZB01_rifa0wlb", "_TZ3000_h3noz0a5", "_TZ3000_iedbgyxt", "_TZ3000_o4cjetlm", "_TZ3000_rk2yzt0u"],
       "properties":     ["status", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaPowerOnStatus"],
       "exposes":        ["lock", "powerOnStatus"],
@@ -233,8 +293,6 @@
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
       "properties":     ["batteryPercentage", "iasGas"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "gas"]
     },
     {
@@ -266,7 +324,7 @@
       "options":        {"sensitivity": {"min": 0, "max": 9}, "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"}, "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"}, "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec"}, "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec"}}
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor with Fall Detector",
+      "description":    "TUYA TS0601 Human Presence Sensor with Fall Function",
       "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
       "properties":     ["tuyaRadarSensor"],
       "actions":        ["tuyaRadarSensor"],
@@ -274,7 +332,7 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
-      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_mmtwjmaq", "_TZ3000_otvn3lne", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz"],
+      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_rwb0hxtf", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_kmh5qpmb", "_TZ3000_mmtwjmaq", "_TZ3000_nss8amz9", "_TZ3000_otvn3lne", "_TZ3000_sr0vaafi", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz", "_TZE200_bq5c8xfe"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -282,7 +340,7 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor with Timeout",
-      "modelNames":     ["_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
+      "modelNames":     ["_TYZB01_5nr7ncpl", "_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -291,7 +349,7 @@
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor",
-      "modelNames":     ["_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_msl6wxk9"],
+      "modelNames":     ["_TZ3000_6ygjfyll", "_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_fwxuzcf4", "_TZ3040_msl6wxk9"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "exposes":        ["battery", "occupancy"]
     },
@@ -305,7 +363,7 @@
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor",
-      "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_yd2e749y", "_TZ3000_ywagc4rj"],
+      "modelNames":     ["_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_xr3htd96", "_TZ3000_yd2e749y", "_TZ3000_ywagc4rj"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"]
     },
