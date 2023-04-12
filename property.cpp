@@ -1504,6 +1504,17 @@ void PropertiesTUYA::CoverSwitch::parseAttribte(quint16 attributeId, const QByte
 
     switch (attributeId)
     {
+        case 0xF000:
+
+            switch (data.at(0))
+            {
+                case 0: map.insert("event", endpointOption("invertCover").toBool() ? "close" : "open"); break;
+                case 1: map.insert("event", "stop"); break;
+                case 2: map.insert("event", endpointOption("invertCover").toBool() ? "open" : "close"); break;
+            }
+
+            break;
+
         case 0xF001: map.insert("calibration", data.at(0) ? false : true); break;
         case 0xF002: map.insert("reverse", data.at(0) ? true : false); break;
     }
