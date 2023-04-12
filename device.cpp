@@ -412,6 +412,14 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->properties().append(Property(new Properties::LevelAction));
                     break;
 
+                case CLUSTER_WINDOW_COVERING:
+                    it.value()->properties().append(Property(new Properties::CoverStatus));
+                    it.value()->properties().append(Property(new Properties::CoverPosition));
+                    it.value()->actions().append(Action(new Actions::CoverStatus));
+                    it.value()->actions().append(Action(new Actions::CoverPosition));
+                    it.value()->exposes().append(Expose(new CoverObject));
+                    break;
+
                 case CLUSTER_COLOR_CONTROL:
 
                     if (!device->batteryPowered() && it.value()->colorCapabilities() && it.value()->colorCapabilities() <= 0x001F)
@@ -504,6 +512,8 @@ void DeviceList::recognizeDevice(const Device &device)
                             break;
                     }
 
+                    it.value()->exposes().append(Expose(new Binary::BatteryLow));
+                    it.value()->exposes().append(Expose(new Binary::Tamper));
                     break;
             }
         }
