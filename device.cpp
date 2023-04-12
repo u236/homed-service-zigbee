@@ -493,7 +493,7 @@ void DeviceList::recognizeDevice(const Device &device)
                             it.value()->exposes().append(Expose(new Binary::Contact));
                             break;
 
-                        case 0x0028:
+                        case 0x002A:
                             it.value()->properties().append(Property(new PropertiesIAS::WaterLeak));
                             it.value()->exposes().append(Expose(new Binary::WaterLeak));
                             break;
@@ -507,7 +507,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
             }
         }
+    }
 
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
         if (!it.value()->properties().isEmpty())
         {
             QList <QString> list;
@@ -517,7 +520,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 const Property &property = it.value()->properties().at(i);
 
                 property->setParent(it.value().data());
-                property->setMultiple(property->name() != "battery");
+                recognizeMultipleProperty(device, it.value(), property);
 
                 if (list.contains(property->name()))
                     continue;
@@ -556,7 +559,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 const Expose &expose = it.value()->exposes().at(i);
 
                 expose->setParent(it.value().data());
-                expose->setMultiple(expose->name() != "battery");
+                recognizeMultipleExpose(device, it.value(), expose);
 
                 if (list.contains(expose->name()))
                     continue;
@@ -565,6 +568,42 @@ void DeviceList::recognizeDevice(const Device &device)
             }
 
             logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "exposes:" << list.join(", ");
+        }
+    }
+}
+
+void DeviceList::recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property)
+{
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        if (it.value() == endpoint)
+            continue;
+
+        for (int i = 0; i < it.value()->properties().count(); i++)
+        {
+            if (it.value()->properties().at(i)->name() == property->name())
+            {
+                property->setMultiple(true);
+                return;
+            }
+        }
+    }
+}
+
+void DeviceList::recognizeMultipleExpose(const Device &device, const Endpoint &endpoint, const Expose &expose)
+{
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        if (it.value() == endpoint)
+            continue;
+
+        for (int i = 0; i < it.value()->exposes().count(); i++)
+        {
+            if (it.value()->exposes().at(i)->name() == expose->name())
+            {
+                expose->setMultiple(true);
+                return;
+            }
         }
     }
 }

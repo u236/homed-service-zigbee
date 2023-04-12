@@ -231,6 +231,9 @@ public:
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
 
     void recognizeDevice(const Device &device);
+    void recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property);
+    void recognizeMultipleExpose(const Device &device, const Endpoint &endpoint, const Expose &expose);
+
     void removeDevice(const Device &device);
 
     void storeDatabase(void);
