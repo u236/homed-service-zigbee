@@ -38,7 +38,7 @@
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Switch",
-      "modelNames":     ["_TZ3000_18ejxno0"],
+      "modelNames":     ["TS0002", "TS0012"],
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
@@ -46,7 +46,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TZ3000_18ejxno0"],
+      "modelNames":     ["TS0002", "TS0012"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -72,7 +72,7 @@
     },
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Switch",
-      "modelNames":     ["_TZ3000_f09j9qjb", "_TZ3000_khtlvdfc", "_TZ3000_vjhcenzo"],
+      "modelNames":     ["TS0003", "TS0013"],
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
@@ -80,7 +80,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TZ3000_f09j9qjb", "_TZ3000_khtlvdfc", "_TZ3000_vjhcenzo"],
+      "modelNames":     ["TS0003", "TS0013"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -106,7 +106,7 @@
     },
     {
       "description":    "TUYA TS0004/TS0014 4-Channel Switch",
-      "modelNames":     ["_TYZB01_bagt1e4o", "_TYZB01_dvakyzhd", "_TZ3000_fxjdcikv", "_TZ3000_jr2atpww", "_TZ3000_mrduubod", "_TZ3000_q6vxaod1", "_TZ3000_r0pmi2p3", "_TZ3210_w3hl6rao"],
+      "modelNames":     ["TS0004", "TS0014"],
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
@@ -114,7 +114,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TYZB01_bagt1e4o", "_TYZB01_dvakyzhd", "_TZ3000_fxjdcikv", "_TZ3000_jr2atpww", "_TZ3000_mrduubod", "_TZ3000_q6vxaod1", "_TZ3000_r0pmi2p3", "_TZ3210_w3hl6rao"],
+      "modelNames":     ["TS0004", "TS0014"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
@@ -123,7 +123,7 @@
     },
     {
       "description":    "TUYA TS0006 6-Channel Switch",
-      "modelNames":     ["_TYZB01_ltundz9m", "_TZ3000_jyupj3fw"],
+      "modelNames":     ["TS0006"],
       "properties":     ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
@@ -131,7 +131,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TYZB01_ltundz9m", "_TZ3000_jyupj3fw"],
+      "modelNames":     ["TS0006"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
