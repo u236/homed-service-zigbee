@@ -389,13 +389,14 @@
       "modelNames":     ["TS0041"],
       "properties":     ["batteryPercentage", "tuyaButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
+      "options":        {"action": ["singleClick", "doubleClick", "hold"], "checkTransactionId": true}
     },
     {
       "description":    "TUYA TS0042 2-Button Wireless Switch",
       "modelNames":     ["TS0042"],
       "properties":     ["batteryPercentage"],
       "exposes":        ["battery"],
+      "options":        {"checkTransactionId": true},
       "endpointId":     1
     },
     {
@@ -410,6 +411,7 @@
       "modelNames":     ["TS0043"],
       "properties":     ["batteryPercentage"],
       "exposes":        ["battery"],
+      "options":        {"checkTransactionId": true},
       "endpointId":     1
     },
     {
@@ -424,6 +426,7 @@
       "modelNames":     ["TS0044"],
       "properties":     ["batteryPercentage"],
       "exposes":        ["battery"],
+      "options":        {"checkTransactionId": true},
       "endpointId":     1
     },
     {
