@@ -24,7 +24,7 @@
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
     }
   ]
 }

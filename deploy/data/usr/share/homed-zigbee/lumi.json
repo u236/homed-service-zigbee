@@ -249,7 +249,7 @@
       "description":    "Aqara Water Leak Sensor SJCGQ11LM",
       "modelNames":     ["lumi.sensor_wleak.aq1"],
       "properties":     ["iasWaterLeak", "lumiBasic"],
-      "exposes":        ["battery", "temperature", "waterLeak", "batteryLow", "tamper"]
+      "exposes":        ["battery", "temperature", "waterLeak", "batteryLow"]
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",

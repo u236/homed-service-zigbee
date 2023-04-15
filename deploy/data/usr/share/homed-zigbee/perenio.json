@@ -7,7 +7,7 @@
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "contact", "batteryLow", "tamper"]
+      "exposes":        ["battery", "contact", "batteryLow"]
     },
     {
       "description":    "Perenio Motion Sensor PECMS01",
@@ -15,7 +15,7 @@
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
+      "exposes":        ["battery", "occupancy", "batteryLow"]
     }
   ],
 
@@ -38,7 +38,7 @@
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
+      "exposes":        ["battery", "waterLeak", "batteryLow"]
     }
   ]
 }
