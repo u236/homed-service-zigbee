@@ -5,4 +5,4 @@ RUN     ln -s /data/homed-zigbee.conf /etc/homed/homed-zigbee.conf
 RUN     ln -s /data/homed.log /var/log/homed.log
 COPY    homed-zigbee-$TARGETARCH /usr/local/bin/homed-zigbee
 ADD     library /usr/share/homed-zigbee
-CMD     /usr/local/bin/homed-zigbee
+CMD     ["/usr/local/bin/homed-zigbee"]
