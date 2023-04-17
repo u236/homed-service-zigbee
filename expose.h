@@ -19,7 +19,7 @@ public:
         MetaObject(name), m_multiple(false), m_homeassistant(false) {}
 
     virtual ~ExposeObject(void) {}
-    virtual QJsonObject reqest(void) { return QJsonObject(); };
+    virtual QJsonObject request(void) { return QJsonObject(); };
 
     inline QString component(void) { return m_component; }
 
@@ -45,7 +45,7 @@ class BinaryObject : public ExposeObject
 public:
 
     BinaryObject(const QString &name = "alarm") : ExposeObject(name, "binary_sensor") {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 };
 
@@ -55,7 +55,7 @@ class SensorObject : public ExposeObject
 public:
 
     SensorObject(const QString &name, const QString &unit = QString(), quint8 round = 0) : ExposeObject(name, "sensor"), m_unit(unit), m_round(round) {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 private:
 
@@ -70,7 +70,7 @@ class NumberObject : public ExposeObject
 public:
 
     NumberObject(const QString &name, const QString &icon = QString()) : ExposeObject(name, "number"), m_icon(icon) {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 private:
 
@@ -84,7 +84,7 @@ class ButtonObject : public ExposeObject
 public:
 
     ButtonObject(const QString &name, const QString &payload) : ExposeObject(name, "button"), m_payload(payload) {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 private:
 
@@ -98,7 +98,7 @@ class LightObject : public ExposeObject
 public:
 
     LightObject(void) : ExposeObject("light", "light") {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 };
 
@@ -108,7 +108,7 @@ class SwitchObject : public ExposeObject
 public:
 
     SwitchObject(void) : ExposeObject("switch", "switch") {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 };
 
@@ -118,7 +118,7 @@ class LockObject : public ExposeObject
 public:
 
     LockObject(void) : ExposeObject("lock", "lock") {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 };
 
@@ -128,7 +128,7 @@ class CoverObject : public ExposeObject
 public:
 
     CoverObject(void) : ExposeObject("cover", "cover") {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 };
 
@@ -138,7 +138,7 @@ class ThermostatObject : public ExposeObject
 public:
 
     ThermostatObject(void) : ExposeObject("thermostat", "climate") {}
-    QJsonObject reqest(void) override;
+    QJsonObject request(void) override;
 
 };
 

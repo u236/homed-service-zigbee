@@ -42,7 +42,7 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <Button::ResetCount>          ("resetCountExpose");
 }
 
-QJsonObject BinaryObject::reqest(void)
+QJsonObject BinaryObject::request(void)
 {
     QList <QString> list = {"alarm", "contact", "batteryLow", "waterLeak"};
     QJsonObject json;
@@ -64,7 +64,7 @@ QJsonObject BinaryObject::reqest(void)
     return json;
 }
 
-QJsonObject SensorObject::reqest(void)
+QJsonObject SensorObject::request(void)
 {
     QList <QString> list = {"action", "event", "scene", "count", "co2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
     QJsonObject json;
@@ -92,7 +92,7 @@ QJsonObject SensorObject::reqest(void)
     return json;
 }
 
-QJsonObject NumberObject::reqest(void)
+QJsonObject NumberObject::request(void)
 {
     QMap <QString, QVariant> options = endpointOption().toMap();
     QJsonObject json;
@@ -121,7 +121,7 @@ QJsonObject NumberObject::reqest(void)
     return json;
 }
 
-QJsonObject ButtonObject::reqest(void)
+QJsonObject ButtonObject::request(void)
 {
     QJsonObject json;
 
@@ -131,7 +131,7 @@ QJsonObject ButtonObject::reqest(void)
     return json;
 }
 
-QJsonObject LightObject::reqest(void)
+QJsonObject LightObject::request(void)
 {
     QList <QString> options = endpointOption().toStringList();
     QString commandOnTemplate = "\"status\":\"on\"";
@@ -175,7 +175,7 @@ QJsonObject LightObject::reqest(void)
     return json;
 }
 
-QJsonObject SwitchObject::reqest(void)
+QJsonObject SwitchObject::request(void)
 {
     QJsonObject json;
 
@@ -193,7 +193,7 @@ QJsonObject SwitchObject::reqest(void)
     return json;
 }
 
-QJsonObject LockObject::reqest(void)
+QJsonObject LockObject::request(void)
 {
     QString option = endpointOption().toString();
     QJsonObject json;
@@ -213,7 +213,7 @@ QJsonObject LockObject::reqest(void)
     return json;
 }
 
-QJsonObject CoverObject::reqest(void)
+QJsonObject CoverObject::request(void)
 {
     QString option = endpointOption().toString();
     QJsonObject json;
@@ -239,7 +239,7 @@ QJsonObject CoverObject::reqest(void)
     return json;
 }
 
-QJsonObject ThermostatObject::reqest(void)
+QJsonObject ThermostatObject::request(void)
 {
     QMap <QString, QVariant> options = endpointOption().toMap();
     QJsonObject json;

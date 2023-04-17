@@ -53,7 +53,7 @@ void Controller::publishExposes(const Device &device, bool remove)
                     expose->setStateTopic(mqttTopic("fd/zigbee/%1").arg(topic));
                     expose->setCommandTopic(mqttTopic("td/zigbee/%1").arg(topic));
 
-                    json = expose->reqest();
+                    json = expose->request();
 
                     identity.insert("identifiers", QJsonArray {QString(device->ieeeAddress().toHex())});
                     identity.insert("model", device->description());

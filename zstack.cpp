@@ -20,18 +20,18 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
 
 bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
-    dataRequestStruct reqest;
+    dataRequestStruct request;
 
-    reqest.networkAddress = qToLittleEndian(networkAddress);
-    reqest.dstEndpointId = dstEndPointId;
-    reqest.srcEndpointId = srcEndPointId;
-    reqest.clusterId = qToLittleEndian(clusterId);
-    reqest.transactionId = id;
-    reqest.options = AF_DISCV_ROUTE;
-    reqest.radius = AF_DEFAULT_RADIUS;
-    reqest.length = static_cast <quint8> (payload.length());
+    request.networkAddress = qToLittleEndian(networkAddress);
+    request.dstEndpointId = dstEndPointId;
+    request.srcEndpointId = srcEndPointId;
+    request.clusterId = qToLittleEndian(clusterId);
+    request.transactionId = id;
+    request.options = AF_DISCV_ROUTE;
+    request.radius = AF_DEFAULT_RADIUS;
+    request.length = static_cast <quint8> (payload.length());
 
-    return sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&reqest), sizeof(reqest)).append(payload)) && !m_replyData.at(0);
+    return sendRequest(AF_DATA_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
 }
 
 bool ZStack::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
