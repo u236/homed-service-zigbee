@@ -217,7 +217,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
         return;
 
     groupId = qFromLittleEndian(groupId);
-    enqueueDataRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00));
+    enqueueDataRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00), QString("%1 group request").arg(remove ? "remove" : "add"));
 }
 
 void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
@@ -312,7 +312,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                 QByteArray request = action->request(name, data);
 
                 if (!request.isEmpty() && !(data.type() == QVariant::String && data.toString().isEmpty()))
-                    enqueueDataRequest(device, it.key(), action->clusterId(), request, QString("%1 action").arg(name));
+                    enqueueDataRequest(device, it.key(), action->clusterId(), request, QString("%1 action request").arg(name));
 
                 if (!action->attributes().isEmpty())
                     enqueueDataRequest(device, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes()));
@@ -577,7 +577,7 @@ void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
         request.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
     }
 
-    enqueueDataRequest(device, endpoint->id(), reporting->clusterId(), request, QString("%1 reporting configuration").arg(reporting->name()));
+    enqueueDataRequest(device, endpoint->id(), reporting->clusterId(), request, QString("%1 reporting configuration request").arg(reporting->name()));
 }
 
 void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data)
@@ -975,7 +975,17 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
     switch (commandId)
     {
         case CMD_CONFIGURE_REPORTING_RESPONSE:
+
+            if (payload.at(0))
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "reporting configuration error, status code:" << QString::asprintf("0x%02x", payload.at(0));
+
+            break;
+
         case CMD_DEFAULT_RESPONSE:
+
+            if (payload.at(1))
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", payload.at(0)) << "default response received with error, status code:" << QString::asprintf("0x%02x", payload.at(1));
+
             break;
 
         case CMD_READ_ATTRIBUTES:
