@@ -9,6 +9,7 @@ void BindingObject::registerMetaTypes(void)
     qRegisterMetaType <Bindings::Color>                 ("colorBinding");
     qRegisterMetaType <Bindings::Illuminance>           ("illuminanceBinding");
     qRegisterMetaType <Bindings::Temperature>           ("temperatureBinding");
+    qRegisterMetaType <Bindings::Pressure>              ("pressureBinding");
     qRegisterMetaType <Bindings::Humidity>              ("humidityBinding");
     qRegisterMetaType <Bindings::Moisture>              ("moistureBinding");
     qRegisterMetaType <Bindings::Energy>                ("energyBinding");

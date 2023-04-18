@@ -92,6 +92,15 @@ namespace Bindings
 
     };
 
+    class Pressure : public BindingObject
+    {
+
+    public:
+
+        Pressure(void) : BindingObject("pressure", CLUSTER_PRESSURE_MEASUREMENT) {}
+
+    };
+
     class Humidity : public BindingObject
     {
 

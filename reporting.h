@@ -141,12 +141,30 @@ namespace Reportings
 
     };
 
+    class Pressure : public ReportingObject
+    {
+
+    public:
+
+        Pressure(void) : ReportingObject("pressure", CLUSTER_PRESSURE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_SIGNED, 10, 3600,  10) {}
+
+    };
+
     class Humidity : public ReportingObject
     {
 
     public:
 
         Humidity(void) : ReportingObject("humidity", CLUSTER_RELATIVE_HUMIDITY, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 50) {}
+
+    };
+
+    class Moisture : public ReportingObject
+    {
+
+    public:
+
+        Moisture(void) : ReportingObject("moisture", CLUSTER_SOIL_MOISTURE, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 50) {}
 
     };
 
