@@ -56,7 +56,7 @@ namespace Reportings
 
     public:
 
-        BatteryVoltage(void) : ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0020, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10) {}
+        BatteryVoltage(void) : ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0020, DATA_TYPE_8BIT_UNSIGNED, 60, 3600) {}
 
     };
 
@@ -65,7 +65,7 @@ namespace Reportings
 
     public:
 
-        BatteryPercentage(void) : ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0021, DATA_TYPE_8BIT_UNSIGNED, 30, 3600, 10) {}
+        BatteryPercentage(void) : ReportingObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0021, DATA_TYPE_8BIT_UNSIGNED, 60, 3600) {}
 
     };
 
@@ -74,7 +74,7 @@ namespace Reportings
 
     public:
 
-        DeviceTemperature(void) : ReportingObject("deviceTemperature", CLUSTER_TEMPERATURE_CONFIGURATION, 0x0000, DATA_TYPE_16BIT_SIGNED, 30, 600, 10) {}
+        DeviceTemperature(void) : ReportingObject("deviceTemperature", CLUSTER_TEMPERATURE_CONFIGURATION, 0x0000, DATA_TYPE_16BIT_SIGNED, 10, 3600, 1) {}
 
     };
 
@@ -128,7 +128,7 @@ namespace Reportings
 
     public:
 
-        Illuminance(void) : ReportingObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10) {}
+        Illuminance(void) : ReportingObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 10) {}
 
     };
 
@@ -137,7 +137,7 @@ namespace Reportings
 
     public:
 
-        Temperature(void) : ReportingObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_SIGNED, 30, 600, 10) {}
+        Temperature(void) : ReportingObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_SIGNED, 10, 3600, 50) {}
 
     };
 
@@ -146,7 +146,7 @@ namespace Reportings
 
     public:
 
-        Humidity(void) : ReportingObject("humidity", CLUSTER_RELATIVE_HUMIDITY, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 30, 600, 10) {}
+        Humidity(void) : ReportingObject("humidity", CLUSTER_RELATIVE_HUMIDITY, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 50) {}
 
     };
 
@@ -155,7 +155,7 @@ namespace Reportings
 
     public:
 
-        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 15, 600, 1) {}
+        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
 
     };
 
@@ -164,7 +164,7 @@ namespace Reportings
 
     public:
 
-        Voltage(void) : ReportingObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0505, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 1) {}
+        Voltage(void) : ReportingObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0505, DATA_TYPE_16BIT_UNSIGNED, 10, 600, 1) {}
 
     };
 
@@ -173,7 +173,7 @@ namespace Reportings
 
     public:
 
-        Current(void) : ReportingObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0508, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 1) {}
+        Current(void) : ReportingObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0508, DATA_TYPE_16BIT_UNSIGNED, 10, 600, 1) {}
 
     };
 
@@ -182,7 +182,7 @@ namespace Reportings
 
     public:
 
-        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 15, 600, 1) {}
+        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600, 1) {}
 
     };
 }
@@ -194,7 +194,7 @@ namespace ReportingsPerenio
 
     public:
 
-        Voltage(void) : ReportingObject("voltage", CLUSTER_PERENIO, 0x0003, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 0) {}
+        Voltage(void) : ReportingObject("voltage", CLUSTER_PERENIO, 0x0003, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -203,7 +203,7 @@ namespace ReportingsPerenio
 
     public:
 
-        Power(void) : ReportingObject("power", CLUSTER_PERENIO, 0x000A, DATA_TYPE_16BIT_UNSIGNED, 15, 600, 0) {}
+        Power(void) : ReportingObject("power", CLUSTER_PERENIO, 0x000A, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -212,7 +212,7 @@ namespace ReportingsPerenio
 
     public:
 
-        Energy(void) : ReportingObject("energy", CLUSTER_PERENIO, 0x000E, DATA_TYPE_32BIT_UNSIGNED, 15, 600, 0) {}
+        Energy(void) : ReportingObject("energy", CLUSTER_PERENIO, 0x000E, DATA_TYPE_32BIT_UNSIGNED, 10, 600) {}
 
     };
 }
