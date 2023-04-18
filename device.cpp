@@ -371,7 +371,6 @@ void DeviceList::recognizeDevice(const Device &device)
                     if (!device->batteryPowered())
                         break;
 
-                    it.value()->properties().append(Property(new Properties::BatteryVoltage));
                     it.value()->properties().append(Property(new Properties::BatteryPercentage));
                     it.value()->exposes().append(Expose(new Sensor::Battery));
                     break;

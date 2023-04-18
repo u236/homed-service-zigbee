@@ -180,9 +180,9 @@ private:
     void enqueueRequest(const Device &device, RequestType type);
 
     bool interviewRequest(quint8 id, const Device &device);
-
     void interviewDevice(const Device &device);
     void interviewFinished(const Device &device);
+    void interviewQuirks(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 
     void configureReporting(const Endpoint &endpoint, const Reporting &reporting);

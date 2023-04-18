@@ -513,21 +513,7 @@ void ZigBee::interviewFinished(const Device &device)
     if (!device->description().isEmpty())
         logInfo << "Device" << device->name() << "identified as" << device->description();
 
-    if (device->options().value("tuyaMagic").toBool())
-        enqueueDataRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
-
-    if (device->manufacturerName() == "IKEA of Sweden" && device->batteryPowered())
-    {
-        QList <QString> list = device->firmware().split('.');
-
-        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75))
-        {
-            quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
-            enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF);
-        }
-        else
-            enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF);
-    }
+    interviewQuirks(device);
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
@@ -545,6 +531,25 @@ void ZigBee::interviewFinished(const Device &device)
     device->setInterviewFinished();
 
     m_devices->storeDatabase();
+}
+
+void ZigBee::interviewQuirks(const Device &device)
+{
+    if (device->manufacturerName() == "IKEA of Sweden" && device->batteryPowered())
+    {
+        QList <QString> list = device->firmware().split('.');
+        quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
+
+        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75))
+            enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF);
+        else
+            enqueueBindRequest(device, 0x01, CLUSTER_ON_OFF);
+
+        enqueueDataRequest(device, 0x01, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, {0x0021}), "battery percentage request");
+    }
+
+    if (device->options().value("tuyaMagic").toBool())
+        enqueueDataRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
 }
 
 void ZigBee::interviewError(const Device &device, const QString &reason)

@@ -38,9 +38,9 @@
     {
       "description":    "GS Temperature and Humidity Sensor STHM-I1H",
       "modelNames":     ["STHM-I1H"],
-      "properties":     ["batteryVoltage", "temperature", "humidity"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
-      "reportings":     ["batteryVoltage", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"]
     }
   ]
