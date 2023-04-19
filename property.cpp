@@ -83,9 +83,10 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::ButtonAction>            ("tuyaButtonActionProperty");
 
     qRegisterMetaType <PropertiesEfekta::ReportingDelay>        ("efektaReportingDelayProperty");
-    qRegisterMetaType <PropertiesEfekta::TemperatureOffset>     ("efektaTemperatureOffsetProperty");
-    qRegisterMetaType <PropertiesEfekta::HumidityOffset>        ("efektaHumidityOffsetProperty");
+    qRegisterMetaType <PropertiesEfekta::TemperatureSettings>   ("efektaTemperatureSettingsProperty");
+    qRegisterMetaType <PropertiesEfekta::HumiditySettings>      ("efektaHumiditySettingsProperty");
     qRegisterMetaType <PropertiesEfekta::CO2Sensor>             ("efektaCO2SensorProperty");
+    qRegisterMetaType <PropertiesEfekta::VOCSensor>             ("efektaVOCSensorProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>     ("sonoffButtonActionProperty");
@@ -510,21 +511,21 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
     map.insert("tamper", (value & 0x0004) ? true : false);
     map.insert("batteryLow", (value & 0x0008) ? true : false);
 
-    m_value = map.isEmpty() ? QVariant() : map;
+    m_value = map;
 }
 
 void PropertiesIAS::ZoneStatus::clearValue(void)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     map.remove(m_name);
-    m_value = map.isEmpty() ? QVariant() : map;
+    m_value = map;
 }
 
 void PropertiesIAS::ZoneStatus::resetValue(void)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     map.insert(m_name, false);
-    m_value = map.isEmpty() ? QVariant() : map;
+    m_value = map;
 }
 
 void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1072,7 +1073,7 @@ void PropertiesLUMI::Vibration::resetValue(void)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     map.insert("vibration", false);
-    m_value = map.isEmpty() ? QVariant() : map;
+    m_value = map;
 }
 
 void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload)
@@ -1622,26 +1623,79 @@ void PropertiesEfekta::ReportingDelay::parseAttribte(quint16 attributeId, const 
     m_value = qFromLittleEndian(value);
 }
 
-void PropertiesEfekta::TemperatureOffset::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::TemperatureSettings::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    qint16 value;
+    QMap <QString, QVariant> map = m_value.toMap();
 
-    if (attributeId != 0x0210 || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
+    switch (attributeId)
+    {
+        case 0x0210:
+        case 0x0221:
+        case 0x0222:
+        {
+            qint16 value;
 
-    memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 10.0;
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            value = qFromLittleEndian(value);
+
+            switch (attributeId)
+            {
+                case 0x0210: map.insert("temperatureOffset", value / 10.0); break;
+                case 0x0221: map.insert("temperatureHigh", value); break;
+                case 0x0222: map.insert("temperatureLow", value); break;
+            }
+
+            break;
+        }
+
+        case 0x0220:
+        case 0x0225:
+        {
+             map.insert(attributeId == 0x0220 ? "temperatureRelay" : "temperatureRelayInvert", data.at(0) ? true : false);
+             break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::HumidityOffset::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::HumiditySettings::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    qint16 value;
+    QMap <QString, QVariant> map = m_value.toMap();
 
-    if (attributeId != 0x0210 || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
+    switch (attributeId)
+    {
+        case 0x0210:
+        {
+            qint16 value;
 
-    memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value);
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert("humidityOffset", qFromLittleEndian(value));
+            break;
+        }
+
+        case 0x0221:
+        case 0x0222:
+        {
+             map.insert(attributeId == 0x0221 ? "humidityHigh" : "humidityLow", static_cast <quint8> (data.at(0)));
+             break;
+        }
+
+        case 0x0220:
+        case 0x0225:
+        {
+             map.insert(attributeId == 0x0220 ? "humidityRelay" : "humidityRelayInvert", data.at(0) ? true : false);
+             break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesEfekta::CO2Sensor::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1686,11 +1740,7 @@ void PropertiesEfekta::CO2Sensor::parseAttribte(quint16 attributeId, const QByte
             break;
         }
 
-        case 0x0209:
-        {
-            map.insert("indicatorLevel", static_cast <quint8> (data.at(0)));
-            break;
-        }
+        case 0x0209: map.insert("indicatorLevel", static_cast <quint8> (data.at(0))); break;
 
         default:
         {
@@ -1710,6 +1760,48 @@ void PropertiesEfekta::CO2Sensor::parseAttribte(quint16 attributeId, const QByte
             }
 
             break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesEfekta::VOCSensor::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert("voc", round(qFromLittleEndian(value)));
+            break;
+        }
+
+        case 0x0221:
+        case 0x0222:
+        {
+            quint16 value;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert(attributeId == 0x0221 ? "vocHigh" : "vocLow", qFromLittleEndian(value));
+            break;
+        }
+
+        case 0x0220:
+        case 0x0225:
+        {
+             map.insert(attributeId == 0x0220 ? "vocRelay" : "vocRelayInvert", data.at(0) ? true : false);
+             break;
         }
     }
 

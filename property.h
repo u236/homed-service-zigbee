@@ -883,22 +883,22 @@ namespace PropertiesEfekta
 
     };
 
-    class TemperatureOffset : public PropertyObject
+    class TemperatureSettings : public PropertyObject
     {
 
     public:
 
-        TemperatureOffset(void) : PropertyObject("temperatureOffset", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        TemperatureSettings(void) : PropertyObject("temperatureSettings", CLUSTER_TEMPERATURE_MEASUREMENT) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
 
-    class HumidityOffset : public PropertyObject
+    class HumiditySettings : public PropertyObject
     {
 
     public:
 
-        HumidityOffset(void) : PropertyObject("humidityOffset", CLUSTER_RELATIVE_HUMIDITY) {}
+        HumiditySettings(void) : PropertyObject("humiditySettings", CLUSTER_RELATIVE_HUMIDITY) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -909,6 +909,16 @@ namespace PropertiesEfekta
     public:
 
         CO2Sensor(void) : PropertyObject("co2Sensor", CLUSTER_CO2_CONCENTRATION) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class VOCSensor : public PropertyObject
+    {
+
+    public:
+
+        VOCSensor(void) : PropertyObject("vocSensor", CLUSTER_ANALOG_INPUT) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };

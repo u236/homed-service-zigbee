@@ -459,22 +459,22 @@ namespace ActionsEfekta
 
     };
 
-    class TemperatureOffset : public ActionObject
+    class TemperatureSettings : public ActionObject
     {
 
     public:
 
-        TemperatureOffset(void) : ActionObject("temperatureOffset", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, 0x0210) {}
+        TemperatureSettings(void) : ActionObject("temperatureSettings", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, QList <QString> {"temperatureOffset", "temperatureHigh", "temperatureLow", "temperatureRelay", "temperatureRelayInvert"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
-    class HumidityOffset : public ActionObject
+    class HumiditySettings : public ActionObject
     {
 
     public:
 
-        HumidityOffset(void) : ActionObject("humidityOffset", CLUSTER_RELATIVE_HUMIDITY, 0x0000, 0x0210) {}
+        HumiditySettings(void) : ActionObject("humiditySettings", CLUSTER_RELATIVE_HUMIDITY, 0x0000, QList <QString> {"humidityOffset", "humidityHigh", "humidityLow", "humidityRelay", "humidityRelayInvert"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -485,6 +485,16 @@ namespace ActionsEfekta
     public:
 
         CO2Sensor(void) : ActionObject("co2Sensor", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"altitude", "manualCalibration", "co2High", "co2Low", "indicatorLevel", "forceCalibration", "autoBrightness", "co2LongChart", "co2FactoryReset", "indicator", "co2Relay", "co2RelayInvert", "pressureLongChart", "nightBacklight"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class VOCSensor : public ActionObject
+    {
+
+    public:
+
+        VOCSensor(void) : ActionObject("vocSensor", CLUSTER_ANALOG_INPUT, 0x0000, QList <QString> {"vovHigh", "vovLow", "vovRelay", "vovRelayInvert"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

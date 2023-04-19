@@ -46,9 +46,10 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
 
     qRegisterMetaType <ActionsEfekta::ReportingDelay>           ("efektaReportingDelayAction");
-    qRegisterMetaType <ActionsEfekta::TemperatureOffset>        ("efektaTemperatureOffsetAction");
-    qRegisterMetaType <ActionsEfekta::HumidityOffset>           ("efektaHumidityOffsetAction");
+    qRegisterMetaType <ActionsEfekta::TemperatureSettings>      ("efektaTemperatureSettingsAction");
+    qRegisterMetaType <ActionsEfekta::HumiditySettings>         ("efektaHumiditySettingsAction");
     qRegisterMetaType <ActionsEfekta::CO2Sensor>                ("efektaCO2SensorAction");
+    qRegisterMetaType <ActionsEfekta::VOCSensor>                ("efektaVOCSensorAction");
 
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
@@ -1045,16 +1046,70 @@ QByteArray ActionsEfekta::ReportingDelay::request(const QString &, const QVarian
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsEfekta::TemperatureOffset::request(const QString &, const QVariant &data)
+QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, const QVariant &data)
 {
-    qint16 value = qToLittleEndian <qint16> (data.toDouble() * 10);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0: // temperatureOffset
+        {
+            qint16 value = qToLittleEndian <qint16> (data.toDouble() * 10);
+            m_attributes = {0x0210};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 1: // temperatureHigh
+        case 2: // temperatureLow
+        {
+            qint16 value = qToLittleEndian <qint16> (data.toInt());
+            m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x2222)};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 3: // temperatureRelay
+        case 4: // temperatureRelayInvert
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            m_attributes = {static_cast <quint16> (index == 3 ? 0x0220 : 0x0225)};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+    }
+
+    return QByteArray();
 }
 
-QByteArray ActionsEfekta::HumidityOffset::request(const QString &, const QVariant &data)
+QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const QVariant &data)
 {
-    qint16 value = qToLittleEndian <qint16> (data.toInt());
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0: // humidityOffset
+        {
+            qint16 value = qToLittleEndian <qint16> (data.toInt());
+            m_attributes = {0x0210};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 1: // humidityHigh
+        case 2: // humidityLow
+        {
+            quint8 value = qToLittleEndian <quint8> (data.toInt());
+            m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x2222)};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 3: // humidityRelay
+        case 4: // humidityRelayInvert
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            m_attributes = {static_cast <quint16> (index == 3 ? 0x0220 : 0x0225)};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+    }
+
+    return QByteArray();
 }
 
 QByteArray ActionsEfekta::CO2Sensor::request(const QString &name, const QVariant &data)
@@ -1109,6 +1164,32 @@ QByteArray ActionsEfekta::CO2Sensor::request(const QString &name, const QVariant
             return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
         }
     }
+}
+
+QByteArray ActionsEfekta::VOCSensor::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 1: // vocHigh
+        case 2: // vocLow
+        {
+            quint16 value = qToLittleEndian <quint16> (data.toInt());
+            m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x2222)};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 3: // vocRelay
+        case 4: // vocRelayInvert
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            m_attributes = {static_cast <quint16> (index == 3 ? 0x0220 : 0x0225)};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+    }
+
+    return QByteArray();
 }
 
 QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QVariant &data)
