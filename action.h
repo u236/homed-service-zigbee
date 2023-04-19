@@ -464,7 +464,27 @@ namespace ActionsEfekta
 
     public:
 
-        TemperatureOffset(void) : ActionObject("temperatureOffset", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, 0x0410) {}
+        TemperatureOffset(void) : ActionObject("temperatureOffset", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000, 0x0210) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class HumidityOffset : public ActionObject
+    {
+
+    public:
+
+        HumidityOffset(void) : ActionObject("humidityOffset", CLUSTER_RELATIVE_HUMIDITY, 0x0000, 0x0210) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class CO2Sensor : public ActionObject
+    {
+
+    public:
+
+        CO2Sensor(void) : ActionObject("co2Sensor", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"altitude", "manualCalibration", "co2High", "co2Low", "indicatorLevel", "forceCalibration", "autoBrightness", "co2LongChart", "co2FactoryReset", "indicator", "co2Relay", "co2RelayInvert", "pressureLongChart", "nightBacklight"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

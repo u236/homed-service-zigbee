@@ -37,6 +37,7 @@ SOURCES += \
     zstack.cpp
 
 DISTFILES += \
+    deploy/data/usr/share/homed-zigbee/efekta.json \
     deploy/data/usr/share/homed-zigbee/gledopto.json \
     deploy/data/usr/share/homed-zigbee/gs.json \
     deploy/data/usr/share/homed-zigbee/homed.json \

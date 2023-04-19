@@ -119,6 +119,15 @@ namespace Bindings
 
     };
 
+    class CO2 : public BindingObject
+    {
+
+    public:
+
+        CO2(void) : BindingObject("co2", CLUSTER_CO2_CONCENTRATION) {}
+
+    };
+
     class Energy : public BindingObject
     {
 

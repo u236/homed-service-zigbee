@@ -84,6 +84,8 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesEfekta::ReportingDelay>        ("efektaReportingDelayProperty");
     qRegisterMetaType <PropertiesEfekta::TemperatureOffset>     ("efektaTemperatureOffsetProperty");
+    qRegisterMetaType <PropertiesEfekta::HumidityOffset>        ("efektaHumidityOffsetProperty");
+    qRegisterMetaType <PropertiesEfekta::CO2Sensor>             ("efektaCO2SensorProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>     ("sonoffButtonActionProperty");
@@ -1624,11 +1626,94 @@ void PropertiesEfekta::TemperatureOffset::parseAttribte(quint16 attributeId, con
 {
     qint16 value;
 
-    if (attributeId != 0x0410 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != 0x0210 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / 10.0;
+}
+
+void PropertiesEfekta::HumidityOffset::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    qint16 value;
+
+    if (attributeId != 0x0210 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
+void PropertiesEfekta::CO2Sensor::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (attributeId)
+    {
+        case 0x0000:
+        {
+            float value;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert("co2", round(qFromLittleEndian(value) * 1000000));
+            break;
+        }
+
+        case 0x0205:
+        case 0x0207:
+        case 0x0221:
+        case 0x0222:
+        {
+            uint16_t value;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            value = qFromLittleEndian(value);
+
+            switch (attributeId)
+            {
+                case 0x0205: map.insert("altitude", value); break;
+                case 0x0207: map.insert("manualCalibration", value); break;
+                case 0x0221: map.insert("co2High", value); break;
+                case 0x0222: map.insert("co2Low", value); break;
+            }
+
+            break;
+        }
+
+        case 0x0209:
+        {
+            map.insert("indicatorLevel", static_cast <quint8> (data.at(0)));
+            break;
+        }
+
+        default:
+        {
+            bool value = data.at(0) ? true : false;
+
+            switch (attributeId)
+            {
+                case 0x0202: map.insert("forceCalibration", value); break;
+                case 0x0203: map.insert("autoBrightness", value); break;
+                case 0x0204: map.insert("co2LongChart", value); break;
+                case 0x0206: map.insert("co2FactoryReset", value); break;
+                case 0x0211: map.insert("indicator", value); break;
+                case 0x0220: map.insert("co2Relay", value); break;
+                case 0x0225: map.insert("co2RelayInvert", value); break;
+                case 0x0244: map.insert("pressureLongChart", value); break;
+                case 0x0401: map.insert("nightBacklight", value); break;
+            }
+
+            break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
@@ -1722,15 +1807,16 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, const
                 break;
 
             memcpy(&value, data.constData(), data.length());
+            value = qFromLittleEndian(value);
 
             switch (attributeId)
             {
-                case 0x0003: map.insert("voltage", qFromLittleEndian(value)); break;
-                case 0x0004: map.insert("voltageMin", qFromLittleEndian(value)); break;
-                case 0x0005: map.insert("voltageMax", qFromLittleEndian(value)); break;
-                case 0x000A: map.insert("power", qFromLittleEndian(value)); break;
-                case 0x000B: map.insert("powerMax", qFromLittleEndian(value)); break;
-                case 0x000F: map.insert("energyLimit", qFromLittleEndian(value)); break;
+                case 0x0003: map.insert("voltage", value); break;
+                case 0x0004: map.insert("voltageMin", value); break;
+                case 0x0005: map.insert("voltageMax", value); break;
+                case 0x000A: map.insert("power", value); break;
+                case 0x000B: map.insert("powerMax", value); break;
+                case 0x000F: map.insert("energyLimit", value); break;
             }
 
             break;

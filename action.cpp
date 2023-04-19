@@ -47,6 +47,8 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsEfekta::ReportingDelay>           ("efektaReportingDelayAction");
     qRegisterMetaType <ActionsEfekta::TemperatureOffset>        ("efektaTemperatureOffsetAction");
+    qRegisterMetaType <ActionsEfekta::HumidityOffset>           ("efektaHumidityOffsetAction");
+    qRegisterMetaType <ActionsEfekta::CO2Sensor>                ("efektaCO2SensorAction");
 
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
@@ -532,9 +534,7 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
 
 QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, const QVariant &data)
 {
-    int index = m_actions.indexOf(name);
-
-    switch (index)
+    switch (m_actions.indexOf(name))
     {
         case 0: // status
         {
@@ -606,9 +606,7 @@ QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, con
 
 QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, const QVariant &data)
 {
-    int index = m_actions.indexOf(name);
-
-    switch (index)
+    switch (m_actions.indexOf(name))
     {
         case 0: // operationMode
         {
@@ -1051,6 +1049,66 @@ QByteArray ActionsEfekta::TemperatureOffset::request(const QString &, const QVar
 {
     qint16 value = qToLittleEndian <qint16> (data.toDouble() * 10);
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsEfekta::HumidityOffset::request(const QString &, const QVariant &data)
+{
+    qint16 value = qToLittleEndian <qint16> (data.toInt());
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsEfekta::CO2Sensor::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        {
+            quint16 value = qToLittleEndian <quint16> (data.toInt());
+
+            switch (index)
+            {
+                case 0:  m_attributes = {0x0205}; break; // altitude
+                case 1:  m_attributes = {0x0207}; break; // manualCalibration
+                case 2:  m_attributes = {0x0221}; break; // co2High
+                case 3:  m_attributes = {0x0222}; break; // co2Low
+            }
+
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 4: // indicatorLevel
+        {
+            quint8 value = qToLittleEndian <quint8> (data.toInt());
+            m_attributes = {0x0209};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        default:
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+
+            switch (index)
+            {
+                case 5:  m_attributes = {0x0202}; break; // forceCalibration
+                case 6:  m_attributes = {0x0203}; break; // autoBrightness
+                case 7:  m_attributes = {0x0204}; break; // co2LongChart
+                case 8:  m_attributes = {0x0206}; break; // co2FactoryReset
+                case 9:  m_attributes = {0x0211}; break; // indicator
+                case 10: m_attributes = {0x0220}; break; // co2Relay
+                case 11: m_attributes = {0x0225}; break; // co2RelayInvert
+                case 12: m_attributes = {0x0244}; break; // pressureLongChart
+                case 13: m_attributes = {0x0401}; break; // nightBacklight
+                default: return QByteArray();
+            }
+
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+    }
 }
 
 QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QVariant &data)

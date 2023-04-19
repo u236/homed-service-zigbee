@@ -1,17 +1,4 @@
 {
-  "efektalab.com":
-  [
-    {
-      "description":    "EFEKTA Plant Watering Sensor miniPWS",
-      "modelNames":     ["EFEKTA_miniPWS"],
-      "properties":     ["batteryPercentage", "temperature", "moisture", "efektaReportingDelay", "efektaTemperatureOffset"],
-      "actions":        ["efektaReportingDelay", "efektaTemperatureOffset"],
-      "bindings":       ["battery", "temperature", "moisture"],
-      "exposes":        ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
-      "options":        {"reportingDelay": {"min": 1, "max": 180, "unit": "min"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}}
-    }
-  ],
-
   "HEIMAN":
   [
     {

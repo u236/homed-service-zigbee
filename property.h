@@ -892,6 +892,26 @@ namespace PropertiesEfekta
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class HumidityOffset : public PropertyObject
+    {
+
+    public:
+
+        HumidityOffset(void) : PropertyObject("humidityOffset", CLUSTER_RELATIVE_HUMIDITY) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class CO2Sensor : public PropertyObject
+    {
+
+    public:
+
+        CO2Sensor(void) : PropertyObject("co2Sensor", CLUSTER_CO2_CONCENTRATION) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
 }
 
 namespace PropertiesOther
