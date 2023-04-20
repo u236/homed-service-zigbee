@@ -65,6 +65,15 @@ namespace Bindings
 
     };
 
+    class AnalogInput : public BindingObject
+    {
+
+    public:
+
+        AnalogInput(void) : BindingObject("analogInput", CLUSTER_ANALOG_INPUT) {}
+
+    };
+
     class Color : public BindingObject
     {
 

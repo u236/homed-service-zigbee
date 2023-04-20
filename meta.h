@@ -14,6 +14,7 @@ public:
     inline void setParent(QObject *value) { m_parent = value; }
 
     QVariant endpointOption(const QString &name = QString());
+    quint8 endpointId(void);
 
 protected:
 

@@ -1732,7 +1732,7 @@ void PropertiesEfekta::CO2Sensor::parseAttribte(quint16 attributeId, const QByte
             switch (attributeId)
             {
                 case 0x0205: map.insert("altitude", value); break;
-                case 0x0207: map.insert("manualCalibration", value); break;
+                case 0x0207: map.insert("co2ManualCalibration", value); break;
                 case 0x0221: map.insert("co2High", value); break;
                 case 0x0222: map.insert("co2Low", value); break;
             }
@@ -1748,7 +1748,7 @@ void PropertiesEfekta::CO2Sensor::parseAttribte(quint16 attributeId, const QByte
 
             switch (attributeId)
             {
-                case 0x0202: map.insert("forceCalibration", value); break;
+                case 0x0202: map.insert("co2ForceCalibration", value); break;
                 case 0x0203: map.insert("autoBrightness", value); break;
                 case 0x0204: map.insert("co2LongChart", value); break;
                 case 0x0206: map.insert("co2FactoryReset", value); break;
@@ -1780,7 +1780,7 @@ void PropertiesEfekta::VOCSensor::parseAttribte(quint16 attributeId, const QByte
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("voc", round(qFromLittleEndian(value)));
+            map.insert(endpointId() == 0x01 ? "voc" : "eco2", round(qFromLittleEndian(value)));
             break;
         }
 
@@ -1845,7 +1845,7 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
     {
         case 0x0000: map.insert("temperature", qFromLittleEndian(value) / 100.0 + endpointOption("temperatureOffset").toDouble()); break;
         case 0x0001: map.insert("humidity", qFromLittleEndian(value) / 100.0 + endpointOption("humidityOffset").toDouble()); break;
-        case 0x0002: map.insert("co2", qFromLittleEndian(value)); break;
+        case 0x0002: map.insert("eco2", qFromLittleEndian(value)); break;
         case 0x0003: map.insert("voc", qFromLittleEndian(value)); break;
     }
 

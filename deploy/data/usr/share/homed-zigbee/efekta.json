@@ -2,13 +2,38 @@
   "efektalab.com":
   [
     {
+      "description":    "EFEKTA CO2 Smart Monitor",
+      "modelNames":     ["EFEKTA_CO2_Smart_Monitor"],
+      "properties":     ["temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
+      "bindings":       ["analogInput", "temperature", "humidity", "co2"],
+      "exposes":        ["temperature", "humidity", "co2", "reportingDelay", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow",  "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ForceCalibration", "co2ManualCalibration", "co2FactoryReset"],
+      "options":        {"reportingDelay": {"min": 5, "max": 300, "unit": "sec"}, "altitude": {"min": 0, "max": 3000, "unit": "m"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}, "temperatureLow": {"min": -40, "max": 60, "unit": "°C"}, "temperatureHigh": {"min": -40, "max": 60, "unit": "°C"}, "humidityOffset": {"min": -50, "max": 50, "unit": "%"}, "humidityLow": {"min": 0, "max": 100, "unit": "%"}, "humidityHigh": {"min": 0, "max": 100, "unit": "%"}, "co2Low": {"min": 400, "max": 5000, "unit": "ppm"}, "co2High": {"min": 400, "max": 5000, "unit": "ppm"}, "co2ManualCalibration": {"min": 0, "max": 5000, "unit": "ppm"}}
+    },
+    {
+      "description":    "EFEKTA CO2 Smart Monitor V2",
+      "modelNames":     ["EFEKTA_CO2_Smart_Monitor_V2"],
+      "properties":     ["temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
+      "bindings":       ["analogInput", "temperature", "humidity", "co2"],
+      "exposes":        ["temperature", "humidity", "co2", "eco2", "voc", "reportingDelay", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow", "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ForceCalibration", "co2ManualCalibration", "co2FactoryReset", "vocLow", "vocHigh", "vocRelay", "vocRelayInvert"],
+      "options":        {"reportingDelay": {"min": 5, "max": 300, "unit": "sec"}, "altitude": {"min": 0, "max": 3000, "unit": "m"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}, "temperatureLow": {"min": -40, "max": 60, "unit": "°C"}, "temperatureHigh": {"min": -40, "max": 60, "unit": "°C"}, "humidityOffset": {"min": -50, "max": 50, "unit": "%"}, "humidityLow": {"min": 0, "max": 100, "unit": "%"}, "humidityHigh": {"min": 0, "max": 100, "unit": "%"}, "co2Low": {"min": 400, "max": 5000, "unit": "ppm"}, "co2High": {"min": 400, "max": 5000, "unit": "ppm"}, "co2ManualCalibration": {"min": 0, "max": 5000, "unit": "ppm"}, "vocLow": {"min": 0, "max": 1000, "unit": "ppb"}, "vocHigh": {"min": 0, "max": 1000, "unit": "ppb"}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["EFEKTA_CO2_Smart_Monitor_V2"],
+      "properties":     ["efektaVOCSensor"],
+      "bindings":       ["analogInput"],
+      "endpointId":     2
+    },
+    {
       "description":    "EFEKTA CO2 Monitor with TFT Display iAQ",
       "modelNames":     ["EFEKTA_iAQ"],
       "properties":     ["temperature", "humidity", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
       "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
       "bindings":       ["temperature", "humidity", "co2"],
-      "exposes":        ["illuminance", "temperature", "humidity", "co2", "temperatureOffset", "humidityOffset", "altitude", "forceCalibration", "manualCalibration", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "autoBrightness", "nightBacklight", "co2LongChart", "co2FactoryReset"],
-      "options":        { "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}, "humidityOffset": {"min": -50, "max": 50, "unit": "%"}, "altitude": {"min": 0, "max": 3000, "unit": "m"}, "manualCalibration": {"min": 0, "max": 5000, "unit": "ppm"}, "co2Low": {"min": 400, "max": 5000, "unit": "ppm"}, "co2High": {"min": 400, "max": 5000, "unit": "ppm"}},
+      "exposes":        ["illuminance", "temperature", "humidity", "co2", "altitude", "autoBrightness", "nightBacklight", "temperatureOffset", "humidityOffset", "co2LongChart", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ForceCalibration", "co2ManualCalibration", "co2FactoryReset"],
+      "options":        {"altitude": {"min": 0, "max": 3000, "unit": "m"}, "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}, "humidityOffset": {"min": -50, "max": 50, "unit": "%"}, "co2Low": {"min": 400, "max": 5000, "unit": "ppm"}, "co2High": {"min": 400, "max": 5000, "unit": "ppm"}, "co2ManualCalibration": {"min": 0, "max": 5000, "unit": "ppm"}},
       "endpointId":     1
     },
     {
@@ -23,8 +48,8 @@
       "properties":     ["temperature", "humidity", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
       "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
       "bindings":       ["temperature", "humidity", "co2"],
-      "exposes":        ["illuminance", "temperature", "pressure", "humidity", "co2", "temperatureOffset", "humidityOffset", "forceCalibration", "manualCalibration", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "autoBrightness", "nightBacklight", "co2LongChart", "pressureLongChart", "co2FactoryReset"],
-      "options":        { "temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}, "humidityOffset": {"min": -50, "max": 50, "unit": "%"}, "manualCalibration": {"min": 0, "max": 5000, "unit": "ppm"}, "co2Low": {"min": 400, "max": 5000, "unit": "ppm"}, "co2High": {"min": 400, "max": 5000, "unit": "ppm"}},
+      "exposes":        ["illuminance", "temperature", "humidity", "pressure", "co2", "autoBrightness", "nightBacklight", "temperatureOffset", "humidityOffset", "pressureLongChart", "co2LongChart", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ForceCalibration", "co2ManualCalibration", "co2FactoryReset"],
+      "options":        {"temperatureOffset": {"min": -50, "max": 50, "step": 0.1, "unit": "°C"}, "humidityOffset": {"min": -50, "max": 50, "unit": "%"}, "co2Low": {"min": 400, "max": 5000, "unit": "ppm"}, "co2High": {"min": 400, "max": 5000, "unit": "ppm"}, "co2ManualCalibration": {"min": 0, "max": 5000, "unit": "ppm"}},
       "endpointId":     1
     },
     {

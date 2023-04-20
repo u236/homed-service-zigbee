@@ -20,10 +20,10 @@
     },
     {
       "modelNames":     ["DIYRuZ_Flower"],
-      "properties":     ["batteryPercentage", "illuminance", "pressure", "humidity", "moisture"],
-      "bindings":       ["battery", "illuminance", "pressure", "humidity", "moisture"],
-      "reportings":     ["batteryPercentage", "illuminance", "pressure", "humidity", "moisture"],
-      "exposes":        ["battery", "illuminance", "pressure", "humidity", "moisture"],
+      "properties":     ["batteryPercentage", "illuminance", "humidity", "moisture", "pressure"],
+      "bindings":       ["battery", "illuminance", "humidity", "moisture", "pressure"],
+      "reportings":     ["batteryPercentage", "illuminance", "humidity", "moisture", "pressure"],
+      "exposes":        ["battery", "illuminance", "humidity", "moisture", "pressure"],
       "endpointId":     1
     },
     {

@@ -1110,7 +1110,7 @@ QByteArray ActionsEfekta::CO2Sensor::request(const QString &name, const QVariant
             switch (index)
             {
                 case 0:  attributeId = 0x0205; break; // altitude
-                case 1:  attributeId = 0x0207; break; // manualCalibration
+                case 1:  attributeId = 0x0207; break; // co2ManualCalibration
                 case 2:  attributeId = 0x0221; break; // co2High
                 case 3:  attributeId = 0x0222; break; // co2Low
             }
@@ -1131,7 +1131,7 @@ QByteArray ActionsEfekta::CO2Sensor::request(const QString &name, const QVariant
 
             switch (index)
             {
-                case 5:  attributeId = 0x0202; break; // forceCalibration
+                case 5:  attributeId = 0x0202; break; // co2ForceCalibration
                 case 6:  attributeId = 0x0203; break; // autoBrightness
                 case 7:  attributeId = 0x0204; break; // co2LongChart
                 case 8:  attributeId = 0x0206; break; // co2FactoryReset

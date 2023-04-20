@@ -14,6 +14,12 @@ QVariant MetaObject::endpointOption(const QString &name)
     return value.isValid() ? value : endpoint->device()->options().value(optionName);
 }
 
+quint8 MetaObject::endpointId(void)
+{
+    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    return endpoint ? endpoint->id() : 0x01;
+}
+
 quint8 MetaObject::deviceVersion(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);

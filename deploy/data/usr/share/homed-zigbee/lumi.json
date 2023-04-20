@@ -260,8 +260,8 @@
     {
       "description":    "Aqara Temperature, Humidity and Pressure Sensor WSDCGQ11LM",
       "modelNames":     ["lumi.weather"],
-      "properties":     ["temperature", "pressure", "humidity", "lumiBasic"],
-      "exposes":        ["battery", "temperature", "pressure", "humidity"]
+      "properties":     ["temperature", "humidity", "pressure", "lumiBasic"],
+      "exposes":        ["battery", "temperature", "humidity", "pressure"]
     },
     {
       "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",

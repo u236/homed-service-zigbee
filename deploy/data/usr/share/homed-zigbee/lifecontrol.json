@@ -33,7 +33,7 @@
       "description":    "Life Control Air Quality Sensor MCLH-08",
       "modelNames":     ["VOC_Sensor"],
       "properties":     ["batteryPercentage", "lifeControlAirQuality"],
-      "exposes":        ["battery", "temperature", "humidity", "co2", "voc"],
+      "exposes":        ["battery", "temperature", "humidity", "eco2", "voc"],
       "options":        {"batteryUndivided": true}
     }
   ],

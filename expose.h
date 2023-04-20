@@ -282,6 +282,15 @@ namespace Sensor
 
     };
 
+    class ECO2 : public SensorObject
+    {
+
+    public:
+
+        ECO2(void) : SensorObject("eco2", "ppm") {}
+
+    };
+
     class VOC : public SensorObject
     {
 

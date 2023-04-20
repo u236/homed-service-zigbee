@@ -24,6 +24,7 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Humidity>            ("humidityExpose");
     qRegisterMetaType <Sensor::Moisture>            ("moistureExpose");
     qRegisterMetaType <Sensor::CO2>                 ("co2Expose");
+    qRegisterMetaType <Sensor::ECO2>                ("eco2Expose");
     qRegisterMetaType <Sensor::VOC>                 ("vocExpose");
     qRegisterMetaType <Sensor::Illuminance>         ("illuminanceExpose");
     qRegisterMetaType <Sensor::Energy>              ("energyExpose");
@@ -66,7 +67,7 @@ QJsonObject BinaryObject::request(void)
 
 QJsonObject SensorObject::request(void)
 {
-    QList <QString> list = {"action", "event", "scene", "count", "co2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
+    QList <QString> list = {"action", "event", "scene", "count", "co2", "eco2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
@@ -76,7 +77,8 @@ QJsonObject SensorObject::request(void)
         case 2:  json.insert("icon",                "mdi:gesture-tap-button"); break;
         case 3:  json.insert("icon",                "mdi:counter"); break;
         case 4:  json.insert("device_class",        "carbon_dioxide"); break;
-        case 5:  json.insert("device_class",        "volatile_organic_compounds"); break;
+        case 5:  json.insert("device_class",        "carbon_dioxide"); break;
+        case 6:  json.insert("device_class",        "volatile_organic_compounds"); break;
         default: json.insert("device_class",        m_name); break;
     }
 

@@ -484,7 +484,7 @@ namespace ActionsEfekta
 
     public:
 
-        CO2Sensor(void) : ActionObject("co2Sensor", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"altitude", "manualCalibration", "co2High", "co2Low", "indicatorLevel", "forceCalibration", "autoBrightness", "co2LongChart", "co2FactoryReset", "indicator", "co2Relay", "co2RelayInvert", "pressureLongChart", "nightBacklight"}) {}
+        CO2Sensor(void) : ActionObject("co2Sensor", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"altitude", "co2ManualCalibration", "co2High", "co2Low", "indicatorLevel", "co2ForceCalibration", "autoBrightness", "co2LongChart", "co2FactoryReset", "indicator", "co2Relay", "co2RelayInvert", "pressureLongChart", "nightBacklight"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -494,7 +494,7 @@ namespace ActionsEfekta
 
     public:
 
-        VOCSensor(void) : ActionObject("vocSensor", CLUSTER_ANALOG_INPUT, 0x0000, QList <QString> {"vovHigh", "vovLow", "vovRelay", "vovRelayInvert"}) {}
+        VOCSensor(void) : ActionObject("vocSensor", CLUSTER_ANALOG_INPUT, 0x0000, QList <QString> {"vocHigh", "vocLow", "vocRelay", "vocRelayInvert"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
