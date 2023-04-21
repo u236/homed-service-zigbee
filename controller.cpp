@@ -296,7 +296,7 @@ void Controller::updateAvailability(void)
             continue;
 
         if (!timeout)
-            timeout = it.value()->batteryPowered() ? 28800 : 600;
+            timeout = it.value()->batteryPowered() ? 86400 : 600;
 
         it.value()->setAvailability(time - it.value()->lastSeen() <= timeout ? AvailabilityStatus::Online : AvailabilityStatus::Offline);
 
