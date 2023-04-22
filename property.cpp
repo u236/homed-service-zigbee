@@ -256,6 +256,13 @@ void Properties::Illuminance::parseAttribte(quint16 attributeId, const QByteArra
         return;
 
     memcpy(&value, data.constData(), data.length());
+
+    if (endpointOption("illuminanceUndivided").toBool())
+    {
+        m_value = qFromLittleEndian(value) + endpointOption("illuminanceOffset").toInt();
+        return;
+    }
+
     m_value = static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0) + endpointOption("illuminanceOffset").toDouble();
 }
 

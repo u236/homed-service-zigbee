@@ -128,13 +128,12 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
     }
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
         for (int i = 0; i < it.value()->bindings().count(); i++)
             enqueueBindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
-    }
 
     logInfo << "Device" << device->name() << "configuration updated";
 }
@@ -516,13 +515,12 @@ void ZigBee::interviewFinished(const Device &device)
     interviewQuirks(device);
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
         for (int i = 0; i < it.value()->bindings().count(); i++)
             enqueueBindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
 
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         for (int i = 0; i < it.value()->reportings().count(); i++)
             configureReporting(it.value(), it.value()->reportings().at(i));
-    }
 
     logInfo << "Device" << device->name() << "interview finished successfully";
     emit deviceEvent(device, Event::interviewFinished);
@@ -566,6 +564,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
 void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)
 {
     Device device = endpoint->device();
+    QMap <QString, QVariant> options = device->options().value("reporting").toMap();
     QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
 
     for (int i = 0; i < reporting->attributes().count(); i++)
@@ -575,9 +574,9 @@ void ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
         item.direction = 0x00;
         item.attributeId = qToLittleEndian(reporting->attributes().at(i));
         item.dataType = reporting->dataType();
-        item.minInterval = qToLittleEndian(reporting->minInterval());
-        item.maxInterval = qToLittleEndian(reporting->maxInterval());
-        item.valueChange = qToLittleEndian(reporting->valueChange());
+        item.minInterval = qToLittleEndian <quint16> (options.contains("minInterval") ? options.value("minInterval").toInt() : reporting->minInterval());
+        item.maxInterval = qToLittleEndian <quint16> (options.contains("maxInterval") ? options.value("maxInterval").toInt() : reporting->maxInterval());
+        item.valueChange = qToLittleEndian <quint16> (options.contains("valueChange") ? options.value("valueChange").toInt() : reporting->valueChange());
 
         request.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
     }

@@ -16,7 +16,7 @@
     {
       "description":    "MODKAM Flower Soil Moisture Sensor",
       "modelNames":     ["DIYRuZ_Flower"],
-      "options":        {"endpointName": {"1": "BME", "2": "DS"}}
+      "options":        {"endpointName": {"1": "BME", "2": "DS"}, "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0}}
     },
     {
       "modelNames":     ["DIYRuZ_Flower"],
@@ -24,6 +24,7 @@
       "bindings":       ["battery", "illuminance", "humidity", "moisture", "pressure"],
       "reportings":     ["batteryPercentage", "illuminance", "humidity", "moisture", "pressure"],
       "exposes":        ["battery", "illuminance", "humidity", "moisture", "pressure"],
+      "options":        {"illuminanceUndivided": true},
       "endpointId":     1
     },
     {
