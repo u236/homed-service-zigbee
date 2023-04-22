@@ -82,7 +82,7 @@ QJsonObject SensorObject::request(void)
         default: json.insert("device_class",        m_name); break;
     }
 
-    if (!m_unit.isEmpty())
+    if (!m_unit.isEmpty() && endpointOption().toString() != "raw")
         json.insert("unit_of_measurement",          m_unit);
 
     if (m_round)

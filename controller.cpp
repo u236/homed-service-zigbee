@@ -121,7 +121,7 @@ void Controller::publishExposes(const Device &device, bool remove)
                     options.insert(expose->name(), option);
                 }
 
-                if (endpointName.contains(id))
+                if (expose->multiple() && endpointName.contains(id))
                     options.insert("name", endpointName.value(id));
 
                 if (!options.isEmpty())

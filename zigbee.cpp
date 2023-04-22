@@ -943,7 +943,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         {
             QVariant value = property->value();
 
-            if (property->transactionId() == transactionId)
+            if (device->options().value("checkTransactionId").toBool() && property->transactionId() == transactionId)
                 continue;
 
             property->setTransactionId(transactionId);

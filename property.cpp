@@ -257,7 +257,7 @@ void Properties::Illuminance::parseAttribte(quint16 attributeId, const QByteArra
 
     memcpy(&value, data.constData(), data.length());
 
-    if (endpointOption("illuminanceUndivided").toBool())
+    if (endpointOption().toString() == "raw")
     {
         m_value = qFromLittleEndian(value) + endpointOption("illuminanceOffset").toInt();
         return;
@@ -374,7 +374,7 @@ void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &dat
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
-    QVariant scene = endpointOption("scene").toMap().value(QString::number(command->sceneId));
+    QVariant scene = endpointOption().toMap().value(QString::number(command->sceneId));
 
     if (commandId != 0x05)
         return;

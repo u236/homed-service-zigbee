@@ -24,7 +24,7 @@
       "bindings":       ["battery", "illuminance", "humidity", "moisture", "pressure"],
       "reportings":     ["batteryPercentage", "illuminance", "humidity", "moisture", "pressure"],
       "exposes":        ["battery", "illuminance", "humidity", "moisture", "pressure"],
-      "options":        {"illuminanceUndivided": true},
+      "options":        {"illuminance": "raw"},
       "endpointId":     1
     },
     {
