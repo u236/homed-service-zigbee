@@ -624,15 +624,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
-
-        case 0x0003:
-        {
-            if (modelName != "lumi.remote.b686opcn01" && modelName != "lumi.sen_ill.mgl01")
-                map.insert("temperature", static_cast <qint8> (data.at(0)) + endpointOption("temperatureOffset").toDouble());
-
-            break;
-        }
-
         case 0x0005:
         {
             quint16 value = 0;
