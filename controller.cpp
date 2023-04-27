@@ -1,6 +1,6 @@
 #include "controller.h"
 
-Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
+Controller::Controller(const QString &configFile) : HOMEd(configFile), m_timer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
 {
     QDate date = QDate::currentDate();
 
@@ -8,6 +8,7 @@ Controller::Controller(void) : m_timer(new QTimer(this)), m_zigbee(new ZigBee(ge
         logInfo << "Merry Christmas and a Happy New Year!" << "\xF0\x9F\x8E\x81\xF0\x9F\x8E\x84\xF0\x9F\x8D\xBA";
 
     logInfo << "Starting version" << SERVICE_VERSION;
+    logInfo << "Configuration file is" << getConfig()->fileName();
 
     m_homeassistant = getConfig()->value("homeassistant/enabled", false).toBool();
     m_homeassistantPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();

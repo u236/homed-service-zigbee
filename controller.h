@@ -13,7 +13,7 @@ class Controller : public HOMEd
 
 public:
 
-    Controller(void);
+    Controller(const QString &configFile);
 
     enum class Command
     {
