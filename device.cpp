@@ -256,6 +256,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 {
     Device device = endpoint->device();
     QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), bindings = json.value("bindings").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), exposes = json.value("exposes").toArray();
+    bool startTimer = false;
 
     for (auto it = properties.begin(); it != properties.end(); it++)
     {
@@ -264,8 +265,17 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
+            quint32 timeout = static_cast <quint32> (device->options().value(QString(property->name()).append("Timeout")).toInt());
+
             property->setParent(endpoint.data());
             property->setMultiple(multiple);
+
+            if (timeout)
+            {
+                property->setTimeout(timeout);
+                startTimer = true;
+            }
+
             endpoint->properties().append(property);
             continue;
         }
@@ -352,10 +362,17 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (pollInterval)
         {
-            connect(endpoint->timer(), &QTimer::timeout, this, &DeviceList::pollAttributes, Qt::UniqueConnection);
-            endpoint->timer()->start(pollInterval * 1000);
+            endpoint->setPollInterval(pollInterval);
+            endpoint->setPollTime(QDateTime::currentSecsSinceEpoch());
+            startTimer = true;
         }
     }
+
+    if (!startTimer)
+        return;
+
+    connect(endpoint->timer(), &QTimer::timeout, this, &DeviceList::endpointTimeout, Qt::UniqueConnection);
+    endpoint->timer()->start(1000);
 }
 
 void DeviceList::recognizeDevice(const Device &device)
@@ -957,13 +974,37 @@ void DeviceList::writeProperties(void)
     logWarning << "Properties not stored, file" << m_propertiesFile.fileName() << "error:" << m_propertiesFile.errorString();
 }
 
-void DeviceList::pollAttributes(void)
+void DeviceList::endpointTimeout(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
+    qint64 time = QDateTime::currentSecsSinceEpoch();
+
+    for (int i = 0; i < endpoint->properties().count(); i++)
+    {
+        const Property &property = endpoint->properties().at(i);
+
+        if (!property->time() || !property->timeout())
+            continue;
+
+        if (time - property->time() >= property->timeout())
+        {
+            QVariant value = property->value();
+
+            property->resetValue();
+            property->setTime(0);
+
+            if (property->value() == value)
+                continue;
+
+            emit endpointUpdated(endpoint->device(), endpoint->id());
+        }
+    }
+
+    if (!endpoint->pollInterval() || time - endpoint->pollTime() < endpoint->pollInterval())
+        return;
 
     for (int i = 0; i < endpoint->polls().count(); i++)
-    {
-        const Poll &poll = endpoint->polls().at(i);
-        emit pollRequest(endpoint, poll);
-    }
+        emit pollRequest(endpoint, endpoint->polls().at(i));
+
+    endpoint->setPollTime(time);
 }

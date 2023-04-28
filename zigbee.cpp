@@ -16,8 +16,9 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
     m_debug = config->value("debug/zigbee", false).toBool();
 
-    connect(m_devices, &DeviceList::pollRequest, this, &ZigBee::pollRequest);
     connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
+    connect(m_devices, &DeviceList::endpointUpdated, this, &ZigBee::endpointUpdated);
+    connect(m_devices, &DeviceList::pollRequest, this, &ZigBee::pollRequest);
     connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
 
     GPIO::direction(m_statusLedPin, GPIO::Output);
@@ -494,8 +495,11 @@ void ZigBee::interviewDevice(const Device &device)
     if (device->interviewFinished())
         return;
 
+    connect(device->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout, Qt::UniqueConnection);
+    device->timer()->setSingleShot(true);
+    device->timer()->start(DEVICE_INTERVIEW_TIMEOUT);
+
     enqueueRequest(device, RequestType::Interview);
-    startDeviceTimer(device, DEVICE_INTERVIEW_TIMEOUT);
 }
 
 void ZigBee::interviewFinished(const Device &device)
@@ -733,8 +737,8 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
             property->parseAttribte(attributeId, data);
             check = true;
 
-            if (property->singleShot())
-                startDeviceTimer(device, static_cast <quint32> (device->options().value("timeout").toInt()) * 1000);
+            if (property->timeout())
+                property->setTime(QDateTime::currentSecsSinceEpoch());
 
             if (property->value() == value)
                 continue;
@@ -950,8 +954,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             property->parseCommand(commandId, payload);
             check = true;
 
-            if (property->singleShot())
-                startDeviceTimer(device, static_cast <quint32> (device->options().value("timeout").toInt()) * 1000);
+            if (property->timeout())
+                property->setTime(QDateTime::currentSecsSinceEpoch());
 
             if (property->value() == value)
                 continue;
@@ -1195,16 +1199,6 @@ void ZigBee::rejoinHandler(const Device &device)
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             for (int i = 0; i < it.value()->reportings().count(); i++)
                 configureReporting(it.value(), it.value()->reportings().at(i));
-}
-
-void ZigBee::startDeviceTimer(const Device &device, quint32 timeout)
-{
-    if (!timeout)
-        return;
-
-    connect(device->timer(), &QTimer::timeout, this, &ZigBee::deviceTimeout, Qt::UniqueConnection);
-    device->timer()->setSingleShot(true);
-    device->timer()->start(timeout);
 }
 
 void ZigBee::blink(quint16 timeout)
@@ -1759,41 +1753,14 @@ void ZigBee::pingDevices(void)
     }
 }
 
-void ZigBee::deviceTimeout(void)
+void ZigBee::interviewTimeout(void)
 {
     Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
 
-    if (!device->interviewFinished())
-    {
-        interviewTimeoutHandler(device);
+    if (device->interviewFinished())
         return;
-    }
 
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        for (int i = 0; i < it.value()->properties().count(); i++)
-        {
-            const Property &property = it.value()->properties().at(i);
-
-            if (property->singleShot())
-            {
-                QVariant value = property->value();
-
-                property->resetValue();
-
-                if (property->value() == value)
-                    continue;
-
-                it.value()->setUpdated(true);
-            }
-
-            if (it.value()->updated())
-            {
-                m_devices->storeProperties();
-                emit endpointUpdated(device, it.key());
-            }
-        }
-    }
+    interviewTimeoutHandler(device);
 }
 
 void ZigBee::pollRequest(EndpointObject *endpoint, const Poll &poll)

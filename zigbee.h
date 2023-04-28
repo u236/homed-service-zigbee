@@ -197,7 +197,6 @@ private:
     void interviewTimeoutHandler(const Device &device);
     void rejoinHandler(const Device &device);
 
-    void startDeviceTimer(const Device &device, quint32 timeout);
     void blink(quint16 timeout);
 
 private slots:
@@ -216,7 +215,7 @@ private slots:
     void handleRequests(void);
     void updateNeighbors(void);
     void pingDevices(void);
-    void deviceTimeout(void);
+    void interviewTimeout(void);
 
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 

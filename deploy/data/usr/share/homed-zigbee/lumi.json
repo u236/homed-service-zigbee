@@ -220,14 +220,14 @@
       "modelNames":     ["lumi.sensor_motion"],
       "properties":     ["occupancy", "lumiBasic"],
       "exposes":        ["battery", "occupancy"],
-      "options":        {"timeout": 60}
+      "options":        {"occupancyTimeout": 60}
     },
     {
       "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
       "modelNames":     ["lumi.sensor_motion.aq2"],
       "properties":     ["occupancy", "lumiBasic", "lumiIlluminance"],
       "exposes":        ["battery", "illuminance", "occupancy"],
-      "options":        {"timeout": 60}
+      "options":        {"occupancyTimeout": 60}
     },
     {
       "description":    "Aqara FP1 Presence Detector RTCZCGQ11LM",
@@ -243,7 +243,7 @@
       "modelNames":     ["lumi.vibration.aq1"],
       "properties":     ["lumiBasic", "lumiVibration"],
       "exposes":        ["battery", "event", "vibration"],
-      "options":        {"event": ["vibration", "tilt", "drop"], "timeout": 60}
+      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM",

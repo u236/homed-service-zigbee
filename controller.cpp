@@ -358,7 +358,7 @@ void Controller::endpointUpdated(const Device &device, quint8 endpointId)
             else
                 map.insert(property->value().toMap());
 
-            if (!property->singleShot())
+            if (property->name() != "action" && property->name() != "scene")
                 continue;
 
             property->clearValue();

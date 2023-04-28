@@ -521,13 +521,6 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray 
     m_value = map;
 }
 
-void PropertiesIAS::ZoneStatus::clearValue(void)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-    map.remove(m_name);
-    m_value = map;
-}
-
 void PropertiesIAS::ZoneStatus::resetValue(void)
 {
     QMap <QString, QVariant> map = m_value.toMap();

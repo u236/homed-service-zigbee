@@ -45,12 +45,18 @@ class EndpointObject : public EndpointDataObject
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-        EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_colorCapabilities(0), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown), m_descriptorReceived(false), m_updated(false) {}
+        EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_pollInterval(0), m_pollTime(0), m_colorCapabilities(0), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown), m_descriptorReceived(false), m_updated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
 
     inline quint8 id(void) { return m_id; }
     inline Device device(void) { return m_device; }
+
+    inline quint32 pollInterval(void) { return m_pollInterval; }
+    inline void setPollInterval(quint32 value) { m_pollInterval = value; }
+
+    inline qint64 pollTime(void) { return m_pollTime; }
+    inline void setPollTime(qint64 value) { m_pollTime = value; }
 
     inline quint16 colorCapabilities(void) { return m_colorCapabilities; }
     inline void setColorCapabilities(quint16 value) { m_colorCapabilities = value; }
@@ -80,6 +86,9 @@ private:
 
     quint8 m_id;
     QWeakPointer <DeviceObject> m_device;
+
+    quint32 m_pollInterval;
+    qint64 m_pollTime;
 
     quint16 m_colorCapabilities, m_zoneType;
     ZoneStatus m_zoneStatus;
@@ -259,11 +268,12 @@ private slots:
 
     void writeDatabase(void);
     void writeProperties(void);
-    void pollAttributes(void);
+    void endpointTimeout(void);
 
 signals:
 
     void statusUpdated(const QJsonObject &json);
+    void endpointUpdated(const Device &device, quint8 endpointId);
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 
 };
