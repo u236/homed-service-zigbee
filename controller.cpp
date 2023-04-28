@@ -34,7 +34,7 @@ void Controller::publishExposes(const Device &device, bool remove)
         for (int i = 0; i < it.value()->exposes().count(); i++)
         {
             const Expose &expose = it.value()->exposes().at(i);
-            QVariant option = expose->endpointOption();
+            QVariant option = expose->option();
 
             if (m_homeassistant && expose->homeassistant())
             {
@@ -113,7 +113,7 @@ void Controller::publishExposes(const Device &device, bool remove)
                 {
                     if (expose->name() == "light" && option.toStringList().contains("colorTemperature"))
                     {
-                        QVariant colorTemperature = expose->endpointOption("colorTemperature");
+                        QVariant colorTemperature = expose->option("colorTemperature");
 
                         if (colorTemperature.isValid())
                             options.insert("colorTemperature", colorTemperature);

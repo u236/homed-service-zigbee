@@ -13,17 +13,18 @@ public:
     inline QString name(void) { return m_name; }
     inline void setParent(QObject *value) { m_parent = value; }
 
-    QVariant endpointOption(const QString &name = QString());
-    quint8 endpointId(void);
+    QVariant option(const QString &name = QString(), const QVariant &defaultValue = QVariant());
 
 protected:
 
     QString m_name;
     QObject *m_parent;
 
-    quint8 deviceVersion(void);
-    QString deviceManufacturerName(void);
-    QString deviceModelName(void);
+    quint8 endpointId(void);
+    quint8 version(void);
+
+    QString manufacturerName(void);
+    QString modelName(void);
 
 };
 

@@ -151,7 +151,7 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
 
 QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = endpointOption("invertCover").toBool() ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};
+    QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};
     qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (command < 0)
@@ -170,7 +170,7 @@ QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data
     if (value > 100)
         value = 100;
 
-    if (endpointOption("invertCover").toBool())
+    if (option("invertCover").toBool())
         value = 100 - value;
 
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(reinterpret_cast <char*> (&value), sizeof(value));
@@ -186,7 +186,7 @@ QByteArray Actions::CoverTilt::request(const QString &, const QVariant &data)
     if (value > 100)
         value = 100;
 
-    if (endpointOption("invertCover").toBool())
+    if (option("invertCover").toBool())
         value = 100 - value;
 
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x08).append(reinterpret_cast <char*> (&value), sizeof(value));
@@ -419,7 +419,7 @@ QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &
     if (value > 100)
         value = 100;
 
-    if (endpointOption("invertCover").toBool())
+    if (option("invertCover").toBool())
         value = 100 - value;
 
     value = qToLittleEndian(value);
@@ -529,7 +529,7 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
     if (value < 0)
         value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
 
-    return makeRequest(m_transactionId++, modelList.contains(deviceManufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
+    return makeRequest(m_transactionId++, modelList.contains(manufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
 }
 
 QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, const QVariant &data)
@@ -919,10 +919,10 @@ QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant 
     {
         case 0: // cover
         {
-            QList <QString> modelList = {"_TYST11_cowvfni3", "_TZE200_cowvfni3", "_TZE200_wmcdj3aq", "_TZE204_r0jdjrvi"}, actionList = modelList.contains(deviceManufacturerName()) ? QList <QString> {"close", "stop", "open"} : QList <QString> {"open", "stop", "close"};
+            QList <QString> modelList = {"_TYST11_cowvfni3", "_TZE200_cowvfni3", "_TZE200_wmcdj3aq", "_TZE204_r0jdjrvi"}, actionList = modelList.contains(manufacturerName()) ? QList <QString> {"close", "stop", "open"} : QList <QString> {"open", "stop", "close"};
             qint8 value;
 
-            if (endpointOption("invertCover").toBool())
+            if (option("invertCover").toBool())
                 actionList = QList <QString> (actionList.rbegin(), actionList.rend());
 
             value = static_cast <qint8> (actionList.indexOf(data.toString()));
@@ -940,8 +940,8 @@ QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant 
             if (value > 100)
                 value = 100;
 
-            if (endpointOption("invertCover").toBool())
-                value = 100 -value;
+            if (option("invertCover").toBool())
+                value = 100 - value;
 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);

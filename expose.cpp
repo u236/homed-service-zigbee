@@ -51,7 +51,7 @@ QJsonObject BinaryObject::request(void)
     switch (list.indexOf(m_name))
     {
         case 0:  break;
-        case 1:  json.insert("device_class",        endpointOption().toString() == "window" ? "window" : "door"); break;
+        case 1:  json.insert("device_class",        option().toString() == "window" ? "window" : "door"); break;
         case 2:  json.insert("device_class",        "battery"); break;
         case 3:  json.insert("device_class",        "moisture"); break;
         default: json.insert("device_class",        m_name); break;
@@ -82,7 +82,7 @@ QJsonObject SensorObject::request(void)
         default: json.insert("device_class",        m_name); break;
     }
 
-    if (!m_unit.isEmpty() && endpointOption().toString() != "raw")
+    if (!m_unit.isEmpty() && option().toString() != "raw")
         json.insert("unit_of_measurement",          m_unit);
 
     if (m_round)
@@ -96,7 +96,7 @@ QJsonObject SensorObject::request(void)
 
 QJsonObject NumberObject::request(void)
 {
-    QMap <QString, QVariant> options = endpointOption().toMap();
+    QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
 
     if (options.contains("min"))
@@ -135,7 +135,7 @@ QJsonObject ButtonObject::request(void)
 
 QJsonObject LightObject::request(void)
 {
-    QList <QString> options = endpointOption().toStringList();
+    QList <QString> options = option().toStringList();
     QString commandOnTemplate = "\"status\":\"on\"";
     QJsonObject json;
 
@@ -155,7 +155,7 @@ QJsonObject LightObject::request(void)
 
     if (options.contains("colorTemperature"))
     {
-        QMap <QString, QVariant> colorTemperature = endpointOption("colorTemperature").toMap();
+        QMap <QString, QVariant> colorTemperature = option("colorTemperature").toMap();
 
         commandOnTemplate.append(                   "{% if color_temp is defined %},\"colorTemperature\":{{ color_temp }}{% endif %}");
         json.insert("color_temp_template",          "{{ value_json.colorTemperature }}");
@@ -181,7 +181,7 @@ QJsonObject SwitchObject::request(void)
 {
     QJsonObject json;
 
-    json.insert("device_class",                     endpointOption().toString() == "outlet" ? "outlet" : "switch");
+    json.insert("device_class",                     option().toString() == "outlet" ? "outlet" : "switch");
 
     json.insert("value_template",                   "{{ value_json.status }}");
     json.insert("state_on",                         "on");
@@ -197,10 +197,9 @@ QJsonObject SwitchObject::request(void)
 
 QJsonObject LockObject::request(void)
 {
-    QString option = endpointOption().toString();
     QJsonObject json;
 
-    if (option == "valve")
+    if (option().toString() == "valve")
         json.insert("icon",                         "mdi:pipe-valve");
 
     json.insert("value_template",                   "{{ value_json.status }}");
@@ -217,10 +216,9 @@ QJsonObject LockObject::request(void)
 
 QJsonObject CoverObject::request(void)
 {
-    QString option = endpointOption().toString();
     QJsonObject json;
 
-    json.insert("device_class",                     option == "blind" ? "blind" : "curtain");
+    json.insert("device_class",                     option().toString() == "blind" ? "blind" : "curtain");
 
     json.insert("value_template",                   "{{ value_json.cover }}");
     json.insert("state_open",                       "open");
@@ -243,7 +241,7 @@ QJsonObject CoverObject::request(void)
 
 QJsonObject ThermostatObject::request(void)
 {
-    QMap <QString, QVariant> options = endpointOption().toMap();
+    QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
 
     if (options.contains("operationMode"))
