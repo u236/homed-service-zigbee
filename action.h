@@ -4,7 +4,6 @@
 #include <QSharedPointer>
 #include <QVariant>
 #include "property.h"
-#include "zcl.h"
 
 class ActionObject;
 typedef QSharedPointer <ActionObject> Action;

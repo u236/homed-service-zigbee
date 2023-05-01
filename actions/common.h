@@ -2,6 +2,7 @@
 #define ACTIONS_COMMON_H
 
 #include "action.h"
+#include "zcl.h"
 
 namespace Actions
 {

@@ -1,6 +1,7 @@
 #ifndef EXPOSE_H
 #define EXPOSE_H
 
+#include <QJsonArray>
 #include <QJsonObject>
 #include "meta.h"
 

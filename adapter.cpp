@@ -1,6 +1,5 @@
 #include <QtEndian>
 #include <QEventLoop>
-#include <QHostAddress>
 #include <QThread>
 #include "adapter.h"
 #include "gpio.h"

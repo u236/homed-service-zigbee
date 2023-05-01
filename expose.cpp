@@ -1,4 +1,3 @@
-#include <QJsonArray>
 #include "expose.h"
 
 void ExposeObject::registerMetaTypes(void)

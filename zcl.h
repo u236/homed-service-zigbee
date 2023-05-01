@@ -111,7 +111,6 @@
 #define MANUFACTURER_CODE_SILABS                    0x1049
 #define MANUFACTURER_CODE_LUMI                      0x115F
 
-#include <QByteArray>
 #include <QList>
 
 #pragma pack(push, 1)

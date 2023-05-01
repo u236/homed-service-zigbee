@@ -1,6 +1,5 @@
 #include <QtEndian>
 #include <QEventLoop>
-#include <QFile>
 #include <QRandomGenerator>
 #include "ezsp.h"
 #include "gpio.h"

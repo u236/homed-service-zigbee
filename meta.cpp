@@ -1,5 +1,5 @@
-#include "meta.h"
 #include "device.h"
+#include "meta.h"
 
 QVariant MetaObject::option(const QString &name, const QVariant &defaultValue)
 {
