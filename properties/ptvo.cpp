@@ -1,0 +1,47 @@
+#include <QtEndian>
+#include "ptvo.h"
+
+void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0000)
+        return;
+
+    m_value = data.at(0) ? true : false;
+}
+
+void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0055:
+        {
+            float value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            (m_unit.isEmpty() ? m_value : m_buffer) = qFromLittleEndian(value) + option(QString(m_name).append("Offset")).toDouble();
+            break;
+        }
+
+        case 0x001C:
+        {
+            QList <QString> list = QString(data).split(',');
+
+            if (list.value(0) != m_unit)
+                return;
+
+            m_value = m_buffer;
+            break;
+        }
+    }
+}
+
+void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0055)
+        return;
+
+    m_value = data.at(0) ? "on" : "off";
+}

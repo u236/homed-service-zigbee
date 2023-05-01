@@ -4,6 +4,12 @@ include(../homed-common/homed-gpio.pri)
 
 HEADERS += \
     action.h \
+    actions/common.h \
+    actions/efekta.h \
+    actions/lumi.h \
+    actions/other.h \
+    actions/ptvo.h \
+    actions/tuya.h \
     adapter.h \
     binding.h \
     controller.h \
@@ -12,6 +18,13 @@ HEADERS += \
     ezsp.h \
     meta.h \
     poll.h \
+    properties/common.h \
+    properties/efekta.h \
+    properties/ias.h \
+    properties/lumi.h \
+    properties/other.h \
+    properties/ptvo.h \
+    properties/tuya.h \
     property.h \
     reporting.h \
     zcl.h \
@@ -21,6 +34,12 @@ HEADERS += \
 
 SOURCES += \
     action.cpp \
+    actions/common.cpp \
+    actions/efekta.cpp \
+    actions/lumi.cpp \
+    actions/other.cpp \
+    actions/ptvo.cpp \
+    actions/tuya.cpp \
     adapter.cpp \
     binding.cpp \
     controller.cpp \
@@ -29,6 +48,13 @@ SOURCES += \
     ezsp.cpp \
     meta.cpp \
     poll.cpp \
+    properties/common.cpp \
+    properties/efekta.cpp \
+    properties/ias.cpp \
+    properties/lumi.cpp \
+    properties/other.cpp \
+    properties/ptvo.cpp \
+    properties/tuya.cpp \
     property.cpp \
     reporting.cpp \
     zcl.cpp \
