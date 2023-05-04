@@ -61,6 +61,16 @@
     }
   ],
 
+  "RE":
+  [
+    {
+      "description":    "Perenio Door and Window Sensor PECWS01 with RE Firmware",
+      "modelNames":     ["lumi.sensor_magnet.aq2"],
+      "properties":     ["lumiBasic", "lumiContact"],
+      "exposes":        ["battery", "contact"]
+    }
+  ],
+
   "Trust International B.V.":
   [
     {
