@@ -153,11 +153,12 @@
     },
     {
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
-      "properties":     ["status", "lumiData"],
-      "actions":        ["status", "lumiStatusMemory"],
+      "properties":     ["status", "lumiData", "lumiSwitchType"],
+      "actions":        ["status", "lumiSwitchType", "lumiStatusMemory"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power", "statusMemory"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power", "switchType", "statusMemory"],
+      "options":        {"switchType": ["toggle", "momentary"]},
       "endpointId":     1
     },
     {

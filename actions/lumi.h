@@ -56,6 +56,16 @@ namespace ActionsLUMI
 
     };
 
+    class SwitchType : public ActionObject
+    {
+
+    public:
+
+        SwitchType(void) : ActionObject("switchType", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x000A) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class StatusMemory : public ActionObject
     {
 

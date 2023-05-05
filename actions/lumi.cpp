@@ -114,6 +114,17 @@ QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &dat
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
+QByteArray ActionsLUMI::SwitchType::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"toggle", "momentary"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()) + 1);
+
+    if (value < 1)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
 QByteArray ActionsLUMI::StatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;

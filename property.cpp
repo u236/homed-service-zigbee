@@ -44,6 +44,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Data>                    ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::Basic>                   ("lumiBasicProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonMode>              ("lumiButtonModeProperty");
+    qRegisterMetaType <PropertiesLUMI::SwitchType>              ("lumiSwitchTypeProperty");
     qRegisterMetaType <PropertiesLUMI::Contact>                 ("lumiContactProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                   ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                   ("lumiCoverProperty");

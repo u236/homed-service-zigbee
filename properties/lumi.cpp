@@ -285,6 +285,18 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteA
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
+void PropertiesLUMI::SwitchType::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x000A)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x01: m_value = "toggle"; break;
+        case 0x02: m_value = "momentary"; break;
+    }
+}
+
 void PropertiesLUMI::Contact::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
