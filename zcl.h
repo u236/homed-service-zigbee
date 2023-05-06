@@ -1,6 +1,8 @@
 #ifndef ZCL_H
 #define ZCL_H
 
+#define ZCL_TIME_OFFSET                             946684800
+
 #define FC_CLUSTER_SPECIFIC                         0x01
 #define FC_MANUFACTURER_SPECIFIC                    0x04
 #define FC_SERVER_TO_CLIENT                         0x08

@@ -1021,7 +1021,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                             if (m_debug)
                                 logInfo << "Device" << device->name() << "requested UTC time";
 
-                            value = qToLittleEndian <quint32> (now.toTime_t() - 946684800);
+                            value = qToLittleEndian <quint32> (now.toTime_t() - ZCL_TIME_OFFSET);
                             response.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
@@ -1039,7 +1039,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                             if (m_debug)
                                 logInfo << "Device" << device->name() << "requested local time";
 
-                            value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - 946684800);
+                            value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - ZCL_TIME_OFFSET);
                             response.append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
                     }
