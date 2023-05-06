@@ -8,6 +8,9 @@
 #define INTER_PAN_CHANNEL_TIMEOUT       100
 #define STATUS_LED_TIMEOUT              500
 
+#define TIME_OFFSET                     946684800
+#define IAS_ZONE_ID                     0x42
+
 #include <QMetaEnum>
 #include "device.h"
 
