@@ -171,7 +171,7 @@ void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVar
         {
             QList <QString> list = {"_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"};
             double value = static_cast <double> (data.toInt());
-            map.insert("localTemperature", list.contains(manufacturerName()) ? value : value / 10);
+            map.insert("temperature", list.contains(manufacturerName()) ? value : value / 10);
             break;
         }
 
@@ -217,7 +217,7 @@ void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVar
         }
 
         case 0x02: map.insert("heatingPoint", data.toInt()); break;
-        case 0x03: map.insert("localTemperature", data.toInt() / 10); break;
+        case 0x03: map.insert("temperature", data.toInt() / 10); break;
         case 0x04: map.insert("boost", data.toBool()); break;
         case 0x05: map.insert("boostCountdown", data.toInt()); break;
         case 0x07: map.insert("heating", data.toInt() ? false : true); break;

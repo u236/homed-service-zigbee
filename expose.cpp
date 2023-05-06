@@ -265,7 +265,7 @@ QJsonObject ThermostatObject::request(void)
     json.insert("action_template",                  "{{ \"heating\" if value_json.heating else \"off\" }}");
     json.insert("action_topic",                     m_stateTopic);
 
-    json.insert("current_temperature_template",     "{{ value_json.localTemperature }}");
+    json.insert("current_temperature_template",     "{{ value_json.temperature }}");
     json.insert("current_temperature_topic",        m_stateTopic);
 
     json.insert("temperature_state_template",       "{{ value_json.heatingPoint }}");
