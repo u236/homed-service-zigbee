@@ -65,6 +65,15 @@ namespace Bindings
 
     };
 
+    class Time : public BindingObject
+    {
+
+    public:
+
+        Time(void) : BindingObject("time", CLUSTER_TIME) {}
+
+    };
+
     class AnalogInput : public BindingObject
     {
 

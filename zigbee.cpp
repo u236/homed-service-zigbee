@@ -721,6 +721,18 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
     if (!device->interviewFinished())
         return;
 
+    if (clusterId == CLUSTER_TIME && device->manufacturerName() == "www.efektalab.com")
+    {
+        QDateTime now = QDateTime::currentDateTime();
+        quint32 value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - TIME_OFFSET);
+
+        if (m_debug)
+            logInfo << "Device" << device->name() << "requested Efekta time synchronization";
+
+        enqueueDataRequest(device, endpoint->id(), CLUSTER_TIME, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_UTC_TIME, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))));
+        return;
+    }
+
     for (int i = 0; i < endpoint->properties().count(); i++)
     {
         const Property &property = endpoint->properties().at(i);
