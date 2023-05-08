@@ -153,17 +153,17 @@ private:
     void enqueueRequest(const Device &device, RequestType type);
 
     bool interviewRequest(quint8 id, const Device &device);
+    bool interviewQuirks(const Device &device);
     void interviewDevice(const Device &device);
     void interviewFinished(const Device &device);
-    void interviewQuirks(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 
     bool waitForReply(void);
-    void bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
-    void configureReporting(const Device &device, quint8 endpointId, const Reporting &reporting);
+    bool bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
+    bool configureReporting(const Device &device, quint8 endpointId, const Reporting &reporting);
+    bool configureDevice(const Device &device);
 
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data);
-
     void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QByteArray &payload);
     void globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, QByteArray payload);
 

@@ -127,13 +127,11 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
         return;
     }
 
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        for (int i = 0; i < it.value()->bindings().count(); i++)
-            bindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        for (int i = 0; i < it.value()->reportings().count(); i++)
-            configureReporting(device, it.value()->id(), it.value()->reportings().at(i));
+    if (!configureDevice(device))
+    {
+        logWarning << "Device" << device->name() << "configuration failed";
+        return;
+    }
 
     logInfo << "Device" << device->name() << "configuration updated";
 }
@@ -151,7 +149,8 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
             continue;
 
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            bindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
+            if (!bindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId()))
+                return;
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
         {
@@ -481,6 +480,26 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
     return true;
 }
 
+bool ZigBee::interviewQuirks(const Device &device)
+{
+    if (device->manufacturerName() == "IKEA of Sweden" && device->batteryPowered())
+    {
+        QList <QString> list = device->firmware().split('.');
+        quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
+        bool group = list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75);
+
+        if ((group && !bindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF)) || (!group && !bindRequest(device, 0x01, CLUSTER_ON_OFF)))
+            return false;
+
+        enqueueRequest(device, 0x01, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, {0x0021}), "battery percentage request");
+    }
+
+    if (device->options().value("tuyaMagic").toBool())
+        enqueueRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
+
+    return true;
+}
+
 void ZigBee::interviewDevice(const Device &device)
 {
     if (device->interviewFinished())
@@ -495,6 +514,8 @@ void ZigBee::interviewDevice(const Device &device)
 
 void ZigBee::interviewFinished(const Device &device)
 {
+    device->timer()->stop();
+
     if (device->interviewFinished()) // TODO: figure out reasons for multiple interviewFinished calls
         return;
 
@@ -507,42 +528,19 @@ void ZigBee::interviewFinished(const Device &device)
     if (!device->description().isEmpty())
         logInfo << "Device" << device->name() << "identified as" << device->description();
 
-    interviewQuirks(device);
-
-    logInfo << "Device" << device->name() << "interview finished successfully";
-    emit deviceEvent(device, Event::interviewFinished);
-
-    device->timer()->stop();
-    device->setInterviewFinished();
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        for (int i = 0; i < it.value()->bindings().count(); i++)
-            bindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId());
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        for (int i = 0; i < it.value()->reportings().count(); i++)
-            configureReporting(device, it.value()->id(), it.value()->reportings().at(i));
-
-    m_devices->storeDatabase();
-}
-
-void ZigBee::interviewQuirks(const Device &device)
-{
-    if (device->manufacturerName() == "IKEA of Sweden" && device->batteryPowered())
+    if (!interviewQuirks(device) || !configureDevice(device))
     {
-        QList <QString> list = device->firmware().split('.');
-        quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
-
-        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75))
-            bindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF);
-        else
-            bindRequest(device, 0x01, CLUSTER_ON_OFF);
-
-        enqueueRequest(device, 0x01, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, {0x0021}), "battery percentage request");
+        logWarning << "Device" << device->name() << "interview finished with errors";
+        emit deviceEvent(device, Event::interviewError);
+    }
+    else
+    {
+        logInfo << "Device" << device->name() << "interview finished successfully";
+        emit deviceEvent(device, Event::interviewFinished);
+        device->setInterviewFinished();
     }
 
-    if (device->options().value("tuyaMagic").toBool())
-        enqueueRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
+    m_devices->storeDatabase();
 }
 
 void ZigBee::interviewError(const Device &device, const QString &reason)
@@ -571,20 +569,20 @@ bool ZigBee::waitForReply()
     return timer.isActive();
 }
 
-void ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
+bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
 {
     m_adapter->setRequestAddress(device->ieeeAddress());
 
     if (!m_adapter->bindRequest(m_requestId, device->networkAddress(), endpointId, clusterId, address, dstEndpointId, unbind))
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "request aborted";
-        return;
+        return false;
     }
 
     if (!waitForReply())
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "timed out";
-        return;
+        return false;
     }
 
     m_requestId++;
@@ -592,13 +590,14 @@ void ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 cluste
     if (m_requestStatus)
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
-        return;
+        return false;
     }
 
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "finished successfully";
+    return true;
 }
 
-void ZigBee::configureReporting(const Device &device, quint8 endpointId, const Reporting &reporting)
+bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const Reporting &reporting)
 {
     QMap <QString, QVariant> options = device->options().value("reporting").toMap();
     QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
@@ -622,13 +621,13 @@ void ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
     if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpointId, reporting->clusterId(), request))
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request aborted";
-        return;
+        return false;
     }
 
     if (!waitForReply())
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request timed out";
-        return;
+        return false;
     }
 
     m_requestId++;
@@ -636,10 +635,26 @@ void ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
     if (m_requestStatus)
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
-        return;
+        return false;
     }
 
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request finished successfully";
+    return true;
+}
+
+bool ZigBee::configureDevice(const Device &device)
+{
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        for (int i = 0; i < it.value()->bindings().count(); i++)
+            if (!bindRequest(device, it.value()->id(), it.value()->bindings().at(i)->clusterId()))
+                return false;
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        for (int i = 0; i < it.value()->reportings().count(); i++)
+            if (!configureReporting(device, it.value()->id(), it.value()->reportings().at(i)))
+                return false;
+
+    return true;
 }
 
 void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data)
