@@ -2,12 +2,10 @@
 #define ADAPTER_H
 
 #define RECEIVE_TIMEOUT                 20
+#define PERMIT_JOIN_TIMEOUT             60000
 
 #define RESET_TIMEOUT                   10000
 #define RESET_DELAY                     100
-
-#define PERMIT_JOIN_TIMEOUT             60000
-#define NETWORK_REQUEST_TIMEOUT         10000
 
 #define DEFAULT_GROUP                   0x0000
 #define IKEA_GROUP                      0x0385

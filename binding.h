@@ -83,6 +83,15 @@ namespace Bindings
 
     };
 
+    class MultistateInput : public BindingObject
+    {
+
+    public:
+
+        MultistateInput(void) : BindingObject("multistateInput", CLUSTER_MULTISTATE_INPUT) {}
+
+    };
+
     class Color : public BindingObject
     {
 

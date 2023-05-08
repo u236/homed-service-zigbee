@@ -3,6 +3,7 @@
 
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define PING_DEVICES_INTERVAL           300000
+#define NETWORK_REQUEST_TIMEOUT         10000
 #define DEVICE_REJOIN_TIMEOUT           5000
 #define DEVICE_INTERVIEW_TIMEOUT        10000
 #define INTER_PAN_CHANNEL_TIMEOUT       100
@@ -17,17 +18,13 @@
 class DataRequestObject;
 typedef QSharedPointer <DataRequestObject> DataRequest;
 
-class BindRequestObject;
-typedef QSharedPointer <BindRequestObject> BindRequest;
-
 class RequestObject;
 typedef QSharedPointer <RequestObject> Request;
 
 enum class RequestType
 {
     Data,
-    Binding,
-    Remove,
+    Leave,
     LQI,
     Interview
 };
@@ -61,32 +58,6 @@ private:
     quint16 m_clusterId;
     QByteArray m_data;
     QString m_name;
-
-};
-
-class BindRequestObject
-{
-
-public:
-
-    BindRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind) :
-        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_address(address), m_dstEndpointId(dstEndpointId), m_unbind(unbind) {}
-
-    inline Device device(void) { return m_device; }
-    inline quint8 endpointId(void) { return m_endpointId; }
-    inline quint16 clusterId(void) { return m_clusterId; }
-    inline QByteArray dstAddress(void) { return m_address; }
-    inline quint8 dstEndpointId(void) { return m_dstEndpointId; }
-    inline bool unbind(void) { return m_unbind; }
-
-private:
-
-    Device m_device;
-    quint8 m_endpointId;
-    quint16 m_clusterId;
-    QByteArray m_address;
-    quint8 m_dstEndpointId;
-    bool m_unbind;
 
 };
 
@@ -170,7 +141,7 @@ private:
     Adapter *m_adapter;
 
     QMetaEnum m_events;
-    quint8 m_requestId, m_interPanChannel;
+    quint8 m_requestId, m_requestStatus, m_interPanChannel;
     bool m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
@@ -178,8 +149,7 @@ private:
 
     QMap <quint8, Request> m_requests;
 
-    void enqueueDataRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
-    void enqueueBindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
+    void enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
     void enqueueRequest(const Device &device, RequestType type);
 
     bool interviewRequest(quint8 id, const Device &device);
@@ -188,7 +158,10 @@ private:
     void interviewQuirks(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 
-    void configureReporting(const Endpoint &endpoint, const Reporting &reporting);
+    bool waitForReply(void);
+    void bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
+    void configureReporting(const Device &device, quint8 endpointId, const Reporting &reporting);
+
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data);
 
     void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QByteArray &payload);
@@ -207,13 +180,13 @@ private slots:
     void adapterReset(void);
     void coordinatorReady(void);
     void permitJoinUpdated(bool enabled);
-    void requestFinished(quint8 id, quint8 status);
 
     void deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress);
     void deviceLeft(const QByteArray &ieeeAddress);
     void zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const QByteArray &payload);
     void zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint16 clusterId, quint8 linkQuality, const QByteArray &payload);
     void rawMessageReveived(const QByteArray &ieeeAddress, quint16 clusterId, quint8 linkQuality, const QByteArray &data);
+    void requestFinished(quint8 id, quint8 status);
 
     void handleRequests(void);
     void updateNeighbors(void);
@@ -230,10 +203,10 @@ signals:
     void deviceEvent(const Device &device, ZigBee::Event event);
     void endpointUpdated(const Device &device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
+    void replyReceived(void);
 
 };
 
 Q_DECLARE_METATYPE(DataRequest)
-Q_DECLARE_METATYPE(BindRequest)
 
 #endif
