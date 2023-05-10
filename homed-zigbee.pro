@@ -71,6 +71,7 @@ DISTFILES += \
     deploy/data/usr/share/homed-zigbee/konke.json \
     deploy/data/usr/share/homed-zigbee/lifecontrol.json \
     deploy/data/usr/share/homed-zigbee/lumi.json \
+    deploy/data/usr/share/homed-zigbee/modkam.json \
     deploy/data/usr/share/homed-zigbee/orvibo.json \
     deploy/data/usr/share/homed-zigbee/other.json \
     deploy/data/usr/share/homed-zigbee/perenio.json \

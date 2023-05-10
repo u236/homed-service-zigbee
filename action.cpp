@@ -10,6 +10,8 @@ void ActionObject::registerMetaTypes(void)
 {
     qRegisterMetaType <Actions::Status>                         ("statusAction");
     qRegisterMetaType <Actions::PowerOnStatus>                  ("powerOnStatusAction");
+    qRegisterMetaType <Actions::SwitchType>                     ("switchTypeAction");
+    qRegisterMetaType <Actions::SwitchMode>                     ("switchModeAction");
     qRegisterMetaType <Actions::Level>                          ("levelAction");
     qRegisterMetaType <Actions::CoverStatus>                    ("coverStatusAction");
     qRegisterMetaType <Actions::CoverPosition>                  ("coverPositionAction");

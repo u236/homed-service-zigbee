@@ -54,6 +54,32 @@ void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteAr
     }
 }
 
+void Properties::SwitchType::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0000)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "toggle"; break;
+        case 0x01: m_value = "momentary"; break;
+        case 0x02: m_value = "multifunction"; break;
+    }
+}
+
+void Properties::SwitchMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0010)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "on"; break;
+        case 0x01: m_value = "off"; break;
+        case 0x02: m_value = "toggle"; break;
+    }
+}
+
 void Properties::Level::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)

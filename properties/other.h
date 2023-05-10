@@ -26,6 +26,16 @@ namespace PropertiesOther
 
     };
 
+    class ModkamButtonAction : public PropertyObject
+    {
+
+    public:
+
+        ModkamButtonAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class LifeControlAirQuality : public PropertyObject
     {
 

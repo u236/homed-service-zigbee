@@ -56,6 +56,26 @@ namespace Properties
 
     };
 
+    class SwitchType : public PropertyObject
+    {
+
+    public:
+
+        SwitchType(void) : PropertyObject("switchType", CLUSTER_SWITCH_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class SwitchMode : public PropertyObject
+    {
+
+    public:
+
+        SwitchMode(void) : PropertyObject("switchMode", CLUSTER_SWITCH_CONFIGURATION) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Level : public PropertyObject
     {
 

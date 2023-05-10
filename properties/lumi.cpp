@@ -375,20 +375,16 @@ void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByt
 
 void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    qint16 value = 0;
-
-    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != 0x0055)
         return;
 
-    memcpy(&value, data.constData(), data.length());
-
-    switch (qFromLittleEndian(value))
+    switch (static_cast <quint8> (data.at(0)))
     {
-        case 0x0000: m_value = "hold"; break;
-        case 0x0001: m_value = "singleClick"; break;
-        case 0x0002: m_value = "doubleClick"; break;
-        case 0x0003: m_value = "tripleClick"; break;
-        case 0x00FF: m_value = "release"; break;
+        case 0x00: m_value = "hold"; break;
+        case 0x01: m_value = "singleClick"; break;
+        case 0x02: m_value = "doubleClick"; break;
+        case 0x03: m_value = "tripleClick"; break;
+        case 0xFF: m_value = "release"; break;
     }
 }
 
@@ -405,7 +401,7 @@ void PropertiesLUMI::CubeRotation::parseAttribte(quint16 attributeId, const QByt
 
 void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    qint16 value = 0;
+    quint16 value = 0;
 
     if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
         return;

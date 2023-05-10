@@ -26,6 +26,26 @@ namespace Actions
 
     };
 
+    class SwitchType : public ActionObject
+    {
+
+    public:
+
+        SwitchType(void) : ActionObject("switchType", CLUSTER_SWITCH_CONFIGURATION, 0x0000, 0x0000) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class SwitchMode : public ActionObject
+    {
+
+    public:
+
+        SwitchMode(void) : ActionObject("switchMode", CLUSTER_SWITCH_CONFIGURATION, 0x0000, 0x0010) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class Level : public ActionObject
     {
 

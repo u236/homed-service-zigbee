@@ -13,6 +13,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::DeviceTemperature>           ("deviceTemperatureProperty");
     qRegisterMetaType <Properties::Status>                      ("statusProperty");
     qRegisterMetaType <Properties::PowerOnStatus>               ("powerOnStatusProperty");
+    qRegisterMetaType <Properties::SwitchType>                  ("switchTypeProperty");
+    qRegisterMetaType <Properties::SwitchMode>                  ("switchModeProperty");
     qRegisterMetaType <Properties::Level>                       ("levelProperty");
     qRegisterMetaType <Properties::CoverStatus>                 ("coverStatusProperty");
     qRegisterMetaType <Properties::CoverPosition>               ("coverPositionProperty");
@@ -94,6 +96,7 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>     ("sonoffButtonActionProperty");
+    qRegisterMetaType <PropertiesOther::ModkamButtonAction>     ("modkamButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>  ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>       ("perenioSmartPlugProperty");
 }

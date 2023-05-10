@@ -24,6 +24,28 @@ QByteArray Actions::PowerOnStatus::request(const QString &, const QVariant &data
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
+QByteArray Actions::SwitchType::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"toggle", "momentary", "multifunction"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray Actions::SwitchMode::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"on", "off", "toggle"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
 QByteArray Actions::Level::request(const QString &, const QVariant &data)
 {
     switch (data.type())
