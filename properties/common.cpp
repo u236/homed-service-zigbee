@@ -282,7 +282,7 @@ void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload
     m_value = scene.isValid() ? scene : command->sceneId;
 }
 
-void Properties::SwitchAction::parseCommand(quint8 commandId, const QByteArray &)
+void Properties::StatusAction::parseCommand(quint8 commandId, const QByteArray &)
 {
     switch (commandId)
     {

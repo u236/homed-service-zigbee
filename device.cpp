@@ -407,7 +407,7 @@ void DeviceList::recognizeDevice(const Device &device)
                         break;
                     }
 
-                    it.value()->properties().append(Property(new Properties::SwitchAction));
+                    it.value()->properties().append(Property(new Properties::StatusAction));
                     break;
 
                 case CLUSTER_LEVEL_CONTROL:

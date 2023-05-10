@@ -31,7 +31,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Current>                     ("currentProperty");
     qRegisterMetaType <Properties::Power>                       ("powerProperty");
     qRegisterMetaType <Properties::Scene>                       ("sceneProperty");
-    qRegisterMetaType <Properties::SwitchAction>                ("switchActionProperty");
+    qRegisterMetaType <Properties::StatusAction>                ("statusActionProperty");
     qRegisterMetaType <Properties::LevelAction>                 ("levelActionProperty");
     qRegisterMetaType <Properties::ColorAction>                 ("colorActionProperty");
 

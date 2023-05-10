@@ -289,7 +289,7 @@
     {
       "description":    "Aqara Opple 2-Key Wireless Switch WXCJKG11LM",
       "modelNames":     ["lumi.remote.b286opcn01"],
-      "properties":     ["batteryVoltage", "switchAction", "lumiData"],
+      "properties":     ["batteryVoltage", "statusAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status"],
       "exposes":        ["battery", "operationMode"],
@@ -306,7 +306,7 @@
     {
       "description":    "Aqara Opple 4-Key Wireless Switch WXCJKG12LM",
       "modelNames":     ["lumi.remote.b486opcn01"],
-      "properties":     ["batteryVoltage", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "properties":     ["batteryVoltage", "statusAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "exposes":        ["battery", "operationMode"],
@@ -323,7 +323,7 @@
     {
       "description":    "Aqara Opple 6-Key Wireless Switch WXCJKG13LM",
       "modelNames":     ["lumi.remote.b686opcn01"],
-      "properties":     ["batteryVoltage", "switchAction", "levelAction", "colorAction", "lumiData"],
+      "properties":     ["batteryVoltage", "statusAction", "levelAction", "colorAction", "lumiData"],
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "exposes":        ["battery", "operationMode"],

@@ -24,7 +24,7 @@
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
       "modelNames":     ["TRADFRI on/off switch"],
-      "properties":     ["batteryPercentage", "switchAction", "levelAction"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],

@@ -245,12 +245,12 @@ namespace Properties
 
     };
 
-    class SwitchAction : public PropertyObject
+    class StatusAction : public PropertyObject
     {
 
     public:
 
-        SwitchAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
+        StatusAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
         void parseCommand(quint8 commandId, const QByteArray &payload) override;
 
     };

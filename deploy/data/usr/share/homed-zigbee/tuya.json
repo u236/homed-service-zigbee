@@ -439,7 +439,7 @@
     {
       "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVB-AA",
       "modelNames":     ["_TZ3000_ja5osu5g"],
-      "properties":     ["batteryPercentage", "switchAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
       "actions":        ["tuyaOperationMode"],
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
@@ -449,7 +449,7 @@
     {
       "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVK-AA",
       "modelNames":     ["_TZ3000_4fjiwweb", "_TZ3000_ixla93vd", "_TZ3000_qja6nq5z", "_TZ3000_uri7ongn"],
-      "properties":     ["batteryPercentage", "switchAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
       "actions":        ["tuyaOperationMode"],
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
