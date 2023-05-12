@@ -554,7 +554,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
     device->timer()->stop();
 }
 
-bool ZigBee::waitForReply()
+bool ZigBee::waitForReply(void)
 {
     QEventLoop loop;
     QTimer timer;

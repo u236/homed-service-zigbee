@@ -94,7 +94,7 @@ Build Linux Binary (aarch64):
   variables:
     ARCHITECTURE: aarch64
     QT_BUILD: qt-aarch64-linux-gnu-5.15.4-static
-    COMPILER: gcc-aarch64-linux-gnu-8.3.0-linaro
+    COMPILER: gcc-aarch64-linux-gnu-8.3.0
   after_script:
   - "cp homed-zigbee-aarch64 homed-zigbee-arm64"
 
@@ -103,7 +103,7 @@ Build Linux Binary (armhf):
   variables:
     ARCHITECTURE: armhf
     QT_BUILD: qt-arm-linux-gnueabihf-5.15.4-static
-    COMPILER: gcc-arm-linux-gnueabihf-8.3.0-linaro
+    COMPILER: gcc-arm-linux-gnueabihf-10.3.0
 
 Build OpenWRT Binary (aarch64_generic):
   extends: .build
