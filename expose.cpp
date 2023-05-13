@@ -268,10 +268,10 @@ QJsonObject ThermostatObject::request(void)
     json.insert("current_temperature_template",     "{{ value_json.temperature }}");
     json.insert("current_temperature_topic",        m_stateTopic);
 
-    json.insert("temperature_state_template",       "{{ value_json.heatingPoint }}");
+    json.insert("temperature_state_template",       "{{ value_json.targetTemperature }}");
     json.insert("temperature_state_topic",          m_stateTopic);
 
-    json.insert("temperature_command_template",     "{\"heatingPoint\":{{ value }}}");
+    json.insert("temperature_command_template",     "{\"targetTemperature\":{{ value }}}");
     json.insert("temperature_command_topic",        m_commandTopic);
 
     return json;

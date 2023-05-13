@@ -128,7 +128,7 @@ QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, con
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_ENUM, &value);
         }
 
-        case 2: // heatingPoint
+        case 2: // targetTemperature
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x10, TUYA_TYPE_VALUE, &value);
@@ -152,7 +152,7 @@ QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, con
             return makeRequest(m_transactionId++, 0x1A, TUYA_TYPE_VALUE, &value);
         }
 
-        case 6: // temperatureCalibration
+        case 6: // temperatureOffset
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x1B, TUYA_TYPE_VALUE, &value);
@@ -164,7 +164,7 @@ QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, con
             return makeRequest(m_transactionId++, 0x28, TUYA_TYPE_BOOL, &value);
         }
 
-        case 8: // sensor
+        case 8: // sensorType
         {
             QList <QString> list = {"internal", "both", "external"};
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -194,7 +194,7 @@ QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, con
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
         }
 
-        case 1: // heatingPoint
+        case 1: // targetTemperature
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
@@ -224,7 +224,7 @@ QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, con
             return makeRequest(m_transactionId++, 0x67, TUYA_TYPE_VALUE, &value);
         }
 
-        case 6: // temperatureCalibration
+        case 6: // temperatureOffset
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
@@ -236,7 +236,7 @@ QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, con
             return makeRequest(m_transactionId++, 0x6A, TUYA_TYPE_BOOL, &value);
         }
 
-        case 8: // ecoModeTemperature
+        case 8: // ecoTemperature
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x6B, TUYA_TYPE_VALUE, &value);

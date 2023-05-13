@@ -162,7 +162,7 @@ void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVar
     {
         case 0x01: map.insert("status", data.toBool() ? "on" : "off"); break;
         case 0x02: map.insert("operationMode", data.toInt() ? "program" : "manual"); break;
-        case 0x10: map.insert("heatingPoint", data.toInt()); break;
+        case 0x10: map.insert("targetTemperature", data.toInt()); break;
         case 0x12: map.insert("temperatureLimitMax", data.toInt()); break;
         case 0x13: map.insert("temperatureMax", data.toInt()); break;
         case 0x14: map.insert("deadZoneTemperature", data.toInt()); break;
@@ -176,7 +176,7 @@ void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVar
         }
 
         case 0x1A: map.insert("temperatureLimitMin", data.toInt()); break;
-        case 0x1B: map.insert("temperatureCalibration", data.toInt()); break;
+        case 0x1B: map.insert("temperatureOffset", data.toInt()); break;
         case 0x24: map.insert("heating", data.toInt() ? false : true); break;
         case 0x28: map.insert("childLock", data.toBool()); break;
 
@@ -184,10 +184,9 @@ void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVar
         {
             switch (data.toInt())
             {
-                case 0:  map.insert("sensor", "internal"); break;
-                case 1:  map.insert("sensor", "both"); break;
-                case 2:  map.insert("sensor", "external"); break;
-                default: map.insert("sensor", "unsupported"); break;
+                case 0:  map.insert("sensorType", "internal"); break;
+                case 1:  map.insert("sensorType", "both"); break;
+                case 2:  map.insert("sensorType", "external"); break;
             }
 
             break;
@@ -216,7 +215,7 @@ void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVar
             break;
         }
 
-        case 0x02: map.insert("heatingPoint", data.toInt()); break;
+        case 0x02: map.insert("targetTemperature", data.toInt()); break;
         case 0x03: map.insert("temperature", data.toInt() / 10); break;
         case 0x04: map.insert("boost", data.toBool()); break;
         case 0x05: map.insert("boostCountdown", data.toInt()); break;
@@ -227,9 +226,9 @@ void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVar
         case 0x0E: map.insert("battery", data.toInt()); break;
         case 0x67: map.insert("boostTimeout", data.toInt()); break;
         case 0x68: map.insert("valvePosition", data.toInt()); break;
-        case 0x69: map.insert("temperatureCalibration", data.toInt()); break;
+        case 0x69: map.insert("temperatureOffset", data.toInt()); break;
         case 0x6A: map.insert("ecoMode", data.toBool()); break;
-        case 0x6B: map.insert("ecoModeTemperature", data.toInt()); break;
+        case 0x6B: map.insert("ecoTemperature", data.toInt()); break;
         case 0x6C: map.insert("temperatureLimitMax", data.toInt()); break;
         case 0x6D: map.insert("temperatureLimitMin", data.toInt()); break;
     }
