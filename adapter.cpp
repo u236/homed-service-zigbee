@@ -126,6 +126,21 @@ void Adapter::setPermitJoin(bool enabled)
     }
 }
 
+bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
+{
+    QEventLoop loop;
+    QTimer timer;
+
+    connect(sender, signal, &loop, SLOT(quit()));
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    timer.setSingleShot(true);
+    timer.start(tiomeout);
+    loop.exec();
+
+    return timer.isActive();
+}
+
 bool Adapter::zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data)
 {
     quint16 dstAddress = qToLittleEndian(networkAddress);
@@ -205,21 +220,6 @@ void Adapter::sendData(const QByteArray &buffer)
         logInfo << "Serial data sent:" << buffer.toHex(':');
 
     m_device->write(buffer);
-}
-
-bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
-{
-    QEventLoop loop;
-    QTimer timer;
-
-    connect(sender, signal, &loop, SLOT(quit()));
-    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
-    timer.setSingleShot(true);
-    timer.start(tiomeout);
-    loop.exec();
-
-    return timer.isActive();
 }
 
 void Adapter::serialError(QSerialPort::SerialPortError error)

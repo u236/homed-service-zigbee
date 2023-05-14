@@ -554,21 +554,6 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
     device->timer()->stop();
 }
 
-bool ZigBee::waitForReply(void)
-{
-    QEventLoop loop;
-    QTimer timer;
-
-    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    connect(this, &ZigBee::replyReceived, &loop, &QEventLoop::quit);
-
-    timer.setSingleShot(true);
-    timer.start(NETWORK_REQUEST_TIMEOUT);
-    loop.exec();
-
-    return timer.isActive();
-}
-
 bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
 {
     m_adapter->setRequestAddress(device->ieeeAddress());
@@ -579,7 +564,7 @@ bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 cluste
         return false;
     }
 
-    if (!waitForReply())
+    if (!m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "timed out";
         return false;
@@ -624,7 +609,7 @@ bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
         return false;
     }
 
-    if (!waitForReply())
+    if (!m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request timed out";
         return false;
