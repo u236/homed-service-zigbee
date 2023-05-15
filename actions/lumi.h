@@ -91,7 +91,17 @@ namespace ActionsLUMI
 
     public:
 
-        CoverPosition(void) : ActionObject("position", CLUSTER_ANALOG_OUTPUT) {}
+        CoverPosition(void) : ActionObject("position", CLUSTER_ANALOG_OUTPUT, 0x0000, 0x0055) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class VibrationSensitivity : public ActionObject
+    {
+
+    public:
+
+        VibrationSensitivity(void) : ActionObject("sensitivityMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, 0xFF0D) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

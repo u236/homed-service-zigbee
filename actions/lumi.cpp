@@ -148,5 +148,17 @@ QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &
         value = 100 - value;
 
     value = qToLittleEndian(value);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0055, DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::VibrationSensitivity::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"high", "medium", "low"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    value = value * 10 + 1;
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }

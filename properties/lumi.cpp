@@ -260,6 +260,19 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             map.insert("battery", percentage(2850, 3200, qFromLittleEndian(value)));
             break;
         }
+
+        case 0xFF0D:
+        {
+            if (modelName() != "lumi.vibration.aq1")
+                break;
+
+            switch (static_cast <quint8> (data.at(0)))
+            {
+                case 0x01: map.insert("sensitivityMode", "high"); break;
+                case 0x0B: map.insert("sensitivityMode", "medium"); break;
+                case 0x15: map.insert("sensitivityMode", "low"); break;
+            }
+        }
     }
 }
 

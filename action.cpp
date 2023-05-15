@@ -29,6 +29,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::StatusMemory>               ("lumiStatusMemoryAction");
     qRegisterMetaType <ActionsLUMI::Interlock>                  ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>              ("lumiCoverPositionAction");
+    qRegisterMetaType <ActionsLUMI::VibrationSensitivity>       ("lumiVibrationSensitivityAction");
 
     qRegisterMetaType <ActionsTUYA::LightDimmer>                ("tuyaLightDimmerAction");
     qRegisterMetaType <ActionsTUYA::ElectricityMeter>           ("tuyaElectricityMeterAction");

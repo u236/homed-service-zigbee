@@ -243,6 +243,7 @@
       "description":    "Aqara Vibration Sensor DJT11LM",
       "modelNames":     ["lumi.vibration.aq1"],
       "properties":     ["lumiBasic", "lumiVibration"],
+      "actions":        ["lumiVibrationSensitivity"],
       "exposes":        ["battery", "event", "vibration"],
       "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60}
     },
