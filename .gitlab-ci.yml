@@ -23,10 +23,10 @@
   script:
   - "mkdir -p deploy/data/lib/systemd/system"
   - "mkdir -p deploy/data/opt/homed-zigbee"
-  - "mkdir -p deploy/data/usr/local/bin"
-  - "cp -r deploy/debian deploy/data/DEBIAN"
+  - "mkdir -p deploy/data/usr/bin"
+  - "cp -r deploy/apt deploy/data/DEBIAN"
   - "cp deploy/systemd/homed-zigbee.service deploy/data/lib/systemd/system"
-  - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/local/bin/homed-zigbee"
+  - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/bin/homed-zigbee"
   - "md5deep -lr deploy/data | grep -v DEBIAN | sed \"s+deploy/data/++g\" | sort -k2 > deploy/data/DEBIAN/md5sums"
   - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/data/DEBIAN/control"
   - "sed -i \"s+^Architecture:.*+Architecture: ${ARCHITECTURE}+g\" deploy/data/DEBIAN/control"
@@ -44,7 +44,7 @@
     when: always
   - when: never
 
-.deploy_ipk:
+.deploy_opkg:
   stage: deploy
   variables:
     PACKAGE_FILE: homed-zigbee_${CI_COMMIT_TAG}_${ARCHITECTURE}.ipk
@@ -55,13 +55,13 @@
   - "mkdir -p deploy/data/usr/bin"
   - "cp deploy/procd/homed-zigbee deploy/data/etc/init.d"
   - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/bin/homed-zigbee"
-  - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/openwrt/control"
-  - "sed -i \"s+^Architecture:.*+Architecture: ${ARCHITECTURE}+g\" deploy/openwrt/control"
+  - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/opkg/control"
+  - "sed -i \"s+^Architecture:.*+Architecture: ${ARCHITECTURE}+g\" deploy/opkg/control"
   - "echo \"2.0\" > debian-binary"
   - "chmod +x deploy/data/etc/init.d/homed-zigbee"
-  - "chmod +x deploy/openwrt/postinst"
-  - "chmod +x deploy/openwrt/prerm"
-  - "fakeroot tar -czf control.tar.gz -C deploy/openwrt ."
+  - "chmod +x deploy/opkg/postinst"
+  - "chmod +x deploy/opkg/prerm"
+  - "fakeroot tar -czf control.tar.gz -C deploy/opkg ."
   - "fakeroot tar -czf data.tar.gz -C deploy/data ."
   - "fakeroot tar -czf ${PACKAGE_FILE} control.tar.gz data.tar.gz debian-binary"
   - "mkdir -p ${FEED_DIR}"
@@ -83,9 +83,9 @@ Build Linux Binary (amd64):
   extends: .build
   variables:
     ARCHITECTURE: amd64
-    QT_BUILD: qt-amd64-linux-5.15.4-static
+    QT_BUILD: qt-amd64-linux-5.15.4-shared
   script:
-  - "docker run --rm -u ${UID}:${UID} -v /opt/qt/${QT_BUILD}:/opt/qt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/qt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j8\""
+  - "docker run --rm -u ${UID}:${UID} -v /opt/qt/${QT_BUILD}:/opt/qt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/qt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j $(nproc)\""
   - "cp homed-zigbee homed-zigbee-amd64"
   - "cp homed-zigbee-amd64 /var/www/sandbox.u236.org/homed-zigbee"
 
@@ -93,7 +93,7 @@ Build Linux Binary (aarch64):
   extends: .build
   variables:
     ARCHITECTURE: aarch64
-    QT_BUILD: qt-aarch64-linux-gnu-5.15.4-static
+    QT_BUILD: qt-aarch64-linux-gnu-5.15.4-shared
     COMPILER: gcc-aarch64-linux-gnu-8.3.0
   after_script:
   - "cp homed-zigbee-aarch64 homed-zigbee-arm64"
@@ -102,50 +102,50 @@ Build Linux Binary (armhf):
   extends: .build
   variables:
     ARCHITECTURE: armhf
-    QT_BUILD: qt-arm-linux-gnueabihf-5.15.4-static
+    QT_BUILD: qt-arm-linux-gnueabihf-5.15.4-shared
     COMPILER: gcc-arm-linux-gnueabihf-10.3.0
 
 Build OpenWRT Binary (aarch64_generic):
   extends: .build
   variables:
     ARCHITECTURE: aarch64_generic
-    QT_BUILD: qt-aarch64_generic-openwrt-linux-5.15.4-static
+    QT_BUILD: qt-aarch64_generic-openwrt-linux-5.15.4-shared
     COMPILER: gcc-aarch64_generic-openwrt-linux-11.2.0-musl
 
 Build OpenWRT Binary (arm_cortex-a7_neon-vfpv4):
   extends: .build
   variables:
     ARCHITECTURE: arm_cortex-a7_neon-vfpv4
-    QT_BUILD: qt-arm_cortex-a7_neon-vfpv4-openwrt-linux-5.15.4-static
+    QT_BUILD: qt-arm_cortex-a7_neon-vfpv4-openwrt-linux-5.15.4-shared
     COMPILER: gcc-arm_cortex-a7_neon-vfpv4-openwrt-linux-11.2.0-musl
 
 Build OpenWRT Binary (arm_cortex-a9_neon):
   extends: .build
   variables:
     ARCHITECTURE: arm_cortex-a9_neon
-    QT_BUILD: qt-arm_cortex-a9_neon-openwrt-linux-5.15.4-static
+    QT_BUILD: qt-arm_cortex-a9_neon-openwrt-linux-5.15.4-shared
     COMPILER: gcc-arm_cortex-a9_neon-openwrt-linux-11.2.0-musl
 
 Build OpenWRT Binary (mips_24kc):
   extends: .build
   variables:
     ARCHITECTURE: mips_24kc
-    QT_BUILD: qt-mips_24kc-openwrt-linux-5.15.4-static
+    QT_BUILD: qt-mips_24kc-openwrt-linux-5.15.4-shared
     COMPILER: gcc-mips_24kc-openwrt-linux-11.2.0-musl
 
 Build OpenWRT Binary (mipsel_24kc):
   extends: .build
   variables:
     ARCHITECTURE: mipsel_24kc
-    QT_BUILD: qt-mipsel_24kc-openwrt-linux-5.15.4-static
+    QT_BUILD: qt-mipsel_24kc-openwrt-linux-5.15.4-shared
     COMPILER: gcc-mipsel_24kc-openwrt-linux-11.2.0-musl
 
 Deploy Docker Images:
   stage: deploy
   script:
+  - "cp homed-zigbee-amd64 deploy/docker/homed-zigbee-amd64"
   - "cp homed-zigbee-aarch64 deploy/docker/homed-zigbee-arm64"
   - "cp homed-zigbee-armhf deploy/docker/homed-zigbee-arm"
-  - "cp homed-zigbee-amd64 deploy/docker/homed-zigbee-amd64"
   - "cp -r deploy/data/usr/share/homed-zigbee deploy/docker/library"
   - "docker buildx create --driver-opt network=host --name job_${CI_JOB_ID} --use"
   - "docker buildx build --platform linux/arm64,linux/arm/v7,linux/amd64 --push --tag 127.0.0.1:5000/homed-zigbee:${CI_COMMIT_TAG} --tag 127.0.0.1:5000/homed-zigbee:latest deploy/docker/"
@@ -155,6 +155,11 @@ Deploy Docker Images:
   - if: $CI_COMMIT_TAG =~ /^\d.\d.\d+$/ || $CI_COMMIT_TAG == "dev"
     when: always
   - when: never
+
+Deploy APT Package (amd64):
+  extends: .deploy_apt
+  variables:
+    ARCHITECTURE: amd64
 
 Deploy APT Package (aarch64):
   extends: .deploy_apt
@@ -171,32 +176,27 @@ Deploy APT Package (armhf):
   variables:
     ARCHITECTURE: armhf
 
-Deploy APT Package (amd64):
-  extends: .deploy_apt
-  variables:
-    ARCHITECTURE: amd64
-
 Deploy OpenWRT Package (aarch64_generic):
-  extends: .deploy_ipk
+  extends: .deploy_opkg
   variables:
     ARCHITECTURE: aarch64_generic
 
 Deploy OpenWRT Package (arm_cortex-a7_neon-vfpv4):
-  extends: .deploy_ipk
+  extends: .deploy_opkg
   variables:
     ARCHITECTURE: arm_cortex-a7_neon-vfpv4
 
 Deploy OpenWRT Package (arm_cortex-a9_neon):
-  extends: .deploy_ipk
+  extends: .deploy_opkg
   variables:
     ARCHITECTURE: arm_cortex-a9_neon
 
 Deploy OpenWRT Package (mips_24kc):
-  extends: .deploy_ipk
+  extends: .deploy_opkg
   variables:
     ARCHITECTURE: mips_24kc
 
 Deploy OpenWRT Package (mipsel_24kc):
-  extends: .deploy_ipk
+  extends: .deploy_opkg
   variables:
     ARCHITECTURE: mipsel_24kc
