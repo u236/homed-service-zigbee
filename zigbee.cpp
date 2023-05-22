@@ -557,6 +557,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
 bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
 {
     m_adapter->setRequestAddress(device->ieeeAddress());
+    m_replyReceived = false;
 
     if (!m_adapter->bindRequest(m_requestId, device->networkAddress(), endpointId, clusterId, address, dstEndpointId, unbind))
     {
@@ -564,7 +565,7 @@ bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 cluste
         return false;
     }
 
-    if (!m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
+    if (!m_replyReceived && !m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "timed out";
         return false;
@@ -602,6 +603,7 @@ bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
     }
 
     m_adapter->setRequestAddress(device->ieeeAddress());
+    m_replyReceived = false;
 
     if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpointId, reporting->clusterId(), request))
     {
@@ -609,7 +611,7 @@ bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
         return false;
     }
 
-    if (!m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
+    if (!m_replyReceived && !m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
     {
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request timed out";
         return false;
@@ -1643,6 +1645,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
     if (id == m_requestId)
     {
         m_requestStatus = status;
+        m_replyReceived = true;
         emit replyReceived();
     }
 
