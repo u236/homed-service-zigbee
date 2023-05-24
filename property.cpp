@@ -92,6 +92,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::Humidity>                ("ptvoHumidityProperty");
     qRegisterMetaType <PropertiesPTVO::Count>                   ("ptvoCountProperty");
     qRegisterMetaType <PropertiesPTVO::Pattern>                 ("ptvoPatternProperty");
+    qRegisterMetaType <PropertiesPTVO::ButtonAction>            ("ptvoButtonActionProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>            ("ptvoSwitchActionProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>      ("konkeButtonActionProperty");

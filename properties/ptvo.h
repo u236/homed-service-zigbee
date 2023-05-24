@@ -112,6 +112,16 @@ namespace PropertiesPTVO
 
     };
 
+    class ButtonAction : public PropertyObject
+    {
+
+    public:
+
+        ButtonAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class SwitchAction : public PropertyObject
     {
 
