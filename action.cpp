@@ -36,6 +36,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::RadiatorThermostat>         ("tuyaRadiatorThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesElectricThermostat>     ("tuyaMoesElectricThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesRadiatorThermostat>     ("tuyaMoesRadiatorThermostatAction");
+    qRegisterMetaType <ActionsTUYA::WeekdayThermostatProgram>   ("tuyaHolidayThermostatProgramAction");
+    qRegisterMetaType <ActionsTUYA::HolidayThermostatProgram>   ("tuyaHolidayThermostatProgramAction");
     qRegisterMetaType <ActionsTUYA::MoesThermostatProgram>      ("tuyaMoesThermostatProgramAction");
     qRegisterMetaType <ActionsTUYA::NeoSiren>                   ("tuyaNeoSirenAction");
     qRegisterMetaType <ActionsTUYA::WaterValve>                 ("tuyaWaterValveAction");

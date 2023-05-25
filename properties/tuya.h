@@ -86,6 +86,32 @@ namespace PropertiesTUYA
 
     };
 
+    class WeekdayThermostatProgram : public Data
+    {
+
+    public:
+
+        WeekdayThermostatProgram(void) : Data("weekdayThermostatProgram") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
+    class HolidayThermostatProgram : public Data
+    {
+
+    public:
+
+        HolidayThermostatProgram(void) : Data("holidayThermostatProgram") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class MoesThermostatProgram : public Data
     {
 

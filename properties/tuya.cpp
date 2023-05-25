@@ -217,7 +217,6 @@ void PropertiesTUYA::RadiatorThermostat::update(quint8 dataPoint, const QVariant
     m_value = map;
 }
 
-
 void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
@@ -305,6 +304,48 @@ void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVar
     m_value = map;
 }
 
+void PropertiesTUYA::WeekdayThermostatProgram::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    if (dataPoint == 0x70)
+    {
+        QList <QString> names = {"Hour", "Minute", "Temperature"};
+        QByteArray program = data.toByteArray();
+
+        for (int i = 0; i < 18; i++)
+        {
+            quint8 value = static_cast <quint8> (program.at(i));
+            map.insert(QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
+        }
+
+        m_meta.insert("received", true);
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    if (dataPoint == 0x71)
+    {
+        QList <QString> names = {"Hour", "Minute", "Temperature"};
+        QByteArray program = data.toByteArray();
+
+        for (int i = 0; i < 18; i++)
+        {
+            quint8 value = static_cast <quint8> (program.at(i));
+            map.insert(QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
+        }
+
+        m_meta.insert("received", true);
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
 void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
@@ -320,7 +361,7 @@ void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVari
             map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
         }
 
-        m_meta.insert("programReceived", true);
+        m_meta.insert("received", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

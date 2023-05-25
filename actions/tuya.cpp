@@ -342,6 +342,66 @@ QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, con
     return QByteArray();
 }
 
+QByteArray ActionsTUYA::WeekdayThermostatProgram::request(const QString &name, const QVariant &data)
+{
+    const Property &property = endpointProperty();
+    QList <QString> names = {"Hour", "Minute", "Temperature"};
+    QByteArray payload;
+
+    if (property.isNull())
+        return QByteArray();
+
+    if (m_data.isEmpty() || property->meta().value("received").toBool())
+    {
+        m_data = property->value().toMap();
+        property->meta().insert("received", false);
+    }
+
+    m_data.insert(name, data.toDouble());
+
+    for (int i = 0; i < 18; i++)
+    {
+        QString key = QString("weekdayP%1%2").arg(i / 3 % 1).arg(names.value(i % 3));
+
+        if (!m_data.contains(key))
+        return QByteArray();
+
+        payload.append(static_cast <char> (m_data.value(key).toInt()));
+    }
+
+    return makeRequest(m_transactionId++, 0x70, TUYA_TYPE_RAW, payload.data(), 18);
+}
+
+QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, const QVariant &data)
+{
+    const Property &property = endpointProperty();
+    QList <QString> names = {"Hour", "Minute", "Temperature"};
+    QByteArray payload;
+
+    if (property.isNull())
+        return QByteArray();
+
+    if (m_data.isEmpty() || property->meta().value("received").toBool())
+    {
+        m_data = property->value().toMap();
+        property->meta().insert("received", false);
+    }
+
+    m_data.insert(name, data.toDouble());
+
+    for (int i = 0; i < 18; i++)
+    {
+        QString key = QString("holidayP%1%2").arg(i / 3 % 1).arg(names.value(i % 3));
+
+        if (!m_data.contains(key))
+        return QByteArray();
+
+        payload.append(static_cast <char> (m_data.value(key).toInt()));
+    }
+
+    return makeRequest(m_transactionId++, 0x71, TUYA_TYPE_RAW, payload.data(), 18);
+}
+
 QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
@@ -351,10 +411,10 @@ QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, cons
     if (property.isNull())
         return QByteArray();
 
-    if (m_data.isEmpty() || property->meta().value("programReceived").toBool())
+    if (m_data.isEmpty() || property->meta().value("received").toBool())
     {
         m_data = property->value().toMap();
-        property->meta().insert("programReceived", false);
+        property->meta().insert("received", false);
     }
 
     m_data.insert(name, data.toDouble());
