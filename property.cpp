@@ -60,6 +60,7 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesTUYA::LightDimmer>             ("tuyaLightDimmerProperty");
     qRegisterMetaType <PropertiesTUYA::ElectricityMeter>        ("tuyaElectricityMeterProperty");
+    qRegisterMetaType <PropertiesTUYA::RadiatorThermostat>      ("tuyaRadiatorThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::MoesElectricThermostat>  ("tuyaMoesElectricThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::MoesRadiatorThermostat>  ("tuyaMoesRadiatorThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostatProgram>   ("tuyaMoesThermostatProgramProperty");

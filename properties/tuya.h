@@ -47,6 +47,19 @@ namespace PropertiesTUYA
 
     };
 
+    class RadiatorThermostat : public Data
+    {
+
+    public:
+
+        RadiatorThermostat(void) : Data("radiatorThermostat") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class MoesElectricThermostat : public Data
     {
 

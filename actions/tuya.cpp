@@ -107,6 +107,96 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
     return makeRequest(m_transactionId++, modelList.contains(manufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
 }
 
+QByteArray ActionsTUYA::RadiatorThermostat::request(const QString &name, const QVariant &data)
+{
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // targetTemperature
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt() * 10);
+            return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 1: // operationMode
+        {
+            QList <QString> list = {"away", "program", "manual", "comfort", "eco", "boost", "complex"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x04, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 2: // childLock
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            return makeRequest(m_transactionId++, 0x07, TUYA_TYPE_BOOL, &value);
+        }
+
+        case 3: // temperatureOffset
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt() * 10);
+            return makeRequest(m_transactionId++, 0x2C, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 4: // temperatureLimitMin
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x66, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 5: // temperatureLimitMax
+        {
+            qint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x67, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 6: // boostTimeout
+        {
+            quint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 7: // comfortTemperature
+        {
+            quint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x6B, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 8: // ecoTemperature
+        {
+            quint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x6C, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 9: // weekMode
+        {
+            QList <QString> list = {"5+2", "6+1", "7+0"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x6F, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 10: // awayTemperature
+        {
+            quint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x72, TUYA_TYPE_VALUE, &value);
+        }
+
+        case 11: // awayDays
+        {
+            quint32 value = qToBigEndian <qint32> (data.toInt());
+            return makeRequest(m_transactionId++, 0x75, TUYA_TYPE_VALUE, &value);
+        }
+    }
+
+    return QByteArray();
+}
+
 QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, const QVariant &data)
 {
     switch (m_actions.indexOf(name))
@@ -206,49 +296,43 @@ QByteArray ActionsTUYA::MoesRadiatorThermostat::request(const QString &name, con
             return makeRequest(m_transactionId++, 0x04, TUYA_TYPE_BOOL, &value);
         }
 
-        case 3: // windowDetection
-        {
-            quint8 value = data.toBool() ? 0x01 : 0x00;
-            return makeRequest(m_transactionId++, 0x08, TUYA_TYPE_BOOL, &value);
-        }
-
-        case 4: // childLock
+        case 3: // childLock
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
             return makeRequest(m_transactionId++, 0x0D, TUYA_TYPE_BOOL, &value);
         }
 
-        case 5: // boostTimeout
+        case 4: // boostTimeout
         {
             quint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x67, TUYA_TYPE_VALUE, &value);
         }
 
-        case 6: // temperatureOffset
+        case 5: // temperatureOffset
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
         }
 
-        case 7: // ecoMode
+        case 6: // ecoMode
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
             return makeRequest(m_transactionId++, 0x6A, TUYA_TYPE_BOOL, &value);
         }
 
-        case 8: // ecoTemperature
+        case 7: // ecoTemperature
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x6B, TUYA_TYPE_VALUE, &value);
         }
 
-        case 9: // temperatureLimitMax
+        case 8: // temperatureLimitMax
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x6C, TUYA_TYPE_VALUE, &value);
         }
 
-        case 10: // temperatureLimitMin
+        case 9: // temperatureLimitMin
         {
             qint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x6D, TUYA_TYPE_VALUE, &value);

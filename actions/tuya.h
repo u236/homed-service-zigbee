@@ -35,6 +35,16 @@ namespace ActionsTUYA
 
     };
 
+    class RadiatorThermostat : public Request, public ActionObject
+    {
+
+    public:
+
+        RadiatorThermostat(void) : ActionObject("radiatorThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"targetTemperature", "operationMode", "childLock", "temperatureOffset", "temperatureLimitMin", "temperatureLimitMax", "boostTimeout", "comfortTemperature", "ecoTemperature", "weekMode", "awayTemperature", "awayDays"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class MoesElectricThermostat : public Request, public ActionObject
     {
 
@@ -49,7 +59,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesRadiatorThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"operationMode", "targetTemperature", "boost", "windowDetection", "childLock", "boostTimeout", "temperatureOffset", "ecoMode", "ecoTemperature", "temperatureLimitMax", "temperatureLimitMin"}) {}
+        MoesRadiatorThermostat(void) : ActionObject("", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"operationMode", "targetTemperature", "boost", "childLock", "boostTimeout", "temperatureOffset", "ecoMode", "ecoTemperature", "temperatureLimitMax", "temperatureLimitMin"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
