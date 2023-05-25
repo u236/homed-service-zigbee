@@ -35,6 +35,31 @@
     }
   ],
 
+  "ptvo.switch-zr02":
+  [
+    {
+      "description":    "Sonoff 1-Channel Relay SWITCH-ZR02 with PTVO Firmware",
+      "modelNames":     ["ptvo.switch-zr02"],
+      "properties":     ["ptvoButtonAction"],
+      "exposes":        ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold", "release"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["ptvo.switch-zr02"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["ptvo.switch-zr02"],
+      "properties":     ["ptvoTemperature"],
+      "exposes":        ["temperature"],
+      "endpointId":     3
+    }
+  ],
+
   "RE":
   [
     {
