@@ -28,7 +28,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": "raw", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
+      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
     }
   ]
 }
