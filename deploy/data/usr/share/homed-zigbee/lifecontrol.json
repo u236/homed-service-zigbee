@@ -41,7 +41,7 @@
   "TexasInstruments":
   [
     {
-      "description":    "Life Control 10A Smart Plug MCLH-03",
+      "description":    "Life Control 10A Smart Plug MCLH-03 (partially supported)",
       "modelNames":     ["RICI01"],
       "properties":     ["status"],
       "actions":        ["status"],

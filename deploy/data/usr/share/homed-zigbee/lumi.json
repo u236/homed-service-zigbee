@@ -156,7 +156,6 @@
       "properties":     ["status", "lumiData", "lumiSwitchType"],
       "actions":        ["status", "lumiSwitchType", "lumiStatusMemory"],
       "bindings":       ["status"],
-      "reportings":     ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "switchType", "statusMemory"],
       "options":        {"switchType": ["toggle", "momentary"]},
       "endpointId":     1
