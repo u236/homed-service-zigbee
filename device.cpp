@@ -743,18 +743,12 @@ void DeviceList::unserializeProperties(const QJsonObject &properties)
         if (device->removed() || json.isEmpty())
             continue;
 
-        for (auto it = json.begin(); it != json.end(); it++)
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
-            const Endpoint &endpoint = device->endpoints().value(static_cast <quint8> (it.key().toInt()));
-            QJsonObject json = it.value().toObject();
-
-            if (endpoint.isNull())
-                continue;
-
-            for (int i = 0; i < endpoint->properties().count(); i++)
+            for (int i = 0; i < it.value()->properties().count(); i++)
             {
-                const Property &property = endpoint->properties().at(i);
-                QVariant value = json.value(property->name()).toVariant();
+                const Property &property = it.value()->properties().at(i);
+                QVariant value = json.value(property->multiple() ? QString("%1-%2").arg(property->name()).arg(it.value()->id()) : property->name()).toVariant();
 
                 if (!value.isValid())
                     continue;
@@ -891,12 +885,10 @@ QJsonObject DeviceList::serializeProperties(void)
     for (auto it = begin(); it != end(); it++)
     {
         const Device &device = it.value();
-        QJsonObject endpoints;
+        QJsonObject properties;
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
-            QJsonObject properties;
-
             for (int i = 0; i < it.value()->properties().count(); i++)
             {
                 const Property &property = it.value()->properties().at(i);
@@ -904,19 +896,14 @@ QJsonObject DeviceList::serializeProperties(void)
                 if (!property->value().isValid())
                     continue;
 
-                properties.insert(property->name(), QJsonValue::fromVariant(property->value()));
+                properties.insert(property->multiple() ? QString("%1-%2").arg(property->name()).arg(it.value()->id()) : property->name(), QJsonValue::fromVariant(property->value()));
             }
-
-            if (properties.isEmpty())
-                continue;
-
-            endpoints.insert(QString::number(it.key()), properties);
         }
 
-        if (endpoints.isEmpty())
+        if (properties.isEmpty())
             continue;
 
-        json.insert(it.value()->ieeeAddress().toHex(':'), endpoints);
+        json.insert(it.value()->ieeeAddress().toHex(':'), properties);
     }
 
     return json;
