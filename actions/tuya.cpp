@@ -158,19 +158,30 @@ QByteArray ActionsTUYA::RadiatorThermostat::request(const QString &name, const Q
             return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
         }
 
-        case 7: // comfortTemperature
+        case 7: // systemMode
+        {
+            QList <QString> list = {"auto", "heat", "off"};
+            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+            if (value < 0)
+                return QByteArray();
+
+            return makeRequest(m_transactionId++, 0x6A, TUYA_TYPE_ENUM, &value);
+        }
+
+        case 8: // comfortTemperature
         {
             quint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x6B, TUYA_TYPE_VALUE, &value);
         }
 
-        case 8: // ecoTemperature
+        case 9: // ecoTemperature
         {
             quint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x6C, TUYA_TYPE_VALUE, &value);
         }
 
-        case 9: // weekMode
+        case 10: // weekMode
         {
             QList <QString> list = {"5+2", "6+1", "7+0"};
             qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
@@ -181,13 +192,13 @@ QByteArray ActionsTUYA::RadiatorThermostat::request(const QString &name, const Q
             return makeRequest(m_transactionId++, 0x6F, TUYA_TYPE_ENUM, &value);
         }
 
-        case 10: // awayTemperature
+        case 11: // awayTemperature
         {
             quint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x72, TUYA_TYPE_VALUE, &value);
         }
 
-        case 11: // awayDays
+        case 12: // awayDays
         {
             quint32 value = qToBigEndian <qint32> (data.toInt());
             return makeRequest(m_transactionId++, 0x75, TUYA_TYPE_VALUE, &value);
@@ -201,14 +212,9 @@ QByteArray ActionsTUYA::MoesElectricThermostat::request(const QString &name, con
 {
     switch (m_actions.indexOf(name))
     {
-        case 0: // status
+        case 0: // systemMode
         {
-            QList <QString> list = {"off", "on"};
-            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-            if (value < 0)
-                value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
-
+            quint8 value = data.toString() == "heat" ? 0x01 : 0x00;
             return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_BOOL, &value);
         }
 

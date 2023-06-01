@@ -31,6 +31,7 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Current>             ("currentExpose");
     qRegisterMetaType <Sensor::Power>               ("powerExpose");
     qRegisterMetaType <Sensor::Count>               ("countExpose");
+    qRegisterMetaType <Sensor::Position>            ("positionExpose");
     qRegisterMetaType <Sensor::Action>              ("actionExpose");
     qRegisterMetaType <Sensor::Event>               ("eventExpose");
     qRegisterMetaType <Sensor::Scene>               ("sceneExpose");
@@ -66,7 +67,7 @@ QJsonObject BinaryObject::request(void)
 
 QJsonObject SensorObject::request(void)
 {
-    QList <QString> list = {"action", "event", "scene", "count", "co2", "eco2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
+    QList <QString> list = {"action", "event", "scene", "count", "position", "co2", "eco2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
@@ -75,9 +76,10 @@ QJsonObject SensorObject::request(void)
         case 1:  json.insert("icon",                "mdi:bell"); break;
         case 2:  json.insert("icon",                "mdi:gesture-tap-button"); break;
         case 3:  json.insert("icon",                "mdi:counter"); break;
-        case 4:  json.insert("device_class",        "carbon_dioxide"); break;
+        case 4:  json.insert("icon",                "mdi:valve"); break;
         case 5:  json.insert("device_class",        "carbon_dioxide"); break;
-        case 6:  json.insert("device_class",        "volatile_organic_compounds"); break;
+        case 6:  json.insert("device_class",        "carbon_dioxide"); break;
+        case 7:  json.insert("device_class",        "volatile_organic_compounds"); break;
         default: json.insert("device_class",        m_name); break;
     }
 
@@ -254,12 +256,12 @@ QJsonObject ThermostatObject::request(void)
         json.insert("preset_mode_command_topic",    m_commandTopic);
     }
 
-    json.insert("modes",                            options.value("status").toBool() ? QJsonArray {"off", "heat"} : QJsonArray {"heat"});
+    json.insert("modes",                            QJsonArray::fromStringList(options.value("systemMode").toStringList()));
 
-    json.insert("mode_state_template",              "{{ \"heat\" if value_json.status == \"on\" else \"off\" }}");
+    json.insert("mode_state_template",              "{{ value_json.systemMode }}");
     json.insert("mode_state_topic",                 m_stateTopic);
 
-    json.insert("mode_command_template",            "{\"status\":\"{{ \"on\" if value == \"heat\" else \"off\" }}\"}");
+    json.insert("mode_command_template",            "{\"systemMode\":\"{{ value }}\"}");
     json.insert("mode_command_topic",               m_commandTopic);
 
     json.insert("action_template",                  "{{ \"heating\" if value_json.heating else \"off\" }}");

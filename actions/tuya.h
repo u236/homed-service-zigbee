@@ -40,7 +40,7 @@ namespace ActionsTUYA
 
     public:
 
-        RadiatorThermostat(void) : ActionObject("radiatorThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"targetTemperature", "operationMode", "childLock", "temperatureOffset", "temperatureLimitMin", "temperatureLimitMax", "boostTimeout", "comfortTemperature", "ecoTemperature", "weekMode", "awayTemperature", "awayDays"}) {}
+        RadiatorThermostat(void) : ActionObject("radiatorThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"targetTemperature", "operationMode", "childLock", "temperatureOffset", "temperatureLimitMin", "temperatureLimitMax", "boostTimeout", "systemMode", "comfortTemperature", "ecoTemperature", "weekMode", "awayTemperature", "awayDays"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -50,7 +50,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesElectricThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status", "operationMode", "targetTemperature", "temperatureLimitMax", "deadZoneTemperature", "temperatureLimitMin", "temperatureOffset", "childLock", "sensorType"}) {}
+        MoesElectricThermostat(void) : ActionObject("moesElectricThermostat", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"systemMode", "operationMode", "targetTemperature", "temperatureLimitMax", "deadZoneTemperature", "temperatureLimitMin", "temperatureOffset", "childLock", "sensorType"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
     };
 

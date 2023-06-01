@@ -346,6 +346,15 @@ namespace Sensor
 
     };
 
+    class Position : public SensorObject
+    {
+
+    public:
+
+        Position(void) : SensorObject("position") {}
+
+    };
+
     class Action : public SensorObject
     {
 
