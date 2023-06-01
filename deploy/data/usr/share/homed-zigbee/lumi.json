@@ -111,12 +111,45 @@
       "endpointId":     [5, 6, 7]
     },
     {
+      "description":    "Aqara D1 3-Channel Wall Switch QBKG26LM",
+      "modelNames":     ["lumi.switch.n3acn3"],
+      "options":        {"endpointName": {"1": "Left", "2": "Center", "3": "Right", "41": "Left", "42": "Center", "43": "Right", "51": "L+C", "52": "L+R", "53": "C+R", "61": "L+C+R"}}
+    },
+    {
+      "modelNames":     ["lumi.switch.n3acn3"],
+      "properties":     ["lumiData"],
+      "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
+      "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
+      "options":        {"indicatorMode": ["default", "inverted"]},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.n3acn3"],
+      "properties":     ["lumiPower"],
+      "endpointId":     21
+    },
+    {
+      "modelNames":     ["lumi.switch.n3acn3"],
+      "properties":     ["status", "lumiData"],
+      "actions":        ["status", "lumiSwitchMode"],
+      "exposes":        ["switch", "switchMode"],
+      "options":        {"switchMode": ["relay", "decoupled"]},
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "modelNames":     ["lumi.switch.n3acn3"],
+      "properties":     ["lumiSwitchAction"],
+      "exposes":        ["action"],
+      "options":        {"action": ["singleClick", "doubleClick"]},
+      "endpointId":     [41, 42, 43, 51, 52, 53, 61]
+    },
+    {
       "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
       "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiStatusMemory"],
       "exposes":        ["switch", "action", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": ["singleClick", "doubleClick"], "switchMode": ["relay", "decoupled"], "indicatorMode": ["default", "inverted"]}
+      "options":        {"action": ["singleClick", "doubleClick"], "indicatorMode": ["default", "inverted"], "switchMode": ["relay", "decoupled"]}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
