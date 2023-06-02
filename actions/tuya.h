@@ -15,6 +15,19 @@ namespace ActionsTUYA
 
     };
 
+    class DataPoints : public Request, public ActionObject
+    {
+
+    public:
+
+        DataPoints(void) : ActionObject("tuyaDataPoints", CLUSTER_TUYA_DATA) {}
+
+    private:
+
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class LightDimmer : public Request, public ActionObject
     {
 

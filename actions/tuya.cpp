@@ -33,6 +33,61 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
     return zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x00).append(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (data), header.length);
 }
 
+QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant &data)
+{
+    QMap <QString, QVariant> map = option().toMap();
+    QList <QString> types = {"bool", "value", "enum"};
+
+    for (auto it = map.begin(); it != map.end(); it++)
+    {
+        QList <QVariant> list = it.value().toList();
+
+        for (int i = 0; i < list.count(); i++)
+        {
+            QMap <QString, QVariant> item = list.at(i).toMap();
+
+            if (item.value("name").toString() != name)
+                continue;
+
+            switch (types.indexOf(item.value("type").toString()))
+            {
+                case 0: // bool
+                {
+                    QList <QString> list = item.value("value").toStringList();
+                    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+                    if (value < 0)
+                        value = data.toBool() ? 1 : 0; // TODO: add toggle featute for status action
+
+                    return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
+                }
+
+                case 1: // value
+                {
+                    quint32 value = static_cast <quint32> (data.toDouble() * item.value("divider", 1).toDouble());
+
+                    // TODO: add min/max checks here
+
+                    value = qToBigEndian(value);
+                    return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
+                }
+
+                case 2: // enum
+                {
+                    qint8 value = static_cast <qint8> (option(name).toStringList().indexOf(data.toString()));
+
+                    if (value < 0)
+                        return QByteArray();
+
+                    return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_ENUM, &value);
+                }
+            }
+        }
+    }
+
+    return QByteArray();
+}
+
 QByteArray ActionsTUYA::LightDimmer::request(const QString &name, const QVariant &data)
 {
     switch (m_actions.indexOf(name))

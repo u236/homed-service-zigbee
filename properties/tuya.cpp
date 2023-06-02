@@ -54,6 +54,55 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
     return QVariant();
 }
 
+void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    QList <QVariant> list = option().toMap().value(QString::number(dataPoint)).toList();
+    QList <QString> types = {"bool", "value", "enum"};
+
+    for (int i = 0; i < list.count(); i++)
+    {
+        QMap <QString, QVariant> item = list.at(i).toMap();
+        QString name = item.value("name").toString();
+
+        if(name.isEmpty())
+            continue;
+
+        switch (types.indexOf(item.value("type").toString()))
+        {
+            case 0: // bool
+            {
+                QString value = item.value("value").toStringList().value(data.toBool() ? 1 : 0);
+
+                if (!value.isEmpty())
+                    map.insert(name, value);
+                else
+                    map.insert(name, data.toBool());
+
+                break;
+            }
+
+            case 1: // value
+            {
+                map.insert(name, data.toInt() / item.value("divider", 1).toDouble());
+                break;
+            }
+
+            case 2: // enum
+            {
+                QString value = option(name).toStringList().value(data.toInt());
+
+                if (!value.isEmpty())
+                    map.insert(name, value);
+
+                break;
+            }
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
 void PropertiesTUYA::LightDimmer::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();

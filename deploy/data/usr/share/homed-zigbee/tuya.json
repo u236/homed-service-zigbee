@@ -272,10 +272,41 @@
     {
       "description":    "TUYA TS0601 Radiator Thermostat",
       "modelNames":     ["_TZE200_2atgpdho,", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_pvvbommb", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj"],
-      "properties":     ["tuyaRadiatorThermostat", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
-      "actions":        ["tuyaRadiatorThermostat", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
+      "properties":     ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
       "exposes":        ["battery", "thermostat", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "awayDays", "boostTimeout", "temperatureOffset", "weekMode", "thermostatProgram"],
-      "options":        {"thermostat": {"systemMode": ["off", "auto", "heat"], "operationMode": ["away", "program", "manual", "comfort", "eco", "boost", "complex"], "position": true, "targetTemperature": {"min": 5, "max": 35, "unit": "°C"}}, "comfortTemperature": {"min": 5, "max": 35, "unit": "°C"}, "ecoTemperature": {"min": 5, "max": 35, "unit": "°C"}, "awayTemperature": {"min": 5, "max": 35, "unit": "°C"}, "awayDays": {"min": 0, "max": 100}, "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec"}, "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C"}, "weekMode": ["5+2", "6+1", "7+0"]}
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
+                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "7":    [{"name": "childLock", "type": "bool", "action": true}],
+                            "21":   [{"name": "battery", "type": "value"}],
+                            "44":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "102":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
+                            "103":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
+                            "105":  [{"name": "boostTimeout", "type": "value", "action": true}],
+                            "106":  [{"name": "systemMode", "type": "enum", "action": true}],
+                            "107":  [{"name": "comfortTemperature", "type": "value", "action": true}],
+                            "108":  [{"name": "ecoTemperature", "type": "value", "action": true}],
+                            "109":  [{"name": "heating", "type": "bool"}, {"name": "position", "type": "value"}],
+                            "111":  [{"name": "weekMode", "type": "enum", "action": true}],
+                            "114":  [{"name": "awayTemperature", "type": "value", "action": true}],
+                            "117":  [{"name": "awayDays", "type": "value", "action": true}]
+                          },
+                          "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "operationMode": ["away", "program", "manual", "comfort", "eco", "boost", "complex"],
+                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C"},
+                          "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec"},
+                          "systemMode": ["off", "auto", "heat"],
+                          "comfortTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "ecoTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "weekMode": ["5+2", "6+1", "7+0"],
+                          "awayTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "awayDays": {"min": 0, "max": 100},
+                          "thermostat": {"position": true}
+                        }
     },
     {
       "description":    "TUYA TS0601 MOES Electric Thermostat",

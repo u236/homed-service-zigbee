@@ -21,6 +21,19 @@ namespace PropertiesTUYA
 
     };
 
+    class DataPoints : public Data
+    {
+
+    public:
+
+        DataPoints(void) : Data("tuyaDataPoints") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class LightDimmer : public Data
     {
 

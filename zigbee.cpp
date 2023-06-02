@@ -305,7 +305,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
         {
             const Action &action = it.value()->actions().at(i);
 
-            if (action->name() == name || action->actions().contains(name))
+            if (action->name() == name || action->name() == "tuyaDataPoints" || action->actions().contains(name))
             {
                 QByteArray request = action->request(name, data);
 
