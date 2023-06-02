@@ -309,7 +309,10 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
             {
                 QByteArray request = action->request(name, data);
 
-                if (!request.isEmpty() && !(data.type() == QVariant::String && data.toString().isEmpty()))
+                if (request.isEmpty())
+                    continue;
+
+                if (data.type() != QVariant::String || !data.toString().isEmpty())
                     enqueueRequest(device, it.key(), action->clusterId(), request, QString("%1 action request").arg(name));
 
                 if (!action->attributes().isEmpty())

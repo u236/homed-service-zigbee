@@ -243,12 +243,12 @@ QJsonObject CoverObject::request(void)
 
 QJsonObject ThermostatObject::request(void)
 {
-    QMap <QString, QVariant> options = option().toMap();
+    QList <QString> operationMode = option("operationMode").toStringList(), systemMode = option("systemMode").toStringList();
     QJsonObject json;
 
-    if (options.contains("operationMode"))
+    if (!operationMode.isEmpty())
     {
-        json.insert("preset_modes",                 QJsonArray::fromStringList(options.value("operationMode").toStringList()));
+        json.insert("preset_modes",                 QJsonArray::fromStringList(operationMode));
 
         json.insert("preset_mode_value_template",   "{{ value_json.operationMode }}");
         json.insert("preset_mode_state_topic",      m_stateTopic);
@@ -257,7 +257,7 @@ QJsonObject ThermostatObject::request(void)
         json.insert("preset_mode_command_topic",    m_commandTopic);
     }
 
-    json.insert("modes",                            QJsonArray::fromStringList(options.value("systemMode").toStringList()));
+    json.insert("modes",                            systemMode.isEmpty() ? QJsonArray {"heat"} : QJsonArray::fromStringList(option("systemMode").toStringList()));
 
     json.insert("mode_state_template",              "{{ value_json.systemMode }}");
     json.insert("mode_state_topic",                 m_stateTopic);

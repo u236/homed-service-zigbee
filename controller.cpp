@@ -109,18 +109,30 @@ void Controller::publishExposes(const Device &device, bool remove)
                 items.append(expose->name());
                 map.insert("items", QVariant(items));
 
-                if (option.isValid())
+                if (expose->name() == "light" && option.toStringList().contains("colorTemperature"))
                 {
-                    if (expose->name() == "light" && option.toStringList().contains("colorTemperature"))
-                    {
-                        QVariant colorTemperature = expose->option("colorTemperature");
+                    QVariant colorTemperature = expose->option("colorTemperature");
 
-                        if (colorTemperature.isValid())
-                            options.insert("colorTemperature", colorTemperature);
-                    }
-
-                    options.insert(expose->name(), option);
+                    if (colorTemperature.isValid())
+                        options.insert("colorTemperature", colorTemperature);
                 }
+
+                if (expose->name() == "thermostat")
+                {
+                    QVariant operationMode = expose->option("operationMode"), systemMode = expose->option("systemMode"), targetTemperature = expose->option("targetTemperature");
+
+                    if (operationMode.isValid())
+                        options.insert("operationMode", operationMode);
+
+                    if (systemMode.isValid())
+                        options.insert("systemMode", systemMode);
+
+                    if (targetTemperature.isValid())
+                        options.insert("targetTemperature", targetTemperature);
+                }
+
+                if (option.isValid())
+                    options.insert(expose->name(), option);
 
                 if (expose->multiple() && endpointName.contains(id))
                     options.insert("name", endpointName.value(id));

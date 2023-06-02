@@ -98,6 +98,16 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
                 break;
             }
+
+            default:
+            {
+                QVariant value = item.value("value");
+
+                if (value.isValid())
+                    map.insert(name, value);
+
+                break;
+            }
         }
     }
 
@@ -208,161 +218,6 @@ void PropertiesTUYA::MultichannelRelay::update(quint8 dataPoint, const QVariant 
 {
     QMap <QString, QVariant> map = m_value.toMap();
     map.insert(QString("status-%1").arg(dataPoint < 0x65 ? dataPoint : dataPoint - 0x5E), data.toBool() ? "on" : "off");
-    m_value = map;
-}
-
-void PropertiesTUYA::RadiatorThermostat::update(quint8 dataPoint, const QVariant &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-
-    switch (dataPoint)
-    {
-        case 0x02: map.insert("targetTemperature", data.toInt() / 10); break;
-        case 0x03: map.insert("temperature", data.toInt() / 10); break;
-
-        case 0x04:
-
-            switch (data.toInt())
-            {
-                case 0: map.insert("operationMode", "away"); break;
-                case 1: map.insert("operationMode", "program"); break;
-                case 2: map.insert("operationMode", "manual"); break;
-                case 3: map.insert("operationMode", "comfort"); break;
-                case 4: map.insert("operationMode", "eco"); break;
-                case 5: map.insert("operationMode", "boost"); break;
-                case 6: map.insert("operationMode", "complex"); break;
-            }
-
-            break;
-
-        case 0x07: map.insert("childLock", data.toBool()); break;
-        case 0x15: map.insert("battery", data.toInt()); break;
-        case 0x2C: map.insert("temperatureOffset", data.toInt() / 10); break;
-        case 0x66: map.insert("temperatureLimitMin", data.toInt()); break;
-        case 0x67: map.insert("temperatureLimitMax", data.toInt()); break;
-        case 0x69: map.insert("boostTimeout", data.toInt()); break;
-
-        case 0x6A:
-
-            switch (data.toInt())
-            {
-                case 0: map.insert("systemMode", "auto"); break;
-                case 1: map.insert("systemMode", "heat"); break;
-                case 2: map.insert("systemMode", "off"); break;
-            }
-
-            break;
-
-        case 0x6B: map.insert("comfortTemperature", data.toInt()); break;
-        case 0x6C: map.insert("ecoTemperature", data.toInt()); break;
-
-        case 0x6D:
-            map.insert("heating", data.toInt() ? true : false);
-            map.insert("position", data.toInt());
-            break;
-
-        case 0x6F:
-
-            switch (data.toInt())
-            {
-                case 0: map.insert("weekMode", "5+2"); break;
-                case 1: map.insert("weekMode", "6+1"); break;
-                case 2: map.insert("weekMode", "7+0"); break;
-            }
-
-            break;
-
-        case 0x72: map.insert("awayTemperature", data.toInt()); break;
-        case 0x75: map.insert("awayDays", data.toInt()); break;
-    }
-
-    m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVariant &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-
-    switch (dataPoint)
-    {
-        case 0x01: map.insert("systemMode", data.toBool() ? "heat" : "off"); break;
-        case 0x02: map.insert("operationMode", data.toInt() ? "program" : "manual"); break;
-        case 0x10: map.insert("targetTemperature", data.toInt()); break;
-        case 0x12: map.insert("temperatureLimitMax", data.toInt()); break;
-        case 0x13: map.insert("temperatureMax", data.toInt()); break;
-        case 0x14: map.insert("deadZoneTemperature", data.toInt()); break;
-
-        case 0x18:
-        {
-            QList <QString> list = {"_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"};
-            double value = static_cast <double> (data.toInt());
-            map.insert("temperature", list.contains(manufacturerName()) ? value : value / 10);
-            break;
-        }
-
-        case 0x1A: map.insert("temperatureLimitMin", data.toInt()); break;
-        case 0x1B: map.insert("temperatureOffset", data.toInt()); break;
-        case 0x24: map.insert("heating", data.toInt() ? false : true); break;
-        case 0x28: map.insert("childLock", data.toBool()); break;
-
-        case 0x2B:
-        {
-            switch (data.toInt())
-            {
-                case 0:  map.insert("sensorType", "internal"); break;
-                case 1:  map.insert("sensorType", "both"); break;
-                case 2:  map.insert("sensorType", "external"); break;
-            }
-
-            break;
-        }
-    }
-
-    m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVariant &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-
-    switch (dataPoint)
-    {
-        case 0x01:
-        {
-            switch (data.toInt())
-            {
-                case 0:  map.insert("operationMode", "program"); break;
-                case 1:  map.insert("operationMode", "manual"); break;
-                case 2:  map.insert("operationMode", "temporary"); break;
-                default: map.insert("operationMode", "holiday"); break;
-            }
-
-            break;
-        }
-
-        case 0x02: map.insert("targetTemperature", data.toInt()); break;
-        case 0x03: map.insert("temperature", data.toInt() / 10); break;
-        case 0x04: map.insert("boost", data.toBool()); break;
-        case 0x05: map.insert("boostCountdown", data.toInt()); break;
-        case 0x07: map.insert("heating", data.toInt() ? false : true); break;
-        case 0x0D: map.insert("childLock", data.toBool()); break;
-        case 0x0E: map.insert("battery", data.toInt()); break;
-        case 0x67: map.insert("boostTimeout", data.toInt()); break;
-        case 0x68: map.insert("position", data.toInt()); break;
-        case 0x69: map.insert("temperatureOffset", data.toInt()); break;
-        case 0x6A: map.insert("ecoMode", data.toBool()); break;
-        case 0x6B: map.insert("ecoTemperature", data.toInt()); break;
-        case 0x6C: map.insert("temperatureLimitMax", data.toInt()); break;
-        case 0x6D: map.insert("temperatureLimitMin", data.toInt()); break;
-    }
-
-    if (map.isEmpty())
-    {
-        m_value = QVariant();
-        return;
-    }
-
-    map.insert("systemMode", "heat");
     m_value = map;
 }
 
