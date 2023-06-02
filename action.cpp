@@ -33,6 +33,7 @@ void ActionObject::registerMetaTypes(void)
 
     qRegisterMetaType <ActionsTUYA::LightDimmer>                ("tuyaLightDimmerAction");
     qRegisterMetaType <ActionsTUYA::ElectricityMeter>           ("tuyaElectricityMeterAction");
+    qRegisterMetaType <ActionsTUYA::MultichannelRelay>          ("tuyaMultichannelRelayAction");
     qRegisterMetaType <ActionsTUYA::RadiatorThermostat>         ("tuyaRadiatorThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesElectricThermostat>     ("tuyaMoesElectricThermostatAction");
     qRegisterMetaType <ActionsTUYA::MoesRadiatorThermostat>     ("tuyaMoesRadiatorThermostatAction");

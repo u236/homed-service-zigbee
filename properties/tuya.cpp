@@ -154,6 +154,13 @@ void PropertiesTUYA::ElectricityMeter::update(quint8 dataPoint, const QVariant &
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
+void PropertiesTUYA::MultichannelRelay::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    map.insert(QString("status-%1").arg(dataPoint < 0x65 ? dataPoint : dataPoint - 0x5E), data.toBool() ? "on" : "off");
+    m_value = map;
+}
+
 void PropertiesTUYA::RadiatorThermostat::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
@@ -219,13 +226,7 @@ void PropertiesTUYA::RadiatorThermostat::update(quint8 dataPoint, const QVariant
         case 0x75: map.insert("awayDays", data.toInt()); break;
     }
 
-    if (map.isEmpty())
-    {
-        m_value = QVariant();
-        return;
-    }
-
-    m_value = map;
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesTUYA::MoesElectricThermostat::update(quint8 dataPoint, const QVariant &data)

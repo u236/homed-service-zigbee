@@ -35,6 +35,16 @@ namespace ActionsTUYA
 
     };
 
+    class MultichannelRelay : public Request, public ActionObject
+    {
+
+    public:
+
+        MultichannelRelay(void) : ActionObject("multichannelRelay", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status-1", "status-2", "status-3", "status-4", "status-5", "status-6", "status-7", "status-8"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class RadiatorThermostat : public Request, public ActionObject
     {
 

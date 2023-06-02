@@ -47,6 +47,19 @@ namespace PropertiesTUYA
 
     };
 
+    class MultichannelRelay : public Data
+    {
+
+    public:
+
+        MultichannelRelay(void) : Data("multichannelRelay") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class RadiatorThermostat : public Data
     {
 

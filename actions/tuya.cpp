@@ -107,6 +107,17 @@ QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVarian
     return makeRequest(m_transactionId++, modelList.contains(manufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
 }
 
+QByteArray ActionsTUYA::MultichannelRelay::request(const QString &name, const QVariant &data)
+{
+    QList <QString> list = {"off", "on"};
+    qint8 index = static_cast <qint8> (m_actions.indexOf(name)), value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        value = endpointProperty()->value().toMap().value(name).toString() == "on" ? 0x00 : 0x01;
+
+    return makeRequest(m_transactionId++, static_cast <quint8> (index < 6 ? index + 0x01 : index + 0x5F), TUYA_TYPE_BOOL, &value);
+}
+
 QByteArray ActionsTUYA::RadiatorThermostat::request(const QString &name, const QVariant &data)
 {
     switch (m_actions.indexOf(name))
