@@ -46,18 +46,19 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
         {
             QMap <QString, QVariant> item = list.at(i).toMap();
 
-            if (item.value("name").toString() != name)
+            if (item.value("name").toString() != name || !item.value("action").toBool())
                 continue;
 
             switch (types.indexOf(item.value("type").toString()))
             {
                 case 0: // bool
                 {
-                    QList <QString> list = item.value("value").toStringList();
+                    QList <QString> list = option(name).toStringList();
                     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+                    bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
                     if (value < 0)
-                        value = data.toBool() ? 1 : 0; // TODO: add toggle featute for status action
+                        value = check ? 1 : 0; // TODO: add toggle featute for status action
 
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
                 }

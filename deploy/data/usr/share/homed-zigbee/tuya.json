@@ -285,10 +285,10 @@
                             "21":   [{"name": "battery", "type": "value"}],
                             "44":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
                             "102":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
-                            "103":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
+                            "103":  [{"name": "temperatureLimitMax", "type": "value", "action": true}],
                             "105":  [{"name": "boostTimeout", "type": "value", "action": true}],
                             "106":  [{"name": "systemMode", "type": "enum", "action": true}],
-                            "107":  [{"name": "comfortTemperature", "type": "value", "action": true}],
+                            "107":  [{"name": "comfortTemperature", "type": "value"}],
                             "108":  [{"name": "ecoTemperature", "type": "value", "action": true}],
                             "109":  [{"name": "heating", "type": "bool"}, {"name": "position", "type": "value"}],
                             "111":  [{"name": "weekMode", "type": "enum", "action": true}],
@@ -310,11 +310,61 @@
     },
     {
       "description":    "TUYA TS0601 MOES Electric Thermostat",
-      "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
-      "properties":     ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
-      "actions":        ["tuyaMoesElectricThermostat", "tuyaMoesThermostatProgram"],
+      "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0"],
+      "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "thermostatProgram"],
-      "options":        {"thermostat": {"systemMode": ["off", "heat"], "operationMode": ["manual", "program"], "targetTemperature": {"min": 5, "max": 35, "unit": "°C"}}, "sensorType": ["internal", "both", "external"], "temperatureOffset": {"min": -30, "max": 30, "unit": "°C"}, "thermostatProgram": "moes"}
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
+                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "16":   [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
+                            "18":   [{"name": "temperatureLimitMax", "type": "value", "action": true}],
+                            "20":   [{"name": "deadZoneTemperature", "type": "value", "action": true}],
+                            "24":   [{"name": "temperature", "type": "value", "divider": 10}],
+                            "26":   [{"name": "temperatureLimitMin", "type": "value", "action": true}],
+                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
+                            "36":   [{"name": "heating", "type": "bool", "invert": true}],
+                            "40":   [{"name": "childLock", "type": "bool", "action": true}],
+                            "43":   [{"name": "sensorType", "type": "enum", "action": true}]
+                          },
+                          "systemMode": ["off", "heat"],
+                          "operationMode": ["manual", "program"],
+                          "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C"},
+                          "sensorType": ["internal", "both", "external"],
+                          "thermostatProgram": "moes"
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 MOES Electric Thermostat",
+      "modelNames":     ["_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
+      "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "thermostatProgram"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
+                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "16":   [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
+                            "18":   [{"name": "temperatureLimitMax", "type": "value", "action": true}],
+                            "20":   [{"name": "deadZoneTemperature", "type": "value", "action": true}],
+                            "24":   [{"name": "temperature", "type": "value"}],
+                            "26":   [{"name": "temperatureLimitMin", "type": "value", "action": true}],
+                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
+                            "36":   [{"name": "heating", "type": "bool", "invert": true}],
+                            "40":   [{"name": "childLock", "type": "bool", "action": true}],
+                            "43":   [{"name": "sensorType", "type": "enum", "action": true}]
+                          },
+                          "systemMode": ["off", "heat"],
+                          "operationMode": ["manual", "program"],
+                          "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C"},
+                          "sensorType": ["internal", "both", "external"],
+                          "thermostatProgram": "moes"
+                        }
     },
     {
       "description":    "TUYA TS0601 MOES Radiator Thermostat",

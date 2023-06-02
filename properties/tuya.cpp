@@ -72,12 +72,13 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         {
             case 0: // bool
             {
-                QString value = item.value("value").toStringList().value(data.toBool() ? 1 : 0);
+                bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
+                QString value = option(name).toStringList().value(check ? 1 : 0);
 
-                if (!value.isEmpty())
-                    map.insert(name, value);
+                if (value.isEmpty())
+                    map.insert(name, check);
                 else
-                    map.insert(name, data.toBool());
+                    map.insert(name, value);
 
                 break;
             }
