@@ -180,17 +180,18 @@ QJsonObject LightObject::request(void)
 
 QJsonObject SwitchObject::request(void)
 {
+    QString name = QString(m_name).replace("switch", "status");
     QJsonObject json;
 
     json.insert("device_class",                     option().toString() == "outlet" ? "outlet" : "switch");
 
-    json.insert("value_template",                   "{{ value_json.status }}");
+    json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(name));
     json.insert("state_on",                         "on");
     json.insert("state_off",                        "off");
     json.insert("state_topic",                      m_stateTopic);
 
-    json.insert("payload_on",                       "{\"status\":\"on\"}");
-    json.insert("payload_off",                      "{\"status\":\"off\"}");
+    json.insert("payload_on",                       QString("{\"%1\":\"on\"}").arg(name));
+    json.insert("payload_off",                      QString("{\"%1\":\"off\"}").arg(name));
     json.insert("command_topic",                    m_commandTopic);
 
     return json;

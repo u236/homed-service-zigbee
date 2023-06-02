@@ -66,7 +66,7 @@ void Controller::publishExposes(const Device &device, bool remove)
                     json.insert("availability", availability);
                     json.insert("availability_mode", "all");
                     json.insert("device", identity);
-                    json.insert("name", QString("%1 %2").arg(device->name(), name.isEmpty() ? object.join(' ') : name));
+                    json.insert("name", QString("%1 %2").arg(device->name(), name.isEmpty() ? object.join(' ').replace('-', ' ') : name));
                     json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
                 }
 

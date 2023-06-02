@@ -11,6 +11,7 @@ public:
     MetaObject(const QString name) : m_name(name), m_parent(nullptr) {}
 
     inline QString name(void) { return m_name; }
+    inline void setName(const QString &value) { m_name = value; }
     inline void setParent(QObject *value) { m_parent = value; }
 
     QVariant option(const QString &name = QString(), const QVariant &defaultValue = QVariant());
