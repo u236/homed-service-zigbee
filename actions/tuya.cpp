@@ -367,7 +367,7 @@ QByteArray ActionsTUYA::WeekdayThermostatProgram::request(const QString &name, c
 
     for (int i = 0; i < 18; i++)
     {
-        QString key = QString("weekdayP%1%2").arg(i / 3 % 1).arg(names.value(i % 3));
+        QString key = QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3));
 
         if (!m_data.contains(key))
         return QByteArray();
@@ -397,7 +397,7 @@ QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, c
 
     for (int i = 0; i < 18; i++)
     {
-        QString key = QString("holidayP%1%2").arg(i / 3 % 1).arg(names.value(i % 3));
+        QString key = QString("holidayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3));
 
         if (!m_data.contains(key))
         return QByteArray();

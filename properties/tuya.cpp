@@ -311,6 +311,7 @@ void PropertiesTUYA::MoesRadiatorThermostat::update(quint8 dataPoint, const QVar
         return;
     }
 
+    map.insert("systemMode", "heat");
     m_value = map;
 }
 
@@ -347,7 +348,7 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
         for (int i = 0; i < 18; i++)
         {
             quint8 value = static_cast <quint8> (program.at(i));
-            map.insert(QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
+            map.insert(QString("holidayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
         }
 
         m_meta.insert("received", true);
