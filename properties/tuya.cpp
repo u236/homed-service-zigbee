@@ -121,8 +121,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
                 if (item.value("round").toBool())
                     value = round(value);
 
-                // TODO: add offsets
-                map.insert(name, value);
+                map.insert(name, value + option(QString(name.append("Offset"))).toDouble());
                 break;
             }
 

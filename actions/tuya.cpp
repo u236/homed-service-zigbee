@@ -58,22 +58,24 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
                     bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
                     if (value < 0)
-                    {
-                        value = check ? 1 : 0;
-                        // TODO: add toggle featute for status action
-                        // value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
-                    }
+                        value = (name == "status" && endpointProperty()->value().toMap().value("status").toString() != "on") || check ? 0x01 : 0x00;
 
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
                 }
 
                 case 1: // value
                 {
-                    qint32 value = static_cast <qint32> (data.toDouble() * item.value("divider", 1).toDouble()) - item.value("offset", 0).toDouble();
+                    QMap <QString, QVariant> options = option(name).toMap();
+                    QVariant min = options.value("min"), max = options.value("max");
+                    double value = data.toDouble();
 
-                    // TODO: add min/max checks here
+                    if (min.isValid() && value < min.toDouble())
+                        value = min.toDouble();
 
-                    value = qToBigEndian(value);
+                    if (max.isValid() && value > max.toDouble())
+                        value = max.toDouble();
+
+                    value = qToBigEndian <qint32> (value * item.value("divider", 1).toDouble() - item.value("offset", 0).toDouble());
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
                 }
 
