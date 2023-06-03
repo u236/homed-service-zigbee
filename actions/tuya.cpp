@@ -58,7 +58,11 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
                     bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
                     if (value < 0)
-                        value = check ? 1 : 0; // TODO: add toggle featute for status action
+                    {
+                        value = check ? 1 : 0;
+                        // TODO: add toggle featute for status action
+                        // value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
+                    }
 
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
                 }
@@ -87,17 +91,6 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
     }
 
     return QByteArray();
-}
-
-QByteArray ActionsTUYA::ElectricityMeter::request(const QString &, const QVariant &data)
-{
-    QList <QString> modelList = {"_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"}, actionList = {"off", "on"};
-    qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
-
-    if (value < 0)
-        value = endpointProperty()->value().toMap().value("status").toString() == "on" ? 0x00 : 0x01;
-
-    return makeRequest(m_transactionId++, modelList.contains(manufacturerName()) ? 0x01 : 0x10, TUYA_TYPE_BOOL, &value);
 }
 
 QByteArray ActionsTUYA::WeekdayThermostatProgram::request(const QString &name, const QVariant &data)

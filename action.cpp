@@ -32,19 +32,9 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::VibrationSensitivity>       ("lumiVibrationSensitivityAction");
 
     qRegisterMetaType <ActionsTUYA::DataPoints>                 ("tuyaDataPointsAction");
-//    qRegisterMetaType <ActionsTUYA::LightDimmer>                ("tuyaLightDimmerAction");
-    qRegisterMetaType <ActionsTUYA::ElectricityMeter>           ("tuyaElectricityMeterAction");
-//    qRegisterMetaType <ActionsTUYA::MultichannelRelay>          ("tuyaMultichannelRelayAction");
-//    qRegisterMetaType <ActionsTUYA::RadiatorThermostat>         ("tuyaRadiatorThermostatAction");
-//    qRegisterMetaType <ActionsTUYA::MoesElectricThermostat>     ("tuyaMoesElectricThermostatAction");
-//    qRegisterMetaType <ActionsTUYA::MoesRadiatorThermostat>     ("tuyaMoesRadiatorThermostatAction");
     qRegisterMetaType <ActionsTUYA::WeekdayThermostatProgram>   ("tuyaWeekdayThermostatProgramAction");
     qRegisterMetaType <ActionsTUYA::HolidayThermostatProgram>   ("tuyaHolidayThermostatProgramAction");
     qRegisterMetaType <ActionsTUYA::MoesThermostatProgram>      ("tuyaMoesThermostatProgramAction");
-//    qRegisterMetaType <ActionsTUYA::NeoSiren>                   ("tuyaNeoSirenAction");
-//    qRegisterMetaType <ActionsTUYA::WaterValve>                 ("tuyaWaterValveAction");
-//    qRegisterMetaType <ActionsTUYA::PresenceSensor>             ("tuyaPresenceSensorAction");
-//    qRegisterMetaType <ActionsTUYA::RadarSensor>                ("tuyaRadarSensorAction");
     qRegisterMetaType <ActionsTUYA::CoverMotor>                 ("tuyaCoverMotorAction");
     qRegisterMetaType <ActionsTUYA::CoverSwitch>                ("tuyaCoverSwitchAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");

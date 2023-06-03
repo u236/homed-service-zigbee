@@ -2,6 +2,59 @@
   "TUYA":
   [
     {
+      "description":    "TUYA TS0601 Electricity Meter (Type A)",
+      "modelNames":     ["_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"],
+      "properties":     ["tuyaElectricityMeter"],
+      "actions":        ["tuyaElectricityMeter"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status", "type": "bool", "action": true}],
+                            "17":   [{"name": "energy", "type": "value", "divider": 100}],
+                            "18":   [{"name": "current", "type": "value", "divider": 1000}],
+                            "19":   [{"name": "power", "type": "value", "divider": 10}],
+                            "20":   [{"name": "voltage", "type": "value", "divider": 10}]
+                          },
+                          "status": ["off", "on"]
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Electricity Meter (Type B)",
+      "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw"],
+      "properties":     ["tuyaElectricityMeter"],
+      "actions":        ["tuyaElectricityMeter"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
+                            "6":    [{"name": "elictricity", "type": "raw"}],
+                            "16":   [{"name": "status", "type": "bool", "action": true}],
+                            "103":  [{"name": "power", "type": "value", "divider": 100}],
+                            "105":  [{"name": "frequency", "type": "value", "divider": 100}],
+                            "111":  [{"name": "powerFactor", "type": "value", "divider": 10}]
+                          },
+                          "status": ["off", "on"]
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Electricity Meter (Type C)",
+      "modelNames":     ["_TZE200_lsanae15"],
+      "properties":     ["tuyaElectricityMeter"],
+      "actions":        ["tuyaElectricityMeter"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
+                            "6":    [{"name": "elictricity", "type": "raw"}],
+                            "16":   [{"name": "status", "type": "bool", "action": true}]
+                          },
+                          "status": ["off", "on"]
+                        }
+    },
+    {
       "description":    "TUYA TS0601 1-Channel Dimmer",
       "modelNames":     ["_TZE200_1agwnems", "_TZE200_3p5ydos3", "_TZE200_4mh6tyyo", "_TZE200_579lguh2", "_TZE200_9i9dt8is", "_TZE200_dfxkcots", "_TZE200_w4cryh2i", "_TZE200_ip2akl4w", "_TZE200_la2c2uo9", "_TZE200_p0gzbqct", "_TZE200_vucankjx"],
       "properties":     ["tuyaDataPoints"],
@@ -288,9 +341,28 @@
                           "fallSensitivity": {"min": 1, "max": 10}
                         }
     },
-
-
-
+    {
+      "description":    "TUYA TS0601 Curtain Motor",
+      "modelNames":     ["_TYST11_cowvfni3", "_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_b2u1drdv", "_TZE200_cf1sl3tj", "_TZE200_cowvfni3", "_TZE200_fdtjuw7u", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_tvrvdj6o", "_TZE200_wmcdj3aq", "_TZE200_xaabybja", "_TZE200_xuzcvlku", "_TZE200_zpzndjez", "_TZE204_r0jdjrvi"],
+      "properties":     ["tuyaCoverMotor"],
+      "actions":        ["tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse"]
+    },
+    {
+      "description":    "TUYA TS0601 Tubular Motor",
+      "modelNames":     ["_TZE200_5sbebbzs", "_TZE200_udank5zs", "_TZE200_zuz7f94z", "_TZE200_68nvbio9", "_TZE200_3ylew7b4", "_TZE200_llm0epxg"],
+      "properties":     ["tuyaCoverMotor"],
+      "actions":        ["tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse"]
+    },
+    {
+      "description":    "TUYA TS0601 Roller Blind Motor",
+      "modelNames":     ["_TZE200_fctwhugx", "_TZE200_zah67ekd", "_TZE200_hsgrhjpf", "_TZE200_pw7mji0l"],
+      "properties":     ["tuyaCoverMotor"],
+      "actions":        ["tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse"],
+      "options":        {"cover": "blind"}
+    },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay",
       "modelNames":     ["_TZ3000_3a9beq8a", "_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_6axxqqi2", "_TZ3000_ark8nv4y", "_TZ3000_gjrubzje", "_TZ3000_ji4araar", "_TZ3000_m9af2l6g", "_TZ3000_majwnphg", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_zw7yf6yk"],
@@ -508,41 +580,12 @@
       "endpointId":     [1, 2]
     },
     {
-      "description":    "TUYA TS0601 Electricity Meter",
-      "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_byzdayie", "_TZE200_eaac7dkw", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01", "_TZE200_lsanae15"],
-      "properties":     ["tuyaElectricityMeter"],
-      "actions":        ["tuyaElectricityMeter"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power"]
-    },
-    {
       "description":    "TUYA TS130F Cover Relay/Switch",
       "modelNames":     ["_TZ3000_1dd0d5yi", "_TZ3000_egq7y6pr", "_TZ3000_fccpjz5z", "_TZ3000_fvhunhxb", "_TZ3000_vd43bbfq", "_TZ3000_zirycpws", "_TZ3210_dwytrmda"],
       "properties":     ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "exposes":        ["cover", "event", "calibration", "reverse"],
       "options":        {"event": ["open", "stop", "close"]}
-    },
-    {
-      "description":    "TUYA TS0601 Curtain Motor",
-      "modelNames":     ["_TYST11_cowvfni3", "_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_b2u1drdv", "_TZE200_cf1sl3tj", "_TZE200_cowvfni3", "_TZE200_fdtjuw7u", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_tvrvdj6o", "_TZE200_wmcdj3aq", "_TZE200_xaabybja", "_TZE200_xuzcvlku", "_TZE200_zpzndjez", "_TZE204_r0jdjrvi"],
-      "properties":     ["tuyaCoverMotor"],
-      "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"]
-    },
-    {
-      "description":    "TUYA TS0601 Tubular Motor",
-      "modelNames":     ["_TZE200_5sbebbzs", "_TZE200_udank5zs", "_TZE200_zuz7f94z", "_TZE200_68nvbio9", "_TZE200_3ylew7b4", "_TZE200_llm0epxg"],
-      "properties":     ["tuyaCoverMotor"],
-      "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"]
-    },
-    {
-      "description":    "TUYA TS0601 Roller Blind Motor",
-      "modelNames":     ["_TZE200_fctwhugx", "_TZE200_zah67ekd", "_TZE200_hsgrhjpf", "_TZE200_pw7mji0l"],
-      "properties":     ["tuyaCoverMotor"],
-      "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"],
-      "options":        {"cover": "blind"}
     },
     {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",

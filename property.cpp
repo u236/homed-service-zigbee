@@ -59,20 +59,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Vibration>                   ("lumiVibrationProperty");
 
     qRegisterMetaType <PropertiesTUYA::DataPoints>                  ("tuyaDataPointsProperty");
-//    qRegisterMetaType <PropertiesTUYA::LightDimmer>                 ("tuyaLightDimmerProperty");
-    qRegisterMetaType <PropertiesTUYA::ElectricityMeter>            ("tuyaElectricityMeterProperty");
-//    qRegisterMetaType <PropertiesTUYA::MultichannelRelay>           ("tuyaMultichannelRelayProperty");
-//    qRegisterMetaType <PropertiesTUYA::RadiatorThermostat>          ("tuyaRadiatorThermostatProperty");
-//    qRegisterMetaType <PropertiesTUYA::MoesElectricThermostat>      ("tuyaMoesElectricThermostatProperty");
-//    qRegisterMetaType <PropertiesTUYA::MoesRadiatorThermostat>      ("tuyaMoesRadiatorThermostatProperty");
     qRegisterMetaType <PropertiesTUYA::WeekdayThermostatProgram>    ("tuyaWeekdayThermostatProgramProperty");
     qRegisterMetaType <PropertiesTUYA::HolidayThermostatProgram>    ("tuyaHolidayThermostatProgramProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostatProgram>       ("tuyaMoesThermostatProgramProperty");
-//    qRegisterMetaType <PropertiesTUYA::NeoSiren>                    ("tuyaNeoSirenProperty");
-//    qRegisterMetaType <PropertiesTUYA::WaterValve>                  ("tuyaWaterValveProperty");
-//    qRegisterMetaType <PropertiesTUYA::SmokeDetector>               ("tuyaSmokeDetectorProperty");
-//    qRegisterMetaType <PropertiesTUYA::PresenceSensor>              ("tuyaPresenceSensorProperty");
-//    qRegisterMetaType <PropertiesTUYA::RadarSensor>                 ("tuyaRadarSensorProperty");
     qRegisterMetaType <PropertiesTUYA::CoverMotor>                  ("tuyaCoverMotorProperty");
     qRegisterMetaType <PropertiesTUYA::CoverSwitch>                 ("tuyaCoverSwitchProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>                   ("tuyaChildLockProperty");

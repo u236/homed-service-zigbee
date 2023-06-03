@@ -34,20 +34,6 @@ namespace PropertiesTUYA
 
     };
 
-
-    class ElectricityMeter : public Data
-    {
-
-    public:
-
-        ElectricityMeter(void) : Data("electricityMeter") {}
-
-    private:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
     class WeekdayThermostatProgram : public Data
     {
 

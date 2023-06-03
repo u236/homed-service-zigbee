@@ -28,16 +28,6 @@ namespace ActionsTUYA
 
     };
 
-    class ElectricityMeter : public Request, public ActionObject
-    {
-
-    public:
-
-        ElectricityMeter(void) : ActionObject("status", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class WeekdayThermostatProgram : public Request, public ActionObject
     {
 
