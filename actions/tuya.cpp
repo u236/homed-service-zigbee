@@ -67,15 +67,16 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
                 {
                     QMap <QString, QVariant> options = option(name).toMap();
                     QVariant min = options.value("min"), max = options.value("max");
-                    double value = data.toDouble();
+                    double check = data.toDouble();
+                    qint32 value;
 
-                    if (min.isValid() && value < min.toDouble())
-                        value = min.toDouble();
+                    if (min.isValid() && check < min.toDouble())
+                        check = min.toDouble();
 
-                    if (max.isValid() && value > max.toDouble())
-                        value = max.toDouble();
+                    if (max.isValid() && check > max.toDouble())
+                        check = max.toDouble();
 
-                    value = qToBigEndian <qint32> (value * item.value("divider", 1).toDouble() - item.value("offset", 0).toDouble());
+                    value = qToBigEndian <qint32> (check * item.value("divider", 1).toDouble() - item.value("offset").toDouble());
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
                 }
 

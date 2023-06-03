@@ -116,12 +116,15 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
             case 2: // value
             {
-                double value = data.toInt() / item.value("divider", 1).toDouble() + item.value("offset", 0).toDouble();
+                double value = data.toInt() / item.value("divider", 1).toDouble() + item.value("offset").toDouble();
 
                 if (item.value("round").toBool())
                     value = round(value);
 
-                map.insert(name, value + option(QString(name.append("Offset"))).toDouble());
+                if (!item.value("action").toBool())
+                    value += option(QString(name).append("Offset")).toDouble();
+
+                map.insert(name, value);
                 break;
             }
 
