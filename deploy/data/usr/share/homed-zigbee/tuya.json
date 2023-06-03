@@ -25,8 +25,8 @@
     {
       "description":    "TUYA TS0601 Multichannel Relay",
       "modelNames":     ["_TZE200_vmcgja59"],
-      "properties":     ["tuyaMultichannelRelay"],
-      "actions":        ["tuyaMultichannelRelay"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch-1", "switch-2", "switch-3", "switch-4", "switch-5", "switch-6", "switch-7", "switch-8"],
       "options":        {
                           "tuyaDataPoints":
@@ -180,6 +180,44 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Neo Siren",
+      "modelNames":     ["_TZE200_t1blo2bj"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "5":    [{"name": "volumeMode", "type": "enum", "action": true}],
+                            "7":    [{"name": "duration", "type": "value", "action": true}],
+                            "13":   [{"name": "fault", "type": "bool", "action": true}],
+                            "15":   [{"name": "battery", "type": "value"}],
+                            "21":   [{"name": "melody", "type": "value", "action": true}]
+                          },
+                          "volumeMode": ["low", "medium", "high"],
+                          "duration": {"min": 0, "max": 1800, "unit": "sec"},
+                          "melody": {"min": 1, "max": 18}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Smart Water Valve",
+      "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["lock", "timer", "threshold"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status", "type": "bool", "action": true}],
+                            "9":    [{"name": "timeout", "type": "value", "divider": 60, "action": true}],
+                            "101":  [{"name": "threshold", "type": "value", "action": true}]
+                          },
+                          "status": ["off", "on"],
+                          "timer": {"min": 0, "max": 600, "unit": "min"},
+                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%"},
+                          "lock": "valve"
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Smoke Detector",
       "modelNames":     ["_TZE200_m9skfctm"],
       "properties":     ["tuyaDataPoints"],
@@ -196,22 +234,58 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Smart Water Valve",
-      "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
-      "properties":     ["tuyaWaterValve"],
-      "actions":        ["tuyaWaterValve"],
-      "exposes":        ["lock", "timer", "threshold"],
+      "description":    "TUYA TS0601 Human Presence Sensor",
+      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "9":    [{"name": "timeout", "type": "value", "divider": 60, "action": true}],
-                            "101":  [{"name": "threshold", "type": "value", "action": true}]
+                            "1":    [{"name": "occupancy", "type": "bool"}],
+                            "2":    [{"name": "sensitivity", "type": "value", "action": true}],
+                            "3":    [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
+                            "4":    [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
+                            "9":    [{"name": "targetDistance", "type": "value", "divider": 100}],
+                            "101":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}],
+                            "102":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
+                            "104":  [{"name": "illuminance", "type": "value"}]
                           },
-                          "status": ["off", "on"],
-                          "timer": {"min": 0, "max": 600, "unit": "min"},
-                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%"},
-                          "lock": "valve"
+                          "sensitivity": {"min": 0, "max": 9},
+                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"},
+                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"},
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec"},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec"}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Human Presence Sensor with Fall Function",
+      "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        [],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "occupancy", "type": "bool"}],
+                            "2":    [{"name": "sensitivity", "type": "value", "action": true}],
+                            "102":  [{"name": "motion", "type": "bool", "invert": true}],
+                            "103":  [{"name": "illuminance", "type": "value"}],
+                            "105":  [{"name": "tumbleSwitch", "type": "bool", "action": true}],
+                            "106":  [{"name": "tumbleAlarmTime", "type": "value", "offset": 1, "action": true}],
+                            "112":  [{"name": "radarScene", "type": "enum", "action": true}],
+                            "114":  [{"name": "motionDirection", "type": "enum"}],
+                            "115":  [{"name": "motionSpeed", "type": "value"}],
+                            "116":  [{"name": "fallDown", "type": "enum"}],
+                            "117":  [{"name": "staticDwellAlarm", "type": "value"}],
+                            "118":  [{"name": "fallSensitivity", "type": "value", "action": true}]
+                          },
+                          "sensitivity": {"min": 0, "max": 10},
+                          "tumbleAlarmTime": {"min": 0, "max": 9, "unit": "min"},
+                          "radarScene": ["default", "area", "toilet", "berroom", "parlour", "office", "hotel"],
+                          "motionDirection": ["standingStill", "movingForward", "movingBackward"],
+                          "fallDown": ["none", "maybe", "fall"],
+                          "fallSensitivity": {"min": 1, "max": 10}
                         }
     },
 
@@ -471,12 +545,6 @@
       "options":        {"cover": "blind"}
     },
     {
-      "description":    "TUYA TS0601 Neo Siren",
-      "modelNames":     ["_TZE200_t1blo2bj"],
-      "properties":     ["tuyaNeoSiren"],
-      "actions":        ["tuyaNeoSiren"]
-    },
-    {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",
       "modelNames":     ["_TYZB01_4tlksk8a", "_TZ3000_5ucujjts", "_TYZB01_rifa0wlb", "_TZ3000_h3noz0a5", "_TZ3000_iedbgyxt", "_TZ3000_o4cjetlm", "_TZ3000_rk2yzt0u"],
       "properties":     ["status", "tuyaPowerOnStatus"],
@@ -503,21 +571,6 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "contact", "batteryLow", "tamper"]
-    },
-    {
-      "description":    "TUYA TS0601 Human Presence Sensor",
-      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
-      "properties":     ["tuyaPresenceSensor"],
-      "actions":        ["tuyaPresenceSensor"],
-      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
-      "options":        {"sensitivity": {"min": 0, "max": 9}, "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"}, "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"}, "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec"}, "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec"}}
-    },
-    {
-      "description":    "TUYA TS0601 Human Presence Sensor with Fall Function",
-      "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
-      "properties":     ["tuyaRadarSensor"],
-      "actions":        ["tuyaRadarSensor"],
-      "exposes":        ["occupancy"]
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",

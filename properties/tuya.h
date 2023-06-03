@@ -87,45 +87,6 @@ namespace PropertiesTUYA
 
     };
 
-    class NeoSiren : public Data
-    {
-
-    public:
-
-        NeoSiren(void) : Data("neoSiren") {}
-
-    public:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
-    class PresenceSensor : public Data
-    {
-
-    public:
-
-        PresenceSensor(void) : Data("presenceSensor") {}
-
-    private:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
-    class RadarSensor : public Data
-    {
-
-    public:
-
-        RadarSensor(void) : Data("radarSensor") {}
-
-    private:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
     class CoverMotor : public Data
     {
 

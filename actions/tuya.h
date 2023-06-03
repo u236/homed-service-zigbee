@@ -80,36 +80,6 @@ namespace ActionsTUYA
 
     };
 
-    class NeoSiren : public Request, public ActionObject
-    {
-
-    public:
-
-        NeoSiren(void) : ActionObject("neoSiren", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"volume", "duration", "alarm", "melody"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class PresenceSensor : public Request, public ActionObject
-    {
-
-    public:
-
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class RadarSensor : public Request, public ActionObject
-    {
-
-    public:
-
-        RadarSensor(void) : ActionObject("radarSensor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"radarSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene", "fallSensitivity"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class CoverMotor : public Request, public ActionObject
     {
 
