@@ -34,18 +34,6 @@ namespace PropertiesTUYA
 
     };
 
-    class LightDimmer : public Data
-    {
-
-    public:
-
-        LightDimmer(void) : Data("lightDimmer") {}
-
-    private:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
 
     class ElectricityMeter : public Data
     {
@@ -53,19 +41,6 @@ namespace PropertiesTUYA
     public:
 
         ElectricityMeter(void) : Data("electricityMeter") {}
-
-    private:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
-    class MultichannelRelay : public Data
-    {
-
-    public:
-
-        MultichannelRelay(void) : Data("multichannelRelay") {}
 
     private:
 
@@ -120,32 +95,6 @@ namespace PropertiesTUYA
         NeoSiren(void) : Data("neoSiren") {}
 
     public:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
-    class WaterValve : public Data
-    {
-
-    public:
-
-        WaterValve(void) : Data("waterValve") {}
-
-    private:
-
-        void update(quint8 dataPoint, const QVariant &data) override;
-
-    };
-
-    class SmokeDetector : public Data
-    {
-
-    public:
-
-        SmokeDetector(void) : Data("SmokeDetector") {}
-
-    private:
 
         void update(quint8 dataPoint, const QVariant &data) override;
 

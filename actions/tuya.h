@@ -28,32 +28,12 @@ namespace ActionsTUYA
 
     };
 
-    class LightDimmer : public Request, public ActionObject
-    {
-
-    public:
-
-        LightDimmer(void) : ActionObject("lightDimmer", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status", "level", "levelMin", "lightType", "levelMax"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class ElectricityMeter : public Request, public ActionObject
     {
 
     public:
 
         ElectricityMeter(void) : ActionObject("status", CLUSTER_TUYA_DATA) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class MultichannelRelay : public Request, public ActionObject
-    {
-
-    public:
-
-        MultichannelRelay(void) : ActionObject("multichannelRelay", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status-1", "status-2", "status-3", "status-4", "status-5", "status-6", "status-7", "status-8"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -106,16 +86,6 @@ namespace ActionsTUYA
     public:
 
         NeoSiren(void) : ActionObject("neoSiren", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"volume", "duration", "alarm", "melody"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class WaterValve : public Request, public ActionObject
-    {
-
-    public:
-
-        WaterValve(void) : ActionObject("waterValve", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"status", "timeout", "threshold"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

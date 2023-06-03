@@ -2,8 +2,57 @@
   "TUYA":
   [
     {
+      "description":    "TUYA TS0601 1-Channel Dimmer",
+      "modelNames":     ["_TZE200_1agwnems", "_TZE200_3p5ydos3", "_TZE200_4mh6tyyo", "_TZE200_579lguh2", "_TZE200_9i9dt8is", "_TZE200_dfxkcots", "_TZE200_w4cryh2i", "_TZE200_ip2akl4w", "_TZE200_la2c2uo9", "_TZE200_p0gzbqct", "_TZE200_vucankjx"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["light", "lightType"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status", "type": "bool", "action": true}],
+                            "2":    [{"name": "level", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}],
+                            "3":    [{"name": "levelMin", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}],
+                            "4":    [{"name": "lightType", "type": "enum", "action": true}],
+                            "5":    [{"name": "levelMax", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}]
+                          },
+                          "status": ["off", "on"],
+                          "lightType": ["led", "incandescent", "halogen"],
+                          "light": ["level"],
+                          "tuyaMagic": true
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Multichannel Relay",
+      "modelNames":     ["_TZE200_vmcgja59"],
+      "properties":     ["tuyaMultichannelRelay"],
+      "actions":        ["tuyaMultichannelRelay"],
+      "exposes":        ["switch-1", "switch-2", "switch-3", "switch-4", "switch-5", "switch-6", "switch-7", "switch-8"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status-1", "type": "bool", "action": true}],
+                            "2":    [{"name": "status-2", "type": "bool", "action": true}],
+                            "3":    [{"name": "status-3", "type": "bool", "action": true}],
+                            "4":    [{"name": "status-4", "type": "bool", "action": true}],
+                            "5":    [{"name": "status-5", "type": "bool", "action": true}],
+                            "6":    [{"name": "status-6", "type": "bool", "action": true}],
+                            "101":  [{"name": "status-7", "type": "bool", "action": true}],
+                            "102":  [{"name": "status-8", "type": "bool", "action": true}]
+                          },
+                          "status-1": ["off", "on"],
+                          "status-2": ["off", "on"],
+                          "status-3": ["off", "on"],
+                          "status-4": ["off", "on"],
+                          "status-5": ["off", "on"],
+                          "status-6": ["off", "on"],
+                          "status-7": ["off", "on"],
+                          "status-8": ["off", "on"]
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Radiator Thermostat",
-      "modelNames":     ["_TZE200_2atgpdho,", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_pvvbommb", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj"],
+      "modelNames":     ["_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_pvvbommb", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj"],
       "properties":     ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
       "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "awayDays", "boostTimeout", "temperatureOffset", "weekMode", "thermostatProgram"],
@@ -31,7 +80,7 @@
                           "operationMode": ["away", "program", "manual", "comfort", "eco", "boost", "complex"],
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C"},
                           "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec"},
-                          "systemMode": ["off", "auto", "heat"],
+                          "systemMode": ["auto", "heat", "off"],
                           "comfortTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "ecoTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "weekMode": ["5+2", "6+1", "7+0"],
@@ -130,6 +179,44 @@
                           "thermostatProgram": "moes"
                         }
     },
+    {
+      "description":    "TUYA TS0601 Smoke Detector",
+      "modelNames":     ["_TZE200_m9skfctm"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["battery", "smoke", "smokeConcentration", "test", "fault"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "smoke", "type": "bool", "invert": true}],
+                            "2":    [{"name": "smokeConcentration", "type": "value", "divider": 10}],
+                            "11":   [{"name": "fault", "type": "bool"}],
+                            "15":   [{"name": "battery", "type": "value"}],
+                            "101":  [{"name": "test", "type": "bool"}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Smart Water Valve",
+      "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
+      "properties":     ["tuyaWaterValve"],
+      "actions":        ["tuyaWaterValve"],
+      "exposes":        ["lock", "timer", "threshold"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status", "type": "bool", "action": true}],
+                            "9":    [{"name": "timeout", "type": "value", "divider": 60, "action": true}],
+                            "101":  [{"name": "threshold", "type": "value", "action": true}]
+                          },
+                          "status": ["off", "on"],
+                          "timer": {"min": 0, "max": 600, "unit": "min"},
+                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%"},
+                          "lock": "valve"
+                        }
+    },
+
+
+
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay",
       "modelNames":     ["_TZ3000_3a9beq8a", "_TZ3000_46t1rvdu", "_TZ3000_5ng23zjs", "_TZ3000_6axxqqi2", "_TZ3000_ark8nv4y", "_TZ3000_gjrubzje", "_TZ3000_ji4araar", "_TZ3000_m9af2l6g", "_TZ3000_majwnphg", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_v7gnj3ad", "_TZ3000_zw7yf6yk"],
@@ -347,26 +434,11 @@
       "endpointId":     [1, 2]
     },
     {
-      "description":    "TUYA TS0601 1-Channel Dimmer",
-      "modelNames":     ["_TZE200_1agwnems", "_TZE200_3p5ydos3", "_TZE200_4mh6tyyo", "_TZE200_579lguh2", "_TZE200_9i9dt8is", "_TZE200_dfxkcots", "_TZE200_w4cryh2i", "_TZE200_ip2akl4w", "_TZE200_la2c2uo9", "_TZE200_p0gzbqct", "_TZE200_vucankjx"],
-      "properties":     ["tuyaLightDimmer"],
-      "actions":        ["tuyaLightDimmer"],
-      "exposes":        ["light", "lightType"],
-      "options":        {"light": ["level"], "lightType": ["led", "incandescent", "halogen"], "tuyaMagic": true}
-    },
-    {
       "description":    "TUYA TS0601 Electricity Meter",
       "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_byzdayie", "_TZE200_eaac7dkw", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01", "_TZE200_lsanae15"],
       "properties":     ["tuyaElectricityMeter"],
       "actions":        ["tuyaElectricityMeter"],
       "exposes":        ["switch", "energy", "voltage", "current", "power"]
-    },
-    {
-      "description":    "TUYA TS0601 Multichannel Relay",
-      "modelNames":     ["_TZE200_vmcgja59"],
-      "properties":     ["tuyaMultichannelRelay"],
-      "actions":        ["tuyaMultichannelRelay"],
-      "exposes":        ["switch-1", "switch-2", "switch-3", "switch-4", "switch-5", "switch-6", "switch-7", "switch-8"]
     },
     {
       "description":    "TUYA TS130F Cover Relay/Switch",
@@ -405,14 +477,6 @@
       "actions":        ["tuyaNeoSiren"]
     },
     {
-      "description":    "TUYA TS0601 Smart Water Valve",
-      "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
-      "properties":     ["tuyaWaterValve"],
-      "actions":        ["tuyaWaterValve"],
-      "exposes":        ["lock", "timer", "threshold"],
-      "options":        {"lock": "valve", "timer": {"min": 0, "max": 600, "unit": "min"}, "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%"}}
-    },
-    {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",
       "modelNames":     ["_TYZB01_4tlksk8a", "_TZ3000_5ucujjts", "_TYZB01_rifa0wlb", "_TZ3000_h3noz0a5", "_TZ3000_iedbgyxt", "_TZ3000_o4cjetlm", "_TZ3000_rk2yzt0u"],
       "properties":     ["status", "tuyaPowerOnStatus"],
@@ -431,12 +495,6 @@
       "modelNames":     ["TS0205"],
       "properties":     ["batteryPercentage", "iasSmoke"],
       "exposes":        ["battery", "smoke", "batteryLow", "tamper"]
-    },
-    {
-      "description":    "TUYA TS0601 Smoke Detector",
-      "modelNames":     ["_TZE200_m9skfctm"],
-      "properties":     ["batteryPercentage", "tuyaSmokeDetector"],
-      "exposes":        ["battery", "smoke", "smokeConcentration", "test", "fault"]
     },
     {
       "description":    "TUYA RH3001 or TS0203 Door and Window Sensor",
