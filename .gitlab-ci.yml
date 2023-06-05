@@ -85,7 +85,7 @@ Build Linux Binary (amd64):
     ARCHITECTURE: amd64
     QT_BUILD: qt-amd64-linux-5.15.4-shared
   script:
-  - "docker run --rm -u ${UID}:${UID} -v /opt/qt/${QT_BUILD}:/opt/qt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:11.2.0 bash -c \"/opt/qt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j $(nproc)\""
+  - "docker run --rm -u ${UID}:${UID} -v /opt/qt/${QT_BUILD}:/opt/qt/${QT_BUILD} -v ${PWD}/..:/build -w /build/homed-zigbee gcc:9.5.0 bash -c \"/opt/qt/${QT_BUILD}/bin/qmake homed-zigbee.pro; make -j $(nproc)\""
   - "cp homed-zigbee homed-zigbee-amd64"
   - "cp homed-zigbee-amd64 /var/www/sandbox.u236.org/homed-zigbee"
 
