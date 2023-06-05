@@ -342,7 +342,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
     for (auto it = exposes.begin(); it != exposes.end(); it++)
     {
-        QList <QString> list = it->toString().split('-');
+        QList <QString> list = it->toString().split('_');
         int type = QMetaType::type(list.value(0).append("Expose").toUtf8());
         Expose expose(type ? reinterpret_cast <ExposeObject*> (QMetaType::create(type)) : new ExposeObject(it->toString()));
 

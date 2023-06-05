@@ -53,12 +53,12 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
             {
                 case 0: // bool
                 {
-                    QList <QString> list = option(name).toStringList();
-                    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+                    QList <QString> nameList = name.split('_'), actionList = option(name).toStringList();
+                    qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
                     bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
                     if (value < 0)
-                        value = (name == "status" && endpointProperty()->value().toMap().value("status").toString() != "on") || check ? 0x01 : 0x00;
+                        value = nameList.value(0) == "status" ? (endpointProperty()->value().toMap().value(name).toString() != "on" ? 0x01 : 0x00) : (check ? 0x01 : 0x00);
 
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
                 }

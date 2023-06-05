@@ -80,27 +80,27 @@
       "modelNames":     ["_TZE200_vmcgja59"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["switch-1", "switch-2", "switch-3", "switch-4", "switch-5", "switch-6", "switch-7", "switch-8"],
+      "exposes":        ["switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8"],
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status-1", "type": "bool", "action": true}],
-                            "2":    [{"name": "status-2", "type": "bool", "action": true}],
-                            "3":    [{"name": "status-3", "type": "bool", "action": true}],
-                            "4":    [{"name": "status-4", "type": "bool", "action": true}],
-                            "5":    [{"name": "status-5", "type": "bool", "action": true}],
-                            "6":    [{"name": "status-6", "type": "bool", "action": true}],
-                            "101":  [{"name": "status-7", "type": "bool", "action": true}],
-                            "102":  [{"name": "status-8", "type": "bool", "action": true}]
+                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
+                            "2":    [{"name": "status_2", "type": "bool", "action": true}],
+                            "3":    [{"name": "status_3", "type": "bool", "action": true}],
+                            "4":    [{"name": "status_4", "type": "bool", "action": true}],
+                            "5":    [{"name": "status_5", "type": "bool", "action": true}],
+                            "6":    [{"name": "status_6", "type": "bool", "action": true}],
+                            "101":  [{"name": "status_7", "type": "bool", "action": true}],
+                            "102":  [{"name": "status_8", "type": "bool", "action": true}]
                           },
-                          "status-1": ["off", "on"],
-                          "status-2": ["off", "on"],
-                          "status-3": ["off", "on"],
-                          "status-4": ["off", "on"],
-                          "status-5": ["off", "on"],
-                          "status-6": ["off", "on"],
-                          "status-7": ["off", "on"],
-                          "status-8": ["off", "on"]
+                          "status_1": ["off", "on"],
+                          "status_2": ["off", "on"],
+                          "status_3": ["off", "on"],
+                          "status_4": ["off", "on"],
+                          "status_5": ["off", "on"],
+                          "status_6": ["off", "on"],
+                          "status_7": ["off", "on"],
+                          "status_8": ["off", "on"]
                         }
     },
     {
