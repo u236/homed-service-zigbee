@@ -57,6 +57,9 @@ QJsonObject BinaryObject::request(void)
         default: json.insert("device_class",        m_name); break;
     }
 
+    if (option().toString() == "diagnostic" || m_name == "batteryLow" || m_name == "tamper")
+        json.insert("entity_category",              "diagnostic");
+
     json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
     json.insert("payload_on",                       true);
     json.insert("payload_off",                      false);
@@ -82,6 +85,9 @@ QJsonObject SensorObject::request(void)
         case 7:  json.insert("device_class",        "volatile_organic_compounds"); break;
         default: json.insert("device_class",        m_name); break;
     }
+
+    if (option().toString() == "diagnostic")
+        json.insert("entity_category",              "diagnostic");
 
     if (!m_unit.isEmpty() && option().toString() != "raw")
         json.insert("unit_of_measurement",          m_unit);

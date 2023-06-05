@@ -19,7 +19,8 @@
       "properties":     ["deviceTemperature"],
       "bindings":       ["deviceTemperature"],
       "reportings":     ["deviceTemperature"],
-      "exposes":        ["temperature"]
+      "exposes":        ["temperature"],
+      "options":        {"temperature": "diagnostic"}
     }
   ],
 
