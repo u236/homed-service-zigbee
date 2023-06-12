@@ -71,6 +71,19 @@
     }
   ],
 
+  "Signify Netherlands B.V.":
+  [
+    {
+      "description":    "Philips Hue Dimmable Bulb A67 (1600lm)",
+      "modelNames":     ["LWA009"],
+      "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level"]},
+      "endpointId":     11
+    }
+  ],
+
   "Trust International B.V.":
   [
     {

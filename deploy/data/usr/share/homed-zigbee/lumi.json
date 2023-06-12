@@ -284,8 +284,8 @@
       "modelNames":     ["lumi.vibration.aq1"],
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
-      "exposes":        ["battery", "event", "vibration", "emperature"],
-      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": "diagnostic"}
+      "exposes":        ["battery", "event", "vibration", "temperature", "sensitivityMode"],
+      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": "diagnostic", "sensitivityMode": ["low", "medium", "high"]}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM",
