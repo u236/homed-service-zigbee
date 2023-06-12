@@ -237,17 +237,19 @@
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "status", "volumeMode", "duration", "melody"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "5":    [{"name": "volumeMode", "type": "enum", "action": true}],
                             "7":    [{"name": "duration", "type": "value", "action": true}],
-                            "13":   [{"name": "fault", "type": "bool", "action": true}],
+                            "13":   [{"name": "status", "type": "bool", "action": true}],
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "value", "action": true}]
                           },
                           "volumeMode": ["low", "medium", "high"],
                           "duration": {"min": 0, "max": 1800, "unit": "sec"},
+                          "status": ["off", "on"],
                           "melody": {"min": 1, "max": 18}
                         }
     },
