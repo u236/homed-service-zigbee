@@ -4,8 +4,8 @@
     {
       "description":    "TUYA TS0601 Electricity Meter (Type A)",
       "modelNames":     ["_TZE200_byzdayie", "_TZE200_ewxhg6o9", "_TZE200_fsb6zw01"],
-      "properties":     ["tuyaElectricityMeter"],
-      "actions":        ["tuyaElectricityMeter"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch", "energy", "voltage", "current", "power"],
       "options":        {
                           "tuyaDataPoints":
@@ -22,8 +22,8 @@
     {
       "description":    "TUYA TS0601 Electricity Meter (Type B)",
       "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw"],
-      "properties":     ["tuyaElectricityMeter"],
-      "actions":        ["tuyaElectricityMeter"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch", "energy", "voltage", "current", "power"],
       "options":        {
                           "tuyaDataPoints":
@@ -41,8 +41,8 @@
     {
       "description":    "TUYA TS0601 Electricity Meter (Type C)",
       "modelNames":     ["_TZE200_lsanae15"],
-      "properties":     ["tuyaElectricityMeter"],
-      "actions":        ["tuyaElectricityMeter"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch", "energy", "voltage", "current", "power"],
       "options":        {
                           "tuyaDataPoints":
