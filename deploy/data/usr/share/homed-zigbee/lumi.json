@@ -120,7 +120,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
       "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
-      "options":        {"indicatorMode": {"select": ["default", "inverted"]}},
+      "options":        {"indicatorMode": {"select": ["default", "inverted"], "icon": "mdi:lightbulb-on"}},
       "endpointId":     1
     },
     {
@@ -149,7 +149,7 @@
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"select": ["default", "inverted"]}, "switchMode": {"select": ["relay", "decoupled"]}}
+      "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"select": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"select": ["relay", "decoupled"]}}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
@@ -161,7 +161,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
-      "options":        {"temperature": "diagnostic", "indicatorMode": {"select": ["default", "inverted"]}},
+      "options":        {"temperature": "diagnostic", "indicatorMode": {"select": ["default", "inverted"], "icon": "mdi:lightbulb-on"}},
       "endpointId":     1
     },
     {
@@ -277,7 +277,7 @@
       "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
       "exposes":        ["event", "occupancy", "temperature", "sensitivityMode", "distanceMode", "detectionMode"],
-      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "temperature": "diagnostic", "sensitivityMode": {"select": ["low", "medium", "high"]}, "detectionMode": {"select": ["undirected", "directed"]}, "distanceMode": {"select": ["far", "middle", "near"]}}
+      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "temperature": "diagnostic", "sensitivityMode": {"select": ["low", "medium", "high"], "icon": "mdi:dumbbell"}, "detectionMode": {"select": ["undirected", "directed"]}, "distanceMode": {"select": ["far", "middle", "near"], "icon": "mdi:ruler"}}
     },
     {
       "description":    "Aqara Vibration Sensor DJT11LM",
@@ -285,7 +285,7 @@
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
       "exposes":        ["battery", "event", "vibration", "temperature", "sensitivityMode"],
-      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": "diagnostic", "sensitivityMode": {"select": ["low", "medium", "high"]}}
+      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": "diagnostic", "sensitivityMode": {"select": ["low", "medium", "high"], "icon": "mdi:dumbbell"}}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM",

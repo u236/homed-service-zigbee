@@ -70,7 +70,7 @@
                             "5":    [{"name": "levelMax", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}]
                           },
                           "status": ["off", "on"],
-                          "lightType": {"select": ["led", "incandescent", "halogen"]},
+                          "lightType": {"select": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
                           "light": ["level"],
                           "tuyaMagic": true
                         }
@@ -131,14 +131,14 @@
                           },
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "operationMode": {"select": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
-                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C"},
-                          "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec"},
+                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
+                          "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec", "icon": "mdi:timer"},
                           "systemMode": {"select": ["auto", "heat", "off"]},
-                          "comfortTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "ecoTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "weekMode": {"select": ["5+2", "6+1", "7+0"]},
-                          "awayTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "awayDays": {"min": 0, "max": 100}
+                          "comfortTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
+                          "ecoTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
+                          "weekMode": {"select": ["5+2", "6+1", "7+0"], "icon": "mdi:calendar-week"},
+                          "awayTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
+                          "awayDays": {"min": 0, "max": 100, "icon": "mdi:calendar"}
                         }
     },
     {
@@ -168,9 +168,9 @@
                           },
                           "operationMode": {"select": ["manual", "program", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30, "unit": "°C"},
-                          "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec"},
-                          "temperatureOffset": {"min": -9, "max": 9, "unit": "°C"},
-                          "ecoTemperature": {"min": 10, "max": 30, "unit": "°C"},
+                          "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec", "icon": "mdi:timer"},
+                          "temperatureOffset": {"min": -9, "max": 9, "unit": "°C", "icon": "mdi:thermometer"},
+                          "ecoTemperature": {"min": 10, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
     },
@@ -198,8 +198,8 @@
                           "systemMode": {"select": ["off", "heat"]},
                           "operationMode": {"select": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C"},
-                          "sensorType": {"select": ["internal", "both", "external"]},
+                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
+                          "sensorType": {"select": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
     },
@@ -227,8 +227,8 @@
                           "systemMode": {"select": ["off", "heat"]},
                           "operationMode": {"select": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C"},
-                          "sensorType": {"select": ["internal", "both", "external"]},
+                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
+                          "sensorType": {"select": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
     },
@@ -247,10 +247,10 @@
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "value", "action": true}]
                           },
-                          "volumeMode": {"select": ["low", "medium", "high"]},
-                          "duration": {"min": 0, "max": 1800, "unit": "sec"},
+                          "volumeMode": {"select": ["low", "medium", "high"], "icon": "mdi:volume-high"},
+                          "duration": {"min": 0, "max": 1800, "unit": "sec", "icon": "mdi:timer"},
                           "status": ["off", "on"],
-                          "melody": {"min": 1, "max": 18}
+                          "melody": {"min": 1, "max": 18, "icon": "mdi:music-note"}
                         }
     },
     {
@@ -306,11 +306,11 @@
                             "102":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
                             "104":  [{"name": "illuminance", "type": "value"}]
                           },
-                          "sensitivity": {"min": 0, "max": 9},
-                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"},
-                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m"},
-                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec"},
-                          "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec"}
+                          "sensitivity": {"min": 0, "max": 9, "icon": "mdi:dumbbell"},
+                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:ruler"},
+                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:ruler"},
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec", "icon": "mdi:timer"},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec", "icon": "mdi:timer"}
                         }
     },
     {
@@ -335,12 +335,12 @@
                             "117":  [{"name": "staticDwellAlarm", "type": "value"}],
                             "118":  [{"name": "fallSensitivity", "type": "value", "action": true}]
                           },
-                          "sensitivity": {"min": 0, "max": 10},
-                          "tumbleAlarmTime": {"min": 0, "max": 9, "unit": "min"},
-                          "radarScene": ["default", "area", "toilet", "berroom", "parlour", "office", "hotel"],
-                          "motionDirection": ["standingStill", "movingForward", "movingBackward"],
-                          "fallDown": ["none", "maybe", "fall"],
-                          "fallSensitivity": {"min": 1, "max": 10}
+                          "sensitivity": {"min": 0, "max": 10, "icon": "mdi:dumbbell"},
+                          "tumbleAlarmTime": {"min": 0, "max": 9, "unit": "min", "icon": "mdi:timer"},
+                          "radarScene": {"select": ["default", "area", "toilet", "bedroom", "parlour", "office", "hotel"]},
+                          "motionDirection": {"select": ["standingStill", "movingForward", "movingBackward"]},
+                          "fallDown": {"select": ["none", "maybe", "fall"], "icon": "mdi:alert"},
+                          "fallSensitivity": {"min": 1, "max": 10, "icon": "mdi:dumbbell"}
                         }
     },
     {
