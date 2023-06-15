@@ -132,7 +132,7 @@
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "operationMode": {"enum": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
-                          "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec", "icon": "mdi:timer"},
+                          "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
                           "systemMode": {"enum": ["auto", "heat", "off"]},
                           "comfortTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
                           "ecoTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
@@ -168,7 +168,7 @@
                           },
                           "operationMode": {"enum": ["manual", "program", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30, "unit": "°C"},
-                          "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec", "icon": "mdi:timer"},
+                          "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
                           "temperatureOffset": {"min": -9, "max": 9, "unit": "°C", "icon": "mdi:thermometer"},
                           "ecoTemperature": {"min": 10, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
@@ -267,8 +267,8 @@
                             "101":  [{"name": "threshold", "type": "value", "action": true}]
                           },
                           "status": ["off", "on"],
-                          "timer": {"min": 0, "max": 600, "unit": "min", "icon": "mdi:clock"},
-                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%", "icon": "mdi:percent"},
+                          "timer": {"min": 0, "max": 600, "unit": "min", "control": true, "icon": "mdi:clock"},
+                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%", "control": true, "icon": "mdi:percent"},
                           "lock": "valve"
                         }
     },

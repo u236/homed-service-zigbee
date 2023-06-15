@@ -102,6 +102,9 @@ QJsonObject NumberObject::request(void)
     QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
 
+    if (!options.value("control").toBool())
+        json.insert("entity_category",              "config");
+
     if (options.contains("icon"))
         json.insert("icon",                         options.value("icon").toString());
 
@@ -127,6 +130,9 @@ QJsonObject SelectObject::request(void)
 {
     QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
+
+    if (!options.value("control").toBool())
+        json.insert("entity_category",              "config");
 
     json.insert("options",                          QJsonArray::fromStringList(options.value("enum").toStringList()));
     json.insert("icon",                             options.contains("icon") ? options.value("icon").toString() : "mdi:dip-switch");
@@ -165,6 +171,7 @@ QJsonObject LightObject::request(void)
     if (options.contains("color"))
     {
         commandOnTemplate.append(                   "{% if red is defined and green is defined and blue is defined %},\"color\":[{{ red }},{{ green }},{{ blue }}]{% endif %}");
+
         json.insert("red_template",                 "{{ value_json.color[0] }}");
         json.insert("green_template",               "{{ value_json.color[1] }}");
         json.insert("blue_template",                "{{ value_json.color[2] }}");
@@ -175,6 +182,7 @@ QJsonObject LightObject::request(void)
         QMap <QString, QVariant> colorTemperature = option("colorTemperature").toMap();
 
         commandOnTemplate.append(                   "{% if color_temp is defined %},\"colorTemperature\":{{ color_temp }}{% endif %}");
+
         json.insert("color_temp_template",          "{{ value_json.colorTemperature }}");
         json.insert("min_mireds",                   colorTemperature.value("min", 150).toInt());
         json.insert("max_mireds",                   colorTemperature.value("max", 500).toInt());
