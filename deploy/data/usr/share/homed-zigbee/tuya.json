@@ -243,19 +243,19 @@
       "modelNames":     ["_TZE200_t1blo2bj"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "status", "volumeMode", "duration", "melody"],
+      "exposes":        ["battery", "alarm", "volumeMode", "duration", "melody"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "5":    [{"name": "volumeMode", "type": "enum", "action": true}],
                             "7":    [{"name": "duration", "type": "value", "action": true}],
-                            "13":   [{"name": "status", "type": "bool", "action": true}],
+                            "13":   [{"name": "alarm", "type": "bool", "action": true}],
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "value", "action": true}]
                           },
                           "volumeMode": {"enum": ["low", "medium", "high"], "icon": "mdi:volume-high"},
                           "duration": {"min": 0, "max": 1800, "unit": "sec", "icon": "mdi:timer"},
-                          "status": ["off", "on"],
+                          "alarm": {"icon": "mdi:bell"},
                           "melody": {"min": 1, "max": 18, "icon": "mdi:music-note"}
                         }
     },
@@ -313,8 +313,8 @@
                             "104":  [{"name": "illuminance", "type": "value"}]
                           },
                           "sensitivity": {"min": 0, "max": 9, "icon": "mdi:dumbbell"},
-                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:ruler"},
-                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:ruler"},
+                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
                           "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec", "icon": "mdi:timer"},
                           "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec", "icon": "mdi:timer"}
                         }

@@ -339,6 +339,15 @@ namespace Sensor
 
     };
 
+    class TargetDistance : public SensorObject
+    {
+
+    public:
+
+        TargetDistance(void) : SensorObject("targetDistance", "m") {}
+
+    };
+
     class Count : public SensorObject
     {
 

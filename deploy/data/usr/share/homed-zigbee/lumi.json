@@ -277,7 +277,7 @@
       "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
       "exposes":        ["event", "occupancy", "temperature", "sensitivityMode", "distanceMode", "detectionMode"],
-      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "temperature": "diagnostic", "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"], "icon": "mdi:ruler"}}
+      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "temperature": "diagnostic", "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"], "icon": "mdi:arrow-left-right"}}
     },
     {
       "description":    "Aqara Vibration Sensor DJT11LM",

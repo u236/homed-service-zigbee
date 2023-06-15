@@ -30,6 +30,7 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Voltage>             ("voltageExpose");
     qRegisterMetaType <Sensor::Current>             ("currentExpose");
     qRegisterMetaType <Sensor::Power>               ("powerExpose");
+    qRegisterMetaType <Sensor::TargetDistance>      ("targetDistanceExpose");
     qRegisterMetaType <Sensor::Count>               ("countExpose");
     qRegisterMetaType <Sensor::Position>            ("positionExpose");
     qRegisterMetaType <Sensor::Action>              ("actionExpose");
@@ -64,7 +65,7 @@ QJsonObject BinaryObject::request(void)
 
 QJsonObject SensorObject::request(void)
 {
-    QList <QString> list = {"action", "event", "scene", "count", "position", "co2", "eco2", "voc"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
+    QList <QString> list = {"action", "event", "scene", "count", "position", "co2", "eco2", "voc", "targetDistance"}, valueTemplate = {QString("value_json.%1").arg(m_name)};
     QJsonObject json;
 
     switch (list.indexOf(m_name))
@@ -77,10 +78,11 @@ QJsonObject SensorObject::request(void)
         case 5:  json.insert("device_class",        "carbon_dioxide"); break;
         case 6:  json.insert("device_class",        "carbon_dioxide"); break;
         case 7:  json.insert("device_class",        "volatile_organic_compounds"); break;
+        case 8:  json.insert("device_class",        "distance"); break;
         default: json.insert("device_class",        m_name); break;
     }
 
-    if (option().toString() == "diagnostic")
+    if (m_name == "battery" || option().toString() == "diagnostic")
         json.insert("entity_category",              "diagnostic");
 
     if (!m_unit.isEmpty() && option().toString() != "raw")
