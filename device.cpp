@@ -355,10 +355,12 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             if (list.count() > 1)
                 expose->setName(name);
         }
-        else if (option.contains("min") && option.contains("max"))
-            expose = Expose(new NumberObject(name));
         else if (option.contains("enum"))
             expose = Expose(new SelectObject(name));
+        else if (option.contains("min") && option.contains("max"))
+            expose = Expose(new NumberObject(name));
+        else if (list.at(0) != "thermostatProgram")
+            expose = Expose(new BooleanObject(name));
         else
             expose = Expose(new ExposeObject(name));
 

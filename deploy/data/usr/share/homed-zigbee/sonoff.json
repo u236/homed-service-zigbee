@@ -67,7 +67,8 @@
       "modelNames":     ["ZBMINI-L", "ZBMINIL2"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
-      "exposes":        ["switch", "powerOnStatus"]
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}}
     }
   ]
 }

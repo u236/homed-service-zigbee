@@ -131,6 +131,7 @@
                           },
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "operationMode": {"enum": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
+                          "childLock": {"control": true, "icon": "mdi:lock"},
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
                           "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
                           "systemMode": {"enum": ["auto", "heat", "off"]},
@@ -168,8 +169,11 @@
                           },
                           "operationMode": {"enum": ["manual", "program", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30, "unit": "°C"},
+                          "boost": {"control": true, "icon": "mdi:fire"},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
+                          "childLock": {"control": true, "icon": "mdi:lock"},
                           "temperatureOffset": {"min": -9, "max": 9, "unit": "°C", "icon": "mdi:thermometer"},
+                          "ecoMode": {"control": true, "icon": "mdi:leaf"},
                           "ecoTemperature": {"min": 10, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
@@ -199,6 +203,7 @@
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
+                          "childLock": {"control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
@@ -228,6 +233,7 @@
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
+                          "childLock": {"control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
@@ -348,14 +354,16 @@
       "modelNames":     ["_TYST11_cowvfni3", "_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_b2u1drdv", "_TZE200_cf1sl3tj", "_TZE200_cowvfni3", "_TZE200_fdtjuw7u", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_tvrvdj6o", "_TZE200_wmcdj3aq", "_TZE200_xaabybja", "_TZE200_xuzcvlku", "_TZE200_zpzndjez", "_TZE204_r0jdjrvi"],
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"]
+      "exposes":        ["cover", "reverse"],
+      "options":        {"reverse": {"icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0601 Tubular Motor",
       "modelNames":     ["_TZE200_5sbebbzs", "_TZE200_udank5zs", "_TZE200_zuz7f94z", "_TZE200_68nvbio9", "_TZE200_3ylew7b4", "_TZE200_llm0epxg"],
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"]
+      "exposes":        ["cover", "reverse"],
+      "options":        {"reverse": {"icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0601 Roller Blind Motor",
@@ -363,7 +371,7 @@
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"],
-      "options":        {"cover": "blind"}
+      "options":        {"cover": "blind", "reverse": {"icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay",
@@ -371,8 +379,8 @@
       "properties":     ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
-      "exposes":        ["switch", "powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true}
+      "exposes":        ["switch", "switchType", "powerOnStatus"],
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Switch",
@@ -381,7 +389,7 @@
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
       "exposes":        ["switch", "powerOnStatus"],
-      "options":        {"tuyaMagic": true}
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay",
@@ -389,7 +397,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -406,7 +414,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"tuyaMagic": true},
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -423,7 +431,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -440,7 +448,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"tuyaMagic": true},
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -457,7 +465,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -474,7 +482,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"tuyaMagic": true},
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -491,7 +499,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"tuyaMagic": true},
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -510,7 +518,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"energyDivider": 100, "currentDivider": 1000}
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay LoraTap RR400ZB",
@@ -540,7 +548,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
@@ -562,7 +570,7 @@
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"pollInterval": 15, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 15}
     },
     {
       "description":    "TUYA TS0501/TS1101 Dimmable Bulb or Led Dimmer",
@@ -587,7 +595,7 @@
       "properties":     ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "exposes":        ["cover", "event", "calibration", "reverse"],
-      "options":        {"event": ["open", "stop", "close"]}
+      "options":        {"event": ["open", "stop", "close"], "calibration": {"icon": "mdi:swap-horizontal-bold"}, "reverse": {"icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",
@@ -595,7 +603,7 @@
       "properties":     ["status", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaPowerOnStatus"],
       "exposes":        ["lock", "powerOnStatus"],
-      "options":        {"lock": "valve"}
+      "options":        {"lock": "valve", "powerOnStatus": {"enum": ["on", "off", "previous"]}}
     },
     {
       "description":    "TUYA TS0204 Gas Detector",

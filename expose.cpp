@@ -35,8 +35,6 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Action>              ("actionExpose");
     qRegisterMetaType <Sensor::Event>               ("eventExpose");
     qRegisterMetaType <Sensor::Scene>               ("sceneExpose");
-
-    qRegisterMetaType <Button::ResetCount>          ("resetCountExpose");
 }
 
 QJsonObject BinaryObject::request(void)
@@ -97,6 +95,26 @@ QJsonObject SensorObject::request(void)
     return json;
 }
 
+QJsonObject SelectObject::request(void)
+{
+    QMap <QString, QVariant> options = option().toMap();
+    QJsonObject json;
+
+    if (!options.value("control").toBool())
+        json.insert("entity_category",              "config");
+
+    json.insert("options",                          QJsonArray::fromStringList(options.value("enum").toStringList()));
+    json.insert("icon",                             options.contains("icon") ? options.value("icon").toString() : "mdi:dip-switch");
+
+    json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
+    json.insert("state_topic",                      m_stateTopic);
+
+    json.insert("command_template",                 QString("{\"%1\":\"{{ value }}\"}").arg(m_name));
+    json.insert("command_topic",                    m_commandTopic);
+
+    return json;
+}
+
 QJsonObject NumberObject::request(void)
 {
     QMap <QString, QVariant> options = option().toMap();
@@ -126,7 +144,7 @@ QJsonObject NumberObject::request(void)
     return json;
 }
 
-QJsonObject SelectObject::request(void)
+QJsonObject BooleanObject::request(void)
 {
     QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
@@ -134,23 +152,16 @@ QJsonObject SelectObject::request(void)
     if (!options.value("control").toBool())
         json.insert("entity_category",              "config");
 
-    json.insert("options",                          QJsonArray::fromStringList(options.value("enum").toStringList()));
-    json.insert("icon",                             options.contains("icon") ? options.value("icon").toString() : "mdi:dip-switch");
+    if (options.contains("icon"))
+        json.insert("icon",                         options.value("icon").toString());
 
     json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
+    json.insert("state_on",                         true);
+    json.insert("state_off",                        false);
     json.insert("state_topic",                      m_stateTopic);
 
-    json.insert("command_template",                 QString("{\"%1\":\"{{ value }}\"}").arg(m_name));
-    json.insert("command_topic",                    m_commandTopic);
-
-    return json;
-}
-
-QJsonObject ButtonObject::request(void)
-{
-    QJsonObject json;
-
-    json.insert("payload_press",                    m_payload);
+    json.insert("payload_on",                       QString("{\"%1\":true}").arg(m_name));
+    json.insert("payload_off",                      QString("{\"%1\":false}").arg(m_name));
     json.insert("command_topic",                    m_commandTopic);
 
     return json;

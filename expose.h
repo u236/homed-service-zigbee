@@ -65,16 +65,6 @@ private:
 
 };
 
-class NumberObject : public ExposeObject
-{
-
-public:
-
-    NumberObject(const QString &name) : ExposeObject(name, "number") {}
-    QJsonObject request(void) override;
-
-};
-
 class SelectObject : public ExposeObject
 {
 
@@ -85,17 +75,23 @@ public:
 
 };
 
-class ButtonObject : public ExposeObject
+class NumberObject : public ExposeObject
 {
 
 public:
 
-    ButtonObject(const QString &name, const QString &payload) : ExposeObject(name, "button"), m_payload(payload) {}
+    NumberObject(const QString &name) : ExposeObject(name, "number") {}
     QJsonObject request(void) override;
 
-private:
+};
 
-    QString m_payload;
+class BooleanObject : public ExposeObject
+{
+
+public:
+
+    BooleanObject(const QString &name) : ExposeObject(name, "switch") {}
+    QJsonObject request(void) override;
 
 };
 
@@ -385,18 +381,6 @@ namespace Sensor
     public:
 
         Scene(void) : SensorObject("scene") {}
-
-    };
-}
-
-namespace Button
-{
-    class ResetCount : public ButtonObject
-    {
-
-    public:
-
-        ResetCount(void) : ButtonObject("resetCount", "{\"count\":0}") {}
 
     };
 }

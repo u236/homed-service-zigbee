@@ -120,7 +120,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
       "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}},
+      "options":        {"indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -149,7 +149,7 @@
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}}
+      "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}, "statusMemory": {"icon": "mdi:memory"}}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
@@ -161,7 +161,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
-      "options":        {"temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}},
+      "options":        {"temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -190,7 +190,7 @@
       "actions":        ["status", "lumiSwitchType", "lumiStatusMemory"],
       "bindings":       ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "switchType", "statusMemory"],
-      "options":        {"temperature": "diagnostic", "switchType": {"enum": ["toggle", "momentary"]}},
+      "options":        {"temperature": "diagnostic", "switchType": {"enum": ["toggle", "momentary"]}, "statusMemory": {"icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -204,7 +204,7 @@
       "properties":     ["lumiBasic", "lumiPower", "lumiInterlock"],
       "actions":        ["lumiInterlock"],
       "exposes":        ["energy", "voltage", "current", "power", "temperature", "interlock"],
-      "options":        {"temperature": "diagnostic"},
+      "options":        {"temperature": "diagnostic", "interlock": {"icon": "mdi:lock"}},
       "endpointId":     1
     },
     {
@@ -228,7 +228,7 @@
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiStatusMemory"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
-      "options":        {"switch": "outlet", "temperature": "diagnostic"},
+      "options":        {"switch": "outlet", "temperature": "diagnostic", "statusMemory": {"icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
