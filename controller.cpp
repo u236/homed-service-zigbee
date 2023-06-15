@@ -38,7 +38,7 @@ void Controller::publishExposes(const Device &device, bool remove)
 
             if (m_homeassistant && expose->homeassistant())
             {
-                QString id = expose->multiple() ? QString::number(it.key()) : QString(), name = endpointName.value(id).toString(), topic = m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':');
+                QString id = expose->multiple() ? QString::number(it.key()) : QString(), topic = m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':');
                 QList <QString> object = {expose->name()};
                 QJsonObject json, identity;
                 QJsonArray availability;
@@ -51,6 +51,13 @@ void Controller::publishExposes(const Device &device, bool remove)
 
                 if (!remove)
                 {
+                    QString name = expose->name();
+
+                    name.replace(QRegExp("([A-Z0-9])"), " \\1").replace(0, 1, name.at(0).toUpper());
+
+                    if (!id.isEmpty())
+                        name.append(" ").append(endpointName.contains(id) ? endpointName.value(id).toString() : id);
+
                     expose->setStateTopic(mqttTopic("fd/zigbee/%1").arg(topic));
                     expose->setCommandTopic(mqttTopic("td/zigbee/%1").arg(topic));
 
@@ -66,7 +73,7 @@ void Controller::publishExposes(const Device &device, bool remove)
                     json.insert("availability", availability);
                     json.insert("availability_mode", "all");
                     json.insert("device", identity);
-                    json.insert("name", QString("%1 %2").arg(device->name(), name.isEmpty() ? object.join(' ').replace('_', ' ') : name));
+                    json.insert("name", QString("%1 %2").arg(device->name(), name));
                     json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
                 }
 
@@ -78,18 +85,28 @@ void Controller::publishExposes(const Device &device, bool remove)
 
                     for (int i = 0; i < list.count(); i++)
                     {
-                        QList <QString> event = {list.at(i)};
+                        QString subtype = list.at(i);
+                        QList <QString> event = {subtype};
                         QJsonObject item;
 
+                        subtype.replace(QRegExp("([A-Z])"), " \\1").replace(0, 1, subtype.at(0).toUpper());
+
                         if (!id.isEmpty())
+                        {
+                            if (endpointName.contains(id))
+                                subtype.prepend(" ").prepend(endpointName.value(id).toString());
+                            else
+                                subtype.append(" ").append(id);
+
                             event.append(id);
+                        }
 
                         if (!remove)
                         {
                             item.insert("automation_type", "trigger");
                             item.insert("device", identity);
                             item.insert("payload", event.at(0));
-                            item.insert("subtype", name.isEmpty() ? event.join(' ') : QString("%1 %2").arg(name, list.at(i)));
+                            item.insert("subtype", subtype);
                             item.insert("topic", mqttTopic("fd/zigbee/%1").arg(topic));
                             item.insert("type", expose->name());
                             item.insert("value_template", QString("{{ value_json.%1 }}").arg(expose->name()));
