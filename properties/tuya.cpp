@@ -130,7 +130,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
             case 3: // enum
             {
-                QString value = option(name).toStringList().value(data.toInt());
+                QString value = option(name).toMap().value("enum").toStringList().value(data.toInt());
 
                 if (!value.isEmpty())
                     map.insert(name, value);

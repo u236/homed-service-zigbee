@@ -357,7 +357,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         }
         else if (option.contains("min") && option.contains("max"))
             expose = Expose(new NumberObject(name));
-        else if (option.contains("select"))
+        else if (option.contains("enum"))
             expose = Expose(new SelectObject(name));
         else
             expose = Expose(new ExposeObject(name));

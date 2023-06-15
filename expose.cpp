@@ -128,7 +128,7 @@ QJsonObject SelectObject::request(void)
     QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
 
-    json.insert("options",                          QJsonArray::fromStringList(options.value("select").toStringList()));
+    json.insert("options",                          QJsonArray::fromStringList(options.value("enum").toStringList()));
     json.insert("icon",                             options.contains("icon") ? options.value("icon").toString() : "mdi:dip-switch");
 
     json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
@@ -259,7 +259,7 @@ QJsonObject CoverObject::request(void)
 
 QJsonObject ThermostatObject::request(void)
 {
-    QList <QString> operationMode = option("operationMode").toMap().value("select").toStringList(), systemMode = option("systemMode").toMap().value("select").toStringList();
+    QList <QString> operationMode = option("operationMode").toMap().value("enum").toStringList(), systemMode = option("systemMode").toMap().value("enum").toStringList();
     QJsonObject json;
 
     if (!operationMode.isEmpty())

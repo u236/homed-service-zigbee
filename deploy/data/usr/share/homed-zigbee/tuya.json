@@ -70,7 +70,7 @@
                             "5":    [{"name": "levelMax", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}]
                           },
                           "status": ["off", "on"],
-                          "lightType": {"select": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
+                          "lightType": {"enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
                           "light": ["level"],
                           "tuyaMagic": true
                         }
@@ -130,13 +130,13 @@
                             "117":  [{"name": "awayDays", "type": "value", "action": true}]
                           },
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "operationMode": {"select": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
+                          "operationMode": {"enum": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
                           "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec", "icon": "mdi:timer"},
-                          "systemMode": {"select": ["auto", "heat", "off"]},
+                          "systemMode": {"enum": ["auto", "heat", "off"]},
                           "comfortTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
                           "ecoTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
-                          "weekMode": {"select": ["5+2", "6+1", "7+0"], "icon": "mdi:calendar-week"},
+                          "weekMode": {"enum": ["5+2", "6+1", "7+0"], "icon": "mdi:calendar-week"},
                           "awayTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
                           "awayDays": {"min": 0, "max": 100, "icon": "mdi:calendar"}
                         }
@@ -166,7 +166,7 @@
                             "108":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
                             "109":  [{"name": "temperatureLimitMax", "type": "value", "action": true}]
                           },
-                          "operationMode": {"select": ["manual", "program", "temporary", "holiday"]},
+                          "operationMode": {"enum": ["manual", "program", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30, "unit": "°C"},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec", "icon": "mdi:timer"},
                           "temperatureOffset": {"min": -9, "max": 9, "unit": "°C", "icon": "mdi:thermometer"},
@@ -195,11 +195,11 @@
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
                             "43":   [{"name": "sensorType", "type": "enum", "action": true}]
                           },
-                          "systemMode": {"select": ["off", "heat"]},
-                          "operationMode": {"select": ["manual", "program"]},
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
-                          "sensorType": {"select": ["internal", "both", "external"], "icon": "mdi:thermometer"},
+                          "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
     },
@@ -224,11 +224,11 @@
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
                             "43":   [{"name": "sensorType", "type": "enum", "action": true}]
                           },
-                          "systemMode": {"select": ["off", "heat"]},
-                          "operationMode": {"select": ["manual", "program"]},
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
-                          "sensorType": {"select": ["internal", "both", "external"], "icon": "mdi:thermometer"},
+                          "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
     },
@@ -247,7 +247,7 @@
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "value", "action": true}]
                           },
-                          "volumeMode": {"select": ["low", "medium", "high"], "icon": "mdi:volume-high"},
+                          "volumeMode": {"enum": ["low", "medium", "high"], "icon": "mdi:volume-high"},
                           "duration": {"min": 0, "max": 1800, "unit": "sec", "icon": "mdi:timer"},
                           "status": ["off", "on"],
                           "melody": {"min": 1, "max": 18, "icon": "mdi:music-note"}
@@ -337,9 +337,9 @@
                           },
                           "sensitivity": {"min": 0, "max": 10, "icon": "mdi:dumbbell"},
                           "tumbleAlarmTime": {"min": 0, "max": 9, "unit": "min", "icon": "mdi:timer"},
-                          "radarScene": {"select": ["default", "area", "toilet", "bedroom", "parlour", "office", "hotel"]},
-                          "motionDirection": {"select": ["standingStill", "movingForward", "movingBackward"]},
-                          "fallDown": {"select": ["none", "maybe", "fall"], "icon": "mdi:alert"},
+                          "radarScene": {"enum": ["default", "area", "toilet", "bedroom", "parlour", "office", "hotel"]},
+                          "motionDirection": {"enum": ["standingStill", "movingForward", "movingBackward"]},
+                          "fallDown": {"enum": ["none", "maybe", "fall"], "icon": "mdi:alert"},
                           "fallSensitivity": {"min": 1, "max": 10, "icon": "mdi:dumbbell"}
                         }
     },
@@ -372,7 +372,7 @@
       "actions":        ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
       "exposes":        ["switch", "powerOnStatus"],
-      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true}
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Switch",
@@ -389,7 +389,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -423,7 +423,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -457,7 +457,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -720,7 +720,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"select": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold"], "tuyaMagic": true}
+      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold"], "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVK-AA",
@@ -730,7 +730,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"select": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"], "tuyaMagic": true}
+      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"], "tuyaMagic": true}
     }
   ]
 }

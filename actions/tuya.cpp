@@ -82,7 +82,7 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
 
                 case 2: // enum
                 {
-                    qint8 value = static_cast <qint8> (option(name).toStringList().indexOf(data.toString()));
+                    qint8 value = static_cast <qint8> (option(name).toMap().value("enum").toStringList().indexOf(data.toString()));
 
                     if (value < 0)
                         return QByteArray();
