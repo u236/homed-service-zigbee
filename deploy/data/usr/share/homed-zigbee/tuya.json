@@ -70,7 +70,7 @@
                             "5":    [{"name": "levelMax", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}]
                           },
                           "status": ["off", "on"],
-                          "lightType": ["led", "incandescent", "halogen"],
+                          "lightType": {"select": ["led", "incandescent", "halogen"]},
                           "light": ["level"],
                           "tuyaMagic": true
                         }
@@ -130,13 +130,13 @@
                             "117":  [{"name": "awayDays", "type": "value", "action": true}]
                           },
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "operationMode": ["away", "program", "manual", "comfort", "eco", "boost", "complex"],
+                          "operationMode": {"select": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C"},
                           "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec"},
-                          "systemMode": ["auto", "heat", "off"],
+                          "systemMode": {"select": ["auto", "heat", "off"]},
                           "comfortTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "ecoTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "weekMode": ["5+2", "6+1", "7+0"],
+                          "weekMode": {"select": ["5+2", "6+1", "7+0"]},
                           "awayTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "awayDays": {"min": 0, "max": 100}
                         }
@@ -166,7 +166,7 @@
                             "108":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
                             "109":  [{"name": "temperatureLimitMax", "type": "value", "action": true}]
                           },
-                          "operationMode": ["manual", "program", "temporary", "holiday"],
+                          "operationMode": {"select": ["manual", "program", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30, "unit": "°C"},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec"},
                           "temperatureOffset": {"min": -9, "max": 9, "unit": "°C"},
@@ -195,11 +195,11 @@
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
                             "43":   [{"name": "sensorType", "type": "enum", "action": true}]
                           },
-                          "systemMode": ["off", "heat"],
-                          "operationMode": ["manual", "program"],
+                          "systemMode": {"select": ["off", "heat"]},
+                          "operationMode": {"select": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C"},
-                          "sensorType": ["internal", "both", "external"],
+                          "sensorType": {"select": ["internal", "both", "external"]},
                           "thermostatProgram": "moes"
                         }
     },
@@ -224,11 +224,11 @@
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
                             "43":   [{"name": "sensorType", "type": "enum", "action": true}]
                           },
-                          "systemMode": ["off", "heat"],
-                          "operationMode": ["manual", "program"],
+                          "systemMode": {"select": ["off", "heat"]},
+                          "operationMode": {"select": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C"},
-                          "sensorType": ["internal", "both", "external"],
+                          "sensorType": {"select": ["internal", "both", "external"]},
                           "thermostatProgram": "moes"
                         }
     },
@@ -247,7 +247,7 @@
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "value", "action": true}]
                           },
-                          "volumeMode": ["low", "medium", "high"],
+                          "volumeMode": {"select": ["low", "medium", "high"]},
                           "duration": {"min": 0, "max": 1800, "unit": "sec"},
                           "status": ["off", "on"],
                           "melody": {"min": 1, "max": 18}
@@ -267,8 +267,8 @@
                             "101":  [{"name": "threshold", "type": "value", "action": true}]
                           },
                           "status": ["off", "on"],
-                          "timer": {"min": 0, "max": 600, "unit": "min"},
-                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%"},
+                          "timer": {"min": 0, "max": 600, "unit": "min", "icon": "mdi:clock"},
+                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%", "icon": "mdi:percent"},
                           "lock": "valve"
                         }
     },
@@ -372,7 +372,7 @@
       "actions":        ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
       "exposes":        ["switch", "powerOnStatus"],
-      "options":        {"switchType": ["toggle", "static", "momentary"], "tuyaMagic": true}
+      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Switch",
@@ -389,7 +389,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": ["toggle", "static", "momentary"], "tuyaMagic": true},
+      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -423,7 +423,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": ["toggle", "static", "momentary"], "tuyaMagic": true},
+      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -457,7 +457,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus"],
-      "options":        {"switchType": ["toggle", "static", "momentary"], "tuyaMagic": true},
+      "options":        {"switchType": {"select": ["toggle", "static", "momentary"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -720,7 +720,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": ["command", "event"], "action": ["singleClick", "doubleClick", "hold"], "tuyaMagic": true}
+      "options":        {"operationMode": {"select": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold"], "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVK-AA",
@@ -730,7 +730,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": ["command", "event"], "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"], "tuyaMagic": true}
+      "options":        {"operationMode": {"select": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"], "tuyaMagic": true}
     }
   ]
 }

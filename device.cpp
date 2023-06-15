@@ -342,12 +342,25 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
     for (auto it = exposes.begin(); it != exposes.end(); it++)
     {
-        QList <QString> list = it->toString().split('_');
+        Expose expose;
+        QString name = it->toString();
+        QList <QString> list = name.split('_');
+        QMap <QString, QVariant> option = device->options().value(multiple ? QString("%1-%2").arg(list.value(0), QString::number(endpoint->id())) : list.value(0)).toMap();
         int type = QMetaType::type(list.value(0).append("Expose").toUtf8());
-        Expose expose(type ? reinterpret_cast <ExposeObject*> (QMetaType::create(type)) : new ExposeObject(it->toString()));
 
-        if (list.count() > 1)
-            expose->setName(it->toString());
+        if (type)
+        {
+            expose = Expose(reinterpret_cast <ExposeObject*> (QMetaType::create(type)));
+
+            if (list.count() > 1)
+                expose->setName(name);
+        }
+        else if (option.contains("min") && option.contains("max"))
+            expose = Expose(new NumberObject(name, option.value("min").toDouble(), option.value("max").toDouble()));
+        else if (option.contains("select"))
+            expose = Expose(new SelectObject(name, option.value("select").toStringList()));
+        else
+            expose = Expose(new ExposeObject(name));
 
         expose->setParent(endpoint.data());
         expose->setMultiple(multiple);

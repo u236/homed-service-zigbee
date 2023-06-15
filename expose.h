@@ -70,12 +70,26 @@ class NumberObject : public ExposeObject
 
 public:
 
-    NumberObject(const QString &name, const QString &icon = QString()) : ExposeObject(name, "number"), m_icon(icon) {}
+    NumberObject(const QString &name, double min, double max) : ExposeObject(name, "number"), m_min(min), m_max(max) {}
     QJsonObject request(void) override;
 
 private:
 
-    QString m_icon;
+    double m_min, m_max;
+
+};
+
+class SelectObject : public ExposeObject
+{
+
+public:
+
+    SelectObject(const QString &name, const QList <QString> &list) : ExposeObject(name, "select"), m_list(list) {}
+    QJsonObject request(void) override;
+
+private:
+
+    QList <QString> m_list;
 
 };
 
@@ -379,36 +393,6 @@ namespace Sensor
     public:
 
         Scene(void) : SensorObject("scene") {}
-
-    };
-}
-
-namespace Number
-{
-    class Pattern : public NumberObject
-    {
-
-    public:
-
-        Pattern(void) : NumberObject("pattern", "mdi:swap-horizontal-bold") {}
-
-    };
-
-    class Timer : public NumberObject
-    {
-
-    public:
-
-        Timer(void) : NumberObject("timer", "mdi:clock") {}
-
-    };
-
-    class Threshold : public NumberObject
-    {
-
-    public:
-
-        Threshold(void) : NumberObject("threshold", "mdi:percent") {}
 
     };
 }

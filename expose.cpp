@@ -36,10 +36,6 @@ void ExposeObject::registerMetaTypes(void)
     qRegisterMetaType <Sensor::Event>               ("eventExpose");
     qRegisterMetaType <Sensor::Scene>               ("sceneExpose");
 
-    qRegisterMetaType <Number::Pattern>             ("patternExpose");
-    qRegisterMetaType <Number::Timer>               ("timerExpose");
-    qRegisterMetaType <Number::Threshold>           ("thresholdExpose");
-
     qRegisterMetaType <Button::ResetCount>          ("resetCountExpose");
 }
 
@@ -106,11 +102,8 @@ QJsonObject NumberObject::request(void)
     QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
 
-    if (options.contains("min"))
-        json.insert("min",                          options.value("min").toDouble());
-
-    if (options.contains("max"))
-        json.insert("max",                          options.value("max").toDouble());
+    if (options.contains("icon"))
+        json.insert("icon",                         options.value("icon").toString());
 
     if (options.contains("step"))
         json.insert("step",                         options.value("step").toDouble());
@@ -118,13 +111,32 @@ QJsonObject NumberObject::request(void)
     if (options.contains("unit"))
         json.insert("unit_of_measurement",          options.value("unit").toString());
 
-    if (!m_icon.isEmpty())
-        json.insert("icon",                         m_icon);
+    json.insert("min",                              m_min);
+    json.insert("max",                              m_max);
 
     json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
     json.insert("state_topic",                      m_stateTopic);
 
     json.insert("command_template",                 QString("{\"%1\":{{ value }}}").arg(m_name));
+    json.insert("command_topic",                    m_commandTopic);
+
+    return json;
+}
+
+QJsonObject SelectObject::request(void)
+{
+    QMap <QString, QVariant> options = option().toMap();
+    QJsonObject json;
+
+    if (options.contains("icon"))
+        json.insert("icon",                         options.value("icon").toString());
+
+    json.insert("options",                          QJsonArray::fromStringList(m_list));
+
+    json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
+    json.insert("state_topic",                      m_stateTopic);
+
+    json.insert("command_template",                 QString("{\"%1\":\"{{ value }}\"}").arg(m_name));
     json.insert("command_topic",                    m_commandTopic);
 
     return json;
@@ -249,7 +261,7 @@ QJsonObject CoverObject::request(void)
 
 QJsonObject ThermostatObject::request(void)
 {
-    QList <QString> operationMode = option("operationMode").toStringList(), systemMode = option("systemMode").toStringList();
+    QList <QString> operationMode = option("operationMode").toMap().value("select").toStringList(), systemMode = option("systemMode").toMap().value("select").toStringList();
     QJsonObject json;
 
     if (!operationMode.isEmpty())
@@ -263,7 +275,7 @@ QJsonObject ThermostatObject::request(void)
         json.insert("preset_mode_command_topic",    m_commandTopic);
     }
 
-    json.insert("modes",                            systemMode.isEmpty() ? QJsonArray {"heat"} : QJsonArray::fromStringList(option("systemMode").toStringList()));
+    json.insert("modes",                            systemMode.isEmpty() ? QJsonArray {"heat"} : QJsonArray::fromStringList(systemMode));
 
     json.insert("mode_state_template",              "{{ value_json.systemMode }}");
     json.insert("mode_state_topic",                 m_stateTopic);

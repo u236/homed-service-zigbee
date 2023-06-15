@@ -40,7 +40,7 @@
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "exposes":        ["pattern"],
-      "options":        {"pattern": {"min": 0, "max": 62}},
+      "options":        {"pattern": {"min": 0, "max": 62, "icon": "mdi:swap-horizontal-bold"}},
       "endpointId":     2
     },
     {
