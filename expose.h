@@ -70,12 +70,8 @@ class NumberObject : public ExposeObject
 
 public:
 
-    NumberObject(const QString &name, double min, double max) : ExposeObject(name, "number"), m_min(min), m_max(max) {}
+    NumberObject(const QString &name) : ExposeObject(name, "number") {}
     QJsonObject request(void) override;
-
-private:
-
-    double m_min, m_max;
 
 };
 
@@ -84,12 +80,8 @@ class SelectObject : public ExposeObject
 
 public:
 
-    SelectObject(const QString &name, const QList <QString> &list) : ExposeObject(name, "select"), m_list(list) {}
+    SelectObject(const QString &name) : ExposeObject(name, "select") {}
     QJsonObject request(void) override;
-
-private:
-
-    QList <QString> m_list;
 
 };
 

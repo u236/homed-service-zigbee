@@ -206,7 +206,7 @@ void DeviceList::setupDevice(const Device &device)
                     if (endpoinId.type() == QJsonValue::Array)
                         for (auto it = options.begin(); it != options.end(); it++)
                             for (int i = 0; i < endpoints.count(); i++)
-                                device->options().insert(QString("%1-%2").arg(it.key(), endpoints.at(i).toString()), it.value().toVariant());
+                                device->options().insert(QString("%1_%2").arg(it.key(), endpoints.at(i).toString()), it.value().toVariant());
                     else
                         device->options().insert(options.toVariantMap());
                 }
@@ -345,7 +345,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         Expose expose;
         QString name = it->toString();
         QList <QString> list = name.split('_');
-        QMap <QString, QVariant> option = device->options().value(multiple ? QString("%1-%2").arg(list.value(0), QString::number(endpoint->id())) : list.value(0)).toMap();
+        QMap <QString, QVariant> option = device->options().value(multiple ? QString("%1_%2").arg(list.value(0), QString::number(endpoint->id())) : list.value(0)).toMap();
         int type = QMetaType::type(list.value(0).append("Expose").toUtf8());
 
         if (type)
@@ -356,9 +356,9 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
                 expose->setName(name);
         }
         else if (option.contains("min") && option.contains("max"))
-            expose = Expose(new NumberObject(name, option.value("min").toDouble(), option.value("max").toDouble()));
+            expose = Expose(new NumberObject(name));
         else if (option.contains("select"))
-            expose = Expose(new SelectObject(name, option.value("select").toStringList()));
+            expose = Expose(new SelectObject(name));
         else
             expose = Expose(new ExposeObject(name));
 
@@ -765,7 +765,7 @@ void DeviceList::unserializeProperties(const QJsonObject &properties)
             for (int i = 0; i < it.value()->properties().count(); i++)
             {
                 const Property &property = it.value()->properties().at(i);
-                QVariant value = json.value(property->multiple() ? QString("%1-%2").arg(property->name()).arg(it.value()->id()) : property->name()).toVariant();
+                QVariant value = json.value(property->multiple() ? QString("%1_%2").arg(property->name()).arg(it.value()->id()) : property->name()).toVariant();
 
                 if (!value.isValid())
                     continue;
@@ -913,7 +913,7 @@ QJsonObject DeviceList::serializeProperties(void)
                 if (!property->value().isValid())
                     continue;
 
-                properties.insert(property->multiple() ? QString("%1-%2").arg(property->name()).arg(it.value()->id()) : property->name(), QJsonValue::fromVariant(property->value()));
+                properties.insert(property->multiple() ? QString("%1_%2").arg(property->name()).arg(it.value()->id()) : property->name(), QJsonValue::fromVariant(property->value()));
             }
         }
 

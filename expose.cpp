@@ -111,8 +111,8 @@ QJsonObject NumberObject::request(void)
     if (options.contains("unit"))
         json.insert("unit_of_measurement",          options.value("unit").toString());
 
-    json.insert("min",                              m_min);
-    json.insert("max",                              m_max);
+    json.insert("min",                              options.value("min").toDouble());
+    json.insert("max",                              options.value("max").toDouble());
 
     json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
     json.insert("state_topic",                      m_stateTopic);
@@ -128,10 +128,8 @@ QJsonObject SelectObject::request(void)
     QMap <QString, QVariant> options = option().toMap();
     QJsonObject json;
 
-    if (options.contains("icon"))
-        json.insert("icon",                         options.value("icon").toString());
-
-    json.insert("options",                          QJsonArray::fromStringList(m_list));
+    json.insert("options",                          QJsonArray::fromStringList(options.value("select").toStringList()));
+    json.insert("icon",                             options.contains("icon") ? options.value("icon").toString() : "mdi:dip-switch");
 
     json.insert("value_template",                   QString("{{ value_json.%1 }}").arg(m_name));
     json.insert("state_topic",                      m_stateTopic);

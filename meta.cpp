@@ -10,7 +10,7 @@ QVariant MetaObject::option(const QString &name, const QVariant &defaultValue)
     if (!endpoint || endpoint->device().isNull())
         return value;
 
-    value = endpoint->device()->options().value(QString("%1-%2").arg(optionName, QString::number(endpoint->id())));
+    value = endpoint->device()->options().value(QString("%1_%2").arg(optionName, QString::number(endpoint->id())));
     return value.isValid() ? value : endpoint->device()->options().value(optionName, defaultValue);
 }
 
