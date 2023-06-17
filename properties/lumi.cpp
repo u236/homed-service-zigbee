@@ -48,7 +48,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         {
             QList <QString> list = {"lumi.magnet.acn001", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.remote.cagl02", "lumi.sen_ill.mgl01", "lumi.sensor_smoke.acn03"};
 
-            if (!list.contains(modelName()))
+            if (list.contains(modelName()))
                 break;
 
             map.insert("temperature", static_cast <qint8> (data.at(0)) + option("temperatureOffset").toDouble());
