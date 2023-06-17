@@ -84,7 +84,7 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
                     QMap <QString, QVariant> options = option(name).toMap();
                     qint8 value;
 
-                    if (map.contains("min") && map.contains("max"))
+                    if (options.contains("min") && options.contains("max"))
                     {
                         qint8 min = static_cast <qint8> (options.value("min").toInt()), max = static_cast <qint8> (options.value("max").toInt());
 
