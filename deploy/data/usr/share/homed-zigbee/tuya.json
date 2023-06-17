@@ -16,7 +16,7 @@
                             "19":   [{"name": "power", "type": "value", "divider": 10}],
                             "20":   [{"name": "voltage", "type": "value", "divider": 10}]
                           },
-                          "status": ["off", "on"]
+                          "status": {"enum": ["off", "on"]}
                         }
     },
     {
@@ -35,7 +35,7 @@
                             "105":  [{"name": "frequency", "type": "value", "divider": 100}],
                             "111":  [{"name": "powerFactor", "type": "value", "divider": 10}]
                           },
-                          "status": ["off", "on"]
+                          "status": {"enum": ["off", "on"]}
                         }
     },
     {
@@ -51,7 +51,7 @@
                             "6":    [{"name": "elictricity", "type": "raw"}],
                             "16":   [{"name": "status", "type": "bool", "action": true}]
                           },
-                          "status": ["off", "on"]
+                          "status": {"enum": ["off", "on"]}
                         }
     },
     {
@@ -69,7 +69,7 @@
                             "4":    [{"name": "lightType", "type": "enum", "action": true}],
                             "5":    [{"name": "levelMax", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}]
                           },
-                          "status": ["off", "on"],
+                          "status": {"enum": ["off", "on"]},
                           "lightType": {"enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
                           "light": ["level"],
                           "tuyaMagic": true
@@ -93,14 +93,14 @@
                             "101":  [{"name": "status_7", "type": "bool", "action": true}],
                             "102":  [{"name": "status_8", "type": "bool", "action": true}]
                           },
-                          "status_1": ["off", "on"],
-                          "status_2": ["off", "on"],
-                          "status_3": ["off", "on"],
-                          "status_4": ["off", "on"],
-                          "status_5": ["off", "on"],
-                          "status_6": ["off", "on"],
-                          "status_7": ["off", "on"],
-                          "status_8": ["off", "on"]
+                          "status_1": {"enum": ["off", "on"]},
+                          "status_2": {"enum": ["off", "on"]},
+                          "status_3": {"enum": ["off", "on"]},
+                          "status_4": {"enum": ["off", "on"]},
+                          "status_5": {"enum": ["off", "on"]},
+                          "status_6": {"enum": ["off", "on"]},
+                          "status_7": {"enum": ["off", "on"]},
+                          "status_8": {"enum": ["off", "on"]}
                         }
     },
     {
@@ -251,7 +251,7 @@
                             "7":    [{"name": "duration", "type": "value", "action": true}],
                             "13":   [{"name": "alarm", "type": "bool", "action": true}],
                             "15":   [{"name": "battery", "type": "value"}],
-                            "21":   [{"name": "melody", "type": "value", "action": true}]
+                            "21":   [{"name": "melody", "type": "enum", "action": true}]
                           },
                           "volumeMode": {"enum": ["low", "medium", "high"], "icon": "mdi:volume-high"},
                           "duration": {"min": 0, "max": 1800, "unit": "sec", "icon": "mdi:timer"},
@@ -272,7 +272,7 @@
                             "9":    [{"name": "timeout", "type": "value", "divider": 60, "action": true}],
                             "101":  [{"name": "threshold", "type": "value", "action": true}]
                           },
-                          "status": ["off", "on"],
+                          "status": {"enum": ["off", "on"]},
                           "timer": {"min": 0, "max": 600, "unit": "min", "control": true, "icon": "mdi:clock"},
                           "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%", "control": true, "icon": "mdi:percent"},
                           "lock": "valve"

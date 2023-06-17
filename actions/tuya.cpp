@@ -53,7 +53,7 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
             {
                 case 0: // bool
                 {
-                    QList <QString> nameList = name.split('_'), actionList = option(name).toStringList();
+                    QList <QString> nameList = name.split('_'), actionList = option(name).toMap().value("enum").toStringList();
                     qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
                     bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
@@ -66,15 +66,14 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
                 case 1: // value
                 {
                     QMap <QString, QVariant> options = option(name).toMap();
-                    QVariant min = options.value("min"), max = options.value("max");
-                    double check = data.toDouble();
+                    double check = data.toDouble(), min = options.value("min").toDouble(), max = options.value("max").toDouble();
                     qint32 value;
 
-                    if (min.isValid() && check < min.toDouble())
-                        check = min.toDouble();
+                    if (check < min)
+                        check = min;
 
-                    if (max.isValid() && check > max.toDouble())
-                        check = max.toDouble();
+                    if (check > max)
+                        check = max;
 
                     value = qToBigEndian <qint32> (check * item.value("divider", 1).toDouble() - item.value("offset").toDouble());
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
@@ -82,10 +81,28 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
 
                 case 2: // enum
                 {
-                    qint8 value = static_cast <qint8> (option(name).toMap().value("enum").toStringList().indexOf(data.toString()));
+                    QMap <QString, QVariant> options = option(name).toMap();
+                    qint8 value;
 
-                    if (value < 0)
-                        return QByteArray();
+                    if (map.contains("min") && map.contains("max"))
+                    {
+                        qint8 min = static_cast <qint8> (options.value("min").toInt()), max = static_cast <qint8> (options.value("max").toInt());
+
+                        value = static_cast <qint8> (data.toInt());
+
+                        if (value < min)
+                            value = min;
+
+                        if (value > max)
+                            value = max;
+                    }
+                    else
+                    {
+                        value = static_cast <qint8> (options.value("enum").toStringList().indexOf(data.toString()));
+
+                        if (value < 0)
+                            return QByteArray();
+                    }
 
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_ENUM, &value);
                 }

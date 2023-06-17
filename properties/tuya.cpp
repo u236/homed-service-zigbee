@@ -104,7 +104,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
             case 1: // bool
             {
                 bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
-                QString value = option(name).toStringList().value(check ? 1 : 0);
+                QString value = option(name).toMap().value("enum").toStringList().value(check ? 1 : 0);
 
                 if (value.isEmpty())
                     map.insert(name, check);
@@ -130,11 +130,19 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
             case 3: // enum
             {
-                QString value = option(name).toMap().value("enum").toStringList().value(data.toInt());
+                QMap <QString, QVariant> options = option(name).toMap();
 
-                if (!value.isEmpty())
-                    map.insert(name, value);
+                if (options.contains("enum"))
+                {
+                    QString value = options.value("enum").toStringList().value(data.toInt());
 
+                    if (!value.isEmpty())
+                        map.insert(name, value);
+
+                    break;
+                }
+
+                map.insert(name, data.toInt());
                 break;
             }
 
