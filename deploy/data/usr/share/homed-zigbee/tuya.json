@@ -335,7 +335,7 @@
                           "108":  [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
                           "109":  [{"name": "targetDistance", "type": "value", "divider": 100}],
                           "110":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
-                          "111":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}],
+                          "111":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}]
                         },
                         "sensitivity": {"min": 0, "max": 9, "icon": "mdi:dumbbell"},
                         "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},

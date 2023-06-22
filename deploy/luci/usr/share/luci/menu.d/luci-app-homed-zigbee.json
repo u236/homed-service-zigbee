@@ -1,0 +1,14 @@
+{
+  "admin/homed":
+  {
+    "title": "HOMEd",
+    "action": {"type": "firstchild"},
+    "depends": {"acl": ["luci-app-homed-zigbee"]},
+    "order": 60
+  },
+  "admin/homed/zigbee":
+  {
+    "title": "ZigBee Service Configuration",
+    "action": {"type": "view", "path": "homed/zigbee"}
+  }
+}

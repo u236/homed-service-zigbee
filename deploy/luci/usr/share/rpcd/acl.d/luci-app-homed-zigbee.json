@@ -1,0 +1,16 @@
+{
+  "luci-app-homed-zigbee":
+  {
+    "description": "Grant access to /etc/homed/homed-zigbee.conf",
+    "read":
+    {
+      "file": {"/etc/homed/homed-zigbee.conf": ["read"]},
+      "ubus": {"file": ["read"]}
+    },
+    "write":
+    {
+      "file": {"/etc/homed/homed-zigbee.conf": ["write"]},
+      "ubus": {"file": ["write"]}
+    }
+  }
+}

@@ -53,6 +53,7 @@
   - "mkdir -p deploy/data/etc/init.d"
   - "mkdir -p deploy/data/opt/homed-zigbee"
   - "mkdir -p deploy/data/usr/bin"
+  - "cp -r deploy/luci/* deploy/data"
   - "cp deploy/procd/homed-zigbee deploy/data/etc/init.d"
   - "cp homed-zigbee-${ARCHITECTURE} deploy/data/usr/bin/homed-zigbee"
   - "sed -i \"s+^Version:.*+Version: ${CI_COMMIT_TAG}+g\" deploy/opkg/control"
