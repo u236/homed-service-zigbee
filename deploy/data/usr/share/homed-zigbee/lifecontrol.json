@@ -43,13 +43,12 @@
     {
       "description":    "Life Control 10A Smart Plug MCLH-03",
       "modelNames":     ["RICI01"],
-      "properties":     ["status", "voltage", "current", "power", "energy"],
+      "properties":     ["status", "energy", "voltage", "current", "power"],
       "actions":        ["status"],
-      "polls":          ["voltage", "current", "power", "energy"],
-      "bindings":       ["status"],
-      "reportings":     ["status", "voltage", "current", "power", "energy"],
-      "exposes":        ["switch", "voltage", "current", "power", "energy"],
-      "options":        {"switch": "outlet", "voltageDivider": 10, "currentDivider": 1000, "powerDivider": 10, "energyDivider": 1000, "pollInterval": 15}
+      "bindings":       ["status", "energy", "power"],
+      "polls":          ["energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power"],
+      "options":        {"switch": "outlet", "energyDivider": 1000, "voltageDivider": 10, "currentDivider": 1000, "powerDivider": 10, "pollInterval": 15}
     }
   ]
 }
