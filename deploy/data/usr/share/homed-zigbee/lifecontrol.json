@@ -41,14 +41,15 @@
   "TexasInstruments":
   [
     {
-      "description":    "Life Control 10A Smart Plug MCLH-03 (partially supported)",
+      "description":    "Life Control 10A Smart Plug MCLH-03",
       "modelNames":     ["RICI01"],
-      "properties":     ["status"],
+      "properties":     ["status", "voltage", "current", "power", "energy"],
       "actions":        ["status"],
+      "polls":          ["voltage", "current", "power", "energy"],
       "bindings":       ["status"],
-      "reportings":     ["status"],
-      "exposes":        ["switch"],
-      "options":        {"switch": "outlet"}
+      "reportings":     ["status", "voltage", "current", "power", "energy"],
+      "exposes":        ["switch", "voltage", "current", "power", "energy"],
+      "options":        {"switch": "outlet", "voltageDivider": 10, "currentDivider": 1000, "powerDivider": 10, "energyDivider": 1000, "pollInterval": 15}
     }
   ]
 }
