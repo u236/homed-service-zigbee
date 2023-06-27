@@ -184,11 +184,13 @@ public:
 
 protected:
 
+    QTimer *m_receiveTimer, *m_resetTimer, *m_permitJoinTimer;
+
     QSerialPort *m_serial;
     QTcpSocket *m_socket;
     QIODevice *m_device;
 
-    QTimer *m_receiveTimer, *m_resetTimer, *m_permitJoinTimer;
+    bool m_serialError;
 
     QHostAddress m_adddress;
     quint16 m_port;
