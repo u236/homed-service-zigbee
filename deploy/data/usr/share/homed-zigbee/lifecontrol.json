@@ -46,9 +46,9 @@
       "properties":     ["status", "energy", "voltage", "current", "power"],
       "actions":        ["status"],
       "bindings":       ["status", "energy", "power"],
-      "polls":          ["energy", "voltage", "current", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "energyDivider": 1000, "voltageDivider": 10, "currentDivider": 1000, "powerDivider": 10, "pollInterval": 15}
+      "options":        {"switch": "outlet", "energyDivider": 1000, "voltageDivider": 10, "currentDivider": 1000, "powerDivider": 10}
     }
   ]
 }
