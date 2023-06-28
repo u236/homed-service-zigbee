@@ -308,7 +308,7 @@ namespace Sensor
 
     public:
 
-        Energy(void) : SensorObject("energy", "kW·h", 2) {}
+        Energy(void) : SensorObject("energy", "kWh", 2) {}
 
     };
 
