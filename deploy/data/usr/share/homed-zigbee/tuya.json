@@ -77,7 +77,7 @@
     },
     {
       "description":    "TUYA TS0601 Multichannel Relay",
-      "modelNames":     ["_TZE200_vmcgja59"],
+      "modelNames":     ["_TZE200_vmcgja59", "_TZE204_vmcgja59"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8"],
