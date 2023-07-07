@@ -264,7 +264,7 @@ void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint1
         return;
 
     request = zclHeader(global ? 0x00 : FC_CLUSTER_SPECIFIC, m_requestId, commandId, manufacturerCode).append(payload);
-    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId ? endpointId : 0x01) << "cluster" << QString::asprintf("0x%04x", clusterId) << "request" << m_requestId << "enqued with data" << request.toHex(':');
+    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId ? endpointId : 0x01) << "cluster" << QString::asprintf("0x%04x", clusterId) << "request" << m_requestId << "enqueued with data" << request.toHex(':');
 
     enqueueRequest(device, endpointId ? endpointId : 0x01, clusterId, request, QString("request %1").arg(m_requestId));
 }
