@@ -1,4 +1,15 @@
 {
+  "_TZ2000_o1yvtxphiwt5cwif": 
+  [
+    {
+      "modelNames":     ["S2100-1004"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3, 4]
+    }
+  ],  
   "TUYA":
   [
     {
