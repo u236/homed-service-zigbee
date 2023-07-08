@@ -1,15 +1,4 @@
 {
-  "_TZ2000_o1yvtxphiwt5cwif": 
-  [
-    {
-      "modelNames":     ["S2100-1004"],
-      "properties":     ["status"],
-      "actions":        ["status"],
-      "bindings":       ["status"],
-      "exposes":        ["switch"],
-      "endpointId":     [1, 2, 3, 4]
-    }
-  ],  
   "TUYA":
   [
     {
@@ -775,6 +764,24 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
       "options":        {"operationMode": {"enum": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"], "tuyaMagic": true}
+    },
+    {
+      "description":    "Simon 2-Channel Switch S2100-1002",
+      "modelNames":     ["S2100-1002"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "Simon 4-Channel Switch S2100-1004",
+      "modelNames":     ["S2100-1004"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3, 4]
     }
   ]
 }

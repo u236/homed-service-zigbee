@@ -136,7 +136,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         return;
     }
 
-    if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || manufacturerName.startsWith("TUYA"))
+    if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || QRegExp("^_TZ[2,3,E]\\d{3}_\\S+$").exactMatch(manufacturerName) || manufacturerName.startsWith("TUYA"))
     {
         modelName = manufacturerName;
         manufacturerName = "TUYA";
