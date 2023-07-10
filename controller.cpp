@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "logger.h"
 
 Controller::Controller(const QString &configFile) : HOMEd(configFile), m_timer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
 {

@@ -3,6 +3,7 @@
 #include "properties/common.h"
 #include "properties/ias.h"
 #include "controller.h"
+#include "logger.h"
 
 DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
 {
