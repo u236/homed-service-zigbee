@@ -148,7 +148,6 @@ void DeviceList::setupDevice(const Device &device)
 {
     QList <QDir> list = {m_externalDir, m_libraryDir};
     QString manufacturerName, modelName;
-    QJsonArray array;
 
     device->setSupported(false);
     device->options().clear();
@@ -166,13 +165,14 @@ void DeviceList::setupDevice(const Device &device)
 
     identityHandler(device, manufacturerName, modelName);
 
-    for (auto it = list.begin(); it != list.end() && array.isEmpty(); it++)
+    for (auto it = list.begin(); it != list.end() && !device->supported(); it++)
     {
         QList <QString> list = it->entryList(QDir::Files);
 
         for (int i = 0; i < list.count(); i++)
         {
             QFile file(QString("%1/%2").arg(it->path(), list.at(i)));
+            QJsonArray array;
 
             if (!file.open(QFile::ReadOnly))
                 continue;
@@ -180,44 +180,41 @@ void DeviceList::setupDevice(const Device &device)
             array = QJsonDocument::fromJson(file.readAll()).object().value(manufacturerName).toArray();
             file.close();
 
-            if (!array.isEmpty())
-                break;
-        }
-    }
+            if (array.isEmpty())
+                continue;
 
-    if (!array.isEmpty())
-    {
-        for (auto it = array.begin(); it != array.end(); it++)
-        {
-            QJsonObject json = it->toObject();
-            QJsonArray modelNames = json.value("modelNames").toArray();
-
-            if (modelNames.contains(modelName) || (manufacturerName == "TUYA" && modelNames.contains(device->modelName())))
+            for (auto it = array.begin(); it != array.end(); it++)
             {
-                QJsonValue endpoinId = json.value("endpointId");
-                QList <QVariant> endpoints = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
+                QJsonObject json = it->toObject();
+                QJsonArray modelNames = json.value("modelNames").toArray();
 
-                if (json.contains("description"))
-                    device->setDescription(json.value("description").toString());
-
-                if (json.contains("options"))
+                if (modelNames.contains(modelName) || (manufacturerName == "TUYA" && modelNames.contains(device->modelName())))
                 {
-                    QJsonObject options = json.value("options").toObject();
+                    QJsonValue endpoinId = json.value("endpointId");
+                    QList <QVariant> endpoints = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
 
-                    if (endpoinId.type() == QJsonValue::Array)
-                        for (auto it = options.begin(); it != options.end(); it++)
-                            for (int i = 0; i < endpoints.count(); i++)
-                                device->options().insert(QString("%1_%2").arg(it.key(), endpoints.at(i).toString()), it.value().toVariant());
-                    else
-                        device->options().insert(options.toVariantMap());
-                }
+                    if (json.contains("description"))
+                        device->setDescription(json.value("description").toString());
 
-                if (json.contains("properties"))
-                {
-                    for (int i = 0; i < endpoints.count(); i++)
-                        setupEndpoint(endpoint(device, static_cast <quint8> (endpoints.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
+                    if (json.contains("options"))
+                    {
+                        QJsonObject options = json.value("options").toObject();
 
-                    device->setSupported(true);
+                        if (endpoinId.type() == QJsonValue::Array)
+                            for (auto it = options.begin(); it != options.end(); it++)
+                                for (int i = 0; i < endpoints.count(); i++)
+                                    device->options().insert(QString("%1_%2").arg(it.key(), endpoints.at(i).toString()), it.value().toVariant());
+                        else
+                            device->options().insert(options.toVariantMap());
+                    }
+
+                    if (json.contains("properties"))
+                    {
+                        for (int i = 0; i < endpoints.count(); i++)
+                            setupEndpoint(endpoint(device, static_cast <quint8> (endpoints.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
+
+                        device->setSupported(true);
+                    }
                 }
             }
         }
