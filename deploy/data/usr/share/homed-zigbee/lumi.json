@@ -388,17 +388,17 @@
     },
     {
       "description":    "Aqara D1 2-Key Wireless Switch WXKG02LM or WXKG07LM",
-      "modelNames":     ["lumi.remote.b286acn01, lumi.remote.b286acn02"],
+      "modelNames":     ["lumi.remote.b286acn01", "lumi.remote.b286acn02"],
       "options":        {"endpointName": {"1": "Left", "2": "Right", "3": "Both"}}
     },
     {
-      "modelNames":     ["lumi.remote.b286acn01, lumi.remote.b286acn02"],
+      "modelNames":     ["lumi.remote.b286acn01", "lumi.remote.b286acn02"],
       "properties":     ["lumiBasic"],
       "exposes":        ["battery"],
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.remote.b286acn01, lumi.remote.b286acn02"],
+      "modelNames":     ["lumi.remote.b286acn01", "lumi.remote.b286acn02"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
       "options":        {"action": ["singleClick", "doubleClick", "hold"]},
