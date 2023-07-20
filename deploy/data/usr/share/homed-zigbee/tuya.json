@@ -345,6 +345,33 @@
                       }
     },
     {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type C)",
+      "modelNames":     ["_TZE204_sooucan5"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "occupancy", "type": "bool"}],
+                            "2":    [{"name": "sensitivity", "type": "value", "action": true}],
+                            "3":    [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
+                            "4":    [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
+                            "101":  [{"name": "illuminance", "type": "value"}],
+                            "102":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
+                            "103":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}],
+                            "112":  [{"name": "radarScene", "type": "enum", "action": true}],
+                            "105":  [{"name": "targetDistance", "type": "value", "divider": 100}]
+                          },
+                          "sensitivity": {"min": 0, "max": 9, "icon": "mdi:dumbbell"},
+                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec", "icon": "mdi:timer"},
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec", "icon": "mdi:timer"},
+                          "radarScene": {"enum": ["default", "bathroom", "bedroom", "sleeping"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Human Presence Sensor with Fall Function",
       "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
       "properties":     ["tuyaDataPoints"],
