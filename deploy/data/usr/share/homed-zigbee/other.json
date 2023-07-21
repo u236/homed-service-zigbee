@@ -1,4 +1,16 @@
 {
+  "Feibit Inc co.":
+  [
+    {
+      "description":    "JIAWEN RGBW Bulb K2RGBW01",
+      "modelNames":     ["FB56-ZCW08KU1.0", "FB56-ZCW08KU1.1"],
+      "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level", "color", "colorTemperature"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+    }
+  ],
+
   "HEIMAN":
   [
     {
@@ -79,7 +91,7 @@
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "previous"]}},
+      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}},
       "endpointId":     11
     }
   ],
@@ -92,7 +104,7 @@
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 500}, "powerOnStatus": {"enum": ["on", "off", "previous"]}}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 500}, "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     },
     {
       "description":    "Trust Dimmable Bulb ZLED-2709",
@@ -100,7 +112,7 @@
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "previous"]}}
+      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     }
   ]
 }

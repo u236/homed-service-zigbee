@@ -29,8 +29,8 @@
       "bindings":       ["status", "perenio"],
       "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
       "polls":          ["perenioSmartPlug"],
-      "exposes":        ["switch", "energy", "voltage", "power"],
-      "options":        {"switch": "outlet"}
+      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "power"],
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["on", "off", "previous"]}}
     },
     {
       "description":    "Perenio Water Leak Sensor PECLS01",

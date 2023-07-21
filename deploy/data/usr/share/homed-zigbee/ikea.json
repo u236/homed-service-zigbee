@@ -9,7 +9,7 @@
       "bindings":       ["status", "level", "color"],
       "reportings":     ["status", "level", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 250, "max": 454}, "powerOnStatus": {"enum": ["on", "off", "previous"]}}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 250, "max": 454}, "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     },
     {
       "description":    "TRADFRI Dimmable Bulb",
@@ -19,7 +19,7 @@
       "bindings":       ["status", "level"],
       "reportings":     ["status", "level"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "previous"]}}
+      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
