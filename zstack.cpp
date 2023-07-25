@@ -493,6 +493,9 @@ bool ZStack::startCoordinator(void)
         return false;
     }
 
+    if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, 0x14)) || m_replyData.at(0))
+        logWarning << "Set TX power request failed";
+
     if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02)
     {
         if (m_version == ZStackVersion::ZStack12x && m_status == ZSTACK_COORDINATOR_STARTED)

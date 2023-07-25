@@ -22,6 +22,7 @@
 #define SYS_OSAL_NV_ITEM_INIT                       0x2107
 #define SYS_OSAL_NV_READ                            0x2108
 #define SYS_OSAL_NV_WRITE                           0x2109
+#define SYS_SET_TX_POWER                            0x2114
 #define AF_REGISTER                                 0x2400
 #define AF_DATA_REQUEST                             0x2401
 #define AF_DATA_REQUEST_EXT                         0x2402
