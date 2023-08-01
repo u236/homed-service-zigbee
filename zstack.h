@@ -37,6 +37,7 @@
 #define ZDO_MGMT_PERMIT_JOIN_REQ                    0x2536
 #define ZDO_MSG_CB_REGISTER                         0x253E
 #define ZDO_STARTUP_FROM_APP                        0x2540
+#define ZDO_ADD_GROUP                               0x254B
 #define ZB_READ_CONFIGURATION                       0x2604
 #define ZB_WRITE_CONFIGURATION                      0x2605
 #define UTIL_GET_DEVICE_INFO                        0x2700
@@ -88,6 +89,13 @@ struct versionResponseStruct
     quint8  minor;
     quint8  patch;
     quint32 build;
+};
+
+struct addGroupRequestStruct
+{
+    quint8  endpointId;
+    quint16 groupId;
+    quint8  nameLength;
 };
 
 struct registerEndpointRequestStruct

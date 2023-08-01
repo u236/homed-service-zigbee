@@ -672,7 +672,7 @@ bool EZSP::startCoordinator(void)
         setMulticastStruct request;
 
         request.groupId = qToLittleEndian(m_multicast.at(i));
-        request.endpointId = 0x01;
+        request.endpointId = m_multicast.at(i) == GREEN_POWER_GROUP ? 0xF2 : 0x01;
         request.index = 0x00;
 
         if (sendFrame(FRAME_SET_MULTICAST_TABLE_ENTRY, QByteArray(1, static_cast <char> (i)).append(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))

@@ -63,6 +63,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
 
     m_multicast.append(DEFAULT_GROUP);
     m_multicast.append(IKEA_GROUP);
+    m_multicast.append(GREEN_POWER_GROUP);
 
     connect(m_device, &QIODevice::readyRead, this, &Adapter::startTimer);
     connect(m_receiveTimer, &QTimer::timeout, this, &Adapter::readyRead);

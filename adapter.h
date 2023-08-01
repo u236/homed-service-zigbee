@@ -9,6 +9,7 @@
 
 #define DEFAULT_GROUP                   0x0000
 #define IKEA_GROUP                      0x0385
+#define GREEN_POWER_GROUP               0x0B84
 
 #define PROFILE_IPM                     0x0101 // Industrial Plant Monitoring
 #define PROFILE_HA                      0x0104 // Home Automation
