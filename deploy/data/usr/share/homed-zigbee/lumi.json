@@ -239,14 +239,14 @@
     {
       "description":    "Aqara RGBW Led Controller ZNTGMK11LM",
       "modelNames":     ["lumi.light.rgbac1"],
-      "properties":     ["status", "powerOnStatus", "level", "colorHS", "colorTemperature"],
-      "actions":        ["status", "powerOnStatus", "level", "colorHS", "colorTemperature"],
+      "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
       "options":        {"light": ["level", "color", "colorTemperature"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     },
     {
-      "description":    "Aqara Curtain Motor ZNCLDJ11LM",
-      "modelNames":     ["lumi.curtain"],
+      "description":    "Aqara Curtain Motor SRSC-M01 or ZNCLDJ11LM",
+      "modelNames":     ["lumi.curtain", "lumi.curtain.aq2"],
       "properties":     ["lumiCover"],
       "actions":        ["coverStatus", "lumiCoverPosition"],
       "exposes":        ["cover"]
