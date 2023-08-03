@@ -237,6 +237,14 @@
       "endpointId":     21
     },
     {
+      "description":    "Aqara RGBW Led Controller ZNTGMK11LM",
+      "modelNames":     ["lumi.light.rgbac1"],
+      "properties":     ["status", "powerOnStatus", "level", "colorHS", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorHS", "colorTemperature"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level", "color", "colorTemperature"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+    },
+    {
       "description":    "Aqara Curtain Motor ZNCLDJ11LM",
       "modelNames":     ["lumi.curtain"],
       "properties":     ["lumiCover"],

@@ -96,6 +96,20 @@
     }
   ],
 
+  "Sunricher":
+  [
+    {
+      "description":    "Sunricher Smart Dimmer SR-ZG2835RAC",
+      "modelNames":     ["HK-SL-DIM-EU-A", "HK-SL-RDIM-A"],
+      "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "bindings":       ["status", "level"],
+      "reportings":     ["status", "level"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+    }
+  ],
+
   "Trust International B.V.":
   [
     {
