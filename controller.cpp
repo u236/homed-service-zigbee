@@ -11,9 +11,10 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile), m_timer(n
     logInfo << "Starting version" << SERVICE_VERSION;
     logInfo << "Configuration file is" << getConfig()->fileName();
 
-    m_homeassistant = getConfig()->value("homeassistant/enabled", false).toBool();
-    m_homeassistantPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
-    m_homeassistantStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
+    m_haEnabled = getConfig()->value("homeassistant/enabled", false).toBool();
+    m_haLegacy = getConfig()->value("homeassistant/legacy", true).toBool();
+    m_haPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
+    m_haStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
 
     connect(m_timer, &QTimer::timeout, this, &Controller::updateAvailability);
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
@@ -37,7 +38,7 @@ void Controller::publishExposes(const Device &device, bool remove)
             const Expose &expose = it.value()->exposes().at(i);
             QVariant option = expose->option();
 
-            if (m_homeassistant && expose->homeassistant())
+            if (m_haEnabled && expose->homeassistant())
             {
                 QString id = expose->multiple() ? QString::number(it.key()) : QString(), topic = m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':');
                 QList <QString> object = {expose->name()};
@@ -74,11 +75,12 @@ void Controller::publishExposes(const Device &device, bool remove)
                     json.insert("availability", availability);
                     json.insert("availability_mode", "all");
                     json.insert("device", identity);
-                    json.insert("name", QString("%1 %2").arg(device->name(), name));
+                    json.insert("has_entity_name", m_haLegacy ? false : true);
+                    json.insert("name", m_haLegacy ? QString("%1 %2").arg(device->name(), name) : name);
                     json.insert("unique_id", QString("%1_%2").arg(device->ieeeAddress().toHex(), object.join('_')));
                 }
 
-                mqttPublish(QString("%1/%2/%3/%4/config").arg(m_homeassistantPrefix, expose->component(), device->ieeeAddress().toHex(), object.join('_')), json, true);
+                mqttPublish(QString("%1/%2/%3/%4/config").arg(m_haPrefix, expose->component(), device->ieeeAddress().toHex(), object.join('_')), json, true);
 
                 if (expose->name() == "action" || expose->name() == "event" || expose->name() == "scene")
                 {
@@ -113,7 +115,7 @@ void Controller::publishExposes(const Device &device, bool remove)
                             item.insert("value_template", QString("{{ value_json.%1 }}").arg(expose->name()));
                         }
 
-                        mqttPublish(QString("%1/device_automation/%2/%3/config").arg(m_homeassistantPrefix, device->ieeeAddress().toHex(), event.join('_')), item, true);
+                        mqttPublish(QString("%1/device_automation/%2/%3/config").arg(m_haPrefix, device->ieeeAddress().toHex(), event.join('_')), item, true);
                     }
                 }
             }
@@ -193,8 +195,8 @@ void Controller::mqttConnected(void)
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
 
-    if (m_homeassistant)
-        mqttSubscribe(m_homeassistantStatus);
+    if (m_haEnabled)
+        mqttSubscribe(m_haStatus);
 
     publishProperties();
 }
@@ -305,7 +307,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
             }
         }
     }
-    else if (topic.name() == m_homeassistantStatus)
+    else if (topic.name() == m_haStatus)
     {
         if (message != "online")
             return;
