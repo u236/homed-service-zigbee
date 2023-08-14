@@ -168,6 +168,7 @@ void DeviceList::setupDevice(const Device &device)
     for (auto it = list.begin(); it != list.end() && !device->supported(); it++)
     {
         QList <QString> list = it->entryList(QDir::Files);
+        bool check = false;
 
         for (int i = 0; i < list.count(); i++)
         {
@@ -187,11 +188,15 @@ void DeviceList::setupDevice(const Device &device)
             {
                 QJsonObject json = it->toObject();
                 QJsonArray modelNames = json.value("modelNames").toArray();
+                bool found = modelNames.contains(modelName);
 
-                if (modelNames.contains(modelName) || (manufacturerName == "TUYA" && modelNames.contains(device->modelName())))
+                if (found || (!check && manufacturerName == "TUYA" && modelNames.contains(device->modelName())))
                 {
                     QJsonValue endpoinId = json.value("endpointId");
                     QList <QVariant> endpoints = endpoinId.type() == QJsonValue::Array ? endpoinId.toArray().toVariantList() : QList <QVariant> {endpoinId.toInt(1)};
+
+                    if (found)
+                        check = true;
 
                     if (json.contains("description"))
                         device->setDescription(json.value("description").toString());

@@ -129,6 +129,8 @@ void Controller::publishExposes(const Device &device, bool remove)
                 items.append(expose->name());
                 map.insert("items", QVariant(items));
 
+                logInfo << device->name() << it.key() << key << expose->name() << map;
+
                 if (expose->name() == "light" && option.toStringList().contains("colorTemperature"))
                 {
                     QVariant colorTemperature = expose->option("colorTemperature");
