@@ -388,8 +388,8 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
-      "description":    "Aqara D1 1-Key Wireless Switch WXKG06LM",
-      "modelNames":     ["lumi.remote.b186acn02"],
+      "description":    "Aqara D1 1-Key Wireless Switch WXKG03LM or WXKG06LM",
+      "modelNames":     ["lumi.remote.b186acn01", "lumi.remote.b186acn02"],
       "properties":     ["lumiBasic", "lumiSwitchAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": ["singleClick", "doubleClick", "hold"]}
