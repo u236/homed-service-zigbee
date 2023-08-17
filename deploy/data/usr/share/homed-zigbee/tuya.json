@@ -440,15 +440,15 @@
       "properties":     ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
-      "exposes":        ["switch", "powerOnStatus"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true}
+      "exposes":        ["switch", "indicatorMode", "powerOnStatus"],
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay",
       "modelNames":     ["_TZ3000_bvrlqyj7", "_TZ3000_01gpyda5", "_TZ3000_4zf0crgo", "_TZ3000_5gey1ohx", "_TZ3000_7ed9cqgi", "_TZ3000_fisb3ajo", "_TZ3000_jl7qyupf", "_TZ3000_nPGIPl5D", "_TZ3000_zmy4lslw"],
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
-      "exposes":        ["powerOnStatus"],
+      "exposes":        ["switchType", "powerOnStatus"],
       "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
@@ -465,8 +465,8 @@
       "modelNames":     ["TS0002", "TS0012"],
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "exposes":        ["powerOnStatus"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
+      "exposes":        ["indicatorMode", "powerOnStatus"],
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -482,7 +482,7 @@
       "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
-      "exposes":        ["powerOnStatus"],
+      "exposes":        ["switchType", "powerOnStatus"],
       "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
@@ -499,8 +499,8 @@
       "modelNames":     ["TS0003", "TS0013"],
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "exposes":        ["powerOnStatus"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
+      "exposes":        ["indicatorMode", "powerOnStatus"],
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -516,7 +516,7 @@
       "modelNames":     ["_TZ3000_ltt60asa"],
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
-      "exposes":        ["powerOnStatus"],
+      "exposes":        ["switchType", "powerOnStatus"],
       "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
@@ -533,8 +533,8 @@
       "modelNames":     ["TS0004", "TS0014"],
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "exposes":        ["powerOnStatus"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
+      "exposes":        ["indicatorMode", "powerOnStatus"],
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -550,8 +550,8 @@
       "modelNames":     ["TS0006"],
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "exposes":        ["powerOnStatus"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
+      "exposes":        ["indicatorMode", "powerOnStatus"],
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -599,8 +599,8 @@
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
+      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
@@ -621,8 +621,8 @@
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 15}
+      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "options":        {"switch": "outlet", "indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 15}
     },
     {
       "description":    "TUYA TS0501/TS1101 Dimmable Bulb or Led Dimmer",
