@@ -10,19 +10,13 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include "device/expose.h"
 #include "action.h"
 #include "adapter.h"
 #include "binding.h"
-#include "expose.h"
 #include "poll.h"
 #include "property.h"
 #include "reporting.h"
-
-class EndpointObject;
-typedef QSharedPointer <EndpointObject> Endpoint;
-
-class DeviceObject;
-typedef QSharedPointer <DeviceObject> Device;
 
 enum class ZoneStatus
 {
@@ -39,18 +33,15 @@ enum class AvailabilityStatus
     Offline
 };
 
-class EndpointObject : public EndpointDataObject
+class EndpointObject : public AbstractEndpointObject, public EndpointDataObject
 {
 
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-        EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_id(id), m_device(device), m_pollInterval(0), m_pollTime(0), m_colorCapabilities(0), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown), m_descriptorReceived(false), m_updated(false) {}
+        AbstractEndpointObject(id, device), EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_pollInterval(0), m_pollTime(0), m_colorCapabilities(0), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown), m_descriptorReceived(false), m_updated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
-
-    inline quint8 id(void) { return m_id; }
-    inline Device device(void) { return m_device; }
 
     inline quint32 pollInterval(void) { return m_pollInterval; }
     inline void setPollInterval(quint32 value) { m_pollInterval = value; }
@@ -78,14 +69,10 @@ public:
     inline QList <Binding> &bindings(void) { return m_bindings; }
     inline QList <Reporting> &reportings(void) { return m_reportings; }
     inline QList <Poll> &polls(void) { return m_polls; }
-    inline QList <Expose> &exposes(void) { return m_exposes; }
 
 private:
 
     QTimer *m_timer;
-
-    quint8 m_id;
-    QWeakPointer <DeviceObject> m_device;
 
     quint32 m_pollInterval;
     qint64 m_pollTime;
@@ -100,18 +87,16 @@ private:
     QList <Binding> m_bindings;
     QList <Reporting> m_reportings;
     QList <Poll> m_polls;
-    QList <Expose> m_exposes;
 
 };
 
-class DeviceObject : public QObject
+class DeviceObject : public AbstractDeviceObject
 {
-    Q_OBJECT
 
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        QObject(nullptr), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_version(0), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
+        m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -153,15 +138,6 @@ public:
     inline quint8 powerSource(void) { return m_powerSource; }
     inline void setPowerSource(quint8 value) { m_powerSource = value; }
 
-    inline quint8 version(void) { return m_version; }
-    inline void setVersion(quint8 value) { m_version = value; }
-
-    inline QString manufacturerName(void) { return m_manufacturerName; }
-    inline void setManufacturerName(const QString &value) { m_manufacturerName = value; }
-
-    inline QString modelName(void) { return m_modelName; }
-    inline void setModelName(const QString &value) { m_modelName = value; }
-
     inline QString firmware(void) { return m_firmware; }
     inline void setFirmware(const QString &value) { m_firmware = value; }
 
@@ -181,8 +157,6 @@ public:
     inline QString description(void) { return m_description; }
     inline void setDescription(const QString &value) { m_description = value; }
 
-    inline QMap <QString, QVariant> &options(void) { return m_options; }
-    inline QMap <quint8, Endpoint> &endpoints(void) { return m_endpoints; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
 private:
@@ -198,8 +172,8 @@ private:
 
     LogicalType m_logicalType;
     quint16 m_manufacturerCode;
-    quint8 m_powerSource, m_version;
-    QString m_manufacturerName, m_modelName, m_firmware;
+    quint8 m_powerSource;
+    QString m_firmware;
 
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
@@ -207,8 +181,6 @@ private:
     AvailabilityStatus m_availability;
     QString m_description;
 
-    QMap <QString, QVariant> m_options;
-    QMap <quint8, Endpoint> m_endpoints;
     QMap <quint16, quint8> m_neighbors;
 
 };

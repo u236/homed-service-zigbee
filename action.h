@@ -8,19 +8,19 @@
 class ActionObject;
 typedef QSharedPointer <ActionObject> Action;
 
-class ActionObject : public MetaObject
+class ActionObject : public AbstractMetaObject
 {
 
 public:
 
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode = 0, QList <quint16> attributes = {}) :
-        MetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_attributes(attributes) {}
+        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_attributes(attributes) {}
 
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId) :
-        MetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_attributes({attributeId}) {}
+        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_attributes({attributeId}) {}
 
     ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, QList <QString> actions) :
-        MetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_actions(actions) {}
+        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_actions(actions) {}
 
     virtual ~ActionObject(void) {}
     virtual QByteArray request(const QString &name, const QVariant &data) = 0;

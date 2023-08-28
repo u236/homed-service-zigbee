@@ -3,18 +3,18 @@
 
 #include <QSharedPointer>
 #include <QVariant>
-#include "meta.h"
+#include "device/endpoint.h"
 
 class PropertyObject;
 typedef QSharedPointer <PropertyObject> Property;
 
-class PropertyObject : public MetaObject
+class PropertyObject : public AbstractMetaObject
 {
 
 public:
 
     PropertyObject(const QString &name, quint16 clusterId) :
-        MetaObject(name), m_clusterId(clusterId), m_multiple(false), m_timeout(0), m_time(0), m_transactionId(0) {}
+        AbstractMetaObject(name), m_clusterId(clusterId), m_multiple(false), m_timeout(0), m_time(0), m_transactionId(0) {}
 
     virtual ~PropertyObject(void) {}
     virtual void parseAttribte(quint16, const QByteArray &) {}

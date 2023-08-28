@@ -1,3 +1,5 @@
+include(../homed-common/device/endpoint.pri)
+
 include(../homed-common/homed-color.pri)
 include(../homed-common/homed-common.pri)
 include(../homed-common/homed-gpio.pri)
@@ -14,9 +16,7 @@ HEADERS += \
     binding.h \
     controller.h \
     device.h \
-    expose.h \
     ezsp.h \
-    meta.h \
     poll.h \
     properties/common.h \
     properties/efekta.h \
@@ -44,9 +44,7 @@ SOURCES += \
     binding.cpp \
     controller.cpp \
     device.cpp \
-    expose.cpp \
     ezsp.cpp \
-    meta.cpp \
     poll.cpp \
     properties/common.cpp \
     properties/efekta.cpp \
