@@ -10,10 +10,10 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include "device/expose.h"
 #include "action.h"
 #include "adapter.h"
 #include "binding.h"
+#include "expose.h"
 #include "poll.h"
 #include "property.h"
 #include "reporting.h"

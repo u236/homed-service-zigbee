@@ -3,7 +3,7 @@
 
 #include <QSharedPointer>
 #include <QVariant>
-#include "device/endpoint.h"
+#include "endpoint.h"
 
 class PropertyObject;
 typedef QSharedPointer <PropertyObject> Property;
