@@ -78,7 +78,11 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
     auto it = device->endpoints().find(endpointId);
 
     if (it == device->endpoints().end())
-        it = device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
+    {
+        Endpoint endpoint(new EndpointObject(endpointId, device));
+        device->abstractEndpoints().insert(endpointId, endpoint.data());
+        it = device->endpoints().insert(endpointId, endpoint);
+    }
 
     return it.value();
 }
@@ -722,6 +726,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                         for (const QJsonValue &clusterId : outClusters)
                             endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
 
+                        device->abstractEndpoints().insert(endpointId, endpoint.data());
                         device->endpoints().insert(endpointId, endpoint);
                     }
                 }

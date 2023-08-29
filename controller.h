@@ -43,11 +43,8 @@ private:
     ZigBee *m_zigbee;
 
     QMetaEnum m_commands;
+    QString m_haStatus;
 
-    bool m_haEnabled, m_haLegacy;
-    QString m_haPrefix, m_haStatus;
-
-    void publishExposes(const Device &device, bool remove = false);
     void publishProperties(void);
 
 public slots:
