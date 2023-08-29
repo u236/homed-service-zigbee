@@ -58,7 +58,7 @@ void ActionObject::registerMetaTypes(void)
 
 Property ActionObject::endpointProperty(const QString &name)
 {
-    EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (m_parent);
+    EndpointObject *endpoint = static_cast <EndpointObject*> (m_parent);
     QString propertyName = name.isEmpty() ? m_name : name;
 
     if (endpoint)

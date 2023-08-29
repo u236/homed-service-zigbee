@@ -35,7 +35,7 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPo
 
 QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant &data)
 {
-    QMap <QString, QVariant> map = option().toMap();
+    QMap <QString, QVariant> map = option().toMap(), options = option(name).toMap();
     QList <QString> types = {"bool", "value", "enum"};
 
     for (auto it = map.begin(); it != map.end(); it++)
@@ -65,14 +65,14 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
 
                 case 1: // value
                 {
-                    QMap <QString, QVariant> options = option(name).toMap();
-                    double check = data.toDouble(), min = options.value("min").toDouble(), max = options.value("max").toDouble();
+                    bool hasMin, hasMax;
+                    double check = data.toDouble(), min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax);
                     qint32 value;
 
-                    if (check < min)
+                    if (hasMin && check < min)
                         check = min;
 
-                    if (check > max)
+                    if (hasMax && check > max)
                         check = max;
 
                     value = qToBigEndian <qint32> (check * item.value("divider", 1).toDouble() - item.value("offset").toDouble());
@@ -81,7 +81,6 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
 
                 case 2: // enum
                 {
-                    QMap <QString, QVariant> options = option(name).toMap();
                     qint8 value;
 
                     if (options.contains("min") && options.contains("max"))
