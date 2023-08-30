@@ -198,17 +198,15 @@ void Controller::updateAvailability(void)
 
 void Controller::deviceEvent(const Device &device, ZigBee::Event event)
 {
-    bool check = true;
+    bool check = true, remove = false;
 
     switch (event)
     {
         case ZigBee::Event::deviceLeft:
         case ZigBee::Event::deviceRemoved:
         case ZigBee::Event::deviceAboutToRename:
-
-            if (device->availability() != AvailabilityStatus::Unknown)
-                mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
-
+            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject(), true);
+            remove = true;
             break;
 
         case ZigBee::Event::deviceUpdated:
@@ -227,7 +225,7 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
     }
 
     if (check)
-        device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex());
+        device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), remove);
 
     mqttPublish(mqttTopic("event/zigbee"), {{"device", device->name()}, {"event", m_zigbee->eventName(event)}});
 }
