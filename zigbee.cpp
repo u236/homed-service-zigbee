@@ -1532,11 +1532,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                     quint8 endpointId = static_cast <quint8> (data.at(i));
 
                     if (device->endpoints().find(endpointId) == device->endpoints().end())
-                    {
-                        Endpoint endpoint(new EndpointObject(endpointId, device));
-                        device->abstractEndpoints().insert(endpointId, endpoint.data());
-                        device->endpoints().insert(endpointId, endpoint);
-                    }
+                        device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
 
                     list.append(QString::asprintf("0x%02x", endpointId));
                 }

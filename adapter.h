@@ -124,14 +124,13 @@ struct bindRequestStruct
 class EndpointDataObject;
 typedef QSharedPointer <EndpointDataObject> EndpointData;
 
-class EndpointDataObject : public QObject
+class EndpointDataObject
 {
-    Q_OBJECT
 
 public:
 
     EndpointDataObject(quint16 profileId = 0, quint16 deviceId = 0) :
-        QObject(nullptr), m_profileId(profileId), m_deviceId(deviceId) {}
+        m_profileId(profileId), m_deviceId(deviceId) {}
 
     inline quint16 profileId(void) { return m_profileId; }
     inline void setProfileId(quint16 value) { m_profileId = value; }
