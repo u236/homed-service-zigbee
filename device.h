@@ -26,13 +26,6 @@ enum class ZoneStatus
     Enrolled
 };
 
-enum class AvailabilityStatus
-{
-    Unknown,
-    Online,
-    Offline
-};
-
 class EndpointObject : public AbstractEndpointObject, public EndpointDataObject
 {
 
@@ -96,7 +89,7 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_availability(AvailabilityStatus::Unknown) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -151,9 +144,6 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
 
-    inline AvailabilityStatus availability(void) { return m_availability; }
-    inline void setAvailability(AvailabilityStatus value) { m_availability = value; }
-
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
 private:
@@ -174,7 +164,6 @@ private:
 
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
-    AvailabilityStatus m_availability;
 
     QMap <quint16, quint8> m_neighbors;
 

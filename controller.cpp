@@ -178,7 +178,7 @@ void Controller::updateAvailability(void)
 
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
     {
-        AvailabilityStatus check = it.value()->availability();
+        Availability check = it.value()->availability();
         qint64 timeout = it.value()->options().value("availability").toInt();
 
         if (it.value()->removed() || it.value()->logicalType() == LogicalType::Coordinator)
@@ -187,12 +187,12 @@ void Controller::updateAvailability(void)
         if (!timeout)
             timeout = it.value()->batteryPowered() ? 86400 : 600;
 
-        it.value()->setAvailability(time - it.value()->lastSeen() <= timeout ? AvailabilityStatus::Online : AvailabilityStatus::Offline);
+        it.value()->setAvailability(time - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline);
 
         if (it.value()->availability() == check)
             continue;
 
-        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"status", it.value()->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
+        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"status", it.value()->availability() == Availability::Online ? "online" : "offline"}}, true);
     }
 }
 
@@ -211,8 +211,8 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
 
         case ZigBee::Event::deviceUpdated:
 
-            if (device->availability() != AvailabilityStatus::Unknown)
-                mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == AvailabilityStatus::Online ? "online" : "offline"}}, true);
+            if (device->availability() != Availability::Unknown)
+                mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == Availability::Online ? "online" : "offline"}}, true);
 
             break;
 
