@@ -89,16 +89,13 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_name(name), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
     inline quint16 networkAddress(void) { return m_networkAddress; }
     inline void setNetworkAddress(quint16 value) { m_networkAddress = value; }
-
-    inline QString name(void) { return m_name.isEmpty() ? m_ieeeAddress.toHex(':') : m_name; }
-    inline void setName(const QString &value) { m_name = value; }
 
     inline bool descriptorReceived(void) { return m_descriptorReceived; }
     inline void setDescriptorReceived(void) { m_descriptorReceived = true; }
@@ -152,7 +149,6 @@ private:
 
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;
-    QString m_name;
 
     bool m_removed, m_supported, m_descriptorReceived, m_endpointsReceived, m_interviewFinished;
     quint8 m_interviewEndpointId, m_lqiRequestIndex;
@@ -229,7 +225,7 @@ private slots:
 signals:
 
     void statusUpdated(const QJsonObject &json);
-    void endpointUpdated(const Device &device, quint8 endpointId);
+    void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 
 };

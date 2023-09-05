@@ -96,7 +96,7 @@ void ZigBee::setDeviceName(const QString &deviceName, const QString &name)
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    if (!other.isNull() && other != device)
+    if (device != other && !other.isNull())
     {
         logWarning << "Device" << device->name() << "rename failed, name already in use";
         emit deviceEvent(device, Event::deviceNameDuplicate);
@@ -104,7 +104,7 @@ void ZigBee::setDeviceName(const QString &deviceName, const QString &name)
     else if (device->name() != name)
     {
         emit deviceEvent(device, Event::deviceAboutToRename);
-        device->setName(name);
+        device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name);
         emit deviceEvent(device, Event::deviceUpdated);
     }
 
@@ -252,7 +252,7 @@ void ZigBee::getProperties(const QString &deviceName)
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        emit endpointUpdated(device, it.key());
+        emit endpointUpdated(device.data(), it.key());
 }
 
 void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global)
@@ -827,7 +827,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
     if (endpoint->updated())
     {
         m_devices->storeProperties();
-        emit endpointUpdated(device, endpoint->id());
+        emit endpointUpdated(device.data(), endpoint->id());
     }
 
     if (!m_debug || check)
@@ -1058,7 +1058,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     if (endpoint->updated())
     {
         m_devices->storeProperties();
-        emit endpointUpdated(device, endpoint->id());
+        emit endpointUpdated(device.data(), endpoint->id());
     }
 
     if (!m_debug || check)

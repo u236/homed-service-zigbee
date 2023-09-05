@@ -200,7 +200,7 @@ private slots:
 signals:
 
     void deviceEvent(const Device &device, ZigBee::Event event);
-    void endpointUpdated(const Device &device, quint8 endpointId);
+    void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
     void replyReceived(void);
 

@@ -45,7 +45,7 @@ private:
     QMetaEnum m_commands;
     QString m_haStatus;
 
-    void publishProperties(void);
+    void publishExposes(const Device &device, bool remove = false);
 
 public slots:
 
@@ -59,7 +59,7 @@ private slots:
     void updateAvailability(void);
 
     void deviceEvent(const Device &device, ZigBee::Event event);
-    void endpointUpdated(const Device &device, quint8 endpointId);
+    void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
 
 };

@@ -24,17 +24,15 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile), m_timer(n
     m_zigbee->init();
 }
 
-void Controller::publishProperties(void)
+void Controller::publishExposes(const Device &device, bool remove)
 {
-    for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
-    {
-        const Device &device = it.value();
+    device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), remove);
 
-        device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex());
+    if (remove)
+        return;
 
-        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-            endpointUpdated(device, it.key());
-    }
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        endpointUpdated(device.data(), it.key());
 }
 
 void Controller::quit(void)
@@ -47,14 +45,14 @@ void Controller::mqttConnected(void)
 {
     logInfo << "MQTT connected";
 
-    mqttSubscribe(mqttTopic("config/zigbee"));
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
 
     if (getConfig()->value("homeassistant/enabled", false).toBool())
         mqttSubscribe(m_haStatus);
 
-    publishProperties();
+    for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
+        publishExposes(it.value());
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -62,21 +60,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     QString subTopic = topic.name().replace(mqttTopic(), QString());
     QJsonObject json = QJsonDocument::fromJson(message).object();
 
-    if (subTopic == "config/zigbee" && json.contains("devices"))
-    {
-        QJsonArray array = json.value("devices").toArray();
-
-        logInfo << "Configuration message received";
-
-        for (auto it = array.begin(); it != array.end(); it++)
-        {
-            QJsonObject item = it->toObject();
-
-            if (item.contains("ieeeAddress") && item.contains("deviceName"))
-                m_zigbee->setDeviceName(item.value("ieeeAddress").toString(), item.value("deviceName").toString());
-        }
-    }
-    else if (subTopic == "command/zigbee" && json.contains("action"))
+    if (subTopic == "command/zigbee")
     {
         Command command = static_cast <Command> (m_commands.keyToValue(json.value("action").toString().toUtf8().constData()));
 
@@ -168,7 +152,8 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
         if (message != "online")
             return;
 
-        publishProperties();
+        for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
+            publishExposes(it.value());
     }
 }
 
@@ -225,12 +210,12 @@ void Controller::deviceEvent(const Device &device, ZigBee::Event event)
     }
 
     if (check)
-        device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), remove);
+        publishExposes(device, remove);
 
     mqttPublish(mqttTopic("event/zigbee"), {{"device", device->name()}, {"event", m_zigbee->eventName(event)}});
 }
 
-void Controller::endpointUpdated(const Device &device, quint8 endpointId)
+void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)
 {
     QMap <QString, QVariant> endpointMap, deviceMap = {{"linkQuality", device->linkQuality()}};
     bool retain = device->options().value("retain").toBool();

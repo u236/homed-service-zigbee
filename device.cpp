@@ -1005,7 +1005,7 @@ void DeviceList::endpointTimeout(void)
             if (property->value() == value)
                 continue;
 
-            emit endpointUpdated(endpoint->device(), endpoint->id());
+            emit endpointUpdated(endpoint->device().data(), endpoint->id());
         }
     }
 
