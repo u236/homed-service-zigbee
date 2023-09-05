@@ -83,7 +83,7 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     }
 
     logInfo << "Device" << device->name() << "removed (force)";
-    emit deviceEvent(device, Event::deviceRemoved);
+    emit deviceEvent(device.data(), Event::deviceRemoved);
 
     m_devices->removeDevice(device);
     m_devices->storeDatabase();
@@ -99,13 +99,13 @@ void ZigBee::setDeviceName(const QString &deviceName, const QString &name)
     if (device != other && !other.isNull())
     {
         logWarning << "Device" << device->name() << "rename failed, name already in use";
-        emit deviceEvent(device, Event::deviceNameDuplicate);
+        emit deviceEvent(device.data(), Event::deviceNameDuplicate);
     }
     else if (device->name() != name)
     {
-        emit deviceEvent(device, Event::deviceAboutToRename);
+        emit deviceEvent(device.data(), Event::deviceAboutToRename);
         device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name);
-        emit deviceEvent(device, Event::deviceUpdated);
+        emit deviceEvent(device.data(), Event::deviceUpdated);
     }
 
     m_devices->storeDatabase();
@@ -119,7 +119,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
         return;
 
     m_devices->setupDevice(device);
-    emit deviceEvent(device, Event::deviceUpdated);
+    emit deviceEvent(device.data(), Event::deviceUpdated);
 
     if (!reportings)
     {
@@ -540,12 +540,12 @@ void ZigBee::interviewFinished(const Device &device)
     if (!interviewQuirks(device) || !configureDevice(device))
     {
         logWarning << "Device" << device->name() << "interview finished with errors";
-        emit deviceEvent(device, Event::interviewError);
+        emit deviceEvent(device.data(), Event::interviewError);
     }
     else
     {
         logInfo << "Device" << device->name() << "interview finished successfully";
-        emit deviceEvent(device, Event::interviewFinished);
+        emit deviceEvent(device.data(), Event::interviewFinished);
         device->setInterviewFinished();
     }
 
@@ -558,7 +558,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
         return;
 
     logWarning << "Device" << device->name() << "interview error:" << reason;
-    emit deviceEvent(device, Event::interviewError);
+    emit deviceEvent(device.data(), Event::interviewError);
 
     device->timer()->stop();
 }
@@ -1281,7 +1281,7 @@ void ZigBee::interviewTimeoutHandler(const Device &device)
     }
 
     logWarning << "Device" << device->name() << "interview timed out";
-    emit deviceEvent(device, Event::interviewTimeout);
+    emit deviceEvent(device.data(), Event::interviewTimeout);
 }
 
 void ZigBee::rejoinHandler(const Device &device)
@@ -1417,7 +1417,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         interviewDevice(it.value());
     }
 
-    emit deviceEvent(it.value(), Event::deviceJoined);
+    emit deviceEvent(it.value().data(), Event::deviceJoined);
 }
 
 void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
@@ -1431,7 +1431,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     blink(500);
 
     logInfo << "Device" << it.value()->name() << "left network";
-    emit deviceEvent(it.value(), Event::deviceLeft);
+    emit deviceEvent(it.value().data(), Event::deviceLeft);
 
     m_devices->removeDevice(it.value());
     m_devices->storeDatabase();
@@ -1690,7 +1690,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
                 break;
 
             logInfo << "Device" << device->name() << "removed";
-            emit deviceEvent(device, Event::deviceRemoved);
+            emit deviceEvent(device.data(), Event::deviceRemoved);
 
             m_devices->removeDevice(device);
             m_devices->storeDatabase();

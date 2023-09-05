@@ -1,38 +1,35 @@
 #include "controller.h"
 #include "logger.h"
 
-Controller::Controller(const QString &configFile) : HOMEd(configFile), m_timer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
+Controller::Controller(const QString &configFile) : HOMEd(configFile), m_avaliabilityTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
 {
-    QDate date = QDate::currentDate();
-
-    if (date > QDate(date.year(), 12, 23) && date < QDate(date.year() + 1, 1, 15))
-        logInfo << "Merry Christmas and a Happy New Year!" << "\xF0\x9F\x8E\x81\xF0\x9F\x8E\x84\xF0\x9F\x8D\xBA";
-
     logInfo << "Starting version" << SERVICE_VERSION;
     logInfo << "Configuration file is" << getConfig()->fileName();
 
     m_haStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
 
-    connect(m_timer, &QTimer::timeout, this, &Controller::updateAvailability);
+    connect(m_avaliabilityTimer, &QTimer::timeout, this, &Controller::updateAvailability);
+    connect(m_propertiesTimer, &QTimer::timeout, this, &Controller::updateProperties);
+
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
     connect(m_zigbee, &ZigBee::statusUpdated, this, &Controller::statusUpdated);
 
-    m_timer->start(UPDATE_AVAILABILITY_INTERVAL);
+    m_avaliabilityTimer->start(UPDATE_AVAILABILITY_INTERVAL);
+    m_propertiesTimer->setSingleShot(true);
 
     m_zigbee->devices()->setNames(getConfig()->value("mqtt/names", false).toBool());
     m_zigbee->init();
 }
 
-void Controller::publishExposes(const Device &device, bool remove)
+void Controller::publishExposes(DeviceObject *device, bool remove)
 {
     device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), remove);
 
     if (remove)
         return;
 
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        endpointUpdated(device.data(), it.key());
+    m_propertiesTimer->start(UPDATE_PROPERTIES_DELAY);
 }
 
 void Controller::quit(void)
@@ -52,7 +49,7 @@ void Controller::mqttConnected(void)
         mqttSubscribe(m_haStatus);
 
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
-        publishExposes(it.value());
+        publishExposes(it.value().data());
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -152,8 +149,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
         if (message != "online")
             return;
 
-        for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
-            publishExposes(it.value());
+        m_propertiesTimer->start(UPDATE_PROPERTIES_DELAY);
     }
 }
 
@@ -181,7 +177,18 @@ void Controller::updateAvailability(void)
     }
 }
 
-void Controller::deviceEvent(const Device &device, ZigBee::Event event)
+void Controller::updateProperties(void)
+{
+    for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
+    {
+        const Device &device = it.value();
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+            endpointUpdated(device.data(), it.key());
+    }
+}
+
+void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event)
 {
     bool check = true, remove = false;
 

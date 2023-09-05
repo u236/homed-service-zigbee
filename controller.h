@@ -3,6 +3,7 @@
 
 #define SERVICE_VERSION                 "3.4.6"
 #define UPDATE_AVAILABILITY_INTERVAL    10000
+#define UPDATE_PROPERTIES_DELAY         1000
 
 #include "homed.h"
 #include "zigbee.h"
@@ -39,13 +40,13 @@ public:
 
 private:
 
-    QTimer *m_timer;
+    QTimer *m_avaliabilityTimer, *m_propertiesTimer;
     ZigBee *m_zigbee;
 
     QMetaEnum m_commands;
     QString m_haStatus;
 
-    void publishExposes(const Device &device, bool remove = false);
+    void publishExposes(DeviceObject *device, bool remove = false);
 
 public slots:
 
@@ -57,8 +58,9 @@ private slots:
     void mqttReceived(const QByteArray &message, const QMqttTopicName &topic) override;
 
     void updateAvailability(void);
+    void updateProperties(void);
 
-    void deviceEvent(const Device &device, ZigBee::Event event);
+    void deviceEvent(DeviceObject *device, ZigBee::Event event);
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
 
