@@ -55,6 +55,16 @@ namespace PropertiesOther
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class LmahmutovCO2 : public PropertyObject
+    {
+
+    public:
+
+        LmahmutovCO2(void) : PropertyObject("co2", CLUSTER_LMAHMUTOV) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
 }
 
 #endif

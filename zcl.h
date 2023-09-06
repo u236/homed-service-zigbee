@@ -99,6 +99,7 @@
 
 #define CLUSTER_LUMI                                0xFCC0
 #define CLUSTER_PERENIO                             0xFC7B
+#define CLUSTER_LMAHMUTOV                           0xFFF2
 
 #define CLUSTER_TUYA_DATA                           0xEF00
 #define CLUSTER_TUYA_UNKNOWN                        0xE000

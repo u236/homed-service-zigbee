@@ -23,6 +23,18 @@
     }
   ],
 
+  "Lmahmutov":
+  [
+    {
+      "description":    "ESP32C6 CO2 Sensor",
+      "modelNames":     ["Air Sensor 1.0"],
+      "properties":     ["temperature", "humidity", "pressure", "lmahmutovCO2"],
+      "bindings":       ["temperature", "humidity", "pressure"],
+      "reportings":     ["temperature", "humidity", "pressure"],
+      "exposes":        ["temperature", "humidity", "pressure", "co2"]
+    }
+  ],
+
   "NXP":
   [
     {
