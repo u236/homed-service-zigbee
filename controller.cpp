@@ -63,6 +63,11 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
         switch (command)
         {
+            case Command::restartService:
+                logWarning << "Restart request received...";
+                QCoreApplication::exit(EXIT_RESTART);
+                break;
+
             case Command::setPermitJoin:
                 m_zigbee->setPermitJoin(json.value("enabled").toBool());
                 break;
