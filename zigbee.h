@@ -141,7 +141,7 @@ private:
     Adapter *m_adapter;
 
     QMetaEnum m_events;
-    quint8 m_requestId, m_requestStatus, m_interPanChannel;
+    quint8 m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
     bool m_replyReceived, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;

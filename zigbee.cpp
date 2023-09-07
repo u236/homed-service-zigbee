@@ -566,6 +566,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
 bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
 {
     m_adapter->setRequestAddress(device->ieeeAddress());
+    m_replyId = m_requestId;
     m_replyReceived = false;
 
     if (!m_adapter->bindRequest(m_requestId, device->networkAddress(), endpointId, clusterId, address, dstEndpointId, unbind))
@@ -612,6 +613,7 @@ bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
     }
 
     m_adapter->setRequestAddress(device->ieeeAddress());
+    m_replyId = m_requestId;
     m_replyReceived = false;
 
     if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpointId, reporting->clusterId(), request))
@@ -1651,7 +1653,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
 {
     auto it = m_requests.find(id);
 
-    if (id == m_requestId)
+    if (id == m_replyId)
     {
         m_requestStatus = status;
         m_replyReceived = true;
