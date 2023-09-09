@@ -52,37 +52,27 @@
 #define CONFIG_SECURITY_LEVEL                                   0x0D
 #define CONFIG_INDIRECT_TRANSMISSION_TIMEOUT                    0x12
 #define CONFIG_END_DEVICE_POLL_TIMEOUT                          0x13
+#define CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE                  0x19
 #define CONFIG_FRAGMENT_WINDOW_SIZE                             0x1C
 #define CONFIG_FRAGMENT_DELAY_MS                                0x1D
+#define CONFIG_PAN_ID_CONFLICT_REPORT_THRESHOLD                 0x22
+#define CONFIG_APPLICATION_ZDO_FLAGS                            0x2A
+#define CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S              0x38
 
 #define POLICY_TRUST_CENTER                                     0x00
-#define POLICY_BINDING_MODIFICATION                             0x01
-#define POLICY_UNICAST_REPLIES                                  0x02
-#define POLICY_POLL_HANDLER                                     0x03
-#define POLICY_MESSAGE_CONTENTS_IN_CALLBACK                     0x04
 #define POLICY_TC_KEY_REQUEST                                   0x05
 #define POLICY_APP_KEY_REQUEST                                  0x06
-#define POLICY_PACKET_VALIDATE_LIBRARY                          0x07
-#define POLICY_ZLL                                              0x08
-#define POLICY_TC_REJOINS_USING_WELL_KNOWN_KEY                  0x09
 
 #define DECISION_ALLOW_JOINS                                    0x01
 #define DECISION_ALLOW_UNSECURED_REJOINS                        0x02
-#define DECISION_DISALLOW_BINDING_MODIFICATION                  0x10
-#define DECISION_HOST_WILL_NOT_SUPPLY_REPLY                     0x20
-#define DECISION_POLL_HANDLER_IGNORE                            0x30
-#define DECISION_MESSAGE_TAG_ONLY_IN_CALLBACK                   0x40
 #define DECISION_ALLOW_TC_KEY_REQUESTS                          0x51
-#define DECISION_ALLOW_APP_KEY_REQUESTS                         0x61
-#define DECISION_PACKET_VALIDATE_LIBRARY_CHECKS_DISABLED        0x63
+#define DECISION_DENY_APP_KEY_REQUESTS                          0x60
 
 #define SECURITY_TRUST_CENTER_USES_HASHED_LINK_KEY              0x0084
 #define SECURITY_HAVE_PRECONFIGURED_KEY                         0x0100
 #define SECURITY_HAVE_NETWORK_KEY                               0x0200
 #define SECURITY_REQUIRE_ENCRYPTED_KEY                          0x0800
 
-#define VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE                    0x05
-#define VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE                    0x06
 #define VALUE_STACK_TOKEN_WRITING                               0x07
 #define VALUE_VERSION_INFO                                      0x11
 #define VALUE_CCA_THRESHOLD                                     0x15
@@ -284,7 +274,7 @@ struct setValueStruct
 {
     quint8  id;
     quint8  length;
-    quint16 value;
+    quint8  value;
 };
 
 struct setMulticastStruct
