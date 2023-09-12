@@ -36,7 +36,6 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
     m_config.append({CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE,      qToLittleEndian <quint16> (0x0002)});
     m_config.append({CONFIG_FRAGMENT_DELAY_MS,                    qToLittleEndian <quint16> (0x0032)});
     m_config.append({CONFIG_PAN_ID_CONFLICT_REPORT_THRESHOLD,     qToLittleEndian <quint16> (0x0002)});
-    m_config.append({CONFIG_APPLICATION_ZDO_FLAGS,                qToLittleEndian <quint16> (0x0003)});
     m_config.append({CONFIG_INDIRECT_TRANSMISSION_TIMEOUT,        qToLittleEndian <quint16> (0x1E00)});
     m_config.append({CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x000E)});
     m_config.append({CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
