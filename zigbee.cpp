@@ -1626,7 +1626,14 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
     request = m_requests.value(transactionId);
 
     if (!request.isNull() && request->type() == RequestType::Data && qvariant_cast <DataRequest> (request->data())->debug())
-        emit deviceEvent(device.data(), frameControl & FC_CLUSTER_SPECIFIC ? Event::clusterRequest : Event::globalRequest, {{"endpointId", endpointId}, {"clusterId", clusterId}, {"commandId", commandId}, {"payload", data.toHex(':').constData()}});
+    {
+        QJsonObject json = {{"endpointId", endpointId}, {"clusterId", clusterId}, {"commandId", commandId}, {"payload", data.toHex(':').constData()}};
+
+        if (manufacturerCode)
+            json.insert("manufacturerCode", manufacturerCode);
+
+        emit deviceEvent(device.data(), frameControl & FC_CLUSTER_SPECIFIC ? Event::clusterRequest : Event::globalRequest, json);
+    }
 
     if (frameControl & FC_CLUSTER_SPECIFIC)
         clusterCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, data);
@@ -1676,6 +1683,9 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
         case RequestType::Data:
         {
             DataRequest request = qvariant_cast <DataRequest> (it.value()->data());
+
+            if (request->debug())
+                emit deviceEvent(request->device().data(), Event::requestFinished, {{"status", status}});
 
             if (status)
             {

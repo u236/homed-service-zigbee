@@ -106,7 +106,8 @@ public:
         interviewError,
         interviewTimeout,
         clusterRequest,
-        globalRequest
+        globalRequest,
+        requestFinished
     };
 
     Q_ENUM(Event)
