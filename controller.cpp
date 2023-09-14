@@ -194,9 +194,12 @@ void Controller::updateProperties(void)
     }
 }
 
-void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event)
+void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json)
 {
+    QMap <QString, QVariant> map = {{"device", device->name()}, {"event", m_zigbee->eventName(event)}};
     bool check = true, remove = false;
+
+    map.insert(json.toVariantMap());
 
     switch (event)
     {
@@ -225,7 +228,7 @@ void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event)
     if (check)
         publishExposes(device, remove);
 
-    mqttPublish(mqttTopic("event/zigbee"), {{"device", device->name()}, {"event", m_zigbee->eventName(event)}});
+    mqttPublish(mqttTopic("event/zigbee"), QJsonObject::fromVariantMap(map));
 }
 
 void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)

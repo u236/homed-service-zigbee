@@ -42,14 +42,15 @@ class DataRequestObject
 
 public:
 
-    DataRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name) :
-        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_data(data), m_name(name) {}
+    DataRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name, bool debug) :
+        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_data(data), m_name(name), m_debug(debug) {}
 
     inline Device device(void) { return m_device; }
     inline quint8 endpointId(void) { return m_endpointId; }
     inline quint16 clusterId(void) { return m_clusterId; }
     inline QByteArray data(void) { return m_data; }
     inline QString name(void) { return m_name; }
+    inline bool debug(void) { return m_debug; }
 
 private:
 
@@ -58,6 +59,7 @@ private:
     quint16 m_clusterId;
     QByteArray m_data;
     QString m_name;
+    bool m_debug;
 
 };
 
@@ -66,10 +68,10 @@ class RequestObject
 
 public:
 
-    RequestObject(const QVariant &request, RequestType type) :
-        m_request(request), m_type(type), m_status(RequestStatus::Pending) {}
+    RequestObject(const QVariant &data, RequestType type) :
+        m_data(data), m_type(type), m_status(RequestStatus::Pending) {}
 
-    inline QVariant request(void) { return m_request; }
+    inline QVariant data(void) { return m_data; }
     inline RequestType type(void) { return m_type; }
 
     inline RequestStatus status(void) { return m_status; }
@@ -77,7 +79,7 @@ public:
 
 private:
 
-    QVariant m_request;
+    QVariant m_data;
     RequestType m_type;
     RequestStatus m_status;
 
@@ -102,7 +104,9 @@ public:
         deviceUpdated,
         interviewFinished,
         interviewError,
-        interviewTimeout
+        interviewTimeout,
+        clusterRequest,
+        globalRequest
     };
 
     Q_ENUM(Event)
@@ -149,7 +153,7 @@ private:
 
     QMap <quint8, Request> m_requests;
 
-    void enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString());
+    void enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString(), bool debug = false);
     void enqueueRequest(const Device &device, RequestType type);
 
     bool interviewRequest(quint8 id, const Device &device);
@@ -199,7 +203,7 @@ private slots:
 
 signals:
 
-    void deviceEvent(DeviceObject *device, ZigBee::Event event);
+    void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json = QJsonObject());
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
     void replyReceived(void);

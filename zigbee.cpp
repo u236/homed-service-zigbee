@@ -267,7 +267,7 @@ void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint1
     request = zclHeader(global ? 0x00 : FC_CLUSTER_SPECIFIC, m_requestId, commandId, manufacturerCode).append(payload);
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId ? endpointId : 0x01) << "cluster" << QString::asprintf("0x%04x", clusterId) << "request" << m_requestId << "enqueued with data" << request.toHex(':');
 
-    enqueueRequest(device, endpointId ? endpointId : 0x01, clusterId, request, QString("request %1").arg(m_requestId));
+    enqueueRequest(device, endpointId ? endpointId : 0x01, clusterId, request, QString("request %1").arg(m_requestId), true);
 }
 
 void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
@@ -347,9 +347,9 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
     }
 }
 
-void ZigBee::enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name)
+void ZigBee::enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name, bool debug)
 {
-    DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name));
+    DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name, debug));
 
     if (!m_requestTimer->isActive() && !m_interPanLock)
         m_requestTimer->start();
@@ -1080,14 +1080,14 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
         case CMD_CONFIGURE_REPORTING_RESPONSE:
 
             if (payload.at(0))
-                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "reporting configuration error, status code:" << QString::asprintf("0x%02x", payload.at(0));
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "reporting configuration error, status code:" << QString::asprintf("0x%02x", static_cast <quint8> (payload.at(0)));
 
             break;
 
         case CMD_DEFAULT_RESPONSE:
 
             if (payload.at(1))
-                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", payload.at(0)) << "default response received with error, status code:" << QString::asprintf("0x%02x", payload.at(1));
+                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", payload.at(0)) << "default response received with error, status code:" << QString::asprintf("0x%02x", static_cast <quint8> (payload.at(1)));
 
             break;
 
@@ -1599,6 +1599,7 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
     quint16 manufacturerCode = 0;
     quint8 frameControl = static_cast <quint8> (payload.at(0)), transactionId, commandId;
     QByteArray data;
+    Request request;
 
     if (device.isNull() || device->removed())
         return;
@@ -1621,6 +1622,11 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
         commandId = static_cast <quint8> (payload.at(2));
         data = payload.mid(3);
     }
+
+    request = m_requests.value(transactionId);
+
+    if (!request.isNull() && request->type() == RequestType::Data && qvariant_cast <DataRequest> (request->data())->debug())
+        emit deviceEvent(device.data(), frameControl & FC_CLUSTER_SPECIFIC ? Event::clusterRequest : Event::globalRequest, {{"endpointId", endpointId}, {"clusterId", clusterId}, {"commandId", commandId}, {"payload", data.toHex(':').constData()}});
 
     if (frameControl & FC_CLUSTER_SPECIFIC)
         clusterCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, data);
@@ -1669,7 +1675,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
     {
         case RequestType::Data:
         {
-            DataRequest request = qvariant_cast <DataRequest> (it.value()->request());
+            DataRequest request = qvariant_cast <DataRequest> (it.value()->data());
 
             if (status)
             {
@@ -1685,7 +1691,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
 
         case RequestType::Leave:
         {
-            Device device = qvariant_cast <Device> (it.value()->request());
+            Device device = qvariant_cast <Device> (it.value()->data());
 
             if (status)
                 logWarning << "Device" << device->name() << "leave request failed, status code:" << QString::asprintf("0x%02x", status);
@@ -1719,7 +1725,7 @@ void ZigBee::handleRequests(void)
         {
             case RequestType::Data:
             {
-                const DataRequest &request = qvariant_cast <DataRequest> (it.value()->request());
+                const DataRequest &request = qvariant_cast <DataRequest> (it.value()->data());
                 const Device &device = request->device();
 
                 m_adapter->setRequestAddress(device->ieeeAddress());
@@ -1735,7 +1741,7 @@ void ZigBee::handleRequests(void)
 
             case RequestType::Leave:
             {
-                const Device &device = qvariant_cast <Device> (it.value()->request());
+                const Device &device = qvariant_cast <Device> (it.value()->data());
 
                 m_adapter->setRequestAddress(device->ieeeAddress());
 
@@ -1750,7 +1756,7 @@ void ZigBee::handleRequests(void)
 
             case RequestType::LQI:
             {
-                const Device &device = qvariant_cast <Device> (it.value()->request());
+                const Device &device = qvariant_cast <Device> (it.value()->data());
 
                 m_adapter->setRequestAddress(device->ieeeAddress());
 
@@ -1762,7 +1768,7 @@ void ZigBee::handleRequests(void)
 
             case RequestType::Interview:
             {
-                const Device &device = qvariant_cast <Device> (it.value()->request());
+                const Device &device = qvariant_cast <Device> (it.value()->data());
 
                 m_adapter->setRequestAddress(device->ieeeAddress());
 

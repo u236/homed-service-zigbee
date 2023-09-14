@@ -61,7 +61,7 @@ private slots:
     void updateAvailability(void);
     void updateProperties(void);
 
-    void deviceEvent(DeviceObject *device, ZigBee::Event event);
+    void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json);
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
 
