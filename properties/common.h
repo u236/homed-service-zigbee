@@ -215,6 +215,16 @@ namespace Properties
 
     };
 
+    class CO2 : public PropertyObject
+    {
+
+    public:
+
+        CO2(void) : PropertyObject("co2", CLUSTER_CO2_CONCENTRATION) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Energy : public PropertyObject
     {
 

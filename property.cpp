@@ -28,6 +28,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Humidity>                        ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>                       ("occupancyProperty");
     qRegisterMetaType <Properties::Moisture>                        ("moistureProperty");
+    qRegisterMetaType <Properties::CO2>                             ("co2Property");
     qRegisterMetaType <Properties::Energy>                          ("energyProperty");
     qRegisterMetaType <Properties::Voltage>                         ("voltageProperty");
     qRegisterMetaType <Properties::Current>                         ("currentProperty");

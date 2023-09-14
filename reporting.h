@@ -168,6 +168,16 @@ namespace Reportings
 
     };
 
+    class CO2 : public ReportingObject
+    {
+
+    public:
+
+        CO2(void) : ReportingObject("co2", CLUSTER_CO2_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
+
+
+    };
+
     class Energy : public ReportingObject
     {
 

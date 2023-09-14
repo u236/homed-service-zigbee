@@ -218,6 +218,17 @@ void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &
     m_value = qFromLittleEndian(value) / (manufacturerName() != "_TZ3000_ywagc4rj" ? 100.0 : 10.0) + option("humidityOffset").toDouble();
 }
 
+void Properties::CO2::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
 void Properties::Occupancy::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
