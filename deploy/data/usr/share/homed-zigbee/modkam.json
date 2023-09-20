@@ -58,6 +58,31 @@
       "exposes":        ["action", "switchType", "switchMode"],
       "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "quadrupleClick", "mutipleClick", "hold", "release"], "switchType": {"enum": ["momentary", "multifunction"]}, "switchMode": {"enum": ["on", "off", "toggle"]}},
       "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    {
+      "description":    "MODKAM 2-Channel Pulse Counter",
+      "modelNames":     ["ptvo_counter_2ch"],
+      "options":        {"endpointName": {"3": "CH1", "5": "CH2"}}
+    },
+    {
+      "modelNames":     ["ptvo_counter_2ch"],
+      "properties":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["ptvo_counter_2ch"],
+      "properties":     ["ptvoCount"],
+      "actions":        ["ptvoCount"],
+      "exposes":        ["count"],
+      "options":        {"count": {"min": -1440, "max": 1000000000}},
+      "endpointId":     [3, 5]
+    },
+    {
+      "modelNames":     ["ptvo_counter_2ch"],
+      "properties":     ["ptvoWaterLeak"],
+      "exposes":        ["waterLeak"],
+      "endpointId":     6
     }
   ]
 }
