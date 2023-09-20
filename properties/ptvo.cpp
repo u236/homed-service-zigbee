@@ -29,7 +29,7 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, const QByte
         {
             QList <QString> list = QString(data).split(',');
 
-            if (list.value(0) != m_unit)
+            if (m_unit.isEmpty() || list.value(0) != m_unit)
                 return;
 
             m_value = m_buffer;
