@@ -126,6 +126,26 @@ namespace PropertiesTUYA
 
     };
 
+    class SensitivityMode : public PropertyObject
+    {
+
+    public:
+
+        SensitivityMode(void) : PropertyObject("sensitivityMode", CLUSTER_IAS_ZONE) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class TimeoutMode : public PropertyObject
+    {
+
+    public:
+
+        TimeoutMode(void) : PropertyObject("timeoutMode", CLUSTER_IAS_ZONE) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class SwitchType : public PropertyObject
     {
 

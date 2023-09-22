@@ -40,6 +40,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::OperationMode>              ("tuyaOperationModeAction");
     qRegisterMetaType <ActionsTUYA::IndicatorMode>              ("tuyaIndicatorModeAction");
+    qRegisterMetaType <ActionsTUYA::SensitivityMode>            ("tuyaSensitivityModeAction");
+    qRegisterMetaType <ActionsTUYA::TimeoutMode>                ("tuyaTimeoutModeAction");
     qRegisterMetaType <ActionsTUYA::SwitchType>                 ("tuyaSwitchTypeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
 

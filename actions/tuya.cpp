@@ -298,6 +298,28 @@ QByteArray ActionsTUYA::IndicatorMode::request(const QString &, const QVariant &
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
+QByteArray ActionsTUYA::SensitivityMode::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"low", "medium", "high"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsTUYA::TimeoutMode::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"30s", "60s", "120s"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
 QByteArray ActionsTUYA::SwitchType::request(const QString &, const QVariant &data)
 {
     QList <QString> list = {"toggle", "static", "momentary"};
