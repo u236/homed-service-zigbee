@@ -8,6 +8,7 @@ HEADERS += \
     actions/common.h \
     actions/efekta.h \
     actions/lumi.h \
+    actions/modkam.h \
     actions/other.h \
     actions/ptvo.h \
     actions/tuya.h \
@@ -21,6 +22,7 @@ HEADERS += \
     properties/efekta.h \
     properties/ias.h \
     properties/lumi.h \
+    properties/modkam.h \
     properties/other.h \
     properties/ptvo.h \
     properties/tuya.h \
@@ -36,6 +38,7 @@ SOURCES += \
     actions/common.cpp \
     actions/efekta.cpp \
     actions/lumi.cpp \
+    actions/modkam.cpp \
     actions/other.cpp \
     actions/ptvo.cpp \
     actions/tuya.cpp \
@@ -49,6 +52,7 @@ SOURCES += \
     properties/efekta.cpp \
     properties/ias.cpp \
     properties/lumi.cpp \
+    properties/modkam.cpp \
     properties/other.cpp \
     properties/ptvo.cpp \
     properties/tuya.cpp \

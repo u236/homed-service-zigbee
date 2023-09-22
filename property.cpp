@@ -2,6 +2,7 @@
 #include "properties/efekta.h"
 #include "properties/ias.h"
 #include "properties/lumi.h"
+#include "properties/modkam.h"
 #include "properties/other.h"
 #include "properties/ptvo.h"
 #include "properties/tuya.h"
@@ -80,6 +81,12 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesEfekta::CO2Settings>               ("efektaCO2SettingsProperty");
     qRegisterMetaType <PropertiesEfekta::VOCSensor>                 ("efektaVOCSensorProperty");
 
+    qRegisterMetaType <PropertiesModkam::ButtonAction>              ("modkamButtonActionProperty");
+    qRegisterMetaType <PropertiesModkam::TemperatureOffset>         ("modkamTemperatureOffsetProperty");
+    qRegisterMetaType <PropertiesModkam::HumidityOffset>            ("modkamHumidityOffsetProperty");
+    qRegisterMetaType <PropertiesModkam::PressureOffset>            ("modkamPressureOffsetProperty");
+    qRegisterMetaType <PropertiesModkam::CO2Settings>               ("modkamCO2SettingsProperty");
+
     qRegisterMetaType <PropertiesPTVO::ChangePattern>               ("ptvoChangePatternProperty");
     qRegisterMetaType <PropertiesPTVO::Contact>                     ("ptvoContactProperty");
     qRegisterMetaType <PropertiesPTVO::Occupancy>                   ("ptvoOccupancyProperty");
@@ -94,7 +101,6 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>          ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>         ("sonoffButtonActionProperty");
-    qRegisterMetaType <PropertiesOther::ModkamButtonAction>         ("modkamButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>      ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>           ("perenioSmartPlugProperty");
     qRegisterMetaType <PropertiesOther::LmahmutovCO2>               ("lmahmutovCO2Property");

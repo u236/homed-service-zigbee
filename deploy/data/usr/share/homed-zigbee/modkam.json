@@ -2,6 +2,23 @@
   "modkam.ru":
   [
     {
+      "description":    "MODKAM AirSense CO2 Sensor",
+      "modelNames":     ["DIYRuZ_AirSense"],
+      "properties":     ["temperature", "humidity", "pressure", "co2", "modkamTemperatureOffset", "modkamHumidityOffset", "modkamPressureOffset", "modkamCO2Settings"],
+      "actions":        ["modkamTemperatureOffset", "modkamHumidityOffset", "modkamPressureOffset", "modkamCO2Settings"],
+      "bindings":       ["temperature", "humidity", "pressure", "co2"],
+      "reportings":     ["temperature", "humidity", "pressure", "co2"],
+      "exposes":        ["temperature", "humidity", "pressure", "co2", "temperatureOffset", "humidityOffset", "pressureOffset", "autoCalibration", "ledFeedback", "thresholdLow", "thresholdHigh"],
+      "options":        {
+                          "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0},
+                          "temperatureOffset": {"min": -20, "max": 20, "unit": "°C", "icon": "mdi:thermometer"},
+                          "humidityOffset": {"min": -50, "max": 50, "unit": "%", "icon": "mdi:water-percent"},
+                          "pressureOffset": {"min": -100, "max": 100, "unit": "kPa", "icon": "mdi:gauge"},
+                          "thresholdLow": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"},
+                          "thresholdHigh": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"}
+                        }
+    },
+    {
       "description":    "MODKAM Flower Soil Moisture Sensor",
       "modelNames":     ["DIYRuZ_Flower"],
       "options":        {"endpointName": {"1": "BME", "2": "DS"}, "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0}}

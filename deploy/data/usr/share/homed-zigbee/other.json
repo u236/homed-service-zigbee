@@ -32,6 +32,14 @@
       "bindings":       ["temperature", "humidity", "pressure"],
       "reportings":     ["temperature", "humidity", "pressure"],
       "exposes":        ["temperature", "humidity", "pressure", "co2"]
+    },
+    {
+      "description":    "ESP32C6 CO2 Sensor",
+      "modelNames":     ["Air Sensor 1.1"],
+      "properties":     ["temperature", "humidity", "pressure", "co2"],
+      "bindings":       ["temperature", "humidity", "pressure", "co2"],
+      "reportings":     ["temperature", "humidity", "pressure", "co2"],
+      "exposes":        ["temperature", "humidity", "pressure", "co2"]
     }
   ],
 
