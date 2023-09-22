@@ -1,5 +1,5 @@
-#ifndef REPORTINGOBJECT_H
-#define REPORTINGOBJECT_H
+#ifndef REPORTING_H
+#define REPORTING_H
 
 #include <QSharedPointer>
 #include "zcl.h"

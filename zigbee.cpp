@@ -726,7 +726,6 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         }
 
         endpoint->setColorCapabilities(value);
-
         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", endpoint->colorCapabilities());
         interviewDevice(device);
         return;
@@ -749,7 +748,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                     return;
 
                 endpoint->setZoneStatus(data.at(0) ? ZoneStatus::Enrolled : ZoneStatus::Enroll);
-                break;
+                return;
             }
 
             case 0x0001:
@@ -761,9 +760,8 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
                 memcpy(&value, data.constData(), data.length());
                 endpoint->setZoneType(qFromLittleEndian(value));
-
                 logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", endpoint->zoneType());
-                break;
+                return;
             }
 
             case 0x0010:
@@ -780,11 +778,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                     endpoint->setZoneStatus(ZoneStatus::SetAddress);
 
                 interviewDevice(device);
-                break;
+                return;
             }
         }
-
-        return;
     }
 
     if (!device->interviewFinished())
