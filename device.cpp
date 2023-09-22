@@ -498,6 +498,11 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->exposes().append(Expose(new Sensor::Temperature));
                     break;
 
+                case CLUSTER_PRESSURE_MEASUREMENT:
+                    it.value()->properties().append(Property(new Properties::Pressure));
+                    it.value()->exposes().append(Expose(new Sensor::Pressure));
+                    break;
+
                 case CLUSTER_RELATIVE_HUMIDITY:
                     it.value()->properties().append(Property(new Properties::Humidity));
                     it.value()->exposes().append(Expose(new Sensor::Humidity));
@@ -506,6 +511,16 @@ void DeviceList::recognizeDevice(const Device &device)
                 case CLUSTER_OCCUPANCY_SENSING:
                     it.value()->properties().append(Property(new Properties::Occupancy));
                     it.value()->exposes().append(Expose(new Binary::Occupancy));
+                    break;
+
+                case CLUSTER_SOIL_MOISTURE:
+                    it.value()->properties().append(Property(new Properties::Moisture));
+                    it.value()->exposes().append(Expose(new Sensor::Moisture));
+                    break;
+
+                case CLUSTER_CO2_CONCENTRATION:
+                    it.value()->properties().append(Property(new Properties::CO2));
+                    it.value()->exposes().append(Expose(new Sensor::CO2));
                     break;
 
                 case CLUSTER_SMART_ENERGY_METERING:
