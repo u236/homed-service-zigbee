@@ -36,12 +36,12 @@ namespace ActionsEfekta
 
     };
 
-    class CO2Sensor : public ActionObject
+    class CO2Settings : public ActionObject
     {
 
     public:
 
-        CO2Sensor(void) : ActionObject("co2Sensor", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"altitude", "co2ManualCalibration", "co2High", "co2Low", "indicatorLevel", "co2ForceCalibration", "autoBrightness", "co2LongChart", "co2FactoryReset", "indicator", "co2Relay", "co2RelayInvert", "pressureLongChart", "nightBacklight"}) {}
+        CO2Settings(void) : ActionObject("co2Settings", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"altitude", "co2ManualCalibration", "co2High", "co2Low", "indicatorLevel", "co2ForceCalibration", "autoBrightness", "co2LongChart", "co2FactoryReset", "indicator", "co2Relay", "co2RelayInvert", "pressureLongChart", "nightBacklight"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

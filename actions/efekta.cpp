@@ -73,7 +73,7 @@ QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const Q
     return QByteArray();
 }
 
-QByteArray ActionsEfekta::CO2Sensor::request(const QString &name, const QVariant &data)
+QByteArray ActionsEfekta::CO2Settings::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 

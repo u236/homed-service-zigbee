@@ -77,7 +77,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesEfekta::ReportingDelay>            ("efektaReportingDelayProperty");
     qRegisterMetaType <PropertiesEfekta::TemperatureSettings>       ("efektaTemperatureSettingsProperty");
     qRegisterMetaType <PropertiesEfekta::HumiditySettings>          ("efektaHumiditySettingsProperty");
-    qRegisterMetaType <PropertiesEfekta::CO2Sensor>                 ("efektaCO2SensorProperty");
+    qRegisterMetaType <PropertiesEfekta::CO2Settings>               ("efektaCO2SettingsProperty");
     qRegisterMetaType <PropertiesEfekta::VOCSensor>                 ("efektaVOCSensorProperty");
 
     qRegisterMetaType <PropertiesPTVO::ChangePattern>               ("ptvoChangePatternProperty");

@@ -48,7 +48,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsEfekta::ReportingDelay>           ("efektaReportingDelayAction");
     qRegisterMetaType <ActionsEfekta::TemperatureSettings>      ("efektaTemperatureSettingsAction");
     qRegisterMetaType <ActionsEfekta::HumiditySettings>         ("efektaHumiditySettingsAction");
-    qRegisterMetaType <ActionsEfekta::CO2Sensor>                ("efektaCO2SensorAction");
+    qRegisterMetaType <ActionsEfekta::CO2Settings>              ("efektaCO2SettingsAction");
     qRegisterMetaType <ActionsEfekta::VOCSensor>                ("efektaVOCSensorAction");
 
     qRegisterMetaType <ActionsPTVO::ChangePattern>              ("ptvoChangePatternAction");

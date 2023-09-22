@@ -36,12 +36,12 @@ namespace PropertiesEfekta
 
     };
 
-    class CO2Sensor : public PropertyObject
+    class CO2Settings : public PropertyObject
     {
 
     public:
 
-        CO2Sensor(void) : PropertyObject("co2Sensor", CLUSTER_CO2_CONCENTRATION) {}
+        CO2Settings(void) : PropertyObject("co2Settings", CLUSTER_CO2_CONCENTRATION) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };

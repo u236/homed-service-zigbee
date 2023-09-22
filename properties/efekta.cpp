@@ -88,24 +88,12 @@ void PropertiesEfekta::HumiditySettings::parseAttribte(quint16 attributeId, cons
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::CO2Sensor::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::CO2Settings::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
     switch (attributeId)
     {
-        case 0x0000:
-        {
-            float value;
-
-            if (static_cast <size_t> (data.length()) > sizeof(value))
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            map.insert("co2", round(qFromLittleEndian(value) * 1000000));
-            break;
-        }
-
         case 0x0205:
         case 0x0207:
         case 0x0221:

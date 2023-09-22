@@ -4,8 +4,8 @@
     {
       "description":    "EFEKTA CO2 Smart Monitor",
       "modelNames":     ["EFEKTA_CO2_Smart_Monitor"],
-      "properties":     ["temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
-      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
+      "properties":     ["temperature", "humidity", "co2", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
       "bindings":       ["analogInput", "temperature", "humidity", "co2"],
       "exposes":        ["temperature", "humidity", "co2", "reportingDelay", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow",  "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset"],
       "options":        {
@@ -31,8 +31,8 @@
     {
       "description":    "EFEKTA CO2 Smart Monitor V2",
       "modelNames":     ["EFEKTA_CO2_Smart_Monitor_V2"],
-      "properties":     ["temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
-      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor", "efektaVOCSensor"],
+      "properties":     ["temperature", "humidity", "co2", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
       "bindings":       ["analogInput", "temperature", "humidity", "co2"],
       "exposes":        ["temperature", "humidity", "co2", "eco2", "voc", "reportingDelay", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow", "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset", "vocLow", "vocHigh", "vocRelay", "vocRelayInvert"],
       "options":        {
@@ -69,8 +69,8 @@
     {
       "description":    "EFEKTA CO2 Monitor with TFT Display iAQ",
       "modelNames":     ["EFEKTA_iAQ"],
-      "properties":     ["temperature", "humidity", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
-      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
+      "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
+      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
       "bindings":       ["time", "temperature", "humidity", "co2"],
       "exposes":        ["illuminance", "temperature", "humidity", "co2", "altitude", "autoBrightness", "nightBacklight", "temperatureOffset", "humidityOffset", "co2LongChart", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset"],
       "options":        {
@@ -97,8 +97,8 @@
     {
       "description":    "EFEKTA CO2 Monitor with TFT Display iAQ-S",
       "modelNames":     ["EFEKTA_iAQ_S"],
-      "properties":     ["temperature", "humidity", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
-      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Sensor"],
+      "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
+      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
       "bindings":       ["time", "temperature", "humidity", "co2"],
       "exposes":        ["illuminance", "temperature", "humidity", "pressure", "co2", "autoBrightness", "nightBacklight", "temperatureOffset", "humidityOffset", "pressureLongChart", "co2LongChart", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset"],
       "options":        {
