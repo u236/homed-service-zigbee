@@ -600,7 +600,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "indicatorMode", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet"}
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet", "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
@@ -716,7 +716,8 @@
       "description":    "TUYA TS0201 Temperature and Humidity Sensor",
       "modelNames":     ["_TZ2000_a476raq2", "_TZ2000_zsfvulde", "_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_xr3htd96", "_TZ3000_yd2e749y", "_TZ3000_ywagc4rj"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity"]
+      "exposes":        ["battery", "temperature", "humidity"],
+      "options":        {"tuyaMagic": true}
     },
     {
       "description":    "TUYA RH3052 Temperature and Humidity Sensor",
@@ -729,14 +730,14 @@
       "modelNames":     ["TS0041"],
       "properties":     ["batteryPercentage", "tuyaButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"], "checkTransactionId": true}
+      "options":        {"action": ["singleClick", "doubleClick", "hold"], "checkTransactionId": true, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0042 2-Button Wireless Switch",
       "modelNames":     ["TS0042"],
       "properties":     ["batteryPercentage"],
       "exposes":        ["battery"],
-      "options":        {"checkTransactionId": true},
+      "options":        {"checkTransactionId": true, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -751,7 +752,7 @@
       "modelNames":     ["TS0043"],
       "properties":     ["batteryPercentage"],
       "exposes":        ["battery"],
-      "options":        {"checkTransactionId": true},
+      "options":        {"checkTransactionId": true, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -766,7 +767,7 @@
       "modelNames":     ["TS0044"],
       "properties":     ["batteryPercentage"],
       "exposes":        ["battery"],
-      "options":        {"checkTransactionId": true},
+      "options":        {"checkTransactionId": true, "tuyaMagic": true},
       "endpointId":     1
     },
     {
