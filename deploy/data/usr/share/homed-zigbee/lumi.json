@@ -303,8 +303,8 @@
       "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": "diagnostic", "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}}
     },
     {
-      "description":    "Aqara Water Leak Sensor SJCGQ11LM",
-      "modelNames":     ["lumi.sensor_wleak.aq1", "lumi.flood.agl02"],
+      "description":    "Aqara Water Leak Sensor SJCGQ11LM or SJCGQ12LM",
+      "modelNames":     ["lumi.flood.agl02", "lumi.sensor_wleak.aq1"],
       "properties":     ["iasWaterLeak", "lumiBasic"],
       "exposes":        ["battery", "waterLeak", "batteryLow", "temperature"],
       "options":        {"temperature": "diagnostic"}
