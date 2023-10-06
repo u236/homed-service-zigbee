@@ -13,6 +13,7 @@ namespace PropertiesLUMI
 
         Data(const quint16 cluster = CLUSTER_LUMI) : PropertyObject("lumiData", cluster) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void resetValue(void) override;
 
     private:
 

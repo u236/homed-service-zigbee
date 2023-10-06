@@ -25,6 +25,16 @@ void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, const QByteArray &
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
+void PropertiesLUMI::Data::resetValue(void)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    if (modelName() == "lumi.motion.ac02")
+        map.insert("occupancy", false);
+
+    m_value = map;
+}
+
 void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, QMap <QString, QVariant> &map)
 {
     if (m_multiple && dataPoint != 0x0200)
@@ -85,17 +95,13 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0064:
         {
-            if (modelName() == "lumi.sen_ill.mgl01")
-            {
-                quint32 value = 0;
+            quint32 value = 0;
 
-                if (static_cast <size_t> (data.length()) > sizeof(value))
-                    break;
+            if (modelName() != "lumi.sen_ill.mgl01" || static_cast <size_t> (data.length()) > sizeof(value))
+                break;
 
-                memcpy(&value, data.constData(), data.length());
-                map.insert("illuminance", qFromLittleEndian(value) + option("illuminanceOffset").toDouble());
-            }
-
+            memcpy(&value, data.constData(), data.length());
+            map.insert("illuminance", qFromLittleEndian(value) + option("illuminanceOffset").toDouble());
             break;
         }
 
@@ -237,22 +243,18 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             break;
         }
-		
+
         case 0x0112:
         {
-            if (modelName() != "lumi.motion.ac02")
-                break;
-
             quint32 value = 0;
 
-            if (static_cast <size_t> (data.length()) > sizeof(value))
+            if (modelName() != "lumi.motion.ac02" || static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
-            memcpy(&value, data.constData(), (sizeof(data.at(0)) + sizeof(data.at(1))));
-            map.insert("illuminance", qFromLittleEndian(value));
-
-            map.insert("occupancy", data.at(2) ? true : false);
-
+            memcpy(&value, data.constData(), data.length());
+            value = qFromLittleEndian(value);
+            map.insert("illuminance", (value > 130536 ? 0 : value & 0xFFFF) + option("illuminanceOffset").toDouble());
+            map.insert("occupancy", true);
             break;
         }
 
