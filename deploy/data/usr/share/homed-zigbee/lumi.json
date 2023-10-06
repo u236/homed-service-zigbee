@@ -279,6 +279,14 @@
       "options":        {"occupancyTimeout": 60, "temperature": "diagnostic"}
     },
     {
+      "description":    "Aqara Motion Sensor P1 MS-S02",
+      "modelNames":     ["lumi.motion.ac02"],
+      "properties":     ["lumiData", "occupancy"],
+      "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
+      "options":        {"occupancyTimeout": 60}
+    },
+
+    {
       "description":    "Aqara FP1 Presence Detector RTCZCGQ11LM",
       "modelNames":     ["lumi.motion.ac01"],
       "properties":     ["lumiData"],
