@@ -237,6 +237,24 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             break;
         }
+		
+        case 0x0112:
+        {
+            if (modelName() != "lumi.motion.ac02")
+                break;
+
+            quint32 value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                break;
+
+            memcpy(&value, data.constData(), (sizeof(data.at(0)) + sizeof(data.at(1))));
+            map.insert("illuminance", qFromLittleEndian(value));
+
+            map.insert("occupancy", data.at(2) ? true : false);
+
+            break;
+        }
 
         case 0x0200:
         {

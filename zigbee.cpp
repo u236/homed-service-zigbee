@@ -802,7 +802,8 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
     {
         const Property &property = endpoint->properties().at(i);
 
-        if (property->clusterId() == clusterId)
+        if ((property->clusterId() == clusterId) || 
+            (device->manufacturerName() == "LUMI" && device->modelName() == "lumi.motion.ac02" && property->clusterId() == CLUSTER_OCCUPANCY_SENSING && clusterId == CLUSTER_LUMI))
         {
             QVariant value = property->value();
 
@@ -1034,7 +1035,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     {
         const Property &property = endpoint->properties().at(i);
 
-        if (property->clusterId() == clusterId)
+        if ((property->clusterId() == clusterId) || 
+            (device->manufacturerName() == "LUMI" && device->modelName() == "lumi.motion.ac02" && property->clusterId() == CLUSTER_OCCUPANCY_SENSING && clusterId == CLUSTER_LUMI))
         {
             QVariant value = property->value();
 
