@@ -297,7 +297,7 @@
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM",
-      "modelNames":     ["lumi.sensor_wleak.aq1"],
+      "modelNames":     ["lumi.sensor_wleak.aq1", "lumi.flood.agl02"],
       "properties":     ["iasWaterLeak", "lumiBasic"],
       "exposes":        ["battery", "waterLeak", "batteryLow", "temperature"],
       "options":        {"temperature": "diagnostic"}
