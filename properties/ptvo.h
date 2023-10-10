@@ -131,6 +131,16 @@ namespace PropertiesPTVO
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class SerialData : public PropertyObject
+    {
+
+    public:
+
+        SerialData(void) : PropertyObject("data", CLUSTER_MULTISTATE_VALUE) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
 }
 
 #endif

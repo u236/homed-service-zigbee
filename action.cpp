@@ -60,6 +60,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::ChangePattern>              ("ptvoChangePatternAction");
     qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
+    qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
 
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }

@@ -98,6 +98,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::Pattern>                     ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::ButtonAction>                ("ptvoButtonActionProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>                ("ptvoSwitchActionProperty");
+    qRegisterMetaType <PropertiesPTVO::SerialData>                  ("ptvoSerialDataProperty");
 
     qRegisterMetaType <PropertiesOther::KonkeButtonAction>          ("konkeButtonActionProperty");
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>         ("sonoffButtonActionProperty");

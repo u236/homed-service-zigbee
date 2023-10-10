@@ -52,6 +52,16 @@ namespace ActionsPTVO
         Pattern(void) : AnalogInput("pattern") {}
 
     };
+
+    class SerialData : public ActionObject
+    {
+
+    public:
+
+        SerialData(void) : ActionObject("data", CLUSTER_MULTISTATE_VALUE) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
 }
 
 #endif

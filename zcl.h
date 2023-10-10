@@ -78,6 +78,7 @@
 #define CLUSTER_ANALOG_INPUT                        0x000C
 #define CLUSTER_ANALOG_OUTPUT                       0x000D
 #define CLUSTER_MULTISTATE_INPUT                    0x0012
+#define CLUSTER_MULTISTATE_VALUE                    0x0014
 #define CLUSTER_OTA_UPGRADE                         0x0019
 #define CLUSTER_POWER_PROFILE                       0x001A
 #define CLUSTER_POLL_CONTROL                        0x0020
