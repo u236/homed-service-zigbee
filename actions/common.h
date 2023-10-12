@@ -115,6 +115,16 @@ namespace Actions
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
+    
+    class TargetTemperature : public ActionObject
+    {
+
+    public:
+
+        TargetTemperature(void) : ActionObject("targetTemperature", CLUSTER_THERMOSTAT, 0x0000, 0x0012) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
 }
 
 #endif

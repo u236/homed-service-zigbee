@@ -436,6 +436,14 @@
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiCubeRotation"],
       "endpointId":     3
+    },
+    {
+      "description":    "Aqara E1 Smart Radiator Thermostat",
+      "modelNames":     ["lumi.airrtc.agl001"],
+      "properties":     ["lumiData", "targetTemperature"],
+      "actions":        ["lumiChildLock", "lumiWindowDetection", "lumiPreset", "targetTemperature"],
+      "exposes":        ["battery", "batteryLow", "childLock", "preset", "targetTemperature", "windowDetection"],
+      "options":        {"preset": {"enum": ["manual", "away", "auto"]}, "targetTemperature": {"min": 5, "max": 30, "control": true, "unit": "°C", "step": 0.5}}
     }
   ]
 }

@@ -224,3 +224,10 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
             return QByteArray();
     }
 }
+
+QByteArray Actions::TargetTemperature::request(const QString &, const QVariant &data)
+{
+    qint16 value = qToLittleEndian <qint16> (data.toDouble() * 100);
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}

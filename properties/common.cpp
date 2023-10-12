@@ -301,6 +301,17 @@ void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &dat
     m_value = qFromLittleEndian(value) / divider + option("powerOffset").toDouble();
 }
 
+void Properties::TargetTemperature::parseAttribte(quint16 attributeId, const QByteArray &data)
+{
+    quint16 value;
+
+    if (attributeId != 0x0012 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) / 100.0;
+}
+
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
