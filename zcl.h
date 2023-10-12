@@ -85,6 +85,7 @@
 #define CLUSTER_GREEN_POWER                         0x0021
 #define CLUSTER_DOOR_LOCK                           0x0101
 #define CLUSTER_WINDOW_COVERING                     0x0102
+#define CLUSTER_THERMOSTAT                          0x0201
 #define CLUSTER_COLOR_CONTROL                       0x0300
 #define CLUSTER_ILLUMINANCE_MEASUREMENT             0x0400
 #define CLUSTER_TEMPERATURE_MEASUREMENT             0x0402

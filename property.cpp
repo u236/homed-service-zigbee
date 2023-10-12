@@ -38,6 +38,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::StatusAction>                    ("statusActionProperty");
     qRegisterMetaType <Properties::LevelAction>                     ("levelActionProperty");
     qRegisterMetaType <Properties::ColorAction>                     ("colorActionProperty");
+    qRegisterMetaType <Properties::TargetTemperature>               ("targetTemperatureProperty");
 
     qRegisterMetaType <PropertiesIAS::Contact>                      ("iasContactProperty");
     qRegisterMetaType <PropertiesIAS::Gas>                          ("iasGasProperty");

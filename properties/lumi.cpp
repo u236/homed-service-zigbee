@@ -279,6 +279,39 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             map.insert("statusMemory", data.at(0) ? true : false);
             break;
         }
+            
+        case 0x0272:
+        {
+            if (modelName() != "lumi.airrtc.agl001")
+                break;
+
+            switch (static_cast <quint8> (data.at(0)))
+            {
+                case 0x00: map.insert("preset", "manual"); break;
+                case 0x01: map.insert("preset", "away"); break;
+                case 0x02: map.insert("preset", "auto"); break;
+            }
+            
+            break;
+        }
+
+        case 0x0273:
+        {
+            if (modelName() != "lumi.airrtc.agl001")
+                break;
+            
+            map.insert("windowDetection", data.at(0) ? true : false);
+            break;
+        }
+
+        case 0x0277:
+        {
+            if (modelName() != "lumi.airrtc.agl001")
+                break;
+            
+            map.insert("childLock", data.at(0) ? true : false);
+            break;
+        }
 
         case 0xFF02:
         {

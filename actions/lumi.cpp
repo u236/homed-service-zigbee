@@ -162,3 +162,26 @@ QByteArray ActionsLUMI::VibrationSensitivity::request(const QString &, const QVa
     value = value * 10 + 1;
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
+
+QByteArray ActionsLUMI::ChildLock::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::Preset::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"manual", "away", "auto"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::WindowDetection::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}

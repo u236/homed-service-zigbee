@@ -264,6 +264,16 @@ namespace Properties
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
+    
+    class TargetTemperature : public PropertyObject
+    {
+
+    public:
+
+        TargetTemperature(void) :  PropertyObject("targetTemperature", CLUSTER_THERMOSTAT) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
 
     class Scene : public PropertyObject
     {

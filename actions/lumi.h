@@ -105,6 +105,36 @@ namespace ActionsLUMI
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
+    
+    class ChildLock : public ActionObject
+    {
+
+    public:
+
+        ChildLock(void) :  ActionObject("childLock", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0277) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class Preset : public ActionObject
+    {
+
+    public:
+
+        Preset(void) :  ActionObject("preset", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0272) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class WindowDetection : public ActionObject
+    {
+
+    public:
+
+        WindowDetection(void) :  ActionObject("windowDetection", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0273) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
 }
 
 #endif
