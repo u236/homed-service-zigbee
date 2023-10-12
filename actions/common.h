@@ -116,12 +116,12 @@ namespace Actions
 
     };
     
-    class TargetTemperature : public ActionObject
+    class Thermostat : public ActionObject
     {
 
     public:
 
-        TargetTemperature(void) : ActionObject("targetTemperature", CLUSTER_THERMOSTAT, 0x0000, 0x0012) {}
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "targetTemperature"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

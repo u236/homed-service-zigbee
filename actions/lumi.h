@@ -106,22 +106,22 @@ namespace ActionsLUMI
 
     };
     
-    class ChildLock : public ActionObject
+    class SystemMode : public ActionObject
     {
 
     public:
 
-        ChildLock(void) :  ActionObject("childLock", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0277) {}
+        SystemMode(void) : ActionObject("systemMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0271) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
 
-    class Preset : public ActionObject
+    class ThermostatMode : public ActionObject
     {
 
     public:
 
-        Preset(void) :  ActionObject("preset", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0272) {}
+        ThermostatMode(void) : ActionObject("operationMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0272) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -131,7 +131,27 @@ namespace ActionsLUMI
 
     public:
 
-        WindowDetection(void) :  ActionObject("windowDetection", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0273) {}
+        WindowDetection(void) : ActionObject("windowDetection", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0273) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class ChildLock : public ActionObject
+    {
+
+    public:
+
+        ChildLock(void) : ActionObject("childLock", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0277) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class AwayTemperature : public ActionObject
+    {
+
+    public:
+
+        AwayTemperature(void) : ActionObject("awayTemperature", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0279) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

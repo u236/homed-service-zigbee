@@ -56,7 +56,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0003:
         {
-            QList <QString> list = {"lumi.magnet.acn001", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.remote.cagl02", "lumi.sen_ill.mgl01", "lumi.sensor_smoke.acn03"};
+            QList <QString> list = {"lumi.airrtc.agl001", "lumi.magnet.acn001", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.remote.cagl02", "lumi.sen_ill.mgl01", "lumi.sensor_smoke.acn03"};
 
             if (list.contains(modelName()))
                 break;
@@ -279,7 +279,16 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             map.insert("statusMemory", data.at(0) ? true : false);
             break;
         }
-            
+
+        case 0x0271:
+        {
+            if (modelName() != "lumi.airrtc.agl001")
+                break;
+
+            map.insert("systemMode", data.at(0) ? "heat" : "off");
+            break;
+        }
+
         case 0x0272:
         {
             if (modelName() != "lumi.airrtc.agl001")
@@ -287,9 +296,9 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             switch (static_cast <quint8> (data.at(0)))
             {
-                case 0x00: map.insert("preset", "manual"); break;
-                case 0x01: map.insert("preset", "away"); break;
-                case 0x02: map.insert("preset", "auto"); break;
+                case 0x00: map.insert("operationMode", "manual"); break;
+                case 0x01: map.insert("operationMode", "away"); break;
+                case 0x02: map.insert("operationMode", "program"); break;
             }
             
             break;
@@ -310,6 +319,27 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
             
             map.insert("childLock", data.at(0) ? true : false);
+            break;
+        }
+
+        case 0x0279:
+        {
+            quint32 value = 0;
+
+            if (modelName() != "lumi.airrtc.agl001")
+                break;
+
+            memcpy(&value, data.constData(), sizeof(value));
+            map.insert("awayTemperature", qFromLittleEndian(value) / 100.0);
+            break;
+        }
+
+        case 0x027A:
+        {
+            if (modelName() != "lumi.airrtc.agl001")
+                break;
+
+            map.insert("windowOpen", data.at(0) ? true : false);
             break;
         }
 

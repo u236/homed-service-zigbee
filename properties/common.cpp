@@ -301,15 +301,33 @@ void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &dat
     m_value = qFromLittleEndian(value) / divider + option("powerOffset").toDouble();
 }
 
-void Properties::TargetTemperature::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Thermostat::parseAttribte(quint16 attributeId, const QByteArray &data)
 {
-    quint16 value;
+    QMap <QString, QVariant> map = m_value.toMap();
 
-    if (attributeId != 0x0012 || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
+    switch (attributeId)
+    {
+        case 0x0000:
+        case 0x0012:
+        {
+            qint16 value = 0;
 
-    memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0;
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert(attributeId ? "temperatureOffset" : "temperature", qFromLittleEndian(value) / 100.0);
+            break;
+        }
+
+        case 0x0010:
+        {
+            map.insert("temperatureOffset", static_cast <qint8> (data.at(0)) / 10.0);
+            break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)

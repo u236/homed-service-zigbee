@@ -2,6 +2,20 @@
   "LUMI":
   [
     {
+      "description":    "Aqara E1 Radiator Thermostat SRTS-A01",
+      "modelNames":     ["lumi.airrtc.agl001"],
+      "properties":     ["thermostat", "lumiData"],
+      "actions":        ["thermostat", "lumiSystemMode", "lumiThermostatMode", "lumiWindowDetection", "lumiChildLock", "lumiAwayTemperature"],
+      "exposes":        ["battery", "thermostat", "windowOpen", "windowDetection", "childLock", "awayTemperature"],
+      "options":        {
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "operationMode": {"enum": ["manual", "away", "program"]},
+                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5, "unit": "°C"},
+                          "temperatureOffset": {"min": -2.5, "max": 2.5, "step" : 0.1, "unit": "°C", "icon": "mdi:thermometer"},
+                          "awayTemperature": {"min": 5, "max": 30, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
+                        }
+    },
+    {
       "description":    "Aqara D1 1-Channel Wall Switch QBKG04LM or QBKG21LM",
       "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "options":        {"logicalType": 2}
@@ -436,14 +450,6 @@
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiCubeRotation"],
       "endpointId":     3
-    },
-    {
-      "description":    "Aqara E1 Smart Radiator Thermostat",
-      "modelNames":     ["lumi.airrtc.agl001"],
-      "properties":     ["lumiData", "targetTemperature"],
-      "actions":        ["lumiChildLock", "lumiWindowDetection", "lumiPreset", "targetTemperature"],
-      "exposes":        ["battery", "batteryLow", "childLock", "preset", "targetTemperature", "windowDetection"],
-      "options":        {"preset": {"enum": ["manual", "away", "auto"]}, "targetTemperature": {"min": 5, "max": 30, "control": true, "unit": "°C", "step": 0.5}}
     }
   ]
 }

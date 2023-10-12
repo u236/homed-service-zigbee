@@ -163,15 +163,20 @@ QByteArray ActionsLUMI::VibrationSensitivity::request(const QString &, const QVa
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::ChildLock::request(const QString &, const QVariant &data)
+QByteArray ActionsLUMI::SystemMode::request(const QString &, const QVariant &data)
 {
-    quint8 value = data.toBool() ? 0x01 : 0x00;
+    QList <QString> list = {"off", "heat"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::Preset::request(const QString &, const QVariant &data)
+QByteArray ActionsLUMI::ThermostatMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"manual", "away", "auto"};
+    QList <QString> list = {"manual", "away", "program"};
     qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
 
     if (value < 0)
@@ -184,4 +189,16 @@ QByteArray ActionsLUMI::WindowDetection::request(const QString &, const QVariant
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::ChildLock::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::AwayTemperature::request(const QString &, const QVariant &data)
+{
+    quint32 value = qToLittleEndian <quint32> (data.toDouble() * 100);
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }

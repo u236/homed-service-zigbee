@@ -265,12 +265,12 @@ namespace Properties
 
     };
     
-    class TargetTemperature : public PropertyObject
+    class Thermostat : public PropertyObject
     {
 
     public:
-
-        TargetTemperature(void) :  PropertyObject("targetTemperature", CLUSTER_THERMOSTAT) {}
+        
+        Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT) {}
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };

@@ -225,9 +225,26 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
     }
 }
 
-QByteArray Actions::TargetTemperature::request(const QString &, const QVariant &data)
+QByteArray Actions::Thermostat::request(const QString &name, const QVariant &data)
 {
-    qint16 value = qToLittleEndian <qint16> (data.toDouble() * 100);
+    int index = m_actions.indexOf(name);
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    switch (index)
+    {
+        case 0: // temperatureOffset
+        {
+            qint8 value = static_cast <qint8> (data.toDouble() * 10);
+            m_attributes = {0x0010};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 1: // targetTemperature
+        {
+            qint16 value = qToLittleEndian <qint16> (data.toDouble() * 100);
+            m_attributes = {0x0012};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+    }
+
+    return QByteArray();
 }
