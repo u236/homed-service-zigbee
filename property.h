@@ -32,8 +32,6 @@ public:
     inline qint64 time(void) { return m_time; }
     inline void setTime(qint64 value) { m_time = value; }
 
-    inline QMap <QString, QVariant> &meta(void) { return m_meta; }
-
     inline quint8 transactionId(void) { return m_transactionId; }
     inline void setTransactionId(quint8 value) { m_transactionId = value; }
 
@@ -51,7 +49,6 @@ protected:
     quint32 m_timeout;
     qint64 m_time;
 
-    QMap <QString, QVariant> m_meta;
     quint8 m_transactionId;
     QVariant m_value;
 

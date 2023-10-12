@@ -121,10 +121,10 @@ QByteArray ActionsTUYA::WeekdayThermostatProgram::request(const QString &name, c
     if (property.isNull())
         return QByteArray();
 
-    if (m_data.isEmpty() || property->meta().value("received").toBool())
+    if (m_data.isEmpty() || meta().value("prorgam").toBool())
     {
         m_data = property->value().toMap();
-        property->meta().insert("received", false);
+        meta().insert("prorgam", false);
     }
 
     m_data.insert(name, data.toDouble());
@@ -151,10 +151,10 @@ QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, c
     if (property.isNull())
         return QByteArray();
 
-    if (m_data.isEmpty() || property->meta().value("received").toBool())
+    if (m_data.isEmpty() || meta().value("program").toBool())
     {
         m_data = property->value().toMap();
-        property->meta().insert("received", false);
+        meta().insert("program", false);
     }
 
     m_data.insert(name, data.toDouble());
@@ -181,10 +181,10 @@ QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, cons
     if (property.isNull())
         return QByteArray();
 
-    if (m_data.isEmpty() || property->meta().value("received").toBool())
+    if (m_data.isEmpty() || meta().value("program").toBool())
     {
         m_data = property->value().toMap();
-        property->meta().insert("received", false);
+        meta().insert("program", false);
     }
 
     m_data.insert(name, data.toDouble());

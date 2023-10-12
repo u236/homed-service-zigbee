@@ -100,7 +100,7 @@ void Properties::CoverPosition::parseAttribte(quint16 attributeId, const QByteAr
 {
     qint8 value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
 
-    if (attributeId != 0x0008 || value == m_meta.value("lastValue", 0xFF).toInt())
+    if (attributeId != 0x0008 || value == meta().value("position", 0xFF).toInt())
         return;
 
     m_value = value;
@@ -110,7 +110,7 @@ void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray 
 {
     qint8 value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
 
-    if (attributeId != 0x0009 || value == m_meta.value("lastValue", 0xFF).toInt())
+    if (attributeId != 0x0009 || value == meta().value("tilt", 0xFF).toInt())
         return;
 
     m_value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));

@@ -176,7 +176,7 @@ void PropertiesTUYA::WeekdayThermostatProgram::update(quint8 dataPoint, const QV
             map.insert(QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
         }
 
-        m_meta.insert("received", true);
+        meta().insert("program", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
@@ -197,7 +197,7 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
             map.insert(QString("holidayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
         }
 
-        m_meta.insert("received", true);
+        meta().insert("program", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
@@ -218,7 +218,7 @@ void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVari
             map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
         }
 
-        m_meta.insert("received", true);
+        meta().insert("program", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
