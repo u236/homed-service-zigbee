@@ -1,6 +1,7 @@
 #include "properties/common.h"
 #include "properties/efekta.h"
 #include "properties/ias.h"
+#include "properties/ikea.h"
 #include "properties/lumi.h"
 #include "properties/modkam.h"
 #include "properties/other.h"
@@ -45,6 +46,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIAS::Occupancy>                    ("iasOccupancyProperty");
     qRegisterMetaType <PropertiesIAS::Smoke>                        ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>                    ("iasWaterLeakProperty");
+
+    qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
+    qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                        ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::Basic>                       ("lumiBasicProperty");

@@ -29,6 +29,15 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
       "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
+    },
+    {
+      "description":    "STYRBAR Wireless Dimmer E2001",
+      "modelNames":     ["Remote Control N2"],
+      "properties":     ["batteryPercentage", "levelAction", "ikeaStatusAction", "ikeaArrowAction"],
+      "bindings":       ["battery", "scenes", "status", "level"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"],
+      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
     }
   ]
 }

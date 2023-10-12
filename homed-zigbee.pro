@@ -21,6 +21,7 @@ HEADERS += \
     properties/common.h \
     properties/efekta.h \
     properties/ias.h \
+    properties/ikea.h \
     properties/lumi.h \
     properties/modkam.h \
     properties/other.h \
@@ -51,6 +52,7 @@ SOURCES += \
     properties/common.cpp \
     properties/efekta.cpp \
     properties/ias.cpp \
+    properties/ikea.cpp \
     properties/lumi.cpp \
     properties/modkam.cpp \
     properties/other.cpp \

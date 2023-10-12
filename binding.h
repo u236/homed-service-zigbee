@@ -47,6 +47,15 @@ namespace Bindings
 
     };
 
+    class Scenes : public BindingObject
+    {
+
+    public:
+
+        Scenes(void) : BindingObject("scenes", CLUSTER_SCENES) {}
+
+    };
+
     class Status : public BindingObject
     {
 
