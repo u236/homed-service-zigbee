@@ -215,7 +215,7 @@ void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / (manufacturerName() != "_TZ3000_ywagc4rj" ? 100.0 : 10.0) + option("humidityOffset").toDouble();
+    m_value = qFromLittleEndian(value) / option("humidityDivider", 100).toDouble() + option("humidityOffset").toDouble();
 }
 
 void Properties::CO2::parseAttribte(quint16 attributeId, const QByteArray &data)
