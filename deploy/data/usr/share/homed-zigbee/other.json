@@ -75,7 +75,7 @@
       "modelNames":     ["ptvo.switch-zr02"],
       "properties":     ["ptvoButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold", "release"]},
+      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
       "endpointId":     1
     },
     {

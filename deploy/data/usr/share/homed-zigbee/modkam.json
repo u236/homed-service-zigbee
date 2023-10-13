@@ -77,6 +77,25 @@
       "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
     },
     {
+      "description":    "MODKAM 3-Channel Switch with Relay",
+      "modelNames":     ["ptvo_switch_3ch"],
+      "options":        {"endpointName": {"2": "CH1", "3": "CH2", "4": "CH3"}}
+    },
+    {
+      "modelNames":     ["ptvo_switch_3ch"],
+      "properties":     ["batteryPercentage", "status"],
+      "actions":        ["status"],
+      "exposes":        ["battery", "switch"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["ptvo_switch_3ch"],
+      "properties":     ["ptvoButtonAction"],
+      "exposes":        ["action"],
+      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
+      "endpointId":     [2, 3, 4]
+    },
+    {
       "description":    "MODKAM 2-Channel Pulse Counter",
       "modelNames":     ["ptvo_counter_2ch"],
       "options":        {"endpointName": {"3": "CH1", "5": "CH2"}}
