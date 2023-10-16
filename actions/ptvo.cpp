@@ -19,5 +19,5 @@ QByteArray ActionsPTVO::SerialData::request(const QString &, const QVariant &dat
     if (value.length() > 0x7F)
         return QByteArray();
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000E, DATA_TYPE_OCTET_STRING, QByteArray(1, static_cast <char> (value.length())).append(value));
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000E, DATA_TYPE_CHARACTER_STRING, QByteArray(1, static_cast <char> (value.length())).append(value));
 }

@@ -66,5 +66,5 @@ void PropertiesPTVO::SerialData::parseAttribte(quint16 attributeId, const QByteA
     if (attributeId != 0x000E)
         return;
 
-    m_value = data.mid(1, static_cast <quint8> (data.at(0))).toHex(':');
+    m_value = data.toHex(':');
 }
