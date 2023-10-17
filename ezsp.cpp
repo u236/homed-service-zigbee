@@ -444,7 +444,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
 
     network.extendedPanId = extendedPanId;
     network.panId = qToLittleEndian(m_panId);
-    network.txPower = 0x05;
+    network.txPower = m_power ? m_power : ASH_DEFAULT_TXPOWER;
     network.channel = m_channel;
     network.channelList = qToLittleEndian(1 << m_channel);
 
@@ -628,7 +628,8 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&network, m_replyData.constData() + 2, sizeof(network));
 
-    if (m_replyData.at(1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != STACK_STATUS_NETWORK_UP)
+    if (m_replyData.at(1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != STACK_STATUS_NETWORK_UP
+        || network.txPower != (m_power ? m_power : ASH_DEFAULT_TXPOWER))
     {
         logWarning << "Adapter network parameters doesn't match configuration";
         check = true;

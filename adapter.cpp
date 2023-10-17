@@ -43,6 +43,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
 
     m_panId = static_cast <quint16> (config->value("zigbee/panid", "0x1A62").toString().toInt(nullptr, 16));
     m_channel = static_cast <quint8> (config->value("zigbee/channel").toInt());
+    m_power = static_cast <quint8> (config->value("zigbee/power", "0").toUInt());
 
     m_write = config->value("zigbee/write", false).toBool();
     m_portDebug = config->value("debug/port", false).toBool();

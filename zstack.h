@@ -4,6 +4,7 @@
 #define ZSTACK_CONFIGURATION_MARKER                 0x42
 #define ZSTACK_CLEAR_DELAY                          4000
 #define ZSTACK_REQUEST_TIMEOUT                      10000
+#define ZSTACK_DEFAULT_TXPOWER                      0x14
 
 #define ZSTACK_SKIP_BOOTLOADER                      0xEF
 #define ZSTACK_PACKET_FLAG                          0xFE

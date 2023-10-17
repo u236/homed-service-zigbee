@@ -501,7 +501,7 @@ bool ZStack::startCoordinator(void)
     if (!sendRequest(ZDO_ADD_GROUP, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
         logWarning << "Add GP group request failed";
 
-    if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, 0x14)) || m_replyData.at(0))
+    if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, m_power ? m_power: ZSTACK_DEFAULT_TXPOWER)) || m_replyData.at(0))
         logWarning << "Set TX power request failed";
 
     if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02)
