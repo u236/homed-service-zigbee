@@ -411,11 +411,15 @@ void DeviceList::recognizeDevice(const Device &device)
                         break;
 
                     it.value()->properties().append(Property(new Properties::BatteryPercentage));
+                    it.value()->bindings().append(Binding(new Bindings::Battery));
+                    it.value()->reportings().append(Reporting(new Reportings::BatteryPercentage));
                     it.value()->exposes().append(Expose(new Sensor::Battery));
                     break;
 
                 case CLUSTER_TEMPERATURE_CONFIGURATION:
                     it.value()->properties().append(Property(new Properties::DeviceTemperature));
+                    it.value()->bindings().append(Binding(new Bindings::DeviceTemperature));
+                    it.value()->reportings().append(Reporting(new Reportings::DeviceTemperature));
                     it.value()->exposes().append(Expose(new Sensor::Temperature));
                     break;
 
@@ -425,6 +429,8 @@ void DeviceList::recognizeDevice(const Device &device)
                     {
                         it.value()->properties().append(Property(new Properties::Status));
                         it.value()->actions().append(Action(new Actions::Status));
+                        it.value()->bindings().append(Binding(new Bindings::Status));
+                        it.value()->reportings().append(Reporting(new Reportings::Status));
                         it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
                         break;
                     }
@@ -437,8 +443,12 @@ void DeviceList::recognizeDevice(const Device &device)
                     if (!device->batteryPowered())
                     {
                         QList <QVariant> options = device->options().value(QString("light-%1").arg(it.key())).toList();
+
                         it.value()->properties().append(Property(new Properties::Level));
                         it.value()->actions().append(Action(new Actions::Level));
+                        it.value()->bindings().append(Binding(new Bindings::Level));
+                        it.value()->reportings().append(Reporting(new Reportings::Level));
+
                         options.append("level");
                         device->options().insert(QString("light-%1").arg(it.key()), options);
                         break;
@@ -465,12 +475,14 @@ void DeviceList::recognizeDevice(const Device &device)
                         {
                             it.value()->properties().append(Property(new Properties::ColorHS));
                             it.value()->actions().append(Action(new Actions::ColorHS));
+                            it.value()->reportings().append(Reporting(new Reportings::ColorHS));
                             options.append("color");
                         }
                         else if (it.value()->colorCapabilities() & 0x0008)
                         {
                             it.value()->properties().append(Property(new Properties::ColorXY));
                             it.value()->actions().append(Action(new Actions::ColorXY));
+                            it.value()->reportings().append(Reporting(new Reportings::ColorXY));
                             options.append("color");
                         }
 
@@ -478,9 +490,11 @@ void DeviceList::recognizeDevice(const Device &device)
                         {
                             it.value()->properties().append(Property(new Properties::ColorTemperature));
                             it.value()->actions().append(Action(new Actions::ColorTemperature));
+                            it.value()->reportings().append(Reporting(new Reportings::ColorTemperature));
                             options.append("colorTemperature");
                         }
 
+                        it.value()->bindings().append(Binding(new Bindings::Color));
                         device->options().insert(QString("light-%1").arg(it.key()), options);
                         break;
                     }
@@ -490,21 +504,29 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_ILLUMINANCE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Illuminance));
+                    it.value()->bindings().append(Binding(new Bindings::Illuminance));
+                    it.value()->reportings().append(Reporting(new Reportings::Illuminance));
                     it.value()->exposes().append(Expose(new Sensor::Illuminance));
                     break;
 
                 case CLUSTER_TEMPERATURE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Temperature));
+                    it.value()->bindings().append(Binding(new Bindings::Temperature));
+                    it.value()->reportings().append(Reporting(new Reportings::Temperature));
                     it.value()->exposes().append(Expose(new Sensor::Temperature));
                     break;
 
                 case CLUSTER_PRESSURE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Pressure));
+                    it.value()->bindings().append(Binding(new Bindings::Pressure));
+                    it.value()->reportings().append(Reporting(new Reportings::Pressure));
                     it.value()->exposes().append(Expose(new Sensor::Pressure));
                     break;
 
                 case CLUSTER_RELATIVE_HUMIDITY:
                     it.value()->properties().append(Property(new Properties::Humidity));
+                    it.value()->bindings().append(Binding(new Bindings::Humidity));
+                    it.value()->reportings().append(Reporting(new Reportings::Humidity));
                     it.value()->exposes().append(Expose(new Sensor::Humidity));
                     break;
 
@@ -515,16 +537,22 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_SOIL_MOISTURE:
                     it.value()->properties().append(Property(new Properties::Moisture));
+                    it.value()->bindings().append(Binding(new Bindings::Moisture));
+                    it.value()->reportings().append(Reporting(new Reportings::Moisture));
                     it.value()->exposes().append(Expose(new Sensor::Moisture));
                     break;
 
                 case CLUSTER_CO2_CONCENTRATION:
                     it.value()->properties().append(Property(new Properties::CO2));
+                    it.value()->bindings().append(Binding(new Bindings::CO2));
+                    it.value()->reportings().append(Reporting(new Reportings::CO2));
                     it.value()->exposes().append(Expose(new Sensor::CO2));
                     break;
 
                 case CLUSTER_SMART_ENERGY_METERING:
                     it.value()->properties().append(Property(new Properties::Energy));
+                    it.value()->bindings().append(Binding(new Bindings::Energy));
+                    it.value()->reportings().append(Reporting(new Reportings::Energy));
                     it.value()->exposes().append(Expose(new Sensor::Energy));
                     break;
 
@@ -532,6 +560,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->properties().append(Property(new Properties::Voltage));
                     it.value()->properties().append(Property(new Properties::Current));
                     it.value()->properties().append(Property(new Properties::Power));
+                    it.value()->bindings().append(Binding(new Bindings::Power));
+                    it.value()->reportings().append(Reporting(new Reportings::Voltage));
+                    it.value()->reportings().append(Reporting(new Reportings::Current));
+                    it.value()->reportings().append(Reporting(new Reportings::Power));
                     it.value()->exposes().append(Expose(new Sensor::Voltage));
                     it.value()->exposes().append(Expose(new Sensor::Current));
                     it.value()->exposes().append(Expose(new Sensor::Power));
