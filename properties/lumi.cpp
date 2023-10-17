@@ -487,11 +487,21 @@ void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, const QByt
 
     switch (static_cast <quint8> (data.at(0)))
     {
-        case 0x00: m_value = "hold"; break;
+        case 0x00:
+        case 0x10:
+            m_value = "hold";
+            break;
+
         case 0x01: m_value = "singleClick"; break;
         case 0x02: m_value = "doubleClick"; break;
         case 0x03: m_value = "tripleClick"; break;
-        case 0xFF: m_value = "release"; break;
+
+        case 0x11:
+        case 0xFF:
+            m_value = "release";
+            break;
+
+        case 0x12: m_value = "shake"; break;
     }
 }
 

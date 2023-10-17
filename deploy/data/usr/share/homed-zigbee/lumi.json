@@ -358,6 +358,13 @@
       "options":        {"action": ["singleClick", "doubleClick", "hold", "release"], "temperature": "diagnostic"}
     },
     {
+      "description":    "Aqara Wireless Button WXKG12LM",
+      "modelNames":     ["lumi.sensor_swit", "lumi.sensor_switch.aq3"],
+      "properties":     ["lumiBasic", "lumiSwitchAction"],
+      "exposes":        ["battery", "action"],
+      "options":        {"action": ["singleClick", "doubleClick", "hold", "release", "shake"]}
+    },
+    {
       "description":    "Aqara Opple 2-Key Wireless Switch WXCJKG11LM",
       "modelNames":     ["lumi.remote.b286opcn01"],
       "properties":     ["batteryVoltage", "statusAction", "lumiData"],
