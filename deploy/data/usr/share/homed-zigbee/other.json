@@ -148,5 +148,17 @@
       "exposes":        ["light", "powerOnStatus"],
       "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     }
+  ],
+
+  "Xiaomi":
+  [
+    {
+      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC",
+      "modelNames":     ["LYWSD03MMC"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity"]
+    }
   ]
 }

@@ -908,7 +908,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
                 if (!file.isOpen() || request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType)
                 {
-                    logWarning << "Device" << device->name() << "OTA upgrade image request failed, file open error or header data mismatch request data";
+                    if (!file.fileName().isEmpty())
+                       logWarning << "Device" << device->name() << "OTA upgrade image request failed, file open error or header data mismatch request data";
+
                     enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x02, manufacturerCode).append(STATUS_NO_IMAGE_AVAILABLE));
                     break;
                 }
