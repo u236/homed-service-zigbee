@@ -119,6 +119,23 @@
       "properties":     ["ptvoWaterLeak"],
       "exposes":        ["waterLeak"],
       "endpointId":     6
+    },
+    {
+      "description":    "MODKAM Led Informer",
+      "modelNames":     ["ptvo_led_inform"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"]},
+      "endpointId":     [1]
+    },
+    {
+      "modelNames":     ["ptvo_led_inform"],
+      "properties":     ["status", "ptvoPattern"],
+      "actions":        ["status", "ptvoPattern"],
+      "exposes":        ["switch", "pattern"],
+      "options":        {"pattern": {"min": 0, "max": 62, "control": true, "icon": "mdi:swap-horizontal-bold"}},
+      "endpointId":     [2, 3, 4, 5, 6, 7, 8]
     }
   ]
 }
