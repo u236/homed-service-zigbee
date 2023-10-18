@@ -282,6 +282,7 @@ private:
 
     QMap <quint16, QByteArray> m_nvItems;
     QList <quint16> m_zdoClusters;
+    qint8 m_power;
 
     bool extendedRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false);
     bool extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &paylaod, bool group = false);
