@@ -16,7 +16,6 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB,     QByteArray(1, 0x01));
 
     m_zdoClusters = {ZDO_NODE_DESCRIPTOR_REQUEST, ZDO_SIMPLE_DESCRIPTOR_REQUEST, ZDO_ACTIVE_ENDPOINTS_REQUEST, ZDO_BIND_REQUEST, ZDO_UNBIND_REQUEST, ZDO_LQI_REQUEST, ZDO_LEAVE_REQUEST};
-    m_power = static_cast <qint8> (config->value("zigbee/power", 5).toInt());
 }
 
 bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)

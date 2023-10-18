@@ -26,9 +26,6 @@ static const uint16_t crcTable[256] =
 
 EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0)
 {
-    connect(m_timer, &QTimer::timeout, this, &EZSP::resetManufacturerCode);
-    m_timer->setSingleShot(true);
-
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
 
@@ -49,6 +46,9 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
 
     m_values.append({VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE,    1, 0x03});
     m_values.append({VALUE_CCA_THRESHOLD,                         1, 0x00});
+
+    connect(m_timer, &QTimer::timeout, this, &EZSP::resetManufacturerCode);
+    m_timer->setSingleShot(true);
 }
 
 bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
@@ -444,7 +444,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
 
     network.extendedPanId = extendedPanId;
     network.panId = qToLittleEndian(m_panId);
-    network.txPower = m_power ? m_power : ASH_DEFAULT_TXPOWER;
+    network.txPower = m_power;
     network.channel = m_channel;
     network.channelList = qToLittleEndian(1 << m_channel);
 
@@ -628,8 +628,7 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&network, m_replyData.constData() + 2, sizeof(network));
 
-    if (m_replyData.at(1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != STACK_STATUS_NETWORK_UP
-        || network.txPower != (m_power ? m_power : ASH_DEFAULT_TXPOWER))
+    if (m_replyData.at(1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != STACK_STATUS_NETWORK_UP)
     {
         logWarning << "Adapter network parameters doesn't match configuration";
         check = true;

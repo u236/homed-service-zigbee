@@ -198,8 +198,7 @@ protected:
 
     QString m_bootPin, m_resetPin, m_reset;
     quint16 m_panId;
-    quint8 m_channel;
-    quint8 m_power;
+    quint8 m_channel, m_power;
     bool m_write, m_portDebug, m_adapterDebug;
 
     QString m_manufacturerName, m_modelName, m_firmware;

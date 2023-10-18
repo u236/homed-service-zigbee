@@ -4,7 +4,6 @@
 #define ZSTACK_CONFIGURATION_MARKER                 0x42
 #define ZSTACK_CLEAR_DELAY                          4000
 #define ZSTACK_REQUEST_TIMEOUT                      10000
-#define ZSTACK_DEFAULT_TXPOWER                      0x14
 
 #define ZSTACK_SKIP_BOOTLOADER                      0xEF
 #define ZSTACK_PACKET_FLAG                          0xFE
@@ -283,7 +282,6 @@ private:
 
     QMap <quint16, QByteArray> m_nvItems;
     QList <quint16> m_zdoClusters;
-    qint8 m_power;
 
     bool extendedRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false);
     bool extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &paylaod, bool group = false);

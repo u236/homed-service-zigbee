@@ -5,7 +5,6 @@
 #define ASH_REQUEST_RETRIES                                     3
 #define ASH_MIN_LENGTH                                          4
 #define ASH_FLAG_BYTE                                           0x7E
-#define ASH_DEFAULT_TXPOWER                                     0x05
 
 #define ASH_CONTROL_ACK                                         0x80
 #define ASH_CONTROL_NAK                                         0xA0
