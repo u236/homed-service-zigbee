@@ -117,6 +117,7 @@ public:
 
     void init(void);
     void setPermitJoin(bool enabled);
+    void togglePermitJoin();
 
     void removeDevice(const QString &deviceName, bool force);
     void setDeviceName(const QString &deviceName, const QString &name);
