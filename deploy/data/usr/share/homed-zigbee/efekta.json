@@ -134,5 +134,29 @@
                           "temperatureOffset": {"min": -50, "max": 50, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
                         }
     }
+  ],
+
+  "EfektaLab.com":
+  [
+    {
+      "description":    "EFEKTA Temperature and Humidity Sensor TH v2",
+      "modelNames":     ["EFEKTA_TH_LR"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity", "reportingDelay", "temperatureLow",  "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert"],
+      "options":        {
+                          "reportingDelay": {"min": 5, "max": 300, "unit": "sec", "icon": "mdi:timer"},
+                          "temperatureLow": {"min": -5, "max": 50, "unit": "°C", "icon": "mdi:thermometer"},
+                          "temperatureHigh": {"min": -5, "max": 50, "unit": "°C", "icon": "mdi:thermometer"},
+                          "temperatureRelay": {"icon": "mdi:thermometer"},
+                          "temperatureRelayInvert": {"icon": "mdi:thermometer"},
+                          "humidityLow": {"min": 0, "max": 100, "unit": "%", "icon": "mdi:water-percent"},
+                          "humidityHigh": {"min": 0, "max": 100, "unit": "%", "icon": "mdi:water-percent"},
+                          "humidityRelay": {"icon": "mdi:water-percent"},
+                          "humidityRelayInvert": {"icon": "mdi:water-percent"}
+                        }
+    }
   ]
 }

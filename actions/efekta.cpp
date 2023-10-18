@@ -24,7 +24,7 @@ QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, cons
         case 2: // temperatureLow
         {
             qint16 value = qToLittleEndian <qint16> (data.toInt());
-            m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x2222)};
+            m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x0222)};
             return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
         }
 
@@ -57,8 +57,8 @@ QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const Q
         case 2: // humidityLow
         {
             quint8 value = qToLittleEndian <quint8> (data.toInt());
-            m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x2222)};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x0222)};
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
         }
 
         case 3: // humidityRelay
