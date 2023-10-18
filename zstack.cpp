@@ -16,6 +16,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     m_nvItems.insert(ZCD_NV_ZDO_DIRECT_CB,     QByteArray(1, 0x01));
 
     m_zdoClusters = {ZDO_NODE_DESCRIPTOR_REQUEST, ZDO_SIMPLE_DESCRIPTOR_REQUEST, ZDO_ACTIVE_ENDPOINTS_REQUEST, ZDO_BIND_REQUEST, ZDO_UNBIND_REQUEST, ZDO_LQI_REQUEST, ZDO_LEAVE_REQUEST};
+    m_power = static_cast <qint8> (config->value("zigbee/power", 5).toInt());
 }
 
 bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
@@ -501,7 +502,7 @@ bool ZStack::startCoordinator(void)
     if (!sendRequest(ZDO_ADD_GROUP, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.at(0))
         logWarning << "Add GP group request failed";
 
-    if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, m_power ? m_power: ZSTACK_DEFAULT_TXPOWER)) || m_replyData.at(0))
+    if (!sendRequest(SYS_SET_TX_POWER, QByteArray(1, static_cast <char> (m_power))) || m_replyData.at(0))
         logWarning << "Set TX power request failed";
 
     if (!sendRequest(ZDO_STARTUP_FROM_APP, QByteArray(2, 0x00)) || m_replyData.at(0) == 0x02)
