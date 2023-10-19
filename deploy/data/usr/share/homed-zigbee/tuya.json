@@ -279,8 +279,8 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Smoke Detector",
-      "modelNames":     ["_TZE200_m9skfctm"],
+      "description":    "TUYA TS0601 Smoke Detector (Type A)",
+      "modelNames":     ["_TZE200_m9skfctm", "_TZE200_rccxox8p"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["battery", "smoke", "smokeConcentration", "test", "fault"],
       "options":        {
@@ -291,6 +291,20 @@
                             "11":   [{"name": "fault", "type": "bool"}],
                             "15":   [{"name": "battery", "type": "value"}],
                             "101":  [{"name": "test", "type": "bool"}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Smoke Detector (Type B)",
+      "modelNames":     ["_TZE200_ntcy3xu1", "_TZE204_ntcy3xu1"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["batteryLow", "smoke", "tamper"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "smoke", "type": "bool", "invert": true}],
+                            "4":    [{"name": "tamper", "type": "bool"}],
+                            "14":   [{"name": "batteryLow", "type": "bool", "invert": true}]
                           }
                         }
     },
