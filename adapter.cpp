@@ -109,6 +109,21 @@ void Adapter::init(void)
     }
 }
 
+bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
+{
+    QEventLoop loop;
+    QTimer timer;
+
+    connect(sender, signal, &loop, SLOT(quit()));
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    timer.setSingleShot(true);
+    timer.start(tiomeout);
+    loop.exec();
+
+    return timer.isActive();
+}
+
 void Adapter::setPermitJoin(bool enabled)
 {
     if (!permitJoin(enabled))
@@ -128,24 +143,9 @@ void Adapter::setPermitJoin(bool enabled)
     }
 }
 
-void Adapter::togglePermitJoin()
+void Adapter::togglePermitJoin(void)
 {
-    setPermitJoin(!m_permitJoin);
-}
-
-bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
-{
-    QEventLoop loop;
-    QTimer timer;
-
-    connect(sender, signal, &loop, SLOT(quit()));
-    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-
-    timer.setSingleShot(true);
-    timer.start(tiomeout);
-    loop.exec();
-
-    return timer.isActive();
+    setPermitJoin(m_permitJoin ? false : true);
 }
 
 bool Adapter::zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data)

@@ -174,9 +174,10 @@ public:
     inline void setRequestAddress(const QByteArray &value) { m_requestAddress = value; }
 
     void init(void);
-    void setPermitJoin(bool enabled);
-    void togglePermitJoin();
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
+
+    void setPermitJoin(bool enabled);
+    void togglePermitJoin(void);
 
     virtual bool zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data = QByteArray());
     virtual bool bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind = false);

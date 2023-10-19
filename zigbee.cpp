@@ -69,7 +69,7 @@ void ZigBee::setPermitJoin(bool enabled)
     m_adapter->setPermitJoin(enabled);
 }
 
-void ZigBee::togglePermitJoin()
+void ZigBee::togglePermitJoin(void)
 {
     if (!m_adapter)
         return;
@@ -1375,15 +1375,15 @@ void ZigBee::coordinatorReady(void)
 
 void ZigBee::permitJoinUpdated(bool enabled)
 {
-    if (!enabled)
-    {
-        m_statusLedTimer->stop();
-        GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
-    }
-    else
+    if (enabled)
     {
         m_statusLedTimer->start(STATUS_LED_TIMEOUT);
         GPIO::setStatus(m_statusLedPin, true);
+    }
+    else
+    {
+        m_statusLedTimer->stop();
+        GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
     }
 
     m_devices->setPermitJoin(enabled);
