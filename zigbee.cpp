@@ -69,6 +69,14 @@ void ZigBee::setPermitJoin(bool enabled)
     m_adapter->setPermitJoin(enabled);
 }
 
+void ZigBee::togglePermitJoin()
+{
+    if (!m_adapter)
+        return;
+
+    m_adapter->togglePermitJoin();
+}
+
 void ZigBee::removeDevice(const QString &deviceName, bool force)
 {
     Device device = m_devices->byName(deviceName);

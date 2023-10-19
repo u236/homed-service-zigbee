@@ -128,6 +128,11 @@ void Adapter::setPermitJoin(bool enabled)
     }
 }
 
+void Adapter::togglePermitJoin()
+{
+    setPermitJoin(!m_permitJoin);
+}
+
 bool Adapter::waitForSignal(const QObject *sender, const char *signal, int tiomeout)
 {
     QEventLoop loop;

@@ -175,6 +175,7 @@ public:
 
     void init(void);
     void setPermitJoin(bool enabled);
+    void togglePermitJoin();
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
 
     virtual bool zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, const QByteArray &data = QByteArray());

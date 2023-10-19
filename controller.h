@@ -20,6 +20,7 @@ public:
     {
         restartService,
         setPermitJoin,
+        togglePermitJoin,
         removeDevice,
         setDeviceName,
         updateDevice,
