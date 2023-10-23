@@ -48,7 +48,7 @@ bool ZiGate::zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, co
         case ZDO_SIMPLE_DESCRIPTOR_REQUEST: command = ZIGATE_SIMPLE_DESCRIPTOR_REQUEST; break;
         case ZDO_ACTIVE_ENDPOINTS_REQUEST:  command = ZIGATE_ACTIVE_ENDPOINTS_REQUEST; break;
         case ZDO_LQI_REQUEST:               command = ZIGATE_LQI_REQUEST; break;
-        default:                            return false;
+        default: return false;
     }
 
     return sendRequest(command, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(data), id) && !m_replyStatus;
