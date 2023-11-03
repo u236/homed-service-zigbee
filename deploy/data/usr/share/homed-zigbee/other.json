@@ -127,6 +127,24 @@
       "reportings":     ["status", "level"],
       "exposes":        ["light", "powerOnStatus"],
       "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+    },
+    {
+      "description":    "Sunricher 4-Channel Wireless Dimmer SR-ZG9001K12-DIM-Z4",
+      "modelNames":     ["ZGRC-KEY-013"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "options":        {"battery": "undivided"},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["ZGRC-KEY-013"],
+      "properties":     ["statusAction", "levelAction", "scene"],
+      "bindings":       ["status", "level", "scene"],
+      "exposes":        ["action", "scene"],
+      "options":        {"action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]},
+      "endpointId":     [1, 2, 3, 4]
     }
   ],
 

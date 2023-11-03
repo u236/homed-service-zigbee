@@ -462,6 +462,8 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->properties().append(Property(new Properties::CoverPosition));
                     it.value()->actions().append(Action(new Actions::CoverStatus));
                     it.value()->actions().append(Action(new Actions::CoverPosition));
+                    it.value()->bindings().append(Binding(new Bindings::Cover));
+                    it.value()->reportings().append(Reporting(new Reportings::CoverPosition));
                     it.value()->exposes().append(Expose(new CoverObject));
                     break;
 

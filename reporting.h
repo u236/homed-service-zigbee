@@ -96,6 +96,24 @@ namespace Reportings
 
     };
 
+    class CoverPosition : public ReportingObject
+    {
+
+    public:
+
+        CoverPosition(void) : ReportingObject("coverPosition", CLUSTER_WINDOW_COVERING, 0x0008, DATA_TYPE_8BIT_UNSIGNED, 1, 3600, 1) {}
+
+    };
+
+    class CoverTilt : public ReportingObject
+    {
+
+    public:
+
+        CoverTilt(void) : ReportingObject("coverTilt", CLUSTER_WINDOW_COVERING, 0x0009, DATA_TYPE_8BIT_UNSIGNED, 1, 3600, 1) {}
+
+    };
+
     class ColorHS : public ReportingObject
     {
 

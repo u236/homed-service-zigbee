@@ -4,12 +4,13 @@ void BindingObject::registerMetaTypes(void)
 {
     qRegisterMetaType <Bindings::Battery>               ("batteryBinding");
     qRegisterMetaType <Bindings::DeviceTemperature>     ("deviceTemperatureBinding");
-    qRegisterMetaType <Bindings::Scenes>                ("scenesBinding");
+    qRegisterMetaType <Bindings::Scene>                 ("sceneBinding");
     qRegisterMetaType <Bindings::Status>                ("statusBinding");
     qRegisterMetaType <Bindings::Level>                 ("levelBinding");
     qRegisterMetaType <Bindings::Time>                  ("timeBinding");
     qRegisterMetaType <Bindings::AnalogInput>           ("analogInputBinding");
     qRegisterMetaType <Bindings::MultistateInput>       ("multistateInputBinding");
+    qRegisterMetaType <Bindings::Cover>                 ("coverBinding");
     qRegisterMetaType <Bindings::Color>                 ("colorBinding");
     qRegisterMetaType <Bindings::Illuminance>           ("illuminanceBinding");
     qRegisterMetaType <Bindings::Temperature>           ("temperatureBinding");

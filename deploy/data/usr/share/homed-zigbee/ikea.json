@@ -32,6 +32,16 @@
       "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     },
     {
+      "description":    "FYRTUR Roller Blind",
+      "modelNames":     ["FYRTUR block-out roller blind"],
+      "properties":     ["batteryPercentage", "coverStatus", "coverPosition"],
+      "actions":        ["coverStatus", "coverPosition"],
+      "bindings":       ["battery", "cover"],
+      "reportings":     ["batteryPercentage", "coverPosition"],
+      "exposes":        ["battery", "cover"],
+      "options":        {"battery": "undivided"}
+    },
+    {
       "description":    "TRADFRI Wireless Dimmer E1743",
       "modelNames":     ["TRADFRI on/off switch"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction"],
@@ -44,7 +54,7 @@
       "description":    "STYRBAR Wireless Dimmer E2001",
       "modelNames":     ["Remote Control N2"],
       "properties":     ["batteryPercentage", "levelAction", "ikeaStatusAction", "ikeaArrowAction"],
-      "bindings":       ["battery", "scenes", "status", "level"],
+      "bindings":       ["battery", "scene", "status", "level"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
       "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}

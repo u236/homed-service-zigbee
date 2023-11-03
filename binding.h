@@ -47,12 +47,12 @@ namespace Bindings
 
     };
 
-    class Scenes : public BindingObject
+    class Scene : public BindingObject
     {
 
     public:
 
-        Scenes(void) : BindingObject("scenes", CLUSTER_SCENES) {}
+        Scene(void) : BindingObject("scene", CLUSTER_SCENES) {}
 
     };
 
@@ -98,6 +98,15 @@ namespace Bindings
     public:
 
         MultistateInput(void) : BindingObject("multistateInput", CLUSTER_MULTISTATE_INPUT) {}
+
+    };
+
+    class Cover : public BindingObject
+    {
+
+    public:
+
+        Cover(void) : BindingObject("cover", CLUSTER_WINDOW_COVERING) {}
 
     };
 
