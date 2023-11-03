@@ -135,7 +135,6 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery"],
-      "options":        {"battery": "undivided"},
       "endpointId":     1
     },
     {
