@@ -617,13 +617,13 @@
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring",
-      "modelNames":     ["_TZ3000_8bxrzyxz", "_TZ3000_ky0fq4ho", "_TZ3000_qeuvnohg"],
+      "modelNames":     ["_TZ3000_8bxrzyxz", "_TZ3000_cayepv1a", "_TZ3000_ky0fq4ho", "_TZ3000_lepzuhto", "_TZ3000_qeuvnohg", "_TZ3000_qystbcjg"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay LoraTap RR400ZB",
