@@ -232,7 +232,7 @@ void DeviceList::setupDevice(const Device &device)
 
         for (auto it = options.begin(); it != options.end(); it++)
         {
-            if ((it.key().contains("Offset") && !m_offsets) || (it.key().endsWith("Divider") && !it.value().toDouble()))
+            if ((it.key().endsWith("Offset") && !m_offsets) || (it.key().endsWith("Divider") && !it.value().toDouble()))
                 continue;
 
             device->options().insert(it.key(), it.value().toVariant());
