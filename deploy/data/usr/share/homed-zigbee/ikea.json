@@ -51,13 +51,22 @@
       "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
     },
     {
+      "description":    "TRADFRI Wireless Dimmer E1810",
+      "modelNames":     ["TRADFRI remote control"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "ikeaArrowAction"],
+      "bindings":       ["battery", "scene", "status", "level"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"],
+      "options":        {"battery": "undivided", "action": ["toggle", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}
+    },
+    {
       "description":    "STYRBAR Wireless Dimmer E2001",
       "modelNames":     ["Remote Control N2"],
       "properties":     ["batteryPercentage", "levelAction", "ikeaStatusAction", "ikeaArrowAction"],
       "bindings":       ["battery", "scene", "status", "level"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
+      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}
     }
   ]
 }
