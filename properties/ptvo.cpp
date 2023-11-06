@@ -21,7 +21,7 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, const QByte
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            (m_unit.isEmpty() ? m_value : m_buffer) = qFromLittleEndian(value) + option(QString(m_name).append("Offset")).toDouble();
+            (m_unit.isEmpty() ? m_value : m_buffer) = qFromLittleEndian(value) / option(QString(m_name).append("Divider"), 1).toDouble() + option(QString(m_name).append("Offset")).toDouble();
             break;
         }
 
