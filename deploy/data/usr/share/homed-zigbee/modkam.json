@@ -14,6 +14,8 @@
                           "temperatureOffset": {"min": -20, "max": 20, "unit": "°C", "icon": "mdi:thermometer"},
                           "humidityOffset": {"min": -50, "max": 50, "unit": "%", "icon": "mdi:water-percent"},
                           "pressureOffset": {"min": -100, "max": 100, "unit": "kPa", "icon": "mdi:gauge"},
+                          "autoCalibration": {"boolean": true, "icon": "mdi:molecule-co2"},
+                          "ledFeedback": {"boolean": true, "icon": "mdi:led-on"},
                           "thresholdLow": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"},
                           "thresholdHigh": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"}
                         }
@@ -28,12 +30,15 @@
       "exposes":        ["alarm", "eventsPerMinute", "dosePerHour", "sensorType", "sensorCount", "sensitivity", "threshold", "ledFeedback", "buzzerFeedback"],
       "options":        {
                           "reporting": {"minInterval": 0, "maxInterval": 60, "valueChange": 0},
-                          "eventsPerMinute": {"unit": "rpm", "icon": "mdi:radioactive"},
-                          "dosePerHour": {"unit": "μR/h", "icon": "mdi:radioactive"},
+                          "alarm": {"binary": true},
+                          "eventsPerMinute": {"sensor": true, "icon": "mdi:radioactive"},
+                          "dosePerHour": {"sensor": true, "unit": "μR/h", "icon": "mdi:radioactive"},
                           "sensorType": {"enum": ["SBM-20/STS-5/BOI-33", "SBM-19/STS-6", "other"]},
                           "sensorCount": {"min": 0, "max": 10, "icon": "mdi:dip-switch"},
                           "sensitivity": {"min": 0, "max": 100, "unit": "%", "icon": "mdi:dumbbell"},
-                          "threshold": {"min": 0, "max": 10000, "unit": "μR/h", "icon": "mdi:radioactive"}
+                          "threshold": {"min": 0, "max": 10000, "unit": "μR/h", "icon": "mdi:radioactive"},
+                          "ledFeedback": {"boolean": true, "icon": "mdi:led-on"},
+                          "buzzerFeedback": {"boolean": true, "icon": "mdi:music"}
                         }
     },
     {

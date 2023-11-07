@@ -12,6 +12,7 @@
                           "operationMode": {"enum": ["manual", "away", "program"]},
                           "targetTemperature": {"min": 5, "max": 30, "step": 0.5, "unit": "°C"},
                           "temperatureOffset": {"min": -2.5, "max": 2.5, "step" : 0.1, "unit": "°C", "icon": "mdi:thermometer"},
+                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "awayTemperature": {"min": 5, "max": 30, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
                         }
     },
@@ -134,7 +135,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
       "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"icon": "mdi:memory"}},
+      "options":        {"indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -163,7 +164,7 @@
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}, "statusMemory": {"icon": "mdi:memory"}}
+      "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
@@ -175,7 +176,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
-      "options":        {"temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"icon": "mdi:memory"}},
+      "options":        {"temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -204,7 +205,7 @@
       "actions":        ["status", "lumiSwitchType", "lumiStatusMemory"],
       "bindings":       ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "switchType", "statusMemory"],
-      "options":        {"temperature": "diagnostic", "switchType": {"enum": ["toggle", "momentary"]}, "statusMemory": {"icon": "mdi:memory"}},
+      "options":        {"temperature": "diagnostic", "switchType": {"enum": ["toggle", "momentary"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -218,7 +219,7 @@
       "properties":     ["lumiBasic", "lumiPower", "lumiInterlock"],
       "actions":        ["lumiInterlock"],
       "exposes":        ["energy", "voltage", "current", "power", "temperature", "interlock"],
-      "options":        {"temperature": "diagnostic", "interlock": {"icon": "mdi:lock"}},
+      "options":        {"temperature": "diagnostic", "interlock": {"boolean": true, "icon": "mdi:lock"}},
       "endpointId":     1
     },
     {
@@ -242,7 +243,7 @@
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiStatusMemory"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
-      "options":        {"switch": "outlet", "temperature": "diagnostic", "statusMemory": {"icon": "mdi:memory"}},
+      "options":        {"switch": "outlet", "temperature": "diagnostic", "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
     },
     {

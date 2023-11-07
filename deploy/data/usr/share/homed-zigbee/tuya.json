@@ -131,7 +131,7 @@
                           },
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "operationMode": {"enum": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
-                          "childLock": {"control": true, "icon": "mdi:lock"},
+                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
                           "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
                           "systemMode": {"enum": ["auto", "heat", "off"]},
@@ -169,11 +169,11 @@
                           },
                           "operationMode": {"enum": ["manual", "program", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30, "unit": "°C"},
-                          "boost": {"control": true, "icon": "mdi:fire"},
+                          "boost": {"boolean": true, "control": true, "icon": "mdi:fire"},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
-                          "childLock": {"control": true, "icon": "mdi:lock"},
+                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "temperatureOffset": {"min": -9, "max": 9, "unit": "°C", "icon": "mdi:thermometer"},
-                          "ecoMode": {"control": true, "icon": "mdi:leaf"},
+                          "ecoMode": {"boolean": true, "control": true, "icon": "mdi:leaf"},
                           "ecoTemperature": {"min": 10, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
@@ -203,7 +203,7 @@
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
-                          "childLock": {"control": true, "icon": "mdi:lock"},
+                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
@@ -233,7 +233,7 @@
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
-                          "childLock": {"control": true, "icon": "mdi:lock"},
+                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
                         }
@@ -255,7 +255,7 @@
                           },
                           "volumeMode": {"enum": ["low", "medium", "high"], "icon": "mdi:volume-high"},
                           "duration": {"min": 0, "max": 1800, "unit": "sec", "icon": "mdi:timer"},
-                          "alarm": {"icon": "mdi:bell"},
+                          "alarm": {"boolean": true, "control": true, "icon": "mdi:bell"},
                           "melody": {"min": 1, "max": 18, "icon": "mdi:music-note"}
                         }
     },
@@ -476,7 +476,7 @@
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"],
-      "options":        {"reverse": {"icon": "mdi:swap-horizontal-bold"}}
+      "options":        {"reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0601 Tubular Motor",
@@ -484,7 +484,7 @@
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"],
-      "options":        {"reverse": {"icon": "mdi:swap-horizontal-bold"}}
+      "options":        {"reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0601 Roller Blind Motor",
@@ -492,7 +492,7 @@
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"],
-      "options":        {"cover": "blind", "reverse": {"icon": "mdi:swap-horizontal-bold"}}
+      "options":        {"cover": "blind", "reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay",
@@ -669,7 +669,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "indicatorMode", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet", "tuyaMagic": true}
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet", "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
@@ -716,7 +716,7 @@
       "properties":     ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "exposes":        ["cover", "event", "calibration", "reverse"],
-      "options":        {"event": ["open", "stop", "close"], "calibration": {"icon": "mdi:swap-horizontal-bold"}, "reverse": {"icon": "mdi:swap-horizontal-bold"}}
+      "options":        {"event": ["open", "stop", "close"], "calibration": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}, "reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
     },
     {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",
