@@ -55,6 +55,36 @@ namespace PropertiesModkam
         void parseAttribte(quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class GeigerAlarm : public PropertyObject
+    {
+
+    public:
+
+        GeigerAlarm(void) : PropertyObject("alarm", CLUSTER_ON_OFF) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class GeigerData : public PropertyObject
+    {
+
+    public:
+
+        GeigerData(void) : PropertyObject("geigerData", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class GeigerSettings : public PropertyObject
+    {
+
+    public:
+
+        GeigerSettings(void) : PropertyObject("geigerSettings", CLUSTER_ILLUMINANCE_LEVEL_SENSING) {}
+        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+
+    };
 }
 
 #endif

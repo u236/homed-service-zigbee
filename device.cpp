@@ -362,6 +362,8 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             expose = Expose(new SelectObject(name));
         else if (option.contains("min") && option.contains("max"))
             expose = Expose(new NumberObject(name));
+        else if (option.contains("unit"))
+            expose = Expose(new SensorObject(name, true));
         else if (list.at(0) != "thermostatProgram")
             expose = Expose(new BooleanObject(name));
         else
@@ -592,7 +594,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                         default:
                             it.value()->properties().append(Property(new PropertiesIAS::ZoneStatus));
-                            it.value()->exposes().append(Expose(new BinaryObject));
+                            it.value()->exposes().append(Expose(new Binary::Alarm));
                             break;
                     }
 

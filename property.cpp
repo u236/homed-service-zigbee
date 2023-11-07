@@ -91,6 +91,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesModkam::HumidityOffset>            ("modkamHumidityOffsetProperty");
     qRegisterMetaType <PropertiesModkam::PressureOffset>            ("modkamPressureOffsetProperty");
     qRegisterMetaType <PropertiesModkam::CO2Settings>               ("modkamCO2SettingsProperty");
+    qRegisterMetaType <PropertiesModkam::GeigerAlarm>               ("modkamGeigerAlarmProperty");
+    qRegisterMetaType <PropertiesModkam::GeigerData>                ("modkamGeigerDataProperty");
+    qRegisterMetaType <PropertiesModkam::GeigerSettings>            ("modkamGeigerSettingsProperty");
 
     qRegisterMetaType <PropertiesPTVO::ChangePattern>               ("ptvoChangePatternProperty");
     qRegisterMetaType <PropertiesPTVO::Contact>                     ("ptvoContactProperty");

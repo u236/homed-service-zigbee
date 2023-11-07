@@ -88,6 +88,7 @@
 #define CLUSTER_THERMOSTAT                          0x0201
 #define CLUSTER_COLOR_CONTROL                       0x0300
 #define CLUSTER_ILLUMINANCE_MEASUREMENT             0x0400
+#define CLUSTER_ILLUMINANCE_LEVEL_SENSING           0x0401
 #define CLUSTER_TEMPERATURE_MEASUREMENT             0x0402
 #define CLUSTER_PRESSURE_MEASUREMENT                0x0403
 #define CLUSTER_RELATIVE_HUMIDITY                   0x0405

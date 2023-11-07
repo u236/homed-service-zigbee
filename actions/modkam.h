@@ -45,6 +45,16 @@ namespace ActionsModkam
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
+
+    class GeigerSettings : public ActionObject
+    {
+
+    public:
+
+        GeigerSettings(void) : ActionObject("geigerSettings", CLUSTER_ILLUMINANCE_LEVEL_SENSING, 0x0000, QList <QString> {"sensitivity", "ledFeedback", "buzzerFeedback", "sensorCount", "sensorType", "threshold"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
 }
 
 #endif

@@ -19,6 +19,24 @@
                         }
     },
     {
+      "description":    "MODKAM Tadioactivity Sensor",
+      "modelNames":     ["DIYRuZ_Geiger"],
+      "properties":     ["status", "modkamGeigerAlarm", "modkamGeigerData", "modkamGeigerSettings"],
+      "actions":        ["modkamGeigerSettings"],
+      "bindings":       ["status", "illuminance"],
+      "reportings":     ["status", "illuminance"],
+      "exposes":        ["alarm", "eventsPerMinute", "dosePerHour", "sensorType", "sensorCount", "sensitivity", "threshold", "ledFeedback", "buzzerFeedback"],
+      "options":        {
+                          "reporting": {"minInterval": 0, "maxInterval": 60, "valueChange": 0},
+                          "eventsPerMinute": {"unit": "rpm", "icon": "mdi:radioactive"},
+                          "dosePerHour": {"unit": "μR/h", "icon": "mdi:radioactive"},
+                          "sensorType": {"enum": ["SBM-20/STS-5/BOI-33", "SBM-19/STS-6", "other"]},
+                          "sensorCount": {"min": 0, "max": 10, "icon": "mdi:dip-switch"},
+                          "sensitivity": {"min": 0, "max": 100, "unit": "%", "icon": "mdi:dumbbell"},
+                          "threshold": {"min": 0, "max": 10000, "unit": "μR/h", "icon": "mdi:radioactive"}
+                        }
+    },
+    {
       "description":    "MODKAM Flower Soil Moisture Sensor",
       "modelNames":     ["DIYRuZ_Flower"],
       "options":        {"endpointName": {"1": "BME", "2": "DS"}, "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0}}
