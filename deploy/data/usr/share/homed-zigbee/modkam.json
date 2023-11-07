@@ -26,10 +26,9 @@
       "properties":     ["status", "modkamGeigerAlarm", "modkamGeigerData", "modkamGeigerSettings"],
       "actions":        ["modkamGeigerSettings"],
       "bindings":       ["status", "illuminance"],
-      "reportings":     ["status", "illuminance"],
+      "reportings":     ["modkamEventsPerMinute", "modkamDosePerHour"],
       "exposes":        ["alarm", "eventsPerMinute", "dosePerHour", "sensorType", "sensorCount", "sensitivity", "threshold", "ledFeedback", "buzzerFeedback"],
       "options":        {
-                          "reporting": {"minInterval": 0, "maxInterval": 60, "valueChange": 0},
                           "alarm": {"binary": true},
                           "eventsPerMinute": {"sensor": true, "icon": "mdi:radioactive"},
                           "dosePerHour": {"sensor": true, "unit": "μR/h", "icon": "mdi:radioactive"},

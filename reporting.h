@@ -233,6 +233,27 @@ namespace Reportings
     };
 }
 
+namespace ReportingsModkam
+{
+    class EventsPerMinute : public ReportingObject
+    {
+
+    public:
+
+        EventsPerMinute(void) : ReportingObject("eventsPerMinute", CLUSTER_ILLUMINANCE_MEASUREMENT, 0xF001, DATA_TYPE_16BIT_UNSIGNED, 0, 60) {}
+
+    };
+
+    class DosePerHour : public ReportingObject
+    {
+
+    public:
+
+        DosePerHour(void) : ReportingObject("dosePerHour", CLUSTER_ILLUMINANCE_MEASUREMENT, 0xF002, DATA_TYPE_32BIT_UNSIGNED, 0, 60) {}
+
+    };
+}
+
 namespace ReportingsPerenio
 {
     class Voltage : public ReportingObject
