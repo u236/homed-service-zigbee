@@ -18,6 +18,7 @@ HEADERS += \
     device.h \
     ezsp.h \
     poll.h \
+    properties/byun.h \
     properties/common.h \
     properties/efekta.h \
     properties/ias.h \
@@ -49,6 +50,7 @@ SOURCES += \
     device.cpp \
     ezsp.cpp \
     poll.cpp \
+    properties/byun.cpp \
     properties/common.cpp \
     properties/efekta.cpp \
     properties/ias.cpp \

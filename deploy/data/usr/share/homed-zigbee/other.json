@@ -1,4 +1,20 @@
 {
+  "BYUN":
+  [
+    {
+      "description":    "BYUN Gas Sensor M415-5C",
+      "modelNames":     ["GAS  SENSOR"],
+      "properties":     ["byunGasSensor"],
+      "exposes":        ["gas"]
+    },
+    {
+      "description":    "BYUN Smoke Sensor M415-6C",
+      "modelNames":     ["Windows switch"],
+      "properties":     ["byunSmokeSensor"],
+      "exposes":        ["smoke"]
+    }
+  ],
+
   "Feibit Inc co.":
   [
     {

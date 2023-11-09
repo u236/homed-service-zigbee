@@ -1,3 +1,4 @@
+#include "properties/byun.h"
 #include "properties/common.h"
 #include "properties/efekta.h"
 #include "properties/ias.h"
@@ -46,6 +47,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIAS::Occupancy>                    ("iasOccupancyProperty");
     qRegisterMetaType <PropertiesIAS::Smoke>                        ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>                    ("iasWaterLeakProperty");
+
+    qRegisterMetaType <PropertiesByun::GasSensor>                   ("byunGasSensorProperty");
+    qRegisterMetaType <PropertiesByun::SmokeSensor>                 ("byunSmokeSensorProperty");
 
     qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
     qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
