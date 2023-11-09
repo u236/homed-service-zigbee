@@ -2,7 +2,7 @@
 #include <QtMath>
 #include "lumi.h"
 
-void PropertiesLUMI::Data::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Data::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -370,7 +370,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
     }
 }
 
-void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::ButtonMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     bool check = modelName() == "lumi.ctrl_neutral1";
@@ -392,7 +392,7 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16 attributeId, const QByteA
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesLUMI::SwitchType::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::SwitchType::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x000A)
         return;
@@ -404,7 +404,7 @@ void PropertiesLUMI::SwitchType::parseAttribte(quint16 attributeId, const QByteA
     }
 }
 
-void PropertiesLUMI::Contact::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Contact::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
@@ -412,7 +412,7 @@ void PropertiesLUMI::Contact::parseAttribte(quint16 attributeId, const QByteArra
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesLUMI::Interlock::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Interlock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0xFF06)
         return;
@@ -420,7 +420,7 @@ void PropertiesLUMI::Interlock::parseAttribte(quint16 attributeId, const QByteAr
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Power::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
@@ -432,7 +432,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16 attributeId, const QByteArray 
     m_value = value + option("powerOffset").toDouble();
 }
 
-void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map;
     float value = 0;
@@ -452,7 +452,7 @@ void PropertiesLUMI::Cover::parseAttribte(quint16 attributeId, const QByteArray 
     m_value = map;
 }
 
-void PropertiesLUMI::Illuminance::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Illuminance::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -464,7 +464,7 @@ void PropertiesLUMI::Illuminance::parseAttribte(quint16 attributeId, const QByte
 }
 
 
-void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::ButtonAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000 && attributeId != 0x8000)
         return;
@@ -480,7 +480,7 @@ void PropertiesLUMI::ButtonAction::parseAttribte(quint16 attributeId, const QByt
     }
 }
 
-void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::SwitchAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0055)
         return;
@@ -505,7 +505,7 @@ void PropertiesLUMI::SwitchAction::parseAttribte(quint16 attributeId, const QByt
     }
 }
 
-void PropertiesLUMI::CubeRotation::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::CubeRotation::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
@@ -516,7 +516,7 @@ void PropertiesLUMI::CubeRotation::parseAttribte(quint16 attributeId, const QByt
     m_value = qFromLittleEndian(value) < 0 ? "rotateLeft" : "rotateRight";
 }
 
-void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::CubeMovement::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -542,7 +542,7 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16 attributeId, const QByt
         m_value = "drop";
 }
 
-void PropertiesLUMI::Vibration::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Vibration::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 

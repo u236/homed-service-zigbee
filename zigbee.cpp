@@ -810,7 +810,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
     {
         const Property &property = endpoint->properties().at(i);
 
-        if (property->clusterId() == clusterId)
+        if (property->clusters().contains(clusterId))
         {
             QVariant value = property->value();
 
@@ -818,7 +818,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                 continue;
 
             property->setTransactionId(transactionId);
-            property->parseAttribte(attributeId, data);
+            property->parseAttribte(clusterId, attributeId, data);
             check = true;
 
             if (property->timeout())
@@ -1044,7 +1044,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     {
         const Property &property = endpoint->properties().at(i);
 
-        if (property->clusterId() == clusterId)
+        if (property->clusters().contains(clusterId))
         {
             QVariant value = property->value();
 
@@ -1052,7 +1052,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 continue;
 
             property->setTransactionId(transactionId);
-            property->parseCommand(commandId, payload);
+            property->parseCommand(clusterId, commandId, payload);
             check = true;
 
             if (property->timeout())

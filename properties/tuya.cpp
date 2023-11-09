@@ -2,7 +2,7 @@
 #include <QtMath>
 #include "tuya.h"
 
-void PropertiesTUYA::Data::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
     QVariant data;
@@ -248,7 +248,7 @@ void PropertiesTUYA::CoverMotor::update(quint8 dataPoint, const QVariant &data)
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::CoverSwitch::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::CoverSwitch::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -272,7 +272,7 @@ void PropertiesTUYA::CoverSwitch::parseAttribte(quint16 attributeId, const QByte
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::ChildLock::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::ChildLock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x8000)
         return;
@@ -280,7 +280,7 @@ void PropertiesTUYA::ChildLock::parseAttribte(quint16 attributeId, const QByteAr
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesTUYA::OperationMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::OperationMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x8004)
         return;
@@ -292,7 +292,7 @@ void PropertiesTUYA::OperationMode::parseAttribte(quint16 attributeId, const QBy
     }
 }
 
-void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::IndicatorMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x8001)
         return;
@@ -306,7 +306,7 @@ void PropertiesTUYA::IndicatorMode::parseAttribte(quint16 attributeId, const QBy
     }
 }
 
-void PropertiesTUYA::SensitivityMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::SensitivityMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0013)
         return;
@@ -319,7 +319,7 @@ void PropertiesTUYA::SensitivityMode::parseAttribte(quint16 attributeId, const Q
     }
 }
 
-void PropertiesTUYA::TimeoutMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::TimeoutMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0xF001)
         return;
@@ -332,7 +332,7 @@ void PropertiesTUYA::TimeoutMode::parseAttribte(quint16 attributeId, const QByte
     }
 }
 
-void PropertiesTUYA::SwitchType::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::SwitchType::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0xD030)
         return;
@@ -345,7 +345,7 @@ void PropertiesTUYA::SwitchType::parseAttribte(quint16 attributeId, const QByteA
     }
 }
 
-void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x8002)
         return;
@@ -358,7 +358,7 @@ void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16 attributeId, const QBy
     }
 }
 
-void PropertiesTUYA::ButtonAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesTUYA::ButtonAction::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
     {

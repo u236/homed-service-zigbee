@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "ptvo.h"
 
-void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::Status::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
@@ -9,7 +9,7 @@ void PropertiesPTVO::Status::parseAttribte(quint16 attributeId, const QByteArray
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::AnalogInput::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -38,7 +38,7 @@ void PropertiesPTVO::AnalogInput::parseAttribte(quint16 attributeId, const QByte
     }
 }
 
-void PropertiesPTVO::ButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::ButtonAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0055)
         return;
@@ -53,7 +53,7 @@ void PropertiesPTVO::ButtonAction::parseAttribte(quint16 attributeId, const QByt
     }
 }
 
-void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::SwitchAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0055)
         return;
@@ -61,7 +61,7 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16 attributeId, const QByt
     m_value = data.at(0) ? "on" : "off";
 }
 
-void PropertiesPTVO::SerialData::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::SerialData::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x000E)
         return;

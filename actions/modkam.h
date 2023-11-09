@@ -46,12 +46,12 @@ namespace ActionsModkam
 
     };
 
-    class GeigerSettings : public ActionObject
+    class Geiger : public ActionObject
     {
 
     public:
 
-        GeigerSettings(void) : ActionObject("geigerSettings", CLUSTER_ILLUMINANCE_LEVEL_SENSING, 0x0000, QList <QString> {"sensitivity", "ledFeedback", "buzzerFeedback", "sensorCount", "sensorType", "threshold"}) {}
+        Geiger(void) : ActionObject("geiger", CLUSTER_ILLUMINANCE_LEVEL_SENSING, 0x0000, QList <QString> {"sensitivity", "ledFeedback", "buzzerFeedback", "sensorCount", "sensorType", "threshold"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

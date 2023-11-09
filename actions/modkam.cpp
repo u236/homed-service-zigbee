@@ -45,7 +45,7 @@ QByteArray ActionsModkam::CO2Settings::request(const QString &name, const QVaria
     return QByteArray();
 }
 
-QByteArray ActionsModkam::GeigerSettings::request(const QString &name, const QVariant &data)
+QByteArray ActionsModkam::Geiger::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 

@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "ikea.h"
 
-void PropertiesIKEA::StatusAction::parseCommand(quint8 commandId, const QByteArray &)
+void PropertiesIKEA::StatusAction::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
     if (meta().value("time").toLongLong() + 1000 > QDateTime::currentMSecsSinceEpoch())
         return;
@@ -13,7 +13,7 @@ void PropertiesIKEA::StatusAction::parseCommand(quint8 commandId, const QByteArr
     }
 }
 
-void PropertiesIKEA::ArrowAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesIKEA::ArrowAction::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
     {

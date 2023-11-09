@@ -5,7 +5,7 @@
 
 using namespace Properties;
 
-void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::BatteryVoltage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0020)
         return;
@@ -13,7 +13,7 @@ void Properties::BatteryVoltage::parseAttribte(quint16 attributeId, const QByteA
     m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
 }
 
-void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::BatteryPercentage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0021)
         return;
@@ -21,7 +21,7 @@ void Properties::BatteryPercentage::parseAttribte(quint16 attributeId, const QBy
     m_value = static_cast <quint8> (data.at(0)) / (option().toString() == "undivided" ? 1.0 : 2.0);
 }
 
-void Properties::DeviceTemperature::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::DeviceTemperature::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
@@ -32,7 +32,7 @@ void Properties::DeviceTemperature::parseAttribte(quint16 attributeId, const QBy
     m_value = qFromLittleEndian(value) + option("temperatureOffset").toDouble();
 }
 
-void Properties::Status::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Status::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
@@ -40,7 +40,7 @@ void Properties::Status::parseAttribte(quint16 attributeId, const QByteArray &da
     m_value = data.at(0) ? "on" : "off";
 }
 
-void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::PowerOnStatus::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x4003)
         return;
@@ -54,7 +54,7 @@ void Properties::PowerOnStatus::parseAttribte(quint16 attributeId, const QByteAr
     }
 }
 
-void Properties::SwitchType::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::SwitchType::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
@@ -67,7 +67,7 @@ void Properties::SwitchType::parseAttribte(quint16 attributeId, const QByteArray
     }
 }
 
-void Properties::SwitchMode::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::SwitchMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0010)
         return;
@@ -80,7 +80,7 @@ void Properties::SwitchMode::parseAttribte(quint16 attributeId, const QByteArray
     }
 }
 
-void Properties::Level::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Level::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
@@ -88,7 +88,7 @@ void Properties::Level::parseAttribte(quint16 attributeId, const QByteArray &dat
     m_value = static_cast <quint8> (data.at(0));
 }
 
-void Properties::CoverStatus::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::CoverStatus::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0008)
         return;
@@ -96,7 +96,7 @@ void Properties::CoverStatus::parseAttribte(quint16 attributeId, const QByteArra
     m_value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0)) ? "open" : "closed";
 }
 
-void Properties::CoverPosition::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::CoverPosition::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint8 value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
 
@@ -106,7 +106,7 @@ void Properties::CoverPosition::parseAttribte(quint16 attributeId, const QByteAr
     m_value = value;
 }
 
-void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::CoverTilt::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint8 value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
 
@@ -116,7 +116,7 @@ void Properties::CoverTilt::parseAttribte(quint16 attributeId, const QByteArray 
     m_value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
 }
 
-void Properties::ColorHS::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::ColorHS::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -136,7 +136,7 @@ void Properties::ColorHS::parseAttribte(quint16 attributeId, const QByteArray &d
     }
 }
 
-void Properties::ColorXY::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::ColorXY::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -163,7 +163,7 @@ void Properties::ColorXY::parseAttribte(quint16 attributeId, const QByteArray &d
     }
 }
 
-void Properties::ColorTemperature::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::ColorTemperature::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
@@ -174,7 +174,7 @@ void Properties::ColorTemperature::parseAttribte(quint16 attributeId, const QByt
     m_value = qFromLittleEndian(value);
 }
 
-void Properties::Illuminance::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Illuminance::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -185,7 +185,7 @@ void Properties::Illuminance::parseAttribte(quint16 attributeId, const QByteArra
     m_value = (option().toString() == "raw" ? qFromLittleEndian(value) : static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0)) + option("illuminanceOffset").toDouble();
 }
 
-void Properties::Temperature::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Temperature::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
@@ -196,7 +196,7 @@ void Properties::Temperature::parseAttribte(quint16 attributeId, const QByteArra
     m_value = qFromLittleEndian(value) / 100.0 + option("temperatureOffset").toDouble();
 }
 
-void Properties::Pressure::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Pressure::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
@@ -207,7 +207,7 @@ void Properties::Pressure::parseAttribte(quint16 attributeId, const QByteArray &
     m_value = qFromLittleEndian(value) / 10.0 + option("pressureOffset").toDouble();
 }
 
-void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -218,7 +218,7 @@ void Properties::Humidity::parseAttribte(quint16 attributeId, const QByteArray &
     m_value = qFromLittleEndian(value) / option("humidityDivider", 100).toDouble() + option("humidityOffset").toDouble();
 }
 
-void Properties::CO2::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::CO2::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
@@ -229,7 +229,7 @@ void Properties::CO2::parseAttribte(quint16 attributeId, const QByteArray &data)
     m_value = round(qFromLittleEndian(value) * 1000000);
 }
 
-void Properties::Occupancy::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Occupancy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
@@ -237,7 +237,7 @@ void Properties::Occupancy::parseAttribte(quint16 attributeId, const QByteArray 
     m_value = data.at(0) ? true : false;
 }
 
-void Properties::Moisture::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Moisture::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -253,7 +253,7 @@ void Properties::Occupancy::resetValue(void)
     m_value = false;
 }
 
-void Properties::Energy::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Energy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     double divider = option("energyDivider", 1).toDouble();
     qint64 value = 0;
@@ -265,7 +265,7 @@ void Properties::Energy::parseAttribte(quint16 attributeId, const QByteArray &da
     m_value = qFromLittleEndian(value) / divider;
 }
 
-void Properties::Voltage::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Voltage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     double divider = option("voltageDivider", 1).toDouble();
     qint16 value = 0;
@@ -277,7 +277,7 @@ void Properties::Voltage::parseAttribte(quint16 attributeId, const QByteArray &d
     m_value = qFromLittleEndian(value) / divider + option("voltageOffset").toDouble();
 }
 
-void Properties::Current::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Current::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     double divider = option("currentDivider", 1).toDouble();
     qint16 value = 0;
@@ -289,7 +289,7 @@ void Properties::Current::parseAttribte(quint16 attributeId, const QByteArray &d
     m_value = qFromLittleEndian(value) / divider + option("currentOffset").toDouble();
 }
 
-void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     double divider = option("powerDivider", 1).toDouble();
     qint16 value = 0;
@@ -301,7 +301,7 @@ void Properties::Power::parseAttribte(quint16 attributeId, const QByteArray &dat
     m_value = qFromLittleEndian(value) / divider + option("powerOffset").toDouble();
 }
 
-void Properties::Thermostat::parseAttribte(quint16 attributeId, const QByteArray &data)
+void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -330,7 +330,7 @@ void Properties::Thermostat::parseAttribte(quint16 attributeId, const QByteArray
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::Scene::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
     QVariant scene = option().toMap().value(QString::number(command->sceneId));
@@ -341,7 +341,7 @@ void Properties::Scene::parseCommand(quint8 commandId, const QByteArray &payload
     m_value = scene.isValid() ? scene : command->sceneId;
 }
 
-void Properties::StatusAction::parseCommand(quint8 commandId, const QByteArray &)
+void Properties::StatusAction::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
     switch (commandId)
     {
@@ -351,7 +351,7 @@ void Properties::StatusAction::parseCommand(quint8 commandId, const QByteArray &
     }
 }
 
-void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::LevelAction::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
     {
@@ -387,7 +387,7 @@ void Properties::LevelAction::parseCommand(quint8 commandId, const QByteArray &p
     }
 }
 
-void Properties::ColorAction::parseCommand(quint8 commandId, const QByteArray &payload)
+void Properties::ColorAction::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
     {

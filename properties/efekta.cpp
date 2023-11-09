@@ -2,7 +2,7 @@
 #include <QtMath>
 #include "efekta.h"
 
-void PropertiesEfekta::ReportingDelay::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::ReportingDelay::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value;
 
@@ -13,7 +13,7 @@ void PropertiesEfekta::ReportingDelay::parseAttribte(quint16 attributeId, const 
     m_value = qFromLittleEndian(value);
 }
 
-void PropertiesEfekta::TemperatureSettings::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::TemperatureSettings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -52,7 +52,7 @@ void PropertiesEfekta::TemperatureSettings::parseAttribte(quint16 attributeId, c
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::HumiditySettings::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::HumiditySettings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -88,7 +88,7 @@ void PropertiesEfekta::HumiditySettings::parseAttribte(quint16 attributeId, cons
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::CO2Settings::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::CO2Settings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -144,7 +144,7 @@ void PropertiesEfekta::CO2Settings::parseAttribte(quint16 attributeId, const QBy
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::VOCSensor::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::VOCSensor::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 

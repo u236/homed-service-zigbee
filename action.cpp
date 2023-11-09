@@ -62,7 +62,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsModkam::HumidityOffset>           ("modkamHumidityOffsetAction");
     qRegisterMetaType <ActionsModkam::PressureOffset>           ("modkamPressureOffsetAction");
     qRegisterMetaType <ActionsModkam::CO2Settings>              ("modkamCO2SettingsAction");
-    qRegisterMetaType <ActionsModkam::GeigerSettings>           ("modkamGeigerSettingsAction");
+    qRegisterMetaType <ActionsModkam::Geiger>                   ("modkamGeigerAction");
 
     qRegisterMetaType <ActionsPTVO::ChangePattern>              ("ptvoChangePatternAction");
     qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");

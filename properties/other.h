@@ -12,7 +12,7 @@ namespace PropertiesOther
     public:
 
         KonkeButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -22,7 +22,7 @@ namespace PropertiesOther
     public:
 
         SonoffButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -32,7 +32,7 @@ namespace PropertiesOther
     public:
 
         LifeControlAirQuality(void) : PropertyObject("airQuality", CLUSTER_TEMPERATURE_MEASUREMENT) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -42,7 +42,7 @@ namespace PropertiesOther
     public:
 
         PerenioSmartPlug(void) : PropertyObject("smartPlug", CLUSTER_PERENIO) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -52,7 +52,7 @@ namespace PropertiesOther
     public:
 
         LmahmutovCO2(void) : PropertyObject("co2", CLUSTER_LMAHMUTOV) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 }

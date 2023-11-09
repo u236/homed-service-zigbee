@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "other.h"
 
-void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesOther::KonkeButtonAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
@@ -14,7 +14,7 @@ void PropertiesOther::KonkeButtonAction::parseAttribte(quint16 attributeId, cons
     }
 }
 
-void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const QByteArray &)
+void PropertiesOther::SonoffButtonAction::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
     switch (commandId)
     {
@@ -24,7 +24,7 @@ void PropertiesOther::SonoffButtonAction::parseCommand(quint8 commandId, const Q
     }
 }
 
-void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     qint16 value = 0;
@@ -45,7 +45,7 @@ void PropertiesOther::LifeControlAirQuality::parseAttribte(quint16 attributeId, 
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -111,7 +111,7 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16 attributeId, const
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesOther::LmahmutovCO2::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesOther::LmahmutovCO2::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 

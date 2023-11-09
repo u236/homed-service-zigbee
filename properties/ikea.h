@@ -12,7 +12,7 @@ namespace PropertiesIKEA
     public:
 
         StatusAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -22,7 +22,7 @@ namespace PropertiesIKEA
     public:
 
         ArrowAction(void) : PropertyObject("action", CLUSTER_SCENES) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     };
 }

@@ -12,7 +12,7 @@ namespace PropertiesPTVO
     public:
 
         Status(const QString &name) : PropertyObject(name, CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -22,7 +22,7 @@ namespace PropertiesPTVO
     public:
 
         AnalogInput(const QString &name, const QString &unit = QString()) : PropertyObject(name, CLUSTER_ANALOG_INPUT), m_unit(unit) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
 
@@ -118,7 +118,7 @@ namespace PropertiesPTVO
     public:
 
         ButtonAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -128,7 +128,7 @@ namespace PropertiesPTVO
     public:
 
         SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -138,7 +138,7 @@ namespace PropertiesPTVO
     public:
 
         SerialData(void) : PropertyObject("data", CLUSTER_MULTISTATE_VALUE) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 }

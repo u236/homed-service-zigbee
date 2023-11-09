@@ -12,7 +12,7 @@ namespace PropertiesEfekta
     public:
 
         ReportingDelay(void) : PropertyObject("reportingDelay", CLUSTER_POWER_CONFIGURATION) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -22,7 +22,7 @@ namespace PropertiesEfekta
     public:
 
         TemperatureSettings(void) : PropertyObject("temperatureSettings", CLUSTER_TEMPERATURE_MEASUREMENT) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -32,7 +32,7 @@ namespace PropertiesEfekta
     public:
 
         HumiditySettings(void) : PropertyObject("humiditySettings", CLUSTER_RELATIVE_HUMIDITY) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -42,7 +42,7 @@ namespace PropertiesEfekta
     public:
 
         CO2Settings(void) : PropertyObject("co2Settings", CLUSTER_CO2_CONCENTRATION) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -52,7 +52,7 @@ namespace PropertiesEfekta
     public:
 
         VOCSensor(void) : PropertyObject("vocSensor", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 }

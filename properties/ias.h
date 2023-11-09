@@ -12,7 +12,7 @@ namespace PropertiesIAS
     public:
 
         ZoneStatus(const QString &name = "alarm") : PropertyObject(name, CLUSTER_IAS_ZONE) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
         void resetValue(void) override;
 
     };

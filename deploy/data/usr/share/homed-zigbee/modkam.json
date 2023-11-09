@@ -23,8 +23,8 @@
     {
       "description":    "MODKAM Radioactivity Sensor",
       "modelNames":     ["DIYRuZ_Geiger"],
-      "properties":     ["status", "modkamGeigerAlarm", "modkamGeigerData", "modkamGeigerSettings"],
-      "actions":        ["modkamGeigerSettings"],
+      "properties":     ["modkamGeiger"],
+      "actions":        ["modkamGeiger"],
       "bindings":       ["status", "illuminance"],
       "reportings":     ["modkamEventsPerMinute", "modkamDosePerHour"],
       "exposes":        ["alarm", "eventsPerMinute", "dosePerHour", "sensorType", "sensorCount", "sensitivity", "threshold", "ledFeedback", "buzzerFeedback"],

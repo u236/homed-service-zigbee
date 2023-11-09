@@ -12,7 +12,7 @@ namespace PropertiesTUYA
     public:
 
         Data(const QString &name) : PropertyObject(name, CLUSTER_TUYA_DATA) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     private:
 
@@ -92,7 +92,7 @@ namespace PropertiesTUYA
     public:
 
         CoverSwitch(void) : PropertyObject("coverSwitch", CLUSTER_WINDOW_COVERING) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -102,7 +102,7 @@ namespace PropertiesTUYA
     public:
 
         ChildLock(void) : PropertyObject("childLock", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -112,7 +112,7 @@ namespace PropertiesTUYA
     public:
 
         OperationMode(void) : PropertyObject("operationMode", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -122,7 +122,7 @@ namespace PropertiesTUYA
     public:
 
         IndicatorMode(void) : PropertyObject("indicatorMode", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -132,7 +132,7 @@ namespace PropertiesTUYA
     public:
 
         SensitivityMode(void) : PropertyObject("sensitivityMode", CLUSTER_IAS_ZONE) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -142,7 +142,7 @@ namespace PropertiesTUYA
     public:
 
         TimeoutMode(void) : PropertyObject("timeoutMode", CLUSTER_IAS_ZONE) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -152,7 +152,7 @@ namespace PropertiesTUYA
     public:
 
         SwitchType(void) : PropertyObject("switchType", CLUSTER_TUYA_SWITCH_MODE) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -162,7 +162,7 @@ namespace PropertiesTUYA
     public:
 
         PowerOnStatus(void) : PropertyObject("powerOnStatus", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 attributeId, const QByteArray &data) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -172,7 +172,7 @@ namespace PropertiesTUYA
     public:
 
         ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
-        void parseCommand(quint8 commandId, const QByteArray &payload) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     };
 }

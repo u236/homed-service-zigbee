@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "modkam.h"
 
-void PropertiesModkam::ButtonAction::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesModkam::ButtonAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0055)
         return;
@@ -18,7 +18,7 @@ void PropertiesModkam::ButtonAction::parseAttribte(quint16 attributeId, const QB
     }
 }
 
-void PropertiesModkam::TemperatureOffset::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesModkam::TemperatureOffset::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
@@ -29,7 +29,7 @@ void PropertiesModkam::TemperatureOffset::parseAttribte(quint16 attributeId, con
     m_value = qFromLittleEndian(value);
 }
 
-void PropertiesModkam::HumidityOffset::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesModkam::HumidityOffset::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
@@ -40,7 +40,7 @@ void PropertiesModkam::HumidityOffset::parseAttribte(quint16 attributeId, const 
     m_value = qFromLittleEndian(value);
 }
 
-void PropertiesModkam::PressureOffset::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesModkam::PressureOffset::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     qint32 value = 0;
 
@@ -51,7 +51,7 @@ void PropertiesModkam::PressureOffset::parseAttribte(quint16 attributeId, const 
     m_value = qFromLittleEndian(value) / 10;
 }
 
-void PropertiesModkam::CO2Settings::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesModkam::CO2Settings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -81,102 +81,106 @@ void PropertiesModkam::CO2Settings::parseAttribte(quint16 attributeId, const QBy
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesModkam::GeigerAlarm::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0000)
-        return;
-
-    m_value = data.at(0) ? true : false;
-}
-
-void PropertiesModkam::GeigerData::parseAttribte(quint16 attributeId, const QByteArray &data)
+void PropertiesModkam::Geiger::parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
-    switch (attributeId)
+    switch (clusterId)
     {
-        case 0xF001:
-        {
-            quint16 value;
+        case CLUSTER_ON_OFF:
 
-            if (static_cast <size_t> (data.length()) > sizeof(value))
+            if (attributeId != 0x0000)
                 return;
 
-            memcpy(&value, data.constData(), data.length());
-            map.insert("eventsPerMinute", qFromLittleEndian(value));
+            map.insert("alarm", data.at(0) ? true : false);
             break;
-        }
 
-        case 0xF002:
-        {
-            quint32 value;
+        case CLUSTER_ILLUMINANCE_MEASUREMENT:
 
-            if (static_cast <size_t> (data.length()) > sizeof(value))
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            map.insert("dosePerHour", qFromLittleEndian(value));
-            break;
-        }
-    }
-
-    m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void PropertiesModkam::GeigerSettings::parseAttribte(quint16 attributeId, const QByteArray &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-
-    switch (attributeId)
-    {
-        case 0xF000:
-        {
-            quint16 value;
-
-            if (static_cast <size_t> (data.length()) > sizeof(value))
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            map.insert("sensitivity", qFromLittleEndian(value));
-            break;
-        }
-
-        case 0xF001:
-        case 0xF002:
-        {
-            map.insert(attributeId == 0xF001 ? "ledFeedback" : "buzzerFeedback", data.at(0) ? true : false);
-            break;
-        }
-
-        case 0xF003:
-        {
-            map.insert("sensorCount", static_cast <quint8> (data.at(0)));
-            break;
-        }
-
-        case 0xF004:
-        {
-            switch (static_cast <quint8> (data.at(0)))
+            switch (attributeId)
             {
-                case 0x00: map.insert("sensorType", "SBM-20/STS-5/BOI-33"); break;
-                case 0x01: map.insert("sensorType", "SBM-19/STS-6"); break;
-                case 0x02: map.insert("sensorType", "other"); break;
+                case 0xF001:
+                {
+                    quint16 value;
+
+                    if (static_cast <size_t> (data.length()) > sizeof(value))
+                        return;
+
+                    memcpy(&value, data.constData(), data.length());
+                    map.insert("eventsPerMinute", qFromLittleEndian(value));
+                    break;
+                }
+
+                case 0xF002:
+                {
+                    quint32 value;
+
+                    if (static_cast <size_t> (data.length()) > sizeof(value))
+                        return;
+
+                    memcpy(&value, data.constData(), data.length());
+                    map.insert("dosePerHour", qFromLittleEndian(value));
+                    break;
+                }
             }
 
             break;
-        }
 
-        case 0xF005:
-        {
-            quint32 value;
+        case CLUSTER_ILLUMINANCE_LEVEL_SENSING:
 
-            if (static_cast <size_t> (data.length()) > sizeof(value))
-                return;
+            switch (attributeId)
+            {
+                case 0xF000:
+                {
+                    quint16 value;
 
-            memcpy(&value, data.constData(), data.length());
-            map.insert("threshold", qFromLittleEndian(value));
+                    if (static_cast <size_t> (data.length()) > sizeof(value))
+                        return;
+
+                    memcpy(&value, data.constData(), data.length());
+                    map.insert("sensitivity", qFromLittleEndian(value));
+                    break;
+                }
+
+                case 0xF001:
+                case 0xF002:
+                {
+                    map.insert(attributeId == 0xF001 ? "ledFeedback" : "buzzerFeedback", data.at(0) ? true : false);
+                    break;
+                }
+
+                case 0xF003:
+                {
+                    map.insert("sensorCount", static_cast <quint8> (data.at(0)));
+                    break;
+                }
+
+                case 0xF004:
+                {
+                    switch (static_cast <quint8> (data.at(0)))
+                    {
+                        case 0x00: map.insert("sensorType", "SBM-20/STS-5/BOI-33"); break;
+                        case 0x01: map.insert("sensorType", "SBM-19/STS-6"); break;
+                        case 0x02: map.insert("sensorType", "other"); break;
+                    }
+
+                    break;
+                }
+
+                case 0xF005:
+                {
+                    quint32 value;
+
+                    if (static_cast <size_t> (data.length()) > sizeof(value))
+                        return;
+
+                    memcpy(&value, data.constData(), data.length());
+                    map.insert("threshold", qFromLittleEndian(value));
+                    break;
+                }
+            }
+
             break;
-        }
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

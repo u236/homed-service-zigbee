@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "ias.h"
 
-void PropertiesIAS::ZoneStatus::parseCommand(quint8 commandId, const QByteArray &payload)
+void PropertiesIAS::ZoneStatus::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     quint16 value;
