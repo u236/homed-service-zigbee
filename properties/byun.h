@@ -13,6 +13,7 @@ namespace PropertiesByun
 
         Sensor(const QString &name, QList <quint16> clusters) : PropertyObject(name, clusters) {}
         void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -22,7 +23,6 @@ namespace PropertiesByun
     public:
 
         GasSensor(void) : Sensor("gas", {CLUSTER_BYUN_GAS, CLUSTER_IAS_ZONE}) {}
-        // void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -32,7 +32,6 @@ namespace PropertiesByun
     public:
 
         SmokeSensor(void) : Sensor("smoke", {CLUSTER_PH_MEASUREMENT, CLUSTER_IAS_ZONE}) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 }

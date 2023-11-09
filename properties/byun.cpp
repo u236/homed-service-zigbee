@@ -9,23 +9,18 @@ void PropertiesByun::Sensor::parseCommand(quint16 clusterId, quint8 commandId, c
         return;
 
     memcpy(&value, payload.constData(), sizeof(value));
-    value = qFromLittleEndian(value);
 
-    if (qFromLittleEndian(value) != 0x21)
+    if (qFromLittleEndian(value) != 0x0021)
         return;
 
     m_value = true;
 }
 
-//void PropertiesByun::GasSensor::parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data)
-//{
-//}
-
-void PropertiesByun::SmokeSensor::parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data)
+void PropertiesByun::Sensor::parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
-    if (clusterId != CLUSTER_PH_MEASUREMENT || attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (clusterId == CLUSTER_IAS_ZONE || attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());

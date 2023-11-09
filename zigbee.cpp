@@ -1016,7 +1016,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         response.responseCode = 0x00;
         response.zoneId = IAS_ZONE_ID;
 
-        enqueueRequest(device, endpoint->id(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x00).append(reinterpret_cast <char*> (&response), sizeof(response)));
+        enqueueRequest(device, endpoint->id(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x00).append(reinterpret_cast <char*> (&response), sizeof(response)));
         return;
     }
 
@@ -1033,7 +1033,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         response.utcTimestamp = qToBigEndian(value);
         response.localTimestamp = qToBigEndian(value + now.offsetFromUtc());
 
-        enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC, transactionId, 0x24).append(reinterpret_cast <char*> (&response), sizeof(response)));
+        enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x24).append(reinterpret_cast <char*> (&response), sizeof(response)));
         return;
     }
 
