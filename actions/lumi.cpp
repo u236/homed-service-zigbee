@@ -102,7 +102,7 @@ QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &
     if (value > 100)
         value = 100;
 
-    if (option("invertCover").toBool())
+    if (!option("invertCover").toBool())
         value = 100 - value;
 
     value = qToLittleEndian(value);

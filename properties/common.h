@@ -86,16 +86,6 @@ namespace Properties
 
     };
 
-    class CoverStatus : public PropertyObject
-    {
-
-    public:
-
-        CoverStatus(void) : PropertyObject("cover", CLUSTER_WINDOW_COVERING) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class CoverPosition : public PropertyObject
     {
 

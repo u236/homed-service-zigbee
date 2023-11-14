@@ -462,7 +462,6 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_WINDOW_COVERING:
-                    it.value()->properties().append(Property(new Properties::CoverStatus));
                     it.value()->properties().append(Property(new Properties::CoverPosition));
                     it.value()->actions().append(Action(new Actions::CoverStatus));
                     it.value()->actions().append(Action(new Actions::CoverPosition));

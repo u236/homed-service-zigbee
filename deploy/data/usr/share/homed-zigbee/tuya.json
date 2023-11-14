@@ -713,7 +713,7 @@
     {
       "description":    "TUYA TS130F Cover Relay/Switch",
       "modelNames":     ["_TZ3000_1dd0d5yi", "_TZ3000_egq7y6pr", "_TZ3000_fccpjz5z", "_TZ3000_fvhunhxb", "_TZ3000_vd43bbfq", "_TZ3000_zirycpws", "_TZ3210_dwytrmda"],
-      "properties":     ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
+      "properties":     ["coverPosition", "tuyaCoverSwitch"],
       "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "exposes":        ["cover", "event", "calibration", "reverse"],
       "options":        {"event": ["open", "stop", "close"], "calibration": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}, "reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}

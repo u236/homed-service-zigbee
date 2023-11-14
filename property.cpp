@@ -19,7 +19,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::SwitchType>                      ("switchTypeProperty");
     qRegisterMetaType <Properties::SwitchMode>                      ("switchModeProperty");
     qRegisterMetaType <Properties::Level>                           ("levelProperty");
-    qRegisterMetaType <Properties::CoverStatus>                     ("coverStatusProperty");
     qRegisterMetaType <Properties::CoverPosition>                   ("coverPositionProperty");
     qRegisterMetaType <Properties::CoverTilt>                       ("coverTiltProperty");
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");

@@ -99,7 +99,7 @@ QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data
     if (value > 100)
         value = 100;
 
-    if (option("invertCover").toBool())
+    if (!option("invertCover").toBool())
         value = 100 - value;
 
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(reinterpret_cast <char*> (&value), sizeof(value));
@@ -115,7 +115,7 @@ QByteArray Actions::CoverTilt::request(const QString &, const QVariant &data)
     if (value > 100)
         value = 100;
 
-    if (option("invertCover").toBool())
+    if (!option("invertCover").toBool())
         value = 100 - value;
 
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x08).append(reinterpret_cast <char*> (&value), sizeof(value));

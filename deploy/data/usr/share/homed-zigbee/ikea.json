@@ -34,7 +34,7 @@
     {
       "description":    "FYRTUR or KADRILJ Roller Blind",
       "modelNames":     ["FYRTUR block-out roller blind", "KADRILJ roller blind"],
-      "properties":     ["batteryPercentage", "coverStatus", "coverPosition"],
+      "properties":     ["batteryPercentage", "coverPosition"],
       "actions":        ["coverStatus", "coverPosition"],
       "bindings":       ["battery", "pollControl", "cover"],
       "reportings":     ["batteryPercentage", "coverPosition"],

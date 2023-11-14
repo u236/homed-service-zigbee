@@ -88,32 +88,30 @@ void Properties::Level::parseAttribte(quint16, quint16 attributeId, const QByteA
     m_value = static_cast <quint8> (data.at(0));
 }
 
-void Properties::CoverStatus::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0008)
-        return;
-
-    m_value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0)) ? "open" : "closed";
-}
-
 void Properties::CoverPosition::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    qint8 value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
+    QMap <QString, QVariant> map;
+    qint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.at(0) : 100 - data.at(0));
 
     if (attributeId != 0x0008 || value == meta().value("position", 0xFF).toInt())
         return;
 
-    m_value = value;
+    map.insert("cover", value ? "open" : "closed");
+    map.insert("position", value);
+    m_value = map;
 }
 
 void Properties::CoverTilt::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    qint8 value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
+    QMap <QString, QVariant> map;
+    qint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.at(0) : 100 - data.at(0));
 
     if (attributeId != 0x0009 || value == meta().value("tilt", 0xFF).toInt())
         return;
 
-    m_value = static_cast <quint8> (option("invertCover").toBool() ? 100 - data.at(0) : data.at(0));
+    map.insert("cover", value ? "open" : "closed");
+    map.insert("tilt", value);
+    m_value = map;
 }
 
 void Properties::ColorHS::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

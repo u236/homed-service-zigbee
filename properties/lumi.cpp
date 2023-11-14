@@ -443,12 +443,11 @@ void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QB
     memcpy(&value, data.constData(), data.length());
     value = round(qFromLittleEndian(value));
 
-    if (option("invertCover").toBool())
+    if (!option("invertCover").toBool())
         value = 100 - value;
 
     map.insert("cover", value ? "open" : "closed");
     map.insert("position", value);
-
     m_value = map;
 }
 
