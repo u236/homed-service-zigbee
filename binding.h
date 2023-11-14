@@ -101,6 +101,15 @@ namespace Bindings
 
     };
 
+    class PollControl : public BindingObject
+    {
+
+    public:
+
+        PollControl(void) : BindingObject("pollControl", CLUSTER_POLL_CONTROL) {}
+
+    };
+
     class Cover : public BindingObject
     {
 

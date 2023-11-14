@@ -32,14 +32,14 @@
       "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     },
     {
-      "description":    "FYRTUR Roller Blind",
-      "modelNames":     ["FYRTUR block-out roller blind"],
+      "description":    "FYRTUR or KADRILJ Roller Blind",
+      "modelNames":     ["FYRTUR block-out roller blind", "KADRILJ roller blind"],
       "properties":     ["batteryPercentage", "coverStatus", "coverPosition"],
       "actions":        ["coverStatus", "coverPosition"],
-      "bindings":       ["battery", "cover"],
+      "bindings":       ["battery", "pollControl", "cover"],
       "reportings":     ["batteryPercentage", "coverPosition"],
       "exposes":        ["battery", "cover"],
-      "options":        {"battery": "undivided"}
+      "options":        {"ikeaCover": true}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
@@ -48,7 +48,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}
+      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"], "ikeaRemote": true}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1810",
@@ -57,7 +57,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["toggle", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}
+      "options":        {"action": ["toggle", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"], "ikeaRemote": true}
     },
     {
       "description":    "STYRBAR Wireless Dimmer E2001",

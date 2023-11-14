@@ -494,7 +494,18 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
 bool ZigBee::interviewQuirks(const Device &device)
 {
-    if (device->manufacturerName() == "IKEA of Sweden" && device->batteryPowered())
+    if (device->options().value("ikeaCover").toBool())
+    {
+        QList <QString> list = device->firmware().split('.');
+        quint32 value = 172800;
+
+        if (list.value(0).toInt() < 24)
+            return true;
+
+        enqueueRequest(device, 0x01, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))));
+    }
+
+    if (device->options().value("ikeaRemote").toBool())
     {
         QList <QString> list = device->firmware().split('.');
         quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
@@ -506,14 +517,11 @@ bool ZigBee::interviewQuirks(const Device &device)
         enqueueRequest(device, 0x01, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, {0x0021}), "battery percentage request");
     }
 
-    if (device->manufacturerName() == "LUMI" && device->modelName() == "lumi.switch.n3acn3") // TODO: make it optional?
-    {
-        qint8 value = 0x01;
-        enqueueRequest(device, 0x01, CLUSTER_LUMI, writeAttributeRequest(m_requestId, MANUFACTURER_CODE_LUMI, 0x0200, DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "magic request");
-    }
-
     if (device->options().value("tuyaMagic").toBool())
         enqueueRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
+
+    if (device->manufacturerName() == "LUMI" && device->modelName() == "lumi.switch.n3acn3") // TODO: make it optional?
+        enqueueRequest(device, 0x01, CLUSTER_LUMI, writeAttributeRequest(m_requestId, MANUFACTURER_CODE_LUMI, 0x0200, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x01)), "magic request");
 
     return true;
 }

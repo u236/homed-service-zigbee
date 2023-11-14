@@ -73,10 +73,10 @@
 #define CLUSTER_ON_OFF                              0x0006
 #define CLUSTER_SWITCH_CONFIGURATION                0x0007
 #define CLUSTER_LEVEL_CONTROL                       0x0008
-#define CLUSTER_BINARY_OUTPUT                       0x0010
 #define CLUSTER_TIME                                0x000A
 #define CLUSTER_ANALOG_INPUT                        0x000C
 #define CLUSTER_ANALOG_OUTPUT                       0x000D
+#define CLUSTER_BINARY_OUTPUT                       0x0010
 #define CLUSTER_MULTISTATE_INPUT                    0x0012
 #define CLUSTER_MULTISTATE_VALUE                    0x0014
 #define CLUSTER_OTA_UPGRADE                         0x0019
