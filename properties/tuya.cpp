@@ -170,13 +170,13 @@ void PropertiesTUYA::WeekdayThermostatProgram::update(quint8 dataPoint, const QV
         QList <QString> names = {"Hour", "Minute", "Temperature"};
         QByteArray program = data.toByteArray();
 
+        meta().insert("program", true);
+
         for (int i = 0; i < 18; i++)
         {
             quint8 value = static_cast <quint8> (program.at(i));
             map.insert(QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
         }
-
-        meta().insert("program", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
@@ -191,13 +191,13 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
         QList <QString> names = {"Hour", "Minute", "Temperature"};
         QByteArray program = data.toByteArray();
 
+        meta().insert("program", true);
+
         for (int i = 0; i < 18; i++)
         {
             quint8 value = static_cast <quint8> (program.at(i));
             map.insert(QString("holidayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
         }
-
-        meta().insert("program", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
@@ -212,13 +212,13 @@ void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVari
         QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
         QByteArray program = data.toByteArray();
 
+        meta().insert("program", true);
+
         for (int i = 0; i < 36; i++)
         {
             double value = static_cast <double> (program.at(i));
             map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
         }
-
-        meta().insert("program", true);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
