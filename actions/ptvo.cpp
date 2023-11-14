@@ -15,9 +15,5 @@ QByteArray ActionsPTVO::AnalogInput::request(const QString &, const QVariant &da
 QByteArray ActionsPTVO::SerialData::request(const QString &, const QVariant &data)
 {
     QByteArray value = QByteArray::fromHex(data.toString().toUtf8());
-
-    if (value.length() > 0x7F)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000E, DATA_TYPE_CHARACTER_STRING, QByteArray(1, static_cast <char> (value.length())).append(value));
+    return value.length() > 0x7F ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x000E, DATA_TYPE_CHARACTER_STRING, QByteArray(1, static_cast <char> (value.length())).append(value));
 }

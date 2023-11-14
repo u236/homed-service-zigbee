@@ -42,6 +42,7 @@ protected:
     QList <QString> m_actions;
 
     Property endpointProperty(const QString &name = QString());
+    qint8 listIndex(const QList <QString> &list, const QVariant &value);
 
 };
 

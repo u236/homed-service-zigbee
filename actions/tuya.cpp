@@ -215,11 +215,7 @@ QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant 
                 actionList = QList <QString> (actionList.rbegin(), actionList.rend());
 
             value = static_cast <qint8> (actionList.indexOf(data.toString()));
-
-            if (value < 0)
-                return QByteArray();
-
-            return makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
+            return value < 0 ? QByteArray() : makeRequest(m_transactionId++, 0x01, TUYA_TYPE_ENUM, &value);
         }
 
         case 1: // position
@@ -278,66 +274,36 @@ QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data
 
 QByteArray ActionsTUYA::OperationMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"command", "event"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"command", "event"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::IndicatorMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"off", "default", "inverted", "on"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"off", "default", "inverted", "on"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::SensitivityMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"low", "medium", "high"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"low", "medium", "high"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::TimeoutMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"30s", "60s", "120s"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"30s", "60s", "120s"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::SwitchType::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"toggle", "static", "momentary"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"toggle", "static", "momentary"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray ActionsTUYA::PowerOnStatus::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"off", "on", "previous"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"off", "on", "previous"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }

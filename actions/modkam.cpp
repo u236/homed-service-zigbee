@@ -75,14 +75,9 @@ QByteArray ActionsModkam::Geiger::request(const QString &name, const QVariant &d
 
         case 4: // sensorType
         {
-            QList <QString> list = {"SBM-20/STS-5/BOI-33", "SBM-19/STS-6", "other"};
-            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-            if (value < 0)
-                return QByteArray();
-
+            qint8 value = listIndex({"SBM-20/STS-5/BOI-33", "SBM-19/STS-6", "other"}, data);
             m_attributes = {0xF004};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
         }
 
         case 5: // threshold

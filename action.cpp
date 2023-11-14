@@ -93,3 +93,8 @@ Property ActionObject::endpointProperty(const QString &name)
 
     return Property();
 }
+
+qint8 ActionObject::listIndex(const QList<QString> &list, const QVariant &value)
+{
+    return static_cast <qint8> (list.indexOf(value.toString()));
+}

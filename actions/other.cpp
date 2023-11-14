@@ -9,25 +9,15 @@ QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QV
     {
         case 0: // powerOnStatus
         {
-            QList <QString> list = {"off", "on", "previous"};
-            qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
+            qint8 value = listIndex({"off", "on", "previous"}, data);
             m_attributes = {0x0000};
-
-            if (value < 0)
-                return QByteArray();
-
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
         }
 
         case 1: // resetAlarms
         {
             m_attributes = {0x0001};
-
-            if (!data.toBool())
-                return QByteArray();
-
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x00)); // TODO: check payload
+            return !data.toBool() ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x00)); // TODO: check payload
         }
 
         default:

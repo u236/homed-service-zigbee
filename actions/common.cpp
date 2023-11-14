@@ -4,19 +4,13 @@
 
 QByteArray Actions::Status::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"off", "on", "toggle"};
-    qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (command < 0)
-        return QByteArray();
-
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
+    qint8 command = listIndex({"off", "on", "toggle"}, data);
+    return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
 QByteArray Actions::PowerOnStatus::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"off", "on", "toggle", "previous"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+    qint8 value = listIndex({"off", "on", "toggle", "previous"}, data);
 
     if (value < 0 || value > 2)
         value = 0xFF;
@@ -26,24 +20,14 @@ QByteArray Actions::PowerOnStatus::request(const QString &, const QVariant &data
 
 QByteArray Actions::SwitchType::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"toggle", "momentary", "multifunction"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"toggle", "momentary", "multifunction"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray Actions::SwitchMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"on", "off", "toggle"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"on", "off", "toggle"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
 QByteArray Actions::Level::request(const QString &, const QVariant &data)
@@ -102,11 +86,7 @@ QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 {
     QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};
     qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (command < 0)
-        return QByteArray();
-
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
+    return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
 QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data)
@@ -251,11 +231,6 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
 
 QByteArray Actions::DisplayMode::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = {"celsius", "fahrenheit"};
-    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
-
-    if (value < 0)
-        return QByteArray();
-
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    qint8 value = listIndex({"celsius", "fahrenheit"}, data);
+    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
