@@ -21,6 +21,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorXY>                        ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>               ("colorTemperatureAction");
     qRegisterMetaType <Actions::Thermostat>                     ("thermostatAction");
+    qRegisterMetaType <Actions::DisplayMode>                    ("displayModeAction");
 
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");

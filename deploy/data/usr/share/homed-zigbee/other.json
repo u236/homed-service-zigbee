@@ -188,10 +188,12 @@
     {
       "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC",
       "modelNames":     ["LYWSD03MMC"],
-      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "displayMode"],
+      "actions":        ["displayMode"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity"]
+      "exposes":        ["battery", "temperature", "humidity", "displayMode"],
+      "options":        {"displayMode": {"enum": ["celsius", "fahrenheit"]}}
     }
   ]
 }

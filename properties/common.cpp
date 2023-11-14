@@ -218,23 +218,17 @@ void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QBy
     m_value = qFromLittleEndian(value) / option("humidityDivider", 100).toDouble() + option("humidityOffset").toDouble();
 }
 
-void Properties::CO2::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    float value = 0;
-
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-    m_value = round(qFromLittleEndian(value) * 1000000);
-}
-
 void Properties::Occupancy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
         return;
 
     m_value = data.at(0) ? true : false;
+}
+
+void Properties::Occupancy::resetValue(void)
+{
+    m_value = false;
 }
 
 void Properties::Moisture::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -248,9 +242,15 @@ void Properties::Moisture::parseAttribte(quint16, quint16 attributeId, const QBy
     m_value = qFromLittleEndian(value) / 100.0 + option("moistureOffset").toDouble();
 }
 
-void Properties::Occupancy::resetValue(void)
+void Properties::CO2::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    m_value = false;
+    float value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = round(qFromLittleEndian(value) * 1000000);
 }
 
 void Properties::Energy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -328,6 +328,14 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void Properties::DisplayMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0000)
+        return;
+
+    m_value = data.at(0) ? "fahrenheit" : "celsius";
 }
 
 void Properties::Scene::parseCommand(quint16, quint8 commandId, const QByteArray &payload)

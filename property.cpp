@@ -36,11 +36,12 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Voltage>                         ("voltageProperty");
     qRegisterMetaType <Properties::Current>                         ("currentProperty");
     qRegisterMetaType <Properties::Power>                           ("powerProperty");
+    qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
+    qRegisterMetaType <Properties::DisplayMode>                     ("displayModeProperty");
     qRegisterMetaType <Properties::Scene>                           ("sceneProperty");
     qRegisterMetaType <Properties::StatusAction>                    ("statusActionProperty");
     qRegisterMetaType <Properties::LevelAction>                     ("levelActionProperty");
     qRegisterMetaType <Properties::ColorAction>                     ("colorActionProperty");
-    qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
 
     qRegisterMetaType <PropertiesIAS::Contact>                      ("iasContactProperty");
     qRegisterMetaType <PropertiesIAS::Gas>                          ("iasGasProperty");
@@ -59,9 +60,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::ButtonMode>                  ("lumiButtonModeProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchType>                  ("lumiSwitchTypeProperty");
     qRegisterMetaType <PropertiesLUMI::Contact>                     ("lumiContactProperty");
+    qRegisterMetaType <PropertiesLUMI::Interlock>                   ("lumiInterlockProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                       ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                       ("lumiCoverProperty");
-    qRegisterMetaType <PropertiesLUMI::Interlock>                   ("lumiInterlockProperty");
     qRegisterMetaType <PropertiesLUMI::Illuminance>                 ("lumiIlluminanceProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>                ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>                ("lumiSwitchActionProperty");

@@ -248,3 +248,14 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
 
     return QByteArray();
 }
+
+QByteArray Actions::DisplayMode::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = {"celsius", "fahrenheit"};
+    qint8 value = static_cast <qint8> (list.indexOf(data.toString()));
+
+    if (value < 0)
+        return QByteArray();
+
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
