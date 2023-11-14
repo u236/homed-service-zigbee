@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION                 "3.5.5"
+#define SERVICE_VERSION                 "3.5.6"
 #define UPDATE_AVAILABILITY_INTERVAL    10000
 #define UPDATE_PROPERTIES_DELAY         1000
 

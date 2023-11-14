@@ -497,12 +497,12 @@ bool ZigBee::interviewQuirks(const Device &device)
     if (device->options().value("ikeaCover").toBool())
     {
         QList <QString> list = device->firmware().split('.');
-        quint32 value = 172800;
+        quint32 value = qToLittleEndian <quint32> (172800);
 
         if (list.value(0).toInt() < 24)
             return true;
 
-        enqueueRequest(device, 0x01, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))));
+        enqueueRequest(device, 0x01, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "polling configuration request");
     }
 
     if (device->options().value("ikeaRemote").toBool())
