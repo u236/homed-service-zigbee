@@ -261,7 +261,12 @@ void ZigBee::getProperties(const QString &deviceName)
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        if (it.value()->properties().isEmpty())
+            continue;
+
         emit endpointUpdated(device.data(), it.key());
+    }
 }
 
 void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global)

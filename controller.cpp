@@ -194,7 +194,12 @@ void Controller::updateProperties(void)
         const Device &device = it.value();
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        {
+            if (it.value()->properties().isEmpty())
+                continue;
+
             endpointUpdated(device.data(), it.key());
+        }
     }
 }
 
