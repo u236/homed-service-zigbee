@@ -183,7 +183,7 @@
       "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE204_5toc8efa", "_TZE204_aoclfnxz"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
-      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -202,6 +202,7 @@
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "hysteresis": {"min": 0, "max": 5, "unit": "°C", "icon": "mdi:thermometer"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
@@ -213,7 +214,7 @@
       "modelNames":     ["_TZE200_5toc8efa", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
-      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -232,10 +233,40 @@
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "hysteresis": {"min": 0, "max": 5, "unit": "°C", "icon": "mdi:thermometer"},
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
                           "thermostatProgram": "moes"
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Electric Thermostat ZWT198",
+      "modelNames":     ["_TZE200_viy9ihs7"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["thermostat", "childLock", "frostProtection", "temperatureOffset", "hysteresis"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
+                            "2":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
+                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "9":    [{"name": "childLock", "type": "bool", "action": true}],
+                            "15":   [{"name": "temperatureLimitMax", "type": "value", "divider": 10, "action": true}],
+                            "19":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "101":  [{"name": "heating", "type": "bool", "invert": true}],
+                            "102":  [{"name": "frostProtection", "type": "bool", "action": true}],
+                            "107":  [{"name": "hysteresis", "type": "value", "action": true}]
+                          },
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5, "unit": "°C"},
+                          "operationMode": {"enum": ["program", "manual"]},
+                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
+                          "temperatureOffset": {"min": -9.9, "max": 9.9, "step": 0.1, "unit": "°C", "icon": "mdi:thermometer"},
+                          "frostProtection": {"boolean": true, "control": true, "icon": "mdi:snowflake"},
+                          "hysteresis": {"min": 0.5, "max": 10, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
                         }
     },
     {
