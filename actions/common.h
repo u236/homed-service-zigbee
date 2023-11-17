@@ -131,7 +131,7 @@ namespace Actions
 
     public:
 
-        DisplayMode(void) : ActionObject("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000) {}
+        DisplayMode(void) : ActionObject("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0000) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
