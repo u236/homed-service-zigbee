@@ -502,31 +502,32 @@ bool ZigBee::interviewQuirks(const Device &device)
     if (device->options().value("ikeaCover").toBool())
     {
         QList <QString> list = device->firmware().split('.');
-        quint32 value = qToLittleEndian <quint32> (172800);
 
-        if (list.value(0).toInt() < 24)
-            return true;
-
-        enqueueRequest(device, 0x01, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "polling configuration request");
+        if (list.value(0).toInt() >= 24)
+        {
+            quint32 value = qToLittleEndian <quint32> (172800);
+            enqueueRequest(device, 0x01, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "polling configuration request");
+        }
     }
 
     if (device->options().value("ikeaRemote").toBool())
     {
         QList <QString> list = device->firmware().split('.');
         quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
-        bool group = list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75);
+        bool check = list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75);
 
-        if ((group && !bindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF)) || (!group && !bindRequest(device, 0x01, CLUSTER_ON_OFF)))
+        if ((check && !bindRequest(device, 0x01, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF)) || (!check && !bindRequest(device, 0x01, CLUSTER_ON_OFF)))
             return false;
-
-        enqueueRequest(device, 0x01, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, {0x0021}), "battery percentage request");
     }
 
-    if (device->options().value("tuyaMagic").toBool())
-        enqueueRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
+    if (device->manufacturerName() == "IKEA of Sweden" && device->powerSource() == POWER_SOURCE_BATTERY)
+        enqueueRequest(device, 0x01, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, {0x0021}), "battery percentage request");
 
     if (device->manufacturerName() == "LUMI" && device->modelName() == "lumi.switch.n3acn3") // TODO: make it optional?
         enqueueRequest(device, 0x01, CLUSTER_LUMI, writeAttributeRequest(m_requestId, MANUFACTURER_CODE_LUMI, 0x0200, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x01)), "magic request");
+
+    if (device->options().value("tuyaMagic").toBool())
+        enqueueRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
 
     return true;
 }
