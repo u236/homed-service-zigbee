@@ -393,6 +393,16 @@ void Properties::LevelAction::parseCommand(quint16, quint8 commandId, const QByt
     }
 }
 
+void CoverAction::parseCommand(quint16, quint8 commandId, const QByteArray &)
+{
+    switch (commandId)
+    {
+        case 0x00: m_value = "open"; break;
+        case 0x01: m_value = "close"; break;
+        case 0x02: m_value = "stop"; break;
+    }
+}
+
 void Properties::ColorAction::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)

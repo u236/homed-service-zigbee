@@ -305,6 +305,16 @@ namespace Properties
 
     };
 
+    class CoverAction : public PropertyObject
+    {
+
+    public:
+
+        CoverAction(void) : PropertyObject("action", CLUSTER_WINDOW_COVERING) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
+
     class ColorAction : public PropertyObject
     {
 

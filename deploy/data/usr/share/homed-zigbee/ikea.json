@@ -64,6 +64,15 @@
       "options":        {"action": ["toggle", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"], "ikeaRemote": true}
     },
     {
+      "description":    "TRADFRI Cover Switch E1766",
+      "modelNames":     ["TRADFRI open/close remote"],
+      "properties":     ["batteryPercentage", "coverAction"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"],
+      "options":        {"battery": "undivided", "action": ["open", "close", "stop"]}
+    },
+    {
       "description":    "STYRBAR Wireless Dimmer E2001",
       "modelNames":     ["Remote Control N2"],
       "properties":     ["batteryPercentage", "levelAction", "ikeaStatusAction", "ikeaArrowAction"],

@@ -702,7 +702,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                 if (dataType != DATA_TYPE_CHARACTER_STRING)
                     return;
 
-                device->setManufacturerName(QString(data).trimmed());
+                device->setManufacturerName(data != "\u0002KE" ? QString(data).trimmed() : "IKEA of Sweden");
                 break;
 
             case 0x0005:

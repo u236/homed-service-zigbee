@@ -40,6 +40,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Scene>                           ("sceneProperty");
     qRegisterMetaType <Properties::StatusAction>                    ("statusActionProperty");
     qRegisterMetaType <Properties::LevelAction>                     ("levelActionProperty");
+    qRegisterMetaType <Properties::CoverAction>                     ("coverActionProperty");
     qRegisterMetaType <Properties::ColorAction>                     ("colorActionProperty");
 
     qRegisterMetaType <PropertiesIAS::Contact>                      ("iasContactProperty");
