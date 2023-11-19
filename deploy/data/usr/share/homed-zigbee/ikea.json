@@ -2,6 +2,10 @@
   "IKEA of Sweden":
   [
     {
+      "description":    "TRADFRI Signal Repeater E1746",
+      "modelNames":     ["TRADFRI Signal Repeater"]
+    },
+    {
       "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
       "modelNames":     ["TRADFRI bulb E14 WS 470lm"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],

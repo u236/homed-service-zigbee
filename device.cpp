@@ -213,13 +213,10 @@ void DeviceList::setupDevice(const Device &device)
                             device->options().insert(options.toVariantMap());
                     }
 
-                    if (json.contains("properties"))
-                    {
-                        for (int i = 0; i < endpoints.count(); i++)
-                            setupEndpoint(endpoint(device, static_cast <quint8> (endpoints.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
+                    for (int i = 0; i < endpoints.count(); i++)
+                        setupEndpoint(endpoint(device, static_cast <quint8> (endpoints.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
 
-                        device->setSupported(true);
-                    }
+                    device->setSupported(true);
                 }
             }
         }
