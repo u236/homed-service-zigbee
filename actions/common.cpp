@@ -15,19 +15,19 @@ QByteArray Actions::PowerOnStatus::request(const QString &, const QVariant &data
     if (value < 0 || value > 2)
         value = 0xFF;
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }
 
 QByteArray Actions::SwitchType::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"toggle", "momentary", "multifunction"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }
 
 QByteArray Actions::SwitchMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"on", "off", "toggle"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }
 
 QByteArray Actions::Level::request(const QString &, const QVariant &data)
@@ -213,14 +213,14 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
         {
             qint8 value = static_cast <qint8> (data.toDouble() * 10);
             m_attributes = {0x0010};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 1: // targetTemperature
         {
             qint16 value = qToLittleEndian <qint16> (data.toDouble() * 100);
             m_attributes = {0x0012};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
         }
     }
 
@@ -230,5 +230,5 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
 QByteArray Actions::DisplayMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"celsius", "fahrenheit"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_ENUM, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }

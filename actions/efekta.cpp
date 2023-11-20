@@ -4,7 +4,7 @@
 QByteArray ActionsEfekta::ReportingDelay::request(const QString &, const QVariant &data)
 {
     quint16 value = qToLittleEndian <quint16> (data.toInt());
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, const QVariant &data)
@@ -17,7 +17,7 @@ QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, cons
         {
             qint16 value = qToLittleEndian <qint16> (data.toDouble() * 10);
             m_attributes = {0x0210};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
         }
 
         case 1: // temperatureHigh
@@ -25,7 +25,7 @@ QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, cons
         {
             qint16 value = qToLittleEndian <qint16> (data.toInt());
             m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x0222)};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
         }
 
         case 3: // temperatureRelay
@@ -33,7 +33,7 @@ QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, cons
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
             m_attributes = {static_cast <quint16> (index == 3 ? 0x0220 : 0x0225)};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }
 
@@ -50,7 +50,7 @@ QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const Q
         {
             qint16 value = qToLittleEndian <qint16> (data.toInt());
             m_attributes = {0x0210};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0x0210, DATA_TYPE_16BIT_SIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
         }
 
         case 1: // humidityHigh
@@ -58,7 +58,7 @@ QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const Q
         {
             quint8 value = qToLittleEndian <quint8> (data.toInt());
             m_attributes = {static_cast <quint16> (index == 1 ? 0x0221 : 0x0222)};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 3: // humidityRelay
@@ -66,7 +66,7 @@ QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const Q
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
             m_attributes = {static_cast <quint16> (index == 3 ? 0x0220 : 0x0225)};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }
 
@@ -91,14 +91,14 @@ QByteArray ActionsEfekta::CO2Settings::request(const QString &name, const QVaria
                 case 3:  m_attributes = {0x0222}; break; // co2Low
             }
 
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 4: // indicatorLevel
         {
             quint8 value = qToLittleEndian <quint8> (data.toInt());
             m_attributes = {0x0209};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
         default:
@@ -119,7 +119,7 @@ QByteArray ActionsEfekta::CO2Settings::request(const QString &name, const QVaria
                 default: return QByteArray();
             }
 
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }
 }
@@ -135,7 +135,7 @@ QByteArray ActionsEfekta::VOCSensor::request(const QString &name, const QVariant
         {
             quint16 value = qToLittleEndian <quint16> (data.toInt());
             m_attributes = {static_cast <quint16> (index == 0 ? 0x0221 : 0x2222)};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 2: // vocRelay
@@ -143,7 +143,7 @@ QByteArray ActionsEfekta::VOCSensor::request(const QString &name, const QVariant
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
             m_attributes = {static_cast <quint16> (index == 2 ? 0x0220 : 0x0225)};
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }
 

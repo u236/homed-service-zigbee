@@ -9,21 +9,21 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
         {
             qint8 value = listIndex({"low", "medium", "high"}, data) + 1;
             m_attributes = {0x010C};
-            return value < 1 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return value < 1 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 1: // detectionMode
         {
             qint8 value = listIndex({"undirected", "directed"}, data);
             m_attributes = {0x0144};
-            return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 2: // distanceMode
         {
             qint8 value = listIndex({"far", "middle", "near"}, data);
             m_attributes = {0x0146};
-            return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 3: // resetPresence
@@ -56,49 +56,49 @@ QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant 
         default: return QByteArray();
     }
 
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::OperationMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"command", "event"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::IndicatorMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"default", "inverted"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"decoupled", "relay"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::SwitchType::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"toggle", "momentary"}, data) + 1;
-    return value < 1 ? QByteArray() :writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 1 ? QByteArray() :writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::SwitchStatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::LightStatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::Interlock::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &data)
@@ -112,7 +112,7 @@ QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &
         value = 100 - value;
 
     value = qToLittleEndian(value);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_SINGLE_PRECISION, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_SINGLE_PRECISION, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::VibrationSensitivity::request(const QString &, const QVariant &data)
@@ -123,35 +123,35 @@ QByteArray ActionsLUMI::VibrationSensitivity::request(const QString &, const QVa
         return QByteArray();
 
     value = value * 10 + 1;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::SystemMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"off", "heat"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::ThermostatMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"manual", "away", "program"}, data);
-    return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::WindowDetection::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::ChildLock::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::AwayTemperature::request(const QString &, const QVariant &data)
 {
     quint32 value = qToLittleEndian <quint32> (data.toDouble() * 100);
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+    return writeAttribute(DATA_TYPE_32BIT_UNSIGNED, &value, sizeof(value));
 }

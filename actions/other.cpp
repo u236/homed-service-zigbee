@@ -11,13 +11,14 @@ QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QV
         {
             qint8 value = listIndex({"off", "on", "previous"}, data);
             m_attributes = {0x0000};
-            return value < 0 ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
         case 1: // resetAlarms
         {
+            quint8 value = 0x00;
             m_attributes = {0x0001};
-            return !data.toBool() ? QByteArray() : writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x00)); // TODO: check payload
+            return !data.toBool() ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
         default:
@@ -33,7 +34,7 @@ QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QV
                 default: return QByteArray();
             }
 
-            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_16BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+            return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
         }
     }
 }

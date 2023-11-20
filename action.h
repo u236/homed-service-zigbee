@@ -41,8 +41,9 @@ protected:
     QList <quint16> m_attributes;
     QList <QString> m_actions;
 
-    Property endpointProperty(const QString &name = QString());
+    QByteArray writeAttribute(quint8 dataType, void *value, size_t length);
     qint8 listIndex(const QList <QString> &list, const QVariant &value);
+    Property endpointProperty(const QString &name = QString());
 
 };
 

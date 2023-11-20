@@ -74,6 +74,16 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
 
+QByteArray ActionObject::writeAttribute(quint8 dataType, void *value, size_t length)
+{
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), dataType, QByteArray(reinterpret_cast <char*> (value), length));
+}
+
+qint8 ActionObject::listIndex(const QList<QString> &list, const QVariant &value)
+{
+    return static_cast <qint8> (list.indexOf(value.toString()));
+}
+
 Property ActionObject::endpointProperty(const QString &name)
 {
     EndpointObject *endpoint = static_cast <EndpointObject*> (m_parent);
@@ -93,9 +103,4 @@ Property ActionObject::endpointProperty(const QString &name)
     }
 
     return Property();
-}
-
-qint8 ActionObject::listIndex(const QList<QString> &list, const QVariant &value)
-{
-    return static_cast <qint8> (list.indexOf(value.toString()));
 }
