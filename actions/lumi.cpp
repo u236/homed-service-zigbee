@@ -83,7 +83,13 @@ QByteArray ActionsLUMI::SwitchType::request(const QString &, const QVariant &dat
     return value < 1 ? QByteArray() :writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_8BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
 }
 
-QByteArray ActionsLUMI::StatusMemory::request(const QString &, const QVariant &data)
+QByteArray ActionsLUMI::SwitchStatusMemory::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));
+}
+
+QByteArray ActionsLUMI::LightStatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), DATA_TYPE_BOOLEAN, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)));

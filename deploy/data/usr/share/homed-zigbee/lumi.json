@@ -133,7 +133,7 @@
     {
       "modelNames":     ["lumi.switch.n3acn3"],
       "properties":     ["lumiData"],
-      "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
+      "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
       "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
       "options":        {"indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
@@ -162,7 +162,7 @@
       "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
       "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
-      "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiStatusMemory"],
+      "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
       "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}}
     },
@@ -174,7 +174,7 @@
     {
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["lumiData"],
-      "actions":        ["lumiIndicatorMode", "lumiStatusMemory"],
+      "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
       "options":        {"temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
@@ -202,7 +202,7 @@
     {
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "properties":     ["status", "lumiData", "lumiSwitchType"],
-      "actions":        ["status", "lumiSwitchType", "lumiStatusMemory"],
+      "actions":        ["status", "lumiSwitchType", "lumiSwitchStatusMemory"],
       "bindings":       ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "switchType", "statusMemory"],
       "options":        {"temperature": "diagnostic", "switchType": {"enum": ["toggle", "momentary"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
@@ -241,7 +241,7 @@
       "description":    "Aqara 10A Smart Plug SP-EUC01, ZNCZ04LM or ZNCZ12LM",
       "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["status", "lumiData"],
-      "actions":        ["status", "lumiStatusMemory"],
+      "actions":        ["status", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
       "options":        {"switch": "outlet", "temperature": "diagnostic", "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
@@ -250,6 +250,14 @@
       "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["lumiPower"],
       "endpointId":     21
+    },
+    {
+      "description":    "Aqara Dimmable Bulb with Changable Color Temperature ZNLDP12LM",
+      "modelNames":     ["lumi.light.aqcn02"],
+      "properties":     ["status", "level", "colorTemperature", "lumiBasic"],
+      "actions":        ["status", "level", "colorTemperature", "lumiLightStatusMemory"],
+      "exposes":        ["light", "statusMemory"],
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}}
     },
     {
       "description":    "Aqara RGBW Led Controller ZNTGMK11LM",

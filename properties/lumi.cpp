@@ -275,6 +275,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         }
 
         case 0x0201:
+        case 0xFF19:
         {
             map.insert("statusMemory", data.at(0) ? true : false);
             break;

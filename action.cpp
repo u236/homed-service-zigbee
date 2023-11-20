@@ -29,7 +29,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::IndicatorMode>              ("lumiIndicatorModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchMode>                 ("lumiSwitchModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchType>                 ("lumiSwitchTypeAction");
-    qRegisterMetaType <ActionsLUMI::StatusMemory>               ("lumiStatusMemoryAction");
+    qRegisterMetaType <ActionsLUMI::SwitchStatusMemory>         ("lumiSwitchStatusMemoryAction");
+    qRegisterMetaType <ActionsLUMI::LightStatusMemory>          ("lumiLightStatusMemoryAction");
     qRegisterMetaType <ActionsLUMI::Interlock>                  ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>              ("lumiCoverPositionAction");
     qRegisterMetaType <ActionsLUMI::VibrationSensitivity>       ("lumiVibrationSensitivityAction");

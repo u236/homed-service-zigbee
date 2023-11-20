@@ -66,12 +66,22 @@ namespace ActionsLUMI
 
     };
 
-    class StatusMemory : public ActionObject
+    class SwitchStatusMemory : public ActionObject
     {
 
     public:
 
-        StatusMemory(void) : ActionObject("statusMemory", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0201) {}
+        SwitchStatusMemory(void) : ActionObject("statusMemory", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0201) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class LightStatusMemory : public ActionObject
+    {
+
+    public:
+
+        LightStatusMemory(void) : ActionObject("statusMemory", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, 0xFF19) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
