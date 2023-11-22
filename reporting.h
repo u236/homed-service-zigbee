@@ -173,7 +173,7 @@ namespace Reportings
 
     public:
 
-        Humidity(void) : ReportingObject("humidity", CLUSTER_RELATIVE_HUMIDITY, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 10) {}
+        Humidity(void) : ReportingObject("humidity", CLUSTER_HUMIDITY_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 10) {}
 
     };
 
@@ -182,7 +182,7 @@ namespace Reportings
 
     public:
 
-        Moisture(void) : ReportingObject("moisture", CLUSTER_SOIL_MOISTURE, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 10) {}
+        Moisture(void) : ReportingObject("moisture", CLUSTER_MOISTURE_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 10) {}
 
     };
 

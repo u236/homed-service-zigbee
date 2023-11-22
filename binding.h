@@ -160,7 +160,7 @@ namespace Bindings
 
     public:
 
-        Humidity(void) : BindingObject("temperature", CLUSTER_RELATIVE_HUMIDITY) {}
+        Humidity(void) : BindingObject("temperature", CLUSTER_HUMIDITY_MEASUREMENT) {}
 
     };
 
@@ -169,7 +169,7 @@ namespace Bindings
 
     public:
 
-        Moisture(void) : BindingObject("moisture", CLUSTER_SOIL_MOISTURE) {}
+        Moisture(void) : BindingObject("moisture", CLUSTER_MOISTURE_MEASUREMENT) {}
 
     };
 

@@ -52,15 +52,50 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
     if (m_channel < 11 || m_channel > 26)
         m_channel = 11;
 
-    logInfo << "Using channel" << m_channel;
+    logInfo << "Using channel" << m_channel << "and PAN ID" << QString::asprintf("0x%04x", m_panId);
 
     m_endpoints.insert(0x01, EndpointData(new EndpointDataObject(PROFILE_HA,  0x0005)));
     m_endpoints.insert(0x0C, EndpointData(new EndpointDataObject(PROFILE_ZLL, 0x0005)));
     m_endpoints.insert(0xF2, EndpointData(new EndpointDataObject(PROFILE_GP,  0x0061)));
 
-    m_endpoints.value(0x01)->inClusters()  = {CLUSTER_BASIC, CLUSTER_ON_OFF, CLUSTER_TIME, CLUSTER_OTA_UPGRADE, CLUSTER_POWER_PROFILE, CLUSTER_COLOR_CONTROL};
-    m_endpoints.value(0x01)->outClusters() = {CLUSTER_BASIC, CLUSTER_GROUPS, CLUSTER_SCENES, CLUSTER_ON_OFF, CLUSTER_LEVEL_CONTROL, CLUSTER_POLL_CONTROL, CLUSTER_COLOR_CONTROL, CLUSTER_ILLUMINANCE_MEASUREMENT, CLUSTER_TEMPERATURE_MEASUREMENT, CLUSTER_PRESSURE_MEASUREMENT, CLUSTER_RELATIVE_HUMIDITY, CLUSTER_OCCUPANCY_SENSING, CLUSTER_SOIL_MOISTURE, CLUSTER_IAS_ZONE, CLUSTER_SMART_ENERGY_METERING, CLUSTER_ELECTRICAL_MEASUREMENT, CLUSTER_TOUCHLINK};
-    m_endpoints.value(0xF2)->outClusters() = {CLUSTER_GREEN_POWER};
+    m_endpoints.value(0x01)->inClusters() =
+    {
+        CLUSTER_BASIC,
+        CLUSTER_ON_OFF,
+        CLUSTER_LEVEL_CONTROL,
+        CLUSTER_TIME,
+        CLUSTER_OTA_UPGRADE,
+        CLUSTER_POWER_PROFILE,
+        CLUSTER_COLOR_CONTROL
+    };
+
+    m_endpoints.value(0x01)->outClusters() =
+    {
+        CLUSTER_BASIC,
+        CLUSTER_GROUPS,
+        CLUSTER_SCENES,
+        CLUSTER_ON_OFF,
+        CLUSTER_LEVEL_CONTROL,
+        CLUSTER_POLL_CONTROL,
+        CLUSTER_COLOR_CONTROL,
+        CLUSTER_ILLUMINANCE_MEASUREMENT,
+        CLUSTER_TEMPERATURE_MEASUREMENT,
+        CLUSTER_PRESSURE_MEASUREMENT,
+        CLUSTER_HUMIDITY_MEASUREMENT,
+        CLUSTER_OCCUPANCY_SENSING,
+        CLUSTER_MOISTURE_MEASUREMENT,
+        CLUSTER_CO2_CONCENTRATION,
+        CLUSTER_PM25_CONCENTRATION,
+        CLUSTER_IAS_ZONE,
+        CLUSTER_SMART_ENERGY_METERING,
+        CLUSTER_ELECTRICAL_MEASUREMENT,
+        CLUSTER_TOUCHLINK
+    };
+
+    m_endpoints.value(0xF2)->outClusters() =
+    {
+        CLUSTER_GREEN_POWER
+    };
 
     m_multicast.append(DEFAULT_GROUP);
     m_multicast.append(IKEA_GROUP);

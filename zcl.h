@@ -92,11 +92,12 @@
 #define CLUSTER_ILLUMINANCE_LEVEL_SENSING           0x0401
 #define CLUSTER_TEMPERATURE_MEASUREMENT             0x0402
 #define CLUSTER_PRESSURE_MEASUREMENT                0x0403
-#define CLUSTER_RELATIVE_HUMIDITY                   0x0405
+#define CLUSTER_HUMIDITY_MEASUREMENT                0x0405
 #define CLUSTER_OCCUPANCY_SENSING                   0x0406
-#define CLUSTER_SOIL_MOISTURE                       0x0408
+#define CLUSTER_MOISTURE_MEASUREMENT                0x0408
 #define CLUSTER_PH_MEASUREMENT                      0x0409
 #define CLUSTER_CO2_CONCENTRATION                   0x040D
+#define CLUSTER_PM25_CONCENTRATION                  0x042A
 #define CLUSTER_IAS_ZONE                            0x0500
 #define CLUSTER_SMART_ENERGY_METERING               0x0702
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04

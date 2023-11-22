@@ -31,7 +31,7 @@ namespace PropertiesModkam
 
     public:
 
-        HumidityOffset(void) : PropertyObject("humidityOffset", CLUSTER_RELATIVE_HUMIDITY) {}
+        HumidityOffset(void) : PropertyObject("humidityOffset", CLUSTER_HUMIDITY_MEASUREMENT) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

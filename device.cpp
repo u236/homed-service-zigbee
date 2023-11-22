@@ -525,7 +525,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->exposes().append(Expose(new Sensor::Pressure));
                     break;
 
-                case CLUSTER_RELATIVE_HUMIDITY:
+                case CLUSTER_HUMIDITY_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Humidity));
                     it.value()->bindings().append(Binding(new Bindings::Humidity));
                     it.value()->reportings().append(Reporting(new Reportings::Humidity));
@@ -537,7 +537,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->exposes().append(Expose(new Binary::Occupancy));
                     break;
 
-                case CLUSTER_SOIL_MOISTURE:
+                case CLUSTER_MOISTURE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Moisture));
                     it.value()->bindings().append(Binding(new Bindings::Moisture));
                     it.value()->reportings().append(Reporting(new Reportings::Moisture));

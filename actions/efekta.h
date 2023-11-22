@@ -31,7 +31,7 @@ namespace ActionsEfekta
 
     public:
 
-        HumiditySettings(void) : ActionObject("humiditySettings", CLUSTER_RELATIVE_HUMIDITY, 0x0000, QList <QString> {"humidityOffset", "humidityHigh", "humidityLow", "humidityRelay", "humidityRelayInvert"}) {}
+        HumiditySettings(void) : ActionObject("humiditySettings", CLUSTER_HUMIDITY_MEASUREMENT, 0x0000, QList <QString> {"humidityOffset", "humidityHigh", "humidityLow", "humidityRelay", "humidityRelayInvert"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

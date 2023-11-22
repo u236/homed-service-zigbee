@@ -179,7 +179,7 @@ namespace Properties
 
     public:
 
-        Humidity(void) : PropertyObject("humidity", CLUSTER_RELATIVE_HUMIDITY) {}
+        Humidity(void) : PropertyObject("humidity", CLUSTER_HUMIDITY_MEASUREMENT) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -200,7 +200,7 @@ namespace Properties
 
     public:
 
-        Moisture(void) : PropertyObject("moisture", CLUSTER_SOIL_MOISTURE) {}
+        Moisture(void) : PropertyObject("moisture", CLUSTER_MOISTURE_MEASUREMENT) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

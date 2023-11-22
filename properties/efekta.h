@@ -31,7 +31,7 @@ namespace PropertiesEfekta
 
     public:
 
-        HumiditySettings(void) : PropertyObject("humiditySettings", CLUSTER_RELATIVE_HUMIDITY) {}
+        HumiditySettings(void) : PropertyObject("humiditySettings", CLUSTER_HUMIDITY_MEASUREMENT) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

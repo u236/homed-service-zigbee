@@ -21,7 +21,7 @@ namespace ActionsModkam
 
     public:
 
-        HumidityOffset(void) : ActionObject("humidityOffset", CLUSTER_RELATIVE_HUMIDITY, 0x0000, 0x0210) {}
+        HumidityOffset(void) : ActionObject("humidityOffset", CLUSTER_HUMIDITY_MEASUREMENT, 0x0000, 0x0210) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
