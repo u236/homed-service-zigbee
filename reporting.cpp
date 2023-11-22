@@ -24,6 +24,8 @@ void ReportingObject::registerMetaTypes(void)
     qRegisterMetaType <Reportings::Current>                 ("currentReporting");
     qRegisterMetaType <Reportings::Power>                   ("powerReporting");
 
+    qRegisterMetaType <ReportingsEfekta::PMSensor>          ("efektaPMSensorReporting");
+    qRegisterMetaType <ReportingsEfekta::VOCSensor>         ("efektaVOCSensorReporting");
 
     qRegisterMetaType <ReportingsModkam::EventsPerMinute>   ("modkamEventsPerMinuteReporting");
     qRegisterMetaType <ReportingsModkam::DosePerHour>       ("modkamDosePerHourReporting");

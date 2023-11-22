@@ -46,6 +46,16 @@ namespace PropertiesEfekta
 
     };
 
+    class PMSensor : public PropertyObject
+    {
+
+    public:
+
+        PMSensor(void) : PropertyObject("pmSenosor", CLUSTER_PM25_CONCENTRATION) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class VOCSensor : public PropertyObject
     {
 

@@ -1,5 +1,5 @@
 {
-  "www.efektalab.com":
+  "EFEKTA":
   [
     {
       "description":    "EFEKTA CO2 Smart Monitor",
@@ -123,22 +123,6 @@
       "endpointId":     2
     },
     {
-      "description":    "EFEKTA Plant Watering Sensor miniPWS",
-      "modelNames":     ["EFEKTA_miniPWS"],
-      "properties":     ["batteryPercentage", "temperature", "moisture", "efektaReportingDelay", "efektaTemperatureSettings"],
-      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings"],
-      "bindings":       ["battery", "temperature", "moisture"],
-      "exposes":        ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
-      "options":        {
-                          "reportingDelay": {"min": 1, "max": 180, "unit": "min", "icon": "mdi:timer"},
-                          "temperatureOffset": {"min": -50, "max": 50, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
-                        }
-    }
-  ],
-
-  "EfektaLab.com":
-  [
-    {
       "description":    "EFEKTA Temperature and Humidity Sensor TH v2",
       "modelNames":     ["EFEKTA_TH_LR"],
       "properties":     ["batteryPercentage", "temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings"],
@@ -157,6 +141,85 @@
                           "humidityRelay": {"boolean": true, "icon": "mdi:water-percent"},
                           "humidityRelayInvert": {"boolean": true, "icon": "mdi:water-percent"}
                         }
+    },
+    {
+      "description":    "EFEKTA Plant Watering Sensor miniPWS",
+      "modelNames":     ["EFEKTA_miniPWS"],
+      "properties":     ["batteryPercentage", "temperature", "moisture", "efektaReportingDelay", "efektaTemperatureSettings"],
+      "actions":        ["efektaReportingDelay", "efektaTemperatureSettings"],
+      "bindings":       ["battery", "temperature", "moisture"],
+      "exposes":        ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
+      "options":        {
+                          "reportingDelay": {"min": 1, "max": 180, "unit": "min", "icon": "mdi:timer"},
+                          "temperatureOffset": {"min": -50, "max": 50, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
+                        }
+    },
+    {
+      "description":    "IKEA VINDRIKTNING Based EFEKTA Air Quality Sensor v1",
+      "modelNames":     ["IKEA_VINDRIKTNING_EFEKTA"],
+      "properties":     ["pm25", "efektaPMSensor"],
+      "actions":        ["efektaPMSensor"],
+      "bindings":       ["pm25"],
+      "reportings":     ["efektaPMSensor"],
+      "exposes":        ["pm1", "pm10", "pm25", "readIterval", "pm25Low",  "pm25High", "pm25Relay", "pm25RelayInvert"],
+      "options":        {
+                          "pm1": {"sensor": true, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm10": {"sensor": true, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "readIterval": {"min": 15, "max": 300, "unit": "sec", "icon": "mdi:timer"},
+                          "pm25Low": {"min": 0, "max": 1000, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm25High": {"min": 0, "max": 1000, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm25Relay": {"boolean": true, "icon": "mdi:molecule"},
+                          "pm25RelayInvert": {"boolean": true, "icon": "mdi:molecule"}
+                        }
+    },
+    {
+      "description":    "IKEA VINDRIKTNING Based EFEKTA Air Quality Sensor v2",
+      "modelNames":     ["IKEA_VINDRIKTNING_EFEKTA II"],
+      "properties":     ["pm25", "efektaPMSensor", "efektaVOCSensor"],
+      "actions":        ["efektaPMSensor"],
+      "bindings":       ["analogInput", "pm25"],
+      "reportings":     ["efektaPMSensor", "efektaVOCSensor"],
+      "exposes":        ["pm1", "pm10", "pm25", "voc", "readIterval", "pm25Low",  "pm25High", "pm25Relay", "pm25RelayInvert"],
+      "options":        {
+                          "pm1": {"sensor": true, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm10": {"sensor": true, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "readIterval": {"min": 15, "max": 300, "unit": "sec", "icon": "mdi:timer"},
+                          "pm25Low": {"min": 0, "max": 1000, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm25High": {"min": 0, "max": 1000, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm25Relay": {"boolean": true, "icon": "mdi:molecule"},
+                          "pm25RelayInvert": {"boolean": true, "icon": "mdi:molecule"}
+                        }
+    },
+    {
+      "description":    "IKEA VINDRIKTNING Based EFEKTA Air Quality Sensor v3",
+      "modelNames":     ["IKEA_VINDRIKTNING_EFEKTA III"],
+      "properties":     ["co2", "pm25", "efektaCO2Settings", "efektaPMSensor", "efektaVOCSensor"],
+      "actions":        ["efektaCO2Settings", "efektaPMSensor"],
+      "bindings":       ["analogInput", "co2", "pm25"],
+      "reportings":     ["co2", "efektaPMSensor", "efektaVOCSensor"],
+      "exposes":        ["temperature", "humidity", "co2", "pm1", "pm10", "pm25", "voc", "readIterval", "altitude", "temperatureOffset", "humidityOffset", "co2AutoCalibration", "co2ForceCalibration", "co2FactoryReset", "pm25Low", "pm25High", "pm25Relay", "pm25RelayInvert"],
+      "options":        {
+                          "pm1": {"sensor": true, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm10": {"sensor": true, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "readIterval": {"min": 15, "max": 300, "unit": "sec", "icon": "mdi:timer"},
+                          "altitude": {"min": 0, "max": 3000, "step": 10, "unit": "m", "icon": "mdi:altimeter"},
+                          "temperatureOffset": {"min": -50, "max": 50, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
+                          "humidityOffset": {"min": -50, "max": 50, "unit": "%", "icon": "mdi:water-percent"},
+                          "co2AutoCalibration": {"boolean": true, "icon": "mdi:molecule-co2"},
+                          "pm25Low": {"min": 0, "max": 1000, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm25High": {"min": 0, "max": 1000, "unit": "µg/m³", "icon": "mdi:molecule"},
+                          "pm25Relay": {"boolean": true, "icon": "mdi:molecule"},
+                          "pm25RelayInvert": {"boolean": true, "icon": "mdi:molecule"}
+                        },
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["IKEA_VINDRIKTNING_EFEKTA III"],
+      "properties":     ["temperature", "humidity", "efektaTemperatureSettings", "efektaHumiditySettings"],
+      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings"],
+      "bindings":       ["temperature", "humidity"],
+      "reportings":     ["temperature", "humidity"],
+      "endpointId":     2
     }
   ]
 }

@@ -58,6 +58,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsEfekta::TemperatureSettings>      ("efektaTemperatureSettingsAction");
     qRegisterMetaType <ActionsEfekta::HumiditySettings>         ("efektaHumiditySettingsAction");
     qRegisterMetaType <ActionsEfekta::CO2Settings>              ("efektaCO2SettingsAction");
+    qRegisterMetaType <ActionsEfekta::PMSensor>                 ("efektaPMSensorAction");
     qRegisterMetaType <ActionsEfekta::VOCSensor>                ("efektaVOCSensorAction");
 
     qRegisterMetaType <ActionsModkam::TemperatureOffset>        ("modkamTemperatureOffsetAction");

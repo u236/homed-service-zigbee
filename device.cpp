@@ -120,6 +120,12 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         return;
     }
 
+    if (manufacturerName.contains("efekta", Qt::CaseInsensitive))
+    {
+        manufacturerName = "EFEKTA";
+        return;
+    }
+
     if (manufacturerName == "GLEDOPTO" && modelName == "GL-C-007")
     {
         QMap <quint8, quint16> map;

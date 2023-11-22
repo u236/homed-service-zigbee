@@ -90,6 +90,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesEfekta::TemperatureSettings>       ("efektaTemperatureSettingsProperty");
     qRegisterMetaType <PropertiesEfekta::HumiditySettings>          ("efektaHumiditySettingsProperty");
     qRegisterMetaType <PropertiesEfekta::CO2Settings>               ("efektaCO2SettingsProperty");
+    qRegisterMetaType <PropertiesEfekta::PMSensor>                  ("efektaPMSensorProperty");
     qRegisterMetaType <PropertiesEfekta::VOCSensor>                 ("efektaVOCSensorProperty");
 
     qRegisterMetaType <PropertiesModkam::ButtonAction>              ("modkamButtonActionProperty");

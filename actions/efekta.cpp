@@ -116,12 +116,45 @@ QByteArray ActionsEfekta::CO2Settings::request(const QString &name, const QVaria
                 case 11: m_attributes = {0x0225}; break; // co2RelayInvert
                 case 12: m_attributes = {0x0244}; break; // pressureLongChart
                 case 13: m_attributes = {0x0401}; break; // nightBacklight
+                case 14: m_attributes = {0x0402}; break; // co2AutoCalibration
                 default: return QByteArray();
             }
 
             return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }
+}
+
+QByteArray ActionsEfekta::PMSensor::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0 ... 2:
+        {
+            quint16 value = qToLittleEndian <quint16> (data.toInt());
+
+            switch (index)
+            {
+                case 0:  m_attributes = {0x0201}; break; // readIterval
+                case 1:  m_attributes = {0x0221}; break; // pm25High
+                case 2:  m_attributes = {0x0222}; break; // pm25Low
+            }
+
+            return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
+        }
+
+        case 3: // pm25Relay
+        case 4: // pm25RelayInvert
+        {
+            quint8 value = data.toBool() ? 0x01 : 0x00;
+            m_attributes = {static_cast <quint16> (index == 2 ? 0x0220 : 0x0225)};
+            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
+        }
+    }
+
+    return QByteArray();
 }
 
 QByteArray ActionsEfekta::VOCSensor::request(const QString &name, const QVariant &data)
@@ -134,7 +167,7 @@ QByteArray ActionsEfekta::VOCSensor::request(const QString &name, const QVariant
         case 1: // vocLow
         {
             quint16 value = qToLittleEndian <quint16> (data.toInt());
-            m_attributes = {static_cast <quint16> (index == 0 ? 0x0221 : 0x2222)};
+            m_attributes = {static_cast <quint16> (index == 0 ? 0x0221 : 0x0222)};
             return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
         }
 
