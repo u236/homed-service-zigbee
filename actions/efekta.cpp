@@ -137,7 +137,7 @@ QByteArray ActionsEfekta::PMSensor::request(const QString &name, const QVariant 
 
             switch (index)
             {
-                case 0:  m_attributes = {0x0201}; break; // readIterval
+                case 0:  m_attributes = {0x0201}; break; // readInterval
                 case 1:  m_attributes = {0x0221}; break; // pm25High
                 case 2:  m_attributes = {0x0222}; break; // pm25Low
             }
@@ -149,7 +149,7 @@ QByteArray ActionsEfekta::PMSensor::request(const QString &name, const QVariant 
         case 4: // pm25RelayInvert
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
-            m_attributes = {static_cast <quint16> (index == 2 ? 0x0220 : 0x0225)};
+            m_attributes = {static_cast <quint16> (index == 3 ? 0x0220 : 0x0225)};
             return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }

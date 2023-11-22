@@ -178,7 +178,7 @@ void PropertiesEfekta::PMSensor::parseAttribte(quint16, quint16 attributeId, con
 
             switch (attributeId)
             {
-                case 0x0201: map.insert("readIterval", value); break;
+                case 0x0201: map.insert("readInterval", value); break;
                 case 0x0221: map.insert("pm25High", value); break;
                 case 0x0222: map.insert("pm25Low", value); break;
             }

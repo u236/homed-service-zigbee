@@ -117,7 +117,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesOther::SonoffButtonAction>         ("sonoffButtonActionProperty");
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>      ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>           ("perenioSmartPlugProperty");
-    qRegisterMetaType <PropertiesOther::LmahmutovCO2>               ("lmahmutovCO2Property");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
