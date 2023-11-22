@@ -551,6 +551,13 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->exposes().append(Expose(new Sensor::CO2));
                     break;
 
+                case CLUSTER_PM25_CONCENTRATION:
+                    it.value()->properties().append(Property(new Properties::PM25));
+                    it.value()->bindings().append(Binding(new Bindings::PM25));
+                    it.value()->reportings().append(Reporting(new Reportings::PM25));
+                    it.value()->exposes().append(Expose(new Sensor::PM25));
+                    break;
+
                 case CLUSTER_SMART_ENERGY_METERING:
                     it.value()->properties().append(Property(new Properties::Energy));
                     it.value()->bindings().append(Binding(new Bindings::Energy));

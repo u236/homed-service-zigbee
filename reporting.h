@@ -193,6 +193,14 @@ namespace Reportings
 
         CO2(void) : ReportingObject("co2", CLUSTER_CO2_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
 
+    };
+
+    class PM25 : public ReportingObject
+    {
+
+    public:
+
+        PM25(void) : ReportingObject("pm25", CLUSTER_PM25_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
 
     };
 

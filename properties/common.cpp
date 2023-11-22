@@ -251,6 +251,17 @@ void Properties::CO2::parseAttribte(quint16, quint16 attributeId, const QByteArr
     m_value = round(qFromLittleEndian(value) * 1000000);
 }
 
+void Properties::PM25::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
 void Properties::Energy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     double divider = option("energyDivider", 1).toDouble();

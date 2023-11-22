@@ -18,6 +18,7 @@ void ReportingObject::registerMetaTypes(void)
     qRegisterMetaType <Reportings::Humidity>                ("humidityReporting");
     qRegisterMetaType <Reportings::Moisture>                ("moistureReporting");
     qRegisterMetaType <Reportings::CO2>                     ("co2Reporting");
+    qRegisterMetaType <Reportings::PM25>                    ("pm25Reporting");
     qRegisterMetaType <Reportings::Energy>                  ("energyReporting");
     qRegisterMetaType <Reportings::Voltage>                 ("voltageReporting");
     qRegisterMetaType <Reportings::Current>                 ("currentReporting");
