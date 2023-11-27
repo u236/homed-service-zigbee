@@ -275,13 +275,20 @@
       "exposes":        ["cover"]
     },
     {
-      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM or MCCGQ11LM",
+      "description":    "Xiaomi Smoke Detector JTYJ-GD-01LM/BW",
+      "modelNames":     ["lumi.sensor_smoke"],
+      "properties":     ["lumiBasic", "iasSmoke"],
+      "exposes":        ["battery", "smoke", "temperature"],
+      "options":        {"temperature": "diagnostic"}
+    },
+    {
+      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
       "properties":     ["lumiBasic", "lumiContact"],
       "exposes":        ["battery", "contact"]
     },
     {
-      "description":    "Xiaomi Door and Window Sensor MCCGQ01LM or MCCGQ11LM",
+      "description":    "Xiaomi Door and Window Sensor MCCGQ11LM",
       "modelNames":     ["lumi.sensor_magnet.aq2"],
       "properties":     ["lumiBasic", "lumiContact"],
       "exposes":        ["battery", "contact", "temperature"],

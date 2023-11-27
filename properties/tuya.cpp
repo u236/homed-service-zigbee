@@ -72,13 +72,14 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         {
             case 0: // raw
             {
+                QList <QString> list = {"_TZE200_bcusnqt8", "_TZE200_lsanae15", "_TZE204_lsanae15"};
                 QByteArray payload = data.toByteArray();
                 quint16 value;
 
                 if (name != "elictricity")
                     break;
 
-                if (manufacturerName() == "_TZE200_lsanae15")
+                if (list.contains(manufacturerName()))
                 {
                     memcpy(&value, payload.constData(), sizeof(value));
                     map.insert("voltage", qFromBigEndian(value) / 10.0 + option("voltageOffset").toDouble());
