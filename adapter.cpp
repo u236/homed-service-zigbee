@@ -237,15 +237,15 @@ void Adapter::reset(void)
     switch (list.indexOf(m_reset))
     {
         case 0:
-            GPIO::setStatus(m_bootPin, true);
             GPIO::setStatus(m_resetPin, false);
+            GPIO::setStatus(m_bootPin, true);
             QThread::msleep(RESET_DELAY);
             GPIO::setStatus(m_resetPin, true);
             break;
 
         case 1:
-            m_serial->setDataTerminalReady(false);
             m_serial->setRequestToSend(true);
+            m_serial->setDataTerminalReady(false);
             QThread::msleep(RESET_DELAY);
             m_serial->setRequestToSend(false);
             break;

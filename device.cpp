@@ -449,7 +449,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                     if (!device->batteryPowered())
                     {
-                        QList <QVariant> options = device->options().value(QString("light-%1").arg(it.key())).toList();
+                        QList <QVariant> options = device->options().value(QString("light_%1").arg(it.key())).toList();
 
                         it.value()->properties().append(Property(new Properties::Level));
                         it.value()->actions().append(Action(new Actions::Level));
@@ -457,7 +457,7 @@ void DeviceList::recognizeDevice(const Device &device)
                         it.value()->reportings().append(Reporting(new Reportings::Level));
 
                         options.append("level");
-                        device->options().insert(QString("light-%1").arg(it.key()), options);
+                        device->options().insert(QString("light_%1").arg(it.key()), options);
                         break;
                     }
 
@@ -477,7 +477,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                     if (!device->batteryPowered() && it.value()->colorCapabilities() && it.value()->colorCapabilities() <= 0x001F)
                     {
-                        QList <QVariant> options = device->options().value(QString("light-%1").arg(it.key())).toList();
+                        QList <QVariant> options = device->options().value(QString("light_%1").arg(it.key())).toList();
 
                         if (it.value()->colorCapabilities() & 0x0001)
                         {
@@ -503,7 +503,7 @@ void DeviceList::recognizeDevice(const Device &device)
                         }
 
                         it.value()->bindings().append(Binding(new Bindings::Color));
-                        device->options().insert(QString("light-%1").arg(it.key()), options);
+                        device->options().insert(QString("light_%1").arg(it.key()), options);
                         break;
                     }
 
