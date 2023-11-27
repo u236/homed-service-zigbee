@@ -753,6 +753,9 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
             {
                 QJsonArray endpoints = json.value("endpoints").toArray(), neighbors = json.value("neighbors").toArray();
 
+                if (json.contains("active"))
+                    device->setActive(json.value("active").toBool());
+
                 device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
                 device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
                 device->setVersion(static_cast <quint8> (json.value("version").toInt()));
@@ -877,6 +880,7 @@ QJsonArray DeviceList::serializeDevices(void)
 
             if (device->logicalType() != LogicalType::Coordinator)
             {
+                json.insert("active", device->active());
                 json.insert("supported", device->supported());
                 json.insert("interviewFinished", device->interviewFinished());
                 json.insert("manufacturerCode", device->manufacturerCode());

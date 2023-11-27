@@ -119,8 +119,8 @@ public:
     void setPermitJoin(bool enabled);
     void togglePermitJoin(void);
 
+    void editDevice(const QString &deviceName, const QString &name, bool active);
     void removeDevice(const QString &deviceName, bool force);
-    void setDeviceName(const QString &deviceName, const QString &name);
 
     void updateDevice(const QString &deviceName, bool reportings);
     void updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);

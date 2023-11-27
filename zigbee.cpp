@@ -77,6 +77,40 @@ void ZigBee::togglePermitJoin(void)
     m_adapter->togglePermitJoin();
 }
 
+void ZigBee::editDevice(const QString &deviceName, const QString &name, bool active)
+{
+    Device device = m_devices->byName(deviceName), other = m_devices->byName(name);
+    bool check = false;
+
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+        return;
+
+    if (device != other && !other.isNull())
+    {
+        logWarning << "Device" << device->name() << "rename failed, name already in use";
+        emit deviceEvent(device.data(), Event::deviceNameDuplicate);
+    }
+    else if (device->name() != name)
+    {
+        emit deviceEvent(device.data(), Event::deviceAboutToRename);
+        device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name);
+        check = true;
+    }
+
+    if (device->active() != active)
+    {
+        device->setAvailability(active ? Availability::Unknown : Availability::Inactive);
+        device->setActive(active);
+        check = true;
+    }
+
+    if (check)
+    {
+        emit deviceEvent(device.data(), Event::deviceUpdated);
+        m_devices->storeDatabase();
+    }
+}
+
 void ZigBee::removeDevice(const QString &deviceName, bool force)
 {
     Device device = m_devices->byName(deviceName);
@@ -97,33 +131,11 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     m_devices->storeDatabase();
 }
 
-void ZigBee::setDeviceName(const QString &deviceName, const QString &name)
-{
-    Device device = m_devices->byName(deviceName), other = m_devices->byName(name);
-
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
-        return;
-
-    if (device != other && !other.isNull())
-    {
-        logWarning << "Device" << device->name() << "rename failed, name already in use";
-        emit deviceEvent(device.data(), Event::deviceNameDuplicate);
-    }
-    else if (device->name() != name)
-    {
-        emit deviceEvent(device.data(), Event::deviceAboutToRename);
-        device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name);
-        emit deviceEvent(device.data(), Event::deviceUpdated);
-    }
-
-    m_devices->storeDatabase();
-}
-
 void ZigBee::updateDevice(const QString &deviceName, bool reportings)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     m_devices->setupDevice(device);
@@ -148,7 +160,7 @@ void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -185,7 +197,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     switch (dstName.type())
@@ -204,7 +216,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
         {
             Device destination = m_devices->byName(dstName.toString());
 
-            if (!destination.isNull() && !destination->removed())
+            if (!destination.isNull() && !destination->removed() && destination->active())
                 bindRequest(device, endpointId, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
 
             break;
@@ -219,7 +231,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     groupId = qFromLittleEndian(groupId);
@@ -230,7 +242,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     enqueueRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04), QString("remove all groups request"));
@@ -241,7 +253,7 @@ void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QStr
     Device device = m_devices->byName(deviceName);
     otaImageNotifyStruct payload;
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator || fileName.isEmpty() || !QFile::exists(fileName))
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator || fileName.isEmpty() || !QFile::exists(fileName))
         return;
 
     m_otaUpgradeFile = fileName;
@@ -257,7 +269,7 @@ void ZigBee::getProperties(const QString &deviceName)
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -274,7 +286,7 @@ void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint1
     Device device = m_devices->byName(deviceName);
     QByteArray request;
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     request = zclHeader(global ? 0x00 : FC_CLUSTER_SPECIFIC, m_requestId, commandId, manufacturerCode).append(payload);
@@ -307,7 +319,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
 {
     Device device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -1355,7 +1367,6 @@ void ZigBee::coordinatorReady(void)
     logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':').constData();
 
     device->setInterviewFinished();
-    device->setRemoved(false);
     device->setLogicalType(LogicalType::Coordinator);
     device->setManufacturerName(m_adapter->manufacturerName());
     device->setModelName(m_adapter->modelName());
@@ -1465,7 +1476,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
 {
     Device device = m_devices->byNetwork(networkAddress);
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || !device->active())
         return;
 
     switch (clusterId & 0x00FF)
@@ -1621,7 +1632,7 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
     QByteArray data;
     Request request;
 
-    if (device.isNull() || device->removed())
+    if (device.isNull() || device->removed() || !device->active())
         return;
 
     device->setLinkQuality(linkQuality);
@@ -1831,7 +1842,7 @@ void ZigBee::updateNeighbors(void)
 {
     for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
-        if (it.value()->logicalType() == LogicalType::EndDevice)
+        if (it.value()->removed() || !it.value()->active() || it.value()->logicalType() == LogicalType::EndDevice)
             continue;
 
         it.value()->setLqiRequestIndex(0);
@@ -1847,7 +1858,7 @@ void ZigBee::pingDevices(void)
     {
         const Device &device = it.value();
 
-        if (it.value()->removed() || it.value()->batteryPowered() || time - device->lastSeen() < PING_DEVICES_INTERVAL / 1000)
+        if (it.value()->removed() || !device->active() || it.value()->batteryPowered() || time - device->lastSeen() < PING_DEVICES_INTERVAL / 1000)
             continue;
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)

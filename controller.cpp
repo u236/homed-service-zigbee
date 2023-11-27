@@ -77,8 +77,8 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->togglePermitJoin();
                 break;
 
-            case Command::setDeviceName:
-                m_zigbee->setDeviceName(json.value("device").toString(), json.value("name").toString());
+            case Command::editDevice:
+                m_zigbee->editDevice(json.value("device").toString(), json.value("name").toString(), json.value("active").toBool(true));
                 break;
 
             case Command::removeDevice:
@@ -178,12 +178,12 @@ void Controller::updateAvailability(void)
         if (!timeout)
             timeout = it.value()->batteryPowered() ? 86400 : 600;
 
-        it.value()->setAvailability(time - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline);
+        it.value()->setAvailability(it.value()->active() ? time - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline : Availability::Inactive);
 
         if (it.value()->availability() == check)
             continue;
 
-        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"status", it.value()->availability() == Availability::Online ? "online" : "offline"}}, true);
+        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"status", it.value()->availability() != Availability::Inactive ? it.value()->availability() == Availability::Online ? "online" : "offline" : "inactive"}}, true);
     }
 }
 
@@ -220,10 +220,7 @@ void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJ
             break;
 
         case ZigBee::Event::deviceUpdated:
-
-            if (device->availability() != Availability::Unknown)
-                mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == Availability::Online ? "online" : "offline"}}, true);
-
+            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() != Availability::Inactive ? device->availability() == Availability::Online ? "online" : "offline" : "inactive"}}, true);
             break;
 
         default:
