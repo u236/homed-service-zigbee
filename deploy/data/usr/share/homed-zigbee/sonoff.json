@@ -56,11 +56,19 @@
   "SONOFF":
   [
     {
+      "description":    "Sonoff 1-Channel Relay BASICZBR3",
+      "modelNames":     ["BASICZBR3"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"]
+    },
+    {
       "description":    "Sonoff 1-Channel Relay ZBMINI",
       "modelNames":     ["01MINIZB"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "exposes":        ["switch"]
+      "exposes":        ["switch"],
+      "options":        {"powerSource": 1}
     },
     {
       "description":    "Sonoff 1-Channel Relay ZBMINI-L or ZBMINI-L2",
