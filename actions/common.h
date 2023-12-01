@@ -121,7 +121,7 @@ namespace Actions
 
     public:
 
-        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "targetTemperature"}) {}
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "targetTemperature", "systemMode"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

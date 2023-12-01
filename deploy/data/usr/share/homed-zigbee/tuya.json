@@ -153,7 +153,8 @@
                           "ecoTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
                           "weekMode": {"enum": ["5+2", "6+1", "7+0"], "icon": "mdi:calendar-week"},
                           "awayTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
-                          "awayDays": {"min": 0, "max": 100, "icon": "mdi:calendar"}
+                          "awayDays": {"min": 0, "max": 100, "icon": "mdi:calendar"},
+                          "heatingStatus": true
                         }
     },
     {
@@ -189,6 +190,7 @@
                           "temperatureOffset": {"min": -9, "max": 9, "unit": "°C", "icon": "mdi:thermometer"},
                           "ecoMode": {"boolean": true, "control": true, "icon": "mdi:leaf"},
                           "ecoTemperature": {"min": 10, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
+                          "heatingStatus": true,
                           "thermostatProgram": "moes"
                         }
     },
@@ -220,6 +222,7 @@
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
+                          "heatingStatus": true,
                           "thermostatProgram": "moes"
                         }
     },
@@ -251,6 +254,7 @@
                           "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
                           "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
+                          "heatingStatus": true,
                           "thermostatProgram": "moes"
                         }
     },
@@ -280,7 +284,8 @@
                           "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
                           "temperatureOffset": {"min": -9.9, "max": 9.9, "step": 0.1, "unit": "°C", "icon": "mdi:thermometer"},
                           "frostProtection": {"boolean": true, "control": true, "icon": "mdi:snowflake"},
-                          "hysteresis": {"min": 0.5, "max": 10, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
+                          "hysteresis": {"min": 0.5, "max": 10, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
+                          "heatingStatus": true
                         }
     },
     {

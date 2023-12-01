@@ -222,6 +222,17 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
             m_attributes = {0x0012};
             return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
         }
+
+        case 2: // systemMode
+        {
+            qint8 value = listIndex({"off", "auto", "heat"}, data);
+
+            if (value == 2)
+                value = 0x04;
+
+            m_attributes = {0x001C};
+            return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
+        }
     }
 
     return QByteArray();

@@ -119,6 +119,15 @@ namespace Bindings
 
     };
 
+    class Thermostat : public BindingObject
+    {
+
+    public:
+
+        Thermostat(void) : BindingObject("thermostat", CLUSTER_THERMOSTAT) {}
+
+    };
+
     class Color : public BindingObject
     {
 
@@ -187,7 +196,7 @@ namespace Bindings
 
     public:
 
-        PM25(void) : BindingObject("pm25", CLUSTER_CO2_CONCENTRATION) {}
+        PM25(void) : BindingObject("pm25", CLUSTER_PM25_CONCENTRATION) {}
 
     };
 

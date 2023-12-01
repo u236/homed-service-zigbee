@@ -325,13 +325,31 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert(attributeId ? "temperatureOffset" : "temperature", qFromLittleEndian(value) / 100.0);
+            map.insert(attributeId ? "targetTemperature" : "temperature", qFromLittleEndian(value) / 100.0);
             break;
         }
 
         case 0x0010:
         {
             map.insert("temperatureOffset", static_cast <qint8> (data.at(0)) / 10.0);
+            break;
+        }
+
+        case 0x001C:
+        {
+            switch (static_cast <quint8> (data.at(0)))
+            {
+                case 0x00: map.insert("systemMode", "off"); break;
+                case 0x01: map.insert("systemMode", "auto"); break;
+                case 0x04: map.insert("systemMode", "heat"); break;
+            }
+
+            break;
+        }
+
+        case 0x001E:
+        {
+            map.insert("heating", data.at(0) == 0x04 ? true : false);
             break;
         }
     }

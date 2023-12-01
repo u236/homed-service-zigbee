@@ -9,6 +9,7 @@ void ReportingObject::registerMetaTypes(void)
     qRegisterMetaType <Reportings::Level>                   ("levelReporting");
     qRegisterMetaType <Reportings::CoverPosition>           ("coverPositionReporting");
     qRegisterMetaType <Reportings::CoverTilt>               ("coverTiltReporting");
+    qRegisterMetaType <Reportings::Thermostat>              ("thermostatReporting");
     qRegisterMetaType <Reportings::ColorHS>                 ("colorHSReporting");
     qRegisterMetaType <Reportings::ColorXY>                 ("colorXYReporting");
     qRegisterMetaType <Reportings::ColorTemperature>        ("colorTemperatureReporting");

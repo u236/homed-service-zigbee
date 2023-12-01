@@ -12,6 +12,7 @@ void BindingObject::registerMetaTypes(void)
     qRegisterMetaType <Bindings::MultistateInput>       ("multistateInputBinding");
     qRegisterMetaType <Bindings::PollControl>           ("pollControlBinding");
     qRegisterMetaType <Bindings::Cover>                 ("coverBinding");
+    qRegisterMetaType <Bindings::Thermostat>            ("thermostatBinding");
     qRegisterMetaType <Bindings::Color>                 ("colorBinding");
     qRegisterMetaType <Bindings::Illuminance>           ("illuminanceBinding");
     qRegisterMetaType <Bindings::Temperature>           ("temperatureBinding");

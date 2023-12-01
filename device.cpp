@@ -450,12 +450,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     if (!device->batteryPowered())
                     {
                         QList <QVariant> options = device->options().value(QString("light_%1").arg(it.key())).toList();
-
                         it.value()->properties().append(Property(new Properties::Level));
                         it.value()->actions().append(Action(new Actions::Level));
                         it.value()->bindings().append(Binding(new Bindings::Level));
                         it.value()->reportings().append(Reporting(new Reportings::Level));
-
                         options.append("level");
                         device->options().insert(QString("light_%1").arg(it.key()), options);
                         break;
@@ -471,6 +469,17 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->bindings().append(Binding(new Bindings::Cover));
                     it.value()->reportings().append(Reporting(new Reportings::CoverPosition));
                     it.value()->exposes().append(Expose(new CoverObject));
+                    break;
+
+                case CLUSTER_THERMOSTAT:
+                    it.value()->properties().append(Property(new Properties::Thermostat));
+                    it.value()->actions().append(Action(new Actions::Thermostat));
+                    it.value()->bindings().append(Binding(new Bindings::Thermostat));
+                    it.value()->reportings().append(Reporting(new Reportings::Thermostat));
+                    it.value()->exposes().append(Expose(new ThermostatObject));
+                    device->options().insert(QString("targetTemperature_%1").arg(it.key()), QVariant(QMap <QString, QVariant> {{"min", 7}, {"max", 30}, {"step", 0.1}, {"unit", "°C"}}));
+                    device->options().insert(QString("systemMode_%1").arg(it.key()), QVariant(QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "auto", "heat"})}}));
+                    device->options().insert(QString("heatingStatus_%1").arg(it.key()), true);
                     break;
 
                 case CLUSTER_COLOR_CONTROL:
