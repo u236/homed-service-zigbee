@@ -7,6 +7,8 @@
 
 DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
 {
+    QFile file;
+
     PropertyObject::registerMetaTypes();
     ActionObject::registerMetaTypes();
     BindingObject::registerMetaTypes();
@@ -20,6 +22,14 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
     m_libraryDir.setPath(config->value("device/library", "/usr/share/homed-zigbee").toString());
     m_offsets = config->value("device/offsets", true).toBool();
+
+    file.setFileName(QString("%1/expose.json").arg(m_libraryDir.path()));
+
+    if (file.open(QFile::ReadOnly))
+    {
+        m_exposeOptions = QJsonDocument::fromJson(file.readAll()).object().toVariantMap();
+        file.close();
+    }
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
     connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
@@ -181,7 +191,7 @@ void DeviceList::setupDevice(const Device &device)
             QFile file(QString("%1/%2").arg(it->path(), list.at(i)));
             QJsonArray array;
 
-            if (!file.open(QFile::ReadOnly))
+            if (list.at(i) == "expose.json" || !file.open(QFile::ReadOnly))
                 continue;
 
             array = QJsonDocument::fromJson(file.readAll()).object().value(manufacturerName).toArray();
@@ -348,34 +358,21 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
     for (auto it = exposes.begin(); it != exposes.end(); it++)
     {
+        QString exposeName = it->toString(), itemName = it->toString().split('_').value(0), optionName = multiple ? QString("%1_%2").arg(itemName, QString::number(endpoint->id())) : itemName;
+        QMap <QString, QVariant> option = m_exposeOptions.value(itemName).toMap();
+        QList <QString> list = {"light", "switch", "lock", "cover", "thermostat"};
         Expose expose;
-        QString name = it->toString();
-        QList <QString> list = name.split('_');
-        QMap <QString, QVariant> option = device->options().value(multiple ? QString("%1_%2").arg(list.value(0), QString::number(endpoint->id())) : list.value(0)).toMap();
-        int type = QMetaType::type(list.value(0).append("Expose").toUtf8());
+        int type;
 
-        if (type)
-        {
-            expose = Expose(reinterpret_cast <ExposeObject*> (QMetaType::create(type)));
+        option.insert(device->options().value(optionName).toMap());
+        type = QMetaType::type(QString(list.contains(itemName) ? itemName : option.value("type").toString()).append("Expose").toUtf8());
 
-            if (list.count() > 1)
-                expose->setName(name);
-        }
-        else if (option.value("binary").toBool())
-            expose = Expose(new BinaryObject(name));
-        else if (option.value("sensor").toBool())
-            expose = Expose(new SensorObject(name, true));
-        else if (option.value("boolean").toBool())
-            expose = Expose(new BooleanObject(name));
-        else if (option.contains("min") && option.contains("max"))
-            expose = Expose(new NumberObject(name));
-        else if (option.contains("enum"))
-            expose = Expose(new SelectObject(name));
-        else
-            expose = Expose(new ExposeObject(name));
-
+        expose = Expose(type ? reinterpret_cast <ExposeObject*> (QMetaType::create(type)) : new ExposeObject(itemName));
+        expose->setName(exposeName);
         expose->setParent(endpoint.data());
         expose->setMultiple(multiple);
+
+        device->options().insert(optionName, option);
         endpoint->exposes().append(expose);
     }
 
@@ -420,14 +417,15 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->properties().append(Property(new Properties::BatteryPercentage));
                     it.value()->bindings().append(Binding(new Bindings::Battery));
                     it.value()->reportings().append(Reporting(new Reportings::BatteryPercentage));
-                    it.value()->exposes().append(Expose(new Sensor::Battery));
+                    it.value()->exposes().append(Expose(new SensorObject("battery")));
                     break;
 
                 case CLUSTER_TEMPERATURE_CONFIGURATION:
                     it.value()->properties().append(Property(new Properties::DeviceTemperature));
                     it.value()->bindings().append(Binding(new Bindings::DeviceTemperature));
                     it.value()->reportings().append(Reporting(new Reportings::DeviceTemperature));
-                    it.value()->exposes().append(Expose(new Sensor::Temperature));
+                    it.value()->exposes().append(Expose(new SensorObject("temperature")));
+                    device->options().insert(QString("temperature_%1").arg(it.key()), QMap <QString, QVariant> {{"diagnostic", true}});
                     break;
 
                 case CLUSTER_ON_OFF:
@@ -477,8 +475,8 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->bindings().append(Binding(new Bindings::Thermostat));
                     it.value()->reportings().append(Reporting(new Reportings::Thermostat));
                     it.value()->exposes().append(Expose(new ThermostatObject));
-                    device->options().insert(QString("targetTemperature_%1").arg(it.key()), QVariant(QMap <QString, QVariant> {{"min", 7}, {"max", 30}, {"step", 0.1}, {"unit", "°C"}}));
-                    device->options().insert(QString("systemMode_%1").arg(it.key()), QVariant(QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "auto", "heat"})}}));
+                    device->options().insert(QString("targetTemperature_%1").arg(it.key()), QMap <QString, QVariant> {{"min", 7}, {"max", 30}, {"step", 0.1}, {"unit", "°C"}});
+                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "auto", "heat"})}});
                     device->options().insert(QString("heatingStatus_%1").arg(it.key()), true);
                     break;
 
@@ -523,61 +521,61 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->properties().append(Property(new Properties::Illuminance));
                     it.value()->bindings().append(Binding(new Bindings::Illuminance));
                     it.value()->reportings().append(Reporting(new Reportings::Illuminance));
-                    it.value()->exposes().append(Expose(new Sensor::Illuminance));
+                    it.value()->exposes().append(Expose(new SensorObject("illuminance")));
                     break;
 
                 case CLUSTER_TEMPERATURE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Temperature));
                     it.value()->bindings().append(Binding(new Bindings::Temperature));
                     it.value()->reportings().append(Reporting(new Reportings::Temperature));
-                    it.value()->exposes().append(Expose(new Sensor::Temperature));
+                    it.value()->exposes().append(Expose(new SensorObject("temperature")));
                     break;
 
                 case CLUSTER_PRESSURE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Pressure));
                     it.value()->bindings().append(Binding(new Bindings::Pressure));
                     it.value()->reportings().append(Reporting(new Reportings::Pressure));
-                    it.value()->exposes().append(Expose(new Sensor::Pressure));
+                    it.value()->exposes().append(Expose(new SensorObject("pressure")));
                     break;
 
                 case CLUSTER_HUMIDITY_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Humidity));
                     it.value()->bindings().append(Binding(new Bindings::Humidity));
                     it.value()->reportings().append(Reporting(new Reportings::Humidity));
-                    it.value()->exposes().append(Expose(new Sensor::Humidity));
+                    it.value()->exposes().append(Expose(new SensorObject("humidity")));
                     break;
 
                 case CLUSTER_OCCUPANCY_SENSING:
                     it.value()->properties().append(Property(new Properties::Occupancy));
-                    it.value()->exposes().append(Expose(new Binary::Occupancy));
+                    it.value()->exposes().append(Expose(new BinaryObject("occupancy")));
                     break;
 
                 case CLUSTER_MOISTURE_MEASUREMENT:
                     it.value()->properties().append(Property(new Properties::Moisture));
                     it.value()->bindings().append(Binding(new Bindings::Moisture));
                     it.value()->reportings().append(Reporting(new Reportings::Moisture));
-                    it.value()->exposes().append(Expose(new Sensor::Moisture));
+                    it.value()->exposes().append(Expose(new SensorObject("moisture")));
                     break;
 
                 case CLUSTER_CO2_CONCENTRATION:
                     it.value()->properties().append(Property(new Properties::CO2));
                     it.value()->bindings().append(Binding(new Bindings::CO2));
                     it.value()->reportings().append(Reporting(new Reportings::CO2));
-                    it.value()->exposes().append(Expose(new Sensor::CO2));
+                    it.value()->exposes().append(Expose(new SensorObject("co2")));
                     break;
 
                 case CLUSTER_PM25_CONCENTRATION:
                     it.value()->properties().append(Property(new Properties::PM25));
                     it.value()->bindings().append(Binding(new Bindings::PM25));
                     it.value()->reportings().append(Reporting(new Reportings::PM25));
-                    it.value()->exposes().append(Expose(new Sensor::PM25));
+                    it.value()->exposes().append(Expose(new SensorObject("pm25")));
                     break;
 
                 case CLUSTER_SMART_ENERGY_METERING:
                     it.value()->properties().append(Property(new Properties::Energy));
                     it.value()->bindings().append(Binding(new Bindings::Energy));
                     it.value()->reportings().append(Reporting(new Reportings::Energy));
-                    it.value()->exposes().append(Expose(new Sensor::Energy));
+                    it.value()->exposes().append(Expose(new SensorObject("energy")));
                     break;
 
                 case CLUSTER_ELECTRICAL_MEASUREMENT:
@@ -588,9 +586,9 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->reportings().append(Reporting(new Reportings::Voltage));
                     it.value()->reportings().append(Reporting(new Reportings::Current));
                     it.value()->reportings().append(Reporting(new Reportings::Power));
-                    it.value()->exposes().append(Expose(new Sensor::Voltage));
-                    it.value()->exposes().append(Expose(new Sensor::Current));
-                    it.value()->exposes().append(Expose(new Sensor::Power));
+                    it.value()->exposes().append(Expose(new SensorObject("voltage")));
+                    it.value()->exposes().append(Expose(new SensorObject("current")));
+                    it.value()->exposes().append(Expose(new SensorObject("power")));
                     break;
 
                 case CLUSTER_IAS_ZONE:
@@ -599,27 +597,27 @@ void DeviceList::recognizeDevice(const Device &device)
                     {
                         case 0x000D:
                             it.value()->properties().append(Property(new PropertiesIAS::Occupancy));
-                            it.value()->exposes().append(Expose(new Binary::Occupancy));
+                            it.value()->exposes().append(Expose(new BinaryObject("occupancy")));
                             break;
 
                         case 0x0015:
                             it.value()->properties().append(Property(new PropertiesIAS::Contact));
-                            it.value()->exposes().append(Expose(new Binary::Contact));
+                            it.value()->exposes().append(Expose(new BinaryObject("contact")));
                             break;
 
                         case 0x002A:
                             it.value()->properties().append(Property(new PropertiesIAS::WaterLeak));
-                            it.value()->exposes().append(Expose(new Binary::WaterLeak));
+                            it.value()->exposes().append(Expose(new BinaryObject("waterLeak")));
                             break;
 
                         default:
                             it.value()->properties().append(Property(new PropertiesIAS::ZoneStatus));
-                            it.value()->exposes().append(Expose(new BinaryObject));
+                            it.value()->exposes().append(Expose(new BinaryObject("alarm")));
                             break;
                     }
 
-                    it.value()->exposes().append(Expose(new Binary::BatteryLow));
-                    it.value()->exposes().append(Expose(new Binary::Tamper));
+                    it.value()->exposes().append(Expose(new BinaryObject("batteryLow")));
+                    it.value()->exposes().append(Expose(new BinaryObject("tamper")));
                     break;
             }
         }

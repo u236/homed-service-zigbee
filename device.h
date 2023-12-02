@@ -211,6 +211,8 @@ private:
     QDir m_externalDir, m_libraryDir;
     bool m_offsets, m_names, m_permitJoin, m_sync;
 
+    QMap <QString, QVariant> m_exposeOptions;
+
     void unserializeDevices(const QJsonArray &devices);
     void unserializeProperties(const QJsonObject &properties);
 
