@@ -25,7 +25,7 @@ QByteArray ActionsModkam::CO2Settings::request(const QString &name, const QVaria
 
     switch (index)
     {
-        case 0: // autoCalibration
+        case 0: // co2AutoCalibration
         case 1: // ledFeedback
         {
             quint8 value = data.toBool() ? 0x01 : 0x00;
@@ -33,8 +33,8 @@ QByteArray ActionsModkam::CO2Settings::request(const QString &name, const QVaria
             return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
 
-        case 2: // thresholdLow
-        case 3: // thresholdHigh
+        case 2: // co2Low
+        case 3: // co2High
         {
             quint16 value = qToLittleEndian <quint16> (data.toInt());
             m_attributes = {static_cast <quint16> (index == 2 ? 0x0204 : 0x0205)};

@@ -8,16 +8,16 @@
       "actions":        ["modkamTemperatureOffset", "modkamHumidityOffset", "modkamPressureOffset", "modkamCO2Settings"],
       "bindings":       ["temperature", "humidity", "pressure", "co2"],
       "reportings":     ["temperature", "humidity", "pressure", "co2"],
-      "exposes":        ["temperature", "humidity", "pressure", "co2", "temperatureOffset", "humidityOffset", "pressureOffset", "autoCalibration", "ledFeedback", "thresholdLow", "thresholdHigh"],
+      "exposes":        ["temperature", "humidity", "pressure", "co2", "temperatureOffset", "humidityOffset", "pressureOffset", "co2AutoCalibration", "ledFeedback", "co2Low", "co2High"],
       "options":        {
                           "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0},
                           "temperatureOffset": {"min": -20, "max": 20, "unit": "°C", "icon": "mdi:thermometer"},
                           "humidityOffset": {"min": -50, "max": 50, "unit": "%", "icon": "mdi:water-percent"},
                           "pressureOffset": {"min": -100, "max": 100, "unit": "kPa", "icon": "mdi:gauge"},
-                          "autoCalibration": {"boolean": true, "icon": "mdi:molecule-co2"},
+                          "co2AutoCalibration": {"boolean": true, "icon": "mdi:molecule-co2"},
                           "ledFeedback": {"boolean": true, "icon": "mdi:led-on"},
-                          "thresholdLow": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"},
-                          "thresholdHigh": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"}
+                          "co2Low": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"},
+                          "co2High": {"min": 400, "max": 5000, "step": 10, "unit": "ppm", "icon": "mdi:molecule-co2"}
                         }
     },
     {
@@ -51,7 +51,7 @@
       "bindings":       ["battery", "illuminance", "humidity", "moisture", "pressure"],
       "reportings":     ["batteryPercentage", "illuminance", "humidity", "moisture", "pressure"],
       "exposes":        ["battery", "illuminance", "humidity", "moisture", "pressure"],
-      "options":        {"illuminance": "raw"},
+      "options":        {"illuminance": {"raw": true}},
       "endpointId":     1
     },
     {

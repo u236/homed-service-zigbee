@@ -164,7 +164,7 @@
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": ["singleClick", "doubleClick"], "temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}}
+      "options":        {"action": ["singleClick", "doubleClick"], "temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
@@ -176,7 +176,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
-      "options":        {"temperature": "diagnostic", "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
+      "options":        {"temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -205,7 +205,7 @@
       "actions":        ["status", "lumiSwitchType", "lumiSwitchStatusMemory"],
       "bindings":       ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "switchType", "statusMemory"],
-      "options":        {"temperature": "diagnostic", "switchType": {"enum": ["toggle", "momentary"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
+      "options":        {"temperature": {"diagnostic": true}, "switchType": {"enum": ["toggle", "momentary"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -219,7 +219,7 @@
       "properties":     ["lumiBasic", "lumiPower", "lumiInterlock"],
       "actions":        ["lumiInterlock"],
       "exposes":        ["energy", "voltage", "current", "power", "temperature", "interlock"],
-      "options":        {"temperature": "diagnostic", "interlock": {"boolean": true, "icon": "mdi:lock"}},
+      "options":        {"temperature": {"diagnostic": true}, "interlock": {"boolean": true, "icon": "mdi:lock"}},
       "endpointId":     1
     },
     {
@@ -235,7 +235,7 @@
       "properties":     ["status", "lumiBasic", "lumiPower"],
       "actions":        ["status"],
       "exposes":        ["switch", "energy", "power", "temperature"],
-      "options":        {"switch": "outlet", "temperature": "diagnostic"}
+      "options":        {"switch": "outlet", "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara 10A Smart Plug SP-EUC01, ZNCZ04LM or ZNCZ12LM",
@@ -243,7 +243,7 @@
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
-      "options":        {"switch": "outlet", "temperature": "diagnostic", "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
+      "options":        {"switch": "outlet", "temperature": {"diagnostic": true}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
       "endpointId":     1
     },
     {
@@ -279,7 +279,7 @@
       "modelNames":     ["lumi.sensor_smoke"],
       "properties":     ["lumiBasic", "iasSmoke"],
       "exposes":        ["battery", "smoke", "temperature"],
-      "options":        {"temperature": "diagnostic"}
+      "options":        {"temperature": {"diagnostic": true}}
     },
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
@@ -292,7 +292,7 @@
       "modelNames":     ["lumi.sensor_magnet.aq2"],
       "properties":     ["lumiBasic", "lumiContact"],
       "exposes":        ["battery", "contact", "temperature"],
-      "options":        {"temperature": "diagnostic"}
+      "options":        {"temperature": {"diagnostic": true}}
     },
     {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
@@ -306,14 +306,14 @@
       "modelNames":     ["lumi.sensor_motion.aq2"],
       "properties":     ["occupancy", "lumiBasic", "lumiIlluminance"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
-      "options":        {"occupancyTimeout": 60, "temperature": "diagnostic"}
+      "options":        {"occupancyTimeout": 60, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara P1 Motion Sensor MS-S02",
       "modelNames":     ["lumi.motion.ac02"],
       "properties":     ["lumiData"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
-      "options":        {"lumiDataTimeout": 60, "temperature": "diagnostic"}
+      "options":        {"lumiDataTimeout": 60, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara FP1 Presence Detector RTCZCGQ11LM",
@@ -322,7 +322,7 @@
       "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
       "exposes":        ["event", "occupancy", "temperature", "sensitivityMode", "distanceMode", "detectionMode"],
-      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "temperature": "diagnostic", "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"], "icon": "mdi:arrow-left-right"}}
+      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"], "icon": "mdi:arrow-left-right"}}
     },
     {
       "description":    "Aqara Vibration Sensor DJT11LM",
@@ -330,14 +330,14 @@
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
       "exposes":        ["battery", "event", "vibration", "temperature", "sensitivityMode"],
-      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": "diagnostic", "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}}
+      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM or SJCGQ12LM",
       "modelNames":     ["lumi.flood.agl02", "lumi.sensor_wleak.aq1"],
       "properties":     ["iasWaterLeak", "lumiBasic"],
       "exposes":        ["battery", "waterLeak", "batteryLow", "temperature"],
-      "options":        {"temperature": "diagnostic"}
+      "options":        {"temperature": {"diagnostic": true}}
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
@@ -371,7 +371,7 @@
       "modelNames":     ["lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
       "properties":     ["lumiBasic", "lumiSwitchAction"],
       "exposes":        ["battery", "action", "temperature"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold", "release"], "temperature": "diagnostic"}
+      "options":        {"action": ["singleClick", "doubleClick", "hold", "release"], "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara Wireless Button WXKG12LM",
@@ -461,7 +461,7 @@
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBasic"],
       "exposes":        ["battery", "action", "temperature"],
-      "options":        {"action": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"], "temperature": "diagnostic"},
+      "options":        {"action": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"], "temperature": {"diagnostic": true}},
       "endpointId":     1
     },
     {

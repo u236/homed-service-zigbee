@@ -369,11 +369,11 @@
                           {
                             "1":    [{"name": "occupancy", "type": "bool", "invert": true}],
                             "4":    [{"name": "battery", "type": "value"}],
-                            "9":    [{"name": "sensitivity", "type": "enum", "action": true}],
+                            "9":    [{"name": "sensitivityMode", "type": "enum", "action": true}],
                             "10":   [{"name": "timeoutMode", "type": "enum", "action": true}],
                             "12":   [{"name": "illuminance", "type": "value"}]
                           },
-                          "sensitivity": {"enum": ["low", "medium", "high"]},
+                          "sensitivityMode": {"enum": ["low", "medium", "high"]},
                           "timeoutMode": {"enum": ["10s", "30s", "60s", "120s"]}
                         }
     },
@@ -459,12 +459,12 @@
       "modelNames":     ["_TZE204_ijxvkhd0"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["occupancy", "targetDistance", "presenceState", "illuminance", "sensitivity", "motionSensitivity", "distanceMax", "fadingTime"],
+      "exposes":        ["occupancy", "targetDistance", "presenceStatus", "illuminance", "sensitivity", "motionSensitivity", "distanceMax", "fadingTime"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "104":  [{"name": "illuminance", "type": "value"}],
-                            "105":  [{"name": "presenceState", "type": "enum"}],
+                            "105":  [{"name": "presenceStatus", "type": "enum"}],
                             "106":  [{"name": "motionSensitivity", "type": "value", "divider": 10, "action": true}],
                             "107":  [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
                             "109":  [{"name": "targetDistance", "type": "value", "divider": 100}],
@@ -472,7 +472,7 @@
                             "111":  [{"name": "sensitivity", "type": "value", "divider": 10, "action": true}],
                             "112":  [{"name": "occupancy", "type": "bool"}]
                           },
-                          "presenceState": {"enum": ["none", "present", "moving"]},
+                          "presenceStatus": {"enum": ["none", "present", "moving"]},
                           "motionSensitivity": {"min": 1, "max": 10, "icon": "mdi:dumbbell"},
                           "distanceMax": {"min": 1, "max": 10, "unit": "m", "icon": "mdi:arrow-left-right"},
                           "fadingTime": {"min": 1, "max": 15, "unit": "sec", "icon": "mdi:timer"},
@@ -484,7 +484,7 @@
       "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["occupancy", "motion", "motionState", "motionSpeed", "fallDown", "staticDwellAlarm", "illuminance",  "sensitivity", "fallSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene"],
+      "exposes":        ["occupancy", "motion", "motionStatus", "motionSpeed", "fallDown", "staticDwellAlarm", "illuminance",  "sensitivity", "fallSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -495,9 +495,9 @@
                             "105":  [{"name": "tumbleSwitch", "type": "bool", "action": true}],
                             "106":  [{"name": "tumbleAlarmTime", "type": "value", "offset": 1, "action": true}],
                             "112":  [{"name": "radarScene", "type": "enum", "action": true}],
-                            "114":  [{"name": "motionState", "type": "enum"}],
+                            "114":  [{"name": "motionStatus", "type": "enum"}],
                             "115":  [{"name": "motionSpeed", "type": "value"}],
-                            "116":  [{"name": "fallDown", "type": "enum"}],
+                            "116":  [{"name": "fallStatus", "type": "enum"}],
                             "117":  [{"name": "staticDwellAlarm", "type": "value"}],
                             "118":  [{"name": "fallSensitivity", "type": "value", "action": true}]
                           },
@@ -506,9 +506,9 @@
                           "tumbleSwitch": {"boolean": true},
                           "tumbleAlarmTime": {"min": 0, "max": 9, "unit": "min", "icon": "mdi:timer"},
                           "radarScene": {"enum": ["default", "area", "toilet", "bedroom", "parlour", "office", "hotel"]},
-                          "motionState": {"enum": ["standingStill", "movingForward", "movingBackward"], "icon": "mdi:motion"},
+                          "motionStatus": {"enum": ["standingStill", "movingForward", "movingBackward"], "icon": "mdi:motion"},
                           "motionSpeed": {"sensor": true, "icon": "mdi:motion"},
-                          "fallDown": {"enum": ["none", "maybe", "fall"], "icon": "mdi:alert"},
+                          "fallStatus": {"enum": ["none", "maybe", "fall"], "icon": "mdi:alert"},
                           "staticDwellAlarm": {"sensor": true, "icon": "mdi:bell"},
                           "fallSensitivity": {"min": 1, "max": 10, "icon": "mdi:dumbbell"}
                         }

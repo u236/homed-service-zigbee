@@ -60,7 +60,7 @@
       "bindings":       ["deviceTemperature"],
       "reportings":     ["deviceTemperature"],
       "exposes":        ["temperature"],
-      "options":        {"temperature": "diagnostic"}
+      "options":        {"temperature": {"diagnostic": true}}
     }
   ],
 

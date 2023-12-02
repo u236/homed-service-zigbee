@@ -60,7 +60,7 @@ void PropertiesModkam::CO2Settings::parseAttribte(quint16, quint16 attributeId, 
         case 0x0202:
         case 0x0203:
         {
-            map.insert(attributeId == 0x0202 ? "autoCalibration" : "ledFeedback", data.at(0) ? true : false);
+            map.insert(attributeId == 0x0202 ? "co2AutoCalibration" : "ledFeedback", data.at(0) ? true : false);
             break;
         }
 
@@ -73,7 +73,7 @@ void PropertiesModkam::CO2Settings::parseAttribte(quint16, quint16 attributeId, 
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert(attributeId == 0x0204 ? "thresholdLow" : "thresholdHigh", qFromLittleEndian(value));
+            map.insert(attributeId == 0x0204 ? "co2Low" : "co2High", qFromLittleEndian(value));
             break;
         }
     }

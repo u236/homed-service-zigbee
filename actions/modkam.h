@@ -41,7 +41,7 @@ namespace ActionsModkam
 
     public:
 
-        CO2Settings(void) : ActionObject("co2Settings", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"autoCalibration", "ledFeedback", "thresholdLow", "thresholdHigh"}) {}
+        CO2Settings(void) : ActionObject("co2Settings", CLUSTER_CO2_CONCENTRATION, 0x0000, QList <QString> {"co2AutoCalibration", "ledFeedback", "co2High", "co2Low"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
