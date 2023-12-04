@@ -16,7 +16,7 @@
       "modelNames":     ["CO2 Sensor"],
       "properties":     ["ptvoTemperature", "ptvoCO2", "ptvoSwitchAction"],
       "exposes":        ["temperature", "co2", "action"],
-      "options":        {"action": ["on", "off"]}
+      "options":        {"action": {"trigger": ["on", "off"]}}
     },
     {
       "description":    "PTVO Firmware Based Smart Plug",
@@ -40,7 +40,7 @@
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
       "exposes":        ["pattern"],
-      "options":        {"pattern": {"min": 0, "max": 62, "control": true, "icon": "mdi:swap-horizontal-bold"}},
+      "options":        {"pattern": {"min": 0, "max": 62}},
       "endpointId":     2
     },
     {
@@ -54,7 +54,7 @@
       "modelNames":     ["Button"],
       "properties":     ["batteryVoltage", "ptvoSwitchAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["on", "off"]}
+      "options":        {"action": {"trigger": ["on", "off"]}}
     }
   ]
 }

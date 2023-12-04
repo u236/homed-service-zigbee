@@ -18,7 +18,7 @@ void Properties::BatteryPercentage::parseAttribte(quint16, quint16 attributeId, 
     if (attributeId != 0x0021)
         return;
 
-    m_value = static_cast <quint8> (data.at(0)) / (option().toString() == "undivided" ? 1.0 : 2.0);
+    m_value = static_cast <quint8> (data.at(0)) / (option().toMap().value("undivided").toBool() ? 1.0 : 2.0);
 }
 
 void Properties::DeviceTemperature::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

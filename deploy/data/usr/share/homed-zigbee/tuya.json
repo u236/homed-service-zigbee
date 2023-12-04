@@ -84,7 +84,7 @@
                             "5":    [{"name": "levelMax", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}]
                           },
                           "status": {"enum": ["off", "on"]},
-                          "lightType": {"enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
+                          "lightType": {"enum": ["led", "incandescent", "halogen"]},
                           "light": ["level"],
                           "tuyaMagic": true
                         }
@@ -143,17 +143,16 @@
                             "114":  [{"name": "awayTemperature", "type": "value", "action": true}],
                             "117":  [{"name": "awayDays", "type": "value", "action": true}]
                           },
-                          "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
+                          "targetTemperature": {"min": 5, "max": 35},
                           "operationMode": {"enum": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
-                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
-                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
-                          "boostTimeout": {"min": 0, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
+                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.5},
+                          "boostTimeout": {"min": 0, "max": 900, "step": 10},
                           "systemMode": {"enum": ["auto", "heat", "off"]},
-                          "comfortTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
-                          "ecoTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
-                          "weekMode": {"enum": ["5+2", "6+1", "7+0"], "icon": "mdi:calendar-week"},
-                          "awayTemperature": {"min": 5, "max": 35, "unit": "°C", "icon": "mdi:thermometer"},
-                          "awayDays": {"min": 0, "max": 100, "icon": "mdi:calendar"},
+                          "comfortTemperature": {"min": 5, "max": 35},
+                          "ecoTemperature": {"min": 5, "max": 35},
+                          "weekMode": {"enum": ["5+2", "6+1", "7+0"]},
+                          "awayTemperature": {"min": 5, "max": 35},
+                          "awayDays": {"min": 0, "max": 100},
                           "heatingStatus": true
                         }
     },
@@ -183,13 +182,10 @@
                             "109":  [{"name": "temperatureLimitMax", "type": "value", "action": true}]
                           },
                           "operationMode": {"enum": ["manual", "program", "temporary", "holiday"]},
-                          "targetTemperature": {"min": 10, "max": 30, "unit": "°C"},
-                          "boost": {"boolean": true, "control": true, "icon": "mdi:fire"},
-                          "boostTimeout": {"min": 60, "max": 900, "step": 10, "unit": "sec", "control": true, "icon": "mdi:timer"},
-                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
-                          "temperatureOffset": {"min": -9, "max": 9, "unit": "°C", "icon": "mdi:thermometer"},
-                          "ecoMode": {"boolean": true, "control": true, "icon": "mdi:leaf"},
-                          "ecoTemperature": {"min": 10, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
+                          "targetTemperature": {"min": 10, "max": 30},
+                          "boostTimeout": {"min": 60, "max": 900, "step": 10},
+                          "temperatureOffset": {"min": -9, "max": 9},
+                          "ecoTemperature": {"min": 10, "max": 30},
                           "heatingStatus": true,
                           "thermostatProgram": "moes"
                         }
@@ -217,11 +213,10 @@
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
-                          "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "hysteresis": {"min": 0, "max": 5, "unit": "°C", "icon": "mdi:thermometer"},
-                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
-                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
-                          "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
+                          "targetTemperature": {"min": 5, "max": 35},
+                          "hysteresis": {"min": 0, "max": 5},
+                          "temperatureOffset": {"min": -30, "max": 30},
+                          "sensorType": {"enum": ["internal", "both", "external"]},
                           "heatingStatus": true,
                           "thermostatProgram": "moes"
                         }
@@ -249,11 +244,10 @@
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
-                          "targetTemperature": {"min": 5, "max": 35, "unit": "°C"},
-                          "hysteresis": {"min": 0, "max": 5, "unit": "°C", "icon": "mdi:thermometer"},
-                          "temperatureOffset": {"min": -30, "max": 30, "unit": "°C", "icon": "mdi:thermometer"},
-                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
-                          "sensorType": {"enum": ["internal", "both", "external"], "icon": "mdi:thermometer"},
+                          "targetTemperature": {"min": 5, "max": 35},
+                          "hysteresis": {"min": 0, "max": 5},
+                          "temperatureOffset": {"min": -30, "max": 30},
+                          "sensorType": {"enum": ["internal", "both", "external"]},
                           "heatingStatus": true,
                           "thermostatProgram": "moes"
                         }
@@ -279,12 +273,10 @@
                             "107":  [{"name": "hysteresis", "type": "value", "action": true}]
                           },
                           "systemMode": {"enum": ["off", "heat"]},
-                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5, "unit": "°C"},
+                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
                           "operationMode": {"enum": ["program", "manual"]},
-                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
-                          "temperatureOffset": {"min": -9.9, "max": 9.9, "step": 0.1, "unit": "°C", "icon": "mdi:thermometer"},
-                          "frostProtection": {"boolean": true, "control": true, "icon": "mdi:snowflake"},
-                          "hysteresis": {"min": 0.5, "max": 10, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"},
+                          "temperatureOffset": {"min": -9.9, "max": 9.9, "step": 0.1},
+                          "hysteresis": {"min": 0.5, "max": 10, "step": 0.5},
                           "heatingStatus": true
                         }
     },
@@ -303,10 +295,10 @@
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "enum", "action": true}]
                           },
-                          "volumeMode": {"enum": ["low", "medium", "high"], "icon": "mdi:volume-high"},
-                          "duration": {"min": 0, "max": 1800, "unit": "sec", "icon": "mdi:timer"},
-                          "alarm": {"boolean": true, "control": true, "icon": "mdi:bell"},
-                          "melody": {"min": 1, "max": 18, "icon": "mdi:music-note"}
+                          "volumeMode": {"enum": ["low", "medium", "high"]},
+                          "duration": {"min": 0, "max": 1800},
+                          "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell", "_comment_": "do not remove"},
+                          "melody": {"min": 1, "max": 18}
                         }
     },
     {
@@ -323,7 +315,7 @@
                             "101":  [{"name": "threshold", "type": "value", "action": true}]
                           },
                           "status": {"enum": ["off", "on"]},
-                          "timer": {"min": 0, "max": 600, "unit": "min", "control": true, "icon": "mdi:clock"},
+                          "timer": {"min": 0, "max": 600},
                           "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%", "control": true, "icon": "mdi:percent"},
                           "lock": "valve"
                         }
@@ -395,37 +387,37 @@
                             "102":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
                             "104":  [{"name": "illuminance", "type": "value"}]
                           },
-                          "sensitivity": {"min": 0, "max": 9, "icon": "mdi:dumbbell"},
-                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
-                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
-                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec", "icon": "mdi:timer"},
-                          "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec", "icon": "mdi:timer"}
+                          "sensitivity": {"min": 0, "max": 9},
+                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
+                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1},
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10}
                         }
     },
     {
-    "description":    "TUYA TS0601 Human Presence Sensor (Type B)",
-    "modelNames":     ["_TZE204_sxm7l9xa"],
-    "properties":     ["tuyaDataPoints"],
-    "actions":        ["tuyaDataPoints"],
-    "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
-    "options":        {
-                        "tuyaDataPoints":
-                        {
-                          "104":  [{"name": "illuminance", "type": "value"}],
-                          "105":  [{"name": "occupancy", "type": "bool"}],
-                          "106":  [{"name": "sensitivity", "type": "value", "action": true}],
-                          "107":  [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                          "108":  [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
-                          "109":  [{"name": "targetDistance", "type": "value", "divider": 100}],
-                          "110":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
-                          "111":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}]
-                        },
-                        "sensitivity": {"min": 0, "max": 9, "icon": "mdi:dumbbell"},
-                        "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
-                        "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
-                        "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec", "icon": "mdi:timer"},
-                        "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec", "icon": "mdi:timer"}
-                      }
+      "description":    "TUYA TS0601 Human Presence Sensor (Type B)",
+      "modelNames":     ["_TZE204_sxm7l9xa"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "104":  [{"name": "illuminance", "type": "value"}],
+                            "105":  [{"name": "occupancy", "type": "bool"}],
+                            "106":  [{"name": "sensitivity", "type": "value", "action": true}],
+                            "107":  [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
+                            "108":  [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
+                            "109":  [{"name": "targetDistance", "type": "value", "divider": 100}],
+                            "110":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
+                            "111":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}]
+                          },
+                          "sensitivity": {"min": 0, "max": 9},
+                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1},
+                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10},
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1}
+                        }
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type C)",
@@ -446,11 +438,11 @@
                             "112":  [{"name": "radarScene", "type": "enum", "action": true}],
                             "105":  [{"name": "targetDistance", "type": "value", "divider": 100}]
                           },
-                          "sensitivity": {"min": 0, "max": 9, "icon": "mdi:dumbbell"},
-                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
-                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1, "unit": "m", "icon": "mdi:arrow-left-right"},
-                          "fadingTime": {"min": 0, "max": 1500, "step": 10, "unit": "sec", "icon": "mdi:timer"},
-                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1, "unit": "sec", "icon": "mdi:timer"},
+                          "sensitivity": {"min": 0, "max": 9},
+                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
+                          "distanceMax": {"min": 0, "max": 9.5, "step": 0.1},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10},
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1},
                           "radarScene": {"enum": ["default", "bathroom", "bedroom", "sleeping"]}
                         }
     },
@@ -473,10 +465,10 @@
                             "112":  [{"name": "occupancy", "type": "bool"}]
                           },
                           "presenceStatus": {"enum": ["none", "present", "moving"]},
-                          "motionSensitivity": {"min": 1, "max": 10, "icon": "mdi:dumbbell"},
-                          "distanceMax": {"min": 1, "max": 10, "unit": "m", "icon": "mdi:arrow-left-right"},
-                          "fadingTime": {"min": 1, "max": 15, "unit": "sec", "icon": "mdi:timer"},
-                          "sensitivity": {"min": 1, "max": 10, "icon": "mdi:dumbbell"}
+                          "motionSensitivity": {"min": 1, "max": 10},
+                          "distanceMax": {"min": 1, "max": 10},
+                          "fadingTime": {"min": 1, "max": 15},
+                          "sensitivity": {"min": 1, "max": 10}
                         }
     },
     {
@@ -501,16 +493,12 @@
                             "117":  [{"name": "staticDwellAlarm", "type": "value"}],
                             "118":  [{"name": "fallSensitivity", "type": "value", "action": true}]
                           },
-                          "sensitivity": {"min": 0, "max": 10, "icon": "mdi:dumbbell"},
-                          "motion": {"binary": true, "icon": "mdi:motion"},
-                          "tumbleSwitch": {"boolean": true},
-                          "tumbleAlarmTime": {"min": 0, "max": 9, "unit": "min", "icon": "mdi:timer"},
+                          "sensitivity": {"min": 0, "max": 10},
+                          "tumbleAlarmTime": {"min": 0, "max": 9},
                           "radarScene": {"enum": ["default", "area", "toilet", "bedroom", "parlour", "office", "hotel"]},
-                          "motionStatus": {"enum": ["standingStill", "movingForward", "movingBackward"], "icon": "mdi:motion"},
-                          "motionSpeed": {"sensor": true, "icon": "mdi:motion"},
-                          "fallStatus": {"enum": ["none", "maybe", "fall"], "icon": "mdi:alert"},
-                          "staticDwellAlarm": {"sensor": true, "icon": "mdi:bell"},
-                          "fallSensitivity": {"min": 1, "max": 10, "icon": "mdi:dumbbell"}
+                          "motionStatus": {"enum": ["standingStill", "movingForward", "movingBackward"]},
+                          "fallStatus": {"enum": ["none", "maybe", "fall"]},
+                          "fallSensitivity": {"min": 1, "max": 10}
                         }
     },
     {
@@ -528,8 +516,8 @@
                             "23":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
                             "24":   [{"name": "humidityOffset", "type": "value", "action": true}]
                           },
-                          "temperatureOffset": {"min": -2, "max": 2, "step": 0.1, "unit": "°C", "icon": "mdi:thermometer"},
-                          "humidityOffset": {"min": -30, "max": 30, "unit": "%", "icon": "mdi:water-percent"}
+                          "temperatureOffset": {"min": -2, "max": 2, "step": 0.1},
+                          "humidityOffset": {"min": -30, "max": 30}
                         }
     },
     {
@@ -553,16 +541,14 @@
       "modelNames":     ["_TYST11_cowvfni3", "_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_b2u1drdv", "_TZE200_cf1sl3tj", "_TZE200_cowvfni3", "_TZE200_fdtjuw7u", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_tvrvdj6o", "_TZE200_wmcdj3aq", "_TZE200_xaabybja", "_TZE200_xuzcvlku", "_TZE200_zpzndjez", "_TZE204_r0jdjrvi"],
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"],
-      "options":        {"reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
+      "exposes":        ["cover", "reverse"]
     },
     {
       "description":    "TUYA TS0601 Tubular Motor",
       "modelNames":     ["_TZE200_5sbebbzs", "_TZE200_udank5zs", "_TZE200_zuz7f94z", "_TZE200_68nvbio9", "_TZE200_3ylew7b4", "_TZE200_llm0epxg"],
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"],
-      "options":        {"reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
+      "exposes":        ["cover", "reverse"]
     },
     {
       "description":    "TUYA TS0601 Roller Blind Motor",
@@ -570,7 +556,7 @@
       "properties":     ["tuyaCoverMotor"],
       "actions":        ["tuyaCoverMotor"],
       "exposes":        ["cover", "reverse"],
-      "options":        {"cover": "blind", "reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
+      "options":        {"cover": "blind"}
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay",
@@ -747,7 +733,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "indicatorMode", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet", "tuyaMagic": true}
+      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet", "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
@@ -794,7 +780,7 @@
       "properties":     ["coverPosition", "tuyaCoverSwitch"],
       "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "exposes":        ["cover", "event", "calibration", "reverse"],
-      "options":        {"event": ["open", "stop", "close"], "calibration": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}, "reverse": {"boolean": true, "icon": "mdi:swap-horizontal-bold"}}
+      "options":        {"event": {"trigger": ["open", "stop", "close"]}}
     },
     {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",
@@ -884,7 +870,7 @@
       "modelNames":     ["TS0041"],
       "properties":     ["batteryPercentage", "tuyaButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"], "checkTransactionId": true, "tuyaMagic": true}
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}, "checkTransactionId": true, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0042 2-Button Wireless Switch",
@@ -898,7 +884,7 @@
       "modelNames":     ["TS0042"],
       "properties":     ["tuyaButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2]
     },
     {
@@ -913,7 +899,7 @@
       "modelNames":     ["TS0043"],
       "properties":     ["tuyaButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2, 3]
     },
     {
@@ -928,7 +914,7 @@
       "modelNames":     ["TS0044"],
       "properties":     ["tuyaButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2, 3, 4]
     },
     {
@@ -939,7 +925,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold"], "tuyaMagic": true}
+      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"trigger": ["singleClick", "doubleClick", "hold"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVK-AA",
@@ -949,7 +935,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"], "tuyaMagic": true}
+      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"trigger": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}, "tuyaMagic": true}
     },
     {
       "description":    "Simon 2-Channel Switch S2100-1002",

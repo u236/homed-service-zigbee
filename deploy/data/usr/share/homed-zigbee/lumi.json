@@ -10,10 +10,9 @@
       "options":        {
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "away", "program"]},
-                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5, "unit": "°C"},
-                          "temperatureOffset": {"min": -2.5, "max": 2.5, "step" : 0.1, "unit": "°C", "icon": "mdi:thermometer"},
-                          "childLock": {"boolean": true, "control": true, "icon": "mdi:lock"},
-                          "awayTemperature": {"min": 5, "max": 30, "step": 0.5, "unit": "°C", "icon": "mdi:thermometer"}
+                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "temperatureOffset": {"min": -2.5, "max": 2.5, "step" : 0.1},
+                          "awayTemperature": {"min": 5, "max": 30, "step": 0.5}
                         }
     },
     {
@@ -40,7 +39,7 @@
       "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["on", "off"]},
+      "options":        {"action": {"trigger": ["on", "off"]}},
       "endpointId":     4
     },
     {
@@ -67,7 +66,7 @@
       "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["on", "off"]},
+      "options":        {"action": {"trigger": ["on", "off"]}},
       "endpointId":     [4, 5]
     },
     {
@@ -89,7 +88,7 @@
       "modelNames":     ["lumi.switch.b1nacn02"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick"]}},
       "endpointId":     5
     },
     {
@@ -122,7 +121,7 @@
       "modelNames":     ["lumi.switch.b2nacn02"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick"]}},
       "endpointId":     [5, 6, 7]
     },
     {
@@ -135,7 +134,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
       "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
+      "options":        {"indicatorMode": {"enum": ["default", "inverted"]}},
       "endpointId":     1
     },
     {
@@ -155,7 +154,7 @@
       "modelNames":     ["lumi.switch.n3acn3"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick"]}},
       "endpointId":     [41, 42, 43, 51, 52, 53, 61]
     },
     {
@@ -164,7 +163,7 @@
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": ["singleClick", "doubleClick"], "temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "switchMode": {"enum": ["relay", "decoupled"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}}
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick"]}, "temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"]}, "switchMode": {"enum": ["relay", "decoupled"]}}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
@@ -176,7 +175,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
-      "options":        {"temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"], "icon": "mdi:lightbulb-on"}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
+      "options":        {"temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"]}},
       "endpointId":     1
     },
     {
@@ -191,7 +190,7 @@
       "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick"]}},
       "endpointId":     [41, 42, 51]
     },
     {
@@ -205,7 +204,7 @@
       "actions":        ["status", "lumiSwitchType", "lumiSwitchStatusMemory"],
       "bindings":       ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "switchType", "statusMemory"],
-      "options":        {"temperature": {"diagnostic": true}, "switchType": {"enum": ["toggle", "momentary"]}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
+      "options":        {"temperature": {"diagnostic": true}, "switchType": {"enum": ["toggle", "momentary"]}},
       "endpointId":     1
     },
     {
@@ -219,7 +218,7 @@
       "properties":     ["lumiBasic", "lumiPower", "lumiInterlock"],
       "actions":        ["lumiInterlock"],
       "exposes":        ["energy", "voltage", "current", "power", "temperature", "interlock"],
-      "options":        {"temperature": {"diagnostic": true}, "interlock": {"boolean": true, "icon": "mdi:lock"}},
+      "options":        {"temperature": {"diagnostic": true}},
       "endpointId":     1
     },
     {
@@ -243,7 +242,7 @@
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
-      "options":        {"switch": "outlet", "temperature": {"diagnostic": true}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}},
+      "options":        {"switch": "outlet", "temperature": {"diagnostic": true}},
       "endpointId":     1
     },
     {
@@ -257,7 +256,7 @@
       "properties":     ["status", "level", "colorTemperature", "lumiBasic"],
       "actions":        ["status", "level", "colorTemperature", "lumiLightStatusMemory"],
       "exposes":        ["light", "statusMemory"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}, "statusMemory": {"boolean": true, "icon": "mdi:memory"}}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}}
     },
     {
       "description":    "Aqara RGBW Led Controller ZNTGMK11LM",
@@ -322,7 +321,7 @@
       "actions":        ["lumiPresenceSensor"],
       "polls":          ["lumiPresenceSensor"],
       "exposes":        ["event", "occupancy", "temperature", "sensitivityMode", "distanceMode", "detectionMode"],
-      "options":        {"event": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"], "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"], "icon": "mdi:arrow-left-right"}}
+      "options":        {"event": {"trigger": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"]}, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"]}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"]}}
     },
     {
       "description":    "Aqara Vibration Sensor DJT11LM",
@@ -330,7 +329,7 @@
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
       "exposes":        ["battery", "event", "vibration", "temperature", "sensitivityMode"],
-      "options":        {"event": ["vibration", "tilt", "drop"], "vibrationTimeout": 60, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}}
+      "options":        {"event": {"trigger": ["vibration", "tilt", "drop"]}, "vibrationTimeout": 60, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"]}}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM or SJCGQ12LM",
@@ -364,21 +363,21 @@
       "modelNames":     ["lumi.sensor_switch"],
       "properties":     ["lumiBasic", "lumiButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}
+      "options":        {"action": {"trigger": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}}
     },
     {
       "description":    "Aqara Wireless Button WXKG11LM",
       "modelNames":     ["lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
       "properties":     ["lumiBasic", "lumiSwitchAction"],
       "exposes":        ["battery", "action", "temperature"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold", "release"], "temperature": {"diagnostic": true}}
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold", "release"]}, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara Wireless Button WXKG12LM",
       "modelNames":     ["lumi.sensor_swit", "lumi.sensor_switch.aq3"],
       "properties":     ["lumiBasic", "lumiSwitchAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold", "release", "shake"]}
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold", "release", "shake"]}}
     },
     {
       "description":    "Aqara Opple 2-Key Wireless Switch WXCJKG11LM",
@@ -394,7 +393,7 @@
       "modelNames":     ["lumi.remote.b286opcn01"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
       "endpointId":     [1, 2]
     },
     {
@@ -411,7 +410,7 @@
       "modelNames":     ["lumi.remote.b486opcn01"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
       "endpointId":     [1, 2, 3, 4]
     },
     {
@@ -428,7 +427,7 @@
       "modelNames":     ["lumi.remote.b686opcn01"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
@@ -436,7 +435,7 @@
       "modelNames":     ["lumi.remote.b186acn01", "lumi.remote.b186acn02"],
       "properties":     ["lumiBasic", "lumiSwitchAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}}
     },
     {
       "description":    "Aqara D1 2-Key Wireless Switch WXKG02LM or WXKG07LM",
@@ -453,7 +452,7 @@
       "modelNames":     ["lumi.remote.b286acn01", "lumi.remote.b286acn02"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"]},
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2, 3]
     },
     {
@@ -461,7 +460,7 @@
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
       "properties":     ["lumiBasic"],
       "exposes":        ["battery", "action", "temperature"],
-      "options":        {"action": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"], "temperature": {"diagnostic": true}},
+      "options":        {"action": {"trigger": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"]}, "temperature": {"diagnostic": true}},
       "endpointId":     1
     },
     {

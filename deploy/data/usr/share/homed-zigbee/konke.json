@@ -45,7 +45,7 @@
       "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
       "properties":     ["batteryPercentage", "konkeButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["singleClick", "doubleClick", "hold"]}
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}}
     },
     {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",

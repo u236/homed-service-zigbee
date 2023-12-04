@@ -52,7 +52,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"], "ikeaRemote": true}
+      "options":        {"battery": {"undivided": true}, "action": {"trigger": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}, "ikeaRemote": true}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1810",
@@ -61,7 +61,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": ["toggle", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"], "ikeaRemote": true}
+      "options":        {"action": {"trigger": ["toggle", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}, "ikeaRemote": true}
     },
     {
       "description":    "TRADFRI Cover Switch E1766",
@@ -70,7 +70,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": "undivided", "action": ["open", "close", "stop"]}
+      "options":        {"battery": {"undivided": true}, "action": {"trigger": ["open", "close", "stop"]}}
     },
     {
       "description":    "STYRBAR Wireless Dimmer E2001",
@@ -79,7 +79,7 @@
       "bindings":       ["battery", "scene", "status", "level"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": "undivided", "action": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}
+      "options":        {"battery": {"undivided": true}, "action": {"trigger": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}}
     }
   ]
 }
