@@ -360,7 +360,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
     {
         QString exposeName = it->toString(), itemName = it->toString().split('_').value(0), optionName = multiple ? QString("%1_%2").arg(itemName, QString::number(endpoint->id())) : itemName;
         QMap <QString, QVariant> option = m_exposeOptions.value(itemName).toMap();
-        QList <QString> list = {"light", "switch", "lock", "cover", "thermostat"};
+        QList <QString> list = {"switch", "light", "cover",  "lock", "thermostat"};
         Expose expose;
         int type;
 

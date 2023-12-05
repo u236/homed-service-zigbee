@@ -124,6 +124,23 @@
     }
   ],
 
+  "SLS":
+  [
+    {
+      "description":    "SLS Temperature and CO2 sensor",
+      "modelNames":     ["AirQMon"],
+      "properties":     ["ptvoTemperature"],
+      "exposes":        ["temperature"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["AirQMon"],
+      "properties":     ["ptvoCO2"],
+      "exposes":        ["co2"],
+      "endpointId":     2
+    }
+  ],
+
   "Sunricher":
   [
     {
