@@ -209,7 +209,7 @@ private:
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_externalDir, m_libraryDir;
-    bool m_offsets, m_names, m_permitJoin, m_sync;
+    bool m_names, m_permitJoin, m_sync;
 
     QMap <QString, QVariant> m_exposeOptions;
 

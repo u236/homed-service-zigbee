@@ -82,21 +82,21 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
                 if (list.contains(manufacturerName()))
                 {
                     memcpy(&value, payload.constData(), sizeof(value));
-                    map.insert("voltage", qFromBigEndian(value) / 10.0 + option("voltageOffset").toDouble());
+                    map.insert("voltage", qFromBigEndian(value) / 10.0);
 
                     memcpy(&value, payload.constData() + 3, sizeof(value));
-                    map.insert("current", qFromBigEndian(value) / 1000.0 + option("currentOffset").toDouble());
+                    map.insert("current", qFromBigEndian(value) / 1000.0);
 
                     memcpy(&value, payload.constData() + 6, sizeof(value));
-                    map.insert("power", qFromBigEndian(value) + option("powerOffset").toDouble());
+                    map.insert("power", qFromBigEndian(value));
                 }
                 else
                 {
                     memcpy(&value, payload.constData() + 11, sizeof(value));
-                    map.insert("current", qFromBigEndian(value) / 1000.0 + option("currentOffset").toDouble());
+                    map.insert("current", qFromBigEndian(value) / 1000.0);
 
                     memcpy(&value, payload.constData() + 13, sizeof(value));
-                    map.insert("voltage", qFromBigEndian(value) / 10.0 + option("voltageOffset").toDouble());
+                    map.insert("voltage", qFromBigEndian(value) / 10.0);
                 }
 
                 break;
@@ -121,9 +121,6 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
                 if (item.value("round").toBool())
                     value = round(value);
-
-                if (!item.value("action").toBool())
-                    value += option(QString(name).append("Offset")).toDouble();
 
                 map.insert(name, value);
                 break;

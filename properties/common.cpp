@@ -29,7 +29,7 @@ void Properties::DeviceTemperature::parseAttribte(quint16, quint16 attributeId, 
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) + option("temperatureOffset").toDouble();
+    m_value = qFromLittleEndian(value);
 }
 
 void Properties::Status::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -180,7 +180,7 @@ void Properties::Illuminance::parseAttribte(quint16, quint16 attributeId, const 
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = (option().toString() == "raw" ? qFromLittleEndian(value) : static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0)) + option("illuminanceOffset").toDouble();
+    m_value = option().toString() == "raw" ? qFromLittleEndian(value) : static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
 }
 
 void Properties::Temperature::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -191,7 +191,7 @@ void Properties::Temperature::parseAttribte(quint16, quint16 attributeId, const 
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0 + option("temperatureOffset").toDouble();
+    m_value = qFromLittleEndian(value) / 100.0;
 }
 
 void Properties::Pressure::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -202,7 +202,7 @@ void Properties::Pressure::parseAttribte(quint16, quint16 attributeId, const QBy
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 10.0 + option("pressureOffset").toDouble();
+    m_value = qFromLittleEndian(value) / 10.0;
 }
 
 void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -213,7 +213,7 @@ void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QBy
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / option("humidityDivider", 100).toDouble() + option("humidityOffset").toDouble();
+    m_value = qFromLittleEndian(value) / option("humidityDivider", 100).toDouble();
 }
 
 void Properties::Occupancy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -237,7 +237,7 @@ void Properties::Moisture::parseAttribte(quint16, quint16 attributeId, const QBy
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 100.0 + option("moistureOffset").toDouble();
+    m_value = qFromLittleEndian(value) / 100.0;
 }
 
 void Properties::CO2::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -283,7 +283,7 @@ void Properties::Voltage::parseAttribte(quint16, quint16 attributeId, const QByt
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / divider + option("voltageOffset").toDouble();
+    m_value = qFromLittleEndian(value) / divider;
 }
 
 void Properties::Current::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -295,7 +295,7 @@ void Properties::Current::parseAttribte(quint16, quint16 attributeId, const QByt
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / divider + option("currentOffset").toDouble();
+    m_value = qFromLittleEndian(value) / divider;
 }
 
 void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -307,7 +307,7 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / divider + option("powerOffset").toDouble();
+    m_value = qFromLittleEndian(value) / divider;
 }
 
 void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

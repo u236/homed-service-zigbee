@@ -61,7 +61,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if (list.contains(modelName()))
                 break;
 
-            map.insert("temperature", static_cast <qint8> (data.at(0)) + option("temperatureOffset").toDouble());
+            map.insert("temperature", static_cast <qint8> (data.at(0)));
             break;
         }
 
@@ -101,7 +101,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("illuminance", qFromLittleEndian(value) + option("illuminanceOffset").toDouble());
+            map.insert("illuminance", qFromLittleEndian(value));
             break;
         }
 
@@ -189,8 +189,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            value = round(qFromLittleEndian(value) * 100) / 100;
-            map.insert("energy", value);
+            map.insert("energy", round(qFromLittleEndian(value) * 100) / 100);
             break;
         }
 
@@ -202,8 +201,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            value = round(qFromLittleEndian(value)) / 10;
-            map.insert("voltage", value + option("voltageOffset").toDouble());
+            map.insert("voltage", round(qFromLittleEndian(value)) / 10);
             break;
         }
 
@@ -215,8 +213,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData(),  data.length());
-            value = modelName() == "lumi.relay.c2acn01" ? qFromLittleEndian(value) : round(qFromLittleEndian(value)) / 1000;
-            map.insert("current", value + option("currentOffset").toDouble());
+            map.insert("current", modelName() == "lumi.relay.c2acn01" ? qFromLittleEndian(value) : round(qFromLittleEndian(value)) / 1000);
             break;
         }
 
@@ -228,8 +225,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            value = round(qFromLittleEndian(value) * 100) / 100;
-            map.insert("power", value + option("powerOffset").toDouble());
+            map.insert("power", round(qFromLittleEndian(value) * 100) / 100);
             break;
         }
 
@@ -253,7 +249,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
             memcpy(&value, data.constData(), data.length());
             value = qFromLittleEndian(value);
-            map.insert("illuminance", (value > 130536 ? 0 : value & 0xFFFF) + option("illuminanceOffset").toDouble());
+            map.insert("illuminance", (value > 130536 ? 0 : value & 0xFFFF));
             map.insert("occupancy", true);
             break;
         }
@@ -429,8 +425,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16, quint16 attributeId, const QB
         return;
 
     memcpy(&value, data.constData(), data.length());
-    value = round(qFromLittleEndian(value) * 100) / 100;
-    m_value = value + option("powerOffset").toDouble();
+    m_value = round(qFromLittleEndian(value) * 100) / 100;
 }
 
 void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -460,7 +455,7 @@ void PropertiesLUMI::Illuminance::parseAttribte(quint16, quint16 attributeId, co
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) + option("illuminanceOffset").toDouble();
+    m_value = qFromLittleEndian(value);
 }
 
 

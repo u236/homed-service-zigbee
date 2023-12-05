@@ -21,7 +21,6 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     m_optionsFile.setFileName(config->value("device/options", "/opt/homed-zigbee/options.json").toString());
     m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
     m_libraryDir.setPath(config->value("device/library", "/usr/share/homed-zigbee").toString());
-    m_offsets = config->value("device/offsets", true).toBool();
 
     file.setFileName(QString("%1/expose.json").arg(m_libraryDir.path()));
 
@@ -245,7 +244,7 @@ void DeviceList::setupDevice(const Device &device)
 
         for (auto it = options.begin(); it != options.end(); it++)
         {
-            if ((it.key().endsWith("Offset") && !m_offsets) || (it.key().endsWith("Divider") && !it.value().toDouble()))
+            if (it.key().endsWith("Divider") && !it.value().toDouble())
                 continue;
 
             device->options().insert(it.key(), it.value().toVariant());
@@ -476,8 +475,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->reportings().append(Reporting(new Reportings::Thermostat));
                     it.value()->exposes().append(Expose(new ThermostatObject));
                     device->options().insert(QString("targetTemperature_%1").arg(it.key()), QMap <QString, QVariant> {{"min", 7}, {"max", 30}, {"step", 0.1}, {"unit", "°C"}});
-                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "auto", "heat"})}});
-                    device->options().insert(QString("heatingStatus_%1").arg(it.key()), true);
+                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "heat"})}});
                     break;
 
                 case CLUSTER_COLOR_CONTROL:
