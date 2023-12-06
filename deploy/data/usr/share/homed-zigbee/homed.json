@@ -12,6 +12,16 @@
       "options":        {"light": ["level", "color"]}
     },
     {
+      "description":    "ESP32C6 Thermostat Relay",
+      "modelNames":     ["Thermostat Relay"],
+      "properties":     ["status", "powerOnStatus", "thermostat"],
+      "actions":        ["status", "powerOnStatus", "thermostat"],
+      "bindings":       ["status", "thermostat"],
+      "reportings":     ["status", "thermostat"],
+      "exposes":        ["switch", "powerOnStatus", "thermostat"],
+      "options":        {"powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}, "systemMode": {"enum": ["off", "heat"]}, "targetTemperature": {"min": -5, "max": 40, "step": 0.1}}
+    },
+    {
       "description":    "PTVO Firmware Based CO2 Sensor",
       "modelNames":     ["CO2 Sensor"],
       "properties":     ["ptvoTemperature", "ptvoCO2", "ptvoSwitchAction"],
