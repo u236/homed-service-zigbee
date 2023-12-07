@@ -2,6 +2,15 @@
   "modkam.ru":
   [
     {
+      "description":    "MODKAM 8-channel Relay",
+      "modelNames":     ["DIYRuZ_R8_8"],
+      "properties":     ["status", "ptvoButtonAction"],
+      "actions":        ["status"],
+      "exposes":        ["switch", "action"],
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
+      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    {
       "description":    "MODKAM AirSense CO2 Sensor",
       "modelNames":     ["DIYRuZ_AirSense"],
       "properties":     ["temperature", "humidity", "pressure", "co2", "modkamTemperatureOffset", "modkamHumidityOffset", "modkamPressureOffset", "modkamCO2Settings"],

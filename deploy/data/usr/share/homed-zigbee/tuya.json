@@ -727,13 +727,22 @@
     },
     {
       "description":    "TUYA TS011F Smart Plug with Power Monitoring",
-      "modelNames":     ["_TZ3000_0yxeawjt", "_TZ3000_1h2x4akh", "_TZ3000_5f43h46b", "_TZ3000_7dndcnnb", "_TZ3000_9vo5icau", "_TZ3000_aim0ztek", "_TZ3000_amdymr7l", "_TZ3000_b28wrpvx", "_TZ3000_cehuw1lw", "_TZ3000_cjrngdr3", "_TZ3000_cphmq0q7", "_TZ3000_dksbtrzs", "_TZ3000_dpo1ysak", "_TZ3000_ew3ldmgx", "_TZ3000_f1bapcit", "_TZ3000_fgwhjm9j", "_TZ3000_gjnozsaz", "_TZ3000_gznh2xla", "_TZ3000_gvn91tmx", "_TZ3000_hdopuwv6", "_TZ3000_idrffznf", "_TZ3000_iksasdbv", "_TZ3000_jtgxgmks", "_TZ3000_jvzvulen", "_TZ3000_ko6v90pg", "_TZ3000_ksw8qtmt", "_TZ3000_kx0pris5", "_TZ3000_mlswgkc3", "_TZ3000_mraovvmm", "_TZ3000_nfnmi125", "_TZ3000_nmsciidq", "_TZ3000_okaz9tjs", "_TZ3000_ps3dmato", "_TZ3210_q7oryllx", "_TZ3000_r6buo8ba", "_TZ3000_rdfh8cfs", "_TZ3000_rdtixbnu", "_TZ3000_ss98ec5d", "_TZ3000_typdpbpg", "_TZ3000_u5u4cakc", "_TZ3000_w0qqde0g", "_TZ3000_waho4jtj", "_TZ3000_yujkchbz", "_TZ3000_z1pnpsdo", "_TZ3000_zloso4jk"],
+      "modelNames":     ["_TZ3000_0yxeawjt", "_TZ3000_1h2x4akh", "_TZ3000_5f43h46b", "_TZ3000_7dndcnnb", "_TZ3000_9vo5icau", "_TZ3000_aim0ztek", "_TZ3000_amdymr7l", "_TZ3000_b28wrpvx", "_TZ3000_cehuw1lw", "_TZ3000_cjrngdr3", "_TZ3000_cphmq0q7", "_TZ3000_dksbtrzs", "_TZ3000_dpo1ysak", "_TZ3000_ew3ldmgx", "_TZ3000_f1bapcit", "_TZ3000_fgwhjm9j", "_TZ3000_gjnozsaz", "_TZ3000_gznh2xla", "_TZ3000_gvn91tmx", "_TZ3000_hdopuwv6", "_TZ3000_idrffznf", "_TZ3000_iksasdbv", "_TZ3000_jtgxgmks", "_TZ3000_jvzvulen", "_TZ3000_ko6v90pg", "_TZ3000_ksw8qtmt", "_TZ3000_kx0pris5", "_TZ3000_mlswgkc3", "_TZ3000_mraovvmm", "_TZ3000_nfnmi125", "_TZ3000_nmsciidq", "_TZ3000_ps3dmato", "_TZ3210_q7oryllx", "_TZ3000_r6buo8ba", "_TZ3000_rdfh8cfs", "_TZ3000_rdtixbnu", "_TZ3000_ss98ec5d", "_TZ3000_typdpbpg", "_TZ3000_u5u4cakc", "_TZ3000_w0qqde0g", "_TZ3000_waho4jtj", "_TZ3000_yujkchbz", "_TZ3000_z1pnpsdo", "_TZ3000_zloso4jk"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "indicatorMode", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "switch": "outlet", "tuyaMagic": true}
+      "options":        {"switch": "outlet", "indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "tuyaMagic": true}
+    },
+    {
+      "description":    "TUYA TS011F Smart Plug with Power Monitoring",
+      "modelNames":     ["_TZ3000_okaz9tjs"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "polls":          ["energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
+      "options":        {"switch": "outlet", "indicatorMode": {"enum": ["default", "inverted", "on", "off"]}, "powerOnStatus": {"enum": ["on", "off", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 15, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
