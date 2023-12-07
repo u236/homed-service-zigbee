@@ -6,9 +6,19 @@
 
 namespace PropertiesIKEA
 {
-    class StatusAction : public PropertyObject
+    class Occupancy : public PropertyObject
     {
 
+    public:
+
+        Occupancy(void) : PropertyObject("occupancy", CLUSTER_ON_OFF) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+        void resetValue(void) override;
+
+    };
+
+    class StatusAction : public PropertyObject
+    {
     public:
 
         StatusAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}

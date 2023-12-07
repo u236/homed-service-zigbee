@@ -1,6 +1,23 @@
 #include <QtEndian>
 #include "ikea.h"
 
+void PropertiesIKEA::Occupancy::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
+{
+    quint16 value;
+
+    if (commandId != 0x42)
+        return;
+
+    memcpy(&value, payload.constData(), sizeof(value));
+    m_timeout = qFromLittleEndian(value) / 10;
+    m_value = true;
+}
+
+void PropertiesIKEA::Occupancy::resetValue(void)
+{
+    m_value = false;
+}
+
 void PropertiesIKEA::StatusAction::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
     if (meta().value("time").toLongLong() + 1000 > QDateTime::currentMSecsSinceEpoch())

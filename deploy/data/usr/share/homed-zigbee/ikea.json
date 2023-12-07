@@ -6,8 +6,18 @@
       "modelNames":     ["TRADFRI Signal Repeater"]
     },
     {
+      "description":    "TRADFRI 10A Smart Plug E1603, E1702 or E1708",
+      "modelNames":     ["TRADFRI control outlet"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"switch": "outlet"}
+    },
+    {
       "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
-      "modelNames":     ["TRADFRI bulb E14 WS 470lm", "TRADFRI bulb E27 WS opal 1000lm", "TRADFRIbulbT120E27WSopal470lm"],
+      "modelNames":     ["TRADFRI bulb E14 WS 470lm", "TRADFRI bulb E27 WS opal 1000lm", "TRADFRIbulbE14WScandleopal470lm", "TRADFRIbulbT120E27WSopal470lm"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "bindings":       ["status", "level", "color"],
@@ -46,6 +56,15 @@
       "options":        {"ikeaCover": true}
     },
     {
+      "description":    "TRADFRI Motion Sensor",
+      "modelNames":     ["TRADFRI motion sensor"],
+      "properties":     ["batteryPercentage", "ikeaOccupancy"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "occupancy"],
+      "options":        {"battery": {"undivided": true}}
+    },
+    {
       "description":    "TRADFRI Wireless Dimmer E1743",
       "modelNames":     ["TRADFRI on/off switch"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction"],
@@ -80,6 +99,15 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
       "options":        {"battery": {"undivided": true}, "action": {"trigger": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}}
+    },
+    {
+      "description":    "RODRET Wireless Dimmer E2201",
+      "modelNames":     ["RODRET Dimmer"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction"],
+      "bindings":       ["battery", "status", "level"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"],
+      "options":        {"battery": {"undivided": true}, "action": {"trigger": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}}
     }
   ]
 }

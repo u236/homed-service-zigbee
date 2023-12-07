@@ -53,6 +53,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesByun::GasSensor>                   ("byunGasSensorProperty");
     qRegisterMetaType <PropertiesByun::SmokeSensor>                 ("byunSmokeSensorProperty");
 
+    qRegisterMetaType <PropertiesIKEA::Occupancy>                   ("ikeaOccupancyProperty");
     qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
     qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
 
