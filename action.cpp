@@ -90,17 +90,14 @@ Property ActionObject::endpointProperty(const QString &name)
     EndpointObject *endpoint = static_cast <EndpointObject*> (m_parent);
     QString propertyName = name.isEmpty() ? m_name : name;
 
-    if (endpoint)
+    for (int i = 0; i < endpoint->properties().count(); i++)
     {
-        for (int i = 0; i < endpoint->properties().count(); i++)
-        {
-            const Property &property = endpoint->properties().at(i);
+        const Property &property = endpoint->properties().at(i);
 
-            if (property->name() != propertyName)
-                continue;
+        if (property->name() != propertyName)
+            continue;
 
-            return property;
-        }
+        return property;
     }
 
     return Property();

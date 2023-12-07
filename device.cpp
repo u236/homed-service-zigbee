@@ -280,16 +280,14 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
-            quint32 timeout = static_cast <quint32> (device->options().value(QString(property->name()).append("Timeout")).toInt());
+            QVariant timeout = device->options().value(QString(property->name()).append("Timeout"));
 
             property->setParent(endpoint.data());
             property->setMultiple(multiple);
+            property->setTimeout(static_cast <quint32> (timeout.toInt()));
 
-            if (timeout)
-            {
-                property->setTimeout(timeout);
+            if (property->timeout() || timeout.toBool())
                 startTimer = true;
-            }
 
             endpoint->properties().append(property);
             continue;
@@ -363,7 +361,12 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         Expose expose;
         int type;
 
-        option.insert(device->options().value(optionName).toMap());
+        if (!list.contains(itemName))
+        {
+            option.insert(device->options().value(optionName).toMap());
+            device->options().insert(optionName, option);
+        }
+
         type = QMetaType::type(QString(list.contains(itemName) ? itemName : option.value("type").toString()).append("Expose").toUtf8());
 
         expose = Expose(type ? reinterpret_cast <ExposeObject*> (QMetaType::create(type)) : new ExposeObject(itemName));
@@ -371,7 +374,6 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         expose->setParent(endpoint.data());
         expose->setMultiple(multiple);
 
-        device->options().insert(optionName, option);
         endpoint->exposes().append(expose);
     }
 

@@ -53,7 +53,7 @@
       "bindings":       ["battery", "pollControl", "cover"],
       "reportings":     ["batteryPercentage", "coverPosition"],
       "exposes":        ["battery", "cover"],
-      "options":        {"ikeaCover": true}
+      "options":        {"cover": "blind", "ikeaCover": true}
     },
     {
       "description":    "TRADFRI Motion Sensor",
@@ -62,7 +62,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy"],
-      "options":        {"battery": {"undivided": true}}
+      "options":        {"battery": {"undivided": true}, "occupancyTimeout": true}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
