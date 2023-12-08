@@ -135,7 +135,7 @@
       "properties":     ["ptvoCount"],
       "actions":        ["ptvoCount"],
       "exposes":        ["count"],
-      "options":        {"count": {"type": "number", "min": -1440, "max": 1000000000, "_comment_": "do not remove"}},
+      "options":        {"count": {"type": "number", "min": -1440, "max": 1000000000}},
       "endpointId":     [3, 5]
     },
     {

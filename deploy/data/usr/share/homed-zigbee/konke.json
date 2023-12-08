@@ -52,7 +52,7 @@
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
       "exposes":        ["battery", "scene"],
-      "options":        {"scene": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}},
+      "options":        {"scene": {"name": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}}},
       "endpointId":     1
     },
     {
