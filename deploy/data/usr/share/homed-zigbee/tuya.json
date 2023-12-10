@@ -525,7 +525,7 @@
       "modelNames":     ["_TZE200_9yapgbuv", "_TZE200_cirvgep4", "_TZE200_upagmta9", "_TZE200_yjjdcqsq", "_TZE204_upagmta9"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "temperature", "humidity"],
+      "exposes":        ["batteryStatus", "temperature", "humidity", "displayMode"],
       "options":        {
                           "tuyaDataPoints":
                           {
