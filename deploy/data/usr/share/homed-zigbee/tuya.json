@@ -502,8 +502,8 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Temperature and Humidity Sensor",
-      "modelNames":     ["_TZE200_a8sdabtg", "_TZE200_qoy0ekbd", "_TZE200_znbl8dj5"],
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type A)",
+      "modelNames":     ["_TZE200_a8sdabtg", "_TZE200_dikkika5", "_TZE200_qoy0ekbd", "_TZE200_znbl8dj5"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["battery", "temperature", "humidity", "temperatureOffset", "humidityOffset"],
@@ -518,6 +518,24 @@
                           },
                           "temperatureOffset": {"min": -2, "max": 2, "step": 0.1},
                           "humidityOffset": {"min": -30, "max": 30}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type B)",
+      "modelNames":     ["_TZE200_9yapgbuv", "_TZE200_cirvgep4", "_TZE200_upagmta9", "_TZE200_yjjdcqsq", "_TZE204_upagmta9"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "temperature", "humidity"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "2":    [{"name": "humidity", "type": "value"}],
+                            "3":    [{"name": "batteryStatus", "type": "enum"}],
+                            "9":    [{"name": "displayMode", "type": "enum", "action": true}]
+                          },
+                          "batteryStatus": {"enum": ["low", "medium", "high"]},
+                          "displayMode": {"enum": ["celsius", "fahrenheit"]}
                         }
     },
     {

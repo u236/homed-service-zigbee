@@ -15,6 +15,7 @@
 
   "action":                     {"type": "sensor", "icon": "mdi:gesture-double-tap"},
   "battery":                    {"type": "sensor", "class": "battery", "unit": "%", "round": 1},
+  "batteryStatus":              {"type": "sensor", "icon": "mdi:battery"},
   "co2":                        {"type": "sensor", "class": "carbon_dioxide", "unit": "ppm"},
   "count":                      {"type": "sensor", "icon": "mdi:counter"},
   "current":                    {"type": "sensor", "class": "current", "unit": "A", "round": 3},
