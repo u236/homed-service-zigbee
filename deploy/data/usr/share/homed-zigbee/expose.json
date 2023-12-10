@@ -21,7 +21,7 @@
   "current":                    {"type": "sensor", "class": "current", "unit": "A", "round": 3},
   "dosePerHour":                {"type": "sensor", "unit": "μR/h", "icon": "mdi:radioactive"},
   "eco2":                       {"type": "sensor", "class": "carbon_dioxide", "unit": "ppm"},
-  "energy":                     {"type": "sensor", "class": "energy", "unit": "kWn", "round": 2},
+  "energy":                     {"type": "sensor", "class": "energy", "unit": "kWh", "round": 2},
   "event":                      {"type": "sensor", "icon": "mdi:bell"},
   "eventsPerMinute":            {"type": "sensor", "icon": "mdi:radioactive"},
   "fallStatus":                 {"type": "sensor", "icon": "mdi:alert"},
