@@ -97,6 +97,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
     QList <QString> lumi =
     {
         "aqara",
+        "Aqara",
         "XIAOMI"
     };
 

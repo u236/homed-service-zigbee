@@ -181,13 +181,13 @@
                             "108":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
                             "109":  [{"name": "temperatureLimitMax", "type": "value", "action": true}]
                           },
-                          "operationMode": {"enum": ["manual", "program", "temporary", "holiday"]},
+                          "operationMode": {"enum": ["program", "manual", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10},
                           "temperatureOffset": {"min": -9, "max": 9},
                           "ecoTemperature": {"min": 10, "max": 30},
                           "heatingStatus": true,
-                          "thermostatProgram": "moes"
+                          "thermostatProgram": {"moes": true}
                         }
     },
     {
@@ -218,7 +218,7 @@
                           "temperatureOffset": {"min": -30, "max": 30},
                           "sensorType": {"enum": ["internal", "both", "external"]},
                           "heatingStatus": true,
-                          "thermostatProgram": "moes"
+                          "thermostatProgram": {"moes": true}
                         }
     },
     {
@@ -249,7 +249,7 @@
                           "temperatureOffset": {"min": -30, "max": 30},
                           "sensorType": {"enum": ["internal", "both", "external"]},
                           "heatingStatus": true,
-                          "thermostatProgram": "moes"
+                          "thermostatProgram": {"moes": true}
                         }
     },
     {
