@@ -327,7 +327,6 @@
       "modelNames":     ["lumi.motion.ac01"],
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],
-      "polls":          ["lumiPresenceSensor"],
       "exposes":        ["event", "occupancy", "temperature", "sensitivityMode", "distanceMode", "detectionMode"],
       "options":        {"event": {"trigger": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"]}, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"]}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"]}}
     },

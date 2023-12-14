@@ -28,7 +28,6 @@
       "actions":        ["status", "perenioSmartPlug"],
       "bindings":       ["status", "perenio"],
       "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
-      "polls":          ["perenioSmartPlug"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "power"],
       "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["on", "off", "previous"]}}
     },

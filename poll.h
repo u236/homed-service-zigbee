@@ -35,51 +35,6 @@ protected:
 
 namespace Polls
 {
-    class Status : public PollObject
-    {
-
-    public:
-
-        Status(void) : PollObject("status", CLUSTER_ON_OFF, 0x0000) {}
-
-    };
-
-    class Level : public PollObject
-    {
-
-    public:
-
-        Level(void) : PollObject("level", CLUSTER_LEVEL_CONTROL, 0x0000) {}
-
-    };
-
-    class ColorHS : public PollObject
-    {
-
-    public:
-
-        ColorHS(void) : PollObject("colorHS", CLUSTER_COLOR_CONTROL, {0x0000, 0x0001}) {}
-
-    };
-
-    class ColorXY : public PollObject
-    {
-
-    public:
-
-        ColorXY(void) : PollObject("colorXY", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
-
-    };
-
-    class ColorTemperature : public PollObject
-    {
-
-    public:
-
-        ColorTemperature(void) : PollObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0007) {}
-
-    };
-
     class Energy : public PollObject
     {
 
@@ -113,27 +68,6 @@ namespace Polls
     public:
 
         Power(void) : PollObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B) {}
-
-    };
-}
-
-namespace PollsOther
-{
-    class LumiPresenceSensor : public PollObject
-    {
-
-    public:
-
-        LumiPresenceSensor(void) : PollObject("presenceSensor", CLUSTER_LUMI, {0x010C, 0x0144, 0x0146}) {}
-
-    };
-
-    class PerenioSmartPlug : public PollObject
-    {
-
-    public:
-
-        PerenioSmartPlug(void) : PollObject("smartPlug", CLUSTER_PERENIO, {0x0000, 0x0001, 0x0004, 0x0005, 0x000B, 0x000F}) {}
 
     };
 }

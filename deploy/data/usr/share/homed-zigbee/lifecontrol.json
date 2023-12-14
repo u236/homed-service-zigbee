@@ -6,7 +6,6 @@
       "modelNames":     ["vivi ZLight"],
       "properties":     ["status", "level", "colorHS"],
       "actions":        ["status", "level", "colorHS"],
-      "polls":          ["status", "level", "colorHS"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color"]},
       "endpointId":     11
