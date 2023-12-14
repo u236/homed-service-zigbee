@@ -821,13 +821,15 @@
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
       "properties":     ["batteryPercentage", "iasGas"],
-      "exposes":        ["battery", "gas", "batteryLow", "tamper"]
+      "exposes":        ["battery", "gas", "batteryLow", "tamper"],
+      "options":        {"tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0205 Smoke Detector",
       "modelNames":     ["TS0205"],
       "properties":     ["batteryPercentage", "iasSmoke"],
-      "exposes":        ["battery", "smoke", "batteryLow", "tamper"]
+      "exposes":        ["battery", "smoke", "batteryLow", "tamper"],
+      "options":        {"tuyaMagic": true}
     },
     {
       "description":    "TUYA RH3001 or TS0203 Door and Window Sensor",
