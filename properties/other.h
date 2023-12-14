@@ -45,6 +45,16 @@ namespace PropertiesOther
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class WoolleySmartPlug : public PropertyObject
+    {
+
+    public:
+
+        WoolleySmartPlug(void) : PropertyObject("smartPlug", CLUSTER_WOOLLEY) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
 }
 
 #endif

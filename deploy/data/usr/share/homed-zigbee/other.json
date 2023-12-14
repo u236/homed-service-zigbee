@@ -76,31 +76,6 @@
     }
   ],
 
-  "ptvo.switch-zr02":
-  [
-    {
-      "description":    "Sonoff 1-Channel Relay SWITCH-ZR02 with PTVO Firmware",
-      "modelNames":     ["ptvo.switch-zr02"],
-      "properties":     ["ptvoButtonAction"],
-      "exposes":        ["action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["ptvo.switch-zr02"],
-      "properties":     ["status"],
-      "actions":        ["status"],
-      "exposes":        ["switch"],
-      "endpointId":     2
-    },
-    {
-      "modelNames":     ["ptvo.switch-zr02"],
-      "properties":     ["ptvoTemperature"],
-      "exposes":        ["temperature"],
-      "endpointId":     3
-    }
-  ],
-
   "RE":
   [
     {
@@ -203,6 +178,45 @@
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity", "displayMode"],
       "options":        {"displayMode": {"enum": ["celsius", "fahrenheit"]}}
+    }
+  ],
+
+  "eWeLink":
+  [
+    {
+      "description":    "Woolley 13A Smart Plug BSD29",
+      "modelNames":     ["CK-BL702-SWP-01(7020)"],
+      "properties":     ["status", "woolleySmartPlug"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "voltage", "current", "power"],
+      "options":        {"switch": "outlet", "powerSource": 1}
+    }
+  ],
+
+  "ptvo.switch-zr02":
+  [
+    {
+      "description":    "Sonoff 1-Channel Relay SWITCH-ZR02 with PTVO Firmware",
+      "modelNames":     ["ptvo.switch-zr02"],
+      "properties":     ["ptvoButtonAction"],
+      "exposes":        ["action"],
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["ptvo.switch-zr02"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["ptvo.switch-zr02"],
+      "properties":     ["ptvoTemperature"],
+      "exposes":        ["temperature"],
+      "endpointId":     3
     }
   ]
 }

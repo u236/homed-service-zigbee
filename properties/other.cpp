@@ -110,3 +110,24 @@ void PropertiesOther::PerenioSmartPlug::parseAttribte(quint16, quint16 attribute
 
     m_value = map.isEmpty() ? QVariant() : map;
 }
+
+void PropertiesOther::WoolleySmartPlug::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    quint32 value = 0;
+
+    if (static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+
+    switch (attributeId)
+    {
+        case 0x7004: map.insert("current", qFromLittleEndian(value) / 1000.0); break;
+        case 0x7005: map.insert("voltage", qFromLittleEndian(value) / 1000.0); break;
+        case 0x7006: map.insert("power", qFromLittleEndian(value) / 1000.0); break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+

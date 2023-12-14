@@ -22,7 +22,7 @@ namespace PropertiesByun
 
     public:
 
-        GasSensor(void) : Sensor("gas", {CLUSTER_BYUN_GAS, CLUSTER_IAS_ZONE}) {}
+        GasSensor(void) : Sensor("gas", {CLUSTER_BYUN, CLUSTER_IAS_ZONE}) {}
 
     };
 

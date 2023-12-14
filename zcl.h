@@ -103,9 +103,10 @@
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_TOUCHLINK                           0x1000
 
-#define CLUSTER_BYUN_GAS                            0x040A
-#define CLUSTER_LUMI                                0xFCC0
+#define CLUSTER_BYUN                                0x040A
+#define CLUSTER_WOOLLEY                             0xFC11
 #define CLUSTER_PERENIO                             0xFC7B
+#define CLUSTER_LUMI                                0xFCC0
 
 #define CLUSTER_TUYA_DATA                           0xEF00
 #define CLUSTER_TUYA_UNKNOWN                        0xE000
