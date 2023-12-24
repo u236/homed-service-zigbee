@@ -233,6 +233,8 @@
       "modelNames":     ["lumi.plug", "lumi.plug.mitw01"],
       "properties":     ["status", "lumiBasic", "lumiPower"],
       "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
       "exposes":        ["switch", "energy", "power", "temperature"],
       "options":        {"switch": "outlet", "temperature": {"diagnostic": true}}
     },
@@ -241,6 +243,8 @@
       "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchStatusMemory"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
       "options":        {"switch": "outlet", "temperature": {"diagnostic": true}},
       "endpointId":     1
