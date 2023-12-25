@@ -549,7 +549,7 @@
                             "2":    [{"name": "pm25", "type": "value"}],
                             "18":   [{"name": "temperature", "type": "value", "divider": 10}],
                             "19":   [{"name": "humidity", "type": "value", "divider": 10}], 
-			                      "20":   [{"name": "formaldehyde", "type": "value", "divider": 1000}],
+	                          "20":   [{"name": "formaldehyde", "type": "value", "divider": 1000}],
                             "21":   [{"name": "voc", "type": "value", "divider": 1000}],
                             "22":   [{"name": "co2", "type": "value"}]
                           }
