@@ -539,6 +539,23 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Smart Air House Keeper",
+      "modelNames":     ["_TZE200_dwcarsat"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["temperature", "humidity", "co2", "pm25", "voc", "formaldehyde"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    [{"name": "pm25", "type": "value"}],
+                            "18":   [{"name": "temperature", "type": "value", "divider": 10}],
+                            "19":   [{"name": "humidity", "type": "value", "divider": 10}], 
+			                      "20":   [{"name": "formaldehyde", "type": "value", "divider": 1000}],
+                            "21":   [{"name": "voc", "type": "value", "divider": 1000}],
+                            "22":   [{"name": "co2", "type": "value"}]
+                          }
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Air Quality Sensor",
       "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k"],
       "properties":     ["tuyaDataPoints"],
