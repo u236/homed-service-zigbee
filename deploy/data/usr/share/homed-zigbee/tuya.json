@@ -568,7 +568,8 @@
                             "20":   [{"name": "formaldehyde", "type": "value", "divider": 1000}],
                             "21":   [{"name": "voc", "type": "value", "divider": 1000}],
                             "22":   [{"name": "co2", "type": "value"}]
-                          }
+                          },
+                          "pm25": {"max": 1000}
                         }
     },
     {
