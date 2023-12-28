@@ -44,7 +44,7 @@
   "staticDwellAlarm":           {"type": "sensor", "icon": "mdi:bell"},
   "targetDistance":             {"type": "sensor", "class": "distance", "unit": "m", "round": 1},
   "temperature":                {"type": "sensor", "class": "temperature", "unit": "°C", "round": 1},
-  "voc":                        {"type": "sensor", "class": "volatile_organic_compounds_parts", "unit": "ppb"},
+  "voc":                        {"type": "sensor", "class": "volatile_organic_compounds_parts", "unit": "ppm"},
   "voltage":                    {"type": "sensor", "class": "voltage", "unit": "V", "round": 1},
 
   "autoBrightness":             {"type": "toggle", "icon": "mdi:brightness-4"},
@@ -111,8 +111,8 @@
   "temperatureOffset":          {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "timer":                      {"type": "number", "control": true, "unit": "min", "icon": "mdi:timer"},
   "tumbleAlarmTime":            {"type": "number", "unit": "min", "icon": "mdi:timer"},
-  "vocHigh":                    {"type": "number", "unit": "ppb", "icon": "mdi:molecule"},
-  "vocLow":                     {"type": "number", "unit": "ppb", "icon": "mdi:molecule"},
+  "vocHigh":                    {"type": "number", "unit": "ppm", "icon": "mdi:molecule"},
+  "vocLow":                     {"type": "number", "unit": "ppm", "icon": "mdi:molecule"},
 
   "buttonMode":                 {"type": "select"},
   "detectionMode":              {"type": "select"},
