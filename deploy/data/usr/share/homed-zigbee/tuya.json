@@ -816,7 +816,7 @@
       "properties":     ["status", "level", "colorHS", "colorTemperature"],
       "actions":        ["status", "level", "colorHS", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"], "colorTemperature": {"min": 143, "max": 500}}
+      "options":        {"light": ["level", "color", "colorTemperature"], "colorTemperature": {"min": 143, "max": 500}, "powerSource": 1}
     },
     {
       "description":    "TUYA TS0052/TS1101 2-Channel Dimmer",
