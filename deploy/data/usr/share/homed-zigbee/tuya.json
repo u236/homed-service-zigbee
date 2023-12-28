@@ -556,7 +556,7 @@
     },
     {
       "description":    "TUYA TS0601 Smart Air House Keeper",
-      "modelNames":     ["_TZE200_dwcarsat"],
+      "modelNames":     ["_TZE200_dwcarsat", "_TZE200_mja3fuja"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["temperature", "humidity", "co2", "voc", "formaldehyde", "pm25"],
       "options":        {
