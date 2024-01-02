@@ -5,14 +5,15 @@
       "description":    "Aqara E1 Radiator Thermostat SRTS-A01",
       "modelNames":     ["lumi.airrtc.agl001"],
       "properties":     ["thermostat", "lumiData"],
-      "actions":        ["thermostat", "lumiSystemMode", "lumiThermostatMode", "lumiWindowDetection", "lumiChildLock", "lumiAwayTemperature"],
-      "exposes":        ["battery", "thermostat", "windowOpen", "windowDetection", "childLock", "awayTemperature"],
+      "actions":        ["thermostat", "lumiThermostat"],
+      "exposes":        ["battery", "thermostat", "windowOpen", "windowDetection", "childLock", "awayTemperature", "sensorType"],
       "options":        {
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "away", "program"]},
                           "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
                           "temperatureOffset": {"min": -2.5, "max": 2.5, "step" : 0.1},
-                          "awayTemperature": {"min": 5, "max": 30, "step": 0.5}
+                          "awayTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "sensorType": {"enum": ["internal", "external"]}
                         }
     },
     {
