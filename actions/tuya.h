@@ -75,7 +75,7 @@ namespace ActionsTUYA
 
     public:
 
-        CoverMotor(void) : ActionObject("coverMotor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"cover", "position", "reverse", "speed"}) {}
+        CoverMotor(void) : ActionObject("coverMotor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"cover", "position"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

@@ -230,21 +230,11 @@ void PropertiesTUYA::CoverMotor::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
-    switch (dataPoint)
+    if (dataPoint == 0x02 || dataPoint == 0x03)
     {
-        case 0x02:
-        case 0x03:
-        {
-            quint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.toInt() : 100 - data.toInt());
-
-            map.insert("cover", value ? "open" : "closed");
-            map.insert("position", static_cast <quint8> (value));
-
-            break;
-        }
-
-        case 0x05:  map.insert("reverse", data.toBool()); break;
-        case 0x69:  map.insert("speed", data.toInt()); break;
+        quint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.toInt() : 100 - data.toInt());
+        map.insert("cover", value ? "open" : "closed");
+        map.insert("position", static_cast <quint8> (value));
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

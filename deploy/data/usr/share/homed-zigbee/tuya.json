@@ -575,24 +575,89 @@
     {
       "description":    "TUYA TS0601 Curtain Motor",
       "modelNames":     ["_TYST11_cowvfni3", "_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_b2u1drdv", "_TZE200_cf1sl3tj", "_TZE200_cowvfni3", "_TZE200_fdtjuw7u", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_tvrvdj6o", "_TZE200_wmcdj3aq", "_TZE200_xaabybja", "_TZE200_xuzcvlku", "_TZE200_zpzndjez", "_TZE204_r0jdjrvi"],
-      "properties":     ["tuyaCoverMotor"],
-      "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"]
+      "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
+      "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse", "speed"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
+                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                          },
+                          "speed": {"min": 1, "max": 255}
+                        }
     },
     {
       "description":    "TUYA TS0601 Tubular Motor",
-      "modelNames":     ["_TZE200_5sbebbzs", "_TZE200_udank5zs", "_TZE200_zuz7f94z", "_TZE200_68nvbio9", "_TZE200_3ylew7b4", "_TZE200_llm0epxg"],
-      "properties":     ["tuyaCoverMotor"],
-      "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"]
+      "modelNames":     ["_TZE200_3ylew7b4", "_TZE200_5sbebbzs", "_TZE200_68nvbio9", "_TZE200_llm0epxg", "_TZE200_udank5zs", "_TZE200_zuz7f94z"],
+      "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
+      "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse", "speed"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
+                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                          },
+                          "speed": {"min": 1, "max": 255}
+                        }
     },
     {
-      "description":    "TUYA TS0601 Roller Blind Motor",
-      "modelNames":     ["_TZE200_fctwhugx", "_TZE200_zah67ekd", "_TZE200_hsgrhjpf", "_TZE200_pw7mji0l"],
-      "properties":     ["tuyaCoverMotor"],
-      "actions":        ["tuyaCoverMotor"],
-      "exposes":        ["cover", "reverse"],
-      "options":        {"cover": "blind"}
+      "description":    "TUYA TS0601 Roller Blind Motor (Type A)",
+      "modelNames":     ["_TZE200_fctwhugx", "_TZE200_hsgrhjpf", "_TZE200_pw7mji0l"],
+      "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
+      "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse", "speed"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
+                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                          },
+                          "speed": {"min": 1, "max": 255},
+                          "cover": "blind"
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Roller Blind Motor (Type B)",
+      "modelNames":     ["_TZE200_cpbo62rn"],
+      "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
+      "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
+      "exposes":        ["battery", "cover", "operationMode", "reverse", "setUpperLimit"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "13":   [{"name": "battery", "type": "value"}],
+                            "101":  [{"name": "reverse", "type": "bool", "action": true}],
+                            "102":  [{"name": "setUpperLimit", "type": "enum", "action": true}]
+                          },
+                          "operationMode": {"enum": ["tilt", "lift"]},
+                          "setUpperLimit": {"enum": ["stop", "start"]},
+                          "cover": "blind"
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Roller Blind Motor (Type C)",
+      "modelNames":     ["_TZE200_zah67ekd"],
+      "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
+      "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
+      "exposes":        ["cover", "operationMode", "reverse", "setLowerLimit", "setUpperLimit", "speed"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
+                            "101":  [{"name": "operationMode", "type": "enum", "action": true}],
+                            "103":  [{"name": "setUpperLimit", "type": "enum", "action": true}],
+                            "104":  [{"name": "setLowerLimit", "type": "enum", "action": true}],
+                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                          },
+                          "operationMode": {"enum": ["tilt", "lift"]},
+                          "setUpperLimit": {"enum": ["stop", "start"]},
+                          "setLowerLimit": {"enum": ["stop", "start"]},
+                          "speed": {"min": 1, "max": 255},
+                          "cover": "blind"
+                        }
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay",
