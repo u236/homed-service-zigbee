@@ -352,7 +352,7 @@
     },
     {
       "description":    "TUYA TS0601 Motion Sensor",
-      "modelNames":     ["_TZE200_ttcovulf"],
+      "modelNames":     ["_TZE200_1ibpyhdc", "_TZE200_3towulqd", "_TZE200_bh3n6gk8", "_TZE200_ttcovulf"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["battery", "occupancy", "illuminance", "sensitivity", "timeoutMode"],
@@ -552,6 +552,24 @@
                             "21":   [{"name": "voc", "type": "value", "divider": 100}],
                             "22":   [{"name": "co2", "type": "value", "divider": 100}]
                           }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Smart Air House Keeper",
+      "modelNames":     ["_TZE200_dwcarsat", "_TZE200_mja3fuja"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["temperature", "humidity", "co2", "voc", "formaldehyde", "pm25"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    [{"name": "pm25", "type": "value"}],
+                            "18":   [{"name": "temperature", "type": "value", "divider": 10}],
+                            "19":   [{"name": "humidity", "type": "value", "divider": 10}], 
+                            "20":   [{"name": "formaldehyde", "type": "value", "divider": 1000}],
+                            "21":   [{"name": "voc", "type": "value", "divider": 1000}],
+                            "22":   [{"name": "co2", "type": "value"}]
+                          },
+                          "pm25": {"max": 1000}
                         }
     },
     {
@@ -820,7 +838,7 @@
     },
     {
       "description":    "TUYA TS011F Smart Plug with Power Monitoring",
-      "modelNames":     ["_TZ3000_okaz9tjs"],
+      "modelNames":     ["_TZ3000_fukaa7nc", "_TZ3000_okaz9tjs"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["energy", "voltage", "current", "power"],
@@ -856,6 +874,14 @@
       "actions":        ["status", "level"],
       "exposes":        ["light"],
       "options":        {"light": ["level"]}
+    },
+    {
+      "description":    "TUYA TS0505B RGBW Bulb",
+      "modelNames":     ["TS0505B"],
+      "properties":     ["status", "level", "colorHS", "colorTemperature"],
+      "actions":        ["status", "level", "colorHS", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"], "colorTemperature": {"min": 143, "max": 500}, "powerSource": 1}
     },
     {
       "description":    "TUYA TS0052/TS1101 2-Channel Dimmer",
