@@ -134,5 +134,10 @@
   "switchType":                 {"type": "select"},
   "timeoutMode":                {"type": "select", "icon": "mdi:timer"},
   "volumeMode":                 {"type": "select", "icon": "mdi:volume-high"},
-  "weekMode":                   {"type": "select", "icon": "mdi:calendar-week"}
+  "weekMode":                   {"type": "select", "icon": "mdi:calendar-week"},
+
+  "co2FactoryReset":            {"type": "button"},
+  "co2ForceCalibration":        {"type": "button"},
+  "resetLimits":                {"type": "button"},
+  "resetPresence":              {"type": "button"}
 }

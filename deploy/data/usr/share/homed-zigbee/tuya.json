@@ -623,17 +623,19 @@
       "modelNames":     ["_TZE200_cpbo62rn"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
       "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
-      "exposes":        ["battery", "cover", "operationMode", "reverse", "setUpperLimit"],
+      "exposes":        ["battery", "cover", "operationMode", "reverse", "setUpperLimit", "resetLimits"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "4":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "13":   [{"name": "battery", "type": "value"}],
                             "101":  [{"name": "reverse", "type": "bool", "action": true}],
-                            "102":  [{"name": "setUpperLimit", "type": "enum", "action": true}]
+                            "102":  [{"name": "setUpperLimit", "type": "enum", "action": true}],
+                            "107":  [{"name": "resetLimits", "type": "enum", "action": true}]
                           },
                           "operationMode": {"enum": ["tilt", "lift"]},
                           "setUpperLimit": {"enum": ["stop", "start"]},
+                          "resetLimits": {"enum": ["true"]},
                           "cover": "blind"
                         }
     },
@@ -648,11 +650,13 @@
                           {
                             "5":    [{"name": "reverse", "type": "bool", "action": true}],
                             "101":  [{"name": "operationMode", "type": "enum", "action": true}],
+                            "102":  [{"name": "resetLimits", "type": "enum", "action": true}],
                             "103":  [{"name": "setUpperLimit", "type": "enum", "action": true}],
                             "104":  [{"name": "setLowerLimit", "type": "enum", "action": true}],
                             "105":  [{"name": "speed", "type": "value", "action": true}]
                           },
                           "operationMode": {"enum": ["tilt", "lift"]},
+                          "resetLimits": {"enum": ["true"]},
                           "setUpperLimit": {"enum": ["stop", "start"]},
                           "setLowerLimit": {"enum": ["stop", "start"]},
                           "speed": {"min": 1, "max": 255},
