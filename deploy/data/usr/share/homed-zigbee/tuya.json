@@ -634,7 +634,7 @@
                             "107":  [{"name": "resetLimits", "type": "enum", "action": true}]
                           },
                           "operationMode": {"enum": ["tilt", "lift"]},
-                          "setUpperLimit": {"enum": ["stop", "start"]},
+                          "setUpperLimit": {"enum": ["start", "stop"]},
                           "resetLimits": {"enum": ["true"]},
                           "cover": "blind"
                         }
@@ -657,8 +657,8 @@
                           },
                           "operationMode": {"enum": ["tilt", "lift"]},
                           "resetLimits": {"enum": ["true"]},
-                          "setUpperLimit": {"enum": ["stop", "start"]},
-                          "setLowerLimit": {"enum": ["stop", "start"]},
+                          "setUpperLimit": {"enum": ["start", "stop"]},
+                          "setLowerLimit": {"enum": ["start", "stop"]},
                           "speed": {"min": 1, "max": 255},
                           "cover": "blind"
                         }
