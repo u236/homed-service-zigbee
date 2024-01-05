@@ -57,7 +57,7 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
 
         case QVariant::String:
         {
-            QList <QString> list {"moveLevelUp", "moveLevelDown", "stopLevel"};
+            QList <QString> list {"moveUp", "moveDown", "stop"};
             int index = list.indexOf(data.toString());
 
             switch (index)
@@ -201,7 +201,7 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
 
         case QVariant::String:
         {
-            QList <QString> list {"moveColorTemperaturelUp", "moveColorTemperatureDown", "stopColorTemperature"};
+            QList <QString> list {"moveUp", "moveDown", "stop"};
             moveColorTemperatureStruct payload;
 
             switch (list.indexOf(data.toString()))
