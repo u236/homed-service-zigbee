@@ -57,7 +57,7 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
 
         case QVariant::String:
         {
-            QList <QString> list {"moveLevelUp", "moveLevelDown", "stopLevel"}; // TODO: add step actions
+            QList <QString> list {"moveLevelUp", "moveLevelDown", "stopLevel"};
             int index = list.indexOf(data.toString());
 
             switch (index)
@@ -196,6 +196,27 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
             payload.time = qToLittleEndian <quint16> (list.value(1).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+        }
+
+
+        case QVariant::String:
+        {
+            QList <QString> list {"moveColorTemperaturelUp", "moveColorTemperatureDown", "stopColorTemperature"};
+            moveColorTemperatureStruct payload;
+
+            switch (list.indexOf(data.toString()))
+            {
+                case 0: payload.mode = 0x01; break;
+                case 1: payload.mode = 0x03; break;
+                case 2: payload.mode = 0x00; break;
+                default: return QByteArray();
+            }
+
+            payload.rate = qToLittleEndian <quint16> (0x0055);
+            payload.minMireds = qToLittleEndian <quint16> (0x0000);
+            payload.maxMireds = qToLittleEndian <quint16> (0x03E8);
+
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x4B).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
         default:
