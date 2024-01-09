@@ -472,6 +472,31 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type E)",
+      "modelNames":     ["_TZE204_kyhbrfyl"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "occupancy", "type": "bool"}],
+                            "11":   [{"name": "motionStatus", "type": "enum"}],
+                            "12":   [{"name": "fadingTime", "type": "value", "action": true}],
+                            "13":   [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
+                            "15":   [{"name": "sensitivity", "type": "value", "action": true}],
+                            "16":   [{"name": "motionSensitivity", "type": "value", "action": true}],
+                            "19":   [{"name": "targetDistance", "type": "value", "divider": 100}]
+                          },
+
+                          "motionStatus": {"enum": ["none", "small", "large"]},
+                          "fadingTime": {"min": 0, "max": 600, "step": 10},
+                          "distanceMax": {"min": 1.5, "max": 6, "step": 0.1},
+                          "sensitivity": {"min": 0, "max": 7},
+                          "motionSensitivity": {"min": 1, "max": 7}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Human Presence Sensor with Fall Function",
       "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
       "properties":     ["tuyaDataPoints"],
