@@ -287,6 +287,13 @@
       "exposes":        ["cover"]
     },
     {
+      "description":    "Xiaomi Gas Detector JTQJ-BF-01LM/BW",
+      "modelNames":     ["lumi.sensor_natgas"],
+      "properties":     ["iasGas"],
+      "exposes":        ["gas", "batteryLow", "tamper"],
+      "options":        {"logicalType": 2, "powerSource": 3}
+    },
+    {
       "description":    "Xiaomi Smoke Detector JTYJ-GD-01LM/BW",
       "modelNames":     ["lumi.sensor_smoke"],
       "properties":     ["lumiBasic", "iasSmoke"],

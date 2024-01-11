@@ -564,6 +564,23 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type C)",
+      "modelNames":     ["_TZE200_c7emyjom", "_TZE200_eanjj2pa", "_TZE200_locansqn", "_TZE200_lve3dvpy"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["batteryStatus", "temperature", "humidity", "displayMode"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "2":    [{"name": "humidity", "type": "value"}],
+                            "4":    [{"name": "battery", "type": "value"}],
+                            "9":    [{"name": "displayMode", "type": "enum", "action": true}]
+                          },
+                          "displayMode": {"enum": ["celsius", "fahrenheit"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Air Quality Sensor",
       "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k"],
       "properties":     ["tuyaDataPoints"],
@@ -699,7 +716,7 @@
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Switch",
-      "modelNames":     ["_TYZB01_4vgantdz", "_TYZB01_reyozfcg", "_TYZB01_xfpdrwvc", "TZ3000_9hpxg80k", "_TZ3000_hhiodade", "_TZ3000_l8fsgo6p", "_TZ3000_wrhhi5h2"],
+      "modelNames":     ["_TYZB01_4vgantdz", "_TYZB01_reyozfcg", "_TYZB01_xfpdrwvc", "TZ3000_9hpxg80k", "_TZ3000_hhiodade", "_TZ3000_l8fsgo6p", "_TZ3000_oex7egmt", "_TZ3000_wrhhi5h2"],
       "properties":     ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
