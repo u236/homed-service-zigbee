@@ -6,6 +6,16 @@
 
 namespace ActionsLUMI
 {
+    class Thermostat : public ActionObject
+    {
+
+    public:
+
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"systemMode", "operationMode", "windowDetection", "childLock", "awayTemperature", "sensorType"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class PresenceSensor : public ActionObject
     {
 
@@ -112,56 +122,6 @@ namespace ActionsLUMI
     public:
 
         VibrationSensitivity(void) : ActionObject("sensitivityMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, 0xFF0D) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-    
-    class SystemMode : public ActionObject
-    {
-
-    public:
-
-        SystemMode(void) : ActionObject("systemMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0271) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class ThermostatMode : public ActionObject
-    {
-
-    public:
-
-        ThermostatMode(void) : ActionObject("operationMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0272) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class WindowDetection : public ActionObject
-    {
-
-    public:
-
-        WindowDetection(void) : ActionObject("windowDetection", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0273) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class ChildLock : public ActionObject
-    {
-
-    public:
-
-        ChildLock(void) : ActionObject("childLock", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0277) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class AwayTemperature : public ActionObject
-    {
-
-    public:
-
-        AwayTemperature(void) : ActionObject("awayTemperature", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0279) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

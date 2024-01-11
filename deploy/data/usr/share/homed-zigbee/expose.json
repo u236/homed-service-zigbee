@@ -44,7 +44,7 @@
   "staticDwellAlarm":           {"type": "sensor", "icon": "mdi:bell"},
   "targetDistance":             {"type": "sensor", "class": "distance", "unit": "m", "round": 1},
   "temperature":                {"type": "sensor", "class": "temperature", "unit": "°C", "round": 1},
-  "voc":                        {"type": "sensor", "class": "volatile_organic_compounds_parts", "unit": "ppm"},
+  "voc":                        {"type": "sensor", "class": "volatile_organic_compounds_parts", "unit": "ppb"},
   "voltage":                    {"type": "sensor", "class": "voltage", "unit": "V", "round": 1},
 
   "autoBrightness":             {"type": "toggle", "icon": "mdi:brightness-4"},
@@ -106,13 +106,14 @@
   "reportingDelay":             {"type": "number", "unit": "sec", "icon": "mdi:timer"},
   "sensitivity":                {"type": "number", "icon": "mdi:dumbbell"},
   "sensorCount":                {"type": "number", "icon": "mdi:dip-switch"},
+  "speed":                      {"type": "number", "icon": "mdi:speedometer"},
   "temperatureHigh":            {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "temperatureLow":             {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "temperatureOffset":          {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "timer":                      {"type": "number", "control": true, "unit": "min", "icon": "mdi:timer"},
   "tumbleAlarmTime":            {"type": "number", "unit": "min", "icon": "mdi:timer"},
-  "vocHigh":                    {"type": "number", "unit": "ppm", "icon": "mdi:molecule"},
-  "vocLow":                     {"type": "number", "unit": "ppm", "icon": "mdi:molecule"},
+  "vocHigh":                    {"type": "number", "unit": "ppb", "icon": "mdi:molecule"},
+  "vocLow":                     {"type": "number", "unit": "ppb", "icon": "mdi:molecule"},
 
   "buttonMode":                 {"type": "select"},
   "detectionMode":              {"type": "select"},
@@ -127,9 +128,16 @@
   "rightMode":                  {"type": "select"},
   "sensitivityMode":            {"type": "select", "icon": "mdi:dumbbell"},
   "sensorType":                 {"type": "select"},
+  "setLowerLimit":              {"type": "select", "icon": "mdi:arrow-collapse-down"},
+  "setUpperLimit":              {"type": "select", "icon": "mdi:arrow-collapse-up"},
   "switchMode":                 {"type": "select"},
   "switchType":                 {"type": "select"},
   "timeoutMode":                {"type": "select", "icon": "mdi:timer"},
   "volumeMode":                 {"type": "select", "icon": "mdi:volume-high"},
-  "weekMode":                   {"type": "select", "icon": "mdi:calendar-week"}
+  "weekMode":                   {"type": "select", "icon": "mdi:calendar-week"},
+
+  "co2FactoryReset":            {"type": "button"},
+  "co2ForceCalibration":        {"type": "button"},
+  "resetLimits":                {"type": "button"},
+  "resetPresence":              {"type": "button"}
 }

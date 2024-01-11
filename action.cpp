@@ -23,6 +23,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::Thermostat>                     ("thermostatAction");
     qRegisterMetaType <Actions::DisplayMode>                    ("displayModeAction");
 
+    qRegisterMetaType <ActionsLUMI::Thermostat>                 ("lumiThermostatAction");
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>              ("lumiOperationModeAction");
@@ -34,11 +35,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::Interlock>                  ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>              ("lumiCoverPositionAction");
     qRegisterMetaType <ActionsLUMI::VibrationSensitivity>       ("lumiVibrationSensitivityAction");
-    qRegisterMetaType <ActionsLUMI::SystemMode>                 ("lumiSystemModeAction");
-    qRegisterMetaType <ActionsLUMI::ThermostatMode>             ("lumiThermostatModeAction");
-    qRegisterMetaType <ActionsLUMI::WindowDetection>            ("lumiWindowDetectionAction");
-    qRegisterMetaType <ActionsLUMI::ChildLock>                  ("lumiChildLockAction");
-    qRegisterMetaType <ActionsLUMI::AwayTemperature>            ("lumiAwayTemperatureAction");
 
     qRegisterMetaType <ActionsTUYA::DataPoints>                 ("tuyaDataPointsAction");
     qRegisterMetaType <ActionsTUYA::WeekdayThermostatProgram>   ("tuyaWeekdayThermostatProgramAction");

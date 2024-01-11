@@ -62,11 +62,13 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
     for (int i = 0; i < list.count(); i++)
     {
-        QMap <QString, QVariant> item = list.at(i).toMap();
+        QMap <QString, QVariant> item = list.at(i).toMap(), options;
         QString name = item.value("name").toString();
 
         if(name.isEmpty())
             continue;
+
+        options = option(name).toMap();
 
         switch (types.indexOf(item.value("type").toString()))
         {
@@ -117,10 +119,14 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
             case 2: // value
             {
-                double value = data.toInt() / item.value("divider", 1).toDouble() + item.value("offset").toDouble();
+                bool hasMin, hasMax;
+                double min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() + item.value("offset").toDouble();
 
                 if (item.value("round").toBool())
                     value = round(value);
+
+                if ((hasMin && value < min) || (hasMax && value > max))
+                    break;
 
                 map.insert(name, value);
                 break;
@@ -128,8 +134,6 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
             case 3: // enum
             {
-                QMap <QString, QVariant> options = option(name).toMap();
-
                 if (options.contains("enum"))
                 {
                     QString value = options.value("enum").toStringList().value(data.toInt());
@@ -226,21 +230,11 @@ void PropertiesTUYA::CoverMotor::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
-    switch (dataPoint)
+    if (dataPoint == 0x02 || dataPoint == 0x03)
     {
-        case 0x02:
-        case 0x03:
-        {
-            quint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.toInt() : 100 - data.toInt());
-
-            map.insert("cover", value ? "open" : "closed");
-            map.insert("position", static_cast <quint8> (value));
-
-            break;
-        }
-
-        case 0x05:  map.insert("reverse", data.toBool()); break;
-        case 0x69:  map.insert("speed", data.toInt()); break;
+        quint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.toInt() : 100 - data.toInt());
+        map.insert("cover", value ? "open" : "closed");
+        map.insert("position", static_cast <quint8> (value));
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

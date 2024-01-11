@@ -231,23 +231,6 @@ QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant 
             value = qToBigEndian(value);
             return makeRequest(m_transactionId++, 0x02, TUYA_TYPE_VALUE, &value);
         }
-
-        case 2: // reverse
-        {
-            quint8 value = data.toBool() ? 0x01 : 0x00;
-            return makeRequest(m_transactionId++, 0x05, TUYA_TYPE_BOOL, &value);
-        }
-
-        case 3: // speed
-        {
-            quint32 value = static_cast <quint32> (data.toInt());
-
-            if (value > 255)
-                value = 255;
-
-            value = qToBigEndian(value);
-            return makeRequest(m_transactionId++, 0x69, TUYA_TYPE_VALUE, &value);
-        }
     }
 
     return QByteArray();
