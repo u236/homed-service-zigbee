@@ -27,7 +27,7 @@
     },
     {
       "description":    "TRADFRI Dimmable Bulb",
-      "modelNames":     ["TRADFRI bulb E14 W op/ch 400lm", "TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
+      "modelNames":     ["TRADFRI bulb E14 W op/ch 400lm", "TRADFRI bulb E27 opal 1000lm", "TRADFRI bulb E27 W opal 1000lm", "TRADFRI bulb E27 WW 806lm", "TRADFRIbulbE14WWclear250lm", "TRADFRIbulbE27WWclear250lm"],
       "properties":     ["status", "powerOnStatus", "level"],
       "actions":        ["status", "powerOnStatus", "level"],
       "bindings":       ["status", "level"],
