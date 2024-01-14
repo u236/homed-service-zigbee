@@ -615,7 +615,21 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 NDIR CO2 Sensor",
+      "description":    "TUYA TS0601 NDIR CO2 Sensor (Type A)",
+      "modelNames":     ["_TZE200_3ejwxpmu"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["temperature", "humidity", "co2"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    [{"name": "co2", "type": "value"}],
+                            "18":   [{"name": "temperature", "type": "value", "divider": 10}],
+                            "19":   [{"name": "humidity", "type": "value", "divider": 10}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 NDIR CO2 Sensor (Type B)",
       "modelNames":     ["_TZE200_ogkdpgy2"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["co2"],
