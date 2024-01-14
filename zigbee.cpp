@@ -93,7 +93,7 @@ void ZigBee::editDevice(const QString &deviceName, const QString &name, bool act
     else if (device->name() != name)
     {
         emit deviceEvent(device.data(), Event::deviceAboutToRename);
-        device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name);
+        device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name.trimmed());
         check = true;
     }
 
