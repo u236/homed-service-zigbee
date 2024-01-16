@@ -13,6 +13,8 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
+    m_discovery = config->value("default/discovery", true).toBool();
+    m_cloud = config->value("default/cloud", true).toBool();
     m_debug = config->value("debug/zigbee", false).toBool();
 
     connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
@@ -77,7 +79,7 @@ void ZigBee::togglePermitJoin(void)
     m_adapter->togglePermitJoin();
 }
 
-void ZigBee::editDevice(const QString &deviceName, const QString &name, bool active)
+void ZigBee::editDevice(const QString &deviceName, const QString &name, const QString &room, bool active, bool discovery, bool cloud)
 {
     Device device = m_devices->byName(deviceName), other = m_devices->byName(name);
     bool check = false;
@@ -89,6 +91,7 @@ void ZigBee::editDevice(const QString &deviceName, const QString &name, bool act
     {
         logWarning << "Device" << device->name() << "rename failed, name already in use";
         emit deviceEvent(device.data(), Event::deviceNameDuplicate);
+        return;
     }
     else if (device->name() != name)
     {
@@ -101,6 +104,14 @@ void ZigBee::editDevice(const QString &deviceName, const QString &name, bool act
     {
         device->setAvailability(active ? Availability::Unknown : Availability::Inactive);
         device->setActive(active);
+        check = true;
+    }
+
+    if (device->room() != room || device->discovery() != discovery || device->cloud() != cloud)
+    {
+        device->setRoom(room);
+        device->setDiscovery(discovery);
+        device->setCloud(cloud);
         check = true;
     }
 
@@ -1363,10 +1374,12 @@ void ZigBee::coordinatorReady(void)
 
     logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':').constData();
 
-    device->setInterviewFinished();
-    device->setLogicalType(LogicalType::Coordinator);
     device->setManufacturerName(m_adapter->manufacturerName());
     device->setModelName(m_adapter->modelName());
+    device->setDiscovery(false);
+    device->setCloud(false);
+    device->setInterviewFinished();
+    device->setLogicalType(LogicalType::Coordinator);
     device->setFirmware(m_adapter->firmware());
 
     connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined, Qt::UniqueConnection);
@@ -1420,11 +1433,17 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
     {
         logInfo << "Device" << ieeeAddress.toHex(':') << "joined network with address" << QString::asprintf("0x%04x", networkAddress);
         it = m_devices->insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
+        it.value()->setDiscovery(m_discovery);
+        it.value()->setCloud(m_cloud);
     }
     else
     {
         if (it.value()->removed())
+        {
+            it.value()->setDiscovery(m_discovery);
+            it.value()->setCloud(m_cloud);
             it.value()->setRemoved(false);
+        }
 
         if (it.value()->joinTime() + DEVICE_REJOIN_TIMEOUT > QDateTime::currentMSecsSinceEpoch())
             return;

@@ -127,7 +127,7 @@ public:
     void setPermitJoin(bool enabled);
     void togglePermitJoin(void);
 
-    void editDevice(const QString &deviceName, const QString &name, bool active);
+    void editDevice(const QString &deviceName, const QString &name, const QString &room, bool active, bool discovery, bool cloud);
     void removeDevice(const QString &deviceName, bool force);
 
     void updateDevice(const QString &deviceName, bool reportings);
@@ -159,7 +159,7 @@ private:
     bool m_replyReceived, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
-    bool m_debug;
+    bool m_discovery, m_cloud, m_debug;
 
     QMap <quint8, Request> m_requests;
 

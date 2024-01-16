@@ -78,7 +78,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 break;
 
             case Command::editDevice:
-                m_zigbee->editDevice(json.value("device").toString(), json.value("name").toString(), json.value("active").toBool(true));
+                m_zigbee->editDevice(json.value("device").toString(), json.value("name").toString(), json.value("room").toString(), json.value("active").toBool(true), json.value("discovery").toBool(true), json.value("cloud").toBool(true));
                 break;
 
             case Command::removeDevice:

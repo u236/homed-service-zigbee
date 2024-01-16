@@ -165,6 +165,9 @@ void DeviceList::setupDevice(const Device &device)
     QList <QDir> list = {m_externalDir, m_libraryDir};
     QString manufacturerName, modelName;
 
+    if (device->logicalType() == LogicalType::Coordinator)
+        return;
+
     device->setSupported(false);
     device->options().clear();
 
@@ -764,12 +767,19 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 if (json.contains("active"))
                     device->setActive(json.value("active").toBool());
 
-                device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
-                device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
+                if (json.contains("discovery"))
+                    device->setDiscovery(json.value("discovery").toBool());
+
+                if (json.contains("cloud"))
+                    device->setActive(json.value("cloud").toBool());
+
                 device->setVersion(static_cast <quint8> (json.value("version").toInt()));
-                device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
                 device->setManufacturerName(json.value("manufacturerName").toString());
                 device->setModelName(json.value("modelName").toString());
+                device->setRoom(json.value("room").toString());
+                device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
+                device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
+                device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
                 device->setFirmware(json.value("firmware").toString());
                 device->setLastSeen(json.value("lastSeen").toInt());
                 device->setLinkQuality(json.value("linkQuality").toInt());
@@ -874,9 +884,6 @@ QJsonArray DeviceList::serializeDevices(void)
             if (device->name() != device->ieeeAddress().toHex(':'))
                 json.insert("name", device->name());
 
-            if (device->version())
-                json.insert("version", device->version());
-
             if (!device->manufacturerName().isEmpty())
                 json.insert("manufacturerName", device->manufacturerName());
 
@@ -889,19 +896,27 @@ QJsonArray DeviceList::serializeDevices(void)
             if (device->logicalType() != LogicalType::Coordinator)
             {
                 json.insert("active", device->active());
+                json.insert("discovery", device->discovery());
+                json.insert("cloud", device->cloud());
                 json.insert("supported", device->supported());
                 json.insert("interviewFinished", device->interviewFinished());
                 json.insert("manufacturerCode", device->manufacturerCode());
                 json.insert("powerSource", device->powerSource());
+
+                if (!device->description().isEmpty())
+                    json.insert("description", device->description());
+
+                if (!device->room().isEmpty())
+                    json.insert("room", device->room());
+
+                if (device->version())
+                    json.insert("version", device->version());
 
                 if (device->lastSeen())
                     json.insert("lastSeen", device->lastSeen());
 
                 if (device->linkQuality())
                     json.insert("linkQuality", device->linkQuality());
-
-                if (!device->description().isEmpty())
-                    json.insert("description", device->description());
             }
 
             if (!device->endpoints().isEmpty())
