@@ -1,8 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION                 "3.6.2"
-#define UPDATE_AVAILABILITY_INTERVAL    10000
+#define SERVICE_VERSION                 "3.6.3"
+#define UPDATE_AVAILABILITY_INTERVAL    5000
 #define UPDATE_PROPERTIES_DELAY         1000
 
 #include "homed.h"
@@ -21,10 +21,10 @@ public:
         restartService,
         setPermitJoin,
         togglePermitJoin,
-        editDevice,
-        removeDevice,
         updateDevice,
-        updateReporting,
+        removeDevice,
+        setupDevice,
+        setupReporting,
         bindDevice,
         unbindDevice,
         addGroup,

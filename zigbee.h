@@ -127,11 +127,11 @@ public:
     void setPermitJoin(bool enabled);
     void togglePermitJoin(void);
 
-    void editDevice(const QString &deviceName, const QString &name, const QString &room, bool active, bool discovery, bool cloud);
+    void updateDevice(const QString &deviceName, const QString &name, bool active, bool discovery, bool cloud);
     void removeDevice(const QString &deviceName, bool force);
-
-    void updateDevice(const QString &deviceName, bool reportings);
-    void updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
+    
+    void setupDevice(const QString &deviceName, bool reportings);
+    void setupReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
 
     void bindingControl(const QString &deviceName, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind);
     void groupControl(const QString &deviceName, quint8 endpointId, quint16 groupId, bool remove);

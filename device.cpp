@@ -776,7 +776,6 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 device->setVersion(static_cast <quint8> (json.value("version").toInt()));
                 device->setManufacturerName(json.value("manufacturerName").toString());
                 device->setModelName(json.value("modelName").toString());
-                device->setRoom(json.value("room").toString());
                 device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
                 device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
                 device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
@@ -903,12 +902,6 @@ QJsonArray DeviceList::serializeDevices(void)
                 json.insert("manufacturerCode", device->manufacturerCode());
                 json.insert("powerSource", device->powerSource());
 
-                if (!device->description().isEmpty())
-                    json.insert("description", device->description());
-
-                if (!device->room().isEmpty())
-                    json.insert("room", device->room());
-
                 if (device->version())
                     json.insert("version", device->version());
 
@@ -917,6 +910,9 @@ QJsonArray DeviceList::serializeDevices(void)
 
                 if (device->linkQuality())
                     json.insert("linkQuality", device->linkQuality());
+
+                if (!device->description().isEmpty())
+                    json.insert("description", device->description());
             }
 
             if (!device->endpoints().isEmpty())

@@ -79,7 +79,7 @@ void ZigBee::togglePermitJoin(void)
     m_adapter->togglePermitJoin();
 }
 
-void ZigBee::editDevice(const QString &deviceName, const QString &name, const QString &room, bool active, bool discovery, bool cloud)
+void ZigBee::updateDevice(const QString &deviceName, const QString &name, bool active, bool discovery, bool cloud)
 {
     Device device = m_devices->byName(deviceName), other = m_devices->byName(name);
     bool check = false;
@@ -107,9 +107,8 @@ void ZigBee::editDevice(const QString &deviceName, const QString &name, const QS
         check = true;
     }
 
-    if (device->room() != room || device->discovery() != discovery || device->cloud() != cloud)
+    if (device->discovery() != discovery || device->cloud() != cloud)
     {
-        device->setRoom(room);
         device->setDiscovery(discovery);
         device->setCloud(cloud);
         check = true;
@@ -142,7 +141,7 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     m_devices->storeDatabase();
 }
 
-void ZigBee::updateDevice(const QString &deviceName, bool reportings)
+void ZigBee::setupDevice(const QString &deviceName, bool reportings)
 {
     Device device = m_devices->byName(deviceName);
 
@@ -167,7 +166,7 @@ void ZigBee::updateDevice(const QString &deviceName, bool reportings)
     logInfo << "Device" << device->name() << "configuration updated";
 }
 
-void ZigBee::updateReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange)
+void ZigBee::setupReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange)
 {
     Device device = m_devices->byName(deviceName);
 
@@ -865,12 +864,6 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         }
     }
 
-    if (endpoint->updated())
-    {
-        m_devices->storeProperties();
-        emit endpointUpdated(device.data(), endpoint->id());
-    }
-
     if (!m_debug || check)
         return;
 
@@ -1097,12 +1090,6 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
             endpoint->setUpdated(true);
         }
-    }
-
-    if (endpoint->updated())
-    {
-        m_devices->storeProperties();
-        emit endpointUpdated(device.data(), endpoint->id());
     }
 
     if (!m_debug || check)
@@ -1695,6 +1682,12 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
         response.status = 0x00;
 
         enqueueRequest(device, endpoint->id(), clusterId, zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_DEFAULT_RESPONSE, manufacturerCode).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
+    }
+
+    if (endpoint->updated())
+    {
+        m_devices->storeProperties();
+        emit endpointUpdated(device.data(), endpoint->id());
     }
 
     device->updateLastSeen();

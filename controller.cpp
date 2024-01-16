@@ -77,20 +77,20 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->togglePermitJoin();
                 break;
 
-            case Command::editDevice:
-                m_zigbee->editDevice(json.value("device").toString(), json.value("name").toString(), json.value("room").toString(), json.value("active").toBool(true), json.value("discovery").toBool(true), json.value("cloud").toBool(true));
+            case Command::updateDevice:
+                m_zigbee->updateDevice(json.value("device").toString(), json.value("name").toString(), json.value("active").toBool(true), json.value("discovery").toBool(true), json.value("cloud").toBool(true));
                 break;
 
             case Command::removeDevice:
                 m_zigbee->removeDevice(json.value("device").toString(), json.value("force").toBool());
                 break;
 
-            case Command::updateDevice:
-                m_zigbee->updateDevice(json.value("device").toString(), json.value("reportings").toBool());
+            case Command::setupDevice:
+                m_zigbee->setupDevice(json.value("device").toString(), json.value("reportings").toBool());
                 break;
 
-            case Command::updateReporting:
-                m_zigbee->updateReporting(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("reporting").toString(), static_cast <quint16> (json.value("minInterval").toInt()), static_cast <quint16> (json.value("maxInterval").toInt()), static_cast <quint16> (json.value("valueChange").toInt()));
+            case Command::setupReporting:
+                m_zigbee->setupReporting(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("reporting").toString(), static_cast <quint16> (json.value("minInterval").toInt()), static_cast <quint16> (json.value("maxInterval").toInt()), static_cast <quint16> (json.value("valueChange").toInt()));
                 break;
 
             case Command::bindDevice:
