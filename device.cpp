@@ -771,7 +771,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                     device->setDiscovery(json.value("discovery").toBool());
 
                 if (json.contains("cloud"))
-                    device->setActive(json.value("cloud").toBool());
+                    device->setCloud(json.value("cloud").toBool());
 
                 device->setVersion(static_cast <quint8> (json.value("version").toInt()));
                 device->setManufacturerName(json.value("manufacturerName").toString());

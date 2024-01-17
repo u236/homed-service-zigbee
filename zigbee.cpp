@@ -87,7 +87,7 @@ void ZigBee::updateDevice(const QString &deviceName, const QString &name, bool a
     if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    if (device != other && !other.isNull())
+    if (device != other && !other.isNull() && !other->removed())
     {
         logWarning << "Device" << device->name() << "rename failed, name already in use";
         emit deviceEvent(device.data(), Event::deviceNameDuplicate);
@@ -96,6 +96,10 @@ void ZigBee::updateDevice(const QString &deviceName, const QString &name, bool a
     else if (device->name() != name)
     {
         emit deviceEvent(device.data(), Event::deviceAboutToRename);
+
+        if (!other.isNull() && other->removed())
+            m_devices->remove(other->ieeeAddress());
+
         device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name.trimmed());
         check = true;
     }
