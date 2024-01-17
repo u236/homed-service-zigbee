@@ -47,6 +47,7 @@ private:
 
     QMetaEnum m_commands;
     QString m_haStatus;
+    QMap <QByteArray, qint64> m_lastSeen;
 
     void publishExposes(DeviceObject *device, bool remove = false);
 

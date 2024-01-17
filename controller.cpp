@@ -180,10 +180,11 @@ void Controller::updateAvailability(void)
 
         it.value()->setAvailability(it.value()->active() ? time - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline : Availability::Inactive);
 
-        if (it.value()->availability() == check)
+        if (it.value()->availability() == check && m_lastSeen.value(it.value()->ieeeAddress()) == it.value()->lastSeen())
             continue;
 
-        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"status", it.value()->availability() == Availability::Online ? "online" : "offline"}}, true);
+        mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"lastSeen", it.value()->lastSeen()}, {"status", it.value()->availability() == Availability::Online ? "online" : "offline"}}, true);
+        m_lastSeen.insert(it.value()->ieeeAddress(), it.value()->lastSeen());
     }
 }
 
@@ -220,7 +221,7 @@ void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJ
             break;
 
         case ZigBee::Event::deviceUpdated:
-            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"status", device->availability() == Availability::Online ? "online" : "offline"}}, true);
+            mqttPublish(mqttTopic("device/zigbee/%1").arg(m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"lastSeen", device->lastSeen()}, {"status", device->availability() == Availability::Online ? "online" : "offline"}}, true);
             break;
 
         default:
