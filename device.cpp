@@ -189,7 +189,7 @@ void DeviceList::setupDevice(const Device &device)
         QList <QString> list = it->entryList(QDir::Files);
         bool check = false;
 
-        for (int i = 0; i < list.count(); i++)
+        for (int i = 0; i < list.count() && !device->supported(); i++)
         {
             QFile file(QString("%1/%2").arg(it->path(), list.at(i)));
             QJsonArray array;

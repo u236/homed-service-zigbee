@@ -1004,7 +1004,7 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
-      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_rwb0hxtf", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_kmh5qpmb", "_TZ3000_mmtwjmaq", "_TZ3000_nss8amz9", "_TZ3000_otvn3lne", "_TZ3000_sr0vaafi", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz", "_TZE200_bq5c8xfe"],
+      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_rwb0hxtf", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_jmrgyl7o", "_TZ3000_kmh5qpmb", "_TZ3000_lf56vpxj", "_TZ3000_mmtwjmaq", "_TZ3000_nss8amz9", "_TZ3000_otvn3lne", "_TZ3000_qomxlryd", "_TZ3000_sr0vaafi", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz", "_TZ3040_bb6xaihh", "_TZ3040_wqmtjsyk", "_TZE200_bq5c8xfe"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
