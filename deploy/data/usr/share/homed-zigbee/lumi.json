@@ -71,6 +71,33 @@
       "endpointId":     [4, 5]
     },
     {
+      "description":    "Aqara D1 2-Channel Wall Switch QBKG12LM",
+      "modelNames":     ["lumi.ctrl_ln2", "lumi.ctrl_ln2.aq1"],
+      "options":        {"endpointName": {"1": "Left", "2": "Right", "5": "Left", "6": "Right", "7": "Both"}, "powerSource": 1}
+    },
+    {
+      "modelNames":     ["lumi.ctrl_ln2", "lumi.ctrl_ln2.aq1"],
+      "properties":     ["lumiButtonMode"],
+      "actions":        ["lumiButtonMode"],
+      "exposes":        ["leftMode", "rightMode"],
+      "options":        {"leftMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}, "rightMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.ctrl_ln2", "lumi.ctrl_ln2.aq1"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
+      "modelNames":     ["lumi.ctrl_ln2", "lumi.ctrl_ln2.aq1"],
+      "properties":     ["lumiSwitchAction"],
+      "exposes":        ["action"],
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold", "release"]}},
+      "endpointId":     [5, 6, 7]
+    },
+    {
       "description":    "Aqara D1 1-Channel Wall Switch QBKG23LM",
       "modelNames":     ["lumi.switch.b1nacn02"],
       "properties":     ["status", "lumiButtonMode"],
@@ -462,6 +489,24 @@
       "properties":     ["lumiBasic", "lumiSwitchAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}}
+    },
+    {
+      "description":    "Aqara D1 2-Key Wireless Switch WXKG02LM (2016)",
+      "modelNames":     ["lumi.sensor_86sw2", "lumi.sensor_86sw2.es1"],
+      "options":        {"endpointName": {"1": "Left", "2": "Right", "3": "Both"}}
+    },
+    {
+      "modelNames":     ["lumi.sensor_86sw2", "lumi.sensor_86sw2.es1"],
+      "properties":     ["lumiBasic"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.sensor_86sw2", "lumi.sensor_86sw2.es1"],
+      "properties":     ["lumiButtonAction"],
+      "exposes":        ["action"],
+      "options":        {"action": {"trigger": ["on", "off"]}},
+      "endpointId":     [1, 2, 3]
     },
     {
       "description":    "Aqara D1 2-Key Wireless Switch WXKG02LM or WXKG07LM",

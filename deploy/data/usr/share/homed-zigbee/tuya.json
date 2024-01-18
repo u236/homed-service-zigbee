@@ -1030,6 +1030,24 @@
       "options":        {"sensitivityMode": {"enum": ["low", "medium", "high"]}, "timeoutMode": {"enum": ["30s", "60s", "120s"]}}
     },
     {
+      "description":    "TUYA TS0202 Motion Sensor with Button",
+      "modelNames":     ["_TZ3210_cwamkvua"],
+      "properties":     ["batteryPercentage", "iasOccupancy", "tuyaDataPoints"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "occupancy", "light", "action"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "101":  [{"name": "action", "type": "enum"}],
+                            "102":  [{"name": "light", "type": "bool"}]
+                          },
+                          "action": {"enum": ["singleClick", "doubleClick", "hold"]},
+                          "light": {"enum": ["dark", "bright"]},
+                          "tuyaMagic": true
+                        }
+    },
+    {
       "description":    "TUYA TS0207 Water Leak Sensor",
       "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_k4ej3ww2", "_TZ3000_kstbkt6a", "_TZ3000_kyb656no", "_TZ3000_mugyhz0q", "_TZ3000_ocjlo4ea", "_TZ3000_qhozxs2b", "_TYZB01_sqmd19i1", "_TZ3000_upgcbody"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
@@ -1128,6 +1146,24 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
       "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"trigger": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}, "tuyaMagic": true}
+    },
+    {
+      "description":    "TUYA TS004F 4-Button Wireless Switch",
+      "modelNames":     ["_TZ3000_czuyt8lz", "_TZ3000_nuombroo", "_TZ3000_xabckq1v"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "tuyaOperationMode"],
+      "actions":        ["tuyaOperationMode"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "operationMode"],
+      "options":        {"operationMode": {"enum": ["command", "event"]}, "tuyaMagic": true}
+    },
+    {
+      "modelNames":     ["_TZ3000_czuyt8lz", "_TZ3000_nuombroo", "_TZ3000_xabckq1v"],
+      "properties":     ["tuyaButtonAction"],
+      "bindings":       ["status"],
+      "exposes":        ["action"],
+      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
+      "endpointId":     [1, 2, 3, 4]
     },
     {
       "description":    "Simon 2-Channel Switch S2100-1002",
