@@ -351,6 +351,24 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Door and Window Sensor",
+      "modelNames":     ["_TZE200_ijey4q29", "_TZE200_pay2byax"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "contact", "illuminance", "illuminanceDelay"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "contact", "type": "bool", "invert": true}],
+                            "2":    [{"name": "battery", "type": "value"}],
+                            "101":  [{"name": "illuminance", "type": "value"}],
+                            "102":  [{"name": "illuminanceDelay", "type": "value", "action": true}]
+                          },
+                          "illuminanceDelay": {"min": 1, "max": 720},
+                          "tuyaMagic": true
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Motion Sensor",
       "modelNames":     ["_TZE200_1ibpyhdc", "_TZE200_3towulqd", "_TZE200_bh3n6gk8", "_TZE200_ttcovulf"],
       "properties":     ["tuyaDataPoints"],

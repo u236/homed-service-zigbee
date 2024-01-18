@@ -96,6 +96,7 @@
   "humidityLow":                {"type": "number", "unit": "%", "icon": "mdi:water-percent"},
   "humidityOffset":             {"type": "number", "unit": "%", "icon": "mdi:water-percent"},
   "hysteresis":                 {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
+  "illuminanceDelay":           {"type": "number", "icon": "mdi:timer"},
   "indicatorLevel":             {"type": "number", "icon": "mdi:led-on"},
   "melody":                     {"type": "number", "icon": "mdi:music-note"},
   "motionSensitivity":          {"type": "number", "icon": "mdi:dumbbell"},
