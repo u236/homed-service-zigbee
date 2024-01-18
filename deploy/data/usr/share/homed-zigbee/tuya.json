@@ -565,7 +565,7 @@
     },
     {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type B)",
-      "modelNames":     ["_TZE200_9yapgbuv", "_TZE200_cirvgep4", "_TZE200_upagmta9", "_TZE200_yjjdcqsq", "_TZE204_upagmta9"],
+      "modelNames":     ["_TZE200_9yapgbuv", "_TZE200_cirvgep4", "_TZE200_upagmta9", "_TZE200_yjjdcqsq", "_TZE204_upagmta9", "_TZE204_yjjdcqsq"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["batteryStatus", "temperature", "humidity", "displayMode"],
@@ -579,7 +579,8 @@
                           },
                           "batteryStatus": {"enum": ["low", "medium", "high"]},
                           "displayMode": {"enum": ["celsius", "fahrenheit"]},
-                          "tuyaMagic": true
+                          "tuyaMagic": true,   
+                          "tuyaDataQuery": true
                         }
     },
     {

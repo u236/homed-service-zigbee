@@ -109,7 +109,6 @@
 #define CLUSTER_LUMI                                0xFCC0
 
 #define CLUSTER_TUYA_DATA                           0xEF00
-#define CLUSTER_TUYA_UNKNOWN                        0xE000
 #define CLUSTER_TUYA_SWITCH_MODE                    0xE001
 
 #define TUYA_TYPE_RAW                               0x00

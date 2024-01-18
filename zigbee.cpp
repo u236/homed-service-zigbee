@@ -552,6 +552,9 @@ bool ZigBee::interviewQuirks(const Device &device)
     if (device->options().value("tuyaMagic").toBool())
         enqueueRequest(device, 0x01, CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0004, 0x0000, 0x0001, 0x0005, 0x0007, 0xFFFE}), "magic request");
 
+    if (device->options().value("tuyaDataQuery").toBool())
+        enqueueRequest(device, 0x01, CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x03), "data query request");
+
     return true;
 }
 
