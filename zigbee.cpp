@@ -13,9 +13,9 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
-    m_discovery = config->value("default/discovery", true).toBool();
-    m_cloud = config->value("default/cloud", true).toBool();
-    m_debug = config->value("debug/zigbee", false).toBool();
+    m_discovery = m_config->value("default/discovery", true).toBool();
+    m_cloud = m_config->value("default/cloud", true).toBool();
+    m_debug = m_config->value("debug/zigbee", false).toBool();
 
     connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
     connect(m_devices, &DeviceList::endpointUpdated, this, &ZigBee::endpointUpdated);

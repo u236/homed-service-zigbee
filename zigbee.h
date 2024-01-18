@@ -158,7 +158,7 @@ private:
     quint8 m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
     bool m_replyReceived, m_interPanLock;
 
-    QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
+    QString m_statusLedPin, m_blinkLedPin, m_permitJoin, m_otaUpgradeFile;
     bool m_discovery, m_cloud, m_debug;
 
     QMap <quint8, Request> m_requests;

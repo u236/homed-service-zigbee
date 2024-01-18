@@ -202,6 +202,7 @@ public:
 
 private:
 
+    QSettings *m_config;
     QTimer *m_databaseTimer, *m_propertiesTimer;
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
