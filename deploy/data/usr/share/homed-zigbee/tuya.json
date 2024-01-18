@@ -578,7 +578,8 @@
                             "9":    [{"name": "displayMode", "type": "enum", "action": true}]
                           },
                           "batteryStatus": {"enum": ["low", "medium", "high"]},
-                          "displayMode": {"enum": ["celsius", "fahrenheit"]}
+                          "displayMode": {"enum": ["celsius", "fahrenheit"]},
+                          "tuyaMagic": true
                         }
     },
     {
