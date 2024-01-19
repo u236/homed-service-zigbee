@@ -501,11 +501,9 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
                 payload.responseCode = 0x00;
                 payload.zoneId = IAS_ZONE_ID;
 
-                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload))) && m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010})))
-                    return true;
-
-                interviewError(device, "enroll IAS zone request failed");
-                return false;
+                m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+                m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010}));
+                break;
             }
 
             case ZoneStatus::Enrolled:
