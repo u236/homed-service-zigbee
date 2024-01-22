@@ -11,11 +11,11 @@
 
 ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_devices(new DeviceList(m_config, this)), m_adapter(nullptr), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0), m_interPanLock(false)
 {
-    m_statusLedPin = config->value("gpio/status", "-1").toString();
-    m_blinkLedPin = config->value("gpio/blink", "-1").toString();
-    m_discovery = config->value("default/discovery", true).toBool();
-    m_cloud = config->value("default/cloud", true).toBool();
-    m_debug = config->value("debug/zigbee", false).toBool();
+    m_statusLedPin = m_config->value("gpio/status", "-1").toString();
+    m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
+    m_discovery = m_config->value("default/discovery", true).toBool();
+    m_cloud = m_config->value("default/cloud", true).toBool();
+    m_debug = m_config->value("debug/zigbee", false).toBool();
 
     connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
     connect(m_devices, &DeviceList::endpointUpdated, this, &ZigBee::endpointUpdated);
@@ -1344,7 +1344,6 @@ void ZigBee::adapterReset(void)
 
 void ZigBee::coordinatorReady(void)
 {
-    QList <QString> list = {"previous", "enabled"};
     Device device = m_devices->value(m_adapter->ieeeAddress());
 
     if (device.isNull())
@@ -1397,13 +1396,7 @@ void ZigBee::coordinatorReady(void)
         pingDevices();
     }
 
-    switch (list.indexOf(m_permitJoin = m_config->value("zigbee/join").toString()))
-    {
-        case 0:  m_adapter->setPermitJoin(m_devices->permitJoin()); break;
-        case 1:  m_adapter->setPermitJoin(true); break;
-        default: m_adapter->setPermitJoin(false); break;
-    }
-
+    m_adapter->setPermitJoin(m_devices->permitJoin());
     m_devices->storeDatabase();
 }
 

@@ -5,7 +5,7 @@
 #include "controller.h"
 #include "logger.h"
 
-DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
+DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
 {
     QFile file;
 
@@ -16,11 +16,11 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     PollObject::registerMetaTypes();
     ExposeObject::registerMetaTypes();
 
-    m_databaseFile.setFileName(config->value("device/database", "/opt/homed-zigbee/database.json").toString());
-    m_propertiesFile.setFileName(config->value("device/properties", "/opt/homed-zigbee/properties.json").toString());
-    m_optionsFile.setFileName(config->value("device/options", "/opt/homed-zigbee/options.json").toString());
-    m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
-    m_libraryDir.setPath(config->value("device/library", "/usr/share/homed-zigbee").toString());
+    m_databaseFile.setFileName(m_config->value("device/database", "/opt/homed-zigbee/database.json").toString());
+    m_propertiesFile.setFileName(m_config->value("device/properties", "/opt/homed-zigbee/properties.json").toString());
+    m_optionsFile.setFileName(m_config->value("device/options", "/opt/homed-zigbee/options.json").toString());
+    m_externalDir.setPath(m_config->value("device/external", "/opt/homed-zigbee/external").toString());
+    m_libraryDir.setPath(m_config->value("device/library", "/usr/share/homed-zigbee").toString());
 
     file.setFileName(QString("%1/expose.json").arg(m_libraryDir.path()));
 
@@ -47,6 +47,7 @@ DeviceList::~DeviceList(void)
 
 void DeviceList::init(void)
 {
+    QList <QString> list = {"previous", "enabled"};
     QJsonObject json;
 
     if (!m_databaseFile.open(QFile::ReadOnly))
@@ -54,7 +55,14 @@ void DeviceList::init(void)
 
     json = QJsonDocument::fromJson(m_databaseFile.readAll()).object();
     unserializeDevices(json.value("devices").toArray());
-    m_permitJoin = json.value("permitJoin").toBool();
+
+    switch (list.indexOf(m_config->value("device/join").toString()))
+    {
+        case 0:  m_permitJoin = json.value("permitJoin").toBool(); break;
+        case 1:  m_permitJoin = true; break;
+        default: m_permitJoin = false; break;
+    }
+
     m_databaseFile.close();
 
     if (!m_propertiesFile.open(QFile::ReadOnly))
