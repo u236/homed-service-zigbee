@@ -1326,6 +1326,9 @@ void ZigBee::rejoinHandler(const Device &device)
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             for (int i = 0; i < it.value()->reportings().count(); i++)
                 configureReporting(device, it.value()->id(), it.value()->reportings().at(i));
+
+    if (device->options().value("tuyaDataQuery").toBool())
+        enqueueRequest(device, 0x01, CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x03), "data query request");
 }
 
 void ZigBee::blink(quint16 timeout)
