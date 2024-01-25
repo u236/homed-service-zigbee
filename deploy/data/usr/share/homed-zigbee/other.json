@@ -15,6 +15,39 @@
     }
   ],
 
+  "DIY":
+  [
+    {
+      "description":    "TLSR8258 DIY Water Meter",
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "options":        {"endpointName": {"1": "Hot", "2": "Cold"}}
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["waterMeterSettings"],
+      "actions":        ["waterMeterSettings"],
+      "exposes":        ["hotPreset", "coldPreset", "pulseVolume"],
+      "options":        {"hotPreset": {"min": 0, "max": 1000000000}, "coldPreset": {"min": 0, "max": 1000000000}, "pulseVolume": {"min": 1, "max": 10000}},
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["waterMeterVolume"],
+      "exposes":        ["volume"],
+      "bindings":       ["energy"],
+      "reportings":     ["energy"],
+      "endpointId":     [1, 2]
+    }
+  ],
+
   "Feibit Inc co.":
   [
     {

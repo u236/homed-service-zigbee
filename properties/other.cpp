@@ -131,3 +131,48 @@ void PropertiesOther::WoolleySmartPlug::parseAttribte(quint16, quint16 attribute
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
+void PropertiesOther::WaterMeterVolume::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    qint64 value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
+void PropertiesOther::WaterMeterSettings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (attributeId)
+    {
+        case 0xF000:
+        case 0xF001:
+        {
+            quint32 value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert(attributeId == 0xF000 ? "hotPreset" : "coldPreset", qFromLittleEndian(value));
+            break;
+        }
+
+        case 0xF002:
+        {
+            quint16 value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            map.insert("pulseVolume", qFromLittleEndian(value));
+            break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}

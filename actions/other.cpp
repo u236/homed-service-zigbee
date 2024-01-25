@@ -38,3 +38,28 @@ QByteArray ActionsOther::PerenioSmartPlug::request(const QString &name, const QV
         }
     }
 }
+
+QByteArray ActionsOther::WaterMeterSettings::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0: // hotPreset
+        case 1: // coldPreset
+        {
+            quint32 value = qToLittleEndian <quint32> (data.toInt());
+            m_attributes = {static_cast <quint16> (index == 0 ? 0xF000 : 0xF001)};
+            return writeAttribute(DATA_TYPE_32BIT_UNSIGNED, &value, sizeof(value));
+        }
+
+        case 2: // pulseVolume
+        {
+            quint16 value = qToLittleEndian <quint16> (data.toInt());
+            m_attributes = {0xF002};
+            return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
+        }
+    }
+
+    return QByteArray();
+}

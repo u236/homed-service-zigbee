@@ -55,6 +55,26 @@ namespace PropertiesOther
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class WaterMeterVolume : public PropertyObject
+    {
+
+    public:
+
+        WaterMeterVolume(void) : PropertyObject("volume", CLUSTER_SMART_ENERGY_METERING) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class WaterMeterSettings : public PropertyObject
+    {
+
+    public:
+
+        WaterMeterSettings(void) : PropertyObject("waterMeterSettings", CLUSTER_SMART_ENERGY_METERING) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
 }
 
 #endif

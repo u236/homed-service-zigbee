@@ -69,6 +69,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
 
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
+    qRegisterMetaType <ActionsOther::WaterMeterSettings>        ("waterMeterSettingsAction");
 }
 
 QByteArray ActionObject::writeAttribute(quint8 dataType, void *value, size_t length)
