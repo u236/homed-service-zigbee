@@ -399,7 +399,7 @@
     {
       "description":    "Xiaomi Illuminance Sensor GZCGQ01LM",
       "modelNames":     ["lumi.sen_ill.mgl01"],
-      "properties":     ["batteryVoltage", "illuminance", "lumiData"],
+      "properties":     ["batteryVoltage", "illuminance"],
       "bindings":       ["battery", "illuminance"],
       "reportings":     ["batteryVoltage", "illuminance"],
       "exposes":        ["battery", "illuminance"]

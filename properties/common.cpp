@@ -10,7 +10,7 @@ void Properties::BatteryVoltage::parseAttribte(quint16, quint16 attributeId, con
     if (attributeId != 0x0020)
         return;
 
-    m_value = percentage(2850, 3200, static_cast <quint8> (data.at(0)) * 100);
+    m_value = percentage(2850, 3000, static_cast <quint8> (data.at(0)) * 100);
 }
 
 void Properties::BatteryPercentage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

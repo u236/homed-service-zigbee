@@ -50,13 +50,13 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert("battery", percentage(2850, 3200, qFromLittleEndian(value)));
+            map.insert("battery", percentage(2850, 3000, qFromLittleEndian(value)));
             break;
         }
 
         case 0x0003:
         {
-            QList <QString> list = {"lumi.airrtc.agl001", "lumi.magnet.acn001", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.remote.cagl02", "lumi.sen_ill.mgl01", "lumi.sensor_smoke.acn03"};
+            QList <QString> list = {"lumi.airrtc.agl001", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.sen_ill.mgl01"};
 
             if (list.contains(modelName()))
                 break;
@@ -90,18 +90,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 case 0x01: map.insert("operationMode", "event"); break;
             }
 
-            break;
-        }
-
-        case 0x0064:
-        {
-            quint32 value = 0;
-
-            if (modelName() != "lumi.sen_ill.mgl01" || static_cast <size_t> (data.length()) > sizeof(value))
-                break;
-
-            memcpy(&value, data.constData(), data.length());
-            map.insert("illuminance", qFromLittleEndian(value));
             break;
         }
 
@@ -357,7 +345,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 break;
 
             memcpy(&value, data.constData() + 5, sizeof(value));
-            map.insert("battery", percentage(2850, 3200, qFromLittleEndian(value)));
+            map.insert("battery", percentage(2850, 3000, qFromLittleEndian(value)));
             break;
         }
 

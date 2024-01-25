@@ -35,7 +35,7 @@
       "properties":     ["waterMeterSettings"],
       "actions":        ["waterMeterSettings"],
       "exposes":        ["hotPreset", "coldPreset", "pulseVolume"],
-      "options":        {"hotPreset": {"min": 0, "max": 1000000000}, "coldPreset": {"min": 0, "max": 1000000000}, "pulseVolume": {"min": 1, "max": 10000}},
+      "options":        {"hotPreset": {"min": 0, "max": 1000000000}, "coldPreset": {"min": 0, "max": 1000000000}, "pulseVolume": {"min": 1, "max": 100}},
       "endpointId":     3
     },
     {

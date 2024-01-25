@@ -642,7 +642,7 @@ bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 cluste
 
 bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const Reporting &reporting)
 {
-    QMap <QString, QVariant> options = device->options().value("reporting").toMap();
+    QMap <QString, QVariant> options = device->options().value(device->options().contains("reporting") ? "reporting" : QString(reporting->name()).append("Reporting")).toMap();
     QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
 
     for (int i = 0; i < reporting->attributes().count(); i++)
