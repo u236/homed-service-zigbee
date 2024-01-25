@@ -3,7 +3,7 @@
 
 void PropertiesByun::Sensor::parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload)
 {
-    quint16 value;
+    quint16 value = 0;
 
     if (clusterId != CLUSTER_IAS_ZONE || commandId != 0x00)
         return;

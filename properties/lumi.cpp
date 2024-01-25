@@ -597,7 +597,7 @@ void PropertiesLUMI::Vibration::parseAttribte(quint16, quint16 attributeId, cons
 
         case 0x0508:
         {
-            quint64 value;
+            quint64 value = 0;
             qint16 x, y, z;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))

@@ -36,7 +36,7 @@ QVariant PropertiesTUYA::Data::parseData(const tuyaHeaderStruct *header, const Q
 
             if (header->length == 4)
             {
-                quint32 value;
+                quint32 value = 0;
                 memcpy(&value, data.constData(), header->length);
                 return qFromBigEndian(value);
             }
@@ -76,7 +76,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
             {
                 QList <QString> list = {"_TZE200_bcusnqt8", "_TZE200_lsanae15", "_TZE204_lsanae15"};
                 QByteArray payload = data.toByteArray();
-                quint16 value;
+                quint16 value = 0;
 
                 if (name != "elictricity")
                     break;

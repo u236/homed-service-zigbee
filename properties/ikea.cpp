@@ -3,7 +3,7 @@
 
 void PropertiesIKEA::Occupancy::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
-    quint16 value;
+    quint16 value = 0;
 
     if (commandId != 0x42)
         return;

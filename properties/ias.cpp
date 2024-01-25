@@ -4,7 +4,7 @@
 void PropertiesIAS::ZoneStatus::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     QMap <QString, QVariant> map = m_value.toMap();
-    quint16 value;
+    quint16 value = 0;
 
     if (commandId != 0x00)
         return;

@@ -4,7 +4,7 @@
 
 void PropertiesEfekta::ReportingDelay::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    quint16 value;
+    quint16 value = 0;
 
     if (attributeId != 0x0201 || static_cast <size_t> (data.length()) > sizeof(value))
         return;
@@ -23,7 +23,7 @@ void PropertiesEfekta::TemperatureSettings::parseAttribte(quint16, quint16 attri
         case 0x0221:
         case 0x0222:
         {
-            qint16 value;
+            qint16 value = 0;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;
@@ -60,7 +60,7 @@ void PropertiesEfekta::HumiditySettings::parseAttribte(quint16, quint16 attribut
     {
         case 0x0210:
         {
-            qint16 value;
+            qint16 value = 0;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;
@@ -99,7 +99,7 @@ void PropertiesEfekta::CO2Settings::parseAttribte(quint16, quint16 attributeId, 
         case 0x0221:
         case 0x0222:
         {
-            uint16_t value;
+            uint16_t value = 0;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;
@@ -168,7 +168,7 @@ void PropertiesEfekta::PMSensor::parseAttribte(quint16, quint16 attributeId, con
         case 0x0221:
         case 0x0222:
         {
-            quint16 value;
+            quint16 value = 0;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;
@@ -205,7 +205,7 @@ void PropertiesEfekta::VOCSensor::parseAttribte(quint16, quint16 attributeId, co
     {
         case 0x0055:
         {
-            float value;
+            float value = 0;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;
@@ -218,7 +218,7 @@ void PropertiesEfekta::VOCSensor::parseAttribte(quint16, quint16 attributeId, co
         case 0x0221:
         case 0x0222:
         {
-            quint16 value;
+            quint16 value = 0;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;

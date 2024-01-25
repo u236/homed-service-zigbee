@@ -67,7 +67,7 @@ void PropertiesModkam::CO2Settings::parseAttribte(quint16, quint16 attributeId, 
         case 0x0204:
         case 0x0205:
         {
-            qint16 value;
+            qint16 value = 0;
 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 return;
@@ -101,7 +101,7 @@ void PropertiesModkam::Geiger::parseAttribte(quint16 clusterId, quint16 attribut
             {
                 case 0xF001:
                 {
-                    quint16 value;
+                    quint16 value = 0;
 
                     if (static_cast <size_t> (data.length()) > sizeof(value))
                         return;
@@ -113,7 +113,7 @@ void PropertiesModkam::Geiger::parseAttribte(quint16 clusterId, quint16 attribut
 
                 case 0xF002:
                 {
-                    quint32 value;
+                    quint32 value = 0;
 
                     if (static_cast <size_t> (data.length()) > sizeof(value))
                         return;
@@ -132,7 +132,7 @@ void PropertiesModkam::Geiger::parseAttribte(quint16 clusterId, quint16 attribut
             {
                 case 0xF000:
                 {
-                    quint16 value;
+                    quint16 value = 0;
 
                     if (static_cast <size_t> (data.length()) > sizeof(value))
                         return;
@@ -169,7 +169,7 @@ void PropertiesModkam::Geiger::parseAttribte(quint16 clusterId, quint16 attribut
 
                 case 0xF005:
                 {
-                    quint32 value;
+                    quint32 value = 0;
 
                     if (static_cast <size_t> (data.length()) > sizeof(value))
                         return;
