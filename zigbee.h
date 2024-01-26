@@ -137,7 +137,7 @@ public:
     void groupControl(const QString &deviceName, quint8 endpointId, quint16 groupId, bool remove);
     void removeAllGroups(const QString &deviceName, quint8 endpointId);
 
-    void otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName);
+    void otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName, bool force);
     void getProperties(const QString &deviceName);
 
     void clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global);
@@ -159,7 +159,7 @@ private:
     bool m_replyReceived, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
-    bool m_discovery, m_cloud, m_debug;
+    bool m_discovery, m_cloud, m_debug, m_otaForce;
 
     QMap <quint8, Request> m_requests;
 

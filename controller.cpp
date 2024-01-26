@@ -108,7 +108,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 break;
 
             case Command::otaUpgrade:
-                m_zigbee->otaUpgrade(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString());
+                m_zigbee->otaUpgrade(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString(), json.value("force").toBool());
                 break;
 
             case  Command::getProperties:

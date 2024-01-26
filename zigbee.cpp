@@ -262,7 +262,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     enqueueRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04), QString("remove all groups request"));
 }
 
-void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName)
+void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName, bool force)
 {
     Device device = m_devices->byName(deviceName);
     otaImageNotifyStruct payload;
@@ -271,6 +271,7 @@ void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QStr
         return;
 
     m_otaUpgradeFile = fileName;
+    m_otaForce = force;
 
     payload.type = 0x00;
     payload.jitter = 0x64; // TODO: check this
@@ -946,7 +947,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 const otaNextImageRequestStruct *request = reinterpret_cast <const otaNextImageRequestStruct*> (payload.constData());
                 otaNextImageResponseStruct response;
 
-                if (!file.isOpen() || request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType)
+                if (!file.isOpen() || (!m_otaForce && (request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType)))
                 {
                     if (!file.fileName().isEmpty())
                        logWarning << "Device" << device->name() << "OTA upgrade image request failed, file open error or header data mismatch request data";
@@ -965,8 +966,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 logInfo << "Device" << device->name() << "OTA upgrade started...";
 
                 response.status = 0x00;
-                response.manufacturerCode = header.manufacturerCode;
-                response.imageType = header.imageType;
+                response.manufacturerCode = m_otaForce ? request->manufacturerCode : header.manufacturerCode;
+                response.imageType = m_otaForce ? request->imageType : header.imageType;
                 response.fileVersion = header.fileVersion;
                 response.imageSize = header.imageSize;
 
