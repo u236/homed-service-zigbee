@@ -12,7 +12,7 @@ void PropertiesIAS::ZoneStatus::parseCommand(quint16, quint8 commandId, const QB
     memcpy(&value, payload.constData(), sizeof(value));
     value = qFromLittleEndian(value);
 
-    map.insert(m_name, (value & 0x0001) ? true : false);
+    map.insert(m_name, (value & (option("iasAlarm2").toBool() ? 0x0002 : 0x0001)) ? true : false);
     map.insert("tamper", (value & 0x0004) ? true : false);
     map.insert("batteryLow", (value & 0x0008) ? true : false);
 
