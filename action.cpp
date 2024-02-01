@@ -14,6 +14,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::SwitchType>                     ("switchTypeAction");
     qRegisterMetaType <Actions::SwitchMode>                     ("switchModeAction");
     qRegisterMetaType <Actions::Level>                          ("levelAction");
+    qRegisterMetaType <Actions::AnalogOutput>                   ("analogOutputAction");
     qRegisterMetaType <Actions::CoverStatus>                    ("coverStatusAction");
     qRegisterMetaType <Actions::CoverPosition>                  ("coverPositionAction");
     qRegisterMetaType <Actions::CoverTilt>                      ("coverTiltAction");

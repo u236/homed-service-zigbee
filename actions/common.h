@@ -56,6 +56,16 @@ namespace Actions
 
     };
 
+    class AnalogOutput : public ActionObject
+    {
+
+    public:
+
+        AnalogOutput(void) : ActionObject("analogOutput", CLUSTER_ANALOG_OUTPUT, 0x0000, 0x0055) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class CoverStatus : public ActionObject
     {
 

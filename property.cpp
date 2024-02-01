@@ -19,6 +19,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::SwitchType>                      ("switchTypeProperty");
     qRegisterMetaType <Properties::SwitchMode>                      ("switchModeProperty");
     qRegisterMetaType <Properties::Level>                           ("levelProperty");
+    qRegisterMetaType <Properties::AnalogInput>                     ("analogInputProperty");
+    qRegisterMetaType <Properties::AnalogOutput>                    ("analogOutputProperty");
     qRegisterMetaType <Properties::CoverPosition>                   ("coverPositionProperty");
     qRegisterMetaType <Properties::CoverTilt>                       ("coverTiltProperty");
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");

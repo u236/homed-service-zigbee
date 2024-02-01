@@ -92,6 +92,15 @@ namespace Bindings
 
     };
 
+    class AnalogOutput : public BindingObject
+    {
+
+    public:
+
+        AnalogOutput(void) : BindingObject("analogOutput", CLUSTER_ANALOG_OUTPUT) {}
+
+    };
+
     class MultistateInput : public BindingObject
     {
 

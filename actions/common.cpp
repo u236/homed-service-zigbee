@@ -82,6 +82,12 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
     }
 }
 
+QByteArray Actions::AnalogOutput::request(const QString &, const QVariant &data)
+{
+    float value = qToLittleEndian(data.toFloat());
+    return writeAttribute(DATA_TYPE_SINGLE_PRECISION, &value, sizeof(value));
+}
+
 QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 {
     QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};

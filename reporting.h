@@ -96,6 +96,24 @@ namespace Reportings
 
     };
 
+    class AnalogInput : public ReportingObject
+    {
+
+    public:
+
+        AnalogInput(void) :  ReportingObject("analogInput", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600) {}
+
+    };
+
+    class AnalogOutput : public ReportingObject
+    {
+
+    public:
+
+        AnalogOutput(void) :  ReportingObject("analogOutput", CLUSTER_ANALOG_OUTPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600) {}
+
+    };
+
     class CoverPosition : public ReportingObject
     {
 

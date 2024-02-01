@@ -14,6 +14,7 @@
   "windowOpen":                 {"type": "binary", "icon": "mdi:mdi:window-open-variant"},
 
   "action":                     {"type": "sensor", "icon": "mdi:gesture-double-tap"},
+  "analogInput":                {"type": "sensor", "icon": "mdi:speedometer"},
   "battery":                    {"type": "sensor", "class": "battery", "unit": "%", "round": 1},
   "batteryStatus":              {"type": "sensor", "icon": "mdi:battery"},
   "co2":                        {"type": "sensor", "class": "carbon_dioxide", "unit": "ppm"},
@@ -78,6 +79,7 @@
   "windowDetection":            {"type": "toggle", "icon": "mdi:mdi:window-open-variant"},
 
   "altitude":                   {"type": "number", "unit": "m", "icon": "mdi:altimeter"},
+  "analogOutput":               {"type": "number", "icon": "mdi:speedometer"},
   "awayDays":                   {"type": "number", "icon": "mdi:calendar-week"},
   "awayTemperature":            {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "boostTimeout":               {"type": "number", "control": true, "unit": "sec", "icon": "mdi:timer"},

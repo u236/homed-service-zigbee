@@ -88,6 +88,28 @@ void Properties::Level::parseAttribte(quint16, quint16 attributeId, const QByteA
     m_value = static_cast <quint8> (data.at(0));
 }
 
+void Properties::AnalogInput::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
+void Properties::AnalogOutput::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
 void Properties::CoverPosition::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map;
