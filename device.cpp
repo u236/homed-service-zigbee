@@ -705,6 +705,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 if (list.contains(expose->name()))
                     continue;
 
+                device->options().insert(QString("%1_%2").arg(expose->name(), QString::number(it.key())), m_exposeOptions.value(expose->name()).toMap());
                 list.append(expose->name());
             }
 
