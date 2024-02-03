@@ -404,7 +404,7 @@ void ZigBee::enqueueRequest(const Device &device, RequestType type)
 
 bool ZigBee::interviewRequest(quint8 id, const Device &device)
 {
-    m_adapter->setRequestAddress(device->ieeeAddress());
+    m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
     if (device->manufacturerName().isEmpty() || device->modelName().isEmpty())
     {
@@ -613,7 +613,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
 
 bool ZigBee::bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
 {
-    m_adapter->setRequestAddress(device->ieeeAddress());
+    m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
     m_replyId = m_requestId;
     m_replyReceived = false;
 
@@ -660,7 +660,7 @@ bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
         request.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
     }
 
-    m_adapter->setRequestAddress(device->ieeeAddress());
+    m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
     m_replyId = m_requestId;
     m_replyReceived = false;
 
@@ -1790,11 +1790,11 @@ void ZigBee::handleRequests(void)
                 const DataRequest &request = qvariant_cast <DataRequest> (it.value()->data());
                 const Device &device = request->device();
 
-                m_adapter->setRequestAddress(device->ieeeAddress());
+                m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
                 if (!m_adapter->unicastRequest(it.key(), device->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()))
                 {
-                    logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "aborted";
+                    logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "aborted, status code:" << QString::asprintf("0x%02x", m_adapter->replyStatus());
                     it.value()->setStatus(RequestStatus::Aborted);
                 }
 
@@ -1805,11 +1805,11 @@ void ZigBee::handleRequests(void)
             {
                 const Device &device = qvariant_cast <Device> (it.value()->data());
 
-                m_adapter->setRequestAddress(device->ieeeAddress());
+                m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
                 if (!m_adapter->leaveRequest(it.key(), device->networkAddress()))
                 {
-                    logWarning << "Device" << device->name() << "leave request aborted";
+                    logWarning << "Device" << device->name() << "leave request aborted, status code:" << QString::asprintf("0x%02x", m_adapter->replyStatus());
                     it.value()->setStatus(RequestStatus::Aborted);
                 }
 
@@ -1820,7 +1820,7 @@ void ZigBee::handleRequests(void)
             {
                 const Device &device = qvariant_cast <Device> (it.value()->data());
 
-                m_adapter->setRequestAddress(device->ieeeAddress());
+                m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
                 if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()))
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1832,7 +1832,7 @@ void ZigBee::handleRequests(void)
             {
                 const Device &device = qvariant_cast <Device> (it.value()->data());
 
-                m_adapter->setRequestAddress(device->ieeeAddress());
+                m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
                 if (!interviewRequest(it.key(), device))
                     it.value()->setStatus(RequestStatus::Aborted);

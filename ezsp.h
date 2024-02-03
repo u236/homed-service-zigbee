@@ -343,7 +343,7 @@ private:
     bool startNetwork(quint64 extendedPanId);
     bool startCoordinator(void);
 
-    void setManufacturerCore(quint16 value);
+    void setManufacturerCode(quint16 value);
     void handleError(const QString &reason);
 
     void softReset(void) override;

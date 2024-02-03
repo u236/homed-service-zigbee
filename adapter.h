@@ -171,7 +171,9 @@ public:
     inline QString firmware(void) { return m_firmware; }
 
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
-    inline void setRequestAddress(const QByteArray &value) { m_requestAddress = value; }
+    inline quint8 replyStatus(void) { return m_replyStatus; }
+
+    inline void setRequestParameters(const QByteArray &value, bool extendedTimeout = true) { m_requestAddress = value; m_extendedTimeout = extendedTimeout; }
 
     void init(void);
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
@@ -204,9 +206,13 @@ protected:
     bool m_write, m_portDebug, m_adapterDebug;
 
     QString m_manufacturerName, m_modelName, m_firmware;
-    QByteArray m_ieeeAddress, m_requestAddress;
+    QByteArray m_ieeeAddress;
 
+    quint8 m_replyStatus;
     bool m_permitJoin;
+
+    QByteArray m_requestAddress;
+    bool m_extendedTimeout;
 
     QMap <quint8, EndpointData> m_endpoints;
     QList <quint16> m_multicast;

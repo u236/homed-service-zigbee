@@ -125,6 +125,7 @@ bool ZiGate::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     m_commandReply = data.isEmpty();
     m_command = command;
 
+    m_replyStatus = 0xFF;
     m_replyData.clear();
     m_requestId = id;
 

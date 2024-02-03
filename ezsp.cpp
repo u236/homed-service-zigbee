@@ -54,7 +54,6 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
 bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
     sendUnicastStruct request;
-    quint64 ieeeAddress;
 
     request.type = MESSAGE_TYPE_DIRECT;
     request.networkAddress = qToLittleEndian(networkAddress);
@@ -68,11 +67,15 @@ bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointI
     request.tag = id;
     request.length = static_cast <quint8> (payload.length());
 
-    memcpy(&ieeeAddress, m_requestAddress.constData(), sizeof(ieeeAddress));
-    ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
-    sendFrame(FRAME_SET_EXTENDED_TIMEOUT, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)).append(1, 0x01));
+    if (m_extendedTimeout)
+    {
+        quint64 ieeeAddress;
+        memcpy(&ieeeAddress, m_requestAddress.constData(), sizeof(ieeeAddress));
+        ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
+        sendFrame(FRAME_SET_EXTENDED_TIMEOUT, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)).append(1, 0x01));
+    }
 
-    return sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
+    return sendFrame(FRAME_SEND_UNICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyStatus;
 }
 
 bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
@@ -91,7 +94,7 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
     request.tag = id;
     request.length = static_cast <quint8> (payload.length());
 
-    return sendFrame(FRAME_SEND_MULTICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
+    return sendFrame(FRAME_SEND_MULTICAST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyStatus;
 }
 
 bool EZSP::unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quint16 clusterId, const QByteArray &payload)
@@ -112,7 +115,7 @@ bool EZSP::unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quin
     request.clusterId = qToLittleEndian (clusterId);
     request.profileId = qToLittleEndian <quint16> (PROFILE_ZLL);
 
-    return sendFrame(FRAME_SEND_RAW, QByteArray(1, static_cast <char> (sizeof(request) + payload.length())).append(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
+    return sendFrame(FRAME_SEND_RAW, QByteArray(1, static_cast <char> (sizeof(request) + payload.length())).append(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyStatus;
 }
 
 bool EZSP::broadcastInterPanRequest(quint8 id, quint16 clusterId, const QByteArray &payload)
@@ -132,12 +135,12 @@ bool EZSP::broadcastInterPanRequest(quint8 id, quint16 clusterId, const QByteArr
     request.clusterId = qToLittleEndian (clusterId);
     request.profileId = qToLittleEndian <quint16> (PROFILE_ZLL);
 
-    return sendFrame(FRAME_SEND_RAW, QByteArray(1, static_cast <char> (sizeof(request) + payload.length())).append(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyData.at(0);
+    return sendFrame(FRAME_SEND_RAW, QByteArray(1, static_cast <char> (sizeof(request) + payload.length())).append(reinterpret_cast <char*> (&request), sizeof(request)).append(payload)) && !m_replyStatus;
 }
 
 bool EZSP::setInterPanChannel(quint8 channel)
 {
-    if (!sendFrame(FRAME_SET_CHANNEL, QByteArray(1, static_cast <char> (channel))) || m_replyData.at(0))
+    if (!sendFrame(FRAME_SET_CHANNEL, QByteArray(1, static_cast <char> (channel))) || m_replyStatus)
     {
         logWarning << "Set Inter-PAN channel" << channel << "request failed";
         return false;
@@ -148,7 +151,7 @@ bool EZSP::setInterPanChannel(quint8 channel)
 
 void EZSP::resetInterPanChannel(void)
 {
-    if (sendFrame(FRAME_SET_CHANNEL, QByteArray(1, static_cast <char> (m_channel))) && !m_replyData.at(0))
+    if (sendFrame(FRAME_SET_CHANNEL, QByteArray(1, static_cast <char> (m_channel))) && !m_replyStatus)
         return;
 
     logWarning << "Reset Inter-PAN request failed";
@@ -205,8 +208,9 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 
     randomize(payload.append(data));
 
-    for (quint8 i = 0; i < ASH_REQUEST_RETRIES; i ++)
+    for (quint8 i = 0; i < ASH_REQUEST_RETRIES; i++)
     {
+        m_replyStatus = 0xFF;
         m_replyData.clear();
         m_replyReceived = false;
 
@@ -263,10 +267,13 @@ void EZSP::parsePacket(const QByteArray &payload)
 
     if (!(header->frameControlLow & 0x18) && header->sequence == m_sequenceId)
     {
-        if (!(header->frameControlHigh & 0x01))
-            m_version = static_cast <quint8> (payload.at(3));
-        else
+        if (header->frameControlHigh & 0x01)
+        {
+            m_replyStatus = static_cast <quint8> (data.at(0));
             m_replyData = data;
+        }
+        else
+            m_version = static_cast <quint8> (payload.at(3));
 
         m_sequenceId++;
         m_replyReceived = true;
@@ -294,7 +301,7 @@ void EZSP::parsePacket(const QByteArray &payload)
                 {
                     sendFrame(FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
 
-                    if (m_replyData.at(0) != static_cast <char> (0xFF))
+                    if (m_replyStatus != static_cast <char> (0xFF))
                         sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
 
                     break;
@@ -337,7 +344,7 @@ void EZSP::parsePacket(const QByteArray &payload)
 
                 if (ieeeAddress.startsWith(QByteArray::fromHex("04cffc")) || ieeeAddress.startsWith(QByteArray::fromHex("54ef44")))
                 {
-                    setManufacturerCore(MANUFACTURER_CODE_LUMI);
+                    setManufacturerCode(MANUFACTURER_CODE_LUMI);
                     m_timer->start(20000);
                 }
 
@@ -381,17 +388,17 @@ bool EZSP::startNetwork(quint64 extendedPanId)
         return false;
     }
 
-    if (m_replyData.at(0) == static_cast <char> (NETWORK_STATUS_JOINED))
+    if (m_replyStatus == static_cast <char> (NETWORK_STATUS_JOINED))
     {
         m_stackStatus = 0x00;
 
-        if (!sendFrame(FRAME_LEAVE_NETWORK) || m_replyData.at(0))
+        if (!sendFrame(FRAME_LEAVE_NETWORK) || m_replyStatus)
         {
             logWarning << "Leave existing network request failed";
             return false;
         }
 
-        if (!m_replyData.at(0) && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
+        if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
         {
             logWarning << "Stack status handler timed out";
             return false;
@@ -404,7 +411,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
         }
     }
 
-    if (!sendFrame(FRAME_CLEAR_KEY_TABLE) || m_replyData.at(0))
+    if (!sendFrame(FRAME_CLEAR_KEY_TABLE) || m_replyStatus)
     {
         logWarning << "Clear key table request failed";
         return false;
@@ -434,7 +441,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
 
     security.bitmask = qToLittleEndian(security.bitmask);
 
-    if (!sendFrame(FRAME_SET_INITIAL_SECURITY_STATE, QByteArray(reinterpret_cast <char*> (&security), sizeof(security))) || m_replyData.at(0))
+    if (!sendFrame(FRAME_SET_INITIAL_SECURITY_STATE, QByteArray(reinterpret_cast <char*> (&security), sizeof(security))) || m_replyStatus)
     {
         logWarning << "Set initial security state request failed";
         return false;
@@ -448,7 +455,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
     network.channel = m_channel;
     network.channelList = qToLittleEndian(1 << m_channel);
 
-    if (!sendFrame(FRAME_FORM_NERWORK, QByteArray(reinterpret_cast <char*> (&network), sizeof(network))) || m_replyData.at(0))
+    if (!sendFrame(FRAME_FORM_NERWORK, QByteArray(reinterpret_cast <char*> (&network), sizeof(network))) || m_replyStatus)
     {
         logWarning << "Form network request failed";
         return false;
@@ -457,7 +464,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
     value.id = VALUE_STACK_TOKEN_WRITING;
     value.length = 0;
 
-    if (!sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)).append(1, 0x01)) || m_replyData.at(0))
+    if (!sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)).append(1, 0x01)) || m_replyStatus)
         logWarning << "Set value" << QString::asprintf("0x%02x", VALUE_STACK_TOKEN_WRITING) << "request failed";
 
     if (!sendFrame(FRAME_NETWORK_STATUS))
@@ -466,9 +473,9 @@ bool EZSP::startNetwork(quint64 extendedPanId)
         return false;
     }
 
-    if (m_replyData.at(0) != static_cast <char> (NETWORK_STATUS_JOINED))
+    if (m_replyStatus != static_cast <char> (NETWORK_STATUS_JOINED))
     {
-        logWarning << "Unexpected network status:" << QString::asprintf("0x%02x", m_replyData.at(0));
+        logWarning << "Unexpected network status:" << QString::asprintf("0x%02x", m_replyStatus);
         return false;
     }
 
@@ -527,7 +534,7 @@ bool EZSP::startCoordinator(void)
     {
         setConfigStruct request = m_config.at(i);
 
-        if (sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        if (sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
 
         logWarning << "Set config" << QString::asprintf("0x%02x", request.id) << "request failed";
@@ -537,7 +544,7 @@ bool EZSP::startCoordinator(void)
     {
         setConfigStruct request = m_policy.at(i);
 
-        if (sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        if (sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
 
         logWarning << "Set policy" << QString::asprintf("0x%02x", request.id) << "request failed";
@@ -547,7 +554,7 @@ bool EZSP::startCoordinator(void)
     {
         setValueStruct request = m_values.at(i);
 
-        if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
 
         logWarning << "Set value" << QString::asprintf("0x%02x", request.id) << "request failed";
@@ -561,7 +568,7 @@ bool EZSP::startCoordinator(void)
     concentrator.deliveryFailureThreshold = CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD;
     concentrator.maxHops = 0x00;
 
-    if (!sendFrame(FRAME_SET_CONCENTRATOR, QByteArray(reinterpret_cast <char*> (&concentrator), sizeof(concentrator))) || m_replyData.at(0))
+    if (!sendFrame(FRAME_SET_CONCENTRATOR, QByteArray(reinterpret_cast <char*> (&concentrator), sizeof(concentrator))) || m_replyStatus)
     {
         logWarning << "Set concentrator request failed";
         return false;
@@ -597,7 +604,7 @@ bool EZSP::startCoordinator(void)
             data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
         }
 
-        if (!sendFrame(FRAME_REGISTER_ENDPOINT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyData.at(0))
+        if (!sendFrame(FRAME_REGISTER_ENDPOINT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
         {
             logWarning << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "register request failed";
             continue;
@@ -614,7 +621,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    if (!m_replyData.at(0) && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
+    if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
     {
         logWarning << "Stack status handler timed out";
         return false;
@@ -669,7 +676,7 @@ bool EZSP::startCoordinator(void)
         request.endpointId = m_multicast.at(i) == GREEN_POWER_GROUP ? 0xF2 : 0x01;
         request.index = 0x00;
 
-        if (sendFrame(FRAME_SET_MULTICAST_TABLE_ENTRY, QByteArray(1, static_cast <char> (i)).append(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyData.at(0))
+        if (sendFrame(FRAME_SET_MULTICAST_TABLE_ENTRY, QByteArray(1, static_cast <char> (i)).append(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
 
         logWarning << "Add group" << QString::asprintf("0x%04x", m_multicast.at(i)) << "request failed";
@@ -678,12 +685,12 @@ bool EZSP::startCoordinator(void)
     ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
-    setManufacturerCore(MANUFACTURER_CODE_SILABS);
+    setManufacturerCode(MANUFACTURER_CODE_SILABS);
     emit coordinatorReady();
     return true;
 }
 
-void EZSP::setManufacturerCore(quint16 value)
+void EZSP::setManufacturerCode(quint16 value)
 {
     value = qToLittleEndian(value);
 
@@ -777,7 +784,7 @@ bool EZSP::permitJoin(bool enabled)
     {
         setConfigStruct policy;
 
-        if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e63653039")) || m_replyData.at(0))
+        if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e63653039")) || m_replyStatus)
         {
             logWarning << "Add transient key request failed";
             return false;
@@ -786,14 +793,14 @@ bool EZSP::permitJoin(bool enabled)
         policy.id = POLICY_TRUST_CENTER;
         policy.value = qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS);
 
-        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyData.at(0))
+        if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyStatus)
         {
             logWarning << "Set policy" << QString::asprintf("0x%02x", POLICY_TRUST_CENTER) << "request failed";
             return false;
         }
     }
 
-    if (!sendFrame(FRAME_PERMIT_JOINING, QByteArray(1, enabled ? 0xF0 : 0x00)) || m_replyData.at(0))
+    if (!sendFrame(FRAME_PERMIT_JOINING, QByteArray(1, enabled ? 0xF0 : 0x00)) || m_replyStatus)
     {
         logWarning << "Set permit join request failed";
         return false;
@@ -804,7 +811,7 @@ bool EZSP::permitJoin(bool enabled)
 
 void EZSP::resetManufacturerCode(void)
 {
-    setManufacturerCore(MANUFACTURER_CODE_SILABS);
+    setManufacturerCode(MANUFACTURER_CODE_SILABS);
 }
 
 void EZSP::handleQueue(void)

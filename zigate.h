@@ -135,7 +135,7 @@ private:
     quint16 m_command;
 
     QByteArray m_replyData;
-    quint8 m_requestId, m_replyStatus;
+    quint8 m_requestId;
 
     QMap <quint8, quint8> m_requests;
 
