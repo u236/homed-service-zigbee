@@ -40,16 +40,6 @@ namespace PropertiesLUMI
 
     };
 
-    class SwitchType : public PropertyObject
-    {
-
-    public:
-
-        SwitchType(void) : PropertyObject("switchType", CLUSTER_LUMI) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class Contact : public PropertyObject
     {
 

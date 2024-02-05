@@ -93,6 +93,18 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x000A:
+        case 0x0125:
+        {
+            switch (static_cast <quint8> (data.at(0)))
+            {
+                case 0x01: map.insert("switchType", modelName() == "lumi.remote.acn004" ? "momentary" : "toggle"); break;
+                case 0x02: map.insert("switchType", modelName() == "lumi.remote.acn004" ? "multifunction" : "momentary"); break;
+            }
+
+            break;
+        }
+
         case 0x0065:
         case 0x0142:
         {
@@ -384,18 +396,6 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16, quint16 attributeId, con
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void PropertiesLUMI::SwitchType::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x000A)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x01: m_value = "toggle"; break;
-        case 0x02: m_value = "momentary"; break;
-    }
 }
 
 void PropertiesLUMI::Contact::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

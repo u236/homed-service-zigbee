@@ -129,8 +129,8 @@ QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &dat
 
 QByteArray ActionsLUMI::SwitchType::request(const QString &, const QVariant &data)
 {
-    qint8 value = listIndex({"toggle", "momentary"}, data) + 1;
-    return value < 1 ? QByteArray() :writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
+    qint8 value = listIndex(modelName() == "lumi.remote.acn004" ? QList <QString> {"momentary", "multifunction"} : QList <QString> {"toggle", "momentary"}, data) + 1;
+    return value < 1 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
 QByteArray ActionsLUMI::SwitchStatusMemory::request(const QString &, const QVariant &data)

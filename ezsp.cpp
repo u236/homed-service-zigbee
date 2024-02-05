@@ -301,7 +301,7 @@ void EZSP::parsePacket(const QByteArray &payload)
                 {
                     sendFrame(FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
 
-                    if (m_replyStatus != static_cast <char> (0xFF))
+                    if (m_replyStatus != 0xFF)
                         sendFrame(FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
 
                     break;
