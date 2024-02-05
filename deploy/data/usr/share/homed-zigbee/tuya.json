@@ -118,7 +118,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Radiator Thermostat",
+      "description":    "TUYA TS0601 Radiator Thermostat (Type A)",
       "modelNames":     ["_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_pvvbommb", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj"],
       "properties":     ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
@@ -154,6 +154,39 @@
                           "awayTemperature": {"min": 5, "max": 35},
                           "awayDays": {"min": 0, "max": 100},
                           "heatingStatus": true
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Radiator Thermostat (Type B)",
+      "modelNames":     ["_TZE204_g2ki0ejr"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "thermostat", "childLock", "holidayTemperature", "comfortTemperature", "frostProtection", "boost", "boostTimeout", "temperatureOffset"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "4":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
+                            "5":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "6":    [{"name": "battery", "type": "value"}],
+                            "7":    [{"name": "childLock", "type": "bool", "action": true}],
+                            "9":    [{"name": "temperatureLimitMax", "type": "value", "divider": 10, "action": true}],
+                            "10":   [{"name": "temperatureLimitMin", "type": "value", "divider": 10, "action": true}],
+                            "21":   [{"name": "holidayTemperature", "type": "value", "action": true}],
+                            "24":   [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
+                            "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
+                            "37":   [{"name": "boost", "type": "bool", "action": true}],
+                            "38":   [{"name": "boostTimeout", "type": "value", "action": true}],
+                            "47":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "49":   [{"name": "systemMode", "type": "bool", "action": true}]
+                          },
+                          "operationMode": {"enum": ["program", "holiday", "manual", "comfort"]},
+                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "holidayTemperature": {"min": 5, "max": 35},
+                          "comfortTemperature": {"min": 5, "max": 35},
+                          "boostTimeout": {"min": 0, "max": 465, "step": 5},
+                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.1},
+                          "systemMode": {"enum": ["off", "heat"]}
                         }
     },
     {

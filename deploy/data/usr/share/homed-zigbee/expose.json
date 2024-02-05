@@ -95,6 +95,7 @@
   "ecoTemperature":             {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "fadingTime":                 {"type": "number", "unit": "sec", "icon": "mdi:timer"},
   "fallSensitivity":            {"type": "number", "icon": "mdi:dumbbell"},
+  "holidayTemperature":         {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "hotPreset":                  {"type": "number", "icon": "mdi:counter"},
   "humidityHigh":               {"type": "number", "unit": "%", "icon": "mdi:water-percent"},
   "humidityLow":                {"type": "number", "unit": "%", "icon": "mdi:water-percent"},
