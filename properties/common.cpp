@@ -136,6 +136,61 @@ void Properties::CoverTilt::parseAttribte(quint16, quint16 attributeId, const QB
     m_value = map;
 }
 
+void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (attributeId)
+    {
+        case 0x0000:
+        case 0x0012:
+            {
+                qint16 value = 0;
+
+                if (static_cast <size_t> (data.length()) > sizeof(value))
+                    return;
+
+                memcpy(&value, data.constData(), data.length());
+                map.insert(attributeId ? "targetTemperature" : "temperature", qFromLittleEndian(value) / 100.0);
+                break;
+            }
+
+        case 0x0010:
+            {
+                map.insert("temperatureOffset", static_cast <qint8> (data.at(0)) / 10.0);
+                break;
+            }
+
+        case 0x001C:
+            {
+                switch (static_cast <quint8> (data.at(0)))
+                {
+                    case 0x00: map.insert("systemMode", "off"); break;
+                    case 0x01: map.insert("systemMode", "auto"); break;
+                    case 0x04: map.insert("systemMode", "heat"); break;
+                }
+
+                break;
+            }
+
+        case 0x001E:
+            {
+                map.insert("heating", data.at(0) == 0x04 ? true : false);
+                break;
+            }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void Properties::DisplayMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0000)
+        return;
+
+    m_value = data.at(0) ? "fahrenheit" : "celsius";
+}
+
 void Properties::ColorHS::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
@@ -251,6 +306,17 @@ void Properties::Occupancy::resetValue(void)
     m_value = false;
 }
 
+void Properties::OccupancyTimeout::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    quint16 value;
+
+    if (attributeId != 0x0010 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
 void Properties::Moisture::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
@@ -330,61 +396,6 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / divider;
-}
-
-void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-
-    switch (attributeId)
-    {
-        case 0x0000:
-        case 0x0012:
-        {
-            qint16 value = 0;
-
-            if (static_cast <size_t> (data.length()) > sizeof(value))
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            map.insert(attributeId ? "targetTemperature" : "temperature", qFromLittleEndian(value) / 100.0);
-            break;
-        }
-
-        case 0x0010:
-        {
-            map.insert("temperatureOffset", static_cast <qint8> (data.at(0)) / 10.0);
-            break;
-        }
-
-        case 0x001C:
-        {
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x00: map.insert("systemMode", "off"); break;
-                case 0x01: map.insert("systemMode", "auto"); break;
-                case 0x04: map.insert("systemMode", "heat"); break;
-            }
-
-            break;
-        }
-
-        case 0x001E:
-        {
-            map.insert("heating", data.at(0) == 0x04 ? true : false);
-            break;
-        }
-    }
-
-    m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void Properties::DisplayMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0000)
-        return;
-
-    m_value = data.at(0) ? "fahrenheit" : "celsius";
 }
 
 void Properties::Scene::parseCommand(quint16, quint8 commandId, const QByteArray &payload)

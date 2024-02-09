@@ -105,6 +105,7 @@
   "indicatorLevel":             {"type": "number", "icon": "mdi:led-on"},
   "melody":                     {"type": "number", "icon": "mdi:music-note"},
   "motionSensitivity":          {"type": "number", "icon": "mdi:dumbbell"},
+  "occupancyTimeout":           {"type": "number", "control": true, "unit": "sec", "icon": "mdi:timer"},
   "pattern":                    {"type": "number", "control": true, "icon": "mdi:swap-horizontal-bold"},
   "pm25High":                   {"type": "number", "unit": "µg/m³", "icon": "mdi:molecule"},
   "pm25Low":                    {"type": "number", "unit": "µg/m³", "icon": "mdi:molecule"},

@@ -1,5 +1,6 @@
 #include "actions/common.h"
 #include "actions/efekta.h"
+#include "actions/hue.h"
 #include "actions/lumi.h"
 #include "actions/modkam.h"
 #include "actions/other.h"
@@ -18,11 +19,15 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::CoverStatus>                    ("coverStatusAction");
     qRegisterMetaType <Actions::CoverPosition>                  ("coverPositionAction");
     qRegisterMetaType <Actions::CoverTilt>                      ("coverTiltAction");
+    qRegisterMetaType <Actions::Thermostat>                     ("thermostatAction");
+    qRegisterMetaType <Actions::DisplayMode>                    ("displayModeAction");
     qRegisterMetaType <Actions::ColorHS>                        ("colorHSAction");
     qRegisterMetaType <Actions::ColorXY>                        ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>               ("colorTemperatureAction");
-    qRegisterMetaType <Actions::Thermostat>                     ("thermostatAction");
-    qRegisterMetaType <Actions::DisplayMode>                    ("displayModeAction");
+    qRegisterMetaType <Actions::OccupancyTimeout>               ("occupancyTimeoutAction");
+
+    qRegisterMetaType <ActionsHUE::IndicatorMode>               ("hueIndicatorModeAction");
+    qRegisterMetaType <ActionsHUE::SensivivityMode>             ("hueSensitivityModeAction");
 
     qRegisterMetaType <ActionsLUMI::Thermostat>                 ("lumiThermostatAction");
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");

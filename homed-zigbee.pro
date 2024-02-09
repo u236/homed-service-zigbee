@@ -21,6 +21,7 @@ HEADERS += \
     properties/byun.h \
     properties/common.h \
     properties/efekta.h \
+    properties/hue.h \
     properties/ias.h \
     properties/ikea.h \
     properties/lumi.h \
@@ -39,6 +40,8 @@ SOURCES += \
     action.cpp \
     actions/common.cpp \
     actions/efekta.cpp \
+    actions/hue.cpp \
+    actions/hue.h \
     actions/lumi.cpp \
     actions/modkam.cpp \
     actions/other.cpp \
@@ -53,6 +56,7 @@ SOURCES += \
     properties/byun.cpp \
     properties/common.cpp \
     properties/efekta.cpp \
+    properties/hue.cpp \
     properties/ias.cpp \
     properties/ikea.cpp \
     properties/lumi.cpp \
@@ -73,6 +77,7 @@ DISTFILES += \
     deploy/data/usr/share/homed-zigbee/gledopto.json \
     deploy/data/usr/share/homed-zigbee/gs.json \
     deploy/data/usr/share/homed-zigbee/homed.json \
+    deploy/data/usr/share/homed-zigbee/hue.json \
     deploy/data/usr/share/homed-zigbee/ikea.json \
     deploy/data/usr/share/homed-zigbee/konke.json \
     deploy/data/usr/share/homed-zigbee/lifecontrol.json \

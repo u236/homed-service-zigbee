@@ -96,6 +96,26 @@ namespace Actions
 
     };
 
+    class Thermostat : public ActionObject
+    {
+
+    public:
+
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "targetTemperature", "systemMode"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class DisplayMode : public ActionObject
+    {
+
+    public:
+
+        DisplayMode(void) : ActionObject("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0000) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class ColorHS : public ActionObject
     {
 
@@ -126,22 +146,12 @@ namespace Actions
 
     };
     
-    class Thermostat : public ActionObject
+    class OccupancyTimeout : public ActionObject
     {
 
     public:
 
-        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "targetTemperature", "systemMode"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class DisplayMode : public ActionObject
-    {
-
-    public:
-
-        DisplayMode(void) : ActionObject("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0000) {}
+        OccupancyTimeout(void) : ActionObject("occupancyTimeout", CLUSTER_OCCUPANCY_SENSING, 0x0000, 0x0010) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

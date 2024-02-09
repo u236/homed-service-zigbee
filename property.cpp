@@ -1,6 +1,7 @@
 #include "properties/byun.h"
 #include "properties/common.h"
 #include "properties/efekta.h"
+#include "properties/hue.h"
 #include "properties/ias.h"
 #include "properties/ikea.h"
 #include "properties/lumi.h"
@@ -23,6 +24,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::AnalogOutput>                    ("analogOutputProperty");
     qRegisterMetaType <Properties::CoverPosition>                   ("coverPositionProperty");
     qRegisterMetaType <Properties::CoverTilt>                       ("coverTiltProperty");
+    qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
+    qRegisterMetaType <Properties::DisplayMode>                     ("displayModeProperty");
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                         ("colorXYProperty");
     qRegisterMetaType <Properties::ColorTemperature>                ("colorTemperatureProperty");
@@ -31,6 +34,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Pressure>                        ("pressureProperty");
     qRegisterMetaType <Properties::Humidity>                        ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>                       ("occupancyProperty");
+    qRegisterMetaType <Properties::OccupancyTimeout>                ("occupancyTimeoutProperty");
     qRegisterMetaType <Properties::Moisture>                        ("moistureProperty");
     qRegisterMetaType <Properties::CO2>                             ("co2Property");
     qRegisterMetaType <Properties::PM25>                            ("pm25Property");
@@ -38,8 +42,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Voltage>                         ("voltageProperty");
     qRegisterMetaType <Properties::Current>                         ("currentProperty");
     qRegisterMetaType <Properties::Power>                           ("powerProperty");
-    qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
-    qRegisterMetaType <Properties::DisplayMode>                     ("displayModeProperty");
     qRegisterMetaType <Properties::Scene>                           ("sceneProperty");
     qRegisterMetaType <Properties::StatusAction>                    ("statusActionProperty");
     qRegisterMetaType <Properties::LevelAction>                     ("levelActionProperty");
@@ -54,6 +56,9 @@ void PropertyObject::registerMetaTypes(void)
 
     qRegisterMetaType <PropertiesByun::GasSensor>                   ("byunGasSensorProperty");
     qRegisterMetaType <PropertiesByun::SmokeSensor>                 ("byunSmokeSensorProperty");
+
+    qRegisterMetaType <PropertiesHUE::IndicatorMode>                ("hueIndicatorModeProperty");
+    qRegisterMetaType <PropertiesHUE::SensivivityMode>              ("hueSensivivityModeProperty");
 
     qRegisterMetaType <PropertiesIKEA::Occupancy>                   ("ikeaOccupancyProperty");
     qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");

@@ -126,6 +126,26 @@ namespace Properties
 
     };
 
+    class Thermostat : public PropertyObject
+    {
+
+    public:
+
+        Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class DisplayMode : public PropertyObject
+    {
+
+    public:
+
+        DisplayMode(void) : PropertyObject("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class ColorHS : public PropertyObject
     {
 
@@ -215,6 +235,16 @@ namespace Properties
 
     };
 
+    class OccupancyTimeout : public PropertyObject
+    {
+
+    public:
+
+        OccupancyTimeout(void) : PropertyObject("occupancyTimeout", CLUSTER_OCCUPANCY_SENSING) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Moisture : public PropertyObject
     {
 
@@ -285,26 +315,6 @@ namespace Properties
 
     };
     
-    class Thermostat : public PropertyObject
-    {
-
-    public:
-        
-        Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class DisplayMode : public PropertyObject
-    {
-
-    public:
-
-        DisplayMode(void) : PropertyObject("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class Scene : public PropertyObject
     {
 
