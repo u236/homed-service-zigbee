@@ -19,6 +19,14 @@
       "endpointId":     [1, 2]
     },
     {
+      "description":    "Sonoff RGBW Bulb ZB-CL01",
+      "modelNames":     ["Z102LG03-1", "ZB-CL01"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"]}
+    },
+    {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02",
       "modelNames":     ["TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],

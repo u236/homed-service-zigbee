@@ -175,7 +175,7 @@
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 500}, "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+      "options":        {"light": ["level", "colorTemperature"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
     },
     {
       "description":    "Trust Dimmable Bulb ZLED-2709",
