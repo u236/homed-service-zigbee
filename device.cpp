@@ -30,6 +30,8 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
         file.close();
     }
 
+    m_specialExposes = {"light", "switch", "cover", "lock", "thermostat"};
+
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
     connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
 
@@ -369,17 +371,16 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
     {
         QString exposeName = it->toString(), itemName = it->toString().split('_').value(0), optionName = multiple ? QString("%1_%2").arg(itemName, QString::number(endpoint->id())) : itemName;
         QMap <QString, QVariant> option = m_exposeOptions.value(itemName).toMap();
-        QList <QString> list = {"light", "switch", "cover", "lock", "thermostat"};
         Expose expose;
         int type;
 
-        if (!list.contains(itemName))
+        if (!m_specialExposes.contains(itemName))
         {
             option.insert(device->options().value(optionName).toMap());
             device->options().insert(optionName, option);
         }
 
-        type = QMetaType::type(QString(list.contains(itemName) ? itemName : option.value("type").toString()).append("Expose").toUtf8());
+        type = QMetaType::type(QString(m_specialExposes.contains(itemName) ? itemName : option.value("type").toString()).append("Expose").toUtf8());
 
         expose = Expose(type ? reinterpret_cast <ExposeObject*> (QMetaType::create(type)) : new ExposeObject(itemName));
         expose->setName(exposeName);
@@ -702,10 +703,12 @@ void DeviceList::recognizeDevice(const Device &device)
                 expose->setParent(it.value().data());
                 recognizeMultipleExpose(device, it.value(), expose);
 
+                if (!m_specialExposes.contains(expose->name()))
+                    device->options().insert(QString("%1_%2").arg(expose->name(), QString::number(it.key())), m_exposeOptions.value(expose->name()).toMap());
+
                 if (list.contains(expose->name()))
                     continue;
 
-                device->options().insert(QString("%1_%2").arg(expose->name(), QString::number(it.key())), m_exposeOptions.value(expose->name()).toMap());
                 list.append(expose->name());
             }
 
