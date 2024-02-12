@@ -74,6 +74,17 @@ void DeviceList::init(void)
     m_propertiesFile.close();
 }
 
+void DeviceList::storeDatabase(void)
+{
+    m_sync = true;
+    m_databaseTimer->start(STORE_DATABASE_DELAY);
+}
+
+void DeviceList::storeProperties(void)
+{
+    m_propertiesTimer->start(STORE_PROPERTIES_DELAY);
+}
+
 Device DeviceList::byName(const QString &name)
 {
     for (auto it = begin(); it != end(); it++)
@@ -764,17 +775,6 @@ void DeviceList::removeDevice(const Device &device)
     remove(device->ieeeAddress());
 }
 
-void DeviceList::storeDatabase(void)
-{
-    m_sync = true;
-    m_databaseTimer->start(STORE_DATABASE_DELAY);
-}
-
-void DeviceList::storeProperties(void)
-{
-    m_propertiesTimer->start(STORE_PROPERTIES_DELAY);
-}
-
 void DeviceList::unserializeDevices(const QJsonArray &devices)
 {
     quint16 count = 0;
@@ -869,7 +869,7 @@ void DeviceList::unserializeProperties(const QJsonObject &properties)
     for (auto it = begin(); it != end(); it++)
     {
         const Device &device = it.value();
-        QJsonObject json = properties.value(it.value()->ieeeAddress().toHex(':')).toObject();
+        QJsonObject json = properties.value(device->ieeeAddress().toHex(':')).toObject();
 
         if (device->removed() || json.isEmpty())
             continue;

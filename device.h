@@ -181,6 +181,8 @@ public:
     inline void setPermitJoin(bool value) { m_permitJoin = value; }
 
     void init(void);
+    void storeDatabase(void);
+    void storeProperties(void);
 
     Device byName(const QString &name);
     Device byNetwork(quint16 networkAddress);
@@ -196,9 +198,6 @@ public:
     void recognizeMultipleExpose(const Device &device, const Endpoint &endpoint, const Expose &expose);
 
     void removeDevice(const Device &device);
-
-    void storeDatabase(void);
-    void storeProperties(void);
 
 private:
 
