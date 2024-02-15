@@ -98,8 +98,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         {
             switch (static_cast <quint8> (data.at(0)))
             {
-                case 0x01: map.insert("switchType", modelName() == "lumi.remote.acn004" ? "momentary" : "toggle"); break;
-                case 0x02: map.insert("switchType", modelName() == "lumi.remote.acn004" ? "multifunction" : "momentary"); break;
+                case 0x01: map.insert("switchType", dataPoint == 0x000A ? "toggle" : "momentary"); break;
+                case 0x02: map.insert("switchType", dataPoint == 0x000A ? "momentary" : "multifunction"); break;
             }
 
             break;

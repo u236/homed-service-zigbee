@@ -129,7 +129,19 @@ QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &dat
 
 QByteArray ActionsLUMI::SwitchType::request(const QString &, const QVariant &data)
 {
-    qint8 value = listIndex(modelName() == "lumi.remote.acn004" ? QList <QString> {"momentary", "multifunction"} : QList <QString> {"toggle", "momentary"}, data) + 1;
+    qint8 value;
+
+    if (modelName() != "lumi.remote.acn004")
+    {
+        value = listIndex({"toggle", "momentary"}, data) + 1;
+        m_attributes = {0x000A};
+    }
+    else
+    {
+        value = listIndex({"momentary", "multifunction"}, data) + 1;
+        m_attributes = {0x0125};
+    }
+
     return value < 1 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
