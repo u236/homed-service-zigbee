@@ -25,6 +25,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::CoverPosition>                   ("coverPositionProperty");
     qRegisterMetaType <Properties::CoverTilt>                       ("coverTiltProperty");
     qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
+    qRegisterMetaType <Properties::FanMode>                         ("fanModeProperty");
     qRegisterMetaType <Properties::DisplayMode>                     ("displayModeProperty");
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                         ("colorXYProperty");

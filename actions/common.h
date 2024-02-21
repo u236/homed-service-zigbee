@@ -106,6 +106,16 @@ namespace Actions
 
     };
 
+    class FanMode : public ActionObject
+    {
+
+    public:
+
+        FanMode(void) : ActionObject("fanMode", CLUSTER_FAN_CONTROL, 0x0000, 0x0000) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class DisplayMode : public ActionObject
     {
 

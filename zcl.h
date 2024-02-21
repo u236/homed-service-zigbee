@@ -86,6 +86,7 @@
 #define CLUSTER_DOOR_LOCK                           0x0101
 #define CLUSTER_WINDOW_COVERING                     0x0102
 #define CLUSTER_THERMOSTAT                          0x0201
+#define CLUSTER_FAN_CONTROL                         0x0202
 #define CLUSTER_THERMOSTAT_UI_CONFIGURATION         0x0204
 #define CLUSTER_COLOR_CONTROL                       0x0300
 #define CLUSTER_ILLUMINANCE_MEASUREMENT             0x0400

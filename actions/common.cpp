@@ -160,6 +160,12 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
     return QByteArray();
 }
 
+QByteArray Actions::FanMode::request(const QString &, const QVariant &data)
+{
+    qint8 value = listIndex({"off", "low", "medium", "high"}, data);
+    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
+}
+
 QByteArray Actions::DisplayMode::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"celsius", "fahrenheit"}, data);

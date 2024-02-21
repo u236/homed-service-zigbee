@@ -183,6 +183,20 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
+void Properties::FanMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0000)
+        return;
+
+    switch (static_cast <quint8> (data.at(0)))
+    {
+        case 0x00: m_value = "off"; break;
+        case 0x01: m_value = "low"; break;
+        case 0x02: m_value = "medium"; break;
+        case 0x03: m_value = "high"; break;
+    }
+}
+
 void Properties::DisplayMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)

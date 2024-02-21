@@ -128,6 +128,7 @@
   "detectionMode":              {"type": "select"},
   "displayMode":                {"type": "select"},
   "distanceMode":               {"type": "select", "icon": "mdi:arrow-left-right"},
+  "fanMode":                    {"type": "select", "icon": "mdi:fan"},
   "indicatorMode":              {"type": "select", "icon": "mdi:lightbulb-on"},
   "leftMode":                   {"type": "select"},
   "lightType":                  {"type": "select", "icon": "mdi:lightbulb-on"},

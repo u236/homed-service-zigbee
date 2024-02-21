@@ -137,6 +137,15 @@ namespace Bindings
 
     };
 
+    class Fan : public BindingObject
+    {
+
+    public:
+
+        Fan(void) : BindingObject("fan", CLUSTER_FAN_CONTROL) {}
+
+    };
+
     class Color : public BindingObject
     {
 

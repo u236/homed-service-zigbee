@@ -136,6 +136,16 @@ namespace Properties
 
     };
 
+    class FanMode : public PropertyObject
+    {
+
+    public:
+
+        FanMode(void) : PropertyObject("fanMode", CLUSTER_FAN_CONTROL) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class DisplayMode : public PropertyObject
     {
 

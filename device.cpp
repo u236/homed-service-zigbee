@@ -519,6 +519,14 @@ void DeviceList::recognizeDevice(const Device &device)
                     device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "heat"})}});
                     break;
 
+                case CLUSTER_FAN_CONTROL:
+                    it.value()->properties().append(Property(new Properties::FanMode));
+                    it.value()->actions().append(Action(new Actions::FanMode));
+                    it.value()->bindings().append(Binding(new Bindings::Fan));
+                    it.value()->exposes().append(Expose(new SelectObject("fanMode")));
+                    device->options().insert(QString("fanMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "low", "medium", "high"})}});
+                    break;
+
                 case CLUSTER_COLOR_CONTROL:
 
                     if (!device->batteryPowered() && it.value()->colorCapabilities() && it.value()->colorCapabilities() <= 0x001F)
@@ -710,12 +718,17 @@ void DeviceList::recognizeDevice(const Device &device)
             for (int i = 0; i < it.value()->exposes().count(); i++)
             {
                 const Expose &expose = it.value()->exposes().at(i);
+                QString name = QString("%1_%2").arg(expose->name(), QString::number(it.key()));
 
                 expose->setParent(it.value().data());
                 recognizeMultipleExpose(device, it.value(), expose);
 
                 if (!m_specialExposes.contains(expose->name()))
-                    device->options().insert(QString("%1_%2").arg(expose->name(), QString::number(it.key())), m_exposeOptions.value(expose->name()).toMap());
+                {
+                    QMap <QString, QVariant> option = device->options().value(name).toMap();
+                    option.insert(m_exposeOptions.value(expose->name()).toMap());
+                    device->options().insert(name, option);
+                }
 
                 if (list.contains(expose->name()))
                     continue;
