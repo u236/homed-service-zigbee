@@ -2,8 +2,8 @@
   "HOMEd":
   [
     {
-      "description":    "ESP32C6 Light Example",
-      "modelNames":     ["ESP Light"],
+      "description":    "ESP32 Based RGB Light",
+      "modelNames":     ["RGB Light"],
       "properties":     ["status", "level", "colorXY"],
       "actions":        ["status", "level", "colorXY"],
       "bindings":       ["status", "level", "color"],
@@ -12,14 +12,24 @@
       "options":        {"light": ["level", "color"]}
     },
     {
-      "description":    "ESP32C6 Thermostat Relay",
-      "modelNames":     ["Thermostat Relay"],
+      "description":    "ESP32 Based Thermostat",
+      "modelNames":     ["Thermostat"],
       "properties":     ["status", "powerOnStatus", "thermostat"],
       "actions":        ["status", "powerOnStatus", "thermostat"],
       "bindings":       ["status", "thermostat"],
       "reportings":     ["status", "thermostat"],
       "exposes":        ["switch", "powerOnStatus", "thermostat"],
       "options":        {"powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}, "systemMode": {"enum": ["off", "heat"]}, "targetTemperature": {"min": -5, "max": 40, "step": 0.1}}
+    },
+    {
+      "description":    "IKEA Vindriktning Based Air Quality Sensor",
+      "modelNames":     ["Vindriktning"],
+      "properties":     ["status", "level", "fanMode", "co2", "pm25"],
+      "actions":        ["status", "level", "fanMode"],
+      "bindings":       ["status", "level", "fan", "co2", "pm25"],
+      "reportings":     ["status", "level", "co2", "pm25"],
+      "exposes":        ["light", "fanMode", "co2", "pm25"],
+      "options":        {"light": ["level"], "fanMode": {"enum": ["off", "low", "medium", "high"]}}
     },
     {
       "description":    "PTVO Firmware Based CO2 Sensor",
