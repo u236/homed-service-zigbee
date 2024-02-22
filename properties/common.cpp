@@ -144,40 +144,40 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
     {
         case 0x0000:
         case 0x0012:
-            {
-                qint16 value = 0;
+        {
+            qint16 value = 0;
 
-                if (static_cast <size_t> (data.length()) > sizeof(value))
-                    return;
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                return;
 
-                memcpy(&value, data.constData(), data.length());
-                map.insert(attributeId ? "targetTemperature" : "temperature", qFromLittleEndian(value) / 100.0);
-                break;
-            }
+            memcpy(&value, data.constData(), data.length());
+            map.insert(attributeId ? "targetTemperature" : "temperature", qFromLittleEndian(value) / 100.0);
+            break;
+        }
 
         case 0x0010:
-            {
-                map.insert("temperatureOffset", static_cast <qint8> (data.at(0)) / 10.0);
-                break;
-            }
+        {
+            map.insert("temperatureOffset", static_cast <qint8> (data.at(0)) / 10.0);
+            break;
+        }
 
         case 0x001C:
+        {
+            switch (static_cast <quint8> (data.at(0)))
             {
-                switch (static_cast <quint8> (data.at(0)))
-                {
-                    case 0x00: map.insert("systemMode", "off"); break;
-                    case 0x01: map.insert("systemMode", "auto"); break;
-                    case 0x04: map.insert("systemMode", "heat"); break;
-                }
-
-                break;
+                case 0x00: map.insert("systemMode", "off"); break;
+                case 0x01: map.insert("systemMode", "auto"); break;
+                case 0x04: map.insert("systemMode", "heat"); break;
             }
+
+            break;
+        }
 
         case 0x001E:
-            {
-                map.insert("heating", data.at(0) == 0x04 ? true : false);
-                break;
-            }
+        {
+            map.insert("heating", data.at(0) == 0x04 ? true : false);
+            break;
+        }
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

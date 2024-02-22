@@ -132,21 +132,21 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
     switch (index)
     {
         case 0: // temperatureOffset
-            {
+        {
             qint8 value = static_cast <qint8> (data.toDouble() * 10);
             m_attributes = {0x0010};
             return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-            }
+        }
 
         case 1: // targetTemperature
-            {
+        {
             qint16 value = qToLittleEndian <qint16> (data.toDouble() * 100);
             m_attributes = {0x0012};
             return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
-            }
+        }
 
         case 2: // systemMode
-            {
+        {
             qint8 value = listIndex({"off", "auto", "heat"}, data);
 
             if (value == 2)
@@ -154,7 +154,7 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
 
             m_attributes = {0x001C};
             return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-            }
+        }
     }
 
     return QByteArray();
