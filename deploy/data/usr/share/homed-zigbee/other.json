@@ -201,6 +201,18 @@
     }
   ],
 
+  "eWeLight":
+  [
+    {
+      "description":    "Lonsonho RGBW Bulb ZB-CL01 or ZB-CL02",
+      "modelNames":     ["ZB-CL01", "ZB-CL02"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"]}
+    },
+  ],
+
   "eWeLink":
   [
     {
