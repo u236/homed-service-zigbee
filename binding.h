@@ -153,7 +153,7 @@ namespace Bindings
 
         Color(void) : BindingObject("color", CLUSTER_COLOR_CONTROL) {}
 
-    };
+    };    
 
     class Illuminance : public BindingObject
     {
@@ -188,6 +188,15 @@ namespace Bindings
     public:
 
         Humidity(void) : BindingObject("temperature", CLUSTER_HUMIDITY_MEASUREMENT) {}
+
+    };
+
+    class Occupancy : public BindingObject
+    {
+
+    public:
+
+        Occupancy(void) : BindingObject("occupancy", CLUSTER_OCCUPANCY_SENSING) {}
 
     };
 

@@ -20,6 +20,7 @@ void BindingObject::registerMetaTypes(void)
     qRegisterMetaType <Bindings::Temperature>           ("temperatureBinding");
     qRegisterMetaType <Bindings::Pressure>              ("pressureBinding");
     qRegisterMetaType <Bindings::Humidity>              ("humidityBinding");
+    qRegisterMetaType <Bindings::Occupancy>             ("occupancyBinding");
     qRegisterMetaType <Bindings::Moisture>              ("moistureBinding");
     qRegisterMetaType <Bindings::CO2>                   ("co2Binding");
     qRegisterMetaType <Bindings::PM25>                  ("pm25Binding");

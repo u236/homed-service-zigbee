@@ -16,12 +16,12 @@ namespace PropertiesHUE
 
     };
 
-    class SensivivityMode : public PropertyObject
+    class SensitivityMode : public PropertyObject
     {
 
     public:
 
-        SensivivityMode(void) : PropertyObject("sensivivityMode", CLUSTER_OCCUPANCY_SENSING) {}
+        SensitivityMode(void) : PropertyObject("sensitivityMode", CLUSTER_OCCUPANCY_SENSING) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

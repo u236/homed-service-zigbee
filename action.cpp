@@ -28,7 +28,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::OccupancyTimeout>               ("occupancyTimeoutAction");
 
     qRegisterMetaType <ActionsHUE::IndicatorMode>               ("hueIndicatorModeAction");
-    qRegisterMetaType <ActionsHUE::SensivivityMode>             ("hueSensitivityModeAction");
+    qRegisterMetaType <ActionsHUE::SensitivityMode>             ("hueSensitivityModeAction");
 
     qRegisterMetaType <ActionsLUMI::Thermostat>                 ("lumiThermostatAction");
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");

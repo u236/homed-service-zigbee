@@ -204,6 +204,15 @@ namespace Reportings
 
     };
 
+    class Occupancy : public ReportingObject
+    {
+
+    public:
+
+        Occupancy(void) : ReportingObject("occupancy", CLUSTER_OCCUPANCY_SENSING, 0x0000, DATA_TYPE_8BIT_BITMAP, 0, 600) {}
+
+    };
+
     class Moisture : public ReportingObject
     {
 

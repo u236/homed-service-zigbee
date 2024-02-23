@@ -594,6 +594,8 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_OCCUPANCY_SENSING:
                     it.value()->properties().append(Property(new Properties::Occupancy));
+                    it.value()->bindings().append(Binding(new Bindings::Occupancy));
+                    it.value()->reportings().append(Reporting(new Reportings::Occupancy));
                     it.value()->exposes().append(Expose(new BinaryObject("occupancy")));
                     break;
 

@@ -4,7 +4,7 @@
     {
       "description":    "Philips Hue Motion Sensor 9290019758",
       "modelNames":     ["SML002"],
-      "properties":     ["battery", "occupancy", "illuminance", "temperature", "occupancyTimeout", "hueSensitivityMode", "hueIndicatorMode"],
+      "properties":     ["batteryPercentage", "occupancy", "illuminance", "temperature", "occupancyTimeout", "hueSensitivityMode", "hueIndicatorMode"],
       "actions":        ["occupancyTimeout", "hueSensitivityMode", "hueIndicatorMode"],
       "bindings":       ["battery", "occupancy", "illuminance", "temperature"],
       "reportings":     ["batteryPercentage", "occupancy", "illuminance", "temperature"],

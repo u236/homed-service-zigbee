@@ -16,12 +16,12 @@ namespace ActionsHUE
 
     };
 
-    class SensivivityMode : public ActionObject
+    class SensitivityMode : public ActionObject
     {
 
     public:
 
-        SensivivityMode(void) : ActionObject("sensivivityMode", CLUSTER_OCCUPANCY_SENSING, 0x100B, 0x0030) {}
+        SensitivityMode (void) : ActionObject("sensitivityMode", CLUSTER_OCCUPANCY_SENSING, 0x100B, 0x0030) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

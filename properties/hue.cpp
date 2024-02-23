@@ -9,7 +9,7 @@ void PropertiesHUE::IndicatorMode::parseAttribte(quint16, quint16 attributeId, c
     m_value = data.at(0) ? "on" : "off";
 }
 
-void PropertiesHUE::SensivivityMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesHUE::SensitivityMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0030)
         return;
