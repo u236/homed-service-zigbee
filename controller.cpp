@@ -1,7 +1,7 @@
 #include "controller.h"
 #include "logger.h"
 
-Controller::Controller(const QString &configFile) : HOMEd(configFile), m_avaliabilityTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ())
+Controller::Controller(const QString &configFile) : HOMEd(configFile), m_avaliabilityTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
 {
     logInfo << "Starting version" << SERVICE_VERSION;
     logInfo << "Configuration file is" << getConfig()->fileName();
@@ -11,6 +11,7 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile), m_avaliab
     connect(m_avaliabilityTimer, &QTimer::timeout, this, &Controller::updateAvailability);
     connect(m_propertiesTimer, &QTimer::timeout, this, &Controller::updateProperties);
 
+    connect(m_zigbee, &ZigBee::networkStarted, this, &Controller::networkStarted);
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
     connect(m_zigbee, &ZigBee::statusUpdated, this, &Controller::statusUpdated);
@@ -32,6 +33,14 @@ void Controller::publishExposes(DeviceObject *device, bool remove)
     m_propertiesTimer->start(UPDATE_PROPERTIES_DELAY);
 }
 
+void Controller::serviceOnline(void)
+{
+    for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
+        publishExposes(it.value().data());
+
+    mqttPublishStatus();
+}
+
 void Controller::quit(void)
 {
     delete m_zigbee;
@@ -40,16 +49,16 @@ void Controller::quit(void)
 
 void Controller::mqttConnected(void)
 {
-    logInfo << "MQTT connected";
+    if (getConfig()->value("homeassistant/enabled", false).toBool())
+        mqttSubscribe(m_haStatus);
 
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
 
-    if (getConfig()->value("homeassistant/enabled", false).toBool())
-        mqttSubscribe(m_haStatus);
+    if (!m_networkStarted)
+        return;
 
-    for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
-        publishExposes(it.value().data());
+    serviceOnline();
 }
 
 void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -202,6 +211,12 @@ void Controller::updateProperties(void)
             endpointUpdated(device.data(), it.key());
         }
     }
+}
+
+void Controller::networkStarted(void)
+{
+    m_networkStarted = true;
+    serviceOnline();
 }
 
 void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json)

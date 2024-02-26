@@ -47,9 +47,12 @@ private:
 
     QMetaEnum m_commands;
     QString m_haStatus;
+    bool m_networkStarted;
+
     QMap <QByteArray, qint64> m_lastSeen;
 
     void publishExposes(DeviceObject *device, bool remove = false);
+    void serviceOnline(void);
 
 public slots:
 
@@ -63,6 +66,7 @@ private slots:
     void updateAvailability(void);
     void updateProperties(void);
 
+    void networkStarted(void);
     void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json);
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);

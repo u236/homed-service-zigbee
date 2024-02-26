@@ -1410,6 +1410,8 @@ void ZigBee::coordinatorReady(void)
 
     m_adapter->setPermitJoin(m_devices->permitJoin());
     m_devices->storeDatabase();
+
+    emit networkStarted();
 }
 
 void ZigBee::permitJoinUpdated(bool enabled)
