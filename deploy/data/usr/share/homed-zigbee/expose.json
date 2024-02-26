@@ -48,6 +48,7 @@
   "temperature":                {"type": "sensor", "class": "temperature", "state": "measurement", "unit": "°C", "round": 1},
   "voc":                        {"type": "sensor", "class": "volatile_organic_compounds_parts", "state": "measurement", "unit": "ppb"},
   "voltage":                    {"type": "sensor", "class": "voltage", "state": "measurement", "unit": "V", "round": 1},
+  "volume":                     {"type": "sensor", "class": "volume", "state": "total_increasing", "unit": "m³"},
 
   "autoBrightness":             {"type": "toggle", "icon": "mdi:brightness-4"},
   "boost":                      {"type": "toggle", "control": true, "icon": "mdi:fire"},
