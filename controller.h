@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION                 "3.6.6"
+#define SERVICE_VERSION                 "3.6.7"
 #define UPDATE_AVAILABILITY_INTERVAL    5000
 #define UPDATE_PROPERTIES_DELAY         1000
 
@@ -46,8 +46,8 @@ private:
     ZigBee *m_zigbee;
 
     QMetaEnum m_commands;
-    QString m_haStatus;
-    bool m_networkStarted;
+    QString m_haPrefix, m_haStatus;
+    bool m_haEnabled, m_networkStarted;
 
     QMap <QByteArray, qint64> m_lastSeen;
 

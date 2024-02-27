@@ -6,7 +6,9 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile), m_avaliab
     logInfo << "Starting version" << SERVICE_VERSION;
     logInfo << "Configuration file is" << getConfig()->fileName();
 
+    m_haPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
     m_haStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
+    m_haEnabled = getConfig()->value("homeassistant/enabled", false).toBool();
 
     connect(m_avaliabilityTimer, &QTimer::timeout, this, &Controller::updateAvailability);
     connect(m_propertiesTimer, &QTimer::timeout, this, &Controller::updateProperties);
@@ -25,7 +27,7 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile), m_avaliab
 
 void Controller::publishExposes(DeviceObject *device, bool remove)
 {
-    device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), remove);
+    device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), m_haPrefix, m_haEnabled, m_zigbee->devices()->names(), remove);
 
     if (remove)
         return;
@@ -38,6 +40,9 @@ void Controller::serviceOnline(void)
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
         publishExposes(it.value().data());
 
+    if (m_haEnabled)
+        mqttPublishDiscovery("ZigBee", SERVICE_VERSION, m_haPrefix, true);
+
     mqttPublishStatus();
 }
 
@@ -49,11 +54,11 @@ void Controller::quit(void)
 
 void Controller::mqttConnected(void)
 {
-    if (getConfig()->value("homeassistant/enabled", false).toBool())
-        mqttSubscribe(m_haStatus);
-
     mqttSubscribe(mqttTopic("command/zigbee"));
     mqttSubscribe(mqttTopic("td/zigbee/#"));
+
+    if (m_haEnabled)
+        mqttSubscribe(m_haStatus);
 
     if (!m_networkStarted)
         return;
