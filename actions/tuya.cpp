@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "tuya.h"
 
-QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data, quint8 length = 0)
+QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data, quint8 length)
 {
     tuyaHeaderStruct header;
 
@@ -112,14 +112,37 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
     return QByteArray();
 }
 
+QByteArray ActionsTUYA::DailyThermostatProgram::request(const QString &name, const QVariant &data)
+{
+    const Property &property = endpointProperty();
+    QList <QString> types = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+    QString day = name.mid(0, name.indexOf('P'));
+    QByteArray payload = QByteArray(1, static_cast <char> (types.indexOf(day) + 1));
+
+    if (m_data.isEmpty() || meta().value("program").toBool())
+    {
+        m_data = property->value().toMap();
+        meta().insert("program", false);
+    }
+
+    m_data.insert(name, data.toDouble());
+
+    for (int i = 0; i < 4; i++)
+    {
+        QString key = QString("%1P%2").arg(day).arg(i + 1);
+        quint16 temperature = qToBigEndian <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 10);
+        payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt()));
+        payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
+    }
+
+    return makeRequest(m_transactionId++, static_cast <quint8> (0x1C + types.indexOf(day)), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
+}
+
 QByteArray ActionsTUYA::WeekdayThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
-    QList <QString> names = {"Hour", "Minute", "Temperature"};
     QByteArray payload;
-
-    if (property.isNull())
-        return QByteArray();
 
     if (m_data.isEmpty() || meta().value("prorgam").toBool())
     {
@@ -129,27 +152,21 @@ QByteArray ActionsTUYA::WeekdayThermostatProgram::request(const QString &name, c
 
     m_data.insert(name, data.toDouble());
 
-    for (int i = 0; i < 18; i++)
+    for (int i = 0; i < 6; i++)
     {
-        QString key = QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3));
-
-        if (!m_data.contains(key))
-            return QByteArray();
-
-        payload.append(static_cast <char> (m_data.value(key).toInt()));
+        QString key = QString("weekdayP%1").arg(i + 1);
+        payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt()));
+        payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        payload.append(static_cast <char> (m_data.value(QString("%1Temperature").arg(key), 21).toInt()));
     }
 
-    return makeRequest(m_transactionId++, 0x70, TUYA_TYPE_RAW, payload.data(), 18);
+    return makeRequest(m_transactionId++, 0x70, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
 QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
-    QList <QString> names = {"Hour", "Minute", "Temperature"};
     QByteArray payload;
-
-    if (property.isNull())
-        return QByteArray();
 
     if (m_data.isEmpty() || meta().value("program").toBool())
     {
@@ -159,27 +176,22 @@ QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, c
 
     m_data.insert(name, data.toDouble());
 
-    for (int i = 0; i < 18; i++)
+    for (int i = 0; i < 6; i++)
     {
-        QString key = QString("holidayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3));
-
-        if (!m_data.contains(key))
-            return QByteArray();
-
-        payload.append(static_cast <char> (m_data.value(key).toInt()));
+        QString key = QString("holidayP%1").arg(i + 1);
+        payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt()));
+        payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        payload.append(static_cast <char> (m_data.value(QString("%1Temperature").arg(key), 21).toInt()));
     }
 
-    return makeRequest(m_transactionId++, 0x71, TUYA_TYPE_RAW, payload.data(), 18);
+    return makeRequest(m_transactionId++, 0x71, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
 QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
-    QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
+    QList <QString> types = {"weekday", "saturday", "sunday"};
     QByteArray payload;
-
-    if (property.isNull())
-        return QByteArray();
 
     if (m_data.isEmpty() || meta().value("program").toBool())
     {
@@ -189,17 +201,15 @@ QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, cons
 
     m_data.insert(name, data.toDouble());
 
-    for (int i = 0; i < 36; i++)
+    for (int i = 0; i < 12; i++)
     {
-        QString key = QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3));
-
-        if (!m_data.contains(key))
-            return QByteArray();
-
-        payload.append(static_cast <char> ((i + 1) % 3 ? m_data.value(key).toDouble() : m_data.value(key).toDouble() * 2));
+        QString key = QString("%1P%2").arg(types.value(i / 4)).arg(i % 4 + 1);
+        payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt()));
+        payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        payload.append(static_cast <char> (m_data.value(QString("%1Temperature").arg(key), 21).toInt()));
     }
 
-    return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_RAW, payload.data(), 36);
+    return makeRequest(m_transactionId++, 0x65, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
 QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant &data)

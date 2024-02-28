@@ -155,9 +155,9 @@
     {
       "description":    "TUYA TS0601 Radiator Thermostat (Type B)",
       "modelNames":     ["_TZE204_g2ki0ejr"],
-      "properties":     ["tuyaDataPoints"],
-      "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "thermostat", "childLock", "holidayTemperature", "comfortTemperature", "frostProtection", "boost", "boostTimeout", "temperatureOffset"],
+      "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "exposes":        ["battery", "thermostat", "childLock", "holidayTemperature", "comfortTemperature", "frostProtection", "boost", "boostTimeout", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -171,16 +171,17 @@
                             "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
                             "37":   [{"name": "boost", "type": "bool", "action": true}],
                             "38":   [{"name": "boostTimeout", "type": "value", "action": true}],
-                            "47":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "49":   [{"name": "systemMode", "type": "bool", "action": true}]
+                            "47":   [{"name": "temperatureOffset", "type": "value", "action": true}],
+                            "49":   [{"name": "heating", "type": "bool"}]
                           },
                           "operationMode": {"enum": ["program", "holiday", "manual", "comfort"]},
                           "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
                           "holidayTemperature": {"min": 5, "max": 35},
                           "comfortTemperature": {"min": 5, "max": 35},
                           "boostTimeout": {"min": 0, "max": 465, "step": 5},
-                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.1},
-                          "systemMode": {"enum": ["off", "heat"]}
+                          "temperatureOffset": {"min": -9, "max": 9},
+                          "thermostatProgram": "daily",
+                          "heatingStatus": true
                         }
     },
     {
@@ -210,8 +211,8 @@
                           "boostTimeout": {"min": 60, "max": 900, "step": 10},
                           "temperatureOffset": {"min": -9, "max": 9},
                           "ecoTemperature": {"min": 10, "max": 30},
-                          "heatingStatus": true,
-                          "thermostatProgram": {"moes": true}
+                          "thermostatProgram": "moes",
+                          "heatingStatus": true
                         }
     },
     {
@@ -239,8 +240,8 @@
                           "hysteresis": {"min": 0, "max": 5},
                           "temperatureOffset": {"min": -30, "max": 30},
                           "sensorType": {"enum": ["internal", "both", "external"]},
-                          "heatingStatus": true,
-                          "thermostatProgram": {"moes": true}
+                          "thermostatProgram": "moes",
+                          "heatingStatus": true
                         }
     },
     {
@@ -268,8 +269,8 @@
                           "hysteresis": {"min": 0, "max": 5},
                           "temperatureOffset": {"min": -30, "max": 30},
                           "sensorType": {"enum": ["internal", "both", "external"]},
-                          "heatingStatus": true,
-                          "thermostatProgram": {"moes": true}
+                          "thermostatProgram": "moes",
+                          "heatingStatus": true
                         }
     },
     {
