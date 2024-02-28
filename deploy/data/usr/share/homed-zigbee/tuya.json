@@ -24,7 +24,7 @@
       "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power", "frequency"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -79,9 +79,7 @@
                           {
                             "1":    [{"name": "status", "type": "bool", "action": true}],
                             "2":    [{"name": "level", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}],
-                            "3":    [{"name": "levelMin", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}],
-                            "4":    [{"name": "lightType", "type": "enum", "action": true}],
-                            "5":    [{"name": "levelMax", "type": "value", "divider": 3.937007874015748, "round": true, "action": true}]
+                            "4":    [{"name": "lightType", "type": "enum", "action": true}]
                           },
                           "status": {"enum": ["off", "on"]},
                           "lightType": {"enum": ["led", "incandescent", "halogen"]},
@@ -132,8 +130,6 @@
                             "7":    [{"name": "childLock", "type": "bool", "action": true}],
                             "21":   [{"name": "battery", "type": "value"}],
                             "44":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "102":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
-                            "103":  [{"name": "temperatureLimitMax", "type": "value", "action": true}],
                             "105":  [{"name": "boostTimeout", "type": "value", "action": true}],
                             "106":  [{"name": "systemMode", "type": "enum", "action": true}],
                             "107":  [{"name": "comfortTemperature", "type": "value", "action": true}],
@@ -170,8 +166,6 @@
                             "5":    [{"name": "temperature", "type": "value", "divider": 10}],
                             "6":    [{"name": "battery", "type": "value"}],
                             "7":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "9":    [{"name": "temperatureLimitMax", "type": "value", "divider": 10, "action": true}],
-                            "10":   [{"name": "temperatureLimitMin", "type": "value", "divider": 10, "action": true}],
                             "21":   [{"name": "holidayTemperature", "type": "value", "action": true}],
                             "24":   [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
                             "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
@@ -202,7 +196,6 @@
                             "2":    [{"name": "targetTemperature", "type": "value", "action": true}],
                             "3":    [{"name": "temperature", "type": "value", "divider": 10}],
                             "4":    [{"name": "boost", "type": "bool", "action": true}],
-                            "5":    [{"name": "boostCountdown", "type": "value"}],
                             "7":    [{"name": "heating", "type": "bool", "invert": true}],
                             "13":   [{"name": "childLock", "type": "bool", "action": true}],
                             "14":   [{"name": "battery", "type": "value"}],
@@ -210,9 +203,7 @@
                             "104":  [{"name": "position", "type": "value"}],
                             "105":  [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "106":  [{"name": "ecoMode", "type": "bool", "action": true}],
-                            "107":  [{"name": "ecoTemperature", "type": "value", "action": true}],
-                            "108":  [{"name": "temperatureLimitMin", "type": "value", "action": true}],
-                            "109":  [{"name": "temperatureLimitMax", "type": "value", "action": true}]
+                            "107":  [{"name": "ecoTemperature", "type": "value", "action": true}]
                           },
                           "operationMode": {"enum": ["program", "manual", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30},
@@ -235,10 +226,8 @@
                             "1":    [{"name": "systemMode", "type": "bool", "action": true}],
                             "2":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
-                            "18":   [{"name": "temperatureLimitMax", "type": "value", "action": true}],
                             "20":   [{"name": "hysteresis", "type": "value", "action": true}],
                             "24":   [{"name": "temperature", "type": "value", "divider": 10}],
-                            "26":   [{"name": "temperatureLimitMin", "type": "value", "action": true}],
                             "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "36":   [{"name": "heating", "type": "bool", "invert": true}],
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
@@ -266,10 +255,8 @@
                             "1":    [{"name": "systemMode", "type": "bool", "action": true}],
                             "2":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
-                            "18":   [{"name": "temperatureLimitMax", "type": "value", "action": true}],
                             "20":   [{"name": "hysteresis", "type": "value", "action": true}],
                             "24":   [{"name": "temperature", "type": "value"}],
-                            "26":   [{"name": "temperatureLimitMin", "type": "value", "action": true}],
                             "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "36":   [{"name": "heating", "type": "bool", "invert": true}],
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
@@ -299,7 +286,6 @@
                             "3":    [{"name": "temperature", "type": "value", "divider": 10}],
                             "4":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "9":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "15":   [{"name": "temperatureLimitMax", "type": "value", "divider": 10, "action": true}],
                             "19":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
                             "101":  [{"name": "heating", "type": "bool", "invert": true}],
                             "102":  [{"name": "frostProtection", "type": "bool", "action": true}],
@@ -345,7 +331,7 @@
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "9":    [{"name": "timeout", "type": "value", "divider": 60, "action": true}],
+                            "9":    [{"name": "timer", "type": "value", "divider": 60, "action": true}],
                             "101":  [{"name": "threshold", "type": "value", "action": true}]
                           },
                           "status": {"enum": ["off", "on"]},
@@ -476,7 +462,7 @@
       "modelNames":     ["_TZE204_sooucan5"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime", "radarScene"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -553,7 +539,7 @@
       "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["occupancy", "motion", "motionStatus", "motionSpeed", "fallDown", "staticDwellAlarm", "illuminance",  "sensitivity", "fallSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene"],
+      "exposes":        ["occupancy", "motion", "motionStatus", "motionSpeed", "fallStatus", "staticDwellAlarm", "illuminance",  "sensitivity", "fallSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -766,7 +752,7 @@
       "modelNames":     ["_TZE200_zah67ekd"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
       "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
-      "exposes":        ["cover", "operationMode", "reverse", "setLowerLimit", "setUpperLimit", "speed"],
+      "exposes":        ["cover", "operationMode", "reverse", "setLowerLimit", "setUpperLimit", "speed", "resetLimits"],
       "options":        {
                           "tuyaDataPoints":
                           {
