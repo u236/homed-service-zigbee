@@ -43,6 +43,7 @@ void Controller::serviceOnline(void)
     if (m_haEnabled)
         mqttPublishDiscovery("ZigBee", SERVICE_VERSION, m_haPrefix, true);
 
+    m_zigbee->devices()->storeDatabase();
     mqttPublishStatus();
 }
 
