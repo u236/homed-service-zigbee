@@ -163,6 +163,28 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
+void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    if (dataPoint == 0x70 || dataPoint == 0x71)
+    {
+        QList <QString> types = {"weekday", "holiday"}, names = {"Hour", "Minute", "Temperature"};
+        QString type = types.value(dataPoint - 0x70);
+        QByteArray program = data.toByteArray();
+
+        meta().insert(QString("%1Program").arg(type), true);
+
+        for (int i = 0; i < 18; i++)
+        {
+            quint8 value = static_cast <quint8> (program.at(i));
+            map.insert(QString("%1P%2%3").arg(type).arg(i / 3 + 1).arg(names.value(i % 3)), value);
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
 void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
@@ -185,28 +207,6 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
             map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
             map.insert(QString("%1Minute").arg(key), static_cast <quint8> (program.at(i * 4 + 1)));
             map.insert(QString("%1Temperature").arg(key), qFromBigEndian(tempertarure) / 10.0);
-        }
-    }
-
-    m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QVariant &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-
-    if (dataPoint == 0x70 || dataPoint == 0x71)
-    {
-        QList <QString> types = {"weekday", "holiday"}, names = {"Hour", "Minute", "Temperature"};
-        QString type = types.value(dataPoint - 0x70);
-        QByteArray program = data.toByteArray();
-
-        meta().insert(QString("%1Program").arg(type), true);
-
-        for (int i = 0; i < 18; i++)
-        {
-            quint8 value = static_cast <quint8> (program.at(i));
-            map.insert(QString("%1P%2%3").arg(type).arg(i / 3 + 1).arg(names.value(i % 3)), value);
         }
     }
 

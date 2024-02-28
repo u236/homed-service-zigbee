@@ -28,12 +28,12 @@ namespace ActionsTUYA
 
     };
 
-    class DailyThermostatProgram : public Request, public ActionObject
+    class HolidayThermostatProgram : public Request, public ActionObject
     {
 
     public:
 
-        DailyThermostatProgram(void) : ActionObject("dailyThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"mondayP1Hour", "mondayP1Minute","mondayP1Temperature", "mondayP2Hour", "mondayP2Minute", "mondayP2Temperature", "mondayP3Hour", "mondayP3Minute", "mondayP3Temperature", "mondayP4Hour", "mondayP4Minute", "mondayP4Temperature", "tuesdayP1Hour", "tuesdayP1Minute", "tuesdayP1Temperature", "tuesdayP2Hour", "tuesdayP2Minute", "tuesdayP2Temperature", "tuesdayP3Hour", "tuesdayP3Minute", "tuesdayP3Temperature", "tuesdayP4Hour", "tuesdayP4Minute", "tuesdayP4Temperature","wednesdayP1Hour", "wednesdayP1Minute", "wednesdayP1Temperature", "wednesdayP2Hour", "wednesdayP2Minute", "wednesdayP2Temperature", "wednesdayP3Hour", "wednesdayP3Minute", "wednesdayP3Temperature", "wednesdayP4Hour", "wednesdayP4Minute", "wednesdayP4Temperature","thursdayP1Hour", "thursdayP1Minute", "thursdayP1Temperature", "thursdayP2Hour", "thursdayP2Minute", "thursdayP2Temperature", "thursdayP3Hour", "thursdayP3Minute", "thursdayP3Temperature", "thursdayP4Hour", "thursdayP4Minute", "thursdayP4Temperature", "fridayP1Hour", "fridayP1Minute", "fridayP1Temperature", "fridayP2Hour", "fridayP2Minute", "fridayP2Temperature", "fridayP3Hour", "fridayP3Minute", "fridayP3Temperature", "fridayP4Hour", "fridayP4Minute", "fridayP4Temperature","saturdayP1Hour", "saturdayP1Minute", "saturdayP1Temperature", "saturdayP2Hour", "saturdayP2Minute", "saturdayP2Temperature", "saturdayP3Hour", "saturdayP3Minute", "saturdayP3Temperature", "saturdayP4Hour", "saturdayP4Minute", "saturdayP4Temperature", "sundayP1Hour", "sundayP1Minute", "sundayP1Temperature", "sundayP2Hour", "sundayP2Minute", "sundayP2Temperature", "sundayP3Hour", "sundayP3Minute", "sundayP3Temperature", "sundayP4Hour", "sundayP4Minute", "sundayP4Temperature"}) {}
+        HolidayThermostatProgram(void) : ActionObject("holidayThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "weekdayP5Hour", "weekdayP5Minute", "weekdayP5Temperature", "weekdayP6Hour", "weekdayP6Minute", "weekdayP6Temperature", "holidayP1Hour", "holidayP1Minute", "holidayP1Temperature", "holidayP2Hour", "holidayP2Minute", "holidayP2Temperature", "holidayP3Hour", "holidayP3Minute", "holidayP3Temperature", "holidayP4Hour", "holidayP4Minute", "holidayP4Temperature", "holidayP5Hour", "holidayP5Minute", "holidayP5Temperature", "holidayP6Hour", "holidayP6Minute", "holidayP6Temperature"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     private:
@@ -42,12 +42,12 @@ namespace ActionsTUYA
 
     };
 
-    class HolidayThermostatProgram : public Request, public ActionObject
+    class DailyThermostatProgram : public Request, public ActionObject
     {
 
     public:
 
-        HolidayThermostatProgram(void) : ActionObject("holidayThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "weekdayP5Hour", "weekdayP5Minute", "weekdayP5Temperature", "weekdayP6Hour", "weekdayP6Minute", "weekdayP6Temperature", "holidayP1Hour", "holidayP1Minute", "holidayP1Temperature", "holidayP2Hour", "holidayP2Minute", "holidayP2Temperature", "holidayP3Hour", "holidayP3Minute", "holidayP3Temperature", "holidayP4Hour", "holidayP4Minute", "holidayP4Temperature", "holidayP5Hour", "holidayP5Minute", "holidayP5Temperature", "holidayP6Hour", "holidayP6Minute", "holidayP6Temperature"}) {}
+        DailyThermostatProgram(void) : ActionObject("dailyThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"mondayP1Hour", "mondayP1Minute","mondayP1Temperature", "mondayP2Hour", "mondayP2Minute", "mondayP2Temperature", "mondayP3Hour", "mondayP3Minute", "mondayP3Temperature", "mondayP4Hour", "mondayP4Minute", "mondayP4Temperature", "tuesdayP1Hour", "tuesdayP1Minute", "tuesdayP1Temperature", "tuesdayP2Hour", "tuesdayP2Minute", "tuesdayP2Temperature", "tuesdayP3Hour", "tuesdayP3Minute", "tuesdayP3Temperature", "tuesdayP4Hour", "tuesdayP4Minute", "tuesdayP4Temperature","wednesdayP1Hour", "wednesdayP1Minute", "wednesdayP1Temperature", "wednesdayP2Hour", "wednesdayP2Minute", "wednesdayP2Temperature", "wednesdayP3Hour", "wednesdayP3Minute", "wednesdayP3Temperature", "wednesdayP4Hour", "wednesdayP4Minute", "wednesdayP4Temperature","thursdayP1Hour", "thursdayP1Minute", "thursdayP1Temperature", "thursdayP2Hour", "thursdayP2Minute", "thursdayP2Temperature", "thursdayP3Hour", "thursdayP3Minute", "thursdayP3Temperature", "thursdayP4Hour", "thursdayP4Minute", "thursdayP4Temperature", "fridayP1Hour", "fridayP1Minute", "fridayP1Temperature", "fridayP2Hour", "fridayP2Minute", "fridayP2Temperature", "fridayP3Hour", "fridayP3Minute", "fridayP3Temperature", "fridayP4Hour", "fridayP4Minute", "fridayP4Temperature","saturdayP1Hour", "saturdayP1Minute", "saturdayP1Temperature", "saturdayP2Hour", "saturdayP2Minute", "saturdayP2Temperature", "saturdayP3Hour", "saturdayP3Minute", "saturdayP3Temperature", "saturdayP4Hour", "saturdayP4Minute", "saturdayP4Temperature", "sundayP1Hour", "sundayP1Minute", "sundayP1Temperature", "sundayP2Hour", "sundayP2Minute", "sundayP2Temperature", "sundayP3Hour", "sundayP3Minute", "sundayP3Temperature", "sundayP4Hour", "sundayP4Minute", "sundayP4Temperature"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     private:

@@ -34,12 +34,12 @@ namespace PropertiesTUYA
 
     };
 
-    class DailyThermostatProgram : public Data
+    class HolidayThermostatProgram : public Data
     {
 
     public:
 
-        DailyThermostatProgram(void) : Data("dailyThermostatProgram") {}
+        HolidayThermostatProgram(void) : Data("holidayThermostatProgram") {}
 
     private:
 
@@ -47,12 +47,12 @@ namespace PropertiesTUYA
 
     };
 
-    class HolidayThermostatProgram : public Data
+    class DailyThermostatProgram : public Data
     {
 
     public:
 
-        HolidayThermostatProgram(void) : Data("holidayThermostatProgram") {}
+        DailyThermostatProgram(void) : Data("dailyThermostatProgram") {}
 
     private:
 

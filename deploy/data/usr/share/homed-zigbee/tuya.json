@@ -118,8 +118,8 @@
     {
       "description":    "TUYA TS0601 Radiator Thermostat (Type A)",
       "modelNames":     ["_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_pvvbommb", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj"],
-      "properties":     ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
-      "actions":        ["tuyaDataPoints", "tuyaWeekdayThermostatProgram", "tuyaHolidayThermostatProgram"],
+      "properties":     ["tuyaDataPoints", "tuyaHolidayThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaHolidayThermostatProgram"],
       "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "awayDays", "boostTimeout", "temperatureOffset", "weekMode", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
