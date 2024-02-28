@@ -120,6 +120,7 @@
   "temperatureHigh":            {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "temperatureLow":             {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
   "temperatureOffset":          {"type": "number", "unit": "°C", "icon": "mdi:thermometer"},
+  "threshold":                  {"type": "number", "unit": "μR/h", "icon": "mdi:radioactive"},
   "timer":                      {"type": "number", "control": true, "unit": "min", "icon": "mdi:timer"},
   "tumbleAlarmTime":            {"type": "number", "unit": "min", "icon": "mdi:timer"},
   "vocHigh":                    {"type": "number", "unit": "ppb", "icon": "mdi:molecule"},

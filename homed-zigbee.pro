@@ -6,6 +6,7 @@ include(../homed-common/homed-gpio.pri)
 HEADERS += \
     action.h \
     actions/common.h \
+    actions/custom.h \
     actions/efekta.h \
     actions/lumi.h \
     actions/modkam.h \
@@ -20,6 +21,7 @@ HEADERS += \
     poll.h \
     properties/byun.h \
     properties/common.h \
+    properties/custom.h \
     properties/efekta.h \
     properties/hue.h \
     properties/ias.h \
@@ -39,6 +41,7 @@ HEADERS += \
 SOURCES += \
     action.cpp \
     actions/common.cpp \
+    actions/custom.cpp \
     actions/efekta.cpp \
     actions/hue.cpp \
     actions/hue.h \
@@ -55,6 +58,7 @@ SOURCES += \
     poll.cpp \
     properties/byun.cpp \
     properties/common.cpp \
+    properties/custom.cpp \
     properties/efekta.cpp \
     properties/hue.cpp \
     properties/ias.cpp \

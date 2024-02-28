@@ -30,16 +30,31 @@
     {
       "description":    "MODKAM Radioactivity Sensor",
       "modelNames":     ["DIYRuZ_Geiger"],
-      "properties":     ["modkamGeiger"],
-      "actions":        ["modkamGeiger"],
+      "properties":     ["customAttributes", "customCommands"],
+      "actions":        ["customAttributes"],
       "bindings":       ["status", "illuminance"],
       "reportings":     ["modkamEventsPerMinute", "modkamDosePerHour"],
       "exposes":        ["alarm", "eventsPerMinute", "dosePerHour", "sensorType", "sensorCount", "sensitivity", "threshold", "ledFeedback", "buzzerFeedback"],
       "options":        {
+                          "customAttributes":
+                          {
+                            "eventsPerMinute":  {"clusterId": 1024, "attributeId": 61441, "dataType": 33},
+                            "dosePerHour":      {"clusterId": 1024, "attributeId": 61442, "dataType": 35},
+                            "sensitivity":      {"clusterId": 1025, "attributeId": 61440, "dataType": 33, "action": true},
+                            "ledFeedback":      {"clusterId": 1025, "attributeId": 61441, "dataType": 16, "action": true},
+                            "buzzerFeedback":   {"clusterId": 1025, "attributeId": 61442, "dataType": 16, "action": true},
+                            "sensorCount":      {"clusterId": 1025, "attributeId": 61443, "dataType": 32, "action": true},
+                            "sensorType":       {"clusterId": 1025, "attributeId": 61444, "dataType": 48, "action": true},
+                            "threshold":        {"clusterId": 1025, "attributeId": 61445, "dataType": 35, "action": true}
+                          },
+                          "customCommands":
+                          {
+                            "alarm":            {"clusterId": 6, "values": {"0": false, "1": true}}
+                          },
                           "sensorType": {"enum": ["SBM-20/STS-5/BOI-33", "SBM-19/STS-6", "other"]},
                           "sensorCount": {"min": 0, "max": 10},
                           "sensitivity": {"min": 0, "max": 100},
-                          "threshold": {"min": 0, "max": 10000, "unit": "μR/h", "icon": "mdi:radioactive"}
+                          "threshold": {"min": 0, "max": 10000}
                         }
     },
     {
