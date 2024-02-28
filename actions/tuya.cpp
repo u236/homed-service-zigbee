@@ -116,75 +116,53 @@ QByteArray ActionsTUYA::DailyThermostatProgram::request(const QString &name, con
 {
     const Property &property = endpointProperty();
     QList <QString> types = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-    QString day = name.mid(0, name.indexOf('P'));
-    QByteArray payload = QByteArray(1, static_cast <char> (types.indexOf(day) + 1));
+    QString type = name.mid(0, name.indexOf('P'));
+    QByteArray payload = QByteArray(1, static_cast <char> (types.indexOf(type) + 1));
 
     if (m_data.isEmpty() || meta().value("program").toBool())
     {
         m_data = property->value().toMap();
-        meta().insert("program", false);
+        meta().insert(QString("%1Program").arg(type), false);
     }
 
     m_data.insert(name, data.toDouble());
 
     for (int i = 0; i < 4; i++)
     {
-        QString key = QString("%1P%2").arg(day).arg(i + 1);
+        QString key = QString("%1P%2").arg(type).arg(i + 1);
         quint16 temperature = qToBigEndian <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 10);
         payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt()));
         payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
         payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
     }
 
-    return makeRequest(m_transactionId++, static_cast <quint8> (0x1C + types.indexOf(day)), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
-}
-
-QByteArray ActionsTUYA::WeekdayThermostatProgram::request(const QString &name, const QVariant &data)
-{
-    const Property &property = endpointProperty();
-    QByteArray payload;
-
-    if (m_data.isEmpty() || meta().value("prorgam").toBool())
-    {
-        m_data = property->value().toMap();
-        meta().insert("prorgam", false);
-    }
-
-    m_data.insert(name, data.toDouble());
-
-    for (int i = 0; i < 6; i++)
-    {
-        QString key = QString("weekdayP%1").arg(i + 1);
-        payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt()));
-        payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
-        payload.append(static_cast <char> (m_data.value(QString("%1Temperature").arg(key), 21).toInt()));
-    }
-
-    return makeRequest(m_transactionId++, 0x70, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
+    return makeRequest(m_transactionId++, static_cast <quint8> (0x1C + types.indexOf(type)), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
 QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
+    QList <QString> types = {"weekday", "holiday"};
+    QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload;
 
     if (m_data.isEmpty() || meta().value("program").toBool())
     {
         m_data = property->value().toMap();
-        meta().insert("program", false);
+        meta().insert(QString("%1Program").arg(type), false);
     }
 
     m_data.insert(name, data.toDouble());
 
     for (int i = 0; i < 6; i++)
     {
-        QString key = QString("holidayP%1").arg(i + 1);
+        QString key = QString("%1P%2").arg(type).arg(i + 1);
         payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt()));
         payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
         payload.append(static_cast <char> (m_data.value(QString("%1Temperature").arg(key), 21).toInt()));
     }
 
-    return makeRequest(m_transactionId++, 0x71, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
+    return makeRequest(m_transactionId++, static_cast <quint8> (0x70 + types.indexOf(type)), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
 QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)

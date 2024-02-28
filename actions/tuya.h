@@ -42,26 +42,12 @@ namespace ActionsTUYA
 
     };
 
-    class WeekdayThermostatProgram : public Request, public ActionObject
-    {
-
-    public:
-
-        WeekdayThermostatProgram(void) : ActionObject("weekdayThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "weekdayP5Hour", "weekdayP5Minute", "weekdayP5Temperature", "weekdayP6Hour", "weekdayP6Minute", "weekdayP6Temperature"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    private:
-
-        QMap <QString, QVariant> m_data;
-
-    };
-
     class HolidayThermostatProgram : public Request, public ActionObject
     {
 
     public:
 
-        HolidayThermostatProgram(void) : ActionObject("holidayThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"holidayP1Hour", "holidayP1Minute", "holidayP1Temperature", "holidayP2Hour", "holidayP2Minute", "holidayP2Temperature", "holidayP3Hour", "holidayP3Minute", "holidayP3Temperature", "holidayP4Hour", "holidayP4Minute", "holidayP4Temperature", "holidayP5Hour", "holidayP5Minute", "holidayP5Temperature", "holidayP6Hour", "holidayP6Minute", "holidayP6Temperature"}) {}
+        HolidayThermostatProgram(void) : ActionObject("holidayThermostatProgram", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"weekdayP1Hour", "weekdayP1Minute", "weekdayP1Temperature", "weekdayP2Hour", "weekdayP2Minute", "weekdayP2Temperature", "weekdayP3Hour", "weekdayP3Minute", "weekdayP3Temperature", "weekdayP4Hour", "weekdayP4Minute", "weekdayP4Temperature", "weekdayP5Hour", "weekdayP5Minute", "weekdayP5Temperature", "weekdayP6Hour", "weekdayP6Minute", "weekdayP6Temperature", "holidayP1Hour", "holidayP1Minute", "holidayP1Temperature", "holidayP2Hour", "holidayP2Minute", "holidayP2Temperature", "holidayP3Hour", "holidayP3Minute", "holidayP3Temperature", "holidayP4Hour", "holidayP4Minute", "holidayP4Temperature", "holidayP5Hour", "holidayP5Minute", "holidayP5Temperature", "holidayP6Hour", "holidayP6Minute", "holidayP6Temperature"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     private:

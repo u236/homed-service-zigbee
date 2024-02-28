@@ -170,14 +170,14 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
     if (dataPoint >= 0x1C && dataPoint <= 0x22)
     {
         QList <QString> types = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-        QString day = types.value(dataPoint - 0x1C);
+        QString type = types.value(dataPoint - 0x1C);
         QByteArray program = data.toByteArray().mid(1);
 
-        meta().insert(QString("%1program%1").arg(day), true);
+        meta().insert(QString("%1Program").arg(type), true);
 
         for (int i = 0; i < 4; i++)
         {
-            QString key = QString("%1P%2").arg(day).arg(i + 1);
+            QString key = QString("%1P%2").arg(type).arg(i + 1);
             quint16 tempertarure;
 
             memcpy(&tempertarure, program.constData() + i * 4 + 2, sizeof(tempertarure));
@@ -191,42 +191,22 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::WeekdayThermostatProgram::update(quint8 dataPoint, const QVariant &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-
-    if (dataPoint == 0x70)
-    {
-        QList <QString> names = {"Hour", "Minute", "Temperature"};
-        QByteArray program = data.toByteArray();
-
-        meta().insert("program", true);
-
-        for (int i = 0; i < 18; i++)
-        {
-            quint8 value = static_cast <quint8> (program.at(i));
-            map.insert(QString("weekdayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
-        }
-    }
-
-    m_value = map.isEmpty() ? QVariant() : map;
-}
-
 void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
-    if (dataPoint == 0x71)
+    if (dataPoint == 0x70 || dataPoint == 0x71)
     {
-        QList <QString> names = {"Hour", "Minute", "Temperature"};
+        QList <QString> types = {"weekday", "holiday"}, names = {"Hour", "Minute", "Temperature"};
+        QString type = types.value(dataPoint - 0x70);
         QByteArray program = data.toByteArray();
 
-        meta().insert("program", true);
+        meta().insert(QString("%1Program").arg(type), true);
 
         for (int i = 0; i < 18; i++)
         {
             quint8 value = static_cast <quint8> (program.at(i));
-            map.insert(QString("holidayP%1%2").arg(i / 3 + 1).arg(names.value(i % 3)), value);
+            map.insert(QString("%1P%2%3").arg(type).arg(i / 3 + 1).arg(names.value(i % 3)), value);
         }
     }
 
