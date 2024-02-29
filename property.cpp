@@ -118,8 +118,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesOther::LifeControlAirQuality>      ("lifeControlAirQualityProperty");
     qRegisterMetaType <PropertiesOther::PerenioSmartPlug>           ("perenioSmartPlugProperty");
     qRegisterMetaType <PropertiesOther::WoolleySmartPlug>           ("woolleySmartPlugProperty");
-    qRegisterMetaType <PropertiesOther::WaterMeterVolume>           ("waterMeterVolumeProperty");
-    qRegisterMetaType <PropertiesOther::WaterMeterSettings>         ("waterMeterSettingsProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)

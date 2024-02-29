@@ -15,16 +15,6 @@ namespace ActionsOther
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
-
-    class WaterMeterSettings : public ActionObject
-    {
-
-    public:
-
-        WaterMeterSettings(void) : ActionObject("waterMeterSettings", CLUSTER_SMART_ENERGY_METERING, 0x0000, QList <QString> {"hotPreset", "coldPreset", "pulseVolume"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
 }
 
 #endif

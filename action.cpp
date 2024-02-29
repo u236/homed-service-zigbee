@@ -69,7 +69,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
 
     qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
-    qRegisterMetaType <ActionsOther::WaterMeterSettings>        ("waterMeterSettingsAction");
 }
 
 Property ActionObject::endpointProperty(const QString &name)

@@ -15,39 +15,6 @@
     }
   ],
 
-  "DIY":
-  [
-    {
-      "description":    "TLSR8258 DIY Water Meter",
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "options":        {"endpointName": {"1": "Hot", "2": "Cold"}}
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "properties":     ["batteryPercentage"],
-      "exposes":        ["battery"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "properties":     ["waterMeterSettings"],
-      "actions":        ["waterMeterSettings"],
-      "exposes":        ["hotPreset", "coldPreset", "pulseVolume"],
-      "options":        {"hotPreset": {"min": 0, "max": 1000000000}, "coldPreset": {"min": 0, "max": 1000000000}, "pulseVolume": {"min": 1, "max": 100}},
-      "endpointId":     3
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "properties":     ["waterMeterVolume"],
-      "exposes":        ["volume"],
-      "bindings":       ["energy"],
-      "reportings":     ["energy"],
-      "endpointId":     [1, 2]
-    }
-  ],
-
   "Feibit Inc co.":
   [
     {
@@ -133,6 +100,50 @@
       "properties":     ["ptvoCO2"],
       "exposes":        ["co2"],
       "endpointId":     2
+    }
+  ],
+
+  "Slacky-DIY":
+  [
+    {
+      "description":    "TLSR8258 DIY Water Meter",
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "options":        {"endpointName": {"1": "Hot", "2": "Cold"}}
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["customAttributes"],
+      "actions":        ["customAttributes"],
+      "exposes":        ["hotPreset", "coldPreset", "pulseVolume"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "hotPreset":    {"type": "value", "clusterId": 1794, "attributeId": 61440, "dataType": 35, "action": true},
+                            "coldPreset":   {"type": "value", "clusterId": 1794, "attributeId": 61441, "dataType": 35, "action": true},
+                            "pulseVolume":  {"type": "value", "clusterId": 1794, "attributeId": 61442, "dataType": 33, "action": true}
+                          },
+                          "hotPreset": {"min": 0, "max": 1000000000},
+                          "coldPreset": {"min": 0, "max": 1000000000},
+                          "pulseVolume": {"min": 1, "max": 100}
+                        },
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["customAttributes"],
+      "exposes":        ["volume"],
+      "bindings":       ["energy"],
+      "reportings":     ["energy"],
+      "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37}}},
+      "endpointId":     [1, 2]
     }
   ],
 
