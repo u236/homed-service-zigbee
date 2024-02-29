@@ -322,7 +322,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (it->toString() == "customCommands")
         {
-            QMap <QString, QVariant> options = device->options().value("customCommands").toMap();
+            QMap <QString, QVariant> options = device->options().value(multiple ? QString("customCommands_%2").arg(QString::number(endpoint->id())) : "customCommands").toMap();
 
             for (auto it = options.begin(); it != options.end(); it++)
             {
@@ -338,12 +338,12 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (it->toString() == "customAttributes")
         {
-            QMap <QString, QVariant> options = device->options().value("customAttributes").toMap();
+            QMap <QString, QVariant> options = device->options().value(multiple ? QString("customAttributes_%2").arg(QString::number(endpoint->id())) : "customAttributes").toMap();
 
             for (auto it = options.begin(); it != options.end(); it++)
             {
                 QMap <QString, QVariant> option = it.value().toMap();
-                Property property(new PropertiesCustom::Attribute(it.key(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider", 1).toDouble()));
+                Property property(new PropertiesCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider", 1).toDouble()));
                 property->setParent(endpoint.data());
                 property->setMultiple(multiple);
                 endpoint->properties().append(property);
@@ -369,7 +369,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (it->toString() == "customAttributes")
         {
-            QMap <QString, QVariant> options = device->options().value("customAttributes").toMap();
+            QMap <QString, QVariant> options = device->options().value(multiple ? QString("customAttributes_%2").arg(QString::number(endpoint->id())) : "customAttributes").toMap();
 
             for (auto it = options.begin(); it != options.end(); it++)
             {
@@ -379,7 +379,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
                 if (!option.value("action").toBool())
                     continue;
 
-                action = Action(new ActionsCustom::Attribute(it.key(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("manufacturerCode").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider", 1).toDouble()));
+                action = Action(new ActionsCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("manufacturerCode").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider", 1).toDouble()));
                 action->setParent(endpoint.data());
                 endpoint->actions().append(action);
             }

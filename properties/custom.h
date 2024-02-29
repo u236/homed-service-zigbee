@@ -2,7 +2,6 @@
 #define PROPERTIES_CUSTOM_H
 
 #include "property.h"
-#include "zcl.h"
 
 namespace PropertiesCustom
 {
@@ -21,13 +20,14 @@ namespace PropertiesCustom
 
     public:
 
-        Attribute(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, double divider) :
-            PropertyObject(name, clusterId), m_attributeId(attributeId), m_dataType(dataType), m_divider(divider) {}
+        Attribute(const QString &name, const QString &type, quint16 clusterId, quint16 attributeId, quint8 dataType, double divider) :
+            PropertyObject(name, clusterId), m_type(type), m_attributeId(attributeId), m_dataType(dataType), m_divider(divider) {}
 
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
 
+        QString m_type;
         quint16 m_attributeId;
         quint8 m_dataType;
         double m_divider;

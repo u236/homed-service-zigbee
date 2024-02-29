@@ -1,9 +1,6 @@
 #include <QtEndian>
 #include "custom.h"
-
-//
-#include "logger.h"
-//
+#include "zcl.h"
 
 void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
@@ -12,146 +9,74 @@ void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QB
 
 void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
+    QList <QString> types = {"bool", "value", "enum"};
+    QByteArray buffer = data;
+    QVariant value;
+
     if (attributeId != m_attributeId)
         return;
 
+    if (buffer.length() < 8)
+        buffer.append(8 - buffer.length(), 0x00);
+
     switch (m_dataType)
     {
-        case DATA_TYPE_BOOLEAN: m_value = data.at(0) ? true : false; break;
-        case DATA_TYPE_8BIT_UNSIGNED: m_value = static_cast <quint8> (data.at(0)) / m_divider; break;
-        case DATA_TYPE_8BIT_SIGNED: m_value = static_cast <qint8> (data.at(0)) / m_divider; break;
+        case DATA_TYPE_BOOLEAN:
+        case DATA_TYPE_8BIT_ENUM:
+        case DATA_TYPE_8BIT_UNSIGNED:
+            value = static_cast <quint8> (buffer.at(0));
+            break;
+
+        case DATA_TYPE_8BIT_SIGNED:
+            value = static_cast <qint8> (buffer.at(0));
+            break;
 
         case DATA_TYPE_16BIT_UNSIGNED:
-        {
-            quint16 value = 0;
-            memcpy(&value, data.constData(), 2);
-            m_value = qFromLittleEndian(value) / m_divider;
+            value = qFromLittleEndian <quint16> (*(reinterpret_cast <quint16*> (buffer.data())));
             break;
-        }
 
         case DATA_TYPE_16BIT_SIGNED:
-        {
-            qint16 value = 0;
-            memcpy(&value, data.constData(), 2);
-            m_value = qFromLittleEndian(value) / m_divider;
+            value = qFromLittleEndian <qint16> (*(reinterpret_cast <qint16*> (buffer.data())));
             break;
-        }
 
         case DATA_TYPE_24BIT_UNSIGNED:
-        {
-            quint32 value = 0;
-            memcpy(&value, data.constData(), 3);
-            m_value = qFromLittleEndian(value) / m_divider;
+        case DATA_TYPE_32BIT_UNSIGNED:
+            value = qFromLittleEndian <quint32> (*(reinterpret_cast <quint32*> (buffer.data())));
             break;
-        }
 
         case DATA_TYPE_24BIT_SIGNED:
-        {
-            qint32 value = 0;
-            memcpy(&value, data.constData(), 3);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
-        case DATA_TYPE_32BIT_UNSIGNED:
-        {
-            quint32 value = 0;
-            memcpy(&value, data.constData(), 4);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
         case DATA_TYPE_32BIT_SIGNED:
-        {
-            qint32 value = 0;
-            memcpy(&value, data.constData(), 4);
-            m_value = qFromLittleEndian(value) / m_divider;
+            value = qFromLittleEndian <qint32> (*(reinterpret_cast <qint32*> (buffer.data())));
             break;
-        }
 
         case DATA_TYPE_40BIT_UNSIGNED:
-        {
-            quint64 value = 0;
-            memcpy(&value, data.constData(), 5);
-            m_value = qFromLittleEndian(value) / m_divider;
+        case DATA_TYPE_48BIT_UNSIGNED:
+        case DATA_TYPE_56BIT_UNSIGNED:
+        case DATA_TYPE_64BIT_UNSIGNED:
+            value = qFromLittleEndian <quint64> (*(reinterpret_cast <quint64*> (buffer.data())));
             break;
-        }
 
         case DATA_TYPE_40BIT_SIGNED:
-        {
-            qint64 value = 0;
-            memcpy(&value, data.constData(), 5);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
-        case DATA_TYPE_48BIT_UNSIGNED:
-        {
-            quint64 value = 0;
-            memcpy(&value, data.constData(), 6);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
         case DATA_TYPE_48BIT_SIGNED:
-        {
-            qint64 value = 0;
-            memcpy(&value, data.constData(), 6);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
-        case DATA_TYPE_56BIT_UNSIGNED:
-        {
-            quint64 value = 0;
-            memcpy(&value, data.constData(), 7);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
         case DATA_TYPE_56BIT_SIGNED:
-        {
-            qint64 value = 0;
-            memcpy(&value, data.constData(), 7);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
-        case DATA_TYPE_64BIT_UNSIGNED:
-        {
-            quint64 value = 0;
-            memcpy(&value, data.constData(), 8);
-            m_value = qFromLittleEndian(value) / m_divider;
-            break;
-        }
-
         case DATA_TYPE_64BIT_SIGNED:
-        {
-            qint64 value = 0;
-            memcpy(&value, data.constData(), 8);
-            m_value = qFromLittleEndian(value) / m_divider;
+            value = qFromLittleEndian <qint64> (*(reinterpret_cast <qint64*> (buffer.data())));
             break;
-        }
 
         case DATA_TYPE_SINGLE_PRECISION:
-        {
-            float value = 0;
-            memcpy(&value, data.constData(), 4);
-            m_value = qFromLittleEndian(value) / m_divider;
+            value = qFromLittleEndian <float> (*(reinterpret_cast <float*> (buffer.data())));
             break;
-        }
 
         case DATA_TYPE_DOUBLE_PRECISION:
-        {
-            double value = 0;
-            memcpy(&value, data.constData(), 8);
-            m_value = qFromLittleEndian(value) / m_divider;
+            value = qFromLittleEndian <double> (*(reinterpret_cast <double*> (buffer.data())));
             break;
-        }
-
-        case DATA_TYPE_8BIT_ENUM: m_value = enumValue(static_cast <qint8> (data.at(0))); break;
     }
 
-    logInfo << "custom attribute" << m_name << "is" << m_value;
+    switch (types.indexOf(m_type))
+    {
+        case 0: m_value = value.toInt() ? true : false; break; // bool
+        case 1: m_value = value.toDouble() / m_divider; break; // value
+        case 2: m_value = enumValue(value.toInt()); break;     // enum
+    }
 }
 

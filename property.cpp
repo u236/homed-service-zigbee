@@ -5,7 +5,6 @@
 #include "properties/ias.h"
 #include "properties/ikea.h"
 #include "properties/lumi.h"
-#include "properties/modkam.h"
 #include "properties/other.h"
 #include "properties/ptvo.h"
 #include "properties/tuya.h"
@@ -100,8 +99,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesEfekta::CO2Settings>               ("efektaCO2SettingsProperty");
     qRegisterMetaType <PropertiesEfekta::PMSensor>                  ("efektaPMSensorProperty");
     qRegisterMetaType <PropertiesEfekta::VOCSensor>                 ("efektaVOCSensorProperty");
-
-    qRegisterMetaType <PropertiesModkam::ButtonAction>              ("modkamButtonActionProperty");
 
     qRegisterMetaType <PropertiesPTVO::ChangePattern>               ("ptvoChangePatternProperty");
     qRegisterMetaType <PropertiesPTVO::Contact>                     ("ptvoContactProperty");

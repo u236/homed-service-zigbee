@@ -72,16 +72,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsOther::WaterMeterSettings>        ("waterMeterSettingsAction");
 }
 
-QByteArray ActionObject::writeAttribute(quint8 dataType, void *value, size_t length)
-{
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), dataType, QByteArray(reinterpret_cast <char*> (value), length));
-}
-
-qint8 ActionObject::listIndex(const QList<QString> &list, const QVariant &value)
-{
-    return static_cast <qint8> (list.indexOf(value.toString()));
-}
-
 Property ActionObject::endpointProperty(const QString &name)
 {
     EndpointObject *endpoint = static_cast <EndpointObject*> (m_parent);
@@ -98,4 +88,38 @@ Property ActionObject::endpointProperty(const QString &name)
     }
 
     return Property();
+}
+
+QByteArray ActionObject::writeAttribute(quint8 dataType, void *value, size_t length)
+{
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), dataType, QByteArray(reinterpret_cast <char*> (value), length));
+}
+
+qint8 ActionObject::listIndex(const QList <QString> &list, const QVariant &value)
+{
+    return static_cast <qint8> (list.indexOf(value.toString()));
+}
+
+int ActionObject::enumIndex(const QVariant &value)
+{
+    QVariant data = option().toMap().value("enum");
+
+    switch (data.type())
+    {
+        case QVariant::Map:
+        {
+            QMap <QString, QVariant> map = data.toMap();
+
+            for (auto it = map.begin(); it != map.end(); it++)
+                if (it.value() == value)
+                    return it.key().toInt();
+
+            break;
+        }
+
+        case QVariant::List: return data.toList().indexOf(value.toString());
+        default: break;
+    }
+
+    return -1;
 }

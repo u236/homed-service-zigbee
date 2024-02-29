@@ -1,57 +1,30 @@
 #include <QtEndian>
 #include "custom.h"
-
-//
-#include "logger.h"
-//
+#include "zcl.h"
 
 QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &data)
 {
-    QByteArray payload;
+    QList <QString> types = {"bool", "value", "enum"};
+    QVariant value;
+    qint64 buffer;
 
-    switch (m_dataType)
+    switch (types.indexOf(m_type))
     {
-        case DATA_TYPE_BOOLEAN: payload.append(1, data.toBool() ? 0x01 : 0x00); break;
+        case 0: value = data.toBool() ? 0x01 : 0x00; break; // bool
+        case 1: value = data.toDouble() * m_divider; break; // value
 
-        case DATA_TYPE_8BIT_UNSIGNED:
-        case DATA_TYPE_8BIT_SIGNED:
-        case DATA_TYPE_16BIT_UNSIGNED:
-        case DATA_TYPE_16BIT_SIGNED:
-        case DATA_TYPE_24BIT_UNSIGNED:
-        case DATA_TYPE_24BIT_SIGNED:
-        case DATA_TYPE_32BIT_UNSIGNED:
-        case DATA_TYPE_32BIT_SIGNED:
+        case 2: // enum
         {
-            qint32 value = qToLittleEndian <qint32> (data.toDouble() * m_divider);
-            payload.append(reinterpret_cast <char*> (&value), zclDataSize(m_dataType));
-            break;
-        }
+            int index = enumIndex(data.toString());
 
-        case DATA_TYPE_40BIT_UNSIGNED:
-        case DATA_TYPE_40BIT_SIGNED:
-        case DATA_TYPE_48BIT_UNSIGNED:
-        case DATA_TYPE_48BIT_SIGNED:
-        case DATA_TYPE_56BIT_UNSIGNED:
-        case DATA_TYPE_56BIT_SIGNED:
-        case DATA_TYPE_64BIT_UNSIGNED:
-        case DATA_TYPE_64BIT_SIGNED:
-        {
-            qint64 value = qToLittleEndian <qint64> (data.toDouble() * m_divider);
-            payload.append(reinterpret_cast <char*> (&value), zclDataSize(m_dataType));
-            break;
-        }
-
-        case DATA_TYPE_8BIT_ENUM:
-        {
-            qint8 value = listIndex(option().toMap().value("enum").toStringList(), data);
-
-            if (value < 0)
+            if (index < 0)
                 return QByteArray();
 
-            payload.append(static_cast <char> (value));
+            value = index;
+            break;
         }
     }
 
-    logInfo << "custom attibute action" << m_name << "payload" << payload.toHex(':');
-    return writeAttribute(m_dataType, payload.data(), payload.length());
+    buffer = qToLittleEndian <qint64> (value.toDouble());
+    return writeAttribute(m_dataType, &buffer, zclDataSize(m_dataType));
 }

@@ -26,7 +26,6 @@ HEADERS += \
     properties/ias.h \
     properties/ikea.h \
     properties/lumi.h \
-    properties/modkam.h \
     properties/other.h \
     properties/ptvo.h \
     properties/tuya.h \
@@ -62,7 +61,6 @@ SOURCES += \
     properties/ias.cpp \
     properties/ikea.cpp \
     properties/lumi.cpp \
-    properties/modkam.cpp \
     properties/other.cpp \
     properties/ptvo.cpp \
     properties/tuya.cpp \
