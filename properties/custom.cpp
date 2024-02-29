@@ -5,6 +5,11 @@
 #include "logger.h"
 //
 
+void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QByteArray &)
+{
+    m_value = enumValue(commandId);
+}
+
 void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != m_attributeId)
@@ -144,14 +149,9 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
             break;
         }
 
-        case DATA_TYPE_8BIT_ENUM: m_value = option().toMap().value("enum").toList().value(data.at(0)); break;
+        case DATA_TYPE_8BIT_ENUM: m_value = enumValue(static_cast <qint8> (data.at(0))); break;
     }
 
     logInfo << "custom attribute" << m_name << "is" << m_value;
 }
 
-void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QByteArray &)
-{
-    m_value = m_map.value(QString::number(commandId));
-    logInfo << "custom command" << m_name << "is" << m_value;
-}

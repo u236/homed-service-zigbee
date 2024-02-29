@@ -22,7 +22,7 @@ QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &da
         case DATA_TYPE_32BIT_UNSIGNED:
         case DATA_TYPE_32BIT_SIGNED:
         {
-            qint32 value = qToLittleEndian(data.toInt());
+            qint32 value = qToLittleEndian <qint32> (data.toDouble() * m_divider);
             payload.append(reinterpret_cast <char*> (&value), zclDataSize(m_dataType));
             break;
         }
@@ -36,7 +36,7 @@ QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &da
         case DATA_TYPE_64BIT_UNSIGNED:
         case DATA_TYPE_64BIT_SIGNED:
         {
-            qint64 value = qToLittleEndian(data.toLongLong());
+            qint64 value = qToLittleEndian <qint64> (data.toDouble() * m_divider);
             payload.append(reinterpret_cast <char*> (&value), zclDataSize(m_dataType));
             break;
         }

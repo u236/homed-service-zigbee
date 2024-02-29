@@ -13,12 +13,22 @@
     {
       "description":    "MODKAM AirSense CO2 Sensor",
       "modelNames":     ["DIYRuZ_AirSense"],
-      "properties":     ["temperature", "humidity", "pressure", "co2", "modkamTemperatureOffset", "modkamHumidityOffset", "modkamPressureOffset", "modkamCO2Settings"],
-      "actions":        ["modkamTemperatureOffset", "modkamHumidityOffset", "modkamPressureOffset", "modkamCO2Settings"],
+      "properties":     ["temperature", "humidity", "pressure", "co2", "customAttributes"],
+      "actions":        ["customAttributes"],
       "bindings":       ["temperature", "humidity", "pressure", "co2"],
       "reportings":     ["temperature", "humidity", "pressure", "co2"],
-      "exposes":        ["temperature", "humidity", "pressure", "co2", "temperatureOffset", "humidityOffset", "pressureOffset", "co2AutoCalibration", "ledFeedback", "co2Low", "co2High"],
+      "exposes":        ["temperature", "humidity", "pressure", "co2", "temperatureOffset", "humidityOffset", "pressureOffset", "co2Low", "co2High", "co2AutoCalibration", "ledFeedback"],
       "options":        {
+                          "customAttributes":
+                          {
+                            "temperatureOffset":  {"clusterId": 1026, "attributeId": 528, "dataType": 41, "action": true},
+                            "humidityOffset":     {"clusterId": 1029, "attributeId": 528, "dataType": 41, "action": true},
+                            "pressureOffset":     {"clusterId": 1027, "attributeId": 528, "dataType": 43, "divider": 10, "action": true},
+                            "co2AutoCalibration": {"clusterId": 1037, "attributeId": 514, "dataType": 16, "action": true},
+                            "ledFeedback":        {"clusterId": 1037, "attributeId": 515, "dataType": 16, "action": true},
+                            "co2Low":             {"clusterId": 1037, "attributeId": 516, "dataType": 33, "action": true},
+                            "co2High":            {"clusterId": 1037, "attributeId": 517, "dataType": 33, "action": true}
+                          },
                           "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0},
                           "temperatureOffset": {"min": -20, "max": 20},
                           "humidityOffset": {"min": -50, "max": 50},
@@ -30,12 +40,16 @@
     {
       "description":    "MODKAM Radioactivity Sensor",
       "modelNames":     ["DIYRuZ_Geiger"],
-      "properties":     ["customAttributes", "customCommands"],
+      "properties":     ["customCommands", "customAttributes"],
       "actions":        ["customAttributes"],
       "bindings":       ["status", "illuminance"],
       "reportings":     ["modkamEventsPerMinute", "modkamDosePerHour"],
       "exposes":        ["alarm", "eventsPerMinute", "dosePerHour", "sensorType", "sensorCount", "sensitivity", "threshold", "ledFeedback", "buzzerFeedback"],
       "options":        {
+                          "customCommands":
+                          {
+                            "alarm":            {"clusterId": 6}
+                          },
                           "customAttributes":
                           {
                             "eventsPerMinute":  {"clusterId": 1024, "attributeId": 61441, "dataType": 33},
@@ -47,13 +61,10 @@
                             "sensorType":       {"clusterId": 1025, "attributeId": 61444, "dataType": 48, "action": true},
                             "threshold":        {"clusterId": 1025, "attributeId": 61445, "dataType": 35, "action": true}
                           },
-                          "customCommands":
-                          {
-                            "alarm":            {"clusterId": 6, "values": {"0": false, "1": true}}
-                          },
-                          "sensorType": {"enum": ["SBM-20/STS-5/BOI-33", "SBM-19/STS-6", "other"]},
-                          "sensorCount": {"min": 0, "max": 10},
+                          "alarm": {"enum": [false, true]},
                           "sensitivity": {"min": 0, "max": 100},
+                          "sensorCount": {"min": 0, "max": 10},
+                          "sensorType": {"enum": ["SBM-20/STS-5/BOI-33", "SBM-19/STS-6", "other"]},
                           "threshold": {"min": 0, "max": 10000}
                         }
     },

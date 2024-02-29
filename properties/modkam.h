@@ -15,46 +15,6 @@ namespace PropertiesModkam
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
-
-    class TemperatureOffset : public PropertyObject
-    {
-
-    public:
-
-        TemperatureOffset(void) : PropertyObject("temperatureOffset", CLUSTER_TEMPERATURE_MEASUREMENT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class HumidityOffset : public PropertyObject
-    {
-
-    public:
-
-        HumidityOffset(void) : PropertyObject("humidityOffset", CLUSTER_HUMIDITY_MEASUREMENT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class PressureOffset : public PropertyObject
-    {
-
-    public:
-
-        PressureOffset(void) : PropertyObject("pressureOffset", CLUSTER_PRESSURE_MEASUREMENT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class CO2Settings : public PropertyObject
-    {
-
-    public:
-
-        CO2Settings(void) : PropertyObject("co2Settings", CLUSTER_CO2_CONCENTRATION) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
 }
 
 #endif

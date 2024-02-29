@@ -2,7 +2,6 @@
 #include "actions/efekta.h"
 #include "actions/hue.h"
 #include "actions/lumi.h"
-#include "actions/modkam.h"
 #include "actions/other.h"
 #include "actions/ptvo.h"
 #include "actions/tuya.h"
@@ -63,11 +62,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsEfekta::CO2Settings>              ("efektaCO2SettingsAction");
     qRegisterMetaType <ActionsEfekta::PMSensor>                 ("efektaPMSensorAction");
     qRegisterMetaType <ActionsEfekta::VOCSensor>                ("efektaVOCSensorAction");
-
-    qRegisterMetaType <ActionsModkam::TemperatureOffset>        ("modkamTemperatureOffsetAction");
-    qRegisterMetaType <ActionsModkam::HumidityOffset>           ("modkamHumidityOffsetAction");
-    qRegisterMetaType <ActionsModkam::PressureOffset>           ("modkamPressureOffsetAction");
-    qRegisterMetaType <ActionsModkam::CO2Settings>              ("modkamCO2SettingsAction");
 
     qRegisterMetaType <ActionsPTVO::ChangePattern>              ("ptvoChangePatternAction");
     qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");

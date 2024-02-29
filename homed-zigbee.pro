@@ -9,7 +9,6 @@ HEADERS += \
     actions/custom.h \
     actions/efekta.h \
     actions/lumi.h \
-    actions/modkam.h \
     actions/other.h \
     actions/ptvo.h \
     actions/tuya.h \
@@ -46,7 +45,6 @@ SOURCES += \
     actions/hue.cpp \
     actions/hue.h \
     actions/lumi.cpp \
-    actions/modkam.cpp \
     actions/other.cpp \
     actions/ptvo.cpp \
     actions/tuya.cpp \

@@ -6,6 +6,16 @@
 
 namespace PropertiesCustom
 {
+    class Command : public PropertyObject
+    {
+
+    public:
+
+        Command(const QString &name, quint16 clusterId) : PropertyObject(name, clusterId) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
+
     class Attribute : public PropertyObject
     {
 
@@ -21,22 +31,6 @@ namespace PropertiesCustom
         quint16 m_attributeId;
         quint8 m_dataType;
         double m_divider;
-
-    };
-
-    class Command : public PropertyObject
-    {
-
-    public:
-
-        Command(const QString &name, quint16 clusterId, const QMap <QString, QVariant> &map) :
-            PropertyObject(name, clusterId), m_map(map) {}
-
-        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
-
-    private:
-
-        QMap <QString, QVariant> m_map;
 
     };
 }

@@ -56,6 +56,7 @@ protected:
     QVariant m_value;
 
     quint8 percentage(double min, double max, double value);
+    QVariant enumValue(int index);
 
 };
 

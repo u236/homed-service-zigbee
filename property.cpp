@@ -102,10 +102,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesEfekta::VOCSensor>                 ("efektaVOCSensorProperty");
 
     qRegisterMetaType <PropertiesModkam::ButtonAction>              ("modkamButtonActionProperty");
-    qRegisterMetaType <PropertiesModkam::TemperatureOffset>         ("modkamTemperatureOffsetProperty");
-    qRegisterMetaType <PropertiesModkam::HumidityOffset>            ("modkamHumidityOffsetProperty");
-    qRegisterMetaType <PropertiesModkam::PressureOffset>            ("modkamPressureOffsetProperty");
-    qRegisterMetaType <PropertiesModkam::CO2Settings>               ("modkamCO2SettingsProperty");
 
     qRegisterMetaType <PropertiesPTVO::ChangePattern>               ("ptvoChangePatternProperty");
     qRegisterMetaType <PropertiesPTVO::Contact>                     ("ptvoContactProperty");
@@ -138,4 +134,16 @@ quint8 PropertyObject::percentage(double min, double max, double value)
         value = max;
 
     return static_cast <quint8> ((value - min) / (max - min) * 100);
+}
+
+QVariant PropertyObject::enumValue(int index)
+{
+    QVariant data = option().toMap().value("enum");
+
+    switch (data.type())
+    {
+        case QVariant::Map: return data.toMap().value(QString::number(index));
+        case QVariant::List: return data.toList().value(index);
+        default: return QVariant();
+    }
 }
