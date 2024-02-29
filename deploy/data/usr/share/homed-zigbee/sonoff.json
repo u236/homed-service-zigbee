@@ -49,7 +49,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
     }
   ],
 

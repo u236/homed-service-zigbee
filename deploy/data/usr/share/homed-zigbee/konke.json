@@ -45,14 +45,14 @@
       "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
       "properties":     ["batteryPercentage", "konkeButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
     },
     {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
       "modelNames":     ["3AFE241000040002"],
       "properties":     ["batteryPercentage", "scene"],
       "exposes":        ["battery", "scene"],
-      "options":        {"scene": {"name": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}}},
+      "options":        {"scene": {"enum": {"241": "hexagon", "242": "square", "243": "triangle", "244": "circle"}}},
       "endpointId":     1
     },
     {

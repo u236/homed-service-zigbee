@@ -1011,7 +1011,7 @@
       "properties":     ["coverPosition", "tuyaCoverSwitch"],
       "actions":        ["coverStatus", "coverPosition", "tuyaCoverSwitch"],
       "exposes":        ["cover", "event", "calibration", "reverse"],
-      "options":        {"event": {"trigger": ["open", "stop", "close"]}}
+      "options":        {"event": {"enum": ["open", "stop", "close"]}}
     },
     {
       "description":    "TUYA TS0001/TS0011 Gas/Water Valve Motor",
@@ -1121,7 +1121,7 @@
       "modelNames":     ["TS0041"],
       "properties":     ["batteryPercentage", "tuyaButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}, "checkTransactionId": true, "tuyaMagic": true}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}, "checkTransactionId": true, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0042 2-Button Wireless Switch",
@@ -1135,7 +1135,7 @@
       "modelNames":     ["TS0042"],
       "properties":     ["tuyaButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2]
     },
     {
@@ -1150,7 +1150,7 @@
       "modelNames":     ["TS0043"],
       "properties":     ["tuyaButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2, 3]
     },
     {
@@ -1165,7 +1165,7 @@
       "modelNames":     ["TS0044"],
       "properties":     ["tuyaButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2, 3, 4]
     },
     {
@@ -1176,7 +1176,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"trigger": ["singleClick", "doubleClick", "hold"]}, "tuyaMagic": true}
+      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"enum": ["singleClick", "doubleClick", "hold"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVK-AA",
@@ -1186,7 +1186,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"trigger": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}, "tuyaMagic": true}
+      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"enum": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}, "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS004F 4-Button Wireless Switch",
@@ -1203,7 +1203,7 @@
       "properties":     ["tuyaButtonAction"],
       "bindings":       ["status"],
       "exposes":        ["action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "hold"]}},
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2, 3, 4]
     },
     {

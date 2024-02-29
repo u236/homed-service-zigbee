@@ -162,7 +162,7 @@
       "properties":     ["statusAction", "levelAction", "scene"],
       "bindings":       ["status", "level", "scene"],
       "exposes":        ["action", "scene"],
-      "options":        {"action": {"trigger": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}},
+      "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}},
       "endpointId":     [1, 2, 3, 4]
     }
   ],
@@ -234,7 +234,7 @@
       "modelNames":     ["ptvo.switch-zr02"],
       "properties":     ["ptvoButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"trigger": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
       "endpointId":     1
     },
     {

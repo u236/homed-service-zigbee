@@ -415,12 +415,12 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
 void Properties::Scene::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
-    QVariant scene = option().toMap().value("name").toMap().value(QString::number(command->sceneId));
+    QVariant name = option().toMap().value("enum").toMap().value(QString::number(command->sceneId));
 
     if (commandId != 0x05)
         return;
 
-    m_value = scene.isValid() ? scene : command->sceneId;
+    m_value = name.isValid() ? name : command->sceneId;
 }
 
 void Properties::StatusAction::parseCommand(quint16, quint8 commandId, const QByteArray &)
