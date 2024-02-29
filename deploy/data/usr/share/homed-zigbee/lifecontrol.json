@@ -31,9 +31,18 @@
     {
       "description":    "Life Control Air Quality Sensor MCLH-08",
       "modelNames":     ["VOC_Sensor"],
-      "properties":     ["batteryPercentage", "lifeControlAirQuality"],
+      "properties":     ["batteryPercentage", "customAttributes"],
       "exposes":        ["battery", "temperature", "humidity", "eco2", "voc"],
-      "options":        {"battery": {"undivided": true}}
+      "options":        {
+                          "customAttributes":
+                          {
+                            "temperature":  {"type": "value", "clusterId": 1026, "attributeId": 0, "dataType": 41, "divider": 100},
+                            "humidity":     {"type": "value", "clusterId": 1026, "attributeId": 1, "dataType": 41, "divider": 100},
+                            "eco2":         {"type": "value", "clusterId": 1026, "attributeId": 2, "dataType": 41},
+                            "voc":          {"type": "value", "clusterId": 1026, "attributeId": 3, "dataType": 41}
+                          },
+                          "battery": {"undivided": true}
+                        }
     }
   ],
 

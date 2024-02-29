@@ -229,12 +229,21 @@
     {
       "description":    "Woolley 13A Smart Plug BSD29",
       "modelNames":     ["CK-BL702-SWP-01(7020)"],
-      "properties":     ["status", "woolleySmartPlug"],
+      "properties":     ["status", "customAttributes"],
       "actions":        ["status"],
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerSource": 1}
+      "options":        {
+                          "customAttributes":
+                          {
+                            "current":  {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
+                            "voltage":  {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
+                            "power":    {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 35, "divider": 1000}
+                          },
+                          "powerSource": 1,
+                          "switch": "outlet"
+                        }
     }
   ],
 

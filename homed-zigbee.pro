@@ -9,7 +9,6 @@ HEADERS += \
     actions/custom.h \
     actions/efekta.h \
     actions/lumi.h \
-    actions/other.h \
     actions/ptvo.h \
     actions/tuya.h \
     adapter.h \
@@ -26,7 +25,6 @@ HEADERS += \
     properties/ias.h \
     properties/ikea.h \
     properties/lumi.h \
-    properties/other.h \
     properties/ptvo.h \
     properties/tuya.h \
     property.h \
@@ -44,7 +42,6 @@ SOURCES += \
     actions/hue.cpp \
     actions/hue.h \
     actions/lumi.cpp \
-    actions/other.cpp \
     actions/ptvo.cpp \
     actions/tuya.cpp \
     adapter.cpp \
@@ -61,7 +58,6 @@ SOURCES += \
     properties/ias.cpp \
     properties/ikea.cpp \
     properties/lumi.cpp \
-    properties/other.cpp \
     properties/ptvo.cpp \
     properties/tuya.cpp \
     property.cpp \

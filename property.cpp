@@ -5,7 +5,6 @@
 #include "properties/ias.h"
 #include "properties/ikea.h"
 #include "properties/lumi.h"
-#include "properties/other.h"
 #include "properties/ptvo.h"
 #include "properties/tuya.h"
 
@@ -112,12 +111,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::ButtonAction>                ("ptvoButtonActionProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>                ("ptvoSwitchActionProperty");
     qRegisterMetaType <PropertiesPTVO::SerialData>                  ("ptvoSerialDataProperty");
-
-    qRegisterMetaType <PropertiesOther::KonkeButtonAction>          ("konkeButtonActionProperty");
-    qRegisterMetaType <PropertiesOther::SonoffButtonAction>         ("sonoffButtonActionProperty");
-    qRegisterMetaType <PropertiesOther::LifeControlAirQuality>      ("lifeControlAirQualityProperty");
-    qRegisterMetaType <PropertiesOther::PerenioSmartPlug>           ("perenioSmartPlugProperty");
-    qRegisterMetaType <PropertiesOther::WoolleySmartPlug>           ("woolleySmartPlugProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)

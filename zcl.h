@@ -105,7 +105,6 @@
 #define CLUSTER_TOUCHLINK                           0x1000
 
 #define CLUSTER_BYUN                                0x040A
-#define CLUSTER_WOOLLEY                             0xFC11
 #define CLUSTER_PERENIO                             0xFC7B
 #define CLUSTER_LUMI                                0xFCC0
 

@@ -2,7 +2,6 @@
 #include "actions/efekta.h"
 #include "actions/hue.h"
 #include "actions/lumi.h"
-#include "actions/other.h"
 #include "actions/ptvo.h"
 #include "actions/tuya.h"
 #include "device.h"
@@ -67,8 +66,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
-
-    qRegisterMetaType <ActionsOther::PerenioSmartPlug>          ("perenioSmartPlugAction");
 }
 
 Property ActionObject::endpointProperty(const QString &name)

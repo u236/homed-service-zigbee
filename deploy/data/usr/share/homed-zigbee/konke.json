@@ -43,9 +43,9 @@
     {
       "description":    "Konke Wireless Button 2AJZ4KPKEY",
       "modelNames":     ["3AFE170100510001", "3AFE280100510001"],
-      "properties":     ["batteryPercentage", "konkeButtonAction"],
+      "properties":     ["batteryPercentage", "customAttributes"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
+      "options":        {"customAttributes": {"action": {"type": "enum", "clusterId": 6, "attributeId": 0, "dataType": 32}}, "action": {"enum": {"128": "singleClick", "129": "doubleClick", "130": "hold"}}}
     },
     {
       "description":    "Konke Wireless Scene Switch KK-TQ-J01W",
