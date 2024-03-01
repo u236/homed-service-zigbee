@@ -243,7 +243,7 @@
       "bindings":       ["status"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory", "switchType"],
       "options":        {
-                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 293, "dataType": 32, "action": true}},
+                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
                           "switchType": {"enum": {"1": "toggle", "2": "momentary"}},
                           "temperature": {"diagnostic": true}
                         },
@@ -554,7 +554,7 @@
       "actions":        ["customAttributes"],
       "exposes":        ["battery", "switchType"],
       "options":        {
-                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
+                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 293, "dataType": 32, "action": true}},
                           "switchType": {"enum": {"1": "momentary", "2": "multifunction"}}
                         },
       "endpointId":     1
