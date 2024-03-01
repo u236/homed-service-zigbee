@@ -203,12 +203,23 @@
     {
       "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC",
       "modelNames":     ["LYWSD03MMC"],
-      "properties":     ["batteryPercentage", "temperature", "humidity", "displayMode"],
-      "actions":        ["displayMode"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "displayMode", "customAttributes"],
+      "actions":        ["displayMode", "customAttributes"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity", "displayMode"],
-      "options":        {"displayMode": {"enum": ["celsius", "fahrenheit"]}}
+      "exposes":        ["battery", "temperature", "humidity", "enableDisplay", "showSmiley", "displayMode"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "showSmiley":         {"type": "bool",  "clusterId": 516,  "attributeId": 16, "dataType": 16, "action": true},
+                            "enableDisplay":      {"type": "bool",  "clusterId": 516,  "attributeId": 17, "dataType": 16, "action": true},
+                            "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 16, "dataType": 41, "divider": 100, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 1029, "attributeId": 16, "dataType": 41, "divider": 100, "action": true}
+                          },
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
+                          "humidityOffset": {"min": -50, "max": 50},
+                          "displayMode": {"enum": ["celsius", "fahrenheit"]}
+                        }
     }
   ],
 
