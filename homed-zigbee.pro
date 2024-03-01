@@ -21,7 +21,6 @@ HEADERS += \
     properties/common.h \
     properties/custom.h \
     properties/efekta.h \
-    properties/hue.h \
     properties/ias.h \
     properties/ikea.h \
     properties/lumi.h \
@@ -39,8 +38,6 @@ SOURCES += \
     actions/common.cpp \
     actions/custom.cpp \
     actions/efekta.cpp \
-    actions/hue.cpp \
-    actions/hue.h \
     actions/lumi.cpp \
     actions/ptvo.cpp \
     actions/tuya.cpp \
@@ -54,7 +51,6 @@ SOURCES += \
     properties/common.cpp \
     properties/custom.cpp \
     properties/efekta.cpp \
-    properties/hue.cpp \
     properties/ias.cpp \
     properties/ikea.cpp \
     properties/lumi.cpp \

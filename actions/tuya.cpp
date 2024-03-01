@@ -255,18 +255,6 @@ QByteArray ActionsTUYA::IndicatorMode::request(const QString &, const QVariant &
     return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }
 
-QByteArray ActionsTUYA::SensitivityMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"low", "medium", "high"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-}
-
-QByteArray ActionsTUYA::TimeoutMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"30s", "60s", "120s"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-}
-
 QByteArray ActionsTUYA::SwitchType::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"toggle", "static", "momentary"}, data);

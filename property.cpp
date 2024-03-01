@@ -1,7 +1,6 @@
 #include "properties/byun.h"
 #include "properties/common.h"
 #include "properties/efekta.h"
-#include "properties/hue.h"
 #include "properties/ias.h"
 #include "properties/ikea.h"
 #include "properties/lumi.h"
@@ -56,9 +55,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesByun::GasSensor>                   ("byunGasSensorProperty");
     qRegisterMetaType <PropertiesByun::SmokeSensor>                 ("byunSmokeSensorProperty");
 
-    qRegisterMetaType <PropertiesHUE::IndicatorMode>                ("hueIndicatorModeProperty");
-    qRegisterMetaType <PropertiesHUE::SensitivityMode>              ("hueSensitivityModeProperty");
-
     qRegisterMetaType <PropertiesIKEA::Occupancy>                   ("ikeaOccupancyProperty");
     qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
     qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
@@ -67,10 +63,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Basic>                       ("lumiBasicProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonMode>                  ("lumiButtonModeProperty");
     qRegisterMetaType <PropertiesLUMI::Contact>                     ("lumiContactProperty");
-    qRegisterMetaType <PropertiesLUMI::Interlock>                   ("lumiInterlockProperty");
     qRegisterMetaType <PropertiesLUMI::Power>                       ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                       ("lumiCoverProperty");
-    qRegisterMetaType <PropertiesLUMI::Illuminance>                 ("lumiIlluminanceProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>                ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>                ("lumiSwitchActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>                ("lumiCubeRotationProperty");
@@ -86,8 +80,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::ChildLock>                   ("tuyaChildLockProperty");
     qRegisterMetaType <PropertiesTUYA::OperationMode>               ("tuyaOperationModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>               ("tuyaIndicatorModeProperty");
-    qRegisterMetaType <PropertiesTUYA::SensitivityMode>             ("tuyaSensitivityModeProperty");
-    qRegisterMetaType <PropertiesTUYA::TimeoutMode>                 ("tuyaTimeoutModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchType>                  ("tuyaSwitchTypeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>               ("tuyaPowerOnStatusProperty");
     qRegisterMetaType <PropertiesTUYA::ButtonAction>                ("tuyaButtonActionProperty");

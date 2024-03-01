@@ -306,32 +306,6 @@ void PropertiesTUYA::IndicatorMode::parseAttribte(quint16, quint16 attributeId, 
     }
 }
 
-void PropertiesTUYA::SensitivityMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0013)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "low"; break;
-        case 0x01: m_value = "medium"; break;
-        case 0x02: m_value = "high"; break;
-    }
-}
-
-void PropertiesTUYA::TimeoutMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0xF001)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "30s"; break;
-        case 0x01: m_value = "60s"; break;
-        case 0x02: m_value = "120s"; break;
-    }
-}
-
 void PropertiesTUYA::SwitchType::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0xD030)

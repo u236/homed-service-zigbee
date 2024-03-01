@@ -1063,12 +1063,20 @@
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor",
       "modelNames":     ["_TZ3000_6ygjfyll", "_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_fwxuzcf4", "_TZ3040_msl6wxk9"],
-      "properties":     ["batteryPercentage", "iasOccupancy", "tuyaSensitivityMode", "tuyaTimeoutMode"],
-      "actions":        ["tuyaSensitivityMode", "tuyaTimeoutMode"],
+      "properties":     ["batteryPercentage", "iasOccupancy", "customAttributes"],
+      "actions":        ["customAttributes"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy", "batteryLow", "tamper", "sensitivityMode", "timeoutMode"],
-      "options":        {"sensitivityMode": {"enum": ["low", "medium", "high"]}, "timeoutMode": {"enum": ["30s", "60s", "120s"]}}
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sensitivityMode":  {"type": "enum", "clusterId": 1280, "attributeId": 19,    "dataType": 32, "action": true},
+                            "timeoutMode":      {"type": "enum", "clusterId": 1280, "attributeId": 61441, "dataType": 32, "action": true}
+                          },
+                          "sensitivityMode": {"enum": ["low", "medium", "high"]},
+                          "timeoutMode": {"enum": ["30s", "60s", "120s"]}
+                        }
     },
     {
       "description":    "TUYA TS0202 Motion Sensor with Button",

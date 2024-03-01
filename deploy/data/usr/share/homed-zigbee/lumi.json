@@ -4,14 +4,24 @@
     {
       "description":    "Aqara E1 Radiator Thermostat SRTS-A01",
       "modelNames":     ["lumi.airrtc.agl001"],
-      "properties":     ["thermostat", "lumiData"],
-      "actions":        ["thermostat", "lumiThermostat"],
+      "properties":     ["thermostat", "customAttributes"],
+      "actions":        ["thermostat", "customAttributes"],
       "exposes":        ["battery", "thermostat", "windowOpen", "windowDetection", "childLock", "awayTemperature", "sensorType"],
       "options":        {
-                          "systemMode": {"enum": ["off", "heat"]},
-                          "operationMode": {"enum": ["manual", "away", "program"]},
+                          "customAttributes":
+                          {
+                            "systemMode":        {"type": "enum",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 625, "dataType": 32, "action": true},
+                            "operationMode":     {"type": "enum",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 626, "dataType": 32, "action": true},
+                            "windowDetection":   {"type": "bool",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 627, "dataType": 32, "action": true},
+                            "childLock":         {"type": "bool",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 631, "dataType": 32, "action": true},
+                            "awayTemperature":   {"type": "value", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 633, "dataType": 35, "divider": 100, "action": true},
+                            "windowOpen":        {"type": "bool",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 634, "dataType": 32},
+                            "sensorType":        {"type": "enum",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 638, "dataType": 32, "action": true}
+                          },
                           "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
                           "temperatureOffset": {"min": -2.5, "max": 2.5, "step" : 0.1},
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "operationMode": {"enum": ["manual", "away", "program"]},
                           "awayTemperature": {"min": 5, "max": 30, "step": 0.5},
                           "sensorType": {"enum": ["internal", "external"]}
                         }
@@ -228,11 +238,15 @@
     },
     {
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
-      "properties":     ["status", "lumiData"],
-      "actions":        ["status", "lumiSwitchType", "lumiSwitchStatusMemory"],
+      "properties":     ["status", "lumiData", "customAttributes"],
+      "actions":        ["status", "lumiSwitchStatusMemory", "customAttributes"],
       "bindings":       ["status"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "switchType", "statusMemory"],
-      "options":        {"temperature": {"diagnostic": true}, "switchType": {"enum": ["toggle", "momentary"]}},
+      "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory", "switchType"],
+      "options":        {
+                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 293, "dataType": 32, "action": true}},
+                          "switchType": {"enum": {"1": "toggle", "2": "momentary"}},
+                          "temperature": {"diagnostic": true}
+                        },
       "endpointId":     1
     },
     {
@@ -243,10 +257,13 @@
     {
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
       "modelNames":     ["lumi.relay.c2acn01"],
-      "properties":     ["lumiBasic", "lumiPower", "lumiInterlock"],
-      "actions":        ["lumiInterlock"],
+      "properties":     ["lumiBasic", "lumiPower", "customAttributes"],
+      "actions":        ["customAttributes"],
       "exposes":        ["energy", "voltage", "current", "power", "temperature", "interlock"],
-      "options":        {"temperature": {"diagnostic": true}},
+      "options":        {
+                          "customAttributes": {"interlock": {"type": "bool", "clusterId": 16, "manufacturerCode": 4447, "attributeId": 65286, "dataType": 16, "action": true}},
+                          "temperature": {"diagnostic": true}
+                        },
       "endpointId":     1
     },
     {
@@ -350,9 +367,9 @@
     {
       "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
       "modelNames":     ["lumi.sensor_motion.aq2"],
-      "properties":     ["occupancy", "lumiBasic", "lumiIlluminance"],
+      "properties":     ["occupancy", "illuminance", "lumiBasic"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
-      "options":        {"occupancyTimeout": 60, "temperature": {"diagnostic": true}}
+      "options":        {"occupancyTimeout": 60, "illuminance": {"raw": true}, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara P1 Motion Sensor MS-S02",
@@ -533,10 +550,13 @@
     },
     {
       "modelNames":     ["lumi.remote.acn004"],
-      "properties":     ["lumiData"],
-      "actions":        ["lumiSwitchType"],
+      "properties":     ["customAttributes"],
+      "actions":        ["customAttributes"],
       "exposes":        ["battery", "switchType"],
-      "options":        {"switchType": {"enum": ["momentary", "multifunction"]}},
+      "options":        {
+                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
+                          "switchType": {"enum": {"1": "momentary", "2": "multifunction"}}
+                        },
       "endpointId":     1
     },
     {

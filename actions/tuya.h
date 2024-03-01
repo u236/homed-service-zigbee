@@ -120,26 +120,6 @@ namespace ActionsTUYA
 
     };
 
-    class SensitivityMode : public ActionObject
-    {
-
-    public:
-
-        SensitivityMode(void) : ActionObject("sensitivityMode", CLUSTER_IAS_ZONE, 0x0000, 0x0013) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class TimeoutMode : public ActionObject
-    {
-
-    public:
-
-        TimeoutMode(void) : ActionObject("timeoutMode", CLUSTER_IAS_ZONE, 0x0000, 0xF001) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class SwitchType : public ActionObject
     {
 

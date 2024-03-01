@@ -9,7 +9,16 @@
       "bindings":       ["battery", "occupancy", "illuminance", "temperature"],
       "reportings":     ["batteryPercentage", "occupancy", "illuminance", "temperature"],
       "exposes":        ["battery", "occupancy", "illuminance", "temperature", "occupancyTimeout", "sensitivityMode", "indicatorMode"],
-      "options":        {"occupancyTimeout": {"min": 10, "max": 7200}, "sensitivityMode": {"enum": ["low", "medium", "high"]}, "indicatorMode": {"enum": ["off", "on"]}},
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicatorMode":    {"type": "enum", "clusterId": 0,    "manufacturerCode": 4107, "attributeId": 51, "dataType": 16, "action": true},
+                            "sensitivityMode":  {"type": "enum", "clusterId": 1030, "manufacturerCode": 4107, "attributeId": 48, "dataType": 32, "action": true}
+                          },
+                          "occupancyTimeout": {"min": 10, "max": 7200},
+                          "indicatorMode": {"enum": ["off", "on"]},
+                          "sensitivityMode": {"enum": ["low", "medium", "high"]}
+                        },
       "endpointId":     2
     }
   ],

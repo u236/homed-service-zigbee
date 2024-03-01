@@ -271,7 +271,7 @@ void Properties::Illuminance::parseAttribte(quint16, quint16 attributeId, const 
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = option().toString() == "raw" ? qFromLittleEndian(value) : static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
+    m_value = option().toMap().value("raw").toBool() ? qFromLittleEndian(value) : static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
 }
 
 void Properties::Temperature::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

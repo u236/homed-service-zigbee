@@ -1,6 +1,5 @@
 #include "actions/common.h"
 #include "actions/efekta.h"
-#include "actions/hue.h"
 #include "actions/lumi.h"
 #include "actions/ptvo.h"
 #include "actions/tuya.h"
@@ -25,19 +24,13 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorTemperature>               ("colorTemperatureAction");
     qRegisterMetaType <Actions::OccupancyTimeout>               ("occupancyTimeoutAction");
 
-    qRegisterMetaType <ActionsHUE::IndicatorMode>               ("hueIndicatorModeAction");
-    qRegisterMetaType <ActionsHUE::SensitivityMode>             ("hueSensitivityModeAction");
-
-    qRegisterMetaType <ActionsLUMI::Thermostat>                 ("lumiThermostatAction");
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");
     qRegisterMetaType <ActionsLUMI::OperationMode>              ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::IndicatorMode>              ("lumiIndicatorModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchMode>                 ("lumiSwitchModeAction");
-    qRegisterMetaType <ActionsLUMI::SwitchType>                 ("lumiSwitchTypeAction");
     qRegisterMetaType <ActionsLUMI::SwitchStatusMemory>         ("lumiSwitchStatusMemoryAction");
     qRegisterMetaType <ActionsLUMI::LightStatusMemory>          ("lumiLightStatusMemoryAction");
-    qRegisterMetaType <ActionsLUMI::Interlock>                  ("lumiInterlockAction");
     qRegisterMetaType <ActionsLUMI::CoverPosition>              ("lumiCoverPositionAction");
     qRegisterMetaType <ActionsLUMI::VibrationSensitivity>       ("lumiVibrationSensitivityAction");
 
@@ -50,8 +43,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::OperationMode>              ("tuyaOperationModeAction");
     qRegisterMetaType <ActionsTUYA::IndicatorMode>              ("tuyaIndicatorModeAction");
-    qRegisterMetaType <ActionsTUYA::SensitivityMode>            ("tuyaSensitivityModeAction");
-    qRegisterMetaType <ActionsTUYA::TimeoutMode>                ("tuyaTimeoutModeAction");
     qRegisterMetaType <ActionsTUYA::SwitchType>                 ("tuyaSwitchTypeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
 

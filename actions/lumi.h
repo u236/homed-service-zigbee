@@ -6,16 +6,6 @@
 
 namespace ActionsLUMI
 {
-    class Thermostat : public ActionObject
-    {
-
-    public:
-
-        Thermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"systemMode", "operationMode", "windowDetection", "childLock", "awayTemperature", "sensorType"}) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class PresenceSensor : public ActionObject
     {
 
@@ -66,16 +56,6 @@ namespace ActionsLUMI
 
     };
 
-    class SwitchType : public ActionObject
-    {
-
-    public:
-
-        SwitchType(void) : ActionObject("switchType", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class SwitchStatusMemory : public ActionObject
     {
 
@@ -92,16 +72,6 @@ namespace ActionsLUMI
     public:
 
         LightStatusMemory(void) : ActionObject("statusMemory", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, 0xFF19) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class Interlock : public ActionObject
-    {
-
-    public:
-
-        Interlock(void) : ActionObject("interlock", CLUSTER_BINARY_OUTPUT, MANUFACTURER_CODE_LUMI, 0xFF06) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

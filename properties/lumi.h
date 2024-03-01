@@ -50,16 +50,6 @@ namespace PropertiesLUMI
 
     };
 
-    class Interlock : public PropertyObject
-    {
-
-    public:
-
-        Interlock(void) : PropertyObject("interlock", CLUSTER_BINARY_OUTPUT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class Power : public PropertyObject
     {
 
@@ -76,16 +66,6 @@ namespace PropertiesLUMI
     public:
 
         Cover(void) : PropertyObject("cover", CLUSTER_ANALOG_OUTPUT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class Illuminance : public PropertyObject
-    {
-
-    public:
-
-        Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

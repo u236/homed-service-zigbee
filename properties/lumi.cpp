@@ -93,18 +93,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
-        case 0x000A:
-        case 0x0125:
-        {
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x01: map.insert("switchType", dataPoint == 0x000A ? "toggle" : "momentary"); break;
-                case 0x02: map.insert("switchType", dataPoint == 0x000A ? "momentary" : "multifunction"); break;
-            }
-
-            break;
-        }
-
         case 0x0065:
         case 0x0142:
         {
@@ -277,78 +265,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
-        case 0x0271:
-        {
-            if (modelName() != "lumi.airrtc.agl001")
-                break;
-
-            map.insert("systemMode", data.at(0) ? "heat" : "off");
-            break;
-        }
-
-        case 0x0272:
-        {
-            if (modelName() != "lumi.airrtc.agl001")
-                break;
-
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x00: map.insert("operationMode", "manual"); break;
-                case 0x01: map.insert("operationMode", "away"); break;
-                case 0x02: map.insert("operationMode", "program"); break;
-            }
-            
-            break;
-        }
-
-        case 0x0273:
-        {
-            if (modelName() != "lumi.airrtc.agl001")
-                break;
-            
-            map.insert("windowDetection", data.at(0) ? true : false);
-            break;
-        }
-
-        case 0x0277:
-        {
-            if (modelName() != "lumi.airrtc.agl001")
-                break;
-            
-            map.insert("childLock", data.at(0) ? true : false);
-            break;
-        }
-
-        case 0x0279:
-        {
-            quint32 value = 0;
-
-            if (modelName() != "lumi.airrtc.agl001")
-                break;
-
-            memcpy(&value, data.constData(), sizeof(value));
-            map.insert("awayTemperature", qFromLittleEndian(value) / 100.0);
-            break;
-        }
-
-        case 0x027A:
-        {
-            if (modelName() != "lumi.airrtc.agl001")
-                break;
-
-            map.insert("windowOpen", data.at(0) ? true : false);
-            break;
-        }
-
-        case 0x027E:
-        {
-            if (modelName() != "lumi.airrtc.agl001")
-                break;
-
-            map.insert("sensorType", data.at(0) ? "external" : "internal");
-            break;
-        }
-
         case 0xFF02:
         {
             quint16 value = 0;
@@ -406,14 +322,6 @@ void PropertiesLUMI::Contact::parseAttribte(quint16, quint16 attributeId, const 
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesLUMI::Interlock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0xFF06)
-        return;
-
-    m_value = data.at(0) ? true : false;
-}
-
 void PropertiesLUMI::Power::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
@@ -422,7 +330,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16, quint16 attributeId, const QB
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = round(qFromLittleEndian(value) * 100) / 100;
+    m_value = qFromLittleEndian(value);
 }
 
 void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -443,18 +351,6 @@ void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QB
     map.insert("position", value);
     m_value = map;
 }
-
-void PropertiesLUMI::Illuminance::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    quint16 value = 0;
-
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value);
-}
-
 
 void PropertiesLUMI::ButtonAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
