@@ -207,7 +207,7 @@
       "actions":        ["displayMode", "customAttributes"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity", "enableDisplay", "showSmiley", "displayMode"],
+      "exposes":        ["battery", "temperature", "humidity", "enableDisplay", "showSmiley", "displayMode", "temperatureOffset", "humidityOffset"],
       "options":        {
                           "customAttributes":
                           {
