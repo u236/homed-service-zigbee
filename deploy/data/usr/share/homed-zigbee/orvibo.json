@@ -16,7 +16,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy", "batteryLow", "tamper"],
-      "options":        {"occupancyTimeout": 60}
+      "options":        {"occupancyResetTimeout": 60}
     },
     {
       "description":    "ORVIBO Water Leak Sensor SW20, SW21 or SW30",

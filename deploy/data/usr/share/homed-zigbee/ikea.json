@@ -62,7 +62,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy"],
-      "options":        {"battery": {"undivided": true}, "occupancyTimeout": true}
+      "options":        {"battery": {"undivided": true}, "occupancyResetTimeout": true}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1743",

@@ -307,7 +307,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
-            QVariant timeout = device->options().value(QString(property->name()).append("Timeout"));
+            QVariant timeout = device->options().value(QString(property->name()).append("ResetTimeout"));
 
             property->setParent(endpoint.data());
             property->setMultiple(multiple);

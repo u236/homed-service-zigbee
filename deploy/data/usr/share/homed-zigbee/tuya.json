@@ -1058,7 +1058,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy", "batteryLow", "tamper"],
-      "options":        {"occupancyTimeout": 60}
+      "options":        {"occupancyResetTimeout": 60}
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor",

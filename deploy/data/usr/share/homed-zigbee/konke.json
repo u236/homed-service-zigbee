@@ -18,7 +18,7 @@
       "modelNames":     ["3AFE07010402100D", "3AFE08010402100D", "3AFE14010402000D", "3AFE27010402000D", "3AFE28010402000D"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "exposes":        ["battery", "occupancy", "batteryLow", "tamper"],
-      "options":        {"occupancyTimeout": 120}
+      "options":        {"occupancyResetTimeout": 120}
     },
     {
       "description":    "Konke Water Leak Sensor LH07321 or KK-WA-J01W",

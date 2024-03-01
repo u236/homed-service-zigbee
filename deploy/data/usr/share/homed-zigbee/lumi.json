@@ -362,21 +362,21 @@
       "modelNames":     ["lumi.sensor_motion"],
       "properties":     ["occupancy", "lumiBasic"],
       "exposes":        ["battery", "occupancy"],
-      "options":        {"occupancyTimeout": 60}
+      "options":        {"occupancyResetTimeout": 60}
     },
     {
       "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
       "modelNames":     ["lumi.sensor_motion.aq2"],
       "properties":     ["occupancy", "illuminance", "lumiBasic"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
-      "options":        {"occupancyTimeout": 60, "illuminance": {"raw": true}, "temperature": {"diagnostic": true}}
+      "options":        {"occupancyResetTimeout": 60, "illuminance": {"raw": true}, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara P1 Motion Sensor MS-S02",
       "modelNames":     ["lumi.motion.ac02"],
       "properties":     ["lumiData"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
-      "options":        {"lumiDataTimeout": 60, "temperature": {"diagnostic": true}}
+      "options":        {"lumiDataResetTimeout": 60, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara FP1 Presence Detector RTCZCGQ11LM",
@@ -392,7 +392,7 @@
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
       "exposes":        ["battery", "event", "vibration", "temperature", "sensitivityMode"],
-      "options":        {"event": {"enum": ["vibration", "tilt", "drop"]}, "vibrationTimeout": 60, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"]}}
+      "options":        {"event": {"enum": ["vibration", "tilt", "drop"]}, "vibrationResetTimeout": 60, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"]}}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM or SJCGQ12LM",
