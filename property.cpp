@@ -1,9 +1,8 @@
-#include "properties/byun.h"
 #include "properties/common.h"
 #include "properties/efekta.h"
 #include "properties/ias.h"
-#include "properties/ikea.h"
 #include "properties/lumi.h"
+#include "properties/other.h"
 #include "properties/ptvo.h"
 #include "properties/tuya.h"
 
@@ -52,13 +51,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIAS::Smoke>                        ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>                    ("iasWaterLeakProperty");
 
-    qRegisterMetaType <PropertiesByun::GasSensor>                   ("byunGasSensorProperty");
-    qRegisterMetaType <PropertiesByun::SmokeSensor>                 ("byunSmokeSensorProperty");
-
-    qRegisterMetaType <PropertiesIKEA::Occupancy>                   ("ikeaOccupancyProperty");
-    qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
-    qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
-
     qRegisterMetaType <PropertiesLUMI::Data>                        ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::Basic>                       ("lumiBasicProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonMode>                  ("lumiButtonModeProperty");
@@ -103,6 +95,13 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::ButtonAction>                ("ptvoButtonActionProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>                ("ptvoSwitchActionProperty");
     qRegisterMetaType <PropertiesPTVO::SerialData>                  ("ptvoSerialDataProperty");
+
+    qRegisterMetaType <PropertiesByun::GasSensor>                   ("byunGasSensorProperty");
+    qRegisterMetaType <PropertiesByun::SmokeSensor>                 ("byunSmokeSensorProperty");
+
+    qRegisterMetaType <PropertiesIKEA::Occupancy>                   ("ikeaOccupancyProperty");
+    qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
+    qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)

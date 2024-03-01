@@ -1,5 +1,5 @@
-#ifndef ACTIONS_CUSTOM_H
-#define ACTIONS_CUSTOM_H
+#ifndef ACTIONS_OTHER_H
+#define ACTIONS_OTHER_H
 
 #include "action.h"
 

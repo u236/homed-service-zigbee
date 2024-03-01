@@ -1,9 +1,9 @@
 #include <QFile>
 #include "actions/common.h"
-#include "actions/custom.h"
+#include "actions/other.h"
 #include "properties/common.h"
-#include "properties/custom.h"
 #include "properties/ias.h"
+#include "properties/other.h"
 #include "controller.h"
 #include "logger.h"
 

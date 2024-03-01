@@ -6,9 +6,9 @@ include(../homed-common/homed-gpio.pri)
 HEADERS += \
     action.h \
     actions/common.h \
-    actions/custom.h \
     actions/efekta.h \
     actions/lumi.h \
+    actions/other.h \
     actions/ptvo.h \
     actions/tuya.h \
     adapter.h \
@@ -17,13 +17,11 @@ HEADERS += \
     device.h \
     ezsp.h \
     poll.h \
-    properties/byun.h \
     properties/common.h \
-    properties/custom.h \
     properties/efekta.h \
     properties/ias.h \
-    properties/ikea.h \
     properties/lumi.h \
+    properties/other.h \
     properties/ptvo.h \
     properties/tuya.h \
     property.h \
@@ -36,9 +34,9 @@ HEADERS += \
 SOURCES += \
     action.cpp \
     actions/common.cpp \
-    actions/custom.cpp \
     actions/efekta.cpp \
     actions/lumi.cpp \
+    actions/other.cpp \
     actions/ptvo.cpp \
     actions/tuya.cpp \
     adapter.cpp \
@@ -47,13 +45,11 @@ SOURCES += \
     device.cpp \
     ezsp.cpp \
     poll.cpp \
-    properties/byun.cpp \
     properties/common.cpp \
-    properties/custom.cpp \
     properties/efekta.cpp \
     properties/ias.cpp \
-    properties/ikea.cpp \
     properties/lumi.cpp \
+    properties/other.cpp \
     properties/ptvo.cpp \
     properties/tuya.cpp \
     property.cpp \

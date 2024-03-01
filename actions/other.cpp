@@ -1,5 +1,5 @@
 #include <QtEndian>
-#include "custom.h"
+#include "other.h"
 #include "zcl.h"
 
 QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &data)
