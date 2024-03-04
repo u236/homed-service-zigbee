@@ -19,7 +19,7 @@
       "bindings":       ["status", "level", "color"],
       "reportings":     ["status", "level", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "colorTemperature"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+      "options":        {"light": ["level", "colorTemperature"]}
     },
     {
       "description":    "GS Gas Detector SGMHM-I1",

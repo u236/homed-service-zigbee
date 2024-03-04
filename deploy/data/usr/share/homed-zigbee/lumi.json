@@ -185,7 +185,7 @@
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchMode"],
       "exposes":        ["switch", "switchMode"],
-      "options":        {"switchMode": {"enum": ["relay", "decoupled"]}},
+      "options":        {"switchMode": {"enum": ["decoupled", "relay"]}},
       "endpointId":     [1, 2, 3]
     },
     {
@@ -201,7 +201,7 @@
       "properties":     ["status", "lumiData", "lumiSwitchAction"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick"]}, "temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"]}, "switchMode": {"enum": ["relay", "decoupled"]}}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick"]}, "temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"]}, "switchMode": {"enum": ["decoupled", "relay"]}}
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
@@ -221,7 +221,7 @@
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchMode"],
       "exposes":        ["switch", "switchMode"],
-      "options":        {"switchMode": {"enum": ["relay", "decoupled"]}},
+      "options":        {"switchMode": {"enum": ["decoupled", "relay"]}},
       "endpointId":     [1, 2]
     },
     {
@@ -313,7 +313,7 @@
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}, "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}}
     },
     {
       "description":    "Aqara RGBW Led Controller ZNTGMK11LM",
@@ -321,7 +321,7 @@
       "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "color", "colorTemperature"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+      "options":        {"light": ["level", "color", "colorTemperature"]}
     },
     {
       "description":    "Aqara Curtain Motor SRSC-M01 or ZNCLDJ11LM",
@@ -456,7 +456,6 @@
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status"],
       "exposes":        ["battery", "operationMode"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}},
       "endpointId":     1
     },
     {
@@ -473,7 +472,6 @@
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "exposes":        ["battery", "operationMode"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}},
       "endpointId":     1
     },
     {
@@ -490,7 +488,6 @@
       "actions":        ["lumiOperationMode"],
       "bindings":       ["battery", "status", "level", "color"],
       "exposes":        ["battery", "operationMode"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}},
       "endpointId":     1
     },
     {

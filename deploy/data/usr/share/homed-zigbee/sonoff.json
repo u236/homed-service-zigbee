@@ -75,8 +75,7 @@
       "modelNames":     ["ZBMINI-L", "ZBMINIL2"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
-      "exposes":        ["switch", "powerOnStatus"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}}
+      "exposes":        ["switch", "powerOnStatus"]
     },
     {
       "description":    "Sonoff Motion Sensor SNZB-06P",

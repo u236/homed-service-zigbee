@@ -19,7 +19,7 @@
       "bindings":       ["status", "thermostat"],
       "reportings":     ["status", "thermostat"],
       "exposes":        ["switch", "powerOnStatus", "thermostat"],
-      "options":        {"powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}, "systemMode": {"enum": ["off", "heat"]}, "targetTemperature": {"min": -5, "max": 40, "step": 0.1}}
+      "options":        {"systemMode": {"enum": ["off", "heat"]}, "targetTemperature": {"min": -5, "max": 40, "step": 0.1}}
     },
     {
       "description":    "IKEA Vindriktning Based Air Quality Sensor",
@@ -29,7 +29,7 @@
       "bindings":       ["status", "level", "fan", "co2", "pm25"],
       "reportings":     ["status", "level", "co2", "pm25"],
       "exposes":        ["light", "fanMode", "co2", "pm25"],
-      "options":        {"light": ["level"], "fanMode": {"enum": ["off", "low", "medium", "high"]}}
+      "options":        {"light": ["level"]}
     },
     {
       "description":    "PTVO Firmware Based CO2 Sensor",

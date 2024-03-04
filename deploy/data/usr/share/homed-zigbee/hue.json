@@ -33,7 +33,7 @@
       "bindings":       ["status", "level"],
       "reportings":     ["status", "level"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level"], "powerOnStatus": {"enum": ["on", "off", "toggle", "previous"]}},
+      "options":        {"light": ["level"]},
       "endpointId":     11
     }
   ]

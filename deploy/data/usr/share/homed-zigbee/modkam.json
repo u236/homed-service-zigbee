@@ -108,8 +108,7 @@
       "options":        {
                           "customAttributes": {"action": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33}},
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "255": "release"}},
-                          "switchType": {"enum": ["momentary", "multifunction"]},
-                          "switchMode": {"enum": ["on", "off", "toggle"]}
+                          "switchType": {"enum": {"1": "momentary", "2": "multifunction"}}
                         },
       "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     },
@@ -131,8 +130,7 @@
       "options":        {
                           "customAttributes": {"action": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33}},
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "255": "release"}},
-                          "switchType": {"enum": ["momentary", "multifunction"]},
-                          "switchMode": {"enum": ["on", "off", "toggle"]}
+                          "switchType": {"enum": {"1": "momentary", "2": "multifunction"}}
                         },
       "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
     },
