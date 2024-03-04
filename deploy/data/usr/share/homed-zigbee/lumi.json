@@ -36,7 +36,6 @@
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
       "exposes":        ["buttonMode"],
-      "options":        {"buttonMode": {"enum": ["relay", "decoupled"]}},
       "endpointId":     1
     },
     {
@@ -63,7 +62,6 @@
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
       "exposes":        ["leftMode", "rightMode"],
-      "options":        {"leftMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}, "rightMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}},
       "endpointId":     1
     },
     {
@@ -90,7 +88,6 @@
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
       "exposes":        ["leftMode", "rightMode"],
-      "options":        {"leftMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}, "rightMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}},
       "endpointId":     1
     },
     {
@@ -113,7 +110,6 @@
       "properties":     ["status", "lumiButtonMode"],
       "actions":        ["status", "lumiButtonMode"],
       "exposes":        ["switch", "buttonMode"],
-      "options":        {"buttonMode": {"enum": ["relay", "decoupled"]}},
       "endpointId":     1
     },
     {
@@ -139,7 +135,6 @@
       "properties":     ["lumiButtonMode"],
       "actions":        ["lumiButtonMode"],
       "exposes":        ["leftMode", "rightMode"],
-      "options":        {"leftMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}, "rightMode": {"enum": ["leftRelay", "rightRelay", "decoupled"]}},
       "endpointId":     1
     },
     {
@@ -384,7 +379,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],
       "exposes":        ["event", "occupancy", "temperature", "sensitivityMode", "distanceMode", "detectionMode", "resetPresence"],
-      "options":        {"event": {"enum": ["enter", "leave", "enterLeft", "leaveLeft", "enterRight", "leaveRight", "approach", "absent"]}, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"]}, "detectionMode": {"enum": ["undirected", "directed"]}, "distanceMode": {"enum": ["far", "middle", "near"]}}
+      "options":        {"event": {"enum": ["enter", "leave", "enterLeft", "leaveRight", "enterRight",  "leaveLeft", "approach", "absent"]}, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}}}
     },
     {
       "description":    "Aqara Vibration Sensor DJT11LM",
@@ -392,7 +387,7 @@
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
       "exposes":        ["battery", "event", "vibration", "temperature", "sensitivityMode"],
-      "options":        {"event": {"enum": ["vibration", "tilt", "drop"]}, "vibrationResetTimeout": 60, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": ["low", "medium", "high"]}}
+      "options":        {"event": {"enum": ["vibration", "tilt", "drop"]}, "vibrationResetTimeout": 60, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM or SJCGQ12LM",

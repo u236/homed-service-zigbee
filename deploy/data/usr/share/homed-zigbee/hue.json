@@ -16,8 +16,7 @@
                             "sensitivityMode":  {"type": "enum", "clusterId": 1030, "manufacturerCode": 4107, "attributeId": 48, "dataType": 32, "action": true}
                           },
                           "occupancyTimeout": {"min": 10, "max": 7200},
-                          "indicatorMode": {"enum": ["off", "on"]},
-                          "sensitivityMode": {"enum": ["low", "medium", "high"]}
+                          "indicatorMode": {"enum": ["off", "on"]}
                         },
       "endpointId":     2
     }

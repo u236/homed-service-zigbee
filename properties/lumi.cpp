@@ -98,38 +98,13 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         }
 
         case 0x0066:
-        case 0x010C:
         case 0x0143:
         {
             if (modelName() != "lumi.motion.ac01")
                 break;
 
-            if (dataPoint != 0x0066 ? dataPoint == 0x010C : version() >= 50)
-            {
-                switch (static_cast <quint8> (data.at(0)))
-                {
-                    case 0x01: map.insert("sensitivityMode", "low"); break;
-                    case 0x02: map.insert("sensitivityMode", "medium"); break;
-                    case 0x03: map.insert("sensitivityMode", "high"); break;
-                }
-            }
-            else
-            {
-                switch (static_cast <quint8> (data.at(0)))
-                {
-                    case 0x00: map.insert("event", "enter"); break;
-                    case 0x01: map.insert("event", "leave"); break;
-                    case 0x02: map.insert("event", "enterLeft"); break;
-                    case 0x03: map.insert("event", "leaveRight"); break;
-                    case 0x04: map.insert("event", "enterRight"); break;
-                    case 0x05: map.insert("event", "leaveLeft"); break;
-                    case 0x06: map.insert("event", "approach"); break;
-                    case 0x07: map.insert("event", "absent"); break;
-                }
-
-                map.insert("occupancy", data.at(0) != 0x01 ? true : false);
-            }
-
+            map.insert("event", enumValue(static_cast <quint8> (data.at(0))));
+            map.insert("occupancy", data.at(0) != 0x01 ? true : false);
             break;
         }
 
@@ -139,12 +114,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if (modelName() != "lumi.motion.ac01")
                 break;
 
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x00: map.insert("detectionMode", "undirected"); break;
-                case 0x01: map.insert("detectionMode", "directed"); break;
-            }
-
+            map.insert("detectionMode", enumValue(static_cast <quint8> (data.at(0))));
             break;
         }
 
@@ -154,13 +124,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if (modelName() != "lumi.motion.ac01")
                 break;
 
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x00: map.insert("distanceMode", "far"); break;
-                case 0x01: map.insert("distanceMode", "middle"); break;
-                case 0x02: map.insert("distanceMode", "near"); break;
-            }
-
+            map.insert("distanceMode", enumValue(static_cast <quint8> (data.at(0))));
             break;
         }
 
@@ -215,6 +179,15 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0x00F0:
         {
             map.insert("indicatorMode", enumValue(static_cast <quint8> (data.at(0))));
+            break;
+        }
+
+        case 0x010C:
+        {
+            if (modelName() != "lumi.motion.ac01")
+                break;
+
+            map.insert("sensitivityMode", enumValue(static_cast <quint8> (data.at(0))));
             break;
         }
 

@@ -82,7 +82,6 @@
                             "4":    [{"name": "lightType", "type": "enum", "action": true}]
                           },
                           "status": {"enum": ["off", "on"]},
-                          "lightType": {"enum": ["led", "incandescent", "halogen"]},
                           "light": ["level"],
                           "tuyaMagic": true
                         }
@@ -146,7 +145,6 @@
                           "systemMode": {"enum": ["auto", "heat", "off"]},
                           "comfortTemperature": {"min": 5, "max": 35},
                           "ecoTemperature": {"min": 5, "max": 35},
-                          "weekMode": {"enum": ["5+2", "6+1", "7+0"]},
                           "awayTemperature": {"min": 5, "max": 35},
                           "awayDays": {"min": 0, "max": 100},
                           "heatingStatus": true
@@ -239,7 +237,6 @@
                           "targetTemperature": {"min": 5, "max": 35},
                           "hysteresis": {"min": 0, "max": 5},
                           "temperatureOffset": {"min": -30, "max": 30},
-                          "sensorType": {"enum": ["internal", "both", "external"]},
                           "thermostatProgram": "moes",
                           "heatingStatus": true
                         }
@@ -268,7 +265,6 @@
                           "targetTemperature": {"min": 5, "max": 35},
                           "hysteresis": {"min": 0, "max": 5},
                           "temperatureOffset": {"min": -30, "max": 30},
-                          "sensorType": {"enum": ["internal", "both", "external"]},
                           "thermostatProgram": "moes",
                           "heatingStatus": true
                         }
@@ -315,7 +311,6 @@
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "enum", "action": true}]
                           },
-                          "volumeMode": {"enum": ["low", "medium", "high"]},
                           "duration": {"min": 0, "max": 1800},
                           "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
                           "melody": {"min": 1, "max": 18},
@@ -403,9 +398,7 @@
                             "9":    [{"name": "sensitivityMode", "type": "enum", "action": true}],
                             "10":   [{"name": "timeoutMode", "type": "enum", "action": true}],
                             "12":   [{"name": "illuminance", "type": "value"}]
-                          },
-                          "sensitivityMode": {"enum": ["low", "medium", "high"]},
-                          "timeoutMode": {"enum": ["10s", "30s", "60s", "120s"]}
+                          }
                         }
     },
     {
@@ -481,8 +474,7 @@
                           "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
                           "distanceMax": {"min": 0, "max": 9.5, "step": 0.1},
                           "fadingTime": {"min": 0, "max": 1500, "step": 10},
-                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1},
-                          "radarScene": {"enum": ["default", "bathroom", "bedroom", "sleeping"]}
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1}
                         }
     },
     {
@@ -764,8 +756,6 @@
                           },
                           "operationMode": {"enum": ["tilt", "lift"]},
                           "resetLimits": {"enum": ["true"]},
-                          "setUpperLimit": {"enum": ["start", "stop"]},
-                          "setLowerLimit": {"enum": ["start", "stop"]},
                           "speed": {"min": 1, "max": 255},
                           "cover": "blind"
                         }
@@ -1072,7 +1062,6 @@
                             "sensitivityMode":  {"type": "enum", "clusterId": 1280, "attributeId": 19,    "dataType": 32, "action": true},
                             "timeoutMode":      {"type": "enum", "clusterId": 1280, "attributeId": 61441, "dataType": 32, "action": true}
                           },
-                          "sensitivityMode": {"enum": ["low", "medium", "high"]},
                           "timeoutMode": {"enum": ["30s", "60s", "120s"]}
                         }
     },

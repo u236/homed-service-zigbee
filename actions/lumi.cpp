@@ -3,26 +3,21 @@
 
 QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVariant &data)
 {
-    switch (m_actions.indexOf(name))
+    int index = m_actions.indexOf(name);
+
+    switch (index)
     {
-        case 0: // sensitivityMode
+        case 0 ... 2:
         {
-            qint8 value = listIndex({"low", "medium", "high"}, data) + 1;
-            m_attributes = {0x010C};
-            return value < 1 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-        }
+            qint8 value = static_cast <qint8> (enumIndex(data));
 
-        case 1: // detectionMode
-        {
-            qint8 value = listIndex({"undirected", "directed"}, data);
-            m_attributes = {0x0144};
-            return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-        }
+            switch (index)
+            {
+                case 0: m_attributes = {0x010C}; break; // sensitivityMode
+                case 1: m_attributes = {0x0144}; break; // detectionMode
+                case 2: m_attributes = {0x0146}; break; // distanceMode
+            }
 
-        case 2: // distanceMode
-        {
-            qint8 value = listIndex({"far", "middle", "near"}, data);
-            m_attributes = {0x0146};
             return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
         }
 
