@@ -84,12 +84,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if (!list.contains(modelName()))
                 break;
 
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x00: map.insert("operationMode", "command"); break;
-                case 0x01: map.insert("operationMode", "event"); break;
-            }
-
+            map.insert("operationMode", enumValue(static_cast <quint8> (data.at(0))));
             break;
         }
 
@@ -219,12 +214,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x00F0:
         {
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x00: map.insert("indicatorMode", "default"); break;
-                case 0x01: map.insert("indicatorMode", "inverted"); break;
-            }
-
+            map.insert("indicatorMode", enumValue(static_cast <quint8> (data.at(0))));
             break;
         }
 
@@ -249,12 +239,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if (!m_multiple && list.contains(modelName()))
                 break;
 
-            switch (static_cast <quint8> (data.at(0)))
-            {
-                case 0x00: map.insert("switchMode", "decoupled"); break;
-                case 0x01: map.insert("switchMode", "relay"); break;
-            }
-
+            map.insert("switchMode", enumValue(static_cast <quint8> (data.at(0))));
             break;
         }
 

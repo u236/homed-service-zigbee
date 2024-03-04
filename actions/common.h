@@ -16,36 +16,6 @@ namespace Actions
 
     };
 
-    class PowerOnStatus : public ActionObject
-    {
-
-    public:
-
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x4003) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class SwitchType : public ActionObject
-    {
-
-    public:
-
-        SwitchType(void) : ActionObject("switchType", CLUSTER_SWITCH_CONFIGURATION, 0x0000, 0x0000) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class SwitchMode : public ActionObject
-    {
-
-    public:
-
-        SwitchMode(void) : ActionObject("switchMode", CLUSTER_SWITCH_CONFIGURATION, 0x0000, 0x0010) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class Level : public ActionObject
     {
 
@@ -106,26 +76,6 @@ namespace Actions
 
     };
 
-    class FanMode : public ActionObject
-    {
-
-    public:
-
-        FanMode(void) : ActionObject("fanMode", CLUSTER_FAN_CONTROL, 0x0000, 0x0000) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class DisplayMode : public ActionObject
-    {
-
-    public:
-
-        DisplayMode(void) : ActionObject("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0000) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class ColorHS : public ActionObject
     {
 
@@ -163,6 +113,51 @@ namespace Actions
 
         OccupancyTimeout(void) : ActionObject("occupancyTimeout", CLUSTER_OCCUPANCY_SENSING, 0x0000, 0x0010) {}
         QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class PowerOnStatus : public EnumAction
+    {
+
+    public:
+
+        PowerOnStatus(void) : EnumAction("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x4003, DATA_TYPE_8BIT_ENUM) {}
+
+    };
+
+    class SwitchType : public EnumAction
+    {
+
+    public:
+
+        SwitchType(void) : EnumAction("switchType", CLUSTER_SWITCH_CONFIGURATION, 0x0000, 0x0000, DATA_TYPE_8BIT_ENUM) {}
+
+    };
+
+    class SwitchMode : public EnumAction
+    {
+
+    public:
+
+        SwitchMode(void) : EnumAction("switchMode", CLUSTER_SWITCH_CONFIGURATION, 0x0000, 0x0010, DATA_TYPE_8BIT_ENUM) {}
+
+    };
+
+    class FanMode : public EnumAction
+    {
+
+    public:
+
+        FanMode(void) : EnumAction("fanMode", CLUSTER_FAN_CONTROL, 0x0000, 0x0000, DATA_TYPE_8BIT_ENUM) {}
+
+    };
+
+    class DisplayMode : public EnumAction
+    {
+
+    public:
+
+        DisplayMode(void) : EnumAction("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0000, DATA_TYPE_8BIT_ENUM) {}
 
     };
 }

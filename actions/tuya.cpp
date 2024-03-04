@@ -242,27 +242,3 @@ QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data
     qint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
-
-QByteArray ActionsTUYA::OperationMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"command", "event"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}
-
-QByteArray ActionsTUYA::IndicatorMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"off", "default", "inverted", "on"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}
-
-QByteArray ActionsTUYA::SwitchType::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"toggle", "static", "momentary"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}
-
-QByteArray ActionsTUYA::PowerOnStatus::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"off", "on", "previous"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}

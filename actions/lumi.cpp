@@ -59,25 +59,6 @@ QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant 
     return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
-QByteArray ActionsLUMI::OperationMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"command", "event"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-}
-
-QByteArray ActionsLUMI::IndicatorMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"default", "inverted"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-}
-
-QByteArray ActionsLUMI::SwitchMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"decoupled", "relay"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
-}
-
-
 QByteArray ActionsLUMI::SwitchStatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;

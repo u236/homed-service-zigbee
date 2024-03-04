@@ -100,43 +100,39 @@ namespace ActionsTUYA
 
     };
 
-    class OperationMode : public ActionObject
+    class OperationMode : public EnumAction
     {
 
     public:
 
-        OperationMode(void) : ActionObject("operationMode", CLUSTER_ON_OFF, 0x0000, 0x8004) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
+        OperationMode(void) : EnumAction("operationMode", CLUSTER_ON_OFF, 0x0000, 0x8004, DATA_TYPE_8BIT_ENUM) {}
 
     };
 
-    class IndicatorMode : public ActionObject
+    class IndicatorMode : public EnumAction
     {
 
     public:
 
-        IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_ON_OFF, 0x0000, 0x8001) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
+        IndicatorMode(void) : EnumAction("indicatorMode", CLUSTER_ON_OFF, 0x0000, 0x8001, DATA_TYPE_8BIT_ENUM) {}
 
     };
 
-    class SwitchType : public ActionObject
+    class SwitchType : public EnumAction
     {
 
     public:
 
-        SwitchType(void) : ActionObject("switchType", CLUSTER_TUYA_SWITCH_MODE, 0x0000, 0xD030) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
+        SwitchType(void) : EnumAction("switchType", CLUSTER_TUYA_SWITCH_MODE, 0x0000, 0xD030, DATA_TYPE_8BIT_ENUM) {}
 
     };
 
-    class PowerOnStatus : public ActionObject
+    class PowerOnStatus : public EnumAction
     {
 
     public:
 
-        PowerOnStatus(void) : ActionObject("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x8002) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
+        PowerOnStatus(void) : EnumAction("powerOnStatus", CLUSTER_ON_OFF, 0x0000, 0x8002, DATA_TYPE_8BIT_ENUM) {}
 
     };
 }

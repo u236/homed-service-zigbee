@@ -126,3 +126,11 @@ QVariant PropertyObject::enumValue(int index)
         default: return QVariant();
     }
 }
+
+void EnumProperty::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != m_attributeId)
+        return;
+
+    m_value = enumValue(static_cast <quint8> (data.at(0)));
+}

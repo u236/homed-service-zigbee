@@ -106,46 +106,6 @@ namespace PropertiesTUYA
 
     };
 
-    class OperationMode : public PropertyObject
-    {
-
-    public:
-
-        OperationMode(void) : PropertyObject("operationMode", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class IndicatorMode : public PropertyObject
-    {
-
-    public:
-
-        IndicatorMode(void) : PropertyObject("indicatorMode", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class SwitchType : public PropertyObject
-    {
-
-    public:
-
-        SwitchType(void) : PropertyObject("switchType", CLUSTER_TUYA_SWITCH_MODE) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class PowerOnStatus : public PropertyObject
-    {
-
-    public:
-
-        PowerOnStatus(void) : PropertyObject("powerOnStatus", CLUSTER_ON_OFF) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class ButtonAction : public PropertyObject
     {
 
@@ -153,6 +113,42 @@ namespace PropertiesTUYA
 
         ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
         void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
+
+    class OperationMode : public EnumProperty
+    {
+
+    public:
+
+        OperationMode(void) : EnumProperty("operationMode", CLUSTER_ON_OFF, 0x8004) {}
+
+    };
+
+    class IndicatorMode : public EnumProperty
+    {
+
+    public:
+
+        IndicatorMode(void) : EnumProperty("indicatorMode", CLUSTER_ON_OFF, 0x8001) {}
+
+    };
+
+    class SwitchType : public EnumProperty
+    {
+
+    public:
+
+        SwitchType(void) : EnumProperty("switchType", CLUSTER_TUYA_SWITCH_MODE, 0xD030) {}
+
+    };
+
+    class PowerOnStatus : public EnumProperty
+    {
+
+    public:
+
+        PowerOnStatus(void) : EnumProperty("powerOnStatus", CLUSTER_ON_OFF, 0x8002) {}
 
     };
 }

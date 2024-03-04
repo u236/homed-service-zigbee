@@ -40,46 +40,6 @@ void Properties::Status::parseAttribte(quint16, quint16 attributeId, const QByte
     m_value = data.at(0) ? "on" : "off";
 }
 
-void Properties::PowerOnStatus::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x4003)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "off"; break;
-        case 0x01: m_value = "on"; break;
-        case 0x02: m_value = "toggle"; break;
-        case 0xFF: m_value = "previous"; break;
-    }
-}
-
-void Properties::SwitchType::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0000)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "toggle"; break;
-        case 0x01: m_value = "momentary"; break;
-        case 0x02: m_value = "multifunction"; break;
-    }
-}
-
-void Properties::SwitchMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0010)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "on"; break;
-        case 0x01: m_value = "off"; break;
-        case 0x02: m_value = "toggle"; break;
-    }
-}
-
 void Properties::Level::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000)
@@ -181,28 +141,6 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void Properties::FanMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0000)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "off"; break;
-        case 0x01: m_value = "low"; break;
-        case 0x02: m_value = "medium"; break;
-        case 0x03: m_value = "high"; break;
-    }
-}
-
-void Properties::DisplayMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x0000)
-        return;
-
-    m_value = data.at(0) ? "fahrenheit" : "celsius";
 }
 
 void Properties::ColorHS::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

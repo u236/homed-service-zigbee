@@ -47,4 +47,20 @@ protected:
     int enumIndex(const QVariant &value);
 };
 
+class EnumAction : public ActionObject
+{
+
+public:
+
+    EnumAction(const QString &name, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId, quint8 dataType) :
+        ActionObject(name, clusterId, manufacturerCode, attributeId), m_dataType(dataType) {}
+
+    QByteArray request(const QString &name, const QVariant &data) override;
+
+private:
+
+    quint8 m_dataType;
+
+};
+
 #endif

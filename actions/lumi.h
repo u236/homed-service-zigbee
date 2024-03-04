@@ -26,36 +26,6 @@ namespace ActionsLUMI
 
     };
 
-    class OperationMode : public ActionObject
-    {
-
-    public:
-
-        OperationMode(void) : ActionObject("operationMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0009) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class IndicatorMode : public ActionObject
-    {
-
-    public:
-
-        IndicatorMode(void) : ActionObject("indicatorMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x00F0) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
-    class SwitchMode : public ActionObject
-    {
-
-    public:
-
-        SwitchMode(void) : ActionObject("switchMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0200) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class SwitchStatusMemory : public ActionObject
     {
 
@@ -93,6 +63,33 @@ namespace ActionsLUMI
 
         VibrationSensitivity(void) : ActionObject("sensitivityMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, 0xFF0D) {}
         QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class OperationMode : public EnumAction
+    {
+
+    public:
+
+        OperationMode(void) : EnumAction("operationMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0009, DATA_TYPE_8BIT_UNSIGNED) {}
+
+    };
+
+    class IndicatorMode : public EnumAction
+    {
+
+    public:
+
+        IndicatorMode(void) : EnumAction("indicatorMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x00F0, DATA_TYPE_8BIT_UNSIGNED) {}
+
+    };
+
+    class SwitchMode : public EnumAction
+    {
+
+    public:
+
+        SwitchMode(void) : EnumAction("switchMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0200, DATA_TYPE_8BIT_UNSIGNED) {}
 
     };
 }

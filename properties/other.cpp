@@ -97,7 +97,7 @@ void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QB
 
 void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    QList <QString> types = {"bool", "value", "enum"};
+    QList <QString> types = {"bool", "value", "enum"}; // TODO: refactor this
     QByteArray buffer = data;
     QVariant value;
 

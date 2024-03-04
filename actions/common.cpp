@@ -8,28 +8,6 @@ QByteArray Actions::Status::request(const QString &, const QVariant &data)
     return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
-QByteArray Actions::PowerOnStatus::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"off", "on", "toggle", "previous"}, data);
-
-    if (value < 0 || value > 2)
-        value = 0xFF;
-
-    return writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}
-
-QByteArray Actions::SwitchType::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"toggle", "momentary", "multifunction"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}
-
-QByteArray Actions::SwitchMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"on", "off", "toggle"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}
-
 QByteArray Actions::Level::request(const QString &, const QVariant &data)
 {
     switch (data.type())
@@ -158,18 +136,6 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
     }
 
     return QByteArray();
-}
-
-QByteArray Actions::FanMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"off", "low", "medium", "high"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
-}
-
-QByteArray Actions::DisplayMode::request(const QString &, const QVariant &data)
-{
-    qint8 value = listIndex({"celsius", "fahrenheit"}, data);
-    return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }
 
 QByteArray Actions::ColorHS::request(const QString &, const QVariant &data)

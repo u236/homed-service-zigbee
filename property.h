@@ -60,4 +60,20 @@ protected:
 
 };
 
+class EnumProperty : public PropertyObject
+{
+
+public:
+
+    EnumProperty(const QString &name, quint16 clusterId, quint16 attributeId) :
+        PropertyObject(name, clusterId), m_attributeId(attributeId) {}
+
+    void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+private:
+
+    quint16 m_attributeId;
+
+};
+
 #endif

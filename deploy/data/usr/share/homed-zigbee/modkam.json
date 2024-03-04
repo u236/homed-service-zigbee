@@ -7,7 +7,7 @@
       "properties":     ["status", "ptvoButtonAction"],
       "actions":        ["status"],
       "exposes":        ["switch", "action"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
+      "options":        {"action": {"enum": ["release", "singleClick", "doubleClick", "tripleClick", "hold"]}},
       "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
     },
     {
@@ -150,7 +150,7 @@
       "modelNames":     ["ptvo_switch_3ch"],
       "properties":     ["ptvoButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
+      "options":        {"action": {"enum": ["release", "singleClick", "doubleClick", "tripleClick", "hold"]}},
       "endpointId":     [2, 3, 4]
     },
     {

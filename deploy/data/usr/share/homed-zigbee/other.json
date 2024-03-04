@@ -264,7 +264,7 @@
       "modelNames":     ["ptvo.switch-zr02"],
       "properties":     ["ptvoButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}},
+      "options":        {"action": {"enum": ["release", "singleClick", "doubleClick", "tripleClick", "hold"]}},
       "endpointId":     1
     },
     {

@@ -4,7 +4,7 @@
 
 QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &data)
 {
-    QList <QString> types = {"bool", "value", "enum"};
+    QList <QString> types = {"bool", "value", "enum"}; // TODO: refactor this
     QVariant value;
     qint64 buffer;
 

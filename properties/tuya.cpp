@@ -280,58 +280,6 @@ void PropertiesTUYA::ChildLock::parseAttribte(quint16, quint16 attributeId, cons
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesTUYA::OperationMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x8004)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "command"; break;
-        case 0x01: m_value = "event"; break;
-    }
-}
-
-void PropertiesTUYA::IndicatorMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x8001)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "off"; break;
-        case 0x01: m_value = "default"; break;
-        case 0x02: m_value = "inverted"; break;
-        case 0x03: m_value = "on"; break;
-    }
-}
-
-void PropertiesTUYA::SwitchType::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0xD030)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "toggle"; break;
-        case 0x01: m_value = "static"; break;
-        case 0x02: m_value = "momentary"; break;
-    }
-}
-
-void PropertiesTUYA::PowerOnStatus::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != 0x8002)
-        return;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x00: m_value = "off"; break;
-        case 0x01: m_value = "on"; break;
-        case 0x02: m_value = "previous"; break;
-    }
-}
-
 void PropertiesTUYA::ButtonAction::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
