@@ -32,7 +32,7 @@
       "options":        {
                           "customAttributes":
                           {
-                            "powerOnStatus":  {"type": "value", "clusterId": 64635, "attributeId": 0,  "dataType": 32, "action": true},
+                            "powerOnStatus":  {"type": "enum",  "clusterId": 64635, "attributeId": 0,  "dataType": 32, "action": true},
                             "voltage":        {"type": "value", "clusterId": 64635, "attributeId": 3,  "dataType": 33},
                             "power":          {"type": "value", "clusterId": 64635, "attributeId": 10, "dataType": 33},
                             "energy":         {"type": "value", "clusterId": 64635, "attributeId": 14, "dataType": 35, "divider": 1000}

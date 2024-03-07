@@ -45,11 +45,11 @@
     {
       "description":    "Sonoff Wireless Button SNZB-01",
       "modelNames":     ["WB01", "WB-01"],
-      "properties":     ["batteryPercentage", "customAttributes"],
+      "properties":     ["batteryPercentage", "customCommands"],
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"customAttributes": {"action": {"type": "enum", "clusterId": 6, "attributeId": 0, "dataType": 32}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}}
+      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}}
     }
   ],
 

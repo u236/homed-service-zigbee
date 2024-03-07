@@ -285,7 +285,7 @@
       "actions":        ["status", "lumiSwitchStatusMemory"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
+      "exposes":        ["switch", "energy", "voltage", "power", "temperature", "statusMemory"],
       "options":        {"switch": "outlet", "temperature": {"diagnostic": true}},
       "endpointId":     1
     },
