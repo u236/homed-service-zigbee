@@ -75,7 +75,7 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
                     if (hasMax && check > max)
                         check = max;
 
-                    value = qToBigEndian <qint32> (check * item.value("divider", 1).toDouble() - item.value("offset").toDouble());
+                    value = qToBigEndian <qint32> (check * item.value("divider", 1).toDouble() * item.value("actionDivider", 1).toDouble() - item.value("offset").toDouble());
                     return makeRequest(m_transactionId++, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
                 }
 
