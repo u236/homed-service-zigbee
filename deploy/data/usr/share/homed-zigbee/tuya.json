@@ -403,7 +403,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type A)",
-      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl"],
+      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_ztc6ggyl", "_TZE204_qasjif9e"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
@@ -423,7 +423,7 @@
                           "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
                           "distanceMax": {"min": 0, "max": 9.5, "step": 0.1},
                           "detectionDelay": {"min": 0, "max": 10, "step": 0.1},
-                          "fadingTime": {"min": 0, "max": 1500, "step": 10}
+                          "fadingTime": {"min": 2, "max": 1500}
                         }
     },
     {
@@ -591,7 +591,7 @@
                             "9":    [{"name": "displayMode", "type": "enum", "action": true}]
                           },
                           "batteryStatus": {"enum": ["low", "medium", "high"]},
-                          "tuyaMagic": true,   
+                          "tuyaMagic": true,
                           "tuyaDataQuery": true
                         }
     },
