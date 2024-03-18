@@ -4,10 +4,10 @@
     {
       "description":    "Life Control Smart Bulb MCLH-02",
       "modelNames":     ["vivi ZLight"],
-      "properties":     ["status", "level", "colorHS"],
-      "actions":        ["status", "level", "colorHS"],
+      "properties":     ["status", "level", "colorHS", "colorTemperature"],
+      "actions":        ["status", "level", "colorHS", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color"]},
+      "options":        {"light": ["level", "color", "colorTemperature"]},
       "endpointId":     11
     }
   ],
