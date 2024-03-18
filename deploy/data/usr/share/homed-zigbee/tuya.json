@@ -488,17 +488,17 @@
                           {
                             "104":  [{"name": "illuminance", "type": "value"}],
                             "105":  [{"name": "presenceStatus", "type": "enum"}],
-                            "106":  [{"name": "motionSensitivity", "type": "value", "divider": 10, "action": true}],
+                            "106":  [{"name": "motionSensitivity", "type": "value", "propertyDivider": 10, "action": true}],
                             "107":  [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
                             "109":  [{"name": "targetDistance", "type": "value", "divider": 100}],
                             "110":  [{"name": "fadingTime", "type": "value", "action": true}],
-                            "111":  [{"name": "sensitivity", "type": "value", "divider": 10, "action": true}],
+                            "111":  [{"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true}],
                             "112":  [{"name": "occupancy", "type": "bool"}]
                           },
                           "presenceStatus": {"enum": ["none", "present", "moving"]},
                           "motionSensitivity": {"min": 1, "max": 10},
-                          "distanceMax": {"min": 1, "max": 10},
-                          "fadingTime": {"min": 1, "max": 15},
+                          "distanceMax": {"min": 1.5, "max": 5.5},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10},
                           "sensitivity": {"min": 1, "max": 10}
                         }
     },
