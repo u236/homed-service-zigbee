@@ -498,7 +498,7 @@
                           "presenceStatus": {"enum": ["none", "present", "moving"]},
                           "motionSensitivity": {"min": 1, "max": 10},
                           "distanceMax": {"min": 1.5, "max": 5.5},
-                          "fadingTime": {"min": 1, "max": 1500},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10},
                           "sensitivity": {"min": 1, "max": 10}
                         }
     },
