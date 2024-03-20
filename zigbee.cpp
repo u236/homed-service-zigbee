@@ -1753,7 +1753,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (!request->name().isEmpty())
                 logInfo << "Device" << request->device()->name() << request->name().toUtf8().constData() << "finished successfully";
 
-            if (!request->attributes().isEmpty())
+            if (!request->attributes().isEmpty() && !request->device()->options().value("skipAttributeRead").toBool())
                 enqueueRequest(request->device(), request->endpointId(), request->clusterId(), readAttributesRequest(m_requestId, request->manufacturerCode(), request->attributes()));
 
             break;
