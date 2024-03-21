@@ -240,9 +240,6 @@ void DeviceList::setupDevice(const Device &device)
                     if (found)
                         check = true;
 
-                    if (json.contains("description"))
-                        device->setDescription(json.value("description").toString());
-
                     if (json.contains("options"))
                     {
                         QJsonObject options = json.value("options").toObject();
@@ -258,6 +255,7 @@ void DeviceList::setupDevice(const Device &device)
                     for (int i = 0; i < endpoints.count(); i++)
                         setupEndpoint(endpoint(device, static_cast <quint8> (endpoints.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
 
+                    device->setDescription(json.value("description").toString());
                     device->setSupported(true);
                 }
             }
@@ -872,6 +870,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 device->setVersion(static_cast <quint8> (json.value("version").toInt()));
                 device->setManufacturerName(json.value("manufacturerName").toString());
                 device->setModelName(json.value("modelName").toString());
+                device->setNote(json.value("note").toString());
                 device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
                 device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
                 device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
@@ -1009,6 +1008,9 @@ QJsonArray DeviceList::serializeDevices(void)
 
                 if (!device->description().isEmpty())
                     json.insert("description", device->description());
+
+                if (!device->note().isEmpty())
+                    json.insert("note", device->note());
             }
 
             if (!device->endpoints().isEmpty())

@@ -79,7 +79,7 @@ void ZigBee::togglePermitJoin(void)
     m_adapter->togglePermitJoin();
 }
 
-void ZigBee::updateDevice(const QString &deviceName, const QString &name, bool active, bool discovery, bool cloud)
+void ZigBee::updateDevice(const QString &deviceName, const QString &name, const QString &note, bool active, bool discovery, bool cloud)
 {
     Device device = m_devices->byName(deviceName), other = m_devices->byName(name);
     bool check = false;
@@ -101,6 +101,12 @@ void ZigBee::updateDevice(const QString &deviceName, const QString &name, bool a
             m_devices->remove(other->ieeeAddress());
 
         device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name.trimmed());
+        check = true;
+    }
+
+    if (device->note() != note)
+    {
+        device->setNote(note);
         check = true;
     }
 

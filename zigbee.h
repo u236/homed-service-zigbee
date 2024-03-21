@@ -127,7 +127,7 @@ public:
     void setPermitJoin(bool enabled);
     void togglePermitJoin(void);
 
-    void updateDevice(const QString &deviceName, const QString &name, bool active, bool discovery, bool cloud);
+    void updateDevice(const QString &deviceName, const QString &name, const QString &note, bool active, bool discovery, bool cloud);
     void removeDevice(const QString &deviceName, bool force);
     
     void setupDevice(const QString &deviceName, bool reportings);

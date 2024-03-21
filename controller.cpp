@@ -93,7 +93,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 break;
 
             case Command::updateDevice:
-                m_zigbee->updateDevice(json.value("device").toString(), json.value("name").toString(), json.value("active").toBool(true), json.value("discovery").toBool(true), json.value("cloud").toBool(true));
+                m_zigbee->updateDevice(json.value("device").toString(), json.value("name").toString(), json.value("note").toString(), json.value("active").toBool(true), json.value("discovery").toBool(true), json.value("cloud").toBool(true));
                 break;
 
             case Command::removeDevice:
