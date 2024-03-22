@@ -217,7 +217,8 @@
                             "humidityOffset":     {"type": "value", "clusterId": 1029, "attributeId": 16, "dataType": 41, "divider": 100, "action": true}
                           },
                           "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
-                          "humidityOffset": {"min": -50, "max": 50}
+                          "humidityOffset": {"min": -50, "max": 50},
+                          "reporting": {"minInterval": 60}
                         }
     }
   ],

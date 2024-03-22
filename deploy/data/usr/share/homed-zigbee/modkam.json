@@ -29,7 +29,7 @@
                             "co2Low":             {"type": "value", "clusterId": 1037, "attributeId": 516, "dataType": 33, "action": true},
                             "co2High":            {"type": "value", "clusterId": 1037, "attributeId": 517, "dataType": 33, "action": true}
                           },
-                          "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0},
+                          "reporting": {"minInterval": 0, "valueChange": 0},
                           "temperatureOffset": {"min": -20, "max": 20},
                           "humidityOffset": {"min": -50, "max": 50},
                           "pressureOffset": {"min": -100, "max": 100},
@@ -71,7 +71,7 @@
     {
       "description":    "MODKAM Flower Soil Moisture Sensor",
       "modelNames":     ["DIYRuZ_Flower"],
-      "options":        {"endpointName": {"1": "BME", "2": "DS"}, "reporting": {"minInterval": 0, "maxInterval": 3600, "valueChange": 0}}
+      "options":        {"endpointName": {"1": "BME", "2": "DS"}, "reporting": {"minInterval": 0, "valueChange": 0}}
     },
     {
       "modelNames":     ["DIYRuZ_Flower"],
