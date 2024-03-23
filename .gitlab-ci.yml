@@ -1,7 +1,10 @@
 variables:
   NAME: homed-zigbee
   PACKAGE_EXTRA: mkdir -p deploy/data/opt/homed-zigbee
-  DOCKER_EXTRA: cp -r deploy/data/usr/share/homed-zigbee deploy/docker/share
+  DOCKER_EXTRA: >
+    mkdir deploy/docker/share;
+    cp -r ../homed-common/deploy/data/usr/share/homed-common deploy/docker/share/homed-common;
+    cp -r deploy/data/usr/share/homed-zigbee deploy/docker/share/homed-zigbee
 
 include:
 - project: 'homed/services/homed-common'
