@@ -898,14 +898,14 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
-      "description":    "TUYA TS0001 1-Channel Relay with Power Monitoring",
+      "description":    "TUYA TS0001 or TS000F 1-Channel Relay with Power Monitoring",
       "modelNames":     ["_TZ3000_g92baclx", "_TZ3000_kqvb5akv", "_TZ3000_mkhkxx1p", "_TZ3000_qnejhcsu", "_TZ3000_tgddllx4", "_TZ3000_x3ewpzyr", "_TZ3000_xkap8wtb"],
-      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaPowerOnStatus"],
-      "actions":        ["status", "tuyaPowerOnStatus"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaSwitchType", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "tuyaMagic": true, "skipAttributeRead": true}
+      "exposes":        ["switch", "switchType", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "tuyaMagic": true, "skipAttributeRead": true}
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring",
