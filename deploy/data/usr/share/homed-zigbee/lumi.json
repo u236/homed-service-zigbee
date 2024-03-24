@@ -378,7 +378,7 @@
       "modelNames":     ["lumi.motion.ac01"],
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],
-      "exposes":        ["event", "occupancy", "temperature", "sensitivityMode", "distanceMode", "detectionMode", "resetPresence"],
+      "exposes":        ["occupancy", "event", "temperature", "sensitivityMode", "distanceMode", "detectionMode", "resetPresence"],
       "options":        {"event": {"enum": ["enter", "leave", "enterLeft", "leaveRight", "enterRight",  "leaveLeft", "approach", "absent"]}, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}}}
     },
     {
@@ -386,7 +386,7 @@
       "modelNames":     ["lumi.vibration.aq1"],
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
-      "exposes":        ["battery", "event", "vibration", "temperature", "sensitivityMode"],
+      "exposes":        ["battery", "vibration", "event", "temperature", "sensitivityMode"],
       "options":        {"event": {"enum": ["vibration", "tilt", "drop"]}, "vibrationResetTimeout": 60, "temperature": {"diagnostic": true}}
     },
     {
