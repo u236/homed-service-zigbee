@@ -151,15 +151,19 @@ private:
     QSettings *m_config;
     QTimer *m_requestTimer, *m_neignborsTimer, *m_pingTimer, *m_statusLedTimer;
 
-    DeviceList *m_devices;
     Adapter *m_adapter;
+    DeviceList *m_devices;
 
     QMetaEnum m_events;
     quint8 m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
     bool m_replyReceived, m_interPanLock;
 
-    QString m_statusLedPin, m_blinkLedPin, m_otaUpgradeFile;
-    bool m_discovery, m_cloud, m_debug, m_otaForce;
+    QString m_statusLedPin, m_blinkLedPin;
+    bool m_discovery, m_cloud, m_debug;
+
+    Device m_otaDevice;
+    QFile m_otaFile;
+    bool m_otaForce;
 
     QMap <quint8, Request> m_requests;
 
@@ -186,6 +190,7 @@ private:
     void interviewTimeoutHandler(const Device &device);
     void rejoinHandler(const Device &device);
 
+    void otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error = QString());
     void blink(quint16 timeout);
 
 private slots:
