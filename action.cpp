@@ -87,9 +87,9 @@ qint8 ActionObject::listIndex(const QList <QString> &list, const QVariant &value
     return static_cast <qint8> (list.indexOf(value.toString()));
 }
 
-int ActionObject::enumIndex(const QVariant &value)
+int ActionObject::enumIndex(const QString name, const QVariant &value)
 {
-    QVariant data = option().toMap().value("enum");
+    QVariant data = option(name).toMap().value("enum");
 
     switch (data.type())
     {
@@ -113,7 +113,7 @@ int ActionObject::enumIndex(const QVariant &value)
 
 QByteArray EnumAction::request(const QString &, const QVariant &data)
 {
-    int index = enumIndex(data);
+    int index = enumIndex(m_name, data);
     quint8 value = static_cast <quint8> (index);
     return index < 0 ? QByteArray() : writeAttribute(m_dataType, &value, sizeof(value));
 }

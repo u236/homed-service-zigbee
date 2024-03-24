@@ -92,7 +92,7 @@ void PropertiesIKEA::ArrowAction::parseCommand(quint16, quint8 commandId, const 
 
 void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
-    m_value = enumValue(commandId);
+    m_value = enumValue(m_name, commandId);
 }
 
 void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -162,9 +162,9 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
 
     switch (types.indexOf(m_type))
     {
-        case 0: m_value = value.toInt() ? true : false; break; // bool
-        case 1: m_value = value.toDouble() / m_divider; break; // value
-        case 2: m_value = enumValue(value.toInt()); break;     // enum
+        case 0: m_value = value.toInt() ? true : false; break;     // bool
+        case 1: m_value = value.toDouble() / m_divider; break;     // value
+        case 2: m_value = enumValue(m_name, value.toInt()); break; // enum
     }
 }
 

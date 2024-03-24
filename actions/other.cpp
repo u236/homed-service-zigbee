@@ -15,7 +15,7 @@ QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &da
 
         case 2: // enum
         {
-            int index = enumIndex(data.toString());
+            int index = enumIndex(m_name, data.toString());
 
             if (index < 0)
                 return QByteArray();

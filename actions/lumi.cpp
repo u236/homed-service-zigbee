@@ -9,7 +9,7 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
     {
         case 0 ... 2:
         {
-            qint8 value = static_cast <qint8> (enumIndex(data));
+            qint8 value = static_cast <qint8> (enumIndex(name, data));
 
             switch (index)
             {

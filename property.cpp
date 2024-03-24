@@ -115,9 +115,9 @@ quint8 PropertyObject::percentage(double min, double max, double value)
     return static_cast <quint8> ((value - min) / (max - min) * 100);
 }
 
-QVariant PropertyObject::enumValue(int index)
+QVariant PropertyObject::enumValue(const QString &name, int index)
 {
-    QVariant data = option().toMap().value("enum");
+    QVariant data = option(name).toMap().value("enum");
 
     switch (data.type())
     {
@@ -132,5 +132,5 @@ void EnumProperty::parseAttribte(quint16, quint16 attributeId, const QByteArray 
     if (attributeId != m_attributeId)
         return;
 
-    m_value = enumValue(static_cast <quint8> (data.at(0)));
+    m_value = enumValue(m_name, static_cast <quint8> (data.at(0)));
 }
