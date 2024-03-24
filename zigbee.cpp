@@ -1389,6 +1389,7 @@ void ZigBee::coordinatorReady(void)
     device->setDiscovery(false);
     device->setCloud(false);
     device->setInterviewFinished();
+    device->setRemoved(false);
     device->setLogicalType(LogicalType::Coordinator);
     device->setFirmware(m_adapter->firmware());
 
@@ -1485,7 +1486,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
 {
     auto it = m_devices->find(ieeeAddress);
 
-    if (it == m_devices->end() || it.value()->removed())
+    if (it == m_devices->end() || it.value()->removed() || it.value()->logicalType() == LogicalType::Coordinator)
         return;
 
     it.value()->timer()->stop();
@@ -1772,7 +1773,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (status)
                 logWarning << "Device" << device->name() << "leave request failed, status code:" << QString::asprintf("0x%02x", status);
 
-            if (device->removed())
+            if (device->removed() || device->logicalType() == LogicalType::Coordinator)
                 break;
 
             logInfo << "Device" << device->name() << "removed";
