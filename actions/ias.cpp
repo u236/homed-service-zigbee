@@ -60,7 +60,7 @@ QByteArray ActionsIAS::Warning::request(const QString &name, const QVariant &dat
 
     if (sirenMode || strobe)
     {
-        property->setTimeout(payload.duration);
+        property->setTimeout(qFromLittleEndian(payload.duration));
         property->setTime(QDateTime::currentSecsSinceEpoch());
     }
 
