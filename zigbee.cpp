@@ -363,6 +363,12 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                 if (data.type() != QVariant::String || !data.toString().isEmpty())
                     enqueueRequest(device, it.key(), action->clusterId(), request, QString("%1 action request").arg(name), false, action->manufacturerCode(), action->attributes());
 
+                if (action->clusterId() == CLUSTER_IAS_WD)
+                {
+                    emit endpointUpdated(device.data(), it.key());
+                    m_devices->storeProperties();
+                }
+
                 break;
             }
         }

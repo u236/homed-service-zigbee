@@ -45,6 +45,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::CoverAction>                     ("coverActionProperty");
     qRegisterMetaType <Properties::ColorAction>                     ("colorActionProperty");
 
+    qRegisterMetaType <PropertiesIAS::Warning>                      ("iasWarningProperty");
     qRegisterMetaType <PropertiesIAS::Contact>                      ("iasContactProperty");
     qRegisterMetaType <PropertiesIAS::Gas>                          ("iasGasProperty");
     qRegisterMetaType <PropertiesIAS::Occupancy>                    ("iasOccupancyProperty");

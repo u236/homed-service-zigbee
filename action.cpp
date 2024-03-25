@@ -1,5 +1,6 @@
 #include "actions/common.h"
 #include "actions/efekta.h"
+#include "actions/ias.h"
 #include "actions/lumi.h"
 #include "actions/ptvo.h"
 #include "actions/tuya.h"
@@ -23,6 +24,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::ColorXY>                        ("colorXYAction");
     qRegisterMetaType <Actions::ColorTemperature>               ("colorTemperatureAction");
     qRegisterMetaType <Actions::OccupancyTimeout>               ("occupancyTimeoutAction");
+
+    qRegisterMetaType <ActionsIAS::Warning>                     ("iasWarningAction");
 
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");

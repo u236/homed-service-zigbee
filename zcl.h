@@ -100,6 +100,7 @@
 #define CLUSTER_CO2_CONCENTRATION                   0x040D
 #define CLUSTER_PM25_CONCENTRATION                  0x042A
 #define CLUSTER_IAS_ZONE                            0x0500
+#define CLUSTER_IAS_WD                              0x0502
 #define CLUSTER_SMART_ENERGY_METERING               0x0702
 #define CLUSTER_ELECTRICAL_MEASUREMENT              0x0B04
 #define CLUSTER_TOUCHLINK                           0x1000
@@ -303,6 +304,14 @@ struct iasZoneEnrollResponseStruct
 {
     quint8  responseCode;
     quint8  zoneId;
+};
+
+struct iasStartWarningStruct
+{
+    quint8  warning;
+    quint16 duration;
+    quint8  dutyCycle;
+    quint8  strobeLevel;
 };
 
 struct touchLinkScanStruct

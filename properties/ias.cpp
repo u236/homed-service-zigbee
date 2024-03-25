@@ -25,3 +25,11 @@ void PropertiesIAS::ZoneStatus::resetValue(void)
     map.insert(m_name, false);
     m_value = map;
 }
+
+void PropertiesIAS::Warning::resetValue(void)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    map.insert("sirenMode", "stop");
+    map.insert("strobe", false);
+    m_value = map;
+}

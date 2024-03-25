@@ -311,7 +311,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             property->setMultiple(multiple);
             property->setTimeout(static_cast <quint32> (timeout.toInt()));
 
-            if (property->timeout() || timeout.toBool())
+            if (timeout.toBool() || property->clusters().contains(CLUSTER_IAS_WD))
                 startTimer = true;
 
             endpoint->properties().append(property);

@@ -22,6 +22,16 @@
       "options":        {"light": ["level", "colorTemperature"]}
     },
     {
+      "description":    "GS Smart Siren SRHMP-I1",
+      "modelNames":     ["SRHMP-I1"],
+      "properties":     ["batteryPercentage", "iasWarning"],
+      "actions":        ["iasWarning"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "sirenMode", "strobe", "dutyCycle", "duration"],
+      "options":        {"sirenMode": {"enum": ["stop", "alarm"]}, "dutyCycle": {"min": 10, "max": 100, "step": 10}, "duration": {"min": 1, "max": 240}}
+    },
+    {
       "description":    "GS Gas Detector SGMHM-I1",
       "modelNames":     ["SGMHM-I1"],
       "properties":     ["iasGas"],

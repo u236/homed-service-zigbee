@@ -17,6 +17,16 @@ namespace PropertiesIAS
 
     };
 
+    class Warning : public PropertyObject
+    {
+
+    public:
+
+        Warning(void) : PropertyObject("warning", CLUSTER_IAS_WD) {}
+        void resetValue(void) override;
+
+    };
+
     class Contact : public ZoneStatus
     {
 

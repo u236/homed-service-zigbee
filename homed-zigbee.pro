@@ -7,6 +7,7 @@ HEADERS += \
     action.h \
     actions/common.h \
     actions/efekta.h \
+    actions/ias.h \
     actions/lumi.h \
     actions/other.h \
     actions/ptvo.h \
@@ -35,6 +36,7 @@ SOURCES += \
     action.cpp \
     actions/common.cpp \
     actions/efekta.cpp \
+    actions/ias.cpp \
     actions/lumi.cpp \
     actions/other.cpp \
     actions/ptvo.cpp \
