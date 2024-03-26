@@ -288,7 +288,8 @@ void Properties::CO2::parseAttribte(quint16, quint16 attributeId, const QByteArr
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = round(qFromLittleEndian(value) * 1000000);
+    value = qFromLittleEndian(value);
+    m_value = round(value < 1 ? value * 1000000 : value);
 }
 
 void Properties::PM25::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

@@ -668,7 +668,7 @@ bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
         item.dataType = reporting->dataType();
         item.minInterval = qToLittleEndian <quint16> (options.contains("minInterval") ? options.value("minInterval").toInt() : reporting->minInterval());
         item.maxInterval = qToLittleEndian <quint16> (options.contains("maxInterval") ? options.value("maxInterval").toInt() : reporting->maxInterval());
-        item.valueChange = qToLittleEndian <quint16> (options.contains("valueChange") ? options.value("valueChange").toInt() : reporting->valueChange());
+        item.valueChange = qToLittleEndian <quint64> (options.contains("valueChange") ? options.value("valueChange").toInt() : reporting->valueChange());
 
         request.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
     }
