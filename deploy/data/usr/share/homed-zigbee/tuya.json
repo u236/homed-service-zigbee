@@ -353,9 +353,9 @@
     },
     {
       "description":    "TUYA TS0601 Gas Sensor",
-      "modelNames":     ["_TZE200_nus5kk3n7"],
+      "modelNames":     ["_TZE200_nus5kk3n"],
       "properties":     ["tuyaDataPoints"],
-      "exposes":        ["gas", "fault"],
+      "exposes":        ["gas", "test", "fault"],
       "options":        {
                           "tuyaDataPoints":
                           {
