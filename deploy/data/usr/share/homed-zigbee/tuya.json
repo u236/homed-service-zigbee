@@ -337,6 +337,37 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Garage Door Controller",
+      "modelNames":     ["_TZE200_nklqjk62", "_TZE204_nklqjk62"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["trigger", "contact"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "trigger", "type": "bool", "action": true}],
+                            "3":    [{"name": "contact", "type": "bool", "invert": true}]
+                          },
+                          "tuyaMagic": true
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Gas Sensor",
+      "modelNames":     ["_TZE200_nus5kk3n7"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["gas", "fault"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "gas", "type": "bool", "invert": true}],
+                            "9":    [{"name": "test", "type": "enum"}],
+                            "11":   [{"name": "fault", "type": "bool"}]
+                          },
+                          "test": {"type": "sensor", "enum": ["checking", "success", "failed", "other"]},
+                          "tuyaMagic": true
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Smoke Detector (Type A)",
       "modelNames":     ["_TZE200_m9skfctm", "_TZE200_rccxox8p"],
       "properties":     ["tuyaDataPoints"],
