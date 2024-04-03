@@ -57,6 +57,7 @@ QByteArray ActionsIAS::Warning::request(const QString &name, const QVariant &dat
     payload.strobeLevel = static_cast <quint8> (strobeLevel);
 
     property->setValue(map);
+    m_properyUpdated = true;
 
     if (sirenMode || strobe)
     {

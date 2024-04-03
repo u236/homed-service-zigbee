@@ -42,8 +42,8 @@ class DataRequestObject
 
 public:
 
-    DataRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name, bool debug, quint16 manufacturerCode, const QList <quint16> attributes) :
-        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_data(data), m_name(name), m_debug(debug), m_manufacturerCode(manufacturerCode), m_attributes(attributes) {}
+    DataRequestObject(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name, bool debug, quint16 manufacturerCode, const Action &action) :
+        m_device(device), m_endpointId(endpointId), m_clusterId(clusterId), m_data(data), m_name(name), m_debug(debug), m_manufacturerCode(manufacturerCode), m_action(action) {}
 
     inline Device device(void) { return m_device; }
     inline quint8 endpointId(void) { return m_endpointId; }
@@ -54,7 +54,7 @@ public:
     inline bool debug(void) { return m_debug; }
 
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
-    inline QList <quint16> &attributes(void) { return m_attributes; }
+    inline Action &action(void) { return m_action; }
 
 private:
 
@@ -67,7 +67,7 @@ private:
     bool m_debug;
 
     quint16 m_manufacturerCode;
-    QList <quint16> m_attributes;
+    Action m_action;
 
 };
 
@@ -167,7 +167,7 @@ private:
 
     QMap <quint8, Request> m_requests;
 
-    void enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString(), bool debug = false, quint16 manufacturerCode = 0, const QList <quint16> &attributes = {});
+    void enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString(), bool debug = false, quint16 manufacturerCode = 0, const Action &action = Action());
     void enqueueRequest(const Device &device, RequestType type);
 
     bool interviewRequest(quint8 id, const Device &device);

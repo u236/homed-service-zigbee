@@ -361,13 +361,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                     continue;
 
                 if (data.type() != QVariant::String || !data.toString().isEmpty())
-                    enqueueRequest(device, it.key(), action->clusterId(), request, QString("%1 action request").arg(name), false, action->manufacturerCode(), action->attributes());
-
-                if (action->clusterId() == CLUSTER_IAS_WD)
-                {
-                    emit endpointUpdated(device.data(), it.key());
-                    m_devices->storeProperties();
-                }
+                    enqueueRequest(device, it.key(), action->clusterId(), request, QString("%1 action request").arg(name), false, action->manufacturerCode(), action);
 
                 break;
             }
@@ -397,9 +391,9 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
     }
 }
 
-void ZigBee::enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name, bool debug, quint16 manufacturerCode, const QList <quint16> &attributes)
+void ZigBee::enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name, bool debug, quint16 manufacturerCode, const Action &action)
 {
-    DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name, debug, manufacturerCode, attributes));
+    DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name, debug, manufacturerCode, action));
 
     if (!m_requestTimer->isActive() && !m_interPanLock)
         m_requestTimer->start();
@@ -1768,8 +1762,18 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (!request->name().isEmpty())
                 logInfo << "Device" << request->device()->name() << request->name().toUtf8().constData() << "finished successfully";
 
-            if (!request->attributes().isEmpty() && !request->device()->options().value("skipAttributeRead").toBool())
-                enqueueRequest(request->device(), request->endpointId(), request->clusterId(), readAttributesRequest(m_requestId, request->manufacturerCode(), request->attributes()));
+
+            if (request->action().isNull())
+                break;
+
+            if (request->action()->attributes().isEmpty() && !request->device()->options().value("skipAttributeRead").toBool())
+                enqueueRequest(request->device(), request->endpointId(), request->clusterId(), readAttributesRequest(m_requestId, request->manufacturerCode(), request->action()->attributes()));
+
+            if (request->action()->propertyUpdated())
+            {
+                emit endpointUpdated(request->device().data(), request->endpointId());
+                m_devices->storeProperties();
+            }
 
             break;
         }

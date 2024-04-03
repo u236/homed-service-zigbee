@@ -13,7 +13,7 @@ class PropertyObject : public AbstractMetaObject
 
 public:
 
-    PropertyObject(const QString &name, QList <quint16> clusters) :
+    PropertyObject(const QString &name, QList <quint16> clusters = {}) :
         AbstractMetaObject(name), m_clusters(clusters), m_multiple(false), m_timeout(0), m_time(0), m_transactionId(0) {}
 
     PropertyObject(const QString &name, quint16 clusterId) :

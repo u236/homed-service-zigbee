@@ -77,7 +77,7 @@ Property ActionObject::endpointProperty(const QString &name)
         return property;
     }
 
-    return Property();
+    return Property(new PropertyObject(propertyName));
 }
 
 QByteArray ActionObject::writeAttribute(quint8 dataType, void *value, size_t length)

@@ -259,9 +259,9 @@
     {
       "description":    "TUYA RGBW Bulb CK-BL702-AL-01",
       "modelNames":     ["CK-BL702-AL-01(7009_Z102LG03-1)", "CK-BL702-AL-01(7009_Z102LG04-2)"],
-      "properties":     ["status", "level", "colorXY", "colorTemperature"],
-      "actions":        ["status", "level", "colorXY", "colorTemperature"],
-      "exposes":        ["light"],
+      "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
+      "exposes":        ["light", "powerOnStatus"],
       "options":        {"light": ["level", "color", "colorTemperature"], "colorTemperature": {"min": 142, "max": 500}}
     },
     {
