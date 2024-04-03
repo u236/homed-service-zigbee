@@ -1779,7 +1779,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (request->action().isNull())
                 break;
 
-            if (request->action()->attributes().isEmpty() && !request->device()->options().value("skipAttributeRead").toBool())
+            if (!request->action()->attributes().isEmpty() && !request->device()->options().value("skipAttributeRead").toBool())
                 enqueueRequest(request->device(), request->endpointId(), request->clusterId(), readAttributesRequest(m_requestId, request->manufacturerCode(), request->action()->attributes()));
 
             if (request->action()->propertyUpdated())
