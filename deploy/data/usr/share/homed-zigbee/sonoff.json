@@ -82,15 +82,17 @@
       "modelNames":     ["SNZB-06P"],
       "properties":     ["occupancy", "customAttributes"],
       "actions":        ["customAttributes"],
-      "exposes":        ["occupancy", "occupancyTimeout", "sensitivityMode"],
+      "exposes":        ["occupancy", "occupancyTimeout", "sensitivityMode", "illumination"],
       "options":        {
                           "customAttributes":
                           {
-                            "occupancyTimeout": {"type": "value", "clusterId": 1030, "attributeId": 32, "dataType": 33, "action": true},
-                            "sensitivityMode":  {"type": "enum",  "clusterId": 1030, "attributeId": 34, "dataType": 32, "action": true}
+                            "occupancyTimeout": {"type": "value", "clusterId": 1030,  "attributeId": 32,   "dataType": 33, "action": true},
+                            "sensitivityMode":  {"type": "enum",  "clusterId": 1030,  "attributeId": 34,   "dataType": 32, "action": true},
+                            "illumination":     {"type": "enum",  "clusterId": 64529, "attributeId": 8193, "dataType": 32}
                           },
                           "occupancyTimeout": {"min": 15, "max": 7200},
-                          "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}}
+                          "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}},
+                          "illumination": {"enum": ["dim", "bright"]}
                         }
     }
   ]
