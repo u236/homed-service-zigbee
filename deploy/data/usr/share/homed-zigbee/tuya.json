@@ -878,7 +878,7 @@
       "endpointId":     [1, 2, 3]
     },
     {
-      "description":    "TUYA TS0004/TS0014 4-Channel Relay",
+      "description":    "TUYA TS0004/TS0014 4-Channel Relay (Type A)",
       "modelNames":     ["_TZ3000_ltt60asa"],
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
@@ -888,6 +888,31 @@
     },
     {
       "modelNames":     ["_TZ3000_ltt60asa"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "TUYA TS0004 4-Channel Relay (Type B)",
+      "modelNames":     ["_TZ3000_gexniqbq", "_TZ3000_imaccztn", "_TZ3000_mdj7kra9", "_TZ3000_nivavasg"],
+      "properties":     ["customAttributes"],
+      "actions":        ["customAttributes"],
+      "exposes":        ["indicator", "powerOnStatus"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":      {"type": "bool", "clusterId": 6,     "attributeId": 20480, "dataType": 48, "action": true},
+                            "powerOnStatus":  {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}
+                          },
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "tuyaMagic": true
+                        },
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TZ3000_gexniqbq", "_TZ3000_imaccztn", "_TZ3000_mdj7kra9", "_TZ3000_nivavasg"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
