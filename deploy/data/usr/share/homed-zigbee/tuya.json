@@ -1037,11 +1037,11 @@
     },
     {
       "description":    "TUYA TS0502B Led Dimmer",
-      "modelNames":     ["_TZ3210_pgq2qvyv"],
+      "modelNames":     ["TS0502B"],
       "properties":     ["status", "level", "colorTemperature"],
       "actions":        ["status", "level", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 500}, "tuyaMagic": true}
+      "options":        {"light": ["level", "colorTemperature"], "tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0505B RGBW Bulb",
