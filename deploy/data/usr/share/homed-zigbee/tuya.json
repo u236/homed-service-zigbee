@@ -298,7 +298,7 @@
     },
     {
       "description":    "TUYA TS0601 Neo Siren",
-      "modelNames":     ["_TZE200_t1blo2bj", "_TZE204_t1blo2bj"],
+      "modelNames":     ["_TZE200_t1blo2bj", "_TZE204_q76rtoa9", "_TZE204_t1blo2bj"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["battery", "alarm", "volumeMode", "duration", "melody"],
