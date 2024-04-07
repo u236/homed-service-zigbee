@@ -899,16 +899,8 @@
       "modelNames":     ["_TZ3000_gexniqbq", "_TZ3000_imaccztn", "_TZ3000_mdj7kra9", "_TZ3000_nivavasg"],
       "properties":     ["customAttributes"],
       "actions":        ["customAttributes"],
-      "exposes":        ["indicator", "powerOnStatus"],
-      "options":        {
-                          "customAttributes":
-                          {
-                            "indicator":      {"type": "bool", "clusterId": 6,     "attributeId": 20480, "dataType": 48, "action": true},
-                            "powerOnStatus":  {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}
-                          },
-                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
-                          "tuyaMagic": true
-                        },
+      "exposes":        ["indicator"],
+      "options":        {"customAttributes": {"indicator": {"type": "bool", "clusterId": 6, "attributeId": 20480, "dataType": 48, "action": true}}, "tuyaMagic": true},
       "endpointId":     1
     },
     {
@@ -916,7 +908,8 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
-      "exposes":        ["switch"],
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"customAttributes": {"powerOnStatus": {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}}, "powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     [1, 2, 3, 4]
     },
     {
