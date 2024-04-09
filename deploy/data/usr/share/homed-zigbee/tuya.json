@@ -905,8 +905,8 @@
     },
     {
       "modelNames":     ["_TZ3000_gexniqbq", "_TZ3000_imaccztn", "_TZ3000_mdj7kra9", "_TZ3000_nivavasg"],
-      "properties":     ["status"],
-      "actions":        ["status"],
+      "properties":     ["status", "customAttributes"],
+      "actions":        ["status", "customAttributes"],
       "bindings":       ["status"],
       "exposes":        ["switch", "powerOnStatus"],
       "options":        {"customAttributes": {"powerOnStatus": {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}}, "powerOnStatus": {"enum": ["off", "on", "previous"]}},
