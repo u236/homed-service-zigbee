@@ -217,11 +217,14 @@ void ZiGate::parsePacket(quint16 command, const QByteArray &payload)
         case ZIGATE_RESTART_NON_FACTORY:
         case ZIGATE_RESTART_FACTORY:
         {
-            m_resetTimer->stop();
 
             if (!startCoordinator(command == ZIGATE_RESTART_FACTORY))
+            {
                 logWarning << "Coordinator startup failed";
+                break;
+            }
 
+            m_resetTimer->stop();
             break;
         }
 

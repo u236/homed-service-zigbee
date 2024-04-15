@@ -852,14 +852,16 @@ void EZSP::handleQueue(void)
 
         if (control == ASH_CONTROL_RSTACK)
         {
-            m_resetTimer->stop();
-
             m_sequenceId = 0;
             m_acknowledgeId = 0;
 
             if (!startCoordinator())
+            {
                 logWarning << "Coordinator startup failed";
+                break;
+            }
 
+            m_resetTimer->stop();
             break;
         }
 

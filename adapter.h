@@ -4,7 +4,7 @@
 #define RECEIVE_TIMEOUT                 20
 #define PERMIT_JOIN_TIMEOUT             60000
 
-#define RESET_TIMEOUT                   10000
+#define RESET_TIMEOUT                   15000
 #define RESET_DELAY                     100
 
 #define DEFAULT_GROUP                   0x0000

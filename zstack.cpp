@@ -162,11 +162,13 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case SYS_RESET_IND:
         {
-            m_resetTimer->stop();
-
             if (!startCoordinator())
+            {
                 logWarning << "Coordinator startup failed";
+                break;
+            }
 
+            m_resetTimer->stop();
             break;
         }
 
