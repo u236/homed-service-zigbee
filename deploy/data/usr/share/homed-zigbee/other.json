@@ -30,8 +30,8 @@
   "HEIMAN":
   [
     {
-      "description":    "Heiman Smoke Detector HS1SA",
-      "modelNames":     ["SmokeSensor-EM", "SmokeSensor-N"],
+      "description":    "Heiman Smoke Detector HS1SA or HS3SA",
+      "modelNames":     ["SmokeSensor-EF-3.0", "SmokeSensor-EM", "SmokeSensor-N", "SmokeSensor-N-3.0"],
       "properties":     ["batteryPercentage", "iasSmoke"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
