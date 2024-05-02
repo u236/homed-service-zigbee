@@ -35,7 +35,7 @@
 #define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
 #define FRAME_SET_MULTICAST_TABLE_ENTRY                         0x0064
 #define FRAME_SET_INITIAL_SECURITY_STATE                        0x0068
-#define FRAME_GET_GEY                                           0x006A
+#define FRAME_GET_KEY                                           0x006A
 #define FRAME_CLEAR_TRANSIENT_LINK_KEYS                         0x006B
 #define FRAME_FIND_KEY_TABLE_ENTRY                              0x0075
 #define FRAME_ERASE_KEY_TABLE_ENTRY                             0x0076
@@ -47,42 +47,44 @@
 #define FRAME_CLEAR_KEY_TABLE                                   0x00B1
 #define FRAME_SET_CHANNEL                                       0x00B9
 
-#define CONFIG_PACKET_BUFFER_COUNT                              0x01
+#define CONFIG_NEIGHBOR_TABLE_SIZE                              0x02
+#define CONFIG_APS_UNICAST_MESSAGE_COUNT                        0x03
+#define CONFIG_BINDING_TABLE_SIZE                               0x04
 #define CONFIG_STACK_PROFILE                                    0x0C
 #define CONFIG_SECURITY_LEVEL                                   0x0D
+#define CONFIG_MAX_HOPS                                         0x10
+#define CONFIG_MAX_END_DEVICE_CHILDREN                          0x11
 #define CONFIG_INDIRECT_TRANSMISSION_TIMEOUT                    0x12
 #define CONFIG_END_DEVICE_POLL_TIMEOUT                          0x13
+#define CONFIG_TX_POWER_MODE                                    0x17
 #define CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE                  0x19
-#define CONFIG_FRAGMENT_WINDOW_SIZE                             0x1C
-#define CONFIG_FRAGMENT_DELAY_MS                                0x1D
-#define CONFIG_PAN_ID_CONFLICT_REPORT_THRESHOLD                 0x22
-#define CONFIG_APPLICATION_ZDO_FLAGS                            0x2A
-#define CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S              0x38
+#define CONFIG_KEY_TABLE_SIZE                                   0x1E
+#define CONFIG_BROADCAST_TABLE_SIZE                             0x2B
+#define CONFIG_RETRY_QUEUE_SIZE                                 0x34
+#define CONFIG_TRANSIENT_KEY_TIMEOUT_S                          0x36
 
 #define POLICY_TRUST_CENTER                                     0x00
+#define POLICY_BINDING_MODIFICATION_POLICY                      0x01
 #define POLICY_TC_KEY_REQUEST                                   0x05
 #define POLICY_APP_KEY_REQUEST                                  0x06
-
-#define DECISION_ALLOW_JOINS                                    0x01
-#define DECISION_ALLOW_UNSECURED_REJOINS                        0x02
-#define DECISION_ALLOW_TC_KEY_REQUESTS                          0x51
-#define DECISION_DENY_APP_KEY_REQUESTS                          0x60
 
 #define SECURITY_TRUST_CENTER_USES_HASHED_LINK_KEY              0x0084
 #define SECURITY_HAVE_PRECONFIGURED_KEY                         0x0100
 #define SECURITY_HAVE_NETWORK_KEY                               0x0200
 #define SECURITY_REQUIRE_ENCRYPTED_KEY                          0x0800
 
+#define VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE                    0x05
+#define VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE                    0x06
 #define VALUE_STACK_TOKEN_WRITING                               0x07
 #define VALUE_VERSION_INFO                                      0x11
-#define VALUE_CCA_THRESHOLD                                     0x15
 #define VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE                0x3F
+#define VALUE_TRANSIENT_DEVICE_TIMEOUT                          0x43
 
 #define CONCENTRATOR_HIGH_RAM                                   0xFFF9
-#define CONCENTRATOR_MIN_TIME                                   10
-#define CONCENTRATOR_MAX_TIME                                   90
-#define CONCENTRATOR_ROUTE_ERROR_THRESHOLD                      4
-#define CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD                 3
+#define CONCENTRATOR_MIN_TIME                                   5
+#define CONCENTRATOR_MAX_TIME                                   60
+#define CONCENTRATOR_ROUTE_ERROR_THRESHOLD                      3
+#define CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD                 1
 
 #define STACK_STATUS_NETWORK_UP                                 0x90
 #define STACK_STATUS_NETWORK_DOWN                               0x91
@@ -274,7 +276,7 @@ struct setValueStruct
 {
     quint8  id;
     quint8  length;
-    quint8  value;
+    quint16 value;
 };
 
 struct setMulticastStruct

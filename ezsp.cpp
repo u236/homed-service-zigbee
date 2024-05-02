@@ -29,23 +29,31 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
 
-    m_config.append({CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S,  qToLittleEndian <quint16> (0x005A)});
     m_config.append({CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE,      qToLittleEndian <quint16> (0x0002)});
-    m_config.append({CONFIG_FRAGMENT_DELAY_MS,                    qToLittleEndian <quint16> (0x0032)});
-    m_config.append({CONFIG_PAN_ID_CONFLICT_REPORT_THRESHOLD,     qToLittleEndian <quint16> (0x0002)});
     m_config.append({CONFIG_INDIRECT_TRANSMISSION_TIMEOUT,        qToLittleEndian <quint16> (0x1E00)});
-    m_config.append({CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x000E)});
-    m_config.append({CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
+    m_config.append({CONFIG_MAX_HOPS,                             qToLittleEndian <quint16> (0x001E)});
+    m_config.append({CONFIG_TX_POWER_MODE,                        qToLittleEndian <quint16> (0x8000)});
     m_config.append({CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
-    m_config.append({CONFIG_FRAGMENT_WINDOW_SIZE,                 qToLittleEndian <quint16> (0x0001)});
-    m_config.append({CONFIG_PACKET_BUFFER_COUNT,                  qToLittleEndian <quint16> (0x00FF)});
+    m_config.append({CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
+    m_config.append({CONFIG_BINDING_TABLE_SIZE,                   qToLittleEndian <quint16> (0x0020)});
+    m_config.append({CONFIG_KEY_TABLE_SIZE,                       qToLittleEndian <quint16> (0x0000)});
+    m_config.append({CONFIG_MAX_END_DEVICE_CHILDREN,              qToLittleEndian <quint16> (0x0020)});
+    m_config.append({CONFIG_APS_UNICAST_MESSAGE_COUNT,            qToLittleEndian <quint16> (0x0020)});
+    m_config.append({CONFIG_BROADCAST_TABLE_SIZE,                 qToLittleEndian <quint16> (0x000F)});
+    m_config.append({CONFIG_NEIGHBOR_TABLE_SIZE,                  qToLittleEndian <quint16> (0x001A)});
+    m_config.append({CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x0008)});
+    m_config.append({CONFIG_TRANSIENT_KEY_TIMEOUT_S,              qToLittleEndian <quint16> (0x012C)});
+    m_config.append({CONFIG_RETRY_QUEUE_SIZE,                     qToLittleEndian <quint16> (0x0010)});
 
-    m_policy.append({POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (DECISION_DENY_APP_KEY_REQUESTS)});
-    m_policy.append({POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (DECISION_ALLOW_TC_KEY_REQUESTS)});
-    m_policy.append({POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS)});
+    m_policy.append({POLICY_BINDING_MODIFICATION_POLICY,          qToLittleEndian <quint16> (0x0012)});
+    m_policy.append({POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (0x0051)});
+    m_policy.append({POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (0x0060)});
+    m_policy.append({POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (0x0003)});
 
-    m_values.append({VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE,    1, 0x03});
-    m_values.append({VALUE_CCA_THRESHOLD,                         1, 0x00});
+    m_values.append({VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, 1, qToLittleEndian <quint16> (0x0003)});
+    m_values.append({VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
+    m_values.append({VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
+    m_values.append({VALUE_TRANSIENT_DEVICE_TIMEOUT,           2, qToLittleEndian <quint16> (0x2710)});
 
     connect(m_timer, &QTimer::timeout, this, &EZSP::resetManufacturerCode);
     m_timer->setSingleShot(true);
@@ -554,7 +562,7 @@ bool EZSP::startCoordinator(void)
     {
         setValueStruct request = m_values.at(i);
 
-        if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
+        if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), request.length + 2)) && !m_replyStatus)
             continue;
 
         logWarning << "Set value" << QString::asprintf("0x%02x", request.id) << "request failed";
@@ -641,7 +649,7 @@ bool EZSP::startCoordinator(void)
         check = true;
     }
 
-    if (!sendFrame(FRAME_GET_GEY, QByteArray(1, static_cast <char> (CURRENT_NETWORK_KEY))))
+    if (!sendFrame(FRAME_GET_KEY, QByteArray(1, static_cast <char> (CURRENT_NETWORK_KEY))))
     {
         logWarning << "Get network key request failed";
         return false;
@@ -791,7 +799,7 @@ bool EZSP::permitJoin(bool enabled)
         }
 
         policy.id = POLICY_TRUST_CENTER;
-        policy.value = qToLittleEndian <quint16> (DECISION_ALLOW_JOINS | DECISION_ALLOW_UNSECURED_REJOINS);
+        policy.value = qToLittleEndian <quint16> (0x0003);
 
         if (!sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&policy), sizeof(policy))) || m_replyStatus)
         {
