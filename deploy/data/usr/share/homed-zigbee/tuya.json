@@ -589,6 +589,31 @@
                         }
     },
     {
+      "description":    "Linptech ES1ZZ(TY) Human Presence Sensor",
+      "modelNames":     ["_TZ3218_awarhusb", "_TZ3218_t9ynfz4x"],
+      "properties":     ["iasOccupancy", "illuminance", "customAttributes", "tuyaDataPoints"],
+      "actions":        ["customAttributes", "tuyaDataPoints"],
+      "exposes":        ["occupancy", "illuminance", "targetDistance", "motionDetectionDistance", "presenceKeepTime", "motionSensitivity", "sensitivity", "fadingTime"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "motionDetectionDistance":  {"type": "value", "clusterId": 57346, "attributeId": 57355, "dataType": 33, "divider": 100, "action": true},
+                            "presenceKeepTime":         {"type": "value", "clusterId": 57346, "attributeId": 57345, "dataType": 33},
+                            "motionSensitivity":        {"type": "value", "clusterId": 57346, "attributeId": 57348, "dataType": 32, "action": true},
+                            "sensitivity":              {"type": "value", "clusterId": 57346, "attributeId": 57349, "dataType": 32, "action": true},
+                            "targetDistance":           {"type": "value", "clusterId": 57346, "attributeId": 57354, "dataType": 33, "divider": 100}
+                          },
+                          "tuyaDataPoints": {
+                            "101":  [{"name": "fadingTime", "type": "value", "action": true}]
+                          },
+                          "motionDetectionDistance": {"min": 0, "max": 6, "step": 0.5},
+                          "motionSensitivity": {"min": 0, "max": 5},
+                          "sensitivity": {"min": 0, "max": 5},
+                          "fadingTime": {"min": 0, "max": 10000, "step": 10},
+                          "tuyaMagic": true
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type A)",
       "modelNames":     ["_TZE200_a8sdabtg", "_TZE200_dikkika5", "_TZE200_qoy0ekbd", "_TZE200_znbl8dj5"],
       "properties":     ["tuyaDataPoints"],
