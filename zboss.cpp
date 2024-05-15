@@ -88,13 +88,13 @@ bool ZBoss::unicastRequest(quint8, quint16 networkAddress, quint8 srcEndPointId,
 
     request.paramLength = 0x15;
     request.dataLength = payload.length();
-    request.profileId = qToBigEndian <quint16> (PROFILE_HA);
+    request.profileId = qToBigEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
     request.clusterId = clusterId;
     request.dstEndpointId = dstEndPointId;
     request.srcEndpointId = srcEndPointId;
     request.radius = 0x00;
     request.dstMode = ADDRESS_MODE_16_BIT;
-    request.txMode = 0x01;
+    request.txMode = 0x00;
     request.alias = 0x00;
     request.srcAlias = 0x0000;
     request.aliasSeq = 0x00;
@@ -113,13 +113,13 @@ bool ZBoss::multicastRequest(quint8, quint16 groupId, quint8 srcEndPointId, quin
 
     request.paramLength = 0x15;
     request.dataLength = payload.length();
-    request.profileId = qToBigEndian <quint16> (PROFILE_HA);
+    request.profileId = qToBigEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
     request.clusterId = clusterId;
     request.dstEndpointId = dstEndPointId;
     request.srcEndpointId = srcEndPointId;
     request.radius = 0x00;
     request.dstMode = ADDRESS_MODE_GROUP;
-    request.txMode = 0x01;
+    request.txMode = 0x00;
     request.alias = 0x00;
     request.srcAlias = 0x0000;
     request.aliasSeq = 0x00;
