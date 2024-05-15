@@ -300,7 +300,8 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
     {
         case APSDE_DATA_IND:
         {
-            const apsdeDataIndicatonStruct *message = reinterpret_cast <const apsdeDataIndicatonStruct*> (data.mid(0, sizeof(apsdeDataIndicatonStruct)).constData());
+            QByteArray byteArrayStruct = data.mid(0, sizeof(apsdeDataIndicatonStruct));
+            const apsdeDataIndicatonStruct *message = reinterpret_cast <const apsdeDataIndicatonStruct*> (byteArrayStruct.constData());
             QByteArray payload = data.mid(sizeof(apsdeDataIndicatonStruct), message->dataLength);
             emit zclMessageReveived(message->srcNetworkAddress, message->srcEndpointId, message->clusterId, message->lqi, payload);
             break;
@@ -308,13 +309,14 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         case ZBOSS_ZDO_NODE_DESC_REQ:
         {
-            const zdoNodeDescriptorResponseStruct *message = reinterpret_cast <const zdoNodeDescriptorResponseStruct*> (data.mid(3, sizeof(zdoNodeDescriptorResponseStruct)).constData());
+            QByteArray byteArrayStruct = data.mid(3, sizeof(zdoNodeDescriptorResponseStruct));
+            const zdoNodeDescriptorResponseStruct *message = reinterpret_cast <const zdoNodeDescriptorResponseStruct*> (byteArrayStruct.constData());
             QByteArray payload;
             quint8 logicalType = message->flags & 0x0003;
             quint8 apsFlags = message->flags & 0x0700;
             quint16 address = message->networkAddress;
 
-            payload.append(static_cast <char> (0x00));
+            payload.append(1, 0x00);
             payload.append(reinterpret_cast <const char*> (&message->networkAddress), sizeof(message->networkAddress));
             payload.append(logicalType);
             payload.append(apsFlags);
@@ -332,16 +334,17 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         case ZBOSS_ZDO_SIMPLE_DESC_REQ:
         {
-            const zdoSimpleDescriptorResponseStruct *message = reinterpret_cast <const zdoSimpleDescriptorResponseStruct*> (data.mid(3, sizeof(zdoSimpleDescriptorResponseStruct)).constData());
+            QByteArray byteArrayStruct = data.mid(3, sizeof(zdoSimpleDescriptorResponseStruct));
+            const zdoSimpleDescriptorResponseStruct *message = reinterpret_cast <const zdoSimpleDescriptorResponseStruct*> (byteArrayStruct.constData());
             quint8 offset = sizeof(zdoSimpleDescriptorResponseStruct) + (2 * message->inpClusterCount) + (2 * message->outClusterCount);
             QByteArray buffer = data.mid(3 + offset, 2);
             QByteArray payload;
             quint16 networkAddress;
             memcpy(&networkAddress, buffer.constData(), sizeof(networkAddress));
 
-            payload.append(static_cast <char> (0x00));
-            payload.append(networkAddress);
-            payload.append(static_cast <char> (0x00));
+            payload.append(1, 0x00);
+            payload.append(reinterpret_cast <const char*> (&networkAddress), sizeof(networkAddress));
+            payload.append(1, 0x00);
             payload.append(message->endpointId);
             payload.append(reinterpret_cast <const char*> (&message->profileId), sizeof(message->profileId));
             payload.append(reinterpret_cast <const char*> (&message->deviceId), sizeof(message->deviceId));
