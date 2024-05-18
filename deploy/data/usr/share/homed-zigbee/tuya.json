@@ -420,7 +420,7 @@
       "modelNames":     ["_TZE200_1ibpyhdc", "_TZE200_3towulqd", "_TZE200_bh3n6gk8", "_TZE200_ttcovulf"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "occupancy", "illuminance", "sensitivity", "timeoutMode"],
+      "exposes":        ["battery", "occupancy", "illuminance", "sensitivityMode", "timeoutMode"],
       "options":        {
                           "tuyaDataPoints":
                           {
