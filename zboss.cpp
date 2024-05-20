@@ -63,9 +63,9 @@ static uint16_t const crc16Table[256] = {
 
 ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent)
 {
-    m_packet_seq = 0;
+    m_packetSeq = 0;
     m_tsn = 0;
-    m_ack_seq = -1;
+    m_ackSeq = -1;
 
     m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
     
@@ -239,10 +239,10 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data)
     llheader.signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
     llheader.length = common.length() + 7;
     llheader.type = ZBOSS_NCP_API_HL;
-    llheader.flags = FIRST_FRAG | LAST_FRAG | m_packet_seq << 2;
+    llheader.flags = FIRST_FRAG | LAST_FRAG | m_packetSeq << 2;
     llheader.CRC = 0;
 
-    m_packet_seq = (m_packet_seq % 3) + 1;
+    m_packetSeq = (m_packetSeq % 3) + 1;
 
     crc_llheader.append(reinterpret_cast <char*> (&llheader.length), sizeof(llheader.length));
     crc_llheader.append(llheader.type);
@@ -270,10 +270,10 @@ void ZBoss::sendAck()
     llheader.signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
     llheader.length = 7;
     llheader.type = ZBOSS_NCP_API_HL;
-    llheader.flags = IS_ACK | m_ack_seq << 4;
+    llheader.flags = IS_ACK | m_ackSeq << 4;
     llheader.CRC = 0;
 
-    m_ack_seq = (m_ack_seq + 1) % 4;
+    m_ackSeq = (m_ackSeq + 1) % 4;
 
     crc_llheader.append(reinterpret_cast <char*> (&llheader.length), sizeof(llheader.length));
     crc_llheader.append(llheader.type);
@@ -531,9 +531,9 @@ bool ZBoss::startCoordinator(void)
 
 void ZBoss::softReset(void)
 {
-    m_packet_seq = 0;
+    m_packetSeq = 0;
     m_tsn = 0;
-    m_ack_seq = -1;
+    m_ackSeq = -1;
     sendRequest(ZBOSS_NCP_RESET_IND, QByteArray(1, 0x01));    
 }
 
@@ -541,28 +541,37 @@ void ZBoss::parseData(QByteArray &buffer)
 {
     while (!buffer.isEmpty())
     {
-        QByteArray frame, data;
-        int length = static_cast <int> (static_cast <char> (buffer.at(3)) + static_cast <char> (buffer.at(2)));
+        QByteArray data;
+        quint8 llHeaderCRC;
+        quint16 bodyCRC;
+        quint16 length;
 
-        if (!buffer.startsWith(QByteArray::fromHex("dead")))
+        if (!buffer.startsWith(QByteArray::fromHex("dead")) || buffer.length() < 7)
             return;
+
+        memcpy(&length, buffer.mid(2, 2).constData(), sizeof(length));
+        length = qFromBigEndian(length);
 
         if (m_portDebug)
             logInfo << "Packet received:" << buffer.mid(0, length + 2).toHex(':');
 
-        frame = buffer.mid(10, length - 8);
+        memcpy(&llHeaderCRC, buffer.mid(6, 1).constData(), sizeof(llHeaderCRC));
+        memcpy(&bodyCRC, buffer.mid(7, 2).constData(), sizeof(bodyCRC));
 
-        for (int i = 0; i < frame.length(); i++)
-            data.append(1, frame.at(i));
+        if (llHeaderCRC != getCRC8(reinterpret_cast <quint8*> (buffer.mid(2, 4).data()), buffer.mid(2, 4).length()) ||
+            (bodyCRC != getCRC16(reinterpret_cast <quint8*> (buffer.mid(9, length - 7).data()), buffer.mid(9, length - 7).length()) && length > 7))
+        {
+            logWarning << QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(0, length + 2).toHex(':')));
+            return;
+        }
 
-        m_queue.enqueue(data);
+        m_queue.enqueue(buffer.mid(10, length - 8));
         buffer.remove(0, length + 2);
     }
 }
 
 bool ZBoss::permitJoin(bool enabled)
 {
-    
     if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(2, 0x00).append(1, enabled ? 0xFF : 0x00).append(0x01)) || m_replyStatus)
     {
         logWarning << "Form network failed";

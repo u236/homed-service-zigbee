@@ -337,9 +337,9 @@ private:
     QByteArray m_networkKey;
     QList <setTCPolicyStruct> m_policy;
 
-    quint8 m_packet_seq;
+    quint8 m_packetSeq;
     quint8 m_tsn;
-    qint8 m_ack_seq;
+    qint8 m_ackSeq;
 
     quint8 getCRC8(quint8 *data, quint32 length);
     quint16 getCRC16(quint8 *data, quint32 length);
