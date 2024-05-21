@@ -3,7 +3,7 @@ Description=HOMEd ZigBee Service
 
 [Service]
 ExecStart=/usr/bin/homed-zigbee
-Environment=LD_LIBRARY_PATH=/lib
+Environment=LD_LIBRARY_PATH=/usr/lib
 KillSignal=SIGTERM
 Restart=on-failure
 
