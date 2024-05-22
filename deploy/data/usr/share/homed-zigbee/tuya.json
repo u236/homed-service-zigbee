@@ -484,7 +484,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type C)",
-      "modelNames":     ["_TZE204_sooucan5"],
+      "modelNames":     ["_TZE204_sooucan5", "_TZE204_oqtpvx51"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime", "radarScene"],
