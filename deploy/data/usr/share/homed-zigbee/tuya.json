@@ -1180,7 +1180,7 @@
     },
     {
       "description":    "TUYA TS0041 1-Button Wireless Switch",
-      "modelNames":     ["TS0041"],
+      "modelNames":     ["TS0041", "TS0041A", "_TYZB01_ub7urdza"],
       "properties":     ["batteryPercentage", "tuyaButtonAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}, "checkTransactionId": true, "tuyaMagic": true}
