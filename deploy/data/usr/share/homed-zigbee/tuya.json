@@ -484,7 +484,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type C)",
-      "modelNames":     ["_TZE204_sooucan5"],
+      "modelNames":     ["_TZE204_sooucan5", "_TZE204_oqtpvx51"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime", "radarScene"],
@@ -1108,7 +1108,7 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor with Timeout",
-      "modelNames":     ["_TYZB01_5nr7ncpl", "_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
+      "modelNames":     ["_TYZB01_5nr7ncpl", "_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6", "_TYZB01_bhxcjvlv"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
