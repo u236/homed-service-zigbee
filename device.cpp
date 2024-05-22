@@ -174,7 +174,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         return;
     }
 
-    if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || QRegExp("^_TZ[2,3,E]\\d{3}_\\S+$").exactMatch(manufacturerName) || manufacturerName.startsWith("TUYA"))
+    if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || QRegExp("^_TZ[2,3,E]\\d{3}_\\S+$").exactMatch(manufacturerName) || manufacturerName.startsWith("_TYZB01_") || manufacturerName.startsWith("TUYA"))
     {
         modelName = manufacturerName;
         manufacturerName = "TUYA";
@@ -507,17 +507,14 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_ON_OFF:
 
-                    if (!device->batteryPowered())
-                    {
-                        it.value()->properties().append(Property(new Properties::Status));
-                        it.value()->actions().append(Action(new Actions::Status));
-                        it.value()->bindings().append(Binding(new Bindings::Status));
-                        it.value()->reportings().append(Reporting(new Reportings::Status));
-                        it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
+                    if (device->batteryPowered())
                         break;
-                    }
 
-                    it.value()->properties().append(Property(new Properties::StatusAction));
+                    it.value()->properties().append(Property(new Properties::Status));
+                    it.value()->actions().append(Action(new Actions::Status));
+                    it.value()->bindings().append(Binding(new Bindings::Status));
+                    it.value()->reportings().append(Reporting(new Reportings::Status));
+                    it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
                     break;
 
                 case CLUSTER_LEVEL_CONTROL:
