@@ -4,11 +4,11 @@
 #include "ezsp.h"
 #include "gpio.h"
 #include "logger.h"
+#include "zboss.h"
 #include "zcl.h"
 #include "zigate.h"
 #include "zigbee.h"
 #include "zstack.h"
-#include "zboss.h"
 
 ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, this)), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0), m_interPanLock(false)
 {
@@ -44,15 +44,15 @@ ZigBee::~ZigBee(void)
 
 void ZigBee::init(void)
 {
-    QList <QString> list = {"ezsp", "zigate", "znp", "zboss"};
+    QList <QString> list = {"ezsp", "zboss", "zigate", "znp"};
     QString adapterType = m_config->value("zigbee/adapter", "znp").toString();
 
     switch (list.indexOf(adapterType))
     {
         case 0:  m_adapter = new EZSP(m_config, this); break;
-        case 1:  m_adapter = new ZiGate(m_config, this); break;
-        case 2:  m_adapter = new ZStack(m_config, this); break;
-        case 3:  m_adapter = new ZBoss(m_config, this); break;
+        case 1:  m_adapter = new ZBoss(m_config, this); break;
+        case 2:  m_adapter = new ZiGate(m_config, this); break;
+        case 3:  m_adapter = new ZStack(m_config, this); break;
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
 

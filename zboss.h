@@ -152,56 +152,54 @@ struct lowLeverHeaderStruct
     quint16 length;
     quint8  type;
     quint8  flags;
-    quint8  CRC;
+    quint8  crc;
 };
 
 struct commonHeaderStruct
 {
-    quint8 version;
-    quint8 type;
+    quint8  version;
+    quint8  type;
     quint16 id;
 };
 
 struct moduleVersionResponseStruct
 {
-    quint8 fwVersionMajor;
-    quint8 fwVersionMinor;
-    quint8 fwVersionRevision;
-    quint8 fwVersionCommit;
-
-    quint8 stackVersionMajor;
-    quint8 stackVersionMinor;
-    quint8 stackVersionRevision;
-    quint8 stackVersionCommit;
-
-    quint8 protocolVersionMajor;
-    quint8 protocolVersionMinor;
-    quint8 protocolVersionRevision;
-    quint8 protocolVersionCommit;
+    quint8  firmwareVersionMajor;
+    quint8  firmwareVersionMinor;
+    quint8  firmwareVersionRevision;
+    quint8  firmwareVersionCommit;
+    quint8  stackVersionMajor;
+    quint8  stackVersionMinor;
+    quint8  stackVersionRevision;
+    quint8  stackVersionCommit;
+    quint8  protocolVersionMajor;
+    quint8  protocolVersionMinor;
+    quint8  protocolVersionRevision;
+    quint8  protocolVersionCommit;
 };
 
 struct localIEEEResponseStruct
 {
-    quint8 macIfaceNum;
+    quint8  macIfaceNum;
     quint64 ieeeAddress;
 };
 
 struct channelMaskRequestStruct
 {
-    quint8 page;
+    quint8  page;
     quint32 mask;
 };
 
 struct nwkSetRequestStruct
 {
-    quint8 key[16];
-    quint8 number;
+    quint8  key[16];
+    quint8  number;
 };
 
 struct setTCPolicyStruct
 {
     quint16 id;
-    quint8 value;
+    quint8  value;
 };
 
 struct nwkForamtionStruct
@@ -244,7 +242,7 @@ struct apsdeDataRequestStruct
 {
     quint8 paramLength;
     quint16 dataLength;
-    quint64 ieeeAddress;
+    quint64 dstAddress;
     quint16 profileId;
     quint16 clusterId;
     quint8 dstEndpointId;
@@ -270,7 +268,7 @@ struct zdoBindRequestStruct
     quint64 srcAddress;
     quint8 srcEndpointId;
     quint16 clusterId;
-    quint8 dstMode;
+    quint8 dstAddressMode;
     quint64 dstAddress;
     quint8 dstEndpointId;
 };
@@ -301,7 +299,7 @@ struct zdoSimpleDescriptorResponseStruct
     quint16 profileId;
     quint16 deviceId;
     quint8 version;
-    quint8 inpClusterCount;
+    quint8 inClusterCount;
     quint8 outClusterCount;
 };
 
@@ -331,22 +329,22 @@ public:
 
 private:
 
+    QByteArray m_networkKey;
+
     quint16 m_command;
     QByteArray m_replyData;
 
-    QByteArray m_networkKey;
+    quint8 m_tsn, m_sequenceId;
+    qint8 m_acknowledgeId;
+
     QList <setTCPolicyStruct> m_policy;
 
-    quint8 m_packetSeq;
-    quint8 m_tsn;
-    qint8 m_ackSeq;
-
+    quint8 getTSN(void);
     quint8 getCRC8(quint8 *data, quint32 length);
     quint16 getCRC16(quint8 *data, quint32 length);
-    inline quint8 getTSN() {m_tsn = (m_tsn + 1) % 255; return m_tsn;}
 
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
-    void sendAck();
+    void sendAcknowledge(void);
     void parsePacket(quint8 type, quint16 command, const QByteArray &data);
 
     bool startCoordinator(void);

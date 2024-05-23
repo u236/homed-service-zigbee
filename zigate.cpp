@@ -47,7 +47,6 @@ bool ZiGate::zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, co
         case ZDO_NODE_DESCRIPTOR_REQUEST:   command = ZIGATE_NODE_DESCRIPTOR_REQUEST; break;
         case ZDO_SIMPLE_DESCRIPTOR_REQUEST: command = ZIGATE_SIMPLE_DESCRIPTOR_REQUEST; break;
         case ZDO_ACTIVE_ENDPOINTS_REQUEST:  command = ZIGATE_ACTIVE_ENDPOINTS_REQUEST; break;
-        case ZDO_LQI_REQUEST:               command = ZIGATE_LQI_REQUEST; break;
         default: return false;
     }
 
@@ -84,8 +83,8 @@ bool ZiGate::leaveRequest(quint8 id, quint16 networkAddress)
 
 bool ZiGate::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
 {
-    quint16 data = qToBigEndian(networkAddress);
-    return sendRequest(ZIGATE_LQI_REQUEST, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(static_cast <quint8> (index)), id) && !m_replyStatus;
+    quint16 dstAddress = qToBigEndian(networkAddress);
+    return sendRequest(ZIGATE_LQI_REQUEST, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(static_cast <quint8> (index)), id) && !m_replyStatus;
 }
 
 quint8 ZiGate::getChecksum(const zigateHeaderStruct *header, const QByteArray &payload)
