@@ -346,7 +346,7 @@
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "trigger", "type": "bool", "action": true}],
-                            "3":    [{"name": "contact", "type": "bool", "invert": true}]
+                            "3":    [{"name": "contact", "type": "bool", "invert": false}]
                           },
                           "tuyaMagic": true
                         }
