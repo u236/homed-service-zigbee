@@ -2,6 +2,17 @@
   "Philips":
   [
     {
+      "description":    "Philips Hue Dimmable Bulb A60 (806lm)",
+      "modelNames":     ["LWA011"],
+      "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "bindings":       ["status", "level"],
+      "reportings":     ["status", "level"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level"]},
+      "endpointId":     11
+    },
+    {
       "description":    "Philips Hue Motion Sensor 9290019758",
       "modelNames":     ["SML002"],
       "properties":     ["batteryPercentage", "occupancy", "illuminance", "temperature", "occupancyTimeout", "customAttributes"],
