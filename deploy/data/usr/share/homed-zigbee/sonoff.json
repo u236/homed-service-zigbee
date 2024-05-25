@@ -27,12 +27,12 @@
       "exposes":        ["battery", "temperature", "humidity"]
     },
     {
-      "description":    "Sonoff Door and Window Sensor SNZB-04",
-      "modelNames":     ["DS01"],
+      "description":    "Sonoff Door and Window Sensor SNZB-04 or SNZB-04P",
+      "modelNames":     ["DS01", "SNZB-04P"],
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "contact", "batteryLow"]
+      "exposes":        ["battery", "contact", "batteryLow", "tamper"]
     },
     {
       "description":    "Sonoff Motion Sensor SNZB-03",
@@ -43,13 +43,13 @@
       "exposes":        ["battery", "occupancy", "batteryLow"]
     },
     {
-      "description":    "Sonoff Wireless Button SNZB-01",
-      "modelNames":     ["WB01", "WB-01"],
+      "description":    "Sonoff Wireless Button SNZB-01 or SNZB-01P",
+      "modelNames":     ["SNZB-01P", "WB01", "WB-01"],
       "properties":     ["batteryPercentage", "customCommands"],
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}}
+      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}, "powerSource": 3}
     }
   ],
 
