@@ -54,6 +54,25 @@
       "endpointId":     2
     },
     {
+      "description":    "EFEKTA AQ Smart Monitor",
+      "modelNames":     ["EFEKTA_AQ_Smart_Monitor"],
+      "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
+      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
+      "bindings":       ["analogInput", "temperature", "humidity", "co2"],
+      "reportings":     ["analogInput", "temperature", "humidity", "co2"],
+      "exposes":        ["temperature", "humidity", "co2", "voc", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "humidityOffset", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset", "vocLow", "vocHigh", "vocRelay", "vocRelayInvert"],
+      "options":        {
+                          "altitude": {"min": 0, "max": 3000, "step": 10},
+                          "temperatureOffset": {"min": -50, "max": 50},
+                          "humidityOffset": {"min": -50, "max": 50},
+                          "co2Low": {"min": 400, "max": 2000, "step": 10},
+                          "co2High": {"min": 400, "max": 2000, "step": 10},
+                          "co2ManualCalibration": {"min": 0, "max": 5000, "step": 10},
+                          "vocLow": {"min": 0, "max": 1000, "step": 5},
+                          "vocHigh": {"min": 0, "max": 1000, "step": 5}
+                        }
+    },
+    {
       "description":    "EFEKTA CO2 Monitor with TFT Display iAQ",
       "modelNames":     ["EFEKTA_iAQ"],
       "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
