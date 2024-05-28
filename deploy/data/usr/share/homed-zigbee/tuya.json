@@ -643,6 +643,42 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type D)",
+      "modelNames":     ["_TZE200_vvmbj46n"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "temperature", "humidity", "displayMode", "temperatureLow", "temperatureHigh", "temperatureAlarm", "temperaturePeriodicReport", "temperatureSensitivity", "humidityLow", "humidityHigh", "humidityAlarm", "humidityPeriodicReport", "humiditySensitivity"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1" : [{"name": "temperature",               "type": "value", "divider": 10}],
+                            "2" : [{"name": "humidity",                  "type": "value"}],
+                            "4" : [{"name": "battery",                   "type": "value"}],
+                            "9" : [{"name": "displayMode",               "type": "enum",  "action": true}],
+                            "10": [{"name": "temperatureHigh",           "type": "value", "divider": 10, "action": true}],
+                            "11": [{"name": "temperatureLow",            "type": "value", "divider": 10, "action": true}],
+                            "12": [{"name": "humidityHigh",              "type": "value", "action": true}],
+                            "13": [{"name": "humidityLow",               "type": "value", "action": true}],
+                            "14": [{"name": "temperatureAlarm",          "type": "enum"}],
+                            "15": [{"name": "humidityAlarm",             "type": "enum"}],
+                            "17": [{"name": "temperaturePeriodicReport", "type": "value",  "action": true}],
+                            "18": [{"name": "humidityPeriodicReport",    "type": "value",  "action": true}],
+                            "19": [{"name": "temperatureSensitivity",    "type": "value", "action": true}],
+                            "20": [{"name": "humiditySensitivity",       "type": "value", "action": true}]
+                          },
+                          "humidityAlarm":             {"type": "sensor", "enum": ["lower alarm", "upper alarm", "cancel"], "icon": "mdi:alarm-light"},
+                          "temperatureAlarm":          {"type": "sensor", "enum": ["lower alarm", "upper alarm", "cancel"], "icon": "mdi:alarm-light"},
+                          "temperatureLow":            {"min": -20, "max": 60,  "step": 1},
+                          "temperatureHigh":           {"min": -20, "max": 60,  "step": 1},
+                          "humidityLow":               {"min": 0,   "max": 100, "step": 1},
+                          "humidityHigh":              {"min": 0,   "max": 100, "step": 1},
+                          "temperatureSensitivity":    {"type": "number", "min": 3, "max": 10,  "step": 1, "icon": "mdi:dumbbell"},
+                          "humiditySensitivity":       {"type": "number", "min": 3, "max": 10,  "step": 1, "icon": "mdi:dumbbell"},
+                          "temperaturePeriodicReport": {"type": "number", "min": 0, "max": 100, "step": 1, "icon": "mdi:dumbbell"},
+                          "humidityPeriodicReport":    {"type": "number", "min": 0, "max": 100, "step": 1, "icon": "mdi:dumbbell"}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Air Quality Sensor",
       "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k"],
       "properties":     ["tuyaDataPoints"],
