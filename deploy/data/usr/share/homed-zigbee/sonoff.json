@@ -19,8 +19,8 @@
       "endpointId":     [1, 2]
     },
     {
-      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02 or SNZB-02P",
-      "modelNames":     ["SNZB-02P", "TH01"],
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02, SNZB-02D or SNZB-02P",
+      "modelNames":     ["SNZB-02D", "SNZB-02P", "TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
