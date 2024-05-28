@@ -406,7 +406,7 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "contact", "type": "bool", "invert": true}],
+                            "1":    [{"name": "contact", "type": "bool"}],
                             "2":    [{"name": "battery", "type": "value"}],
                             "101":  [{"name": "illuminance", "type": "value"}],
                             "102":  [{"name": "illuminanceDelay", "type": "value", "action": true}]
