@@ -650,8 +650,8 @@
                           "temperatureLow":            {"min": -20, "max": 60},
                           "humidityHigh":              {"min": 0, "max": 100},
                           "humidityLow":               {"min": 0, "max": 100},
-                          "temperatureAlarm":          {"type": "sensor", "enum": ["low", "high", "none"], "icon": "mdi:alarm-light"},
-                          "humidityAlarm":             {"type": "sensor", "enum": ["low", "high", "none"], "icon": "mdi:alarm-light"}
+                          "temperatureAlarm":          {"enum": ["low", "high", "none"]},
+                          "humidityAlarm":             {"enum": ["low", "high", "none"]}
                         }
     },
     {
