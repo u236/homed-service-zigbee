@@ -262,7 +262,7 @@ void EZSP::sendRequest(quint8 control, const QByteArray &payload)
     }
 
     m_errorReceived = false;
-    sendData(buffer.append(static_cast <char> (ASH_FLAG_BYTE)));
+    sendData(buffer.append(static_cast <char> (ASH_PACKET_FLAG)));
 }
 
 void EZSP::parsePacket(const QByteArray &payload)
@@ -733,10 +733,10 @@ void EZSP::parseData(QByteArray &buffer)
         if (buffer.startsWith(QByteArray::fromHex("1ac102")) || buffer.startsWith(QByteArray::fromHex("1ac202")))
             buffer.remove(0, 1);
 
-        if (buffer.length() < ASH_MIN_LENGTH || !buffer.contains(static_cast <char> (ASH_FLAG_BYTE)))
+        if (buffer.length() < 4 || !buffer.contains(static_cast <char> (ASH_PACKET_FLAG)))
             return;
 
-        length = static_cast <quint16> (buffer.indexOf(ASH_FLAG_BYTE));
+        length = static_cast <quint16> (buffer.indexOf(ASH_PACKET_FLAG));
 
         if (m_portDebug)
             logInfo << "Packet received:" << buffer.mid(0, length + 1).toHex(':');

@@ -533,7 +533,10 @@ void ZStack::parseData(QByteArray &buffer)
     {
         quint8 length, fcs = 0;
 
-        if (buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG) || buffer.length() < 5)
+        if (!buffer.at(0))
+            buffer.remove(0, 1);
+
+        if (buffer.length() < 5 || buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG))
         {
             buffer.clear();
             break;
