@@ -112,7 +112,7 @@ struct ezspHeaderStruct
     quint16 frameId;
 };
 
-struct registerEndpointStruct
+struct ezspRegisterEndpointStruct
 {
     quint8  endpointId;
     quint16 profileId;
@@ -122,7 +122,7 @@ struct registerEndpointStruct
     quint8  outClustersCount;
 };
 
-struct setConcentratorStruct
+struct ezspSetConcentratorStruct
 {
     quint8  enabled;
     quint16 type;
@@ -133,7 +133,7 @@ struct setConcentratorStruct
     quint8  maxHops;
 };
 
-struct trustCenterJoinHandlerStruct
+struct ezspTrustCenterJoinStruct
 {
     quint16 networkAddress;
     quint64 ieeeAddress;
@@ -142,7 +142,7 @@ struct trustCenterJoinHandlerStruct
     quint16 parentAddress;
 };
 
-struct networkParametersStruct
+struct ezspNetworkParametersStruct
 {
     quint64 extendedPanId;
     quint16 panId;
@@ -154,7 +154,7 @@ struct networkParametersStruct
     quint32 channelList;
 };
 
-struct sendUnicastStruct
+struct ezspSendUnicastStruct
 {
     quint8  type;
     quint16 networkAddress;
@@ -169,7 +169,7 @@ struct sendUnicastStruct
     quint8  length;
 };
 
-struct sendMulticastStruct
+struct ezspSendMulticastStruct
 {
     quint16 profileId;
     quint16 clusterId;
@@ -184,7 +184,7 @@ struct sendMulticastStruct
     quint8  length;
 };
 
-struct sendIeeeRawStruct
+struct ezspSendIeeeRawStruct
 {
     quint16 ieeeFrameControl;
     quint8  sequence;
@@ -198,7 +198,7 @@ struct sendIeeeRawStruct
     quint16 profileId;
 };
 
-struct sendRawStruct
+struct ezspSendRawStruct
 {
     quint16 ieeeFrameControl;
     quint8  sequence;
@@ -212,7 +212,7 @@ struct sendRawStruct
     quint16 profileId;
 };
 
-struct messageSentHandlerStruct
+struct ezspMessageSentStruct
 {
     quint8  type;
     quint16 networkAddress;
@@ -228,7 +228,7 @@ struct messageSentHandlerStruct
     quint8  length;
 };
 
-struct incomingMessageHandlerStruct
+struct ezspIncomingMessageStruct
 {
     quint8  type;
     quint16 profileId;
@@ -246,7 +246,7 @@ struct incomingMessageHandlerStruct
     quint8  length;
 };
 
-struct macFilterMatchMessageHandlerStruct
+struct ezspMacFilterMessageStruct
 {
     quint8  index;
     quint8  type;
@@ -265,27 +265,27 @@ struct macFilterMatchMessageHandlerStruct
     quint16 profileId;
 };
 
-struct setConfigStruct
+struct ezspSetConfigStruct
 {
     quint8  id;
     quint16 value;
 };
 
-struct setValueStruct
+struct ezspSetValueStruct
 {
     quint8  id;
     quint8  length;
     quint16 value;
 };
 
-struct setMulticastStruct
+struct ezspAddGroupStruct
 {
     quint16 groupId;
     quint8  endpointId;
     quint8  index;
 };
 
-struct setInitialSecurityStateStruct
+struct ezspSetInitialSecurityStruct
 {
     quint16 bitmask;
     quint8  preconfiguredKey[16];
@@ -294,7 +294,7 @@ struct setInitialSecurityStateStruct
     quint64 preconfiguredTrustCenter;
 };
 
-struct versionInfoStruct
+struct ezspVersionStruct
 {
     quint16 build;
     quint8  major;
@@ -331,8 +331,8 @@ private:
     QByteArray m_replyData;
     bool m_replyReceived, m_errorReceived;
 
-    QList <setConfigStruct> m_config, m_policy;
-    QList <setValueStruct> m_values;
+    QList <ezspSetConfigStruct> m_config, m_policy;
+    QList <ezspSetValueStruct> m_values;
 
     quint16 getCRC(quint8 *data, quint32 length);
     void randomize(QByteArray &data);

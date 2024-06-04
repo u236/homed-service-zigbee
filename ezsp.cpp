@@ -61,7 +61,7 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
 
 bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
-    sendUnicastStruct request;
+    ezspSendUnicastStruct request;
 
     request.type = MESSAGE_TYPE_DIRECT;
     request.networkAddress = qToLittleEndian(networkAddress);
@@ -88,7 +88,7 @@ bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointI
 
 bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
-    sendMulticastStruct request;
+    ezspSendMulticastStruct request;
 
     request.profileId = qToLittleEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
     request.clusterId = qToLittleEndian(clusterId);
@@ -107,7 +107,7 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
 
 bool EZSP::unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quint16 clusterId, const QByteArray &payload)
 {
-    sendIeeeRawStruct request;
+    ezspSendIeeeRawStruct request;
 
     memcpy(&request.dstAddress, ieeeAddress.constData(), sizeof(request.dstAddress));
     memcpy(&request.srcAddress, m_ieeeAddress.constData(), sizeof(request.srcAddress));
@@ -128,7 +128,7 @@ bool EZSP::unicastInterPanRequest(quint8 id, const QByteArray &ieeeAddress, quin
 
 bool EZSP::broadcastInterPanRequest(quint8 id, quint16 clusterId, const QByteArray &payload)
 {
-    sendRawStruct request;
+    ezspSendRawStruct request;
 
     memcpy(&request.srcAddress, m_ieeeAddress.constData(), sizeof(request.srcAddress));
 
@@ -301,7 +301,7 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         case FRAME_TRUST_CENTER_JOIN_HANDLER:
         {
-            const trustCenterJoinHandlerStruct *message = reinterpret_cast <const trustCenterJoinHandlerStruct*> (data.constData());
+            const ezspTrustCenterJoinStruct *message = reinterpret_cast <const ezspTrustCenterJoinStruct*> (data.constData());
 
             switch (message->status)
             {
@@ -328,15 +328,15 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         case FRAME_MESSAGE_SENT_HANDLER:
         {
-            const messageSentHandlerStruct *message = reinterpret_cast <const messageSentHandlerStruct*> (data.constData());
+            const ezspMessageSentStruct *message = reinterpret_cast <const ezspMessageSentStruct*> (data.constData());
             emit requestFinished(message->tag, message->status);
             break;
         }
 
         case FRAME_INCOMING_MESSAGE_HANDLER:
         {
-            const incomingMessageHandlerStruct *message = reinterpret_cast <const incomingMessageHandlerStruct*> (data.constData());
-            QByteArray payload = data.mid(sizeof(incomingMessageHandlerStruct), message->length);
+            const ezspIncomingMessageStruct *message = reinterpret_cast <const ezspIncomingMessageStruct*> (data.constData());
+            QByteArray payload = data.mid(sizeof(ezspIncomingMessageStruct), message->length);
 
             if (message->profileId)
             {
@@ -366,9 +366,9 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         case FRAME_MAC_FILTER_MATCH_MESSAGE_HANDLER:
         {
-            const macFilterMatchMessageHandlerStruct *message = reinterpret_cast <const macFilterMatchMessageHandlerStruct*> (data.constData());
+            const ezspMacFilterMessageStruct *message = reinterpret_cast <const ezspMacFilterMessageStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->srcAddress));
-            emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(macFilterMatchMessageHandlerStruct)));
+            emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(ezspMacFilterMessageStruct)));
             break;
         }
 
@@ -384,9 +384,9 @@ void EZSP::parsePacket(const QByteArray &payload)
 
 bool EZSP::startNetwork(quint64 extendedPanId)
 {
-    setInitialSecurityStateStruct security;
-    networkParametersStruct network;
-    setValueStruct value;
+    ezspSetInitialSecurityStruct security;
+    ezspNetworkParametersStruct network;
+    ezspSetValueStruct value;
 
     logInfo << "Starting new network...";
 
@@ -492,9 +492,9 @@ bool EZSP::startNetwork(quint64 extendedPanId)
 
 bool EZSP::startCoordinator(void)
 {
-    setConcentratorStruct concentrator;
-    networkParametersStruct network;
-    versionInfoStruct version;
+    ezspSetConcentratorStruct concentrator;
+    ezspNetworkParametersStruct network;
+    ezspVersionStruct version;
     quint64 ieeeAddress;
     bool check = false;
 
@@ -540,7 +540,7 @@ bool EZSP::startCoordinator(void)
 
     for (int i = 0; i < m_config.length(); i++)
     {
-        setConfigStruct request = m_config.at(i);
+        ezspSetConfigStruct request = m_config.at(i);
 
         if (sendFrame(FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
@@ -550,7 +550,7 @@ bool EZSP::startCoordinator(void)
 
     for (int i = 0; i < m_policy.length(); i++)
     {
-        setConfigStruct request = m_policy.at(i);
+        ezspSetConfigStruct request = m_policy.at(i);
 
         if (sendFrame(FRAME_SET_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
@@ -560,7 +560,7 @@ bool EZSP::startCoordinator(void)
 
     for (int i = 0; i < m_values.length(); i++)
     {
-        setValueStruct request = m_values.at(i);
+        ezspSetValueStruct request = m_values.at(i);
 
         if (sendFrame(FRAME_SET_VALUE, QByteArray(reinterpret_cast <char*> (&request), request.length + 2)) && !m_replyStatus)
             continue;
@@ -590,7 +590,7 @@ bool EZSP::startCoordinator(void)
 
     for (auto it = m_endpoints.begin(); it != m_endpoints.end(); it++)
     {
-        registerEndpointStruct request;
+        ezspRegisterEndpointStruct request;
         QByteArray data;
 
         request.endpointId = it.key();
@@ -678,7 +678,7 @@ bool EZSP::startCoordinator(void)
 
     for (int i = 0; i < m_multicast.length(); i++)
     {
-        setMulticastStruct request;
+        ezspAddGroupStruct request;
 
         request.groupId = qToLittleEndian(m_multicast.at(i));
         request.endpointId = m_multicast.at(i) == GREEN_POWER_GROUP ? 0xF2 : 0x01;
@@ -790,7 +790,7 @@ bool EZSP::permitJoin(bool enabled)
 {
     if (enabled)
     {
-        setConfigStruct policy;
+        ezspSetConfigStruct policy;
 
         if (!sendFrame(FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e63653039")) || m_replyStatus)
         {

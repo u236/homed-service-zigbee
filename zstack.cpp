@@ -20,7 +20,7 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
 
 bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
-    dataRequestStruct request;
+    zstackDataRequestStruct request;
 
     request.networkAddress = qToLittleEndian(networkAddress);
     request.dstEndpointId = dstEndPointId;
@@ -70,7 +70,7 @@ void ZStack::resetInterPanChannel(void)
 
 bool ZStack::extendedRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
-    extendedDataRequestStruct data;
+    zstackExtendedRequestStruct data;
 
     switch (address.length())
     {
@@ -174,21 +174,21 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case AF_DATA_CONFIRM:
         {
-            const dataConfirmStruct *message = reinterpret_cast <const dataConfirmStruct*> (data.constData());
+            const zstackDataConfirmStruct *message = reinterpret_cast <const zstackDataConfirmStruct*> (data.constData());
             emit requestFinished(message->transactionId, message->status);
             break;
         }
 
         case AF_INCOMING_MSG:
         {
-            const incomingMessageStruct *message = reinterpret_cast <const incomingMessageStruct*> (data.constData());
-            emit zclMessageReveived(qFromLittleEndian(message->srcAddress), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(incomingMessageStruct), message->length));
+            const zstackIncomingMessageStruct *message = reinterpret_cast <const zstackIncomingMessageStruct*> (data.constData());
+            emit zclMessageReveived(qFromLittleEndian(message->srcAddress), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(zstackIncomingMessageStruct), message->length));
             break;
         }
 
         case AF_INCOMING_MSG_EXT:
         {
-            const extendedIncomingMessageStruct *message = reinterpret_cast <const extendedIncomingMessageStruct*> (data.constData());
+            const zstackExtendedMessageStruct *message = reinterpret_cast <const zstackExtendedMessageStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->srcAddress));
 
             if (message->srcAddressMode != 0x03)
@@ -197,7 +197,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
                 return;
             }
 
-            emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(extendedIncomingMessageStruct), message->length));
+            emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(zstackExtendedMessageStruct), message->length));
             break;
         }
 
@@ -222,7 +222,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_LEAVE_IND:
         {
-            const deviceLeaveStruct *message = reinterpret_cast <const deviceLeaveStruct*> (data.constData());
+            const zstackDeviceLeaveStruct *message = reinterpret_cast <const zstackDeviceLeaveStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
             emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
             break;
@@ -230,8 +230,8 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZDO_MSG_CB_INCOMING:
         {
-            const zdoMessageStruct *message = reinterpret_cast <const zdoMessageStruct*> (data.constData());
-            QByteArray payload = data.mid(sizeof(zdoMessageStruct));
+            const zstackZdoMessageStruct *message = reinterpret_cast <const zstackZdoMessageStruct*> (data.constData());
+            QByteArray payload = data.mid(sizeof(zstackZdoMessageStruct));
             emit requestFinished(message->transactionId, static_cast <quint8> (payload.at(0)));
             emit zdoMessageReveived(qFromLittleEndian(message->srcAddress), qFromLittleEndian(message->clusterId), payload);
             break;
@@ -253,7 +253,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
 bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 {
-    nvWriteRequestStruct request;
+    zstackNvWriteStruct request;
 
     request.id = qToLittleEndian(id);
     request.offset = 0x00;
@@ -270,7 +270,7 @@ bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 
 bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 {
-    writeConfigurationRequestStruct request;
+    zstackWriteConfigurationStruct request;
 
     request.id = id;
     request.length = static_cast <quint8> (data.length());
@@ -286,8 +286,8 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 
 bool ZStack::startCoordinator(void)
 {
-    versionResponseStruct version;
-    addGroupRequestStruct request;
+    zstackVersionStruct version;
+    zstackAddGroupStruct request;
 
     if (!sendRequest(SYS_VERSION))
     {
@@ -340,8 +340,8 @@ bool ZStack::startCoordinator(void)
 
             if (m_version != ZStackVersion::ZStack12x || it.key() != ZCD_NV_PRECFGKEY)
             {
-                nvReadRequestStruct request;
-                nvReadReplyStruct *reply;
+                zstackNvReadStruct request;
+                zstackNvReplyStruct *reply;
 
                 request.id = qToLittleEndian <quint16> (it.key());
                 request.offset = 0x00;
@@ -352,13 +352,13 @@ bool ZStack::startCoordinator(void)
                     return false;
                 }
 
-                reply = reinterpret_cast <nvReadReplyStruct*> (m_replyData.data());
-                data = m_replyData.mid(sizeof(nvReadReplyStruct));
+                reply = reinterpret_cast <zstackNvReplyStruct*> (m_replyData.data());
+                data = m_replyData.mid(sizeof(zstackNvReplyStruct));
                 status = reply->status;
             }
             else
             {
-                readConfigurationReplyStruct *reply;
+                zstackReadConfigurationStruct *reply;
 
                 if (!sendRequest(ZB_READ_CONFIGURATION, QByteArray(1, static_cast <char> (it.key()))))
                 {
@@ -366,8 +366,8 @@ bool ZStack::startCoordinator(void)
                     return false;
                 }
 
-                reply = reinterpret_cast <readConfigurationReplyStruct*> (m_replyData.data());
-                data = m_replyData.mid(sizeof(readConfigurationReplyStruct));
+                reply = reinterpret_cast <zstackReadConfigurationStruct*> (m_replyData.data());
+                data = m_replyData.mid(sizeof(zstackReadConfigurationStruct));
                 status = reply->status;
             }
 
@@ -391,7 +391,7 @@ bool ZStack::startCoordinator(void)
     }
     else
     {
-        nvInitRequestStruct request;
+        zstackNvInitStruct request;
 
         request.id = qToLittleEndian <quint16> (ZCD_NV_MARKER);
         request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvItems.value(ZCD_NV_MARKER).length()));
@@ -424,7 +424,7 @@ bool ZStack::startCoordinator(void)
 
     if (m_version != ZStackVersion::ZStack12x)
     {
-        setChannelRequestStruct channelRequest;
+        zstackSetChannelStruct channelRequest;
 
         channelRequest.isPrimary = 0x01;
         channelRequest.channel = qToLittleEndian <quint32> (1 << m_channel);
@@ -458,7 +458,7 @@ bool ZStack::startCoordinator(void)
 
     for (auto it = m_endpoints.begin(); it != m_endpoints.end(); it++)
     {
-        registerEndpointRequestStruct request;
+        zstackRegisterEndpointStruct request;
         QByteArray data;
 
         request.endpointId = it.key();
@@ -567,7 +567,7 @@ void ZStack::parseData(QByteArray &buffer)
 
 bool ZStack::permitJoin(bool enabled)
 {
-    permitJoinRequestStruct request;
+    zstackPermitJoinStruct request;
 
     request.mode = PERMIT_JOIN_MODE_ADDREESS;
     request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);

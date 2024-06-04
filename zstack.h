@@ -81,7 +81,7 @@
 
 #pragma pack(push, 1)
 
-struct versionResponseStruct
+struct zstackVersionStruct
 {
     quint8  transport;
     quint8  product;
@@ -91,14 +91,14 @@ struct versionResponseStruct
     quint32 build;
 };
 
-struct addGroupRequestStruct
+struct zstackAddGroupStruct
 {
     quint8  endpointId;
     quint16 groupId;
     quint8  nameLength;
 };
 
-struct registerEndpointRequestStruct
+struct zstackRegisterEndpointStruct
 {
     quint8  endpointId;
     quint16 profileId;
@@ -107,7 +107,7 @@ struct registerEndpointRequestStruct
     quint8  latency;
 };
 
-struct permitJoinRequestStruct
+struct zstackPermitJoinStruct
 {
     quint8  mode;
     quint16 dstAddress;
@@ -115,7 +115,7 @@ struct permitJoinRequestStruct
     quint8  significance;
 };
 
-struct dataRequestStruct
+struct zstackDataRequestStruct
 {
     quint16 networkAddress;
     quint8  dstEndpointId;
@@ -127,7 +127,7 @@ struct dataRequestStruct
     quint8  length;
 };
 
-struct extendedDataRequestStruct
+struct zstackExtendedRequestStruct
 {
     quint8  dstAddressMode;
     quint64 dstAddress;
@@ -141,59 +141,59 @@ struct extendedDataRequestStruct
     quint16 length;
 };
 
-struct setChannelRequestStruct
+struct zstackSetChannelStruct
 {
     quint8  isPrimary;
     quint32 channel;
 };
 
-struct nvReadRequestStruct
+struct zstackNvReadStruct
 {
     quint16 id;
     quint8  offset;
 };
 
-struct nvReadReplyStruct
+struct zstackNvReplyStruct
 {
     quint8  status;
     quint8  length;
 };
 
-struct nvInitRequestStruct
+struct zstackNvInitStruct
 {
     quint16 id;
     quint16 itemLength;
     quint8  dataLength;
 };
 
-struct nvWriteRequestStruct
+struct zstackNvWriteStruct
 {
     quint16 id;
     quint8  offset;
     quint8  length;
 };
 
-struct readConfigurationReplyStruct
+struct zstackReadConfigurationStruct
 {
     quint8  status;
     quint8  id;
     quint8  length;
 };
 
-struct writeConfigurationRequestStruct
+struct zstackWriteConfigurationStruct
 {
     quint8  id;
     quint8  length;
 };
 
-struct dataConfirmStruct
+struct zstackDataConfirmStruct
 {
     quint8  status;
     quint8  endpointId;
     quint8  transactionId;
 };
 
-struct incomingMessageStruct
+struct zstackIncomingMessageStruct
 {
     quint16 groupId;
     quint16 clusterId;
@@ -208,7 +208,7 @@ struct incomingMessageStruct
     quint8  length;
 };
 
-struct extendedIncomingMessageStruct
+struct zstackExtendedMessageStruct
 {
     quint16 groupId;
     quint16 clusterId;
@@ -225,16 +225,7 @@ struct extendedIncomingMessageStruct
     quint16 length;
 };
 
-struct deviceLeaveStruct
-{
-    quint16 networkAddress;
-    quint64 ieeeAddress;
-    quint8  request;
-    quint8  remove;
-    quint8  rejoin;
-};
-
-struct zdoMessageStruct
+struct zstackZdoMessageStruct
 {
     quint16 srcAddress;
     quint8  broadcast;
@@ -242,6 +233,15 @@ struct zdoMessageStruct
     quint8  security;
     quint8  transactionId;
     quint16 dstAddress;
+};
+
+struct zstackDeviceLeaveStruct
+{
+    quint16 networkAddress;
+    quint64 ieeeAddress;
+    quint8  request;
+    quint8  remove;
+    quint8  rejoin;
 };
 
 #pragma pack(pop)
