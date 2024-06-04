@@ -1,104 +1,104 @@
 #ifndef EZSP_H
 #define EZSP_H
 
-#define ASH_REQUEST_TIMEOUT                                     2000
-#define ASH_REQUEST_RETRIES                                     3
-#define ASH_PACKET_FLAG                                         0x7E
+#define ASH_REQUEST_TIMEOUT                                 2000
+#define ASH_REQUEST_RETRIES                                 3
+#define ASH_PACKET_FLAG                                     0x7E
 
-#define ASH_CONTROL_ACK                                         0x80
-#define ASH_CONTROL_NAK                                         0xA0
-#define ASH_CONTROL_RST                                         0xC0
-#define ASH_CONTROL_RSTACK                                      0xC1
-#define ASH_CONTROL_ERROR                                       0xC2
+#define ASH_CONTROL_ACK                                     0x80
+#define ASH_CONTROL_NAK                                     0xA0
+#define ASH_CONTROL_RST                                     0xC0
+#define ASH_CONTROL_RSTACK                                  0xC1
+#define ASH_CONTROL_ERROR                                   0xC2
 
-#define FRAME_VERSION                                           0x0000
-#define FRAME_REGISTER_ENDPOINT                                 0x0002
-#define FRAME_SET_CONCENTRATOR                                  0x0010
-#define FRAME_SET_MANUFACTURER_CODE                             0x0015
-#define FRAME_NETWORK_INIT                                      0x0017
-#define FRAME_NETWORK_STATUS                                    0x0018
-#define FRAME_STACK_STATUS_HANDLER                              0x0019
-#define FRAME_FORM_NERWORK                                      0x001E
-#define FRAME_LEAVE_NETWORK                                     0x0020
-#define FRAME_PERMIT_JOINING                                    0x0022
-#define FRAME_TRUST_CENTER_JOIN_HANDLER                         0x0024
-#define FRAME_GET_IEEE_ADDRESS                                  0x0026
-#define FRAME_GET_NETWORK_PARAMETERS                            0x0028
-#define FRAME_SEND_UNICAST                                      0x0034
-#define FRAME_SEND_MULTICAST                                    0x0038
-#define FRAME_MESSAGE_SENT_HANDLER                              0x003F
-#define FRAME_INCOMING_MESSAGE_HANDLER                          0x0045
-#define FRAME_MAC_FILTER_MATCH_MESSAGE_HANDLER                  0x0046
-#define FRAME_SET_CONFIG                                        0x0053
-#define FRAME_SET_POLICY                                        0x0055
-#define FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE                   0x005A
-#define FRAME_SET_MULTICAST_TABLE_ENTRY                         0x0064
-#define FRAME_SET_INITIAL_SECURITY_STATE                        0x0068
-#define FRAME_GET_KEY                                           0x006A
-#define FRAME_CLEAR_TRANSIENT_LINK_KEYS                         0x006B
-#define FRAME_FIND_KEY_TABLE_ENTRY                              0x0075
-#define FRAME_ERASE_KEY_TABLE_ENTRY                             0x0076
-#define FRAME_SET_EXTENDED_TIMEOUT                              0x007E
-#define FRAME_SEND_RAW                                          0x0096
-#define FRAME_GET_VALUE                                         0x00AA
-#define FRAME_SET_VALUE                                         0x00AB
-#define FRAME_ADD_TRANSIENT_LINK_KEY                            0x00AF
-#define FRAME_CLEAR_KEY_TABLE                                   0x00B1
-#define FRAME_SET_CHANNEL                                       0x00B9
+#define EZSP_FRAME_VERSION                                  0x0000
+#define EZSP_FRAME_REGISTER_ENDPOINT                        0x0002
+#define EZSP_FRAME_SET_CONCENTRATOR                         0x0010
+#define EZSP_FRAME_SET_MANUFACTURER_CODE                    0x0015
+#define EZSP_FRAME_NETWORK_INIT                             0x0017
+#define EZSP_FRAME_NETWORK_STATUS                           0x0018
+#define EZSP_FRAME_STACK_STATUS_HANDLER                     0x0019
+#define EZSP_FRAME_FORM_NERWORK                             0x001E
+#define EZSP_FRAME_LEAVE_NETWORK                            0x0020
+#define EZSP_FRAME_PERMIT_JOINING                           0x0022
+#define EZSP_FRAME_TRUST_CENTER_JOIN_HANDLER                0x0024
+#define EZSP_FRAME_GET_IEEE_ADDRESS                         0x0026
+#define EZSP_FRAME_GET_NETWORK_PARAMETERS                   0x0028
+#define EZSP_FRAME_SEND_UNICAST                             0x0034
+#define EZSP_FRAME_SEND_MULTICAST                           0x0038
+#define EZSP_FRAME_MESSAGE_SENT_HANDLER                     0x003F
+#define EZSP_FRAME_INCOMING_MESSAGE_HANDLER                 0x0045
+#define EZSP_FRAME_MAC_FILTER_MATCH_MESSAGE_HANDLER         0x0046
+#define EZSP_FRAME_SET_CONFIG                               0x0053
+#define EZSP_FRAME_SET_POLICY                               0x0055
+#define EZSP_FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE          0x005A
+#define EZSP_FRAME_SET_MULTICAST_TABLE_ENTRY                0x0064
+#define EZSP_FRAME_SET_INITIAL_SECURITY_STATE               0x0068
+#define EZSP_FRAME_GET_KEY                                  0x006A
+#define EZSP_FRAME_CLEAR_TRANSIENT_LINK_KEYS                0x006B
+#define EZSP_FRAME_FIND_KEY_TABLE_ENTRY                     0x0075
+#define EZSP_FRAME_ERASE_KEY_TABLE_ENTRY                    0x0076
+#define EZSP_FRAME_SET_EXTENDED_TIMEOUT                     0x007E
+#define EZSP_FRAME_SEND_RAW                                 0x0096
+#define EZSP_FRAME_GET_VALUE                                0x00AA
+#define EZSP_FRAME_SET_VALUE                                0x00AB
+#define EZSP_FRAME_ADD_TRANSIENT_LINK_KEY                   0x00AF
+#define EZSP_FRAME_CLEAR_KEY_TABLE                          0x00B1
+#define EZSP_FRAME_SET_CHANNEL                              0x00B9
 
-#define CONFIG_NEIGHBOR_TABLE_SIZE                              0x02
-#define CONFIG_APS_UNICAST_MESSAGE_COUNT                        0x03
-#define CONFIG_BINDING_TABLE_SIZE                               0x04
-#define CONFIG_STACK_PROFILE                                    0x0C
-#define CONFIG_SECURITY_LEVEL                                   0x0D
-#define CONFIG_MAX_HOPS                                         0x10
-#define CONFIG_MAX_END_DEVICE_CHILDREN                          0x11
-#define CONFIG_INDIRECT_TRANSMISSION_TIMEOUT                    0x12
-#define CONFIG_END_DEVICE_POLL_TIMEOUT                          0x13
-#define CONFIG_TX_POWER_MODE                                    0x17
-#define CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE                  0x19
-#define CONFIG_KEY_TABLE_SIZE                                   0x1E
-#define CONFIG_BROADCAST_TABLE_SIZE                             0x2B
-#define CONFIG_RETRY_QUEUE_SIZE                                 0x34
-#define CONFIG_TRANSIENT_KEY_TIMEOUT_S                          0x36
+#define EZSP_CONFIG_NEIGHBOR_TABLE_SIZE                     0x02
+#define EZSP_CONFIG_APS_UNICAST_MESSAGE_COUNT               0x03
+#define EZSP_CONFIG_BINDING_TABLE_SIZE                      0x04
+#define EZSP_CONFIG_STACK_PROFILE                           0x0C
+#define EZSP_CONFIG_SECURITY_LEVEL                          0x0D
+#define EZSP_CONFIG_MAX_HOPS                                0x10
+#define EZSP_CONFIG_MAX_END_DEVICE_CHILDREN                 0x11
+#define EZSP_CONFIG_INDIRECT_TRANSMISSION_TIMEOUT           0x12
+#define EZSP_CONFIG_END_DEVICE_POLL_TIMEOUT                 0x13
+#define EZSP_CONFIG_TX_POWER_MODE                           0x17
+#define EZSP_CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE         0x19
+#define EZSP_CONFIG_KEY_TABLE_SIZE                          0x1E
+#define EZSP_CONFIG_BROADCAST_TABLE_SIZE                    0x2B
+#define EZSP_CONFIG_RETRY_QUEUE_SIZE                        0x34
+#define EZSP_CONFIG_TRANSIENT_KEY_TIMEOUT_S                 0x36
 
-#define POLICY_TRUST_CENTER                                     0x00
-#define POLICY_BINDING_MODIFICATION_POLICY                      0x01
-#define POLICY_TC_KEY_REQUEST                                   0x05
-#define POLICY_APP_KEY_REQUEST                                  0x06
+#define EZSP_POLICY_TRUST_CENTER                            0x00
+#define EZSP_POLICY_BINDING_MODIFICATION_POLICY             0x01
+#define EZSP_POLICY_TC_KEY_REQUEST                          0x05
+#define EZSP_POLICY_APP_KEY_REQUEST                         0x06
 
-#define SECURITY_TRUST_CENTER_USES_HASHED_LINK_KEY              0x0084
-#define SECURITY_HAVE_PRECONFIGURED_KEY                         0x0100
-#define SECURITY_HAVE_NETWORK_KEY                               0x0200
-#define SECURITY_REQUIRE_ENCRYPTED_KEY                          0x0800
+#define EZSP_SECURITY_TRUST_CENTER_USES_HASHED_LINK_KEY     0x0084
+#define EZSP_SECURITY_HAVE_PRECONFIGURED_KEY                0x0100
+#define EZSP_SECURITY_HAVE_NETWORK_KEY                      0x0200
+#define EZSP_SECURITY_REQUIRE_ENCRYPTED_KEY                 0x0800
 
-#define VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE                    0x05
-#define VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE                    0x06
-#define VALUE_STACK_TOKEN_WRITING                               0x07
-#define VALUE_VERSION_INFO                                      0x11
-#define VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE                0x3F
-#define VALUE_TRANSIENT_DEVICE_TIMEOUT                          0x43
+#define EZSP_VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE           0x05
+#define EZSP_VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE           0x06
+#define EZSP_VALUE_STACK_TOKEN_WRITING                      0x07
+#define EZSP_VALUE_VERSION_INFO                             0x11
+#define EZSP_VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE       0x3F
+#define EZSP_VALUE_TRANSIENT_DEVICE_TIMEOUT                 0x43
 
-#define CONCENTRATOR_HIGH_RAM                                   0xFFF9
-#define CONCENTRATOR_MIN_TIME                                   5
-#define CONCENTRATOR_MAX_TIME                                   60
-#define CONCENTRATOR_ROUTE_ERROR_THRESHOLD                      3
-#define CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD                 1
+#define EZSP_CONCENTRATOR_HIGH_RAM                          0xFFF9
+#define EZSP_CONCENTRATOR_MIN_TIME                          5
+#define EZSP_CONCENTRATOR_MAX_TIME                          60
+#define EZSP_CONCENTRATOR_ROUTE_ERROR_THRESHOLD             3
+#define EZSP_CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD        1
 
-#define STACK_STATUS_NETWORK_UP                                 0x90
-#define STACK_STATUS_NETWORK_DOWN                               0x91
+#define EZSP_STACK_STATUS_NETWORK_UP                        0x90
+#define EZSP_STACK_STATUS_NETWORK_DOWN                      0x91
 
-#define TRUST_CENTER_UNSECURED_JOIN                             0x01
-#define TRUST_CENTER_DEVICE_LEFT                                0x02
+#define EZSP_TRUST_CENTER_UNSECURED_JOIN                    0x01
+#define EZSP_TRUST_CENTER_DEVICE_LEFT                       0x02
 
-#define MESSAGE_TYPE_DIRECT                                     0x00
+#define EZSP_MESSAGE_TYPE_DIRECT                            0x00
 
-#define APS_OPTION_RETRY                                        0x0040
-#define APS_OPTION_ENABLE_ROUTE_DISCOVERY                       0x0100
-#define APS_OPTION_ENABLE_ADDRESS_DISCOVERY                     0x1000
+#define EZSP_APS_OPTION_RETRY                               0x0040
+#define EZSP_APS_OPTION_ENABLE_ROUTE_DISCOVERY              0x0100
+#define EZSP_APS_OPTION_ENABLE_ADDRESS_DISCOVERY            0x1000
 
-#define NETWORK_STATUS_JOINED                                   0x02
-#define CURRENT_NETWORK_KEY                                     0x03
+#define EZSP_NETWORK_STATUS_JOINED                          0x02
+#define EZSP_CURRENT_NETWORK_KEY                            0x03
 
 #include "adapter.h"
 
