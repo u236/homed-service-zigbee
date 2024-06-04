@@ -34,8 +34,11 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 
 ZigBee::~ZigBee(void)
 {
-    disconnect(m_adapter, &Adapter::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
-    m_adapter->setPermitJoin(false);
+    if (m_adapter)
+    {
+        disconnect(m_adapter, &Adapter::permitJoinUpdated, this, &ZigBee::permitJoinUpdated);
+        m_adapter->setPermitJoin(false);
+    }
 
     GPIO::setStatus(m_statusLedPin, false);
     GPIO::setStatus(m_blinkLedPin, false);
