@@ -31,10 +31,12 @@
       "modelNames":     ["lumi.airrtc.pcacn2"],
       "properties":     ["lumiData", "humidity"],
       "actions":        ["lumiThermostat", "lumiLanguage"],
-      "exposes":        ["thermostat", "humidity", "language"],
+      "exposes":        ["thermostat", "fanMode", "humidity", "language"],
       "options":        {
                           "targetTemperature": {"min": 16, "max": 32, "step": 0.5},
-                          "systemMode": {"enum": ["off", "heat"]},
+                          "systemMode": {"enum": ["off", "on"]},
+                          "operationMode": {"enum": {"0": "heat", "1": "cool", "4": "air"}},
+                          "fanMode": {"enum": ["low", "medium", "high", "auto"]},
                           "language": {"type": "select", "enum": ["cn", "en"], "icon": "mdi:translate"},
                           "heatingStatus": true,
                           "utcTime": true

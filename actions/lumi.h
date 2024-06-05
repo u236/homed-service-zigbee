@@ -21,7 +21,7 @@ namespace ActionsLUMI
 
     public:
 
-        Thermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"targetTemperature", "systemMode"}) {}
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"targetTemperature", "systemMode", "operationMode", "fanMode"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

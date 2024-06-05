@@ -241,17 +241,19 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             memcpy(&buffer, data.constData(), sizeof(buffer));
             buffer = qFromLittleEndian(buffer);
 
-            value = static_cast <quint16> (buffer >> 48);
-
-            if (value != 0xFFFF)
+            if ((value = static_cast <quint16> (buffer >> 48)) != 0xFFFF)
                 map.insert("targetTemperature", value / 100.0);
 
-            value = static_cast <quint16> (buffer >> 32);
-
-            if (value != 0xFFFF)
+            if ((value = static_cast <quint16> (buffer >> 32)) != 0xFFFF)
                 map.insert("temperature", value / 100.0);
 
-            map.insert("systemMode", (buffer & 1 << 28) ? "heat" : "off");
+            if ((value = static_cast <quint16> (buffer >> 24) & 0x000F) != 0x000F)
+                map.insert("operationMode", enumValue("operationMode", value));
+
+            if ((value = static_cast <quint16> (buffer >> 20) & 0x000F) != 0x000F)
+                map.insert("fanMode", enumValue("fanMode", value));
+
+            map.insert("systemMode", enumValue("systemMode", buffer >> 28 & 0x01));
             break;
         }
 

@@ -39,12 +39,24 @@ QByteArray ActionsLUMI::Thermostat::request(const QString &name, const QVariant 
     switch (index)
     {
         case 0: // targetTemperature
+        {
             value = static_cast <quint64> (0xFFFF - data.toDouble() * 100) << 48;
             break;
+        }
 
-        case 1: // systemMode
-            value = static_cast <quint64> (data.toString() == "heat" ? 0x0E : 0x0F) << 28;
+        case 1 ... 3:
+        {
+            value = static_cast <quint64> (0x0F - enumIndex(name, data.toString()));
+
+            switch (index)
+            {
+                case 1: value <<= 28; break; // systemMode
+                case 2: value <<= 24; break; // operationMode
+                case 3: value <<= 20; break; // fanMode
+            }
+
             break;
+        }
 
         default:
             return QByteArray();
