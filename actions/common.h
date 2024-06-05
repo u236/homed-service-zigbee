@@ -71,7 +71,7 @@ namespace Actions
 
     public:
 
-        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "targetTemperature", "systemMode"}) {}
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "hysteresis", "targetTemperature", "systemMode"}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -112,6 +112,16 @@ namespace Actions
     public:
 
         OccupancyTimeout(void) : ActionObject("occupancyTimeout", CLUSTER_OCCUPANCY_SENSING, 0x0000, 0x0010) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class ChildLock : public ActionObject
+    {
+
+    public:
+
+        ChildLock(void) : ActionObject("childLock", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0001) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

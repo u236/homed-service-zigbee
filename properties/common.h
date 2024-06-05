@@ -274,6 +274,16 @@ namespace Properties
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
+
+    class ChildLock : public PropertyObject
+    {
+
+    public:
+
+        ChildLock(void) : PropertyObject("childLock", CLUSTER_THERMOSTAT_UI_CONFIGURATION) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
     
     class Scene : public PropertyObject
     {

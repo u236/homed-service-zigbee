@@ -137,7 +137,7 @@ namespace Reportings
 
     public:
 
-        Thermostat(void) : ReportingObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, DATA_TYPE_16BIT_SIGNED, 1, 3600, 1) {}
+        Thermostat(void) : ReportingObject("thermostat", CLUSTER_THERMOSTAT, {0x0000, 0x0012}, DATA_TYPE_16BIT_SIGNED, 1, 3600, 1) {}
 
     };
 

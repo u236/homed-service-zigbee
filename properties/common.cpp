@@ -111,13 +111,14 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert(attributeId ? "targetTemperature" : "temperature", qFromLittleEndian(value) / 100.0);
+            map.insert(attributeId == 0x0000 ? "temperature" : "targetTemperature", qFromLittleEndian(value) / 100.0);
             break;
         }
 
         case 0x0010:
+        case 0x0019:
         {
-            map.insert("temperatureOffset", static_cast <qint8> (data.at(0)) / 10.0);
+            map.insert(attributeId == 0x0010 ? "temperatureOffset" : "hysteresis", static_cast <qint8> (data.at(0)) / 10.0);
             break;
         }
 
@@ -349,6 +350,14 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / divider;
+}
+
+void ChildLock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0001)
+        return;
+
+    m_value = data.at(0) ? true : false;
 }
 
 void Properties::Scene::parseCommand(quint16, quint8 commandId, const QByteArray &payload)

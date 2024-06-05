@@ -12,17 +12,12 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::BatteryPercentage>               ("batteryPercentageProperty");
     qRegisterMetaType <Properties::DeviceTemperature>               ("deviceTemperatureProperty");
     qRegisterMetaType <Properties::Status>                          ("statusProperty");
-    qRegisterMetaType <Properties::PowerOnStatus>                   ("powerOnStatusProperty");
-    qRegisterMetaType <Properties::SwitchType>                      ("switchTypeProperty");
-    qRegisterMetaType <Properties::SwitchMode>                      ("switchModeProperty");
     qRegisterMetaType <Properties::Level>                           ("levelProperty");
     qRegisterMetaType <Properties::AnalogInput>                     ("analogInputProperty");
     qRegisterMetaType <Properties::AnalogOutput>                    ("analogOutputProperty");
     qRegisterMetaType <Properties::CoverPosition>                   ("coverPositionProperty");
     qRegisterMetaType <Properties::CoverTilt>                       ("coverTiltProperty");
     qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
-    qRegisterMetaType <Properties::FanMode>                         ("fanModeProperty");
-    qRegisterMetaType <Properties::DisplayMode>                     ("displayModeProperty");
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                         ("colorXYProperty");
     qRegisterMetaType <Properties::ColorTemperature>                ("colorTemperatureProperty");
@@ -39,11 +34,17 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Voltage>                         ("voltageProperty");
     qRegisterMetaType <Properties::Current>                         ("currentProperty");
     qRegisterMetaType <Properties::Power>                           ("powerProperty");
+    qRegisterMetaType <Properties::ChildLock>                       ("childLockProperty");
     qRegisterMetaType <Properties::Scene>                           ("sceneProperty");
     qRegisterMetaType <Properties::StatusAction>                    ("statusActionProperty");
     qRegisterMetaType <Properties::LevelAction>                     ("levelActionProperty");
     qRegisterMetaType <Properties::CoverAction>                     ("coverActionProperty");
     qRegisterMetaType <Properties::ColorAction>                     ("colorActionProperty");
+    qRegisterMetaType <Properties::PowerOnStatus>                   ("powerOnStatusProperty");
+    qRegisterMetaType <Properties::SwitchType>                      ("switchTypeProperty");
+    qRegisterMetaType <Properties::SwitchMode>                      ("switchModeProperty");
+    qRegisterMetaType <Properties::FanMode>                         ("fanModeProperty");
+    qRegisterMetaType <Properties::DisplayMode>                     ("displayModeProperty");
 
     qRegisterMetaType <PropertiesIAS::Warning>                      ("iasWarningProperty");
     qRegisterMetaType <PropertiesIAS::Contact>                      ("iasContactProperty");

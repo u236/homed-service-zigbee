@@ -110,20 +110,21 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
     switch (index)
     {
         case 0: // temperatureOffset
+        case 1: // hysteresis
         {
             qint8 value = static_cast <qint8> (data.toDouble() * 10);
-            m_attributes = {0x0010};
-            return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
+            m_attributes = {static_cast <quint16> (index == 0 ? 0x0010 : 0x0019)};
+            return writeAttribute(DATA_TYPE_8BIT_SIGNED, &value, sizeof(value));
         }
 
-        case 1: // targetTemperature
+        case 2: // targetTemperature
         {
             qint16 value = qToLittleEndian <qint16> (data.toDouble() * 100);
             m_attributes = {0x0012};
             return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
         }
 
-        case 2: // systemMode
+        case 3: // systemMode
         {
             qint8 value = listIndex({"off", "auto", "heat"}, data);
 
@@ -247,4 +248,10 @@ QByteArray Actions::OccupancyTimeout::request(const QString &, const QVariant &d
 {
     quint16 value = qToLittleEndian <quint16> (data.toInt());
     return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
+}
+
+QByteArray Actions::ChildLock::request(const QString &, const QVariant &data)
+{
+    quint8 value = data.toBool() ? 0x01 : 0x00;
+    return writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }
