@@ -72,11 +72,11 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::CoverMotor>                  ("tuyaCoverMotorProperty");
     qRegisterMetaType <PropertiesTUYA::CoverSwitch>                 ("tuyaCoverSwitchProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>                   ("tuyaChildLockProperty");
+    qRegisterMetaType <PropertiesTUYA::ButtonAction>                ("tuyaButtonActionProperty");
     qRegisterMetaType <PropertiesTUYA::OperationMode>               ("tuyaOperationModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>               ("tuyaIndicatorModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchType>                  ("tuyaSwitchTypeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>               ("tuyaPowerOnStatusProperty");
-    qRegisterMetaType <PropertiesTUYA::ButtonAction>                ("tuyaButtonActionProperty");
 
     qRegisterMetaType <PropertiesEfekta::ReportingDelay>            ("efektaReportingDelayProperty");
     qRegisterMetaType <PropertiesEfekta::TemperatureSettings>       ("efektaTemperatureSettingsProperty");
@@ -94,9 +94,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesPTVO::Humidity>                    ("ptvoHumidityProperty");
     qRegisterMetaType <PropertiesPTVO::Count>                       ("ptvoCountProperty");
     qRegisterMetaType <PropertiesPTVO::Pattern>                     ("ptvoPatternProperty");
-    qRegisterMetaType <PropertiesPTVO::ButtonAction>                ("ptvoButtonActionProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>                ("ptvoSwitchActionProperty");
     qRegisterMetaType <PropertiesPTVO::SerialData>                  ("ptvoSerialDataProperty");
+    qRegisterMetaType <PropertiesPTVO::ButtonAction>                ("ptvoButtonActionProperty");
 
     qRegisterMetaType <PropertiesByun::GasSensor>                   ("byunGasSensorProperty");
     qRegisterMetaType <PropertiesByun::SmokeSensor>                 ("byunSmokeSensorProperty");
