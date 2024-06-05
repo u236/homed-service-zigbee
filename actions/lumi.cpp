@@ -31,6 +31,30 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
     return QByteArray();
 }
 
+QByteArray ActionsLUMI::Thermostat::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+    quint64 value;
+
+    switch (index)
+    {
+        case 0: // targetTemperature
+            value = static_cast <quint64> (0xFFFF - data.toDouble() * 100) << 48;
+            break;
+
+        case 1: // systemMode
+            value = static_cast <quint64> (data.toString() == "heat" ? 0x0E : 0x0F) << 28;
+            break;
+
+        default:
+            return QByteArray();
+    }
+
+    value = qToLittleEndian(~value);
+    m_attributes = {0x024F};
+    return writeAttribute(DATA_TYPE_64BIT_UNSIGNED, &value, sizeof(value));
+}
+
 QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant &data)
 {
     QList <QString> list = {"relay", "leftRelay", "rightRelay", "decoupled"};

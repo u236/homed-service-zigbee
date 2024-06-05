@@ -1172,7 +1172,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                             if (m_debug)
                                 logInfo << "Device" << device->name() << "requested UTC time";
 
-                            value = qToLittleEndian <quint32> (now.toTime_t() - TIME_OFFSET);
+                            value = qToLittleEndian <quint32> (now.toTime_t() + (device->options().value("utcTime").toBool() ? now.offsetFromUtc() : 0) - TIME_OFFSET);
                             response.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 

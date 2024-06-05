@@ -27,6 +27,20 @@
                         }
     },
     {
+      "description":    "Aqara S3 Thermostat ZNWKQ11LM",
+      "modelNames":     ["lumi.airrtc.pcacn2"],
+      "properties":     ["lumiData", "humidity"],
+      "actions":        ["lumiThermostat", "lumiLanguage"],
+      "exposes":        ["thermostat", "humidity", "language"],
+      "options":        {
+                          "targetTemperature": {"min": 16, "max": 32, "step": 0.5},
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "language": {"type": "select", "enum": ["cn", "en"], "icon": "mdi:translate"},
+                          "heatingStatus": true,
+                          "utcTime": true
+                        }
+    },
+    {
       "description":    "Aqara D1 1-Channel Wall Switch QBKG04LM or QBKG21LM",
       "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "options":        {"logicalType": 2}

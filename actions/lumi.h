@@ -16,6 +16,16 @@ namespace ActionsLUMI
 
     };
 
+    class Thermostat : public ActionObject
+    {
+
+    public:
+
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"targetTemperature", "systemMode"}) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class ButtonMode : public ActionObject
     {
 
@@ -92,6 +102,16 @@ namespace ActionsLUMI
         SwitchMode(void) : EnumAction("switchMode", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0200, DATA_TYPE_8BIT_UNSIGNED) {}
 
     };
+
+    class Language : public EnumAction
+    {
+
+    public:
+
+        Language(void) : EnumAction("language", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0210, DATA_TYPE_8BIT_UNSIGNED) {}
+
+    };
+
 }
 
 #endif

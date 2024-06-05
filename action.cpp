@@ -29,6 +29,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsIAS::Warning>                     ("iasWarningAction");
 
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
+    qRegisterMetaType <ActionsLUMI::Thermostat>                 ("lumiThermostatAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchStatusMemory>         ("lumiSwitchStatusMemoryAction");
     qRegisterMetaType <ActionsLUMI::LightStatusMemory>          ("lumiLightStatusMemoryAction");
@@ -37,6 +38,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::OperationMode>              ("lumiOperationModeAction");
     qRegisterMetaType <ActionsLUMI::IndicatorMode>              ("lumiIndicatorModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchMode>                 ("lumiSwitchModeAction");
+    qRegisterMetaType <ActionsLUMI::Language>                   ("lumiLanguageAction");
 
     qRegisterMetaType <ActionsTUYA::DataPoints>                 ("tuyaDataPointsAction");
     qRegisterMetaType <ActionsTUYA::HolidayThermostatProgram>   ("tuyaHolidayThermostatProgramAction");

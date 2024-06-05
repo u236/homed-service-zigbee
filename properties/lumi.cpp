@@ -56,7 +56,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0003:
         {
-            QList <QString> list = {"lumi.airrtc.agl001", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.sen_ill.mgl01"};
+            QList <QString> list = {"lumi.airrtc.agl001", "lumi.airrtc.pcacn2", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.sen_ill.mgl01"};
 
             if (list.contains(modelName()))
                 break;
@@ -218,6 +218,40 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0xFF19:
         {
             map.insert("statusMemory", data.at(0) ? true : false);
+            break;
+        }
+
+        case 0x0210:
+        {
+            map.insert("language", enumValue("language", static_cast <quint8> (data.at(0))));
+            break;
+        }
+
+        case 0x024A:
+        {
+            map.insert("heating", data.at(0) ? true : false);
+            break;
+        }
+
+        case 0x024F:
+        {
+            qint64 buffer = 0;
+            quint16 value = 0;
+
+            memcpy(&buffer, data.constData(), sizeof(buffer));
+            buffer = qFromLittleEndian(buffer);
+
+            value = static_cast <quint16> (buffer >> 48);
+
+            if (value != 0xFFFF)
+                map.insert("targetTemperature", value / 100.0);
+
+            value = static_cast <quint16> (buffer >> 32);
+
+            if (value != 0xFFFF)
+                map.insert("temperature", value / 100.0);
+
+            map.insert("systemMode", (buffer & 1 << 28) ? "heat" : "off");
             break;
         }
 
