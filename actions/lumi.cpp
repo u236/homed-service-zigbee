@@ -43,6 +43,12 @@ QByteArray ActionsLUMI::Thermostat::request(const QString &name, const QVariant 
 
         case 1: // systemMode
 
+            if (endpointProperty("lumiData")->value().toMap().value("floor").toBool())
+            {
+                value = static_cast <quint64> (data.toString() == "off" ? 0xF7 : 0xE7) << 24;
+                break;
+            }
+
             switch (enumIndex(name, data.toString()))
             {
                 case 0:  value = 0xF0; break;

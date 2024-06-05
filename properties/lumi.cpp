@@ -233,6 +233,12 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x024E:
+        {
+            map.insert("floor", data.at(0) == 0x03 ? true : false);
+            break;
+        }
+
         case 0x024F:
         {
             qint64 buffer = 0;
@@ -258,11 +264,11 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                  break;
             }
 
-            switch (value & 0x0F)
+            switch (value & 0x07)
             {
-                case 0: map.insert("systemMode", "heat"); break;
-                case 1: map.insert("systemMode", "cool"); break;
-                case 4: map.insert("systemMode", "fan"); break;
+                case 1:  map.insert("systemMode", "cool"); break;
+                case 4:  map.insert("systemMode", "fan"); break;
+                default: map.insert("systemMode", "heat"); break;
             }
 
             break;
