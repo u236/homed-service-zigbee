@@ -33,30 +33,32 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
 
 QByteArray ActionsLUMI::Thermostat::request(const QString &name, const QVariant &data)
 {
-    int index = m_actions.indexOf(name);
     quint64 value;
 
-    switch (index)
+    switch (m_actions.indexOf(name))
     {
         case 0: // targetTemperature
-        {
             value = static_cast <quint64> (0xFFFF - data.toDouble() * 100) << 48;
             break;
-        }
 
-        case 1 ... 3:
-        {
-            value = static_cast <quint64> (0x0F - enumIndex(name, data.toString()));
+        case 1: // systemMode
 
-            switch (index)
+            switch (enumIndex(name, data.toString()))
             {
-                case 1: value <<= 28; break; // systemMode
-                case 2: value <<= 24; break; // operationMode
-                case 3: value <<= 20; break; // fanMode
+                case 0:  value = 0xF0; break;
+                case 1:  value = 0x0F; break;
+                case 2:  value = 0x0E; break;
+                case 3:  value = 0x0B; break;
+                default: return QByteArray();
             }
 
+            value <<= 24;
             break;
-        }
+
+
+        case 2: // fanMode
+            value = static_cast <quint64> (0x0F - enumIndex(name, data.toString())) << 20;
+            break;
 
         default:
             return QByteArray();

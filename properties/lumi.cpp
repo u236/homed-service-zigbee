@@ -247,13 +247,24 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if ((value = static_cast <quint16> (buffer >> 32)) != 0xFFFF)
                 map.insert("temperature", value / 100.0);
 
-            if ((value = static_cast <quint16> (buffer >> 24) & 0x000F) != 0x000F)
-                map.insert("operationMode", enumValue("operationMode", value));
-
-            if ((value = static_cast <quint16> (buffer >> 20) & 0x000F) != 0x000F)
+            if ((value = static_cast <quint8> (buffer >> 20) & 0x0F) != 0x0F)
                 map.insert("fanMode", enumValue("fanMode", value));
 
-            map.insert("systemMode", enumValue("systemMode", buffer >> 28 & 0x01));
+            value = static_cast <quint8> (buffer >> 24) & 0xFF;
+
+            if (!(value & 0x10))
+            {
+                 map.insert("systemMode", "off");
+                 break;
+            }
+
+            switch (value & 0x0F)
+            {
+                case 0: map.insert("systemMode", "heat"); break;
+                case 1: map.insert("systemMode", "cool"); break;
+                case 4: map.insert("systemMode", "fan"); break;
+            }
+
             break;
         }
 

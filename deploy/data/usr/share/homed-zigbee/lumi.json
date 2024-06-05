@@ -34,8 +34,7 @@
       "exposes":        ["thermostat", "fanMode", "humidity", "language"],
       "options":        {
                           "targetTemperature": {"min": 16, "max": 32, "step": 0.5},
-                          "systemMode": {"enum": ["off", "on"]},
-                          "operationMode": {"enum": {"0": "heat", "1": "cool", "4": "air"}},
+                          "systemMode": {"enum": ["off", "heat", "cool", "fan"]},
                           "fanMode": {"enum": ["low", "medium", "high", "auto"]},
                           "language": {"type": "select", "enum": ["cn", "en"], "icon": "mdi:translate"},
                           "runningStatus": true,
