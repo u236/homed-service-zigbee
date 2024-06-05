@@ -229,7 +229,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x024A:
         {
-            map.insert("heating", data.at(0) ? true : false);
+            map.insert("running", data.at(0) ? true : false);
             break;
         }
 

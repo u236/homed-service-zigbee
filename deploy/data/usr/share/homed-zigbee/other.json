@@ -68,7 +68,7 @@
                           "temperatureOffset": {"min": -3, "max": 3, "step": 0.1},
                           "hysteresis": {"min": 0, "max": 3, "step": 0.1},
                           "sensorType": {"enum": ["3K3", "5K", "6K8", "10K", "12K", "14K8", "15K", "20K", "33K", "47K"]},
-                          "heatingStatus": true
+                          "runningStatus": true
                         },
       "endpointId":     3
     },

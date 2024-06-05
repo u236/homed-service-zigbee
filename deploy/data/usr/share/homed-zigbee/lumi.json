@@ -38,7 +38,7 @@
                           "operationMode": {"enum": {"0": "heat", "1": "cool", "4": "air"}},
                           "fanMode": {"enum": ["low", "medium", "high", "auto"]},
                           "language": {"type": "select", "enum": ["cn", "en"], "icon": "mdi:translate"},
-                          "heatingStatus": true,
+                          "runningStatus": true,
                           "utcTime": true
                         }
     },

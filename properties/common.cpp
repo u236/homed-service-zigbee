@@ -136,7 +136,7 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
 
         case 0x001E:
         {
-            map.insert("heating", data.at(0) == 0x04 ? true : false);
+            map.insert("running", data.at(0) == 0x04 ? true : false);
             break;
         }
     }
