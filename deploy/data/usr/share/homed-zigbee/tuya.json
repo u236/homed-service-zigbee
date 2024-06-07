@@ -40,7 +40,7 @@
     },
     {
       "description":    "TUYA TS0601 Electricity Meter (Type C)",
-      "modelNames":     ["_TZE204_cjbofhxw"],
+      "modelNames":     ["_TZE204_cjbofhxw", "_TZE284_cjbofhxw"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["energy", "voltage", "current", "power"],
@@ -51,7 +51,8 @@
                             "19":   [{"name": "power", "type": "value", "divider": 10}],
                             "20":   [{"name": "voltage", "type": "value", "divider": 10}],
                             "101":  [{"name": "energy", "type": "value", "divider": 1000}]
-                          }
+                          },
+                          "tuyaMagic": true
                         }
     },
     {
