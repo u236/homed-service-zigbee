@@ -144,6 +144,16 @@ namespace Properties
 
     };
 
+    class ColorMode : public PropertyObject
+    {
+
+    public:
+
+        ColorMode(void) :  PropertyObject("colorMode", CLUSTER_COLOR_CONTROL) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Illuminance : public PropertyObject
     {
 

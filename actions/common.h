@@ -81,7 +81,7 @@ namespace Actions
 
     public:
 
-        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0000, 0x0001}) {}
+        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0000, 0x0001, 0x0008}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -91,7 +91,7 @@ namespace Actions
 
     public:
 
-        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0003, 0x0004}) {}
+        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0003, 0x0004, 0x0008}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };
@@ -101,7 +101,7 @@ namespace Actions
 
     public:
 
-        ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0000, 0x0007) {}
+        ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0007, 0x0008}) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

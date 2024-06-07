@@ -202,6 +202,14 @@ void Properties::ColorTemperature::parseAttribte(quint16, quint16 attributeId, c
     m_value = qFromLittleEndian(value);
 }
 
+void ColorMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != 0x0008)
+        return;
+
+    m_value = data.at(0) != 0x02 ? true : false;
+}
+
 void Properties::Illuminance::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;

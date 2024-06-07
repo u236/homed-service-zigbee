@@ -1075,10 +1075,10 @@
     {
       "description":    "TUYA TS0505B RGBW Bulb",
       "modelNames":     ["TS0505B"],
-      "properties":     ["status", "level", "colorHS", "colorTemperature"],
+      "properties":     ["status", "level", "colorHS", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorHS", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"], "colorTemperature": {"min": 143, "max": 500}, "powerSource": 1}
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"], "colorTemperature": {"min": 143, "max": 500}, "powerSource": 1}
     },
     {
       "description":    "TUYA TS0052/TS1101 2-Channel Dimmer",

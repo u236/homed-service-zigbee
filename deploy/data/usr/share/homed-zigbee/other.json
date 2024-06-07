@@ -20,10 +20,10 @@
     {
       "description":    "JIAWEN RGBW Bulb K2RGBW01",
       "modelNames":     ["FB56-ZCW08KU1.0", "FB56-ZCW08KU1.1"],
-      "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
+      "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "color", "colorTemperature"]}
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]}
     }
   ],
 
@@ -98,10 +98,10 @@
     {
       "description":    "OpenLumi Router Bulb (HML004)",
       "modelNames":     ["HML004"],
-      "properties":     ["status", "level", "colorHS", "colorTemperature"],
+      "properties":     ["status", "level", "colorHS", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorHS", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"]}
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]}
     }
   ],
 
@@ -257,10 +257,10 @@
     {
       "description":    "Lonsonho RGBW Bulb ZB-CL01 or ZB-CL02",
       "modelNames":     ["ZB-CL01", "ZB-CL02"],
-      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"]}
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]}
     }
   ],
 
@@ -288,10 +288,10 @@
     {
       "description":    "TUYA RGBW Bulb CK-BL702-AL-01",
       "modelNames":     ["CK-BL702-AL-01(7009_Z102LG03-1)", "CK-BL702-AL-01(7009_Z102LG04-2)"],
-      "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
+      "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level", "color", "colorTemperature"], "colorTemperature": {"min": 142, "max": 500}}
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"], "colorTemperature": {"min": 142, "max": 500}}
     },
     {
       "description":    "TUYA Smart Plug SA-003",

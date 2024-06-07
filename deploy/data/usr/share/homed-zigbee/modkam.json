@@ -181,10 +181,10 @@
     {
       "description":    "MODKAM Led Informer",
       "modelNames":     ["ptvo_led_inform"],
-      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"]},
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
       "endpointId":     [1]
     },
     {

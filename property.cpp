@@ -21,6 +21,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                         ("colorXYProperty");
     qRegisterMetaType <Properties::ColorTemperature>                ("colorTemperatureProperty");
+    qRegisterMetaType <Properties::ColorMode>                       ("colorModeProperty");
     qRegisterMetaType <Properties::Illuminance>                     ("illuminanceProperty");
     qRegisterMetaType <Properties::Temperature>                     ("temperatureProperty");
     qRegisterMetaType <Properties::Pressure>                        ("pressureProperty");

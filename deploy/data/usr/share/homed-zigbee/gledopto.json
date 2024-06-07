@@ -4,10 +4,10 @@
     {
       "description":    "GLEDOPTO RGBW Led Controller GL-C-007 (1ID)",
       "modelNames":     ["GL-C-007-1ID", "GL-C-007P", "GL-C-007S"],
-      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"]},
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
       "endpointId":     11
     },
     {
@@ -17,10 +17,10 @@
     },
     {
       "modelNames":     ["GL-C-007-2ID"],
-      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"]},
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
       "endpointId":     [11]
     },
     {
@@ -34,10 +34,10 @@
     {
       "description":    "GLEDOPTO RGB+CCT Led Controller GL-C-008 (1ID)",
       "modelNames":     ["GL-C-008", "GL-C-008P", "GL-C-008S"],
-      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature"]},
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
       "endpointId":     11
     },
     {
