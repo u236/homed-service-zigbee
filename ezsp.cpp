@@ -44,6 +44,7 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
     m_config.append({EZSP_CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x0008)});
     m_config.append({EZSP_CONFIG_TRANSIENT_KEY_TIMEOUT_S,              qToLittleEndian <quint16> (0x012C)});
     m_config.append({EZSP_CONFIG_RETRY_QUEUE_SIZE,                     qToLittleEndian <quint16> (0x0010)});
+    m_config.append({EZSP_CONFIG_PACKET_BUFFER_COUNT,                  qToLittleEndian <quint16> (0x00FF)});
 
     m_policy.append({EZSP_POLICY_BINDING_MODIFICATION_POLICY,          qToLittleEndian <quint16> (0x0012)});
     m_policy.append({EZSP_POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (0x0051)});

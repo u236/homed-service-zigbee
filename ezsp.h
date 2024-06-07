@@ -46,6 +46,7 @@
 #define EZSP_FRAME_CLEAR_KEY_TABLE                          0x00B1
 #define EZSP_FRAME_SET_CHANNEL                              0x00B9
 
+#define EZSP_CONFIG_PACKET_BUFFER_COUNT                     0x01
 #define EZSP_CONFIG_NEIGHBOR_TABLE_SIZE                     0x02
 #define EZSP_CONFIG_APS_UNICAST_MESSAGE_COUNT               0x03
 #define EZSP_CONFIG_BINDING_TABLE_SIZE                      0x04
