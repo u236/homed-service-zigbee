@@ -47,6 +47,14 @@
       "exposes":        ["battery", "smoke", "batteryLow"]
     },
     {
+      "description":    "GS Door and Window Sensor SOHM-I1",
+      "modelNames":     ["SOHM-I1"],
+      "properties":     ["batteryVoltage", "iasContact"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryVoltage"],
+      "exposes":        ["battery", "contact", "batteryLow"]
+    },
+    {
       "description":    "GS Motion Sensor SMHM-I1",
       "modelNames":     ["SMHM-I1"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
