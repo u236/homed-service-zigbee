@@ -27,6 +27,25 @@
     }
   ],
 
+  "JetHome":
+  [
+    {
+      "description":    "JetHome Wireless Switch Controller WS7",
+      "modelNames":     ["WS7"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"]
+    },
+    {
+      "modelNames":     ["WS7"],
+      "properties":     ["customAttributes"],
+      "exposes":        ["action"],
+      "options":        {"customAttributes": {"action": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33}}, "action": {"enum": ["release", "singleClick", "doubleClick", "tripleClick", "hold"]}},
+      "endpointId":     [1, 2, 3]
+    }
+  ],
+
   "HEIMAN":
   [
     {
