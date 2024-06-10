@@ -6,6 +6,8 @@
       "modelNames":     ["GL-C-003P"],
       "properties":     ["status", "level", "colorXY"],
       "actions":        ["status", "level", "colorXY"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorXY"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color"]},
       "endpointId":     11
@@ -15,6 +17,8 @@
       "modelNames":     ["GL-C-006P"],
       "properties":     ["status", "level", "colorTemperature"],
       "actions":        ["status", "level", "colorTemperature"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "colorTemperature"]},
       "endpointId":     11
@@ -24,6 +28,8 @@
       "modelNames":     ["GL-C-007-1ID", "GL-C-007P", "GL-C-007S"],
       "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
       "endpointId":     11
@@ -37,6 +43,8 @@
       "modelNames":     ["GL-C-007-2ID"],
       "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
       "endpointId":     [11]
@@ -45,6 +53,8 @@
       "modelNames":     ["GL-C-007-2ID"],
       "properties":     ["status", "level"],
       "actions":        ["status", "level"],
+      "bindings":       ["status", "level"],
+      "reportings":     ["status", "level"],
       "exposes":        ["light"],
       "options":        {"light": ["level"]},
       "endpointId":     [15]
@@ -54,6 +64,8 @@
       "modelNames":     ["GL-C-008", "GL-C-008P", "GL-C-008S"],
       "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
       "endpointId":     11
@@ -67,6 +79,8 @@
       "modelNames":     ["GL-C-008-2ID"],
       "properties":     ["status", "level", "colorXY"],
       "actions":        ["status", "level", "colorXY"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorXY"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color"]},
       "endpointId":     [11]
@@ -75,6 +89,8 @@
       "modelNames":     ["GL-C-008-2ID"],
       "properties":     ["status", "level", "colorTemperature"],
       "actions":        ["status", "level", "colorTemperature"],
+      "bindings":       ["status", "level", "color"],
+      "reportings":     ["status", "level", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "colorTemperature"]},
       "endpointId":     [15]
