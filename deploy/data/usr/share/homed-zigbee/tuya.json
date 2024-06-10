@@ -976,6 +976,39 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
+      "description":    "TUYA TS0726 MOES 3-Channel Switch SR-ZS",
+      "modelNames":     ["_TZ3002_vaq2bfcu"],
+      "properties":     ["tuyaIndicatorMode"],
+      "actions":        ["tuyaIndicatorMode"],
+      "exposes":        ["indicatorMode"],
+      "options":        {"tuyaMagic": true},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TZ3002_vaq2bfcu"],
+      "properties":     ["status", "customAttributes"],
+      "actions":        ["status", "customAttributes"],
+      "bindings":       ["status"],
+      "exposes":        ["switch", "powerOnStatus", "switchMode"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "powerOnStatus":  {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true},
+                            "switchMode":     {"type": "enum", "clusterId": 57345, "attributeId": 53280, "dataType": 48, "action": true}
+                          },
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "switchMode": {"enum": ["relay", "decoupled"]}
+                        },
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "modelNames":     ["_TZ3002_vaq2bfcu"],
+      "properties":     ["tuyaButtonAction"],
+      "exposes":        ["action"],
+      "options":        {"action": {"enum": ["singleClick"]}},
+      "endpointId":     [1, 2, 3, 4, 5, 6]
+    },
+    {
       "description":    "TUYA TS0001 or TS000F 1-Channel Relay with Power Monitoring",
       "modelNames":     ["_TZ3000_g92baclx", "_TZ3000_kqvb5akv", "_TZ3000_mkhkxx1p", "_TZ3000_qnejhcsu", "_TZ3000_tgddllx4", "_TZ3000_x3ewpzyr", "_TZ3000_xkap8wtb"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaSwitchType", "tuyaPowerOnStatus"],
