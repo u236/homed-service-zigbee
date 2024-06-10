@@ -62,6 +62,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::Cover>                       ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>                ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>                ("lumiSwitchActionProperty");
+    qRegisterMetaType <PropertiesLUMI::DimmerAction>                ("lumiDimmerActionProperty");
     qRegisterMetaType <PropertiesLUMI::CubeRotation>                ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>                ("lumiCubeMovementProperty");
     qRegisterMetaType <PropertiesLUMI::Vibration>                   ("lumiVibrationProperty");

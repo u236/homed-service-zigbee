@@ -58,10 +58,9 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         {
             QList <QString> list = {"lumi.airrtc.agl001", "lumi.airrtc.pcacn2", "lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.sen_ill.mgl01"};
 
-            if (list.contains(modelName()))
-                break;
+            if (!list.contains(modelName()))
+                map.insert("temperature", static_cast <qint8> (data.at(0)));
 
-            map.insert("temperature", static_cast <qint8> (data.at(0)));
             break;
         }
 
@@ -79,12 +78,11 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0009:
         {
-            QList <QString> list = {"lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01"};
+            QList <QString> list = {"lumi.remote.b286opcn01", "lumi.remote.b486opcn01", "lumi.remote.b686opcn01", "lumi.remote.rkba01"};
 
-            if (!list.contains(modelName()))
-                break;
+            if (list.contains(modelName()))
+                map.insert("operationMode", enumValue("operationMode", static_cast <quint8> (data.at(0))));
 
-            map.insert("operationMode", enumValue("operationMode", static_cast <quint8> (data.at(0))));
             break;
         }
 
@@ -118,20 +116,18 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0x0067:
         case 0x0144:
         {
-            if (modelName() != "lumi.motion.ac01")
-                break;
+            if (modelName() == "lumi.motion.ac01")
+                map.insert("detectionMode", enumValue("detectionMode", static_cast <quint8> (data.at(0))));
 
-            map.insert("detectionMode", enumValue("detectionMode", static_cast <quint8> (data.at(0))));
             break;
         }
 
         case 0x0069:
         case 0x0146:
         {
-            if (modelName() != "lumi.motion.ac01")
-                break;
+            if (modelName() == "lumi.motion.ac01")
+                map.insert("distanceMode", enumValue("distanceMode", static_cast <quint8> (data.at(0))));
 
-            map.insert("distanceMode", enumValue("distanceMode", static_cast <quint8> (data.at(0))));
             break;
         }
 
@@ -223,19 +219,25 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0210:
         {
-            map.insert("language", enumValue("language", static_cast <quint8> (data.at(0))));
+            if (modelName() == "lumi.airrtc.pcacn2")
+                map.insert("language", enumValue("language", static_cast <quint8> (data.at(0))));
+
             break;
         }
 
         case 0x024A:
         {
-            map.insert("running", data.at(0) ? true : false);
+            if (modelName() == "lumi.airrtc.pcacn2")
+                map.insert("running", data.at(0) ? true : false);
+
             break;
         }
 
         case 0x024E:
         {
-            map.insert("floor", data.at(0) == 0x03 ? true : false);
+            if (modelName() == "lumi.airrtc.pcacn2")
+                map.insert("floor", data.at(0) == 0x03 ? true : false);
+
             break;
         }
 
@@ -403,6 +405,32 @@ void PropertiesLUMI::SwitchAction::parseAttribte(quint16, quint16 attributeId, c
             break;
 
         case 0x12: m_value = "shake"; break;
+    }
+}
+
+void PropertiesLUMI::DimmerAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    switch (attributeId)
+    {
+        case 0x0233:
+        {
+            float value = 0;
+
+            if (static_cast <size_t> (data.length()) > sizeof(value))
+                break;
+
+            memcpy(&value, data.constData(), data.length());
+            m_value = qFromLittleEndian(value) < 0 ? "rotateLeft" : "rotateRight";
+            break;
+        }
+
+        case 0x023A:
+        {
+            if (data.at(0) == 0x03)
+                m_value = "stop";
+
+            break;
+        }
     }
 }
 

@@ -90,6 +90,16 @@ namespace PropertiesLUMI
 
     };
 
+    class DimmerAction : public PropertyObject
+    {
+
+    public:
+
+        DimmerAction(void) : PropertyObject("action", CLUSTER_LUMI) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class CubeRotation : public PropertyObject
     {
 

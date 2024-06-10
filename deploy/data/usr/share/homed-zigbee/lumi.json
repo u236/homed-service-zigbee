@@ -432,6 +432,20 @@
       "exposes":        ["battery", "illuminance"]
     },
     {
+      "description":    "Aqara H1 Wireless Dimmer ZNXNKG02LM",
+      "modelNames":     ["lumi.remote.rkba01"],
+      "properties":     ["lumiData", "lumiSwitchAction"],
+      "actions":        ["lumiOperationMode"],
+      "exposes":        ["battery", "action", "temperature", "operationMode"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "release", "rotateLeft", "rotateRight", "stop"]}, "temperature": {"diagnostic": true}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.remote.rkba01"],
+      "properties":     ["lumiDimmerAction"],
+      "endpointId":     71
+    },
+    {
       "description":    "Xiaomi Wireless Button WXKG01LM",
       "modelNames":     ["lumi.sensor_switch"],
       "properties":     ["lumiBasic", "lumiButtonAction"],
