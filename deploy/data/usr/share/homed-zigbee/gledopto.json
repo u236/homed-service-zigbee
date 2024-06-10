@@ -2,6 +2,24 @@
   "GLEDOPTO":
   [
     {
+      "description":    "GLEDOPTO RGB Led Controller GL-C-003P",
+      "modelNames":     ["GL-C-003P"],
+      "properties":     ["status", "level", "colorXY"],
+      "actions":        ["status", "level", "colorXY"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color"]},
+      "endpointId":     11
+    },
+    {
+      "description":    "GLEDOPTO CCT Led Controller GL-C-006P",
+      "modelNames":     ["GL-C-006P"],
+      "properties":     ["status", "level", "colorTemperature"],
+      "actions":        ["status", "level", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "colorTemperature"]},
+      "endpointId":     11
+    },
+    {
       "description":    "GLEDOPTO RGBW Led Controller GL-C-007 (1ID)",
       "modelNames":     ["GL-C-007-1ID", "GL-C-007P", "GL-C-007S"],
       "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
