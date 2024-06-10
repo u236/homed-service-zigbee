@@ -1075,21 +1075,33 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         return;
     }
 
-    if (clusterId == CLUSTER_TUYA_DATA && commandId == 0x24)
+    if (clusterId == CLUSTER_TUYA_DATA)
     {
-        QDateTime now = QDateTime::currentDateTime();
-        quint32 value = now.toTime_t();
-        tuyaTimeStruct response;
+        switch (commandId)
+        {
+            case 0x24:
+            {
+                QDateTime now = QDateTime::currentDateTime();
+                quint32 value = now.toTime_t();
+                tuyaTimeStruct response;
 
-        if (m_debug)
-            logInfo << "Device" << device->name() << "requested TUYA time synchronization";
+                if (m_debug)
+                    logInfo << "Device" << device->name() << "requested TUYA time synchronization";
 
-        response.payloadSize = qToLittleEndian <quint16> (8);
-        response.utcTimestamp = qToBigEndian(value);
-        response.localTimestamp = qToBigEndian(value + now.offsetFromUtc());
+                response.payloadSize = qToLittleEndian <quint16> (8);
+                response.utcTimestamp = qToBigEndian(value);
+                response.localTimestamp = qToBigEndian(value + now.offsetFromUtc());
 
-        enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x24).append(reinterpret_cast <char*> (&response), sizeof(response)));
-        return;
+                enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x24).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                return;
+            }
+
+            case 0x25:
+            {
+                enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x25).append(QByteArray::fromHex("010001")));
+                return;
+            }
+        }
     }
 
     if (!device->interviewFinished())
