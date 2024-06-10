@@ -468,7 +468,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (!device->batteryPowered() && it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) && !it.value()->colorCapabilities())
+        if (!device->batteryPowered() && it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) && it.value()->colorCapabilities() != 0xFFFF)
         {
             if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
                 return true;

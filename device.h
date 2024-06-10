@@ -32,7 +32,7 @@ class EndpointObject : public AbstractEndpointObject, public EndpointDataObject
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-        AbstractEndpointObject(id, device), EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_pollInterval(0), m_pollTime(0), m_colorCapabilities(0), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown), m_descriptorReceived(false), m_updated(false) {}
+        AbstractEndpointObject(id, device), EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_pollInterval(0), m_pollTime(0), m_colorCapabilities(0xFFFF), m_zoneType(0), m_zoneStatus(ZoneStatus::Unknown), m_descriptorReceived(false), m_updated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
 
