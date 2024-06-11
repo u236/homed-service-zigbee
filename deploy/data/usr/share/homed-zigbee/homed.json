@@ -49,10 +49,10 @@
     {
       "description":    "PTVO Firmware Based RGB Led Controller",
       "modelNames":     ["RGB Strip"],
-      "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
+      "options":        {"light": ["level", "color", "colorTemperature"]},
       "endpointId":     1
     },
     {
