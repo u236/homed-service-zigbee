@@ -29,31 +29,26 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
     if (config->value("security/enabled", false).toBool())
         m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
 
+    m_config.append({EZSP_CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S,  qToLittleEndian <quint16> (0x005A)});
     m_config.append({EZSP_CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE,      qToLittleEndian <quint16> (0x0002)});
+    m_config.append({EZSP_CONFIG_FRAGMENT_DELAY_MS,                    qToLittleEndian <quint16> (0x0032)});
+    m_config.append({EZSP_CONFIG_PAN_ID_CONFLICT_REPORT_THRESHOLD,     qToLittleEndian <quint16> (0x0002)});
     m_config.append({EZSP_CONFIG_INDIRECT_TRANSMISSION_TIMEOUT,        qToLittleEndian <quint16> (0x1E00)});
-    m_config.append({EZSP_CONFIG_MAX_HOPS,                             qToLittleEndian <quint16> (0x001E)});
-    m_config.append({EZSP_CONFIG_TX_POWER_MODE,                        qToLittleEndian <quint16> (0x8000)});
-    m_config.append({EZSP_CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
+    m_config.append({EZSP_CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x000E)});
     m_config.append({EZSP_CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
-    m_config.append({EZSP_CONFIG_BINDING_TABLE_SIZE,                   qToLittleEndian <quint16> (0x0020)});
-    m_config.append({EZSP_CONFIG_KEY_TABLE_SIZE,                       qToLittleEndian <quint16> (0x0000)});
-    m_config.append({EZSP_CONFIG_MAX_END_DEVICE_CHILDREN,              qToLittleEndian <quint16> (0x0020)});
+    m_config.append({EZSP_CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
+    m_config.append({EZSP_CONFIG_FRAGMENT_WINDOW_SIZE,                 qToLittleEndian <quint16> (0x0001)});
     m_config.append({EZSP_CONFIG_APS_UNICAST_MESSAGE_COUNT,            qToLittleEndian <quint16> (0x0020)});
-    m_config.append({EZSP_CONFIG_BROADCAST_TABLE_SIZE,                 qToLittleEndian <quint16> (0x000F)});
-    m_config.append({EZSP_CONFIG_NEIGHBOR_TABLE_SIZE,                  qToLittleEndian <quint16> (0x001A)});
-    m_config.append({EZSP_CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x0008)});
-    m_config.append({EZSP_CONFIG_TRANSIENT_KEY_TIMEOUT_S,              qToLittleEndian <quint16> (0x012C)});
     m_config.append({EZSP_CONFIG_RETRY_QUEUE_SIZE,                     qToLittleEndian <quint16> (0x0010)});
     m_config.append({EZSP_CONFIG_PACKET_BUFFER_COUNT,                  qToLittleEndian <quint16> (0x00FF)});
 
     m_policy.append({EZSP_POLICY_BINDING_MODIFICATION_POLICY,          qToLittleEndian <quint16> (0x0012)});
-    m_policy.append({EZSP_POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (0x0051)});
     m_policy.append({EZSP_POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (0x0060)});
+    m_policy.append({EZSP_POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (0x0051)});
     m_policy.append({EZSP_POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (0x0003)});
 
     m_values.append({EZSP_VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, 1, qToLittleEndian <quint16> (0x0003)});
-    m_values.append({EZSP_VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
-    m_values.append({EZSP_VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
+    m_values.append({EZSP_VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
     m_values.append({EZSP_VALUE_TRANSIENT_DEVICE_TIMEOUT,           2, qToLittleEndian <quint16> (0x2710)});
 
     connect(m_timer, &QTimer::timeout, this, &EZSP::resetManufacturerCode);
