@@ -51,8 +51,7 @@
                             "19":   [{"name": "power", "type": "value", "divider": 10}],
                             "20":   [{"name": "voltage", "type": "value", "divider": 10}],
                             "101":  [{"name": "energy", "type": "value", "divider": 1000}]
-                          },
-                          "tuyaMagic": true
+                          }
                         }
     },
     {
@@ -82,6 +81,22 @@
                           {
                             "1":    [{"name": "energy", "type": "value", "divider": 100}],
                             "6":    [{"name": "elictricity", "type": "raw"}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 3-Phase Electricity Meter",
+      "modelNames":     ["_TZE200_ves1ycwx", "_TZE204_ves1ycwx"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["energy", "voltage_1", "current_1", "power_1", "voltage_2", "current_2", "power_2", "voltage_3", "current_3", "power_3"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
+                            "6":    [{"name": "elictricity_1", "type": "raw"}],
+                            "7":    [{"name": "elictricity_2", "type": "raw"}],
+                            "8":    [{"name": "elictricity_3", "type": "raw"}]
                           }
                         }
     },

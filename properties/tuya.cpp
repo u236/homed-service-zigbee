@@ -74,23 +74,25 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         {
             case 0: // raw
             {
-                QList <QString> list = {"_TZE200_bcusnqt8", "_TZE200_lsanae15", "_TZE204_lsanae15"};
+                QList <QString> modelList = {"_TZE200_bcusnqt8", "_TZE200_lsanae15", "_TZE200_ves1ycwx", "_TZE204_lsanae15", "_TZE204_ves1ycwx"}, nameList = name.split('_');
                 QByteArray payload = data.toByteArray();
                 quint16 value = 0;
 
-                if (name != "elictricity")
+                if (nameList.value(0) != "elictricity")
                     break;
 
-                if (list.contains(manufacturerName()))
+                if (modelList.contains(manufacturerName()))
                 {
+                    quint8 id = static_cast <quint8> (nameList.value(1).toInt());
+
                     memcpy(&value, payload.constData(), sizeof(value));
-                    map.insert("voltage", qFromBigEndian(value) / 10.0);
+                    map.insert(id ? QString("voltage_%1").arg(id) : "voltage", qFromBigEndian(value) / 10.0);
 
                     memcpy(&value, payload.constData() + 3, sizeof(value));
-                    map.insert("current", qFromBigEndian(value) / 1000.0);
+                    map.insert(id ? QString("current_%1").arg(id) : "current", qFromBigEndian(value) / 1000.0);
 
                     memcpy(&value, payload.constData() + 6, sizeof(value));
-                    map.insert("power", qFromBigEndian(value));
+                    map.insert(id ? QString("power_%1").arg(id) : "power", qFromBigEndian(value));
                 }
                 else
                 {
