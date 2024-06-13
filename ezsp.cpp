@@ -742,7 +742,7 @@ void EZSP::parseData(QByteArray &buffer)
             if (buffer.at(i) == 0x11 || buffer.at(i) == 0x13)
                 continue;
 
-            if (buffer.at(i) != static_cast <char> (0x7D))
+            if (buffer.at(i) != 0x7D)
             {
                 data.append(buffer.at(i));
                 continue;

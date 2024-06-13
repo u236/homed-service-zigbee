@@ -218,7 +218,6 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
         }
 
-
         case QVariant::String:
         {
             QList <QString> list {"moveUp", "moveDown", "stop"};
