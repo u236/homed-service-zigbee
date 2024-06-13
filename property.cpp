@@ -75,6 +75,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::CoverSwitch>                 ("tuyaCoverSwitchProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>                   ("tuyaChildLockProperty");
     qRegisterMetaType <PropertiesTUYA::ButtonAction>                ("tuyaButtonActionProperty");
+    qRegisterMetaType <PropertiesTUYA::IRCode>                      ("tuyaIRCodeProperty");
     qRegisterMetaType <PropertiesTUYA::OperationMode>               ("tuyaOperationModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>               ("tuyaIndicatorModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchType>                  ("tuyaSwitchTypeProperty");

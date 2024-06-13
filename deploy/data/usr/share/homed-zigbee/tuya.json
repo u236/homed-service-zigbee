@@ -1350,6 +1350,12 @@
       "endpointId":     [1, 2, 3, 4]
     },
     {
+      "description":    "TUYA TS1201 IR Remote Control",
+      "modelNames":     ["_TZ3290_7v1k4vufotpowp9z", "_TZ3290_rlkmy85q4pzoxobl"],
+      "properties":     ["tuyaIRCode"],
+      "actions":        ["tuyaIRCode", "tuyaIRLearn"]
+    },
+    {
       "description":    "MIBOXER FUT089Z 8-Group Remote Control",
       "modelNames":     ["_TZ3000_xwh1e22x"],
       "properties":     ["batteryPercentage"],

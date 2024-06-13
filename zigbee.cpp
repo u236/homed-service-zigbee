@@ -750,6 +750,12 @@ bool ZigBee::parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 t
             property->setTransactionId(transactionId);
             check = true;
 
+            while (!property->queue().isEmpty())
+            {
+                const PropertyRequest &request = property->queue().dequeue();
+                enqueueRequest(device, endpoint->id(), request.clusterId, request.data);
+            }
+
             if (property->timeout())
                 property->setTime(QDateTime::currentSecsSinceEpoch());
 

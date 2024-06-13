@@ -116,6 +116,21 @@ namespace PropertiesTUYA
 
     };
 
+    class IRCode : public PropertyObject
+    {
+
+    public:
+
+        IRCode(void) : PropertyObject("irCode", CLUSTER_TUYA_IR_DATA) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    private:
+
+        quint32 m_length;
+        QByteArray m_buffer;
+
+    };
+
     class OperationMode : public EnumProperty
     {
 
