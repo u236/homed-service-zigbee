@@ -245,18 +245,13 @@ QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data
 
 QByteArray ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
 {
-    QJsonObject json = {{"delay", 300}, {"key1", QJsonObject {{"freq", 38000}, {"key_code", data.toString()}, {"num", 1}, {"type", 1}}}, {"key_num", 1}};
-    QByteArray message = QJsonDocument(json).toJson(QJsonDocument::Compact);
-    quint32 length = message.length();
-
+    QByteArray message = QJsonDocument(QJsonObject {{"delay", 300}, {"key1", QJsonObject {{"freq", 38000}, {"key_code", data.toString()}, {"num", 1}, {"type", 1}}}, {"key_num", 1}}).toJson(QJsonDocument::Compact);
+    quint32 length = qToLittleEndian <quint32> (message.length());
     meta().insert("message", message);
-    length = qToLittleEndian(length);
-
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(2, 0x00).append(reinterpret_cast <char*> (&length), sizeof(length)).append(QByteArray::fromHex("0000000004e001020000"));
 }
 
 QByteArray ActionsTUYA::IRLearn::request(const QString &, const QVariant &data)
 {
-    QJsonObject json = {{"study", 0}};
-    return !data.toBool() ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(QJsonDocument(json).toJson(QJsonDocument::Compact));
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(QJsonDocument(QJsonObject {{"study", data.toBool() ? 0 : 1}}).toJson(QJsonDocument::Compact));
 }

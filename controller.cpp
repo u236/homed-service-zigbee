@@ -38,7 +38,12 @@ void Controller::publishExposes(DeviceObject *device, bool remove)
 void Controller::serviceOnline(void)
 {
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
+    {
+        if (it.value()->removed())
+            continue;
+
         publishExposes(it.value().data());
+    }
 
     if (m_haEnabled)
         mqttPublishDiscovery("ZigBee", SERVICE_VERSION, m_haPrefix, true);

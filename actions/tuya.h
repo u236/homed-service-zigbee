@@ -115,7 +115,7 @@ namespace ActionsTUYA
 
     public:
 
-        IRLearn(void) : ActionObject("irLearn", CLUSTER_TUYA_IR_CONTROL, 0x0000) {}
+        IRLearn(void) : ActionObject("learn", CLUSTER_TUYA_IR_CONTROL, 0x0000) {}
         QByteArray request(const QString &name, const QVariant &data) override;
 
     };

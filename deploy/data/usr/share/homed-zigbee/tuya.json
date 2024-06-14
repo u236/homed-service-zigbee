@@ -1351,9 +1351,19 @@
     },
     {
       "description":    "TUYA TS1201 IR Remote Control",
-      "modelNames":     ["_TZ3290_7v1k4vufotpowp9z", "_TZ3290_rlkmy85q4pzoxobl"],
+      "modelNames":     ["_TZ3290_7v1k4vufotpowp9z", "_TZ3290_acv1iuslxi3shaaj", "_TZ3290_gnl5a6a5xvql7c2a", "_TZ3290_rlkmy85q4pzoxobl"],
       "properties":     ["tuyaIRCode"],
-      "actions":        ["tuyaIRCode", "tuyaIRLearn"]
+      "actions":        ["tuyaIRCode", "tuyaIRLearn"],
+      "exposes":        ["irCode"]
+    },
+    {
+      "description":    "TUYA TS1201 Wireless IR Remote Control",
+      "modelNames":     ["_TZ3290_j37rooaxrcdcqo5n", "_TZ3290_ot6ewjvmejq5ekhl", "_TZ3290_xjpbcxn92aaxvmlz"],
+      "properties":     ["batteryPercentage", "tuyaIRCode"],
+      "actions":        ["tuyaIRCode", "tuyaIRLearn"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["irCode", "battery"]
     },
     {
       "description":    "MIBOXER FUT089Z 8-Group Remote Control",

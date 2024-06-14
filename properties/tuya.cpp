@@ -377,8 +377,7 @@ void PropertiesTUYA::IRCode::parseCommand(quint16, quint8 commandId, const QByte
 
         case 0x05:
         {
-            QJsonObject json = {{"study", 1}};
-            m_queue.enqueue({CLUSTER_TUYA_IR_CONTROL, zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId, 0x00).append(QJsonDocument(json).toJson(QJsonDocument::Compact))});
+            m_queue.enqueue({CLUSTER_TUYA_IR_CONTROL, zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId, 0x00).append(QJsonDocument(QJsonObject {{"study", 1}}).toJson(QJsonDocument::Compact))});
             m_value = m_buffer.toBase64();
             break;
         }
