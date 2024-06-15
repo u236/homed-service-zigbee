@@ -605,6 +605,12 @@ void DeviceList::recognizeDevice(const Device &device)
                             options.append("colorTemperature");
                         }
 
+                        if (options.contains("color") && options.contains("colorTemperature"))
+                        {
+                            it.value()->properties().append(Property(new Properties::ColorMode));
+                            options.append("colorMode");
+                        }
+
                         it.value()->bindings().append(Binding(new Bindings::Color));
                         device->options().insert(QString("light_%1").arg(it.key()), options);
                         break;
