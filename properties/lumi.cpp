@@ -359,6 +359,9 @@ void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QB
     memcpy(&value, data.constData(), data.length());
     value = qFromLittleEndian(value);
 
+    if (value > 100)
+        return;
+
     if (!option("invertCover").toBool())
         value = 100 - value;
 
