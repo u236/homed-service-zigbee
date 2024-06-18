@@ -54,6 +54,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
         m_channel = 11;
 
     logInfo << "Using channel" << m_channel << "and PAN ID" << QString::asprintf("0x%04x", m_panId);
+    m_defaultKey = QByteArray::fromHex("5a6967426565416c6c69616e63653039");
 
     m_endpoints.insert(0x01, EndpointData(new EndpointDataObject(PROFILE_HA,  0x0005)));
     m_endpoints.insert(0x0C, EndpointData(new EndpointDataObject(PROFILE_ZLL, 0x0005)));

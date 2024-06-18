@@ -416,7 +416,7 @@ bool ZStack::startCoordinator(void)
             }
             else
             {
-                if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e636530390000000000000000")))
+                if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray(8, 0xFF).append(m_defaultKey).append(8, 0x00)))
                     return false;
             }
 

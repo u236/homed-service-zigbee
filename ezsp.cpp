@@ -38,9 +38,7 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
     m_config.append({EZSP_CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
     m_config.append({EZSP_CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
     m_config.append({EZSP_CONFIG_FRAGMENT_WINDOW_SIZE,                 qToLittleEndian <quint16> (0x0001)});
-    m_config.append({EZSP_CONFIG_APS_UNICAST_MESSAGE_COUNT,            qToLittleEndian <quint16> (0x0020)});
     m_config.append({EZSP_CONFIG_RETRY_QUEUE_SIZE,                     qToLittleEndian <quint16> (0x0010)});
-    m_config.append({EZSP_CONFIG_PACKET_BUFFER_COUNT,                  qToLittleEndian <quint16> (0x00FF)});
 
     m_policy.append({EZSP_POLICY_BINDING_MODIFICATION_POLICY,          qToLittleEndian <quint16> (0x0012)});
     m_policy.append({EZSP_POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (0x0060)});
@@ -48,6 +46,8 @@ EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_time
     m_policy.append({EZSP_POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (0x0003)});
 
     m_values.append({EZSP_VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE, 1, qToLittleEndian <quint16> (0x0003)});
+    m_values.append({EZSP_VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
+    m_values.append({EZSP_VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE,     2, qToLittleEndian <quint16> (0x0052)});
     m_values.append({EZSP_VALUE_CCA_THRESHOLD,                      1, qToLittleEndian <quint16> (0x0000)});
     m_values.append({EZSP_VALUE_TRANSIENT_DEVICE_TIMEOUT,           2, qToLittleEndian <quint16> (0x2710)});
 
@@ -488,6 +488,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
 
 bool EZSP::startCoordinator(void)
 {
+    QList <ezspSetConfigStruct> config = m_config;
     ezspSetConcentratorStruct concentrator;
     ezspNetworkParametersStruct network;
     ezspVersionStruct version;
@@ -534,9 +535,12 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&ieeeAddress, m_replyData.constData(), sizeof(ieeeAddress));
 
-    for (int i = 0; i < m_config.length(); i++)
+    if (m_version < 12)
+        config.append({EZSP_CONFIG_PACKET_BUFFER_COUNT, qToLittleEndian <quint16> (0x00FF)});
+
+    for (int i = 0; i < config.length(); i++)
     {
-        ezspSetConfigStruct request = m_config.at(i);
+        ezspSetConfigStruct request = config.at(i);
 
         if (sendFrame(EZSP_FRAME_SET_CONFIG, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
@@ -645,13 +649,13 @@ bool EZSP::startCoordinator(void)
         check = true;
     }
 
-    if (!sendFrame(EZSP_FRAME_GET_KEY, QByteArray(1, static_cast <char> (EZSP_CURRENT_NETWORK_KEY))))
+    if (m_version < 13 ? !sendFrame(EZSP_FRAME_GET_KEY, QByteArray(1, 0x03)) : !sendFrame(EZSP_FRAME_EXPORT_KEY, QByteArray(1, 0x01).append(17, 0x00)))
     {
         logWarning << "Get network key request failed";
         return false;
     }
 
-    if (m_replyData.mid(4, m_networkKey.length()) != m_networkKey)
+    if (m_replyData.mid(m_version < 13 ? 4 : 0, m_networkKey.length()) != m_networkKey)
     {
         logWarning << "Adapter network key doesn't match configuration";
         check = true;
@@ -786,9 +790,10 @@ bool EZSP::permitJoin(bool enabled)
 {
     if (enabled)
     {
+        QByteArray request = QByteArray(8, 0xFF).append(m_defaultKey);
         ezspSetConfigStruct policy;
 
-        if (!sendFrame(EZSP_FRAME_ADD_TRANSIENT_LINK_KEY, QByteArray::fromHex("ffffffffffffffff5a6967426565416c6c69616e63653039")) || m_replyStatus)
+        if (m_version < 13 ? !sendFrame(EZSP_FRAME_ADD_TRANSIENT_LINK_KEY, request) : !sendFrame(EZSP_FRAME_IMPORT_TRANSIENT_KEY, request.append(1, 0x00)) || m_replyStatus)
         {
             logWarning << "Add transient key request failed";
             return false;
