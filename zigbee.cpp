@@ -552,9 +552,6 @@ bool ZigBee::interviewQuirks(const Device &device)
             return false;
     }
 
-    if (device->manufacturerName() == "IKEA of Sweden" && device->powerSource() == POWER_SOURCE_BATTERY)
-        enqueueRequest(device, 0x01, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, {0x0021}), "battery percentage request");
-
     if (device->manufacturerName() == "LUMI" && device->modelName() == "lumi.switch.n3acn3") // TODO: make it optional?
         enqueueRequest(device, 0x01, CLUSTER_LUMI, writeAttributeRequest(m_requestId, MANUFACTURER_CODE_LUMI, 0x0200, DATA_TYPE_8BIT_UNSIGNED, QByteArray(1, 0x01)), "magic request");
 
@@ -706,6 +703,9 @@ bool ZigBee::configureReporting(const Device &device, quint8 endpointId, const R
         logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
         return false;
     }
+
+    if (reporting->name() == "battery")
+        enqueueRequest(device, endpointId, CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()));
 
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId) << reporting->name().toUtf8().constData() << "reporting configuration request finished successfully";
     return true;
