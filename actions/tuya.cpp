@@ -242,3 +242,16 @@ QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data
     qint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
+
+QByteArray ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
+{
+    QByteArray message = QJsonDocument(QJsonObject {{"delay", 300}, {"key1", QJsonObject {{"freq", 38000}, {"key_code", data.toString()}, {"num", 1}, {"type", 1}}}, {"key_num", 1}}).toJson(QJsonDocument::Compact);
+    quint32 length = qToLittleEndian <quint32> (message.length());
+    meta().insert("message", message);
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(2, 0x00).append(reinterpret_cast <char*> (&length), sizeof(length)).append(QByteArray::fromHex("0000000004e001020000"));
+}
+
+QByteArray ActionsTUYA::IRLearn::request(const QString &, const QVariant &data)
+{
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(QJsonDocument(QJsonObject {{"study", data.toBool() ? 0 : 1}}).toJson(QJsonDocument::Compact));
+}

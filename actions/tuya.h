@@ -100,6 +100,26 @@ namespace ActionsTUYA
 
     };
 
+    class IRCode : public ActionObject
+    {
+
+    public:
+
+        IRCode(void) : ActionObject("irCode", CLUSTER_TUYA_IR_DATA, 0x0000) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class IRLearn : public ActionObject
+    {
+
+    public:
+
+        IRLearn(void) : ActionObject("learn", CLUSTER_TUYA_IR_CONTROL, 0x0000) {}
+        QByteArray request(const QString &name, const QVariant &data) override;
+
+    };
+
     class OperationMode : public EnumAction
     {
 

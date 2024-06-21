@@ -111,6 +111,8 @@
 
 #define CLUSTER_TUYA_DATA                           0xEF00
 #define CLUSTER_TUYA_SWITCH_MODE                    0xE001
+#define CLUSTER_TUYA_IR_DATA                        0xED00
+#define CLUSTER_TUYA_IR_CONTROL                     0xE004
 
 #define TUYA_TYPE_RAW                               0x00
 #define TUYA_TYPE_BOOL                              0x01

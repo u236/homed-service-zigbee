@@ -45,9 +45,10 @@
 #define EZSP_FRAME_ADD_TRANSIENT_LINK_KEY                   0x00AF
 #define EZSP_FRAME_CLEAR_KEY_TABLE                          0x00B1
 #define EZSP_FRAME_SET_CHANNEL                              0x00B9
+#define EZSP_FRAME_IMPORT_TRANSIENT_KEY                     0x0111
+#define EZSP_FRAME_EXPORT_KEY                               0x0114
 
 #define EZSP_CONFIG_PACKET_BUFFER_COUNT                     0x01
-#define EZSP_CONFIG_APS_UNICAST_MESSAGE_COUNT               0x03
 #define EZSP_CONFIG_STACK_PROFILE                           0x0C
 #define EZSP_CONFIG_SECURITY_LEVEL                          0x0D
 #define EZSP_CONFIG_INDIRECT_TRANSMISSION_TIMEOUT           0x12
@@ -69,6 +70,8 @@
 #define EZSP_SECURITY_HAVE_NETWORK_KEY                      0x0200
 #define EZSP_SECURITY_REQUIRE_ENCRYPTED_KEY                 0x0800
 
+#define EZSP_VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE           0x05
+#define EZSP_VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE           0x06
 #define EZSP_VALUE_STACK_TOKEN_WRITING                      0x07
 #define EZSP_VALUE_VERSION_INFO                             0x11
 #define EZSP_VALUE_CCA_THRESHOLD                            0x15
@@ -94,7 +97,6 @@
 #define EZSP_APS_OPTION_ENABLE_ADDRESS_DISCOVERY            0x1000
 
 #define EZSP_NETWORK_STATUS_JOINED                          0x02
-#define EZSP_CURRENT_NETWORK_KEY                            0x03
 
 #include "adapter.h"
 

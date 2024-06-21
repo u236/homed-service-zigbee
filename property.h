@@ -1,9 +1,16 @@
 #ifndef PROPERTY_H
 #define PROPERTY_H
 
+#include <QQueue>
 #include <QSharedPointer>
 #include <QVariant>
 #include "endpoint.h"
+
+struct PropertyRequest
+{
+    quint16 clusterId;
+    QByteArray data;
+};
 
 class PropertyObject;
 typedef QSharedPointer <PropertyObject> Property;
@@ -42,6 +49,7 @@ public:
     inline void setValue(const QVariant &value) { m_value = value; }
     inline void clearValue(void) { m_value = QVariant(); }
 
+    inline QQueue <PropertyRequest> &queue(void) { return m_queue; }
     static void registerMetaTypes(void);
 
 protected:
@@ -54,6 +62,8 @@ protected:
 
     quint8 m_transactionId;
     QVariant m_value;
+
+    QQueue <PropertyRequest> m_queue;
 
     quint8 percentage(double min, double max, double value);
     QVariant enumValue(const QString &name, int index);

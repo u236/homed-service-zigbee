@@ -19,8 +19,8 @@
       "endpointId":     [1, 2]
     },
     {
-      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02, SNZB-02D or SNZB-02P",
-      "modelNames":     ["SNZB-02D", "SNZB-02P", "TH01"],
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02 or SNZB-02P",
+      "modelNames":     ["SNZB-02P", "TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
@@ -41,6 +41,14 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy", "batteryLow"]
+    },
+    {
+      "description":    "Sonoff Water Leak Sensor SNZB-05P",
+      "modelNames":     ["SNZB-05P"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak", "batteryLow"]
     },
     {
       "description":    "Sonoff Wireless Button SNZB-01 or SNZB-01P",
@@ -78,15 +86,16 @@
       "exposes":        ["switch", "powerOnStatus"]
     },
     {
-      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02, SNZB-02D or SNZB-02P",
-      "modelNames":     ["SNZB-02D", "SNZB-02P", "TH01"],
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02D",
+      "modelNames":     ["SNZB-02D"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity"]
+      "exposes":        ["battery", "temperature", "humidity"],
+      "options":        {"powerSource": 3}
     },
     {
-      "description":    "Sonoff Motion Sensor SNZB-06P",
+      "description":    "Sonoff Human Presense Sensor SNZB-06P",
       "modelNames":     ["SNZB-06P"],
       "properties":     ["occupancy", "customAttributes"],
       "actions":        ["customAttributes"],

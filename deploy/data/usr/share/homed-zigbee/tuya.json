@@ -687,6 +687,23 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Soil Moisture Sensor",
+      "modelNames":     ["_TZE284_g2e6cpnw"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["battery", "batteryStatus", "temperature", "moisture"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "3":    [{"name": "moisture", "type": "value"}],
+                            "5":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "102":  [{"name": "batteryStatus", "type": "enum"}],
+                            "110":  [{"name": "battery", "type": "value", "divider": 10}]
+                          },
+                          "batteryStatus": {"enum": ["low", "medium", "high"]},
+                          "tuyaMagic": true
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Air Quality Sensor",
       "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k"],
       "properties":     ["tuyaDataPoints"],
@@ -1348,6 +1365,22 @@
       "exposes":        ["action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}},
       "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "TUYA TS1201 IR Remote Control",
+      "modelNames":     ["_TZ3290_7v1k4vufotpowp9z", "_TZ3290_acv1iuslxi3shaaj", "_TZ3290_gnl5a6a5xvql7c2a", "_TZ3290_rlkmy85q4pzoxobl"],
+      "properties":     ["tuyaIRCode"],
+      "actions":        ["tuyaIRCode", "tuyaIRLearn"],
+      "exposes":        ["irCode"]
+    },
+    {
+      "description":    "TUYA TS1201 Wireless IR Remote Control",
+      "modelNames":     ["_TZ3290_j37rooaxrcdcqo5n", "_TZ3290_ot6ewjvmejq5ekhl", "_TZ3290_xjpbcxn92aaxvmlz"],
+      "properties":     ["batteryPercentage", "tuyaIRCode"],
+      "actions":        ["tuyaIRCode", "tuyaIRLearn"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["irCode", "battery"]
     },
     {
       "description":    "MIBOXER FUT089Z 8-Group Remote Control",
