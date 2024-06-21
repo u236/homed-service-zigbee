@@ -299,7 +299,7 @@ void ZigBee::getProperties(const QString &deviceName)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (it.value()->properties().isEmpty())
+        if (it.value()->properties().isEmpty() && !it.value()->inClusters().contains(CLUSTER_BASIC))
             continue;
 
         emit endpointUpdated(device.data(), it.key());
@@ -762,6 +762,7 @@ bool ZigBee::parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 t
             if (property->value() == value)
                 continue;
 
+            m_devices->storeProperties();
             endpoint->setUpdated(true);
         }
     }
@@ -1723,11 +1724,8 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
         enqueueRequest(device, endpoint->id(), clusterId, zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_DEFAULT_RESPONSE, manufacturerCode).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
     }
 
-    if (endpoint->updated())
-    {
-        m_devices->storeProperties();
+    if (endpoint->updated() || (endpoint->properties().isEmpty() && endpoint->inClusters().contains(CLUSTER_BASIC)))
         emit endpointUpdated(device.data(), endpoint->id());
-    }
 
     device->updateLastSeen();
 }
@@ -1784,8 +1782,8 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
 
             if (request->action()->propertyUpdated())
             {
-                emit endpointUpdated(request->device().data(), request->endpointId());
                 m_devices->storeProperties();
+                emit endpointUpdated(request->device().data(), request->endpointId());
             }
 
             break;
