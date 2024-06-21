@@ -86,15 +86,6 @@
       "exposes":        ["switch", "powerOnStatus"]
     },
     {
-      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02D",
-      "modelNames":     ["SNZB-02D"],
-      "properties":     ["batteryPercentage", "temperature", "humidity"],
-      "bindings":       ["battery", "temperature", "humidity"],
-      "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity"],
-      "options":        {"powerSource": 3}
-    },
-    {
       "description":    "Sonoff Human Presense Sensor SNZB-06P",
       "modelNames":     ["SNZB-06P"],
       "properties":     ["occupancy", "customAttributes"],
@@ -111,6 +102,15 @@
                           "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}},
                           "illumination": {"enum": ["dim", "bright"]}
                         }
+    },
+    {
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02D",
+      "modelNames":     ["SNZB-02D"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity"],
+      "options":        {"powerSource": 3}
     }
   ]
 }
