@@ -239,6 +239,7 @@
                           "operationMode": {"enum": ["program", "manual", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10},
+                          "position": {"type": "sensor", "icon": "mdi:valve"},
                           "temperatureOffset": {"min": -9, "max": 9},
                           "ecoTemperature": {"min": 10, "max": 30},
                           "thermostatProgram": "moes",
