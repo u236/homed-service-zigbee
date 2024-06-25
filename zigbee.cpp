@@ -1466,11 +1466,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
     else
     {
         if (it.value()->removed())
-        {
-            it.value()->setDiscovery(m_discovery);
-            it.value()->setCloud(m_cloud);
             it.value()->setRemoved(false);
-        }
 
         if (it.value()->joinTime() + DEVICE_REJOIN_TIMEOUT > QDateTime::currentMSecsSinceEpoch())
             return;

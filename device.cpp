@@ -838,7 +838,7 @@ void DeviceList::removeDevice(const Device &device)
 {
     if (device->name() != device->ieeeAddress().toHex(':'))
     {
-        insert(device->ieeeAddress(), Device(new DeviceObject(device->ieeeAddress(), device->networkAddress(), device->name(), true)));
+        device->setRemoved(true);
         return;
     }
 
@@ -857,23 +857,18 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
         {
             Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt()), json.value("name").toString(), json.value("removed").toBool()));
 
+            device->setNote(json.value("note").toString());
+            device->setActive(json.value("active").toBool());
+            device->setDiscovery(json.value("discovery").toBool());
+            device->setCloud(json.value("cloud").toBool());
+
             if (!device->removed())
             {
                 QJsonArray endpoints = json.value("endpoints").toArray(), neighbors = json.value("neighbors").toArray();
 
-                if (json.contains("active"))
-                    device->setActive(json.value("active").toBool());
-
-                if (json.contains("discovery"))
-                    device->setDiscovery(json.value("discovery").toBool());
-
-                if (json.contains("cloud"))
-                    device->setCloud(json.value("cloud").toBool());
-
                 device->setVersion(static_cast <quint8> (json.value("version").toInt()));
                 device->setManufacturerName(json.value("manufacturerName").toString());
                 device->setModelName(json.value("modelName").toString());
-                device->setNote(json.value("note").toString());
                 device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
                 device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
                 device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
@@ -974,6 +969,16 @@ QJsonArray DeviceList::serializeDevices(void)
         const Device &device = it.value();
         QJsonObject json = {{"ieeeAddress", QString(device->ieeeAddress().toHex(':'))}, {"networkAddress", device->networkAddress()}};
 
+        if (device->logicalType() != LogicalType::Coordinator)
+        {
+            if (!device->note().isEmpty())
+                json.insert("note", device->note());
+
+            json.insert("active", device->active());
+            json.insert("discovery", device->discovery());
+            json.insert("cloud", device->cloud());
+        }
+
         if (!device->removed())
         {
             json.insert("logicalType", static_cast <quint8> (device->logicalType()));
@@ -992,9 +997,6 @@ QJsonArray DeviceList::serializeDevices(void)
 
             if (device->logicalType() != LogicalType::Coordinator)
             {
-                json.insert("active", device->active());
-                json.insert("discovery", device->discovery());
-                json.insert("cloud", device->cloud());
                 json.insert("supported", device->supported());
                 json.insert("interviewFinished", device->interviewFinished());
                 json.insert("manufacturerCode", device->manufacturerCode());
@@ -1011,9 +1013,6 @@ QJsonArray DeviceList::serializeDevices(void)
 
                 if (!device->description().isEmpty())
                     json.insert("description", device->description());
-
-                if (!device->note().isEmpty())
-                    json.insert("note", device->note());
             }
 
             if (!device->endpoints().isEmpty())
@@ -1093,25 +1092,29 @@ QJsonObject DeviceList::serializeProperties(void)
     for (auto it = begin(); it != end(); it++)
     {
         const Device &device = it.value();
-        QJsonObject properties;
 
-        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        if (!device->removed())
         {
-            for (int i = 0; i < it.value()->properties().count(); i++)
+            QJsonObject properties;
+
+            for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
-                const Property &property = it.value()->properties().at(i);
+                for (int i = 0; i < it.value()->properties().count(); i++)
+                {
+                    const Property &property = it.value()->properties().at(i);
 
-                if (!property->value().isValid())
-                    continue;
+                    if (!property->value().isValid())
+                        continue;
 
-                properties.insert(property->multiple() ? QString("%1_%2").arg(property->name()).arg(it.value()->id()) : property->name(), QJsonValue::fromVariant(property->value()));
+                    properties.insert(property->multiple() ? QString("%1_%2").arg(property->name()).arg(it.value()->id()) : property->name(), QJsonValue::fromVariant(property->value()));
+                }
             }
+
+            if (properties.isEmpty())
+                continue;
+
+            json.insert(it.value()->ieeeAddress().toHex(':'), properties);
         }
-
-        if (properties.isEmpty())
-            continue;
-
-        json.insert(it.value()->ieeeAddress().toHex(':'), properties);
     }
 
     return json;
