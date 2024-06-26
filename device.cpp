@@ -9,7 +9,7 @@
 
 DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
 {
-    QFile file("/usr/share/homed-common/expose.json");
+    QFile file;
 
     PropertyObject::registerMetaTypes();
     ActionObject::registerMetaTypes();
@@ -24,9 +24,12 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     m_externalDir.setPath(m_config->value("device/external", "/opt/homed-zigbee/external").toString());
     m_libraryDir.setPath(m_config->value("device/library", "/usr/share/homed-zigbee").toString());
 
+    file.setFileName(m_config->value("device/expose", "/usr/share/homed-common/expose.json").toString());
+
     if (file.open(QFile::ReadOnly))
     {
         m_exposeOptions = QJsonDocument::fromJson(file.readAll()).object().toVariantMap();
+        logInfo << m_exposeOptions.count() << "exposes loaded"; // TODO: remove it
         file.close();
     }
 

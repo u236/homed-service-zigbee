@@ -1,0 +1,8 @@
+Package: homed-zigbee
+Version:
+Architecture:
+Maintainer: u236 <mail@u236.org>
+Depends: homed-common, homed-qt
+Section: misc
+Priority: standard
+Description: HOMEd ZigBee Service
