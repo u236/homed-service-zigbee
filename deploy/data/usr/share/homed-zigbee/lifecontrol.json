@@ -22,10 +22,17 @@
       "options":        {"battery": {"undivided": true}}
     },
     {
+      "description":    "Life Control Motion sensor MCLH-05",
+      "modelNames":     ["Motion_Sensor"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"],
+      "options":        {"battery": {"undivided": true}}
+    },
+    {
       "description":    "Life Control Water Leak Sensor MCLH-07",
       "modelNames":     ["Leak_Sensor"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
-      "exposes":        ["battery", "waterLeak", "batteryLow"],
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"],
       "options":        {"battery": {"undivided": true}}
     },
     {
