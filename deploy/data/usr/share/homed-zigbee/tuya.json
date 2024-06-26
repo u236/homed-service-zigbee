@@ -1230,6 +1230,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
+      "options":        {"tuyaMagic": true}
     },
     {
       "description":    "TUYA TS0202 Motion Sensor with Timeout",
@@ -1255,6 +1256,7 @@
                             "timeoutMode":      {"type": "enum", "clusterId": 1280, "attributeId": 61441, "dataType": 32, "action": true}
                           },
                           "timeoutMode": {"enum": ["30s", "60s", "120s"]}
+                          "tuyaMagic": true
                         }
     },
     {
