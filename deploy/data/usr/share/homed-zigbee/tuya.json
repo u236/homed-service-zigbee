@@ -1229,7 +1229,7 @@
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"]
+      "exposes":        ["battery", "occupancy", "batteryLow", "tamper"],
       "options":        {"tuyaMagic": true}
     },
     {
@@ -1255,7 +1255,7 @@
                             "sensitivityMode":  {"type": "enum", "clusterId": 1280, "attributeId": 19,    "dataType": 32, "action": true},
                             "timeoutMode":      {"type": "enum", "clusterId": 1280, "attributeId": 61441, "dataType": 32, "action": true}
                           },
-                          "timeoutMode": {"enum": ["30s", "60s", "120s"]}
+                          "timeoutMode": {"enum": ["30s", "60s", "120s"]},
                           "tuyaMagic": true
                         }
     },
