@@ -249,7 +249,7 @@
   "Xiaomi":
   [
     {
-      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC",
+      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC (Type A)",
       "modelNames":     ["LYWSD03MMC"],
       "properties":     ["batteryPercentage", "temperature", "humidity", "displayMode", "customAttributes"],
       "actions":        ["displayMode", "customAttributes"],
@@ -267,6 +267,30 @@
                           "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
                           "humidityOffset": {"min": -50, "max": 50},
                           "reporting": {"minInterval": 60}
+                        }
+    },
+    {
+      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC (Type B)",
+      "modelNames":     ["LYWSD03MMC-z", "LYWSD03MMC-bz"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity", "enableDisplay", "showSmiley", "readInterval", "temperatureOffset", "humidityOffset"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "showSmiley":         {"type": "enum",  "clusterId": 516, "attributeId": 2,   "dataType": 48, "action": true},
+                            "temperatureOffset":  {"type": "value", "clusterId": 516, "attributeId": 256, "dataType": 41, "divider": 10, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 516, "attributeId": 257, "dataType": 41, "divider": 10, "action": true},
+                            "enableDisplay":      {"type": "enum",  "clusterId": 516, "attributeId": 262, "dataType": 48, "action": true},
+                            "readInterval":       {"type": "value", "clusterId": 516, "attributeId": 263, "dataType": 32, "action": true}
+                          },
+                          "showSmiley": {"enum": [true, false]},
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
+                          "humidityOffset": {"min": -50, "max": 50},
+                          "enableDisplay": {"enum": [true, false]},
+                          "readInterval": {"min": 3, "max": 255}
                         }
     }
   ],
