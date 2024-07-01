@@ -30,7 +30,8 @@ HEADERS += \
     zcl.h \
     zigate.h \
     zigbee.h \
-    zstack.h
+    zstack.h \
+    zboss.h
 
 SOURCES += \
     action.cpp \
@@ -59,7 +60,8 @@ SOURCES += \
     zcl.cpp \
     zigate.cpp \
     zigbee.cpp \
-    zstack.cpp
+    zstack.cpp \
+    zboss.cpp
 
 DISTFILES += \
     deploy/data/usr/share/homed-zigbee/efekta.json \
