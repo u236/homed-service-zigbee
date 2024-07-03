@@ -207,7 +207,7 @@ bool Adapter::bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, 
     if (request.dstAddressMode != ADDRESS_MODE_GROUP)
         dstAddress = qToLittleEndian(qFromBigEndian(dstAddress));
 
-    return unicastRequest(id, networkAddress, 0x00, 0x00, unbind ? ZDO_UNBIND_REQUEST : ZDO_BIND_REQUEST, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dstAddress), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, unbind ? ZDO_UNBIND_REQUEST : ZDO_BIND_REQUEST, QByteArray(1, static_cast <char> (id)).append(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dstAddress), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 0x01)));
 }
 
 bool Adapter::leaveRequest(quint8 id, quint16 networkAddress)

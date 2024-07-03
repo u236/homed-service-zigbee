@@ -72,7 +72,7 @@ bool ZiGate::bindRequest(quint8 id, quint16, quint8 endpointId, quint16 clusterI
         memcpy(&dstAddress, &value, sizeof(value));
     }
 
-    return sendRequest(unbind ? ZIGATE_UNBIND_REQUEST : ZIGATE_BIND_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dstAddress), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 1)), id) && !m_replyStatus;
+    return sendRequest(unbind ? ZIGATE_UNBIND_REQUEST : ZIGATE_BIND_REQUEST, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&dstAddress), request.dstAddressMode == ADDRESS_MODE_GROUP ? 2 : 8).append(static_cast <char> (dstEndpointId ? dstEndpointId : 0x01)), id) && !m_replyStatus;
 }
 
 bool ZiGate::leaveRequest(quint8 id, quint16 networkAddress)

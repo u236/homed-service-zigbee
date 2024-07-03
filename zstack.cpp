@@ -246,8 +246,12 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         }
 
         default:
-            logWarning << "Unrecognized Z-Stack command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+        {
+            if (m_adapterDebug)
+                logWarning << "Unrecognized Z-Stack command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+
             break;
+        }
     }
 }
 

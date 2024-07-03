@@ -1834,7 +1834,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!m_adapter->unicastRequest(it.key(), device->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()))
+                if (!m_adapter->unicastRequest(it.key(), device->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()) && it.value()->status() != RequestStatus::Finished)
                 {
                     logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "aborted, status code:" << QString::asprintf("0x%02x", m_adapter->replyStatus());
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1849,7 +1849,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!m_adapter->leaveRequest(it.key(), device->networkAddress()))
+                if (!m_adapter->leaveRequest(it.key(), device->networkAddress()) && it.value()->status() != RequestStatus::Finished)
                 {
                     logWarning << "Device" << device->name() << "leave request aborted, status code:" << QString::asprintf("0x%02x", m_adapter->replyStatus());
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1864,7 +1864,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()))
+                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()) && it.value()->status() != RequestStatus::Finished)
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;
@@ -1876,7 +1876,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!interviewRequest(it.key(), device))
+                if (!interviewRequest(it.key(), device) && it.value()->status() != RequestStatus::Finished)
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;

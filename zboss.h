@@ -282,15 +282,15 @@ struct zdoLeaveRequestStruct
 
 struct zdoNodeDescriptorResponseStruct
 {
-    quint16 flags;
-    quint8 macCpb;
+    quint8  logicalType;
+    quint8  apsFlags;
+    quint8  capabilityFlags;
     quint16 manufacturerCode;
-    quint8 maxBufferSize;
+    quint8  maxBufferSize;
     quint16 maxTransferSize;
-    quint16 serverMask;
+    quint16 serverFlags;
     quint16 maxOutTransferSize;
-    quint8 descriptorCapabilities;
-    quint16 networkAddress;
+    quint8  descriptorCapabilities;
 };
 
 struct zdoSimpleDescriptorResponseStruct
@@ -334,16 +334,15 @@ private:
     quint16 m_command;
     QByteArray m_replyData;
 
-    quint8 m_tsn, m_sequenceId;
-    qint8 m_acknowledgeId;
+    quint8 m_sequenceId, m_acknowledgeId;
+    quint16 m_lqiAddress;
 
     QList <setTCPolicyStruct> m_policy;
 
-    quint8 getTSN(void);
     quint8 getCRC8(quint8 *data, quint32 length);
     quint16 getCRC16(quint8 *data, quint32 length);
 
-    bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
+    bool sendRequest(quint16 command, const QByteArray &data = QByteArray(), quint8 id = 0);
     void sendAcknowledge(void);
     void parsePacket(quint8 type, quint16 command, const QByteArray &data);
 
