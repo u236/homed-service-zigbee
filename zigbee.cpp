@@ -1399,8 +1399,6 @@ void ZigBee::coordinatorReady(void)
             break;
     }
 
-    logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':').constData();
-
     device->setManufacturerName(m_adapter->manufacturerName());
     device->setModelName(m_adapter->modelName());
     device->setDiscovery(false);
@@ -1420,6 +1418,9 @@ void ZigBee::coordinatorReady(void)
     connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
     connect(m_pingTimer, &QTimer::timeout, this, &ZigBee::pingDevices, Qt::UniqueConnection);
 
+    logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':').constData();
+    m_adapter->setPermitJoin(m_devices->permitJoin());
+
     if (!m_requests.isEmpty())
         m_requestTimer->start();
 
@@ -1432,7 +1433,6 @@ void ZigBee::coordinatorReady(void)
         pingDevices();
     }
 
-    m_adapter->setPermitJoin(m_devices->permitJoin());
     emit networkStarted();
 }
 
@@ -1834,7 +1834,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!m_adapter->unicastRequest(it.key(), device->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()) && it.value()->status() != RequestStatus::Finished)
+                if (!m_adapter->unicastRequest(it.key(), device->networkAddress(), 0x01, request->endpointId(), request->clusterId(), request->data()))
                 {
                     logWarning << "Device" << request->device()->name() << (!request->name().isEmpty() ? request->name().toUtf8().constData() : "data request") << "aborted, status code:" << QString::asprintf("0x%02x", m_adapter->replyStatus());
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1849,7 +1849,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!m_adapter->leaveRequest(it.key(), device->networkAddress()) && it.value()->status() != RequestStatus::Finished)
+                if (!m_adapter->leaveRequest(it.key(), device->networkAddress()))
                 {
                     logWarning << "Device" << device->name() << "leave request aborted, status code:" << QString::asprintf("0x%02x", m_adapter->replyStatus());
                     it.value()->setStatus(RequestStatus::Aborted);
@@ -1864,7 +1864,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()) && it.value()->status() != RequestStatus::Finished)
+                if (!m_adapter->lqiRequest(it.key(), device->networkAddress(), device->lqiRequestIndex()))
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;
@@ -1876,7 +1876,7 @@ void ZigBee::handleRequests(void)
 
                 m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-                if (!interviewRequest(it.key(), device) && it.value()->status() != RequestStatus::Finished)
+                if (!interviewRequest(it.key(), device))
                     it.value()->setStatus(RequestStatus::Aborted);
 
                 break;

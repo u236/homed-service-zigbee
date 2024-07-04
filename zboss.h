@@ -1,7 +1,7 @@
 #ifndef ZBOSS_H
 #define ZBOSS_H
 
-#define ZBOSS_REQUEST_TIMEOUT                       15000
+#define ZBOSS_REQUEST_TIMEOUT                       2000
 
 #define ZBOSS_SIGNATURE                             0xDEAD
 #define ZBOSS_NCP_API_HL                            0x06
@@ -329,6 +329,7 @@ public:
 
 private:
 
+    bool m_clear;
     QByteArray m_networkKey;
 
     quint16 m_command;
@@ -355,9 +356,11 @@ private:
 private slots:
 
     void handleQueue(void) override;
+    void serialError(QSerialPort::SerialPortError error) override;
 
 signals:
 
+    void acknowledgeReceived(void);
     void dataReceived(void);
 
 };

@@ -43,7 +43,7 @@ static uint16_t const crc16Table[256] =
     0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
 
-ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent)
+ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_clear(false)
 {
     m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
     
@@ -73,7 +73,7 @@ bool ZBoss::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPoint
     request.srcAlias = 0x0000;
     request.aliasSeq = 0x00;
 
-    return sendRequest(APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id) && !m_replyStatus;
+    return sendRequest(APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
 }
 
 bool ZBoss::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
@@ -94,7 +94,7 @@ bool ZBoss::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, q
     request.srcAlias = 0x0000;
     request.aliasSeq = 0x00;
 
-    return sendRequest(APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id) && !m_replyStatus;
+    return sendRequest(APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
 }
 
 bool ZBoss::unicastInterPanRequest(quint8, const QByteArray &, quint16 , const QByteArray &)
@@ -235,7 +235,7 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
 
     sendData(request);
 
-    return waitForSignal(this, SIGNAL(dataReceived()), ZBOSS_REQUEST_TIMEOUT);
+    return waitForSignal(this, command & 0x0200 && command != ZBOSS_ZDO_PERMIT_JOINING_REQ ? SIGNAL(acknowledgeReceived()) : SIGNAL(dataReceived()), ZBOSS_REQUEST_TIMEOUT);
 }
 
 void ZBoss::sendAcknowledge(void)
@@ -276,6 +276,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
     switch (command)
     {
+        case ZBOSS_NCP_RESET:
         case ZBOSS_NCP_RESET_IND:
         {
             m_sequenceId = 0;
@@ -380,7 +381,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
         }
     }
 
-    emit requestFinished(static_cast <quint8> (data.at(0)), static_cast <quint8> (data.at(2)));
+    emit requestFinished(static_cast <quint8> (data.at(0)), m_replyStatus);
 }
 
 bool ZBoss::startCoordinator(void)
@@ -389,31 +390,7 @@ bool ZBoss::startCoordinator(void)
     localIEEEResponseStruct localIeee;
     channelMaskRequestStruct channel;
     nwkSetRequestStruct nwk;
-    nwkForamtionStruct network;
-
-    bool withoutFormation = false;
-
     bool check = false;
-
-
-    channel.page = 0;
-    channel.mask = qToLittleEndian <quint32> (1 << m_channel);
-
-    memcpy(nwk.key, m_networkKey.constData(), sizeof(nwk.key));
-    nwk.number = 0;
-
-    if (!sendRequest(ZBOSS_GET_MODULE_VERSION) || m_replyStatus)
-    {
-        logWarning << "Adapter version request failed";
-        return false;
-    }
-
-    memcpy(&version, m_replyData.constData(), sizeof(version));
-    m_manufacturerName = "Nordic Semiconductor";
-    m_modelName = QString::asprintf("ZBOSS");
-    m_firmware = QString::asprintf("%d.%d.%d", version.firmwareVersionMinor, version.firmwareVersionRevision, version.firmwareVersionCommit);
-
-    logInfo << QString("Adapter type: %1 (%2)").arg(m_modelName, m_firmware).toUtf8().constData();
 
     if (!sendRequest(ZBOSS_GET_LOCAL_IEEE_ADDR) || m_replyStatus)
     {
@@ -423,57 +400,6 @@ bool ZBoss::startCoordinator(void)
 
     memcpy(&localIeee, m_replyData.constData(), sizeof(localIeee));
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&localIeee.ieeeAddress), sizeof(localIeee.ieeeAddress));
-
-    if (!sendRequest(ZBOSS_GET_ZIGBEE_ROLE) || m_replyStatus)
-    {
-        logWarning << "Get adapter logical type request failed";
-        return false;
-    }
-
-    if (m_replyData.at(0) != static_cast <char> (LogicalType::Coordinator))
-    {
-        logWarning << "Adapter logical type doesn't match coordinator";
-        check = true;
-    }
-
-    if (!sendRequest(ZBOSS_GET_PAN_ID) || m_replyStatus)
-    {
-        logWarning << "Get adapter panid request failed";
-        return false;
-    }
-
-    if (*(reinterpret_cast <quint16*> (m_replyData.data())) != qToLittleEndian(m_panId))
-    {
-        logWarning << "Adapter panid doesn't match configuration";
-        check = true;
-    }
-
-    if (!sendRequest(ZBOSS_GET_ZIGBEE_CHANNEL_MASK) || m_replyStatus)
-    {
-        logWarning << "Get adapter channel request failed";
-        return false;
-    }
-
-    if (memcmp(m_replyData.data() + 1, &channel, sizeof(channel)))
-    {
-        logWarning << "Adapter channel doesn't match configuration";
-        check = true;
-    }
-
-    if (!sendRequest(ZBOSS_GET_NWK_KEYS) || m_replyStatus)
-    {
-        logWarning << "Get adapter network key request failed";
-        return false;
-    }
-
-    if (memcmp(m_replyData.data(), &nwk, sizeof(nwk)))
-    {
-        logWarning << "Adapter network key doesn't match configuration";
-        check = true;
-    }
-
-
-
 
     for (int i = 0; i < m_policy.length(); i++)
     {
@@ -485,26 +411,106 @@ bool ZBoss::startCoordinator(void)
         logWarning << "Set policy" << QString::asprintf("0x%04x", request.id) << "request failed";
     }
 
+    channel.page = 0;
+    channel.mask = qToLittleEndian <quint32> (1 << m_channel);
 
-    if (check)
+    memcpy(nwk.key, m_networkKey.constData(), sizeof(nwk.key));
+    nwk.number = 0;
+
+    if (!m_clear)
     {
-        if (!m_write)
+        if (!sendRequest(ZBOSS_GET_MODULE_VERSION) || m_replyStatus)
         {
-            logWarning << "Adapter configuration can't be changed, write protection enabled";
+            logWarning << "Adapter version request failed";
             return false;
         }
 
+        memcpy(&version, m_replyData.constData(), sizeof(version));
+
+        m_manufacturerName = "Nordic Semiconductor";
+        m_modelName = QString::asprintf("ZBOSS");
+        m_firmware = QString::asprintf("%d.%d.%d", version.firmwareVersionMinor, version.firmwareVersionRevision, version.firmwareVersionCommit);
+
+        logInfo << QString("Adapter type: %1 (%2)").arg(m_modelName, m_firmware).toUtf8().constData();
+
+        if (!sendRequest(ZBOSS_GET_ZIGBEE_ROLE) || m_replyStatus)
+        {
+            logWarning << "Get adapter logical type request failed";
+            return false;
+        }
+
+        if (m_replyData.at(0) != static_cast <char> (LogicalType::Coordinator))
+        {
+            logWarning << "Adapter logical type doesn't match coordinator";
+            check = true;
+        }
+
+        if (!sendRequest(ZBOSS_GET_ZIGBEE_CHANNEL_MASK) || m_replyStatus)
+        {
+            logWarning << "Get adapter channel request failed";
+            return false;
+        }
+
+        if (memcmp(m_replyData.data() + 1, &channel, sizeof(channel)))
+        {
+            logWarning << "Adapter channel doesn't match configuration";
+            check = true;
+        }
+
+        if (!sendRequest(ZBOSS_GET_PAN_ID) || m_replyStatus)
+        {
+            logWarning << "Get adapter panid request failed";
+            return false;
+        }
+
+        if (*(reinterpret_cast <quint16*> (m_replyData.data())) != qToLittleEndian(m_panId))
+        {
+            logWarning << "Adapter panid doesn't match configuration";
+            check = true;
+        }
+
+        if (!sendRequest(ZBOSS_GET_NWK_KEYS) || m_replyStatus)
+        {
+            logWarning << "Get adapter network key request failed";
+            return false;
+        }
+
+        if (memcmp(m_replyData.data(), &nwk, sizeof(nwk)))
+        {
+            logWarning << "Adapter network key doesn't match configuration";
+            check = true;
+        }
+
+        if (check)
+        {
+            if (!m_write)
+            {
+                logWarning << "Adapter configuration can't be changed, write protection enabled";
+                return false;
+            }
+
+            m_clear = true;
+            reset();
+
+            return true;
+        }
+
+        if (!sendRequest(NWK_START_WITHOUT_FORMATION) || m_replyStatus)
+        {
+            logWarning << "Network startup failed";
+            return false;
+        }
+    }
+    else
+    {
+        nwkForamtionStruct network;
+
         logInfo << "Starting new network...";
+        m_clear = false;
 
         if (!sendRequest(ZBOSS_SET_ZIGBEE_ROLE, QByteArray(1, static_cast <char> (LogicalType::Coordinator))) || m_replyStatus)
         {
             logWarning << "Set adapter logical type request failed";
-            return false;
-        }
-
-        if (!sendRequest(ZBOSS_SET_PAN_ID, QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId))) || m_replyStatus)
-        {
-            logWarning << "Set panid request failed";
             return false;
         }
 
@@ -514,40 +520,39 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
+        if (!sendRequest(ZBOSS_SET_PAN_ID, QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId))) || m_replyStatus)
+        {
+            logWarning << "Set panid request failed";
+            return false;
+        }
+
         if (!sendRequest(ZBOSS_SET_NWK_KEY, QByteArray(reinterpret_cast <char*> (&nwk), sizeof(nwk))) || m_replyStatus)
         {
             logWarning << "Set nwk request failed";
             return false;
         }
 
-        // network.channelListLen = 0x01;
-        // network.channelList = channel;
-        // network.scanDuration = 0x05;
-        // network.flag = 0x00;
-        // network.address = 0x0000;
-        // network.ieeeAddress = 0xdddddddddddddddd; //qToBigEndian <quint64> (m_ieeeAddress);
+        network.channelListLen = 0x01;
+        network.channelList = channel;
+        network.scanDuration = 0x05;
+        network.flag = 0x00;
+        network.address = 0x0000;
+        network.ieeeAddress = localIeee.ieeeAddress;
 
-
-        // logInfo << sendRequest(NWK_FORMATION, QByteArray(reinterpret_cast<char *>(&network), sizeof(network)));
-        // logInfo << m_replyStatus;
-    }
-    // else
-    {
-        if (!sendRequest(NWK_START_WITHOUT_FORMATION) || m_replyStatus)
+        if (!sendRequest(NWK_FORMATION, QByteArray(reinterpret_cast<char *>(&network), sizeof(network))) || m_replyStatus)
         {
-            logWarning << "Form network failed";
+            logWarning << "Network startup failed";
             return false;
         }
     }
 
     emit coordinatorReady();
-    logInfo << "here";
     return true;
 }
 
 void ZBoss::softReset(void)
 {
-    sendRequest(ZBOSS_NCP_RESET_IND, QByteArray(1, 0x01));    
+    sendRequest(ZBOSS_NCP_RESET, QByteArray(1, m_clear ? 0x02 : 0x00));
 }
 
 void ZBoss::parseData(QByteArray &buffer)
@@ -580,7 +585,10 @@ void ZBoss::parseData(QByteArray &buffer)
         if (llHeader->flags & IS_ACK)
         {
             if (m_sequenceId == (llHeader->flags >> 4 & 0x03))
+            {
                 m_sequenceId = (m_sequenceId + 1) % 0x03;
+                emit acknowledgeReceived();
+            }
         }
         else
         {
@@ -602,6 +610,19 @@ bool ZBoss::permitJoin(bool enabled)
     }
 
     return true;
+}
+
+void ZBoss::serialError(QSerialPort::SerialPortError error)
+{
+    if (error != QSerialPort::SerialPortError::ReadError)
+    {
+        Adapter::serialError(error);
+        return;
+    }
+
+    m_serial->close();
+    QThread::msleep(2000);
+    m_serial->open(QIODevice::ReadWrite);
 }
 
 void ZBoss::handleQueue(void)

@@ -407,7 +407,8 @@ bool ZStack::startCoordinator(void)
             return false;
         }
 
-        logInfo << "Adapter configuration cleared";
+        logInfo << "Starting new network...";
+        m_clear = false;
 
         for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {
