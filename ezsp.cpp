@@ -727,8 +727,8 @@ void EZSP::parseData(QByteArray &buffer)
 {
     while (!buffer.isEmpty())
     {
-        QByteArray data;
         quint16 length, crc;
+        QByteArray packet;
 
         if (buffer.startsWith(QByteArray::fromHex("1ac102")) || buffer.startsWith(QByteArray::fromHex("1ac202")))
             buffer.remove(0, 1);
@@ -739,7 +739,7 @@ void EZSP::parseData(QByteArray &buffer)
         length = static_cast <quint16> (buffer.indexOf(ASH_PACKET_FLAG));
 
         if (m_portDebug)
-            logInfo << "Packet received:" << buffer.mid(0, length + 1).toHex(':');
+            logInfo << "Frame received:" << buffer.mid(0, length + 1).toHex(':');
 
         for (int i = 0; i < length; i++)
         {
@@ -748,24 +748,24 @@ void EZSP::parseData(QByteArray &buffer)
 
             if (buffer.at(i) != 0x7D)
             {
-                data.append(buffer.at(i));
+                packet.append(buffer.at(i));
                 continue;
             }
 
             switch (buffer.at(++i))
             {
-                case 0x31: data.append(0x11); break;
-                case 0x33: data.append(0x13); break;
-                case 0x38: data.append(0x18); break;
-                case 0x3A: data.append(0x1A); break;
-                case 0x5D: data.append(0x7D); break;
-                case 0x5E: data.append(0x7E); break;
+                case 0x31: packet.append(0x11); break;
+                case 0x33: packet.append(0x13); break;
+                case 0x38: packet.append(0x18); break;
+                case 0x3A: packet.append(0x1A); break;
+                case 0x5D: packet.append(0x7D); break;
+                case 0x5E: packet.append(0x7E); break;
 
                 default:
 
                     if (buffer.at(i) != 0x11 && buffer.at(i) != 0x13)
                     {
-                        handleError(QString("Packet %1 unstaffing failed at position %2").arg(QString(buffer.toHex(':'))).arg(i));
+                        handleError(QString("Frame %1 unstaffing failed at position %2").arg(QString(buffer.mid(0, length + 1).toHex(':'))).arg(i));
                         return;
                     }
 
@@ -773,15 +773,15 @@ void EZSP::parseData(QByteArray &buffer)
             }
         }
 
-        memcpy(&crc, data.constData() + data.length() - 2, sizeof(crc));
+        memcpy(&crc, packet.constData() + packet.length() - 2, sizeof(crc));
 
-        if (crc != getCRC(reinterpret_cast <quint8*> (data.data()), data.length() - 2))
+        if (crc != getCRC(reinterpret_cast <quint8*> (packet.data()), packet.length() - 2))
         {
-            handleError(QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(0, length + 1).toHex(':'))));
+            handleError(QString("Packet %1 CRC mismatch").arg(QString(packet.toHex(':'))));
             return;
         }
 
-        m_queue.enqueue(data);
+        m_queue.enqueue(packet);
         buffer.remove(0, length + 1);
     }
 }

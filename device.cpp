@@ -27,7 +27,6 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     if (file.open(QFile::ReadOnly))
     {
         m_exposeOptions = QJsonDocument::fromJson(file.readAll()).object().toVariantMap();
-        logInfo << m_exposeOptions.count() << "exposes loaded"; // TODO: remove it
         file.close();
     }
 

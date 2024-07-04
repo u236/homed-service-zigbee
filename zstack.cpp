@@ -550,14 +550,14 @@ void ZStack::parseData(QByteArray &buffer)
             break;
 
         if (m_portDebug)
-            logInfo << "Packet received:" << buffer.mid(0, length + 5).toHex(':');
+            logInfo << "Frame received:" << buffer.mid(0, length + 5).toHex(':');
 
         for (quint8 i = 1; i < length + 4; i++)
             fcs ^= buffer.at(i);
 
         if (fcs != static_cast <quint8> (buffer.at(length + 4)))
         {
-            logWarning << "Packet" << buffer.mid(0, length + 5).toHex(':') << "FCS mismatch";
+            logWarning << "Frame" << buffer.mid(0, length + 5).toHex(':') << "FCS mismatch";
             buffer.clear();
             break;
         }

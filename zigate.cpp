@@ -378,20 +378,20 @@ void ZiGate::parseData(QByteArray &buffer)
     while (!buffer.isEmpty())
     {
         int length = buffer.indexOf(0x03);
-        QByteArray frame, data;
+        QByteArray frame, packet;
 
         if (!buffer.startsWith(0x01) || length < 6)
             return;
 
         if (m_portDebug)
-            logInfo << "Packet received:" << buffer.mid(0, length + 1).toHex(':');
+            logInfo << "Frame received:" << buffer.mid(0, length + 1).toHex(':');
 
         frame = buffer.mid(1, length - 1);
 
         for (int i = 0; i < frame.length(); i++)
-            data.append(1, frame.at(i) == 0x02 ? frame.at(++i) ^ 0x10 : frame.at(i));
+            packet.append(1, frame.at(i) == 0x02 ? frame.at(++i) ^ 0x10 : frame.at(i));
 
-        m_queue.enqueue(data);
+        m_queue.enqueue(packet);
         buffer.remove(0, length + 1);
     }
 }
