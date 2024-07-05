@@ -576,8 +576,8 @@ bool ZStack::permitJoin(bool enabled)
 {
     zstackPermitJoinStruct request;
 
-    request.mode = ZSTACK_PERMIT_JOIN_MODE_ADDREESS;
-    request.dstAddress = qToLittleEndian <quint16> (ZSTACK_PERMIT_JOIN_BROARCAST_ADDRESS);
+    request.mode = 0x0F;
+    request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
     request.duration = enabled ? 0xF0 : 0x00;
     request.significance = 0x00;
 

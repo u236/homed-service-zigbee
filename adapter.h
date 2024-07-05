@@ -2,7 +2,9 @@
 #define ADAPTER_H
 
 #define RECEIVE_TIMEOUT                 20
+
 #define PERMIT_JOIN_TIMEOUT             60000
+#define PERMIT_JOIN_BROARCAST_ADDRESS   0xFFFC
 
 #define RESET_TIMEOUT                   15000
 #define RESET_DELAY                     100

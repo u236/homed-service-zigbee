@@ -392,7 +392,9 @@ void ZiGate::parseData(QByteArray &buffer)
 
 bool ZiGate::permitJoin(bool enabled)
 {
-    if (!sendRequest(ZIGATE_SET_PERMIT_JOIN, QByteArray(2, 0x00).append(1, enabled ? 0xF0 : 0x00)) || m_replyStatus)
+    quint16 dstAddress = qToBigEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
+
+    if (!sendRequest(ZIGATE_SET_PERMIT_JOIN, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(1, enabled ? 0xF0 : 0x00)) || m_replyStatus)
     {
         logWarning << "Set permit join request failed";
         return false;

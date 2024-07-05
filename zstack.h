@@ -9,9 +9,6 @@
 #define ZSTACK_PACKET_FLAG                      0xFE
 #define ZSTACK_COORDINATOR_STARTED              0x09
 
-#define ZSTACK_PERMIT_JOIN_MODE_ADDREESS        0x0F
-#define ZSTACK_PERMIT_JOIN_BROARCAST_ADDRESS    0xFFFC
-
 #define ZSTACK_AF_ACK_REQUEST                   0x10
 #define ZSTACK_AF_DISCV_ROUTE                   0x20
 #define ZSTACK_AF_EN_SECURITY                   0x40

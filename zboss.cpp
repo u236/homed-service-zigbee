@@ -479,7 +479,7 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (!sendRequest(ZBOSS_SET_ZIGBEE_CHANNEL_MASK, QByteArray(reinterpret_cast <char*> (&channelMask), sizeof(channelMask))) || m_replyStatus)
+        if (!sendRequest(ZBOSS_SET_ZIGBEE_CHANNEL_MASK, QByteArray(1, 0x00).append(reinterpret_cast <char*> (&channelMask), sizeof(channelMask))) || m_replyStatus)
         {
             logWarning << "Set channel mask request failed";
             return false;
@@ -609,9 +609,22 @@ void ZBoss::parseData(QByteArray &buffer)
 
 bool ZBoss::permitJoin(bool enabled)
 {
-    if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(2, 0x00).append(1, enabled ? 0xFF : 0x00).append(0x01)) || m_replyStatus)
+    zbossPermitJoinStruct request;
+
+    memset(&request, 0, sizeof(request));
+    request.duration = enabled ? 0xF0 : 0x00;
+
+    if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
     {
-        logWarning << "Set permit join request failed";
+        logWarning << "Local permit join request failed";
+        return false;
+    }
+
+    request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
+
+    if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
+    {
+        logWarning << "Broadcast permit join request failed";
         return false;
     }
 

@@ -96,6 +96,13 @@ struct zbossNetworkForamtionStruct
     quint64 extendedPanId;
 };
 
+struct zbossPermitJoinStruct
+{
+    quint16 dstAddress;
+    quint8  duration;
+    quint8  significance;
+};
+
 struct zbossBindRequestStruct
 {
     quint16 networkAddress;
