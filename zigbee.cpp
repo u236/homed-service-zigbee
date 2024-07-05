@@ -14,6 +14,7 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
+    m_debounce = m_config->value("mqtt/debounce", true).toBool();
     m_discovery = m_config->value("default/discovery", true).toBool();
     m_cloud = m_config->value("default/cloud", true).toBool();
     m_debug = m_config->value("debug/zigbee", false).toBool();
@@ -761,7 +762,7 @@ bool ZigBee::parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 t
             if (property->timeout())
                 property->setTime(QDateTime::currentSecsSinceEpoch());
 
-            if (property->value() == value)
+            if (m_debounce && property->value() == value)
                 continue;
 
             m_devices->storeProperties();

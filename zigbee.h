@@ -159,7 +159,7 @@ private:
     bool m_replyReceived, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin;
-    bool m_discovery, m_cloud, m_debug;
+    bool m_debounce, m_discovery, m_cloud, m_debug;
 
     Device m_otaDevice;
     QFile m_otaFile;
