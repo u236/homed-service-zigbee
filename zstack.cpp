@@ -248,8 +248,12 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
         }
 
         default:
-            logWarning << "Unrecognized Z-Stack command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+        {
+            if (m_adapterDebug)
+                logWarning << "Unrecognized Z-Stack command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+
             break;
+        }
     }
 }
 
@@ -405,7 +409,8 @@ bool ZStack::startCoordinator(void)
             return false;
         }
 
-        logInfo << "Adapter configuration cleared";
+        logInfo << "Starting new network...";
+        m_clear = false;
 
         for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {

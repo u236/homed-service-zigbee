@@ -227,11 +227,13 @@ private:
     virtual void parseData(QByteArray &buffer) = 0;
     virtual bool permitJoin(bool enabled) = 0;
 
-private slots:
+protected slots:
 
     virtual void handleQueue(void) = 0;
+    virtual void serialError(QSerialPort::SerialPortError error);
 
-    void serialError(QSerialPort::SerialPortError error);
+private slots:
+
     void socketError(QTcpSocket::SocketError error);
     void socketConnected(void);
 
