@@ -1,152 +1,64 @@
 #ifndef ZBOSS_H
 #define ZBOSS_H
 
-#define ZBOSS_REQUEST_TIMEOUT                       2000
+#define ZBOSS_REQUEST_TIMEOUT                           2000
+#define ZBOSS_RESET_DELAY                               2000
 
-#define ZBOSS_SIGNATURE                             0xDEAD
-#define ZBOSS_NCP_API_HL                            0x06
-#define ZBOSS_PROTOCOL_VERSION                      0x00
+#define ZBOSS_SIGNATURE                                 0xDEAD
+#define ZBOSS_PROTOCOL_VERSION                          0x00
+#define ZBOSS_NCP_API_HL                                0x06
 
-//Flags in low level header
-#define IS_ACK                                      0x01
-#define RETRANSMIT                                  0x02
-#define PACKET_SEQ                                  0x0C
-#define ACK_SEQ                                     0x30
-#define FIRST_FRAG                                  0x40
-#define LAST_FRAG                                   0x80
+#define ZBOSS_ROUTE_DISCOVERY                           0x02
+#define ZBOSS_DEFAULT_RADIUS                            0x03
 
-//Control Type
-#define REQUEST                                     0x00
-#define RESPONSE                                    0x01
-#define INDICATION                                  0x02
+#define ZBOSS_TYPE_REQUEST                              0x00
+#define ZBOSS_TYPE_RESPONSE                             0x01
 
-//Policy ids
-#define POLICY_TC_LINK_KEYS_REQUIRED                0x0000
-#define POLICY_IC_REQUIRED                          0x0001
-#define POLICY_TC_REJOIN_ENABLED                    0x0002
-#define POLICY_IGNORE_TC_REJOIN                     0x0003
-#define POLICY_APS_INSECURE_JOIN                    0x0004
-#define POLICY_DISABLE_NWK_MGMT_CHANNEL_UPDATE      0x0005
+#define ZBOSS_FLAG_ACK                                  0x01
+#define ZBOSS_FLAG_FIRST_FRAGMENT                       0x40
+#define ZBISS_FLAG_LAST_FRAGMENT                        0x80
 
-//NCP config command ids
-#define ZBOSS_GET_MODULE_VERSION                    0x0001
-#define ZBOSS_NCP_RESET                             0x0002
-#define ZBOSS_GET_ZIGBEE_ROLE                       0x0004
-#define ZBOSS_SET_ZIGBEE_ROLE                       0x0005
-#define ZBOSS_GET_ZIGBEE_CHANNEL_MASK               0x0006
-#define ZBOSS_SET_ZIGBEE_CHANNEL_MASK               0x0007
-#define ZBOSS_GET_ZIGBEE_CHANNEL                    0x0008
-#define ZBOSS_GET_PAN_ID                            0x0009
-#define ZBOSS_SET_PAN_ID                            0x000a
-#define ZBOSS_GET_LOCAL_IEEE_ADDR                   0x000b
-#define ZBOSS_SET_LOCAL_IEEE_ADDR                   0x000c
-#define ZBOSS_GET_TX_POWER                          0x0010
-#define ZBOSS_SET_TX_POWER                          0x0011
-#define ZBOSS_GET_RX_ON_WHEN_IDLE                   0x0012
-#define ZBOSS_SET_RX_ON_WHEN_IDLE                   0x0013
-#define ZBOSS_GET_JOINED                            0x0014
-#define ZBOSS_GET_AUTHENTICATED                     0x0015
-#define ZBOSS_GET_ED_TIMEOUT                        0x0016
-#define ZBOSS_SET_ED_TIMEOUT                        0x0017
-#define ZBOSS_SET_NWK_KEY                           0x001b
-#define ZBOSS_GET_NWK_KEYS                          0x001e
-#define ZBOSS_GET_APS_KEY_BY_IEEE                   0x001f
-#define ZBOSS_GET_PARENT_ADDRESS                    0x0022
-#define ZBOSS_GET_EXTENDED_PAN_ID                   0x0023
-#define ZBOSS_GET_COORDINATOR_VERSION               0x0024
-#define ZBOSS_GET_SHORT_ADDRESS                     0x0025
-#define ZBOSS_GET_TRUST_CENTER_ADDRESS              0x0026
-#define ZBOSS_NCP_RESET_IND                         0x002b
-#define ZBOSS_NVRAM_WRITE                           0x002e
-#define ZBOSS_NVRAM_READ                            0x002f
-#define ZBOSS_NVRAM_ERASE                           0x0030
-#define ZBOSS_NVRAM_CLEAR                           0x0031
-#define ZBOSS_SET_TC_POLICY                         0x0032
-#define ZBOSS_SET_EXTENDED_PAN_ID                   0x0033
-#define ZBOSS_SET_MAX_CHILDREN                      0x0034
-#define ZBOSS_GET_MAX_CHILDREN                      0x0035
+#define ZBOSS_GET_MODULE_VERSION                        0x0001
+#define ZBOSS_NCP_RESET                                 0x0002
+#define ZBOSS_GET_ZIGBEE_ROLE                           0x0004
+#define ZBOSS_SET_ZIGBEE_ROLE                           0x0005
+#define ZBOSS_GET_ZIGBEE_CHANNEL_MASK                   0x0006
+#define ZBOSS_SET_ZIGBEE_CHANNEL_MASK                   0x0007
+#define ZBOSS_GET_PAN_ID                                0x0009
+#define ZBOSS_SET_PAN_ID                                0x000a
+#define ZBOSS_GET_LOCAL_IEEE_ADDR                       0x000b
+#define ZBOSS_SET_TX_POWER                              0x0011
+#define ZBOSS_SET_NWK_KEY                               0x001b
+#define ZBOSS_GET_NWK_KEYS                              0x001e
+#define ZBOSS_NCP_RESET_IND                             0x002b
+#define ZBOSS_SET_TC_POLICY                             0x0032
+#define ZBOSS_ZDO_NODE_DESC_REQ                         0x0204
+#define ZBOSS_ZDO_SIMPLE_DESC_REQ                       0x0205
+#define ZBOSS_ZDO_ACTIVE_EP_REQ                         0x0206
+#define ZBOSS_ZDO_BIND_REQ                              0x0208
+#define ZBOSS_ZDO_UNBIND_REQ                            0x0209
+#define ZBOSS_ZDO_MGMT_LEAVE_REQ                        0x020a
+#define ZBOSS_ZDO_PERMIT_JOINING_REQ                    0x020b
+#define ZBOSS_ZDO_DEV_ANNCE_IND                         0x020c
+#define ZBOSS_ZDO_MGMT_LQI_REQ                          0x0210
+#define ZBOSS_APSDE_DATA_REQ                            0x0301
+#define ZBOSS_APSDE_DATA_IND                            0x0306
+#define ZBOSS_NWK_FORMATION                             0x0401
+#define ZBOSS_NWK_LEAVE_IND                             0x040b
+#define ZBOSS_NWK_START_WITHOUT_FORMATION               0x041d
 
-//ZDO command ids
-#define ZBOSS_ZDO_NWK_ADDR_REQ                      0x0201
-#define ZBOSS_ZDO_IEEE_ADDR_REQ                     0x0202
-#define ZBOSS_ZDO_POWER_DESC_REQ                    0x0203
-#define ZBOSS_ZDO_NODE_DESC_REQ                     0x0204
-#define ZBOSS_ZDO_SIMPLE_DESC_REQ                   0x0205
-#define ZBOSS_ZDO_ACTIVE_EP_REQ                     0x0206
-#define ZBOSS_ZDO_MATCH_DESC_REQ                    0x0207
-#define ZBOSS_ZDO_BIND_REQ                          0x0208
-#define ZBOSS_ZDO_UNBIND_REQ                        0x0209
-#define ZBOSS_ZDO_MGMT_LEAVE_REQ                    0x020a
-#define ZBOSS_ZDO_PERMIT_JOINING_REQ                0x020b
-#define ZBOSS_ZDO_DEV_ANNCE_IND                     0x020c
-#define ZBOSS_ZDO_REJOIN                            0x020d
-#define ZBOSS_ZDO_SYSTEM_SRV_DISCOVERY_REQ          0x020e
-#define ZBOSS_ZDO_MGMT_BIND_REQ                     0x020f
-#define ZBOSS_ZDO_MGMT_LQI_REQ                      0x0210
-#define ZBOSS_ZDO_MGMT_NWK_UPDATE_REQ               0x0211
-#define ZBOSS_ZDO_GET_STATS                         0x0213
-#define ZBOSS_ZDO_DEV_AUTHORIZED_IND                0x0214
-#define ZBOSS_ZDO_DEV_UPDATE_IND                    0x0215
-#define ZBOSS_ZDO_SET_NODE_DESC_MANUF_CODE          0x0216
-
-//APS command ids
-#define APSDE_DATA_REQ                              0x0301
-#define APSME_BIND                                  0x0302
-#define APSME_UNBIND                                0x0303
-#define APSME_ADD_GROUP                             0x0304
-#define APSME_RM_GROUP                              0x0305
-#define APSDE_DATA_IND                              0x0306
-#define APSME_RM_ALL_GROUPS                         0x0307
-#define APS_CHECK_BINDING                           0x0308
-#define APS_GET_GROUP_TABLE                         0x0309
-#define APSME_UNBIND_ALL                            0x030a
-
-//NCP config command ids
-#define NWK_FORMATION                               0x0401
-#define NWK_DISCOVERY                               0x0402
-#define NWK_NLME_JOIN                               0x0403
-#define NWK_PERMIT_JOINING                          0x0404
-#define NWK_GET_IEEE_BY_SHORT                       0x0405
-#define NWK_GET_SHORT_BY_IEEE                       0x0406
-#define NWK_GET_NEIGHBOR_BY_IEEE                    0x0407
-#define NWK_REJOINED_IND                            0x0409
-#define NWK_REJOIN_FAILED_IND                       0x040a
-#define NWK_LEAVE_IND                               0x040b
-#define PIM_SET_FAST_POLL_INTERVAL                  0x040e
-#define PIM_SET_LONG_POLL_INTERVAL                  0x040f
-#define PIM_START_FAST_POLL                         0x0410
-#define PIM_START_LONG_POLL                         0x0411
-#define PIM_START_POLL                              0x0412
-#define PIM_STOP_FAST_POLL                          0x0414
-#define PIM_STOP_POLL                               0x0415
-#define PIM_ENABLE_TURBO_POLL                       0x0416
-#define PIM_DISABLE_TURBO_POLL                      0x0417
-#define NWK_PAN_ID_CONFLICT_RESOLVE                 0x041a
-#define NWK_PAN_ID_CONFLICT_IND                     0x041b
-#define NWK_ADDRESS_UPDATE_IND                      0x041c
-#define NWK_START_WITHOUT_FORMATION                 0x041d
-#define NWK_NLME_ROUTER_START                       0x041e
-#define PARENT_LOST_IND                             0x0420
-#define PIM_START_TURBO_POLL_PACKETS                0x0424
-#define PIM_START_TURBO_POLL_CONTINUOUS             0x0425
-#define PIM_TURBO_POLL_CONTINUOUS_LEAVE             0x0426
-#define PIM_TURBO_POLL_PACKETS_LEAVE                0x0427
-#define PIM_PERMIT_TURBO_POLL                       0x0428
-#define PIM_SET_FAST_POLL_TIMEOUT                   0x0429
-#define PIM_GET_LONG_POLL_INTERVAL                  0x042a
-#define PIM_GET_IN_FAST_POLL_FLAG                   0x042b
-#define SET_KEEPALIVE_MOVE                          0x042c
-#define START_CONCENTRATOR_MODE                     0x042d
-#define STOP_CONCENTRATOR_MODE                      0x042e
-#define NWK_ENABLE_PAN_ID_CONFLICT_RESOLUTION       0x042f
-#define NWK_ENABLE_AUTO_PAN_ID_CONFLICT_RESOLUTION  0x0430
-#define PIM_TURBO_POLL_CANCEL_PACKET                0x0431
+#define ZBOSS_POLICY_TC_LINK_KEYS_REQUIRED              0x0000
+#define ZBOSS_POLICY_IC_REQUIRED                        0x0001
+#define ZBOSS_POLICY_TC_REJOIN_ENABLED                  0x0002
+#define ZBOSS_POLICY_IGNORE_TC_REJOIN                   0x0003
+#define ZBOSS_POLICY_APS_INSECURE_JOIN                  0x0004
+#define ZBOSS_POLICY_DISABLE_NWK_MGMT_CHANNEL_UPDATE    0x0005
 
 #include "adapter.h"
 
 #pragma pack(push, 1)
 
-struct lowLeverHeaderStruct
+struct zbossLowLevelHeaderStruct
 {
     quint16 signature;
     quint16 length;
@@ -155,132 +67,60 @@ struct lowLeverHeaderStruct
     quint8  crc;
 };
 
-struct commonHeaderStruct
+struct zbossCommonHeaderStruct
 {
     quint8  version;
     quint8  type;
     quint16 id;
 };
 
-struct moduleVersionResponseStruct
+struct zbossNetworkForamtionStruct
 {
-    quint8  firmwareVersionMajor;
-    quint8  firmwareVersionMinor;
-    quint8  firmwareVersionRevision;
-    quint8  firmwareVersionCommit;
-    quint8  stackVersionMajor;
-    quint8  stackVersionMinor;
-    quint8  stackVersionRevision;
-    quint8  stackVersionCommit;
-    quint8  protocolVersionMajor;
-    quint8  protocolVersionMinor;
-    quint8  protocolVersionRevision;
-    quint8  protocolVersionCommit;
-};
-
-struct localIEEEResponseStruct
-{
-    quint8  macIfaceNum;
-    quint64 ieeeAddress;
-};
-
-struct channelMaskRequestStruct
-{
-    quint8  page;
-    quint32 mask;
-};
-
-struct nwkSetRequestStruct
-{
-    quint8  key[16];
-    quint8  number;
-};
-
-struct setTCPolicyStruct
-{
-    quint16 id;
-    quint8  value;
-};
-
-struct nwkForamtionStruct
-{
-    quint8 channelListLen;
-    channelMaskRequestStruct channelList;
-    quint8 scanDuration;
-    quint8 flag;
+    quint8  channelLength;
+    quint8  channelPage;
+    quint32 channelMask;
+    quint8  scanDuration;
+    quint8  distributed;
     quint16 address;
-    quint64 ieeeAddress;
+    quint64 extendedPanId;
 };
 
-struct nwkLeaveStruct
-{
-    quint64 ieeeAddress;
-    quint8  rejoin;
-};
-
-struct apsdeDataIndicatonStruct
-{
-    quint8 paramLength;
-    quint16 dataLength;
-    quint8 frameFC;
-    quint16 srcNetworkAddress;
-    quint16 dstNetworkAddress;
-    quint16 grpNetworkAddress;
-    quint8 dstEndpointId;
-    quint8 srcEndpointId;
-    quint16 clusterId;
-    quint16 profileId;
-    quint8 counter;
-    quint16 srcMAC;
-    quint16 dstMAC;
-    quint8 lqi;
-    quint8 rssi;
-    quint8 keyAttr;
-};
-
-struct apsdeDataRequestStruct
-{
-    quint8 paramLength;
-    quint16 dataLength;
-    quint64 dstAddress;
-    quint16 profileId;
-    quint16 clusterId;
-    quint8 dstEndpointId;
-    quint8 srcEndpointId;
-    quint8 radius;
-    quint8 dstMode;
-    quint8 txMode;
-    quint8 alias;
-    quint16 srcAlias;
-    quint8 aliasSeq;
-};
-
-struct deviceAnnounceIndicatonStruct
-{
-    quint16 networkAddress;
-    quint64 ieeeAddress;
-    quint8  capabilities;
-};
-
-struct zdoBindRequestStruct
+struct zbossBindRequestStruct
 {
     quint16 networkAddress;
     quint64 srcAddress;
-    quint8 srcEndpointId;
+    quint8  srcEndpointId;
     quint16 clusterId;
-    quint8 dstAddressMode;
+    quint8  dstAddressMode;
     quint64 dstAddress;
-    quint8 dstEndpointId;
+    quint8  dstEndpointId;
 };
 
-struct zdoLeaveRequestStruct
+struct zbossLeaveRequestStruct
 {
     quint16 networkAddress;
     quint64 dstAddress;
-    quint8 flags;
+    quint8  flags;
 };
 
-struct zdoNodeDescriptorResponseStruct
+struct zbossDataRequestStruct
+{
+    quint8  requestLength;
+    quint16 dataLength;
+    quint64 dstAddress;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  dstEndpointId;
+    quint8  srcEndpointId;
+    quint8  radius;
+    quint8  addressMode;
+    quint8  options;
+    quint8  alias;
+    quint16 aliasAddress;
+    quint8  aliasId;
+};
+
+struct zbossNodeDescriptorResponseStruct
 {
     quint8  logicalType;
     quint8  apsFlags;
@@ -293,14 +133,54 @@ struct zdoNodeDescriptorResponseStruct
     quint8  descriptorCapabilities;
 };
 
-struct zdoSimpleDescriptorResponseStruct
+struct zbossSimpleDescriptorResponseStruct
 {
-    quint8 endpointId;
+    quint8  endpointId;
     quint16 profileId;
     quint16 deviceId;
-    quint8 version;
-    quint8 inClusterCount;
-    quint8 outClusterCount;
+    quint8  version;
+    quint8  inClusterCount;
+    quint8  outClusterCount;
+};
+
+
+struct zbossIncomingMessageStruct
+{
+    quint8  requestLength;
+    quint16 dataLength;
+    quint8  options;
+    quint16 srcAddress;
+    quint16 dstAddress;
+    quint16 groupId;
+    quint8  dstEndpointId;
+    quint8  srcEndpointId;
+    quint16 clusterId;
+    quint16 profileId;
+    quint8  count;
+    quint16 srcHeader;
+    quint16 dstHeader;
+    quint8  linkQuality;
+    quint8  rssi;
+    quint8  security;
+};
+
+struct zbossDeviceAnnounceStruct
+{
+    quint16 networkAddress;
+    quint64 ieeeAddress;
+    quint8  capabilities;
+};
+
+struct zbossDeviceLeaveStruct
+{
+    quint64 ieeeAddress;
+    quint8  rejoin;
+};
+
+struct zbossSetPolicyStruct
+{
+    quint16 id;
+    quint8  value;
 };
 
 #pragma pack(pop)
@@ -336,9 +216,9 @@ private:
     QByteArray m_replyData;
 
     quint8 m_sequenceId, m_acknowledgeId;
-    quint16 m_lqiAddress;
+    quint16 m_lqiRequestAddress;
 
-    QList <setTCPolicyStruct> m_policy;
+    QList <zbossSetPolicyStruct> m_policy;
 
     quint8 getCRC8(quint8 *data, quint32 length);
     quint16 getCRC16(quint8 *data, quint32 length);

@@ -47,54 +47,54 @@ ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_cl
 {
     m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
     
-    m_policy.append({POLICY_TC_LINK_KEYS_REQUIRED,           0x00});
-    m_policy.append({POLICY_IC_REQUIRED,                     0x00});
-    m_policy.append({POLICY_TC_REJOIN_ENABLED,               0x01});
-    m_policy.append({POLICY_IGNORE_TC_REJOIN,                0x00});
-    m_policy.append({POLICY_APS_INSECURE_JOIN,               0x00});
-    m_policy.append({POLICY_DISABLE_NWK_MGMT_CHANNEL_UPDATE, 0x00});
+    m_policy.append({ZBOSS_POLICY_TC_LINK_KEYS_REQUIRED,           0x00});
+    m_policy.append({ZBOSS_POLICY_IC_REQUIRED,                     0x00});
+    m_policy.append({ZBOSS_POLICY_TC_REJOIN_ENABLED,               0x01});
+    m_policy.append({ZBOSS_POLICY_IGNORE_TC_REJOIN,                0x00});
+    m_policy.append({ZBOSS_POLICY_APS_INSECURE_JOIN,               0x00});
+    m_policy.append({ZBOSS_POLICY_DISABLE_NWK_MGMT_CHANNEL_UPDATE, 0x00});
 }
 
 bool ZBoss::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
-    apsdeDataRequestStruct request;
+    zbossDataRequestStruct request;
 
-    request.paramLength = 0x15;
+    request.requestLength = 0x15;
     request.dataLength = qToLittleEndian <quint16> (payload.length());
     request.dstAddress = qToLittleEndian <quint64> (networkAddress);
     request.profileId = qToLittleEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
     request.clusterId = qToLittleEndian(clusterId);
     request.dstEndpointId = dstEndPointId;
     request.srcEndpointId = srcEndPointId;
-    request.radius = 0x00;
-    request.dstMode = ADDRESS_MODE_16_BIT;
-    request.txMode = 0x00;
+    request.radius = ZBOSS_DEFAULT_RADIUS;
+    request.addressMode = ADDRESS_MODE_16_BIT;
+    request.options = ZBOSS_ROUTE_DISCOVERY;
     request.alias = 0x00;
-    request.srcAlias = 0x0000;
-    request.aliasSeq = 0x00;
+    request.aliasAddress = 0x0000;
+    request.aliasId = 0x00;
 
-    return sendRequest(APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
+    return sendRequest(ZBOSS_APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
 }
 
 bool ZBoss::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
-    apsdeDataRequestStruct request;
+    zbossDataRequestStruct request;
 
-    request.paramLength = 0x15;
+    request.requestLength = 0x15;
     request.dataLength = qToLittleEndian <quint16> (payload.length());
     request.dstAddress = qToLittleEndian <quint64> (groupId);
     request.profileId = qToLittleEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
     request.clusterId = qToLittleEndian(clusterId);
     request.dstEndpointId = dstEndPointId;
     request.srcEndpointId = srcEndPointId;
-    request.radius = 0x00;
-    request.dstMode = ADDRESS_MODE_GROUP;
-    request.txMode = 0x00;
+    request.radius = ZBOSS_DEFAULT_RADIUS;
+    request.addressMode = ADDRESS_MODE_GROUP;
+    request.options = ZBOSS_ROUTE_DISCOVERY;
     request.alias = 0x00;
-    request.srcAlias = 0x0000;
-    request.aliasSeq = 0x00;
+    request.aliasAddress = 0x0000;
+    request.aliasId = 0x00;
 
-    return sendRequest(APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
+    return sendRequest(ZBOSS_APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
 }
 
 bool ZBoss::unicastInterPanRequest(quint8, const QByteArray &, quint16 , const QByteArray &)
@@ -129,13 +129,13 @@ bool ZBoss::zdoRequest(quint8 id, quint16 networkAddress, quint16 clusterId, con
         default: return false;
     }
 
-    return sendRequest(command, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(data), id) && !m_replyStatus;
+    return sendRequest(command, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(data), id);
 }
 
 bool ZBoss::bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
 {
     QByteArray buffer = address.isEmpty() ? m_ieeeAddress : address;
-    zdoBindRequestStruct request;
+    zbossBindRequestStruct request;
 
     memcpy(&request.srcAddress, m_requestAddress.constData(), sizeof(request.srcAddress));
     memcpy(&request.dstAddress, buffer.constData(), sizeof(request.dstAddress));
@@ -145,34 +145,35 @@ bool ZBoss::bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, qu
     request.srcEndpointId = endpointId;
     request.clusterId = qToLittleEndian(clusterId);
     request.dstAddressMode = buffer.length() == 2 ? ADDRESS_MODE_GROUP : ADDRESS_MODE_64_BIT;
+    request.dstEndpointId = 0x00;
 
     if (request.dstAddressMode != ADDRESS_MODE_GROUP)
     {
         request.dstAddress = qToLittleEndian(qFromBigEndian(request.dstAddress));
         request.dstEndpointId = dstEndpointId ? dstEndpointId : 0x01;
     }
-    else
-        request.dstEndpointId = 0x00;
 
-    return sendRequest(unbind ? ZBOSS_ZDO_UNBIND_REQ : ZBOSS_ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)), id) && !m_replyStatus;
+    return sendRequest(unbind ? ZBOSS_ZDO_UNBIND_REQ : ZBOSS_ZDO_BIND_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)), id);
 }
 
 bool ZBoss::leaveRequest(quint8 id, quint16 networkAddress)
 {
-    zdoLeaveRequestStruct request;
+    zbossLeaveRequestStruct request;
+
+    memcpy(&request.dstAddress, m_requestAddress.constData(), sizeof(request.dstAddress));
 
     request.networkAddress = qToLittleEndian(networkAddress);
-    request.dstAddress = 0x00;
+    request.dstAddress = qToLittleEndian(qFromBigEndian(request.dstAddress));
     request.flags = 0x00;
 
-    return sendRequest(ZBOSS_ZDO_MGMT_LEAVE_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)), id) && !m_replyStatus;
+    return sendRequest(ZBOSS_ZDO_MGMT_LEAVE_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)), id);
 }
 
 bool ZBoss::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
 {
     quint16 dstAddress = qToLittleEndian(networkAddress);
-    m_lqiAddress = networkAddress;
-    return sendRequest(ZBOSS_ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(static_cast <quint8> (index)), id) && !m_replyStatus;
+    m_lqiRequestAddress = networkAddress;
+    return sendRequest(ZBOSS_ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(static_cast <char> (index)), id);
 }
 
 quint8 ZBoss::getCRC8(quint8 *data, quint32 length)
@@ -192,74 +193,52 @@ quint16 ZBoss::getCRC16(quint8 *data, quint32 length)
     while (length--)
         crc = static_cast <quint16> (crc >> 8) ^ crc16Table[(crc ^ *data++) & 0xFF];
 
-    return qToLittleEndian(crc); // TODO: move it
+    return qToLittleEndian(crc);
 }
 
 bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
 {
-    QByteArray request, crc_llheader, common;
-
-    lowLeverHeaderStruct lowLevelHeader;
-    commonHeaderStruct commonHeader;
+    zbossLowLevelHeaderStruct lowLevelHeader;
+    zbossCommonHeaderStruct commonHeader;
+    QByteArray payload;
     quint16 crc;
 
-    m_command = qToLittleEndian(command);
+    if (m_adapterDebug)
+        logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
-    commonHeader.version = ZBOSS_PROTOCOL_VERSION;
-    commonHeader.type = REQUEST;
-    commonHeader.id = m_command;
-
-    common = QByteArray(reinterpret_cast <char*> (&commonHeader), sizeof(commonHeader));
-    common.append(1, static_cast <char> (id));
-    common.append(data);
+    m_command = command;
 
     lowLevelHeader.signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
-    lowLevelHeader.length = common.length() + 7;
+    lowLevelHeader.length = data.length() + 12;
     lowLevelHeader.type = ZBOSS_NCP_API_HL;
-    lowLevelHeader.flags = FIRST_FRAG | LAST_FRAG | m_sequenceId << 2;
-    lowLevelHeader.crc = 0;
+    lowLevelHeader.flags = m_sequenceId << 2 | ZBOSS_FLAG_FIRST_FRAGMENT | ZBISS_FLAG_LAST_FRAGMENT;
+    lowLevelHeader.crc = getCRC8(reinterpret_cast <quint8*> (&lowLevelHeader) + 2, sizeof(lowLevelHeader) - 3);
 
-    crc_llheader.append(reinterpret_cast <char*> (&lowLevelHeader.length), sizeof(lowLevelHeader.length));
-    crc_llheader.append(lowLevelHeader.type);
-    crc_llheader.append(lowLevelHeader.flags);
-    lowLevelHeader.crc = getCRC8(reinterpret_cast <quint8*> (crc_llheader.data()), crc_llheader.length());
+    commonHeader.version = ZBOSS_PROTOCOL_VERSION;
+    commonHeader.type = ZBOSS_TYPE_REQUEST;
+    commonHeader.id = qToLittleEndian(command);
 
-    request = QByteArray(reinterpret_cast <char*> (&lowLevelHeader), sizeof(lowLevelHeader));
+    payload.append(reinterpret_cast <char*> (&commonHeader), sizeof(commonHeader));
+    payload.append(1, static_cast <char> (id));
+    payload.append(data);
 
-    if (m_adapterDebug)
-        logInfo << "-->" << request.toHex(':');
+    crc = getCRC16(reinterpret_cast <quint8*> (payload.data()), payload.length());
 
-    crc = getCRC16(reinterpret_cast <quint8*> (common.data()), common.length());
-    request.append(reinterpret_cast <char*> (&crc), sizeof(crc));
-    request.append(common);
-
-    sendData(request);
-
+    sendData(QByteArray(reinterpret_cast <char*> (&lowLevelHeader), sizeof(lowLevelHeader)).append(reinterpret_cast <char*> (&crc), sizeof(crc)).append(payload));
     return waitForSignal(this, command & 0x0200 && command != ZBOSS_ZDO_PERMIT_JOINING_REQ ? SIGNAL(acknowledgeReceived()) : SIGNAL(dataReceived()), ZBOSS_REQUEST_TIMEOUT);
 }
 
 void ZBoss::sendAcknowledge(void)
 {
-    QByteArray request, crc_llheader;
-    lowLeverHeaderStruct llheader;
+    zbossLowLevelHeaderStruct lowLevelHeader;
 
-    llheader.signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
-    llheader.length = 7;
-    llheader.type = ZBOSS_NCP_API_HL;
-    llheader.flags = IS_ACK | m_acknowledgeId << 4;
-    llheader.crc = 0;
+    lowLevelHeader.signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
+    lowLevelHeader.length = 5;
+    lowLevelHeader.type = ZBOSS_NCP_API_HL;
+    lowLevelHeader.flags = ZBOSS_FLAG_ACK | m_acknowledgeId << 4;
+    lowLevelHeader.crc = getCRC8(reinterpret_cast <quint8*> (&lowLevelHeader) + 2, sizeof(lowLevelHeader) - 3);
 
-    crc_llheader.append(reinterpret_cast <char*> (&llheader.length), sizeof(llheader.length));
-    crc_llheader.append(llheader.type);
-    crc_llheader.append(llheader.flags);
-    llheader.crc = getCRC8(reinterpret_cast <quint8*> (crc_llheader.data()), crc_llheader.length());
-
-    request = QByteArray(reinterpret_cast <char*> (&llheader), sizeof(llheader));
-
-    if (m_adapterDebug)
-        logInfo << "-->" << request.toHex(':');
-
-    sendData(request);
+    sendData(QByteArray(reinterpret_cast <char*> (&lowLevelHeader), sizeof(lowLevelHeader)));
 }
 
 void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
@@ -267,7 +246,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
     if (m_adapterDebug)
         logInfo << "<--" << QString::asprintf("0x%04x", qFromBigEndian(command)) << data.toHex(':');
 
-    if (type == RESPONSE && command == qFromLittleEndian(m_command))
+    if (type == ZBOSS_TYPE_RESPONSE && command == m_command)
     {
         m_replyStatus = static_cast <quint8> (data.at(2));
         m_replyData = data.mid(3);
@@ -293,7 +272,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         case ZBOSS_ZDO_NODE_DESC_REQ:
         {
-            const zdoNodeDescriptorResponseStruct *message = reinterpret_cast <const zdoNodeDescriptorResponseStruct*> (m_replyData.constData());
+            const zbossNodeDescriptorResponseStruct *message = reinterpret_cast <const zbossNodeDescriptorResponseStruct*> (m_replyData.constData());
             quint16 networkAddress;
             QByteArray payload;
 
@@ -301,7 +280,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
             payload.append(1, static_cast <char> (m_replyStatus));
             payload.append(reinterpret_cast <const char*> (&networkAddress), sizeof(networkAddress));
-            payload.append(reinterpret_cast <const char*> (message), sizeof(zdoNodeDescriptorResponseStruct));
+            payload.append(reinterpret_cast <const char*> (message), sizeof(zbossNodeDescriptorResponseStruct));
 
             emit zdoMessageReveived(qFromLittleEndian(networkAddress), ZDO_NODE_DESCRIPTOR_REQUEST, payload);
             break;
@@ -309,7 +288,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         case ZBOSS_ZDO_SIMPLE_DESC_REQ:
         {
-            const zdoSimpleDescriptorResponseStruct *message = reinterpret_cast <const zdoSimpleDescriptorResponseStruct*> (m_replyData.constData());
+            const zbossSimpleDescriptorResponseStruct *message = reinterpret_cast <const zbossSimpleDescriptorResponseStruct*> (m_replyData.constData());
             quint16 networkAddress;
             QByteArray payload;
 
@@ -317,12 +296,12 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
             payload.append(1, static_cast <char> (m_replyStatus));
             payload.append(reinterpret_cast <const char*> (&networkAddress), sizeof(networkAddress));
-            payload.append(1, static_cast <char> (message->inClusterCount * 2 + message->outClusterCount * 2) + sizeof(zdoSimpleDescriptorResponseStruct));
-            payload.append(reinterpret_cast <const char*> (message), sizeof(zdoSimpleDescriptorResponseStruct) - 2);
+            payload.append(1, static_cast <char> (message->inClusterCount * 2 + message->outClusterCount * 2) + sizeof(zbossSimpleDescriptorResponseStruct));
+            payload.append(reinterpret_cast <const char*> (message), sizeof(zbossSimpleDescriptorResponseStruct) - 2);
             payload.append(1, static_cast <char> (message->inClusterCount));
-            payload.append(m_replyData.mid(sizeof(zdoSimpleDescriptorResponseStruct), message->inClusterCount * 2));
+            payload.append(m_replyData.mid(sizeof(zbossSimpleDescriptorResponseStruct), message->inClusterCount * 2));
             payload.append(1, static_cast <char> (message->outClusterCount));
-            payload.append(m_replyData.mid(sizeof(zdoSimpleDescriptorResponseStruct) + message->inClusterCount * 2), message->outClusterCount * 2);
+            payload.append(m_replyData.mid(sizeof(zbossSimpleDescriptorResponseStruct) + message->inClusterCount * 2), message->outClusterCount * 2);
 
             emit zdoMessageReveived(networkAddress, ZDO_SIMPLE_DESCRIPTOR_REQUEST, payload);
             break;
@@ -345,30 +324,30 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         case ZBOSS_ZDO_MGMT_LQI_REQ:
         {
-            emit zdoMessageReveived(m_lqiAddress, ZDO_LQI_REQUEST, data.mid(2));
+            emit zdoMessageReveived(m_lqiRequestAddress, ZDO_LQI_REQUEST, data.mid(2));
             break;
         }
 
         case ZBOSS_ZDO_DEV_ANNCE_IND:
         {
-            const deviceAnnounceIndicatonStruct *message = reinterpret_cast <const deviceAnnounceIndicatonStruct*> (data.constData());
+            const zbossDeviceAnnounceStruct *message = reinterpret_cast <const zbossDeviceAnnounceStruct*> (data.constData());
             quint64 ieeeAddress = qToBigEndian <quint64> (message->ieeeAddress);
             emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), message->networkAddress);
             break;
         }
 
-        case NWK_LEAVE_IND:
+        case ZBOSS_APSDE_DATA_IND:
         {
-            const nwkLeaveStruct *message = reinterpret_cast <const nwkLeaveStruct*> (data.constData());
-            quint64 ieeeAddress = qToBigEndian <quint64> (message->ieeeAddress);
-            emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
+            const zbossIncomingMessageStruct *message = reinterpret_cast <const zbossIncomingMessageStruct*> (data.constData());
+            emit zclMessageReveived(message->srcAddress, message->srcEndpointId, message->clusterId, message->linkQuality, data.mid(sizeof(zbossIncomingMessageStruct), message->dataLength));
             break;
         }
 
-        case APSDE_DATA_IND:
+        case ZBOSS_NWK_LEAVE_IND:
         {
-            const apsdeDataIndicatonStruct *message = reinterpret_cast <const apsdeDataIndicatonStruct*> (data.constData());
-            emit zclMessageReveived(message->srcNetworkAddress, message->srcEndpointId, message->clusterId, message->lqi, data.mid(sizeof(apsdeDataIndicatonStruct), message->dataLength));
+            const zbossDeviceLeaveStruct *message = reinterpret_cast <const zbossDeviceLeaveStruct*> (data.constData());
+            quint64 ieeeAddress = qToBigEndian <quint64> (message->ieeeAddress);
+            emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
             break;
         }
 
@@ -386,11 +365,8 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
 bool ZBoss::startCoordinator(void)
 {
-    moduleVersionResponseStruct version;
-    localIEEEResponseStruct localIeee;
-    channelMaskRequestStruct channel;
-    nwkSetRequestStruct nwk;
-    bool check = false;
+    quint32 channelMask = qToLittleEndian <quint32> (1 << m_channel);
+    quint64 ieeeAddress;
 
     if (!sendRequest(ZBOSS_GET_LOCAL_IEEE_ADDR) || m_replyStatus)
     {
@@ -398,12 +374,11 @@ bool ZBoss::startCoordinator(void)
         return false;
     }
 
-    memcpy(&localIeee, m_replyData.constData(), sizeof(localIeee));
-    m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&localIeee.ieeeAddress), sizeof(localIeee.ieeeAddress));
+    memcpy(&ieeeAddress, m_replyData.constData() + 1, sizeof(ieeeAddress));
 
     for (int i = 0; i < m_policy.length(); i++)
     {
-        setTCPolicyStruct request = m_policy.at(i);
+        zbossSetPolicyStruct request = m_policy.at(i);
 
         if (sendRequest(ZBOSS_SET_TC_POLICY, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
@@ -411,25 +386,19 @@ bool ZBoss::startCoordinator(void)
         logWarning << "Set policy" << QString::asprintf("0x%04x", request.id) << "request failed";
     }
 
-    channel.page = 0;
-    channel.mask = qToLittleEndian <quint32> (1 << m_channel);
-
-    memcpy(nwk.key, m_networkKey.constData(), sizeof(nwk.key));
-    nwk.number = 0;
-
     if (!m_clear)
     {
+        bool check = false;
+
         if (!sendRequest(ZBOSS_GET_MODULE_VERSION) || m_replyStatus)
         {
             logWarning << "Adapter version request failed";
             return false;
         }
 
-        memcpy(&version, m_replyData.constData(), sizeof(version));
-
         m_manufacturerName = "Nordic Semiconductor";
-        m_modelName = QString::asprintf("ZBOSS");
-        m_firmware = QString::asprintf("%d.%d.%d", version.firmwareVersionMinor, version.firmwareVersionRevision, version.firmwareVersionCommit);
+        m_modelName = QString::asprintf("ZBOSS NCP");
+        m_firmware = QString::asprintf("%d.%d.%d", static_cast <quint8> (m_replyData.at(1)), static_cast <quint8> (m_replyData.at(2)), static_cast <quint8> (m_replyData.at(3)));
 
         logInfo << QString("Adapter type: %1 (%2)").arg(m_modelName, m_firmware).toUtf8().constData();
 
@@ -451,7 +420,7 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (memcmp(m_replyData.data() + 1, &channel, sizeof(channel)))
+        if (*(reinterpret_cast <quint32*> (m_replyData.data() + 2)) != channelMask)
         {
             logWarning << "Adapter channel doesn't match configuration";
             check = true;
@@ -475,7 +444,7 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (memcmp(m_replyData.data(), &nwk, sizeof(nwk)))
+        if (m_replyData.mid(0, m_networkKey.length()) != m_networkKey)
         {
             logWarning << "Adapter network key doesn't match configuration";
             check = true;
@@ -495,7 +464,7 @@ bool ZBoss::startCoordinator(void)
             return true;
         }
 
-        if (!sendRequest(NWK_START_WITHOUT_FORMATION) || m_replyStatus)
+        if (!sendRequest(ZBOSS_NWK_START_WITHOUT_FORMATION) || m_replyStatus)
         {
             logWarning << "Network startup failed";
             return false;
@@ -503,7 +472,7 @@ bool ZBoss::startCoordinator(void)
     }
     else
     {
-        nwkForamtionStruct network;
+        zbossNetworkForamtionStruct network;
 
         logInfo << "Starting new network...";
         m_clear = false;
@@ -514,7 +483,7 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (!sendRequest(ZBOSS_SET_ZIGBEE_CHANNEL_MASK, QByteArray(reinterpret_cast <char*> (&channel), sizeof(channel))) || m_replyStatus)
+        if (!sendRequest(ZBOSS_SET_ZIGBEE_CHANNEL_MASK, QByteArray(reinterpret_cast <char*> (&channelMask), sizeof(channelMask))) || m_replyStatus)
         {
             logWarning << "Set channel mask request failed";
             return false;
@@ -526,25 +495,32 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (!sendRequest(ZBOSS_SET_NWK_KEY, QByteArray(reinterpret_cast <char*> (&nwk), sizeof(nwk))) || m_replyStatus)
+        if (!sendRequest(ZBOSS_SET_NWK_KEY, QByteArray(m_networkKey).append(1, 0x00)) || m_replyStatus)
         {
             logWarning << "Set nwk request failed";
             return false;
         }
 
-        network.channelListLen = 0x01;
-        network.channelList = channel;
+        network.channelLength = 0x01;
+        network.channelPage = 0x00;
+        network.channelMask = channelMask;
         network.scanDuration = 0x05;
-        network.flag = 0x00;
+        network.distributed = 0x00;
         network.address = 0x0000;
-        network.ieeeAddress = localIeee.ieeeAddress;
+        network.extendedPanId = ieeeAddress;
 
-        if (!sendRequest(NWK_FORMATION, QByteArray(reinterpret_cast<char *>(&network), sizeof(network))) || m_replyStatus)
+        if (!sendRequest(ZBOSS_NWK_FORMATION, QByteArray(reinterpret_cast <char*> (&network), sizeof(network))) || m_replyStatus)
         {
             logWarning << "Network startup failed";
             return false;
         }
     }
+
+    if (!sendRequest(ZBOSS_SET_TX_POWER, QByteArray(1, static_cast <char> (m_power))) || m_replyStatus)
+        logWarning << "Set TX power request failed";
+
+    ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
+    m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
     emit coordinatorReady();
     return true;
@@ -559,45 +535,47 @@ void ZBoss::parseData(QByteArray &buffer)
 {
     while (!buffer.isEmpty())
     {
-        const lowLeverHeaderStruct *llHeader = reinterpret_cast <const lowLeverHeaderStruct*> (buffer.constData());
+        zbossLowLevelHeaderStruct *lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (buffer.data());
+        quint16 length = qFromLittleEndian(lowLevelHeader->length) + 2;
 
-        quint8 llHeaderCRC;
-        quint16 bodyCRC;
-
-        int length = static_cast <int> (static_cast <char> (buffer.at(3)) + static_cast <char> (buffer.at(2)));
-
-        if (!buffer.startsWith(QByteArray::fromHex("dead")))
+        if (lowLevelHeader->signature != qToBigEndian <quint16> (ZBOSS_SIGNATURE))
             return;
 
-        if (m_portDebug)
-            logInfo << "Packet received:" << buffer.mid(0, length + 2).toHex(':');
-
-        memcpy(&llHeaderCRC, buffer.mid(6, 1).constData(), sizeof(llHeaderCRC));
-        memcpy(&bodyCRC, buffer.mid(7, 2).constData(), sizeof(bodyCRC));
-
-        if (llHeaderCRC != getCRC8(reinterpret_cast <quint8*> (buffer.mid(2, 4).data()), buffer.mid(2, 4).length()) ||
-            (bodyCRC != getCRC16(reinterpret_cast <quint8*> (buffer.mid(9, length - 7).data()), buffer.mid(9, length - 7).length()) && length > 7))
+        if (lowLevelHeader->crc != getCRC8(reinterpret_cast <quint8*> (lowLevelHeader) + 2, sizeof(zbossLowLevelHeaderStruct) - 3))
         {
-            logWarning << QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(0, length + 2).toHex(':')));
+            logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(buffer.mid(0, length).toHex(':')));
             return;
         }
 
-        if (llHeader->flags & IS_ACK)
+        if (m_portDebug)
+            logInfo << "Frame received:" << buffer.mid(0, length).toHex(':');
+
+        if (lowLevelHeader->flags & ZBOSS_FLAG_ACK)
         {
-            if (m_sequenceId == (llHeader->flags >> 4 & 0x03))
+            if (m_sequenceId == (lowLevelHeader->flags >> 4 & 0x03))
             {
-                m_sequenceId = (m_sequenceId + 1) % 0x03;
+                m_sequenceId = (m_sequenceId + 1) & 0x03;
                 emit acknowledgeReceived();
             }
         }
         else
         {
-            m_acknowledgeId = llHeader->flags >> 2 & 0x03;
+            m_acknowledgeId = lowLevelHeader->flags >> 2 & 0x03;
             sendAcknowledge();
         }
 
-        m_queue.enqueue(buffer.mid(10, length - 8));
-        buffer.remove(0, length + 2);
+        if (length > 9)
+        {
+            if (*(reinterpret_cast <quint16*> (buffer.data() + 7)) != getCRC16(reinterpret_cast <quint8*> (buffer.data() + 9), length - 9))
+            {
+                logWarning << QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(0, length).toHex(':')));
+                return;
+            }
+
+            m_queue.enqueue(buffer.mid(9, length - 9));
+        }
+
+        buffer.remove(0, length);
     }
 }
 
@@ -621,7 +599,7 @@ void ZBoss::serialError(QSerialPort::SerialPortError error)
     }
 
     m_serial->close();
-    QThread::msleep(2000);
+    QThread::msleep(ZBOSS_RESET_DELAY);
     m_serial->open(QIODevice::ReadWrite);
 }
 
@@ -630,8 +608,7 @@ void ZBoss::handleQueue(void)
     while (!m_queue.isEmpty())
     {
         QByteArray packet = m_queue.dequeue();
-        quint16 command;
-        memcpy(&command, packet.mid(1, 2).constData(), sizeof(command));
-        parsePacket(static_cast <quint8> (packet.at(0)), qFromLittleEndian(command), packet.mid(3));
+        const zbossCommonHeaderStruct *header = reinterpret_cast <const zbossCommonHeaderStruct*> (packet.constData());
+        parsePacket(header->type, qFromLittleEndian(header->id), packet.mid(sizeof(zbossCommonHeaderStruct)));
     }
 }
