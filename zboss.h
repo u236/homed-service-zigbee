@@ -32,6 +32,7 @@
 #define ZBOSS_GET_NWK_KEYS                              0x001e
 #define ZBOSS_NCP_RESET_IND                             0x002b
 #define ZBOSS_SET_TC_POLICY                             0x0032
+#define ZBOSS_AF_SET_SIMPLE_DESC                        0x0101
 #define ZBOSS_ZDO_NODE_DESC_REQ                         0x0204
 #define ZBOSS_ZDO_SIMPLE_DESC_REQ                       0x0205
 #define ZBOSS_ZDO_ACTIVE_EP_REQ                         0x0206
@@ -72,6 +73,16 @@ struct zbossCommonHeaderStruct
     quint8  version;
     quint8  type;
     quint16 id;
+};
+
+struct zbossRegisterEndpointStruct
+{
+    quint8  endpointId;
+    quint16 profileId;
+    quint16 deviceId;
+    quint8  version;
+    quint8  inClustersCount;
+    quint8  outClustersCount;
 };
 
 struct zbossNetworkForamtionStruct

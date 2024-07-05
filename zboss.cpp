@@ -516,6 +516,39 @@ bool ZBoss::startCoordinator(void)
         }
     }
 
+    for (auto it = m_endpoints.begin(); it != m_endpoints.end(); it++)
+    {
+        zbossRegisterEndpointStruct request;
+        QByteArray data;
+
+        request.endpointId = it.key();
+        request.profileId = qToLittleEndian(it.value()->profileId());
+        request.deviceId = qToLittleEndian(it.value()->deviceId());
+        request.version = 0x00;
+        request.inClustersCount = static_cast <quint8> (it.value()->inClusters().count());
+        request.outClustersCount = static_cast <quint8> (it.value()->outClusters().count());
+
+        for (int i = 0; i < it.value()->inClusters().count(); i++)
+        {
+            quint16 clusterId = qToLittleEndian(it.value()->inClusters().at(i));
+            data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
+        }
+
+        for (int i = 0; i < it.value()->outClusters().count(); i++)
+        {
+            quint16 clusterId = qToLittleEndian(it.value()->outClusters().at(i));
+            data.append(reinterpret_cast <char*> (&clusterId), sizeof(clusterId));
+        }
+
+        if (!sendRequest(ZBOSS_AF_SET_SIMPLE_DESC, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
+        {
+            logWarning << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "register request failed";
+            continue;
+        }
+
+        logInfo << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "registered successfully";
+    }
+
     if (!sendRequest(ZBOSS_SET_TX_POWER, QByteArray(1, static_cast <char> (m_power))) || m_replyStatus)
         logWarning << "Set TX power request failed";
 
