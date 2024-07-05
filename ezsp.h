@@ -322,8 +322,6 @@ public:
 private:
 
     QTimer *m_timer;
-
-    QByteArray m_networkKey;
     quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId;
 
     QByteArray m_replyData;

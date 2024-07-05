@@ -8,8 +8,8 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
     quint32 channelList = qToLittleEndian <quint32> (1 << m_channel);
 
     m_nvItems.insert(ZCD_NV_MARKER,            QByteArray(1, ZSTACK_CONFIGURATION_MARKER));
-    m_nvItems.insert(ZCD_NV_PRECFGKEY,         QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8()));
-    m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, config->value("security/enabled", false).toBool() ? 0x01 : 0x00));
+    m_nvItems.insert(ZCD_NV_PRECFGKEY,         m_networkKey);
+    m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, 0x01));
     m_nvItems.insert(ZCD_NV_PANID,             QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId)));
     m_nvItems.insert(ZCD_NV_CHANLIST,          QByteArray(reinterpret_cast <char*> (&channelList), sizeof(channelList)));
     m_nvItems.insert(ZCD_NV_LOGICAL_TYPE,      QByteArray(1, 0x00));

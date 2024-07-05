@@ -206,7 +206,7 @@ protected:
     bool m_write, m_portDebug, m_adapterDebug;
 
     QString m_manufacturerName, m_modelName, m_firmware;
-    QByteArray m_ieeeAddress, m_defaultKey;
+    QByteArray m_networkKey, m_defaultKey, m_ieeeAddress;
 
     quint8 m_replyStatus;
     bool m_permitJoin;

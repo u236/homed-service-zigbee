@@ -221,7 +221,6 @@ public:
 private:
 
     bool m_clear;
-    QByteArray m_networkKey;
 
     quint16 m_command;
     QByteArray m_replyData;

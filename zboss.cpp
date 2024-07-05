@@ -45,8 +45,6 @@ static uint16_t const crc16Table[256] =
 
 ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_clear(false)
 {
-    m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
-    
     m_policy.append({ZBOSS_POLICY_TC_LINK_KEYS_REQUIRED,           0x00});
     m_policy.append({ZBOSS_POLICY_IC_REQUIRED,                     0x00});
     m_policy.append({ZBOSS_POLICY_TC_REJOIN_ENABLED,               0x01});
@@ -59,6 +57,8 @@ bool ZBoss::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPoint
 {
     zbossDataRequestStruct request;
 
+    memset(&request, 0, sizeof(request));
+
     request.requestLength = 0x15;
     request.dataLength = qToLittleEndian <quint16> (payload.length());
     request.dstAddress = qToLittleEndian <quint64> (networkAddress);
@@ -69,9 +69,6 @@ bool ZBoss::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPoint
     request.radius = ZBOSS_DEFAULT_RADIUS;
     request.addressMode = ADDRESS_MODE_16_BIT;
     request.options = ZBOSS_ROUTE_DISCOVERY;
-    request.alias = 0x00;
-    request.aliasAddress = 0x0000;
-    request.aliasId = 0x00;
 
     return sendRequest(ZBOSS_APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
 }
@@ -79,6 +76,8 @@ bool ZBoss::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPoint
 bool ZBoss::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
     zbossDataRequestStruct request;
+
+    memset(&request, 0, sizeof(request));
 
     request.requestLength = 0x15;
     request.dataLength = qToLittleEndian <quint16> (payload.length());
@@ -90,9 +89,6 @@ bool ZBoss::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, q
     request.radius = ZBOSS_DEFAULT_RADIUS;
     request.addressMode = ADDRESS_MODE_GROUP;
     request.options = ZBOSS_ROUTE_DISCOVERY;
-    request.alias = 0x00;
-    request.aliasAddress = 0x0000;
-    request.aliasId = 0x00;
 
     return sendRequest(ZBOSS_APSDE_DATA_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(payload), id);
 }
@@ -501,12 +497,11 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
+        memset(&network, 0, sizeof(network));
+
         network.channelLength = 0x01;
-        network.channelPage = 0x00;
         network.channelMask = channelMask;
         network.scanDuration = 0x05;
-        network.distributed = 0x00;
-        network.address = 0x0000;
         network.extendedPanId = ieeeAddress;
 
         if (!sendRequest(ZBOSS_NWK_FORMATION, QByteArray(reinterpret_cast <char*> (&network), sizeof(network))) || m_replyStatus)

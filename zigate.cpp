@@ -2,12 +2,6 @@
 #include "logger.h"
 #include "zigate.h"
 
-ZiGate::ZiGate(QSettings *config, QObject *parent) : Adapter(config, parent)
-{
-    m_networkKeyEnabled = config->value("security/enabled", false).toBool();
-    m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
-}
-
 bool ZiGate::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
 {
     return apsRequest(id, ADDRESS_MODE_16_BIT, networkAddress, srcEndPointId, dstEndPointId, clusterId, payload);
@@ -306,7 +300,7 @@ bool ZiGate::startCoordinator(bool clear)
         return false;
     }
 
-    if (!sendRequest(ZIGATE_SET_NETWORK_KEY, QByteArray(1, m_networkKeyEnabled ? 0x02 : 0x01).append(m_networkKey)) || m_replyStatus)
+    if (!sendRequest(ZIGATE_SET_NETWORK_KEY, QByteArray(1, 0x02).append(m_networkKey)) || m_replyStatus)
     {
         logWarning << "Set network key request failed";
         return false;

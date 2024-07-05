@@ -50,6 +50,8 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
     m_portDebug = config->value("debug/port", false).toBool();
     m_adapterDebug = config->value("debug/adapter", false).toBool();
 
+    m_networkKey = QByteArray::fromHex(config->value("security/key", "000102030405060708090a0b0c0d0e0f").toString().remove("0x").toUtf8());
+
     if (m_channel < 11 || m_channel > 26)
         m_channel = 11;
 

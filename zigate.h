@@ -110,7 +110,7 @@ class ZiGate : public Adapter
 
 public:
 
-    ZiGate(QSettings *config, QObject *parent);
+    ZiGate(QSettings *config, QObject *parent) : Adapter(config, parent) {}
 
     bool unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) override;
     bool multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload) override;
@@ -127,9 +127,6 @@ public:
     bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index) override;
 
 private:
-
-    bool m_networkKeyEnabled;
-    QByteArray m_networkKey;
 
     bool m_commandReply;
     quint16 m_command;
