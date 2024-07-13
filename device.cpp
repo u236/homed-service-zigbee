@@ -213,13 +213,36 @@ void DeviceList::setupDevice(const Device &device)
         for (int i = 0; i < list.count() && !device->supported(); i++)
         {
             QFile file(QString("%1/%2").arg(it->path(), list.at(i)));
+            QJsonObject json;
             QJsonArray array;
 
-            if (list.at(i) == "expose.json" || !file.open(QFile::ReadOnly))
-                continue;
+            if (!file.open(QFile::ReadOnly))
+            {
+                if (!m_brokenFiles.contains(file.fileName()))
+                {
+                    logWarning << "Cant't open library file" << file.fileName();
+                    m_brokenFiles.append(file.fileName());
+                }
 
-            array = QJsonDocument::fromJson(file.readAll()).object().value(manufacturerName).toArray();
+                continue;
+            }
+
+            json = QJsonDocument::fromJson(file.readAll()).object();
             file.close();
+
+            if (json.isEmpty())
+            {
+                if (!m_brokenFiles.contains(file.fileName()))
+                {
+                    logWarning << "Library file" << file.fileName() << "JSON data is empty or not valid";
+                    m_brokenFiles.append(file.fileName());
+                }
+
+                continue;
+            }
+
+            array = json.value(manufacturerName).toArray();
+            m_brokenFiles.removeAll(file.fileName());
 
             if (array.isEmpty())
                 continue;

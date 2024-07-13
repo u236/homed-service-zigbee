@@ -209,7 +209,7 @@ private:
     bool m_names, m_permitJoin, m_sync;
 
     QMap <QString, QVariant> m_exposeOptions;
-    QList <QString> m_specialExposes;
+    QList <QString> m_specialExposes, m_brokenFiles;
 
     void unserializeDevices(const QJsonArray &devices);
     void unserializeProperties(const QJsonObject &properties);
