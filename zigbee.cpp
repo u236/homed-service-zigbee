@@ -616,8 +616,8 @@ void ZigBee::interviewFinished(const Device &device)
     else
     {
         logInfo << "Device" << device->name() << "interview finished successfully";
+        device->setInterviewFinished(true);
         emit deviceEvent(device.data(), Event::interviewFinished);
-        device->setInterviewFinished();
     }
 
     m_devices->storeDatabase();
@@ -1405,7 +1405,7 @@ void ZigBee::coordinatorReady(void)
     device->setModelName(m_adapter->modelName());
     device->setDiscovery(false);
     device->setCloud(false);
-    device->setInterviewFinished();
+    device->setInterviewFinished(true);
     device->setRemoved(false);
     device->setLogicalType(LogicalType::Coordinator);
     device->setFirmware(m_adapter->firmware());

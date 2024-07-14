@@ -861,6 +861,7 @@ void DeviceList::removeDevice(const Device &device)
 {
     if (device->name() != device->ieeeAddress().toHex(':'))
     {
+        device->setInterviewFinished(false);
         device->setRemoved(true);
         return;
     }
@@ -892,6 +893,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 device->setVersion(static_cast <quint8> (json.value("version").toInt()));
                 device->setManufacturerName(json.value("manufacturerName").toString());
                 device->setModelName(json.value("modelName").toString());
+                device->setInterviewFinished(json.value("interviewFinished").toBool());
                 device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
                 device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
                 device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
@@ -934,11 +936,8 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                     device->neighbors().insert(static_cast <quint16> (json.value("networkAddress").toInt()), static_cast <quint8> (json.value("linkQuality").toInt()));
                 }
 
-                if (json.value("interviewFinished").toBool())
-                {
-                    device->setInterviewFinished();
+                if (device->interviewFinished())
                     setupDevice(device);
-                }
 
                 count++;
             }

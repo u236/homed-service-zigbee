@@ -104,7 +104,7 @@ public:
     inline void setEndpointsReceived(void) { m_endpointsReceived = true; }
 
     inline bool interviewFinished(void) { return m_interviewFinished; }
-    inline void setInterviewFinished(void) { m_interviewFinished = true; }
+    inline void setInterviewFinished(bool value) { m_interviewFinished = value; }
 
     inline bool removed(void) { return m_removed; }
     inline void setRemoved(bool value) { m_removed = value; }
