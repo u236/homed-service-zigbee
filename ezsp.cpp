@@ -226,6 +226,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
         control |= 0x08;
     }
 
+    handleError(QString("Request failed after %1 retries").arg(ASH_REQUEST_RETRIES));
     return false;
 }
 

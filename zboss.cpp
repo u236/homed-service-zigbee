@@ -203,6 +203,7 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
         logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     m_command = command;
+    m_replyStatus = 0xFF;
 
     lowLevelHeader.signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
     lowLevelHeader.length = data.length() + 12;
