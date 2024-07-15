@@ -35,6 +35,15 @@ protected:
 
 namespace Polls
 {
+    class Status : public PollObject
+    {
+
+    public:
+
+        Status(void) : PollObject("status", CLUSTER_ON_OFF, 0x0000) {}
+
+    };
+
     class Energy : public PollObject
     {
 

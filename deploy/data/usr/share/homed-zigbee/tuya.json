@@ -1155,9 +1155,9 @@
       "modelNames":     ["_TZ3000_cphmq0q7", "_TZ3000_okaz9tjs", "_TZ3000_u5u4cakc"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "polls":          ["energy", "voltage", "current", "power"],
+      "polls":          ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "indicatorMode", "powerOnStatus", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 60}
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 30}
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
