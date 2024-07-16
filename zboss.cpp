@@ -241,7 +241,7 @@ void ZBoss::sendAcknowledge(void)
 void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 {
     if (m_adapterDebug)
-        logInfo << "<--" << QString::asprintf("0x%04x", qFromBigEndian(command)) << data.toHex(':');
+        logInfo << "<--" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     if (type == ZBOSS_TYPE_RESPONSE && command == m_command)
     {
@@ -350,7 +350,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         default:
         {
-            if (m_adapterDebug)
+            if (type != ZBOSS_TYPE_RESPONSE && m_adapterDebug)
                 logWarning << "Unrecognized ZBoss command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
 
             break;
