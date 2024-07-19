@@ -919,7 +919,7 @@
       "actions":        ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
       "exposes":        ["switch", "switchType", "powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true}
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true, "skipAttributeRead": true}
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Switch",
@@ -936,7 +936,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["switchType", "powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
@@ -970,7 +970,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["switchType", "powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
@@ -1004,7 +1004,7 @@
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["switchType", "powerOnStatus"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true},
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
@@ -1056,7 +1056,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["indicatorMode", "powerOnStatus"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "tuyaMagic": true, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
