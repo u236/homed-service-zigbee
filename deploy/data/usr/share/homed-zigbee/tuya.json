@@ -923,7 +923,7 @@
     },
     {
       "description":    "TUYA TS0001/TS0011 1-Channel Switch",
-      "modelNames":     ["_TYZB01_4vgantdz", "_TYZB01_reyozfcg", "_TYZB01_xfpdrwvc", "_TZ3000_5ftkaulg", "TZ3000_9hpxg80k", "_TZ3000_hhiodade", "_TZ3000_j8dbnrgx", "_TZ3000_l8fsgo6p", "_TZ3000_oex7egmt", "_TZ3000_wrhhi5h2"],
+      "modelNames":     ["_TYZB01_4vgantdz", "_TYZB01_reyozfcg", "_TYZB01_xfpdrwvc", "_TZ3000_5ftkaulg", "_TZ3000_9hpxg80k", "_TZ3000_hhiodade", "_TZ3000_j8dbnrgx", "_TZ3000_l8fsgo6p", "_TZ3000_oex7egmt", "_TZ3000_wrhhi5h2"],
       "properties":     ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status"],
