@@ -780,7 +780,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
     if (m_debug)
         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
 
-    if (clusterId == CLUSTER_BASIC && attributeId <= 0x4000)
+    if (clusterId == CLUSTER_BASIC && attributeId <= 0x4000 && !device->interviewFinished())
     {
         switch (attributeId)
         {
@@ -825,7 +825,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                 break;
         }
 
-        if (!device->interviewFinished() && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && (attributeId == 0x0004 || attributeId == 0x0005))
+        if (!device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && (attributeId == 0x0004 || attributeId == 0x0005))
             interviewDevice(device);
 
         return;
