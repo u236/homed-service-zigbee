@@ -425,7 +425,7 @@
     },
     {
       "description":    "TUYA TS0601 Garage Door Controller",
-      "modelNames":     ["_TZE200_nklqjk62", "_TZE204_nklqjk62"],
+      "modelNames":     ["_TZE200_wfxuhoea", "_TZE200_nklqjk62", "_TZE204_nklqjk62"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["trigger", "contact"],
