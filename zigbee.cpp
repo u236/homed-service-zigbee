@@ -1461,6 +1461,9 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
 
     if (it == m_devices->end())
     {
+        if (!networkAddress)
+            return;
+
         logInfo << "Device" << ieeeAddress.toHex(':') << "joined network with address" << QString::asprintf("0x%04x", networkAddress);
         it = m_devices->insert(ieeeAddress, Device(new DeviceObject(ieeeAddress, networkAddress)));
         it.value()->setDiscovery(m_discovery);
@@ -1468,13 +1471,11 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
     }
     else
     {
-        if (it.value()->removed())
-            it.value()->setRemoved(false);
-
         if (it.value()->joinTime() + DEVICE_REJOIN_TIMEOUT > QDateTime::currentMSecsSinceEpoch())
             return;
 
         logInfo << "Device" << it.value()->name() << "rejoined network with address" << QString::asprintf("0x%04x", networkAddress);
+        it.value()->setRemoved(false);
         rejoinHandler(it.value());
     }
 
