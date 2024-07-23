@@ -237,7 +237,8 @@
       "options":        {
                           "customAttributes": {"transmitPower": {"type": "value", "clusterId": 0, "attributeId": 4919, "dataType": 40, "action": true}},
                           "transmitPower": {"type": "number", "min": -20, "max": 20, "unit": "dBm", "icon": "mdi:antenna"}
-                        }
+                        },
+      "endpointId":     8
     }
   ],
 
