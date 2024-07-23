@@ -373,7 +373,7 @@
                             "15":   [{"name": "battery", "type": "value"}],
                             "21":   [{"name": "melody", "type": "enum", "action": true}]
                           },
-                          "duration": {"min": 0, "max": 1800},
+                          "duration": {"min": 1, "max": 1800},
                           "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
                           "melody": {"min": 0, "max": 17},
                           "tuyaDataQuery": true
@@ -381,23 +381,59 @@
     },
     {
       "description":    "TUYA TS0601 Siren (Type B)",
+      "modelNames":     ["_TZE200_d0yu2xgi"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["batteryStatus", "temperature", "humidity", "alarm", "volumeMode", "duration", "melody", "temperatureLow", "temperatureHigh", "temperatureAlarm", "humidityLow", "humidityHigh", "humidityAlarm"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "101":  [{"name": "batteryStatus", "type": "enum"}],
+                            "102":  [{"name": "melody", "type": "enum", "action": true}],
+                            "103":  [{"name": "duration", "type": "value", "action": true}],
+                            "104":  [{"name": "alarm", "type": "bool", "action": true}],
+                            "105":  [{"name": "temperature", "type": "value", "divider": 10}],
+                            "106":  [{"name": "humidity", "type": "value", "divider": 10}],
+                            "107":  [{"name": "temperatureLow", "type": "value", "action": true}],
+                            "108":  [{"name": "temperatureHigh", "type": "value", "action": true}],
+                            "109":  [{"name": "humidityLow", "type": "value", "aaction": true}],
+                            "110":  [{"name": "humidityHigh", "type": "value", "action": true}],
+                            "113":  [{"name": "temperatureAlarm", "type": "bool", "action": true}],
+                            "114":  [{"name": "humidityAlarm", "type": "bool", "action": true}],
+                            "116":  [{"name": "volumeMode", "type": "enum", "action": true}]
+                          },
+                          "batteryStatus": {"enum": ["full", "high", "meduim", "low", "usb"]},
+                          "melody": {"min": 0, "max": 17},
+                          "duration": {"min": 1, "max": 1800},
+                          "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
+                          "temperatureLow": {"min": -20, "max": 80},
+                          "temperatureHigh": {"min": -20, "max": 80},
+                          "humidityLow": {"min": 0, "max": 100},
+                          "humidityHigh": {"min": 0, "max": 100},
+                          "temperatureAlarm": {"type": "toggle", "control": true, "icon": "mdi:thermometer-alert"},
+                          "humidityAlarm": {"type": "toggle", "control": true, "icon": "mdi:water-percent-alert"},
+                          "tuyaDataQuery": true
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Siren (Type C)",
       "modelNames":     ["_TZE204_fncxk3ob", "_TZE204_k7mfgaen"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "batteryStatus", "powerMode", "alarm", "volumeMode", "duration", "melody"],
+      "exposes":        ["battery", "batteryStatus", "powerStatus", "alarm", "volumeMode", "duration", "melody"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "5":    [{"name": "volumeMode", "type": "enum", "action": true}],
-                            "6":    [{"name": "powerMode", "type": "enum"}],
+                            "6":    [{"name": "powerStatus", "type": "enum"}],
                             "7":    [{"name": "duration", "type": "value", "action": true}],
                             "13":   [{"name": "alarm", "type": "bool", "action": true}],
                             "14":   [{"name": "batteryStatus", "type": "enum"}],
                             "15":   [{"name": "battery", "type": "value"}],
-                            "21":   [{"name": "melody", "type": "enum", "offset": -1, "action": true}]
+                            "21":   [{"name": "melody", "type": "enum", "action": true}]
                           },
                           "volumeMode": {"enum": ["low", "medium", "high", "mute"]},
-                          "powerMode": {"type": "sensor", "enum": ["normal", "backup"], "icon": "mdi:power-plug-battery"},
+                          "powerStatus": {"type": "sensor", "enum": ["normal", "backup"], "icon": "mdi:power-plug-battery"},
                           "duration": {"min": 1, "max": 60, "unit": "min"},
                           "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
                           "batteryStatus": {"enum": ["low", "medium", "high"]},
