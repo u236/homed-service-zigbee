@@ -780,52 +780,55 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
     if (m_debug)
         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
 
-    if (clusterId == CLUSTER_BASIC && attributeId <= 0x4000 && !device->interviewFinished())
+    if (clusterId == CLUSTER_BASIC && !device->interviewFinished())
     {
+        bool check = false;
+
         switch (attributeId)
         {
             case 0x0001:
 
-                if (dataType != DATA_TYPE_8BIT_UNSIGNED)
-                    return;
+                if (dataType == DATA_TYPE_8BIT_UNSIGNED)
+                    device->setVersion(static_cast <quint8> (data.at(0)));
 
-                device->setVersion(static_cast <quint8> (data.at(0)));
                 break;
 
             case 0x0004:
 
-                if (dataType != DATA_TYPE_CHARACTER_STRING)
-                    return;
+                if (dataType == DATA_TYPE_CHARACTER_STRING)
+                {
+                    device->setManufacturerName(data != "\u0002KE" ? QString(data).trimmed() : "IKEA of Sweden");
+                    check = true;
+                }
 
-                device->setManufacturerName(data != "\u0002KE" ? QString(data).trimmed() : "IKEA of Sweden");
                 break;
 
             case 0x0005:
 
-                if (dataType != DATA_TYPE_CHARACTER_STRING)
-                    return;
+                if (dataType == DATA_TYPE_CHARACTER_STRING)
+                {
+                    device->setModelName(QString(data).trimmed());
+                    check = true;
+                }
 
-                device->setModelName(QString(data).trimmed());
                 break;
 
             case 0x0007:
 
-                if (dataType != DATA_TYPE_8BIT_UNSIGNED && dataType != DATA_TYPE_8BIT_ENUM)
-                    return;
+                if (dataType == DATA_TYPE_8BIT_UNSIGNED || dataType == DATA_TYPE_8BIT_ENUM)
+                    device->setPowerSource(static_cast <quint8> (data.at(0)));
 
-                device->setPowerSource(static_cast <quint8> (data.at(0)));
                 break;
 
             case 0x4000:
 
-                if (dataType != DATA_TYPE_CHARACTER_STRING)
-                    return;
+                if (dataType == DATA_TYPE_CHARACTER_STRING)
+                    device->setFirmware(QString(data).trimmed());
 
-                device->setFirmware(QString(data).trimmed());
                 break;
         }
 
-        if (!device->manufacturerName().isEmpty() && !device->modelName().isEmpty() && (attributeId == 0x0004 || attributeId == 0x0005))
+        if (check && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
             interviewDevice(device);
 
         return;
@@ -871,43 +874,40 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         switch (attributeId)
         {
             case 0x0000:
-            {
-                if (dataType != DATA_TYPE_8BIT_ENUM)
-                    return;
 
-                endpoint->setZoneStatus(data.at(0) ? ZoneStatus::Enrolled : ZoneStatus::Enroll);
+                if (dataType == DATA_TYPE_8BIT_ENUM)
+                    endpoint->setZoneStatus(data.at(0) ? ZoneStatus::Enrolled : ZoneStatus::Enroll);
+
                 return;
-            }
 
             case 0x0001:
-            {
-                quint16 value;
 
-                if (dataType != DATA_TYPE_16BIT_ENUM)
-                    return;
+                if (dataType == DATA_TYPE_16BIT_ENUM)
+                {
+                    quint16 value;
+                    memcpy(&value, data.constData(), data.length());
+                    endpoint->setZoneType(qFromLittleEndian(value));
+                    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", endpoint->zoneType());
+                }
 
-                memcpy(&value, data.constData(), data.length());
-                endpoint->setZoneType(qFromLittleEndian(value));
-                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", endpoint->zoneType());
                 return;
-            }
 
             case 0x0010:
-            {
-                quint64 ieeeAddress;
 
-                if (dataType != DATA_TYPE_IEEE_ADDRESS)
-                    return;
+                if (dataType == DATA_TYPE_IEEE_ADDRESS)
+                {
+                    quint64 ieeeAddress;
 
-                memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
-                ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
+                    memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
+                    ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
 
-                if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
-                    endpoint->setZoneStatus(ZoneStatus::SetAddress);
+                    if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
+                        endpoint->setZoneStatus(ZoneStatus::SetAddress);
 
-                interviewDevice(device);
+                    interviewDevice(device);
+                }
+
                 return;
-            }
         }
     }
 
