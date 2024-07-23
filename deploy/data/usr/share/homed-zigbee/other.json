@@ -226,6 +226,21 @@
     }
   ],
 
+  "TexasInstruments":
+  [
+    {
+      "description":    "Texas Instruments Router",
+      "modelNames":     ["ti.router"],
+      "properties":     ["customAttributes"],
+      "actions":        ["customAttributes"],
+      "exposes":        ["transmitPower"],
+      "options":        {
+                          "customAttributes": {"transmitPower": {"type": "value", "clusterId": 0, "attributeId": 4919, "dataType": 40, "action": true}},
+                          "transmitPower": {"type": "number", "min": -20, "max": 20, "unit": "dBm", "icon": "mdi:antenna"}
+                        }
+    }
+  ],
+
   "Trust International B.V.":
   [
     {
