@@ -89,7 +89,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": {"undivided": true}, "action": {"enum": ["open", "close", "stop"]}}
+      "options":        {"action": {"enum": ["open", "close", "stop"]}}
     },
     {
       "description":    "STYRBAR Wireless Dimmer E2001",
