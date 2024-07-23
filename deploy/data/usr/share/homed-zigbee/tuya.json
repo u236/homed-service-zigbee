@@ -393,7 +393,7 @@
                             "103":  [{"name": "duration", "type": "value", "action": true}],
                             "104":  [{"name": "alarm", "type": "bool", "action": true}],
                             "105":  [{"name": "temperature", "type": "value", "divider": 10}],
-                            "106":  [{"name": "humidity", "type": "value", "divider": 10}],
+                            "106":  [{"name": "humidity", "type": "value"}],
                             "107":  [{"name": "temperatureLow", "type": "value", "action": true}],
                             "108":  [{"name": "temperatureHigh", "type": "value", "action": true}],
                             "109":  [{"name": "humidityLow", "type": "value", "aaction": true}],
@@ -412,6 +412,7 @@
                           "humidityHigh": {"min": 0, "max": 100},
                           "temperatureAlarm": {"type": "toggle", "control": true, "icon": "mdi:thermometer-alert"},
                           "humidityAlarm": {"type": "toggle", "control": true, "icon": "mdi:water-percent-alert"},
+                          "volumeMode": {"enum": ["high", "meduim", "low"]},
                           "tuyaDataQuery": true
                         }
     },
