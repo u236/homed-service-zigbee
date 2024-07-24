@@ -359,7 +359,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (it->toString() == "customAttributes")
         {
-            QMap <QString, QVariant> options = device->options().value(multiple ? QString("customAttributes_%2").arg(QString::number(endpoint->id())) : "customAttributes").toMap();
+            QMap <QString, QVariant> options = device->options().value(QString("customAttributes_%2").arg(QString::number(endpoint->id())), device->options().value("customAttributes")).toMap();
 
             for (auto it = options.begin(); it != options.end(); it++)
             {
@@ -390,7 +390,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (it->toString() == "customAttributes")
         {
-            QMap <QString, QVariant> options = device->options().value(multiple ? QString("customAttributes_%2").arg(QString::number(endpoint->id())) : "customAttributes").toMap();
+            QMap <QString, QVariant> options = device->options().value(QString("customAttributes_%2").arg(QString::number(endpoint->id())), device->options().value("customAttributes")).toMap();
 
             for (auto it = options.begin(); it != options.end(); it++)
             {
