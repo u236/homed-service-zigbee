@@ -161,9 +161,9 @@
     {
       "modelNames":     ["Watermeter_TLSR8258"],
       "properties":     ["batteryPercentage"],
-      "exposes":        ["battery"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
       "endpointId":     1
     },
     {
@@ -183,6 +183,12 @@
                           "pulseVolume": {"min": 1, "max": 100}
                         },
       "endpointId":     3
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["iasWaterLeak"],
+      "exposes":        ["waterLeak"],
+      "endpointId":     4
     },
     {
       "modelNames":     ["Watermeter_TLSR8258"],
