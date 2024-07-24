@@ -198,6 +198,52 @@
       "bindings":       ["temperature", "humidity"],
       "reportings":     ["temperature", "humidity"],
       "endpointId":     2
+    },
+    {
+      "description":    "EFEKTA Egony Soil Moisture Sensor",
+      "modelNames":     ["Egony_Flower"],
+      "properties":     ["temperature", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["temperature"],
+      "reportings":     ["temperature"],
+      "exposes":        ["battery", "illuminance", "temperature", "moisture", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh", "readInterval", "transmitPower", "enablePolling"],
+      "options":        {
+                          "customAttributes_1": {
+                            "temperatureOffset":        {"type": "value", "clusterId": 1026, "attributeId": 1040, "dataType": 41, "divider": 10, "action": true},
+                            "temperatureCompensation":  {"type": "bool",  "clusterId": 1026, "attributeId": 1284, "dataType": 16, "action": true}
+                          },
+                          "customAttributes_2": {
+                            "readInterval":             {"type": "value", "clusterId": 1,    "attributeId": 513,  "dataType": 33, "action": true},
+                            "enablePolling":            {"type": "bool",  "clusterId": 1,    "attributeId": 534,  "dataType": 16, "action": true},
+                            "transmitPower":            {"type": "value", "clusterId": 1,    "attributeId": 566,  "dataType": 40, "action": true},
+                            "moistureLow":              {"type": "value", "clusterId": 1032, "attributeId": 1282, "dataType": 33, "action": true},
+                            "moistureHigh":             {"type": "value", "clusterId": 1032, "attributeId": 1283, "dataType": 33, "action": true}
+                          },
+                          "temperatureOffset": {"min": -50, "max": 50, "step": 0.5},
+                          "temperatureCompensation": {"type": "toggle"},
+                          "readInterval": {"min": 1, "max": 360, "unit": "min"},
+                          "enablePolling": {"type": "toggle"},
+                          "transmitPower": {"min": -4, "max": 4, "step": 4},
+                          "moistureLow": {"min": 0, "max": 100},
+                          "moistureHigh": {"min": 0, "max": 100},
+                          "illuminance": {"raw": true}
+                        },
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["Egony_Flower"],
+      "properties":     ["batteryPercentage", "moisture", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["battery", "moisture"],
+      "reportings":     ["batteryPercentage", "moisture"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["Egony_Flower"],
+      "properties":     ["illuminance"],
+      "bindings":       ["illuminance"],
+      "reportings":     ["illuminance"],
+      "endpointId":     3
     }
   ]
 }
