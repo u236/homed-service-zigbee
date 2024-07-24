@@ -208,11 +208,13 @@
       "reportings":     ["temperature"],
       "exposes":        ["battery", "illuminance", "temperature", "moisture", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh", "readInterval", "transmitPower", "enablePolling"],
       "options":        {
-                          "customAttributes_1": {
+                          "customAttributes_1":
+                          {
                             "temperatureOffset":        {"type": "value", "clusterId": 1026, "attributeId": 1040, "dataType": 41, "divider": 10, "action": true},
                             "temperatureCompensation":  {"type": "bool",  "clusterId": 1026, "attributeId": 1284, "dataType": 16, "action": true}
                           },
-                          "customAttributes_2": {
+                          "customAttributes_2":
+                          {
                             "readInterval":             {"type": "value", "clusterId": 1,    "attributeId": 513,  "dataType": 33, "action": true},
                             "enablePolling":            {"type": "bool",  "clusterId": 1,    "attributeId": 534,  "dataType": 16, "action": true},
                             "transmitPower":            {"type": "value", "clusterId": 1,    "attributeId": 566,  "dataType": 40, "action": true},

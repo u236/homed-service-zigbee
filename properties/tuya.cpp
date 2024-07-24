@@ -7,10 +7,17 @@ void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteAr
     const tuyaHeaderStruct *header = reinterpret_cast <const tuyaHeaderStruct*> (payload.constData());
     QVariant data;
 
-    if (commandId != 0x01 && commandId != 0x02)
-        return;
+    switch (commandId)
+    {
+        case 0x01:
+        case 0x02:
+        case 0x06:
+            data = parseData(header, payload.mid(sizeof(tuyaHeaderStruct)));
+            break;
 
-    data = parseData(header, payload.mid(sizeof(tuyaHeaderStruct)));
+        default:
+            return;
+    }
 
     if (!data.isValid())
         return;
