@@ -71,6 +71,15 @@ namespace PropertiesIAS
         WaterLeak(void) : ZoneStatus("waterLeak") {}
 
     };
+
+    class Rain : public ZoneStatus
+    {
+
+    public:
+
+        Rain(void) : ZoneStatus("rain") {}
+
+    };
 }
 
 #endif

@@ -53,6 +53,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIAS::Occupancy>                    ("iasOccupancyProperty");
     qRegisterMetaType <PropertiesIAS::Smoke>                        ("iasSmokeProperty");
     qRegisterMetaType <PropertiesIAS::WaterLeak>                    ("iasWaterLeakProperty");
+    qRegisterMetaType <PropertiesIAS::Rain>                         ("iasRainProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                        ("lumiDataProperty");
     qRegisterMetaType <PropertiesLUMI::Basic>                       ("lumiBasicProperty");
