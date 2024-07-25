@@ -339,6 +339,18 @@
       "exposes":        ["cover"]
     },
     {
+      "description":    "Aqara Curtain Motor ZNCLBL01LM",
+      "modelNames":     ["lumi.curtain.acn003", "lumi.curtain.agl001"],
+      "properties":     ["batteryPercentage", "lumiCover", "lumiData", "customAttributes"],
+      "actions":        ["coverStatus", "lumiCoverPosition", "customAttributes"],
+      "exposes":        ["battery", "cover", "temperature"],
+      "options":        {
+                          "customAttributes": {"calibration": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1031, "dataType": 32, "action": true}},
+                          "calibration": {"type": "select", "enum": ["reset", "start", "stop"], "icon": "mdi:swap-horizontal-bold"},
+                          "temperature": {"diagnostic": true}
+                        }
+    },
+    {
       "description":    "Xiaomi Gas Detector JTQJ-BF-01LM/BW",
       "modelNames":     ["lumi.sensor_natgas"],
       "properties":     ["iasGas"],
