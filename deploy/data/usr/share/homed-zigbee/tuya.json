@@ -946,6 +946,24 @@
                         }
     },
     {
+      "description":    "TUYA TS0207 Rain Sensor WKD-LS100",
+      "modelNames":     ["_TZ3210_tgvtvdoc"],
+      "properties":     ["batteryPercentage", "iasRain", "tuyaDataPoints"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "rain", "batteryLow", "rainIntensity", "illuminance"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "101":    [{"name": "illuminance", "type": "value"}],
+                            "105":    [{"name": "rainIntensity", "type": "value"}]
+                          },
+                          "rain": {"type": "binary", "icon": "mdi:weather-pouring"},
+                          "illuminance": {"unit": "mV"},
+                          "rainIntensity": {"type": "sensor", "unit": "mV", "icon": "mdi:weather-pouring"}
+                        }
+    },
+    {
       "description":    "TUYA TS0207 Network Router",
       "modelNames":     ["_TZ3000_5k5vh43t", "_TZ3000_gszjt2xx", "_TZ3000_m0vaazab", "_TZ3000_misw04hq", "_TZ3000_nkkl7uzv", "_TZ3000_nlsszmzl", "_TZ3000_ufttklsz", "_TZ3000_wlquqiiz"]
     },
