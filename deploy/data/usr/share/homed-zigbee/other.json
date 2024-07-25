@@ -58,6 +58,27 @@
     }
   ],
 
+  "LifeConrol":
+  [
+    {
+      "description":    "Life Control 10A Smart Plug MCLH-03 with PTVO Firmware",
+      "modelNames":     ["ptvo_mclh03"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["ptvo_mclh03"],
+      "properties":     ["energy", "voltage", "current", "power"],
+      "bindings":       ["energy", "power"],
+      "exposes":        ["energy", "voltage", "current", "power"],
+      "options":        {"energyDivider": 1000, "voltageDivider": 100, "currentDivider": 1000, "powerDivider": 10},
+      "endpointId":     2
+    }
+  ],
+
   "Lmahmutov":
   [
     {
