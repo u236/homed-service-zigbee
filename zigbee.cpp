@@ -423,20 +423,24 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
     {
         if (!device->descriptorReceived())
         {
-            if (m_adapter->zdoRequest(id, device->networkAddress(), ZDO_NODE_DESCRIPTOR_REQUEST))
-                return true;
+            if (!m_adapter->zdoRequest(id, device->networkAddress(), ZDO_NODE_DESCRIPTOR_REQUEST))
+            {
+                interviewError(device, "node descriptor request failed");
+                return false;
+            }
 
-            interviewError(device, "node descriptor request failed");
-            return false;
+            return true;
         }
 
         if (!device->endpointsReceived())
         {
-            if (m_adapter->zdoRequest(id, device->networkAddress(), ZDO_ACTIVE_ENDPOINTS_REQUEST))
-                return true;
+            if (!m_adapter->zdoRequest(id, device->networkAddress(), ZDO_ACTIVE_ENDPOINTS_REQUEST))
+            {
+                interviewError(device, "active endpoints request failed");
+                return false;
+            }
 
-            interviewError(device, "active endpoints request failed");
-            return false;
+            return true;
         }
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -445,11 +449,13 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
             {
                 device->setInterviewEndpointId(it.key());
 
-                if (m_adapter->zdoRequest(id, device->networkAddress(), ZDO_SIMPLE_DESCRIPTOR_REQUEST, QByteArray(1, static_cast <char> (it.key()))))
-                    return true;
+                if (!m_adapter->zdoRequest(id, device->networkAddress(), ZDO_SIMPLE_DESCRIPTOR_REQUEST, QByteArray(1, static_cast <char> (it.key()))))
+                {
+                    interviewError(device, QString::asprintf("endpoint 0x%02x simple descriptor request failed", it.key()));
+                    return false;
+                }
 
-                interviewError(device, QString::asprintf("endpoint 0x%02x simple descriptor request failed", it.key()));
-                return false;
+                return true;
             }
         }
 
@@ -457,11 +463,37 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             if (it.value()->inClusters().contains(CLUSTER_BASIC))
             {
-                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001, 0x0004, 0x0005, 0x0007, 0x4000})))
-                    return true;
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001})))
+                {
+                    interviewError(device, "read application version request failed");
+                    return false;
+                }
 
-                interviewError(device, "read basic attributes request failed");
-                return false;
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0004})))
+                {
+                    interviewError(device, "read manufacturer name request failed");
+                    return false;
+                }
+
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0005})))
+                {
+                    interviewError(device, "read model name request failed");
+                    return false;
+                }
+
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0007})))
+                {
+                    interviewError(device, "read power source request failed");
+                    return false;
+                }
+
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x4000})))
+                {
+                    interviewError(device, "read firmware version request failed");
+                    return false;
+                }
+
+                return true;
             }
         }
 
@@ -473,11 +505,13 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
     {
         if (!device->batteryPowered() && it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) && it.value()->colorCapabilities() != 0xFFFF)
         {
-            if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
-                return true;
+            if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
+            {
+                interviewError(device, "read color capabilities request failed");
+                return false;
+            }
 
-            interviewError(device, "read color capabilities request failed");
-            return false;
+            return true;
         }
 
         if (!it.value()->inClusters().contains(CLUSTER_IAS_ZONE))
@@ -487,11 +521,13 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
         {
             case ZoneStatus::Unknown:
             {
-                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0001, 0x0010})))
-                    return true;
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0001, 0x0010})))
+                {
+                    interviewError(device, "read current IAS zone status request failed");
+                    return false;
+                }
 
-                interviewError(device, "read current IAS zone status request failed");
-                return false;
+                return true;
             }
 
             case ZoneStatus::SetAddress:
@@ -501,11 +537,13 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
                 memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
                 ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
 
-                if (m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
-                    return true;
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
+                {
+                    interviewError(device, "write IAS zone CIE address request failed");
+                    return false;
+                }
 
-                interviewError(device, "write IAS zone CIE address request failed");
-                return false;
+                return true;
             }
 
             case ZoneStatus::Enroll:
