@@ -24,6 +24,7 @@ enum class InterviewStatus
     NodeDescriptor,
     ActiveEndpoints,
     SimpleDescriptors,
+    BasicAttributes,
     ApplicationVersion,
     ManufacturerName,
     ModelName,
