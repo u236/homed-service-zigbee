@@ -118,8 +118,8 @@
       "endpointId":     2
     },
     {
-      "description":    "EFEKTA Temperature and Humidity Sensor TH v2",
-      "modelNames":     ["EFEKTA_TH_LR"],
+      "description":    "EFEKTA Temperature and Humidity Sensor TH v1 or TH v2",
+      "modelNames":     ["EFEKTA_TH", "EFEKTA_TH_LR"],
       "properties":     ["batteryPercentage", "temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings"],
       "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings"],
       "bindings":       ["battery", "temperature", "humidity"],
@@ -127,8 +127,8 @@
       "exposes":        ["battery", "temperature", "humidity", "reportingDelay", "temperatureLow",  "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert"],
       "options":        {
                           "reportingDelay": {"min": 5, "max": 300},
-                          "temperatureLow": {"min": -5, "max": 50},
-                          "temperatureHigh": {"min": -5, "max": 50},
+                          "temperatureLow": {"min": -50, "max": 120},
+                          "temperatureHigh": {"min": -50, "max": 120},
                           "humidityLow": {"min": 0, "max": 100},
                           "humidityHigh": {"min": 0, "max": 100}
                         }
@@ -206,7 +206,7 @@
       "actions":        ["customAttributes"],
       "bindings":       ["temperature"],
       "reportings":     ["temperature"],
-      "exposes":        ["battery", "illuminance", "temperature", "moisture", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh", "readInterval", "transmitPower", "enablePolling"],
+      "exposes":        ["battery", "illuminance", "temperature", "moisture", "readInterval", "transmitPower", "enablePolling", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh"],
       "options":        {
                           "customAttributes_1":
                           {
