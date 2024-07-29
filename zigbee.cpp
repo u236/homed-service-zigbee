@@ -419,34 +419,37 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 {
     m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
-    if (device->manufacturerName().isEmpty() || device->modelName().isEmpty())
+    switch (device->interviewStatus())
     {
-        if (!device->descriptorReceived())
-        {
+        case InterviewStatus::NodeDescriptor:
+
             if (!m_adapter->zdoRequest(id, device->networkAddress(), ZDO_NODE_DESCRIPTOR_REQUEST))
             {
                 interviewError(device, "node descriptor request failed");
                 return false;
             }
 
+            device->setInterviewStatus(InterviewStatus::ActiveEndpoints);
             return true;
-        }
 
-        if (!device->endpointsReceived())
-        {
+        case InterviewStatus::ActiveEndpoints:
+
             if (!m_adapter->zdoRequest(id, device->networkAddress(), ZDO_ACTIVE_ENDPOINTS_REQUEST))
             {
                 interviewError(device, "active endpoints request failed");
                 return false;
             }
 
+            device->setInterviewStatus(InterviewStatus::SimpleDescriptors);
             return true;
-        }
 
-        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        {
-            if (!it.value()->descriptorReceived())
+        case InterviewStatus::SimpleDescriptors:
+
+            for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
+                if (it.value()->descriptorReceived())
+                    continue;
+
                 device->setInterviewEndpointId(it.key());
 
                 if (!m_adapter->zdoRequest(id, device->networkAddress(), ZDO_SIMPLE_DESCRIPTOR_REQUEST, QByteArray(1, static_cast <char> (it.key()))))
@@ -457,117 +460,125 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
                 return true;
             }
-        }
 
-        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-        {
-            if (it.value()->inClusters().contains(CLUSTER_BASIC))
-            {
-                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0001})))
-                {
-                    interviewError(device, "read application version request failed");
-                    return false;
-                }
-
-                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0004})))
-                {
-                    interviewError(device, "read manufacturer name request failed");
-                    return false;
-                }
-
-                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0005})))
-                {
-                    interviewError(device, "read model name request failed");
-                    return false;
-                }
-
-                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x0007})))
-                {
-                    interviewError(device, "read power source request failed");
-                    return false;
-                }
-
-                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x4000})))
-                {
-                    interviewError(device, "read firmware version request failed");
-                    return false;
-                }
-
-                return true;
-            }
-        }
-
-        interviewError(device, "device has empty manufacturer name or model name");
-        return false;
-    }
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        if (!device->batteryPowered() && it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) && it.value()->colorCapabilities() != 0xFFFF)
-        {
-            if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
-            {
-                interviewError(device, "read color capabilities request failed");
-                return false;
-            }
-
+            device->setInterviewStatus(InterviewStatus::ApplicationVersion);
+            interviewDevice(device);
             return true;
-        }
 
-        if (!it.value()->inClusters().contains(CLUSTER_IAS_ZONE))
-            continue;
+        case InterviewStatus::ApplicationVersion ... InterviewStatus::FirmwareVersion:
 
-        switch (it.value()->zoneStatus())
-        {
-            case ZoneStatus::Unknown:
+            for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
-                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0001, 0x0010})))
+                quint16 attributeId;
+
+                if (!it.value()->inClusters().contains(CLUSTER_BASIC))
+                    continue;
+
+                switch (device->interviewStatus())
                 {
-                    interviewError(device, "read current IAS zone status request failed");
+                    case InterviewStatus::ApplicationVersion: attributeId = 0x0001; break;
+                    case InterviewStatus::ManufacturerName: attributeId = 0x0004; break;
+                    case InterviewStatus::ModelName: attributeId = 0x0005; break;
+                    case InterviewStatus::PowerSource: attributeId = 0x0007; break;
+                    case InterviewStatus::FirmwareVersion: attributeId = 0x4000; break;
+                    default: return false;
+                }
+
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {attributeId})))
+                {
+                    interviewError(device, QString::asprintf("read basic cluster attribute 0x%04x request failed", attributeId));
+                    return false;
+                }
+
+                device->setInterviewStatus(static_cast <InterviewStatus> (static_cast <int> (device->interviewStatus()) + 1));
+                return true;
+            }
+
+            interviewError(device, "no endpoint contains basic cluster");
+            return false;
+
+        case InterviewStatus::ColorCapabilities:
+
+            for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+            {
+                if (device->batteryPowered() || !it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) || it.value()->colorCapabilities() == 0xFFFF)
+                    continue;
+
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
+                {
+                    interviewError(device, "read color capabilities request failed");
                     return false;
                 }
 
                 return true;
             }
 
-            case ZoneStatus::SetAddress:
+            device->setInterviewStatus(InterviewStatus::ZoneEnroll);
+            interviewDevice(device);
+            return true;
+
+        case InterviewStatus::ZoneEnroll:
+
+            for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
-                quint64 ieeeAddress;
+                if (!it.value()->inClusters().contains(CLUSTER_IAS_ZONE))
+                    continue;
 
-                memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
-                ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
-
-                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
+                switch (it.value()->zoneStatus())
                 {
-                    interviewError(device, "write IAS zone CIE address request failed");
-                    return false;
+                    case ZoneStatus::Unknown:
+                    {
+                        if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0001, 0x0010})))
+                        {
+                            interviewError(device, "read current IAS zone status request failed");
+                            return false;
+                        }
+
+                        return true;
+                    }
+
+                    case ZoneStatus::SetAddress:
+                    {
+                        quint64 ieeeAddress;
+
+                        memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
+                        ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
+
+                        if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, writeAttributeRequest(id, 0x0000, 0x0010, DATA_TYPE_IEEE_ADDRESS, QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)))))
+                        {
+                            interviewError(device, "write IAS zone CIE address request failed");
+                            return false;
+                        }
+
+                        return true;
+                    }
+
+                    case ZoneStatus::Enroll:
+                    {
+                        iasZoneEnrollResponseStruct payload;
+
+                        payload.responseCode = 0x00;
+                        payload.zoneId = IAS_ZONE_ID;
+
+                        m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
+                        m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010}));
+                        break;
+                    }
+
+                    case ZoneStatus::Enrolled:
+                    {
+                        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.key()) << "IAS zone enrolled";
+                        break;
+                    }
                 }
-
-                return true;
             }
 
-            case ZoneStatus::Enroll:
-            {
-                iasZoneEnrollResponseStruct payload;
+            interviewFinished(device);
+            return true;
 
-                payload.responseCode = 0x00;
-                payload.zoneId = IAS_ZONE_ID;
-
-                m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, id, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload)));
-                m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_IAS_ZONE, readAttributesRequest(id, 0x0000, {0x0000, 0x0010}));
-                break;
-            }
-
-            case ZoneStatus::Enrolled:
-            {
-                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.key()) << "IAS zone enrolled";
-                break;
-            }
-        }
+        default:
+            return false;
     }
-
-    interviewFinished(device);
-    return true;
 }
 
 bool ZigBee::interviewQuirks(const Device &device)
@@ -620,7 +631,7 @@ bool ZigBee::interviewQuirks(const Device &device)
 
 void ZigBee::interviewDevice(const Device &device)
 {
-    if (device->interviewFinished())
+    if (device->interviewStatus() == InterviewStatus::Finished)
         return;
 
     connect(device->timer(), &QTimer::timeout, this, &ZigBee::interviewTimeout, Qt::UniqueConnection);
@@ -633,9 +644,6 @@ void ZigBee::interviewDevice(const Device &device)
 void ZigBee::interviewFinished(const Device &device)
 {
     device->timer()->stop();
-
-    if (device->interviewFinished()) // TODO: figure out reasons for multiple interviewFinished calls
-        return;
 
     logInfo << "Device" << device->name() << "manufacturer name is" << device->manufacturerName() << "and model name is" << device->modelName();
     m_devices->setupDevice(device);
@@ -653,8 +661,8 @@ void ZigBee::interviewFinished(const Device &device)
     }
     else
     {
+        device->setInterviewStatus(InterviewStatus::Finished);
         logInfo << "Device" << device->name() << "interview finished successfully";
-        device->setInterviewFinished(true);
         emit deviceEvent(device.data(), Event::interviewFinished);
     }
 
@@ -818,141 +826,139 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
     if (m_debug)
         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
 
-    if (clusterId == CLUSTER_BASIC && !device->interviewFinished())
+    if (device->interviewStatus() == InterviewStatus::Finished)
     {
-        bool check = false;
-
-        switch (attributeId)
+        if (clusterId == CLUSTER_TIME && device->manufacturerName().contains("efekta", Qt::CaseInsensitive))
         {
-            case 0x0001:
+            QDateTime now = QDateTime::currentDateTime();
+            quint32 value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - TIME_OFFSET);
 
-                if (dataType == DATA_TYPE_8BIT_UNSIGNED)
-                    device->setVersion(static_cast <quint8> (data.at(0)));
+            if (m_debug)
+                logInfo << "Device" << device->name() << "requested EFEKTA time synchronization";
 
-                break;
-
-            case 0x0004:
-
-                if (dataType == DATA_TYPE_CHARACTER_STRING)
-                {
-                    device->setManufacturerName(data != "\u0002KE" ? QString(data).trimmed() : "IKEA of Sweden");
-                    check = true;
-                }
-
-                break;
-
-            case 0x0005:
-
-                if (dataType == DATA_TYPE_CHARACTER_STRING)
-                {
-                    device->setModelName(QString(data).trimmed());
-                    check = true;
-                }
-
-                break;
-
-            case 0x0007:
-
-                if (dataType == DATA_TYPE_8BIT_UNSIGNED || dataType == DATA_TYPE_8BIT_ENUM)
-                    device->setPowerSource(static_cast <quint8> (data.at(0)));
-
-                break;
-
-            case 0x4000:
-
-                if (dataType == DATA_TYPE_CHARACTER_STRING)
-                    device->setFirmware(QString(data).trimmed());
-
-                break;
-        }
-
-        if (check && !device->manufacturerName().isEmpty() && !device->modelName().isEmpty())
-            interviewDevice(device);
-
-        return;
-    }
-
-    if (clusterId == CLUSTER_TIME && device->manufacturerName().contains("efekta", Qt::CaseInsensitive))
-    {
-        QDateTime now = QDateTime::currentDateTime();
-        quint32 value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - TIME_OFFSET);
-
-        if (m_debug)
-            logInfo << "Device" << device->name() << "requested EFEKTA time synchronization";
-
-        enqueueRequest(device, endpoint->id(), CLUSTER_TIME, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_UTC_TIME, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))));
-        return;
-    }
-
-    if (clusterId == CLUSTER_COLOR_CONTROL && attributeId == 0x400A)
-    {
-        quint16 value = 0xFFFF;
-
-        if (dataType == DATA_TYPE_16BIT_BITMAP)
-        {
-            memcpy(&value, data.constData(), data.length());
-            value = qFromLittleEndian(value);
-        }
-
-        endpoint->setColorCapabilities(value);
-        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", endpoint->colorCapabilities());
-        interviewDevice(device);
-        return;
-    }
-
-    if (clusterId == CLUSTER_IAS_ZONE)
-    {
-        if (attributeId == 0x0010 && dataType == DATA_TYPE_NO_DATA) // TODO: figure it out
-        {
-            endpoint->setZoneStatus(ZoneStatus::Enrolled);
-            interviewDevice(device);
+            enqueueRequest(device, endpoint->id(), CLUSTER_TIME, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_UTC_TIME, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))));
             return;
         }
 
-        switch (attributeId)
-        {
-            case 0x0000:
+        if (!parseProperty(endpoint, clusterId, transactionId, attributeId, data) && m_debug)
+            logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
 
-                if (dataType == DATA_TYPE_8BIT_ENUM)
-                    endpoint->setZoneStatus(data.at(0) ? ZoneStatus::Enrolled : ZoneStatus::Enroll);
-
-                return;
-
-            case 0x0001:
-
-                if (dataType == DATA_TYPE_16BIT_ENUM)
-                {
-                    quint16 value;
-                    memcpy(&value, data.constData(), data.length());
-                    endpoint->setZoneType(qFromLittleEndian(value));
-                    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", endpoint->zoneType());
-                }
-
-                return;
-
-            case 0x0010:
-
-                if (dataType == DATA_TYPE_IEEE_ADDRESS)
-                {
-                    quint64 ieeeAddress;
-
-                    memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
-                    ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
-
-                    if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
-                        endpoint->setZoneStatus(ZoneStatus::SetAddress);
-
-                    interviewDevice(device);
-                }
-
-                return;
-        }
+        return;
     }
 
-    if (!device->interviewFinished() || parseProperty(endpoint, clusterId, transactionId, attributeId, data) || !m_debug)
-        return;
+    switch (clusterId)
+    {
+        case CLUSTER_BASIC:
 
-    logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+            switch (attributeId)
+            {
+                case 0x0001:
+
+                    if (dataType == DATA_TYPE_8BIT_UNSIGNED)
+                        device->setVersion(static_cast <quint8> (data.at(0)));
+
+                    break;
+
+                case 0x0004:
+
+                    if (dataType == DATA_TYPE_CHARACTER_STRING)
+                        device->setManufacturerName(data != "\u0002KE" ? QString(data).trimmed() : "IKEA of Sweden");
+
+                    break;
+
+                case 0x0005:
+
+                    if (dataType == DATA_TYPE_CHARACTER_STRING)
+                        device->setModelName(QString(data).trimmed());
+
+                    break;
+
+                case 0x0007:
+
+                    if (dataType == DATA_TYPE_8BIT_UNSIGNED || dataType == DATA_TYPE_8BIT_ENUM)
+                        device->setPowerSource(static_cast <quint8> (data.at(0)));
+
+                    break;
+
+                case 0x4000:
+
+                    if (dataType == DATA_TYPE_CHARACTER_STRING)
+                        device->setFirmware(QString(data).trimmed());
+
+                    break;
+            }
+
+            break;
+
+        case CLUSTER_COLOR_CONTROL:
+
+            if (attributeId == 0x400A)
+            {
+                quint16 value = 0xFFFF;
+
+                if (dataType == DATA_TYPE_16BIT_BITMAP)
+                {
+                    memcpy(&value, data.constData(), data.length());
+                    value = qFromLittleEndian(value);
+                }
+
+                endpoint->setColorCapabilities(value);
+                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", endpoint->colorCapabilities());
+                interviewDevice(device);
+            }
+
+            break;
+
+        case CLUSTER_IAS_ZONE:
+
+            if (attributeId == 0x0010 && dataType == DATA_TYPE_NO_DATA) // TODO: figure it out
+            {
+                endpoint->setZoneStatus(ZoneStatus::Enrolled);
+                interviewDevice(device);
+                break;
+            }
+
+            switch (attributeId)
+            {
+                case 0x0000:
+
+                    if (dataType == DATA_TYPE_8BIT_ENUM)
+                        endpoint->setZoneStatus(data.at(0) ? ZoneStatus::Enrolled : ZoneStatus::Enroll);
+
+                    break;
+
+                case 0x0001:
+
+                    if (dataType == DATA_TYPE_16BIT_ENUM)
+                    {
+                        quint16 value;
+                        memcpy(&value, data.constData(), data.length());
+                        endpoint->setZoneType(qFromLittleEndian(value));
+                        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", endpoint->zoneType());
+                    }
+
+                    break;
+
+                case 0x0010:
+
+                    if (dataType == DATA_TYPE_IEEE_ADDRESS)
+                    {
+                        quint64 ieeeAddress;
+
+                        memcpy(&ieeeAddress, m_adapter->ieeeAddress().constData(), sizeof(ieeeAddress));
+                        ieeeAddress = qToLittleEndian(qFromBigEndian(ieeeAddress));
+
+                        if (memcmp(&ieeeAddress, data.constData(), sizeof(ieeeAddress)))
+                            endpoint->setZoneStatus(ZoneStatus::SetAddress);
+
+                        interviewDevice(device);
+                    }
+
+                    break;
+            }
+
+            break;
+    }
 }
 
 void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QByteArray &payload)
@@ -962,204 +968,216 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
     if (m_debug)
         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':')) << "and transaction id" << transactionId;
 
-    if (clusterId == CLUSTER_IDENTIFY)
-        return;
-
-    if (clusterId == CLUSTER_GROUPS)
+    switch (clusterId)
     {
-        switch (commandId)
+        case CLUSTER_IDENTIFY:
+            return;
+
+        case CLUSTER_GROUPS:
         {
-            case 0x00:
-            case 0x03:
+            switch (commandId)
             {
-                const groupControlResponseStruct *response = reinterpret_cast <const groupControlResponseStruct*> (payload.constData());
-
-                switch (response->status)
+                case 0x00:
+                case 0x03:
                 {
-                    case STATUS_SUCCESS:
-                        logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "successfully" << (commandId ? "removed" : "added");
-                        break;
+                        const groupControlResponseStruct *response = reinterpret_cast <const groupControlResponseStruct*> (payload.constData());
 
-                    case STATUS_INSUFFICIENT_SPACE:
-                        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "not added, no free space available";
-                        break;
+                        switch (response->status)
+                        {
+                            case STATUS_SUCCESS:
+                                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "successfully" << (commandId ? "removed" : "added");
+                                break;
 
-                    case STATUS_DUPLICATE_EXISTS:
-                        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "already exists";
-                        break;
+                            case STATUS_INSUFFICIENT_SPACE:
+                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "not added, no free space available";
+                                break;
 
-                    case STATUS_NOT_FOUND:
-                        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "not found";
-                        break;
+                            case STATUS_DUPLICATE_EXISTS:
+                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "already exists";
+                                break;
 
-                    default:
-                        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << (commandId ? "remove" : "add") << "command status" << QString::asprintf("0x%02x", response->status) << "unrecognized";
+                            case STATUS_NOT_FOUND:
+                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "not found";
+                                break;
+
+                            default:
+                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << (commandId ? "remove" : "add") << "command status" << QString::asprintf("0x%02x", response->status) << "unrecognized";
+                                break;
+                        }
+
                         break;
                 }
 
-                break;
+                default:
+                    logWarning << "Unrecognized group control command" << QString::asprintf("0x%02x", commandId) << "received from device" << device->name() << "with payload:" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+                    break;
             }
 
-            default:
-                logWarning << "Unrecognized group control command" << QString::asprintf("0x%02x", commandId) << "received from device" << device->name() << "with payload:" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
-                break;
-        }
-
-        return;
-    }
-
-    if (clusterId == CLUSTER_OTA_UPGRADE)
-    {
-        otaFileHeaderStruct header;
-
-        if (device != m_otaDevice)
-        {
-            otaError(endpoint, manufacturerCode, transactionId, commandId);
             return;
         }
 
-        if (!m_otaFile.exists() || !m_otaFile.open(QFile::ReadOnly))
+        case CLUSTER_OTA_UPGRADE:
         {
-            otaError(endpoint, manufacturerCode, transactionId, commandId, "OTA upgrade failed, file open error");
+            otaFileHeaderStruct header;
+
+            if (device != m_otaDevice)
+            {
+                otaError(endpoint, manufacturerCode, transactionId, commandId);
+                return;
+            }
+
+            if (!m_otaFile.exists() || !m_otaFile.open(QFile::ReadOnly))
+            {
+                otaError(endpoint, manufacturerCode, transactionId, commandId, "OTA upgrade failed, file open error");
+                return;
+            }
+
+            memcpy(&header, m_otaFile.read(sizeof(header)).constData(), sizeof(header));
+
+            switch (commandId)
+            {
+                case 0x01:
+                {
+                    const otaNextImageRequestStruct *request = reinterpret_cast <const otaNextImageRequestStruct*> (payload.constData());
+                    otaNextImageResponseStruct response;
+
+                    if (!m_otaForce && (request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType))
+                    {
+                        otaError(endpoint, manufacturerCode, transactionId, commandId, "OTA upgrade image request failed, header data mismatch request data");
+                        break;
+                    }
+
+                    if (request->fileVersion == header.fileVersion)
+                    {
+                        otaError(endpoint, manufacturerCode, transactionId, commandId, QString::asprintf("OTA upgrade not started, version match: 0x%08x", qFromLittleEndian(request->fileVersion)).toUtf8().constData());
+                        break;
+                    }
+
+                    response.status = 0x00;
+                    response.manufacturerCode = m_otaForce ? request->manufacturerCode : header.manufacturerCode;
+                    response.imageType = m_otaForce ? request->imageType : header.imageType;
+                    response.fileVersion = header.fileVersion;
+                    response.imageSize = header.imageSize;
+
+                    logInfo << "Device" << device->name() << "OTA upgrade started...";
+                    enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x02).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                    break;
+                }
+
+                case 0x03:
+                {
+                    const otaImageBlockRequestStruct *request = reinterpret_cast <const otaImageBlockRequestStruct*> (payload.constData());
+                    otaImageBlockResponseStruct response;
+                    QByteArray block;
+
+                    if (!m_otaForce && (request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType || request->fileVersion != header.fileVersion))
+                    {
+                        otaError(endpoint, manufacturerCode, transactionId, commandId, "OTA upgrade block request failed, header data mismatch request data");
+                        break;
+                    }
+
+                    m_otaFile.seek(qFromLittleEndian(request->fileOffset));
+                    block = m_otaFile.read(request->maxDataSize);
+
+                    response.status = 0x00;
+                    response.manufacturerCode = request->manufacturerCode;
+                    response.imageType = request->imageType;
+                    response.fileVersion = request->fileVersion;
+                    response.fileOffset = request->fileOffset;
+                    response.dataSize = static_cast <quint8> (block.length());
+
+                    logInfo << "Device" << device->name() << "OTA upgrade progress is" << QString::asprintf("%.2f%%", static_cast <double> (m_otaFile.pos() + block.size()) / m_otaFile.size() * 100).toUtf8().constData();
+                    enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x05).append(reinterpret_cast <char*> (&response), sizeof(response)).append(block));
+                    break;
+                }
+
+                case 0x06:
+                {
+                    const otaUpgradeEndRequestStruct *request = reinterpret_cast <const otaUpgradeEndRequestStruct*> (payload.constData());
+                    otaUpgradeEndResponseStruct response;
+
+                    if (request->status)
+                    {
+                        logWarning << "Device" << device->name() << "OTA upgrade finished with error, status code:" << QString::asprintf("0x%02x", request->status);
+                        break;
+                    }
+
+                    response.manufacturerCode = request->manufacturerCode;
+                    response.imageType = request->imageType;
+                    response.fileVersion = request->fileVersion;
+                    response.currentTime = 0;
+                    response.upgradeTime = 0;
+
+                    logInfo << "Device" << device->name() << "OTA upgrade finished successfully";
+                    enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x07).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                    m_devices->removeDevice(device);
+                    break;
+                }
+
+                default:
+                    logWarning << "Unrecognized OTA upgrade command" << QString::asprintf("0x%02x", commandId) << "received from device" << device->name() << "with payload:" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+                    break;
+            }
+
+            if (m_otaFile.isOpen())
+                m_otaFile.close();
+
             return;
         }
 
-        memcpy(&header, m_otaFile.read(sizeof(header)).constData(), sizeof(header));
 
-        switch (commandId)
+        case CLUSTER_IAS_ZONE:
         {
-            case 0x01:
+            if (commandId == 0x01)
             {
-                const otaNextImageRequestStruct *request = reinterpret_cast <const otaNextImageRequestStruct*> (payload.constData());
-                otaNextImageResponseStruct response;
-
-                if (!m_otaForce && (request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType))
-                {
-                    otaError(endpoint, manufacturerCode, transactionId, commandId, "OTA upgrade image request failed, header data mismatch request data");
-                    break;
-                }
-
-                if (request->fileVersion == header.fileVersion)
-                {
-                    otaError(endpoint, manufacturerCode, transactionId, commandId, QString::asprintf("OTA upgrade not started, version match: 0x%08x", qFromLittleEndian(request->fileVersion)).toUtf8().constData());
-                    break;
-                }
-
-                response.status = 0x00;
-                response.manufacturerCode = m_otaForce ? request->manufacturerCode : header.manufacturerCode;
-                response.imageType = m_otaForce ? request->imageType : header.imageType;
-                response.fileVersion = header.fileVersion;
-                response.imageSize = header.imageSize;
-
-                logInfo << "Device" << device->name() << "OTA upgrade started...";
-                enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x02).append(reinterpret_cast <char*> (&response), sizeof(response)));
-                break;
-            }
-
-            case 0x03:
-            {
-                const otaImageBlockRequestStruct *request = reinterpret_cast <const otaImageBlockRequestStruct*> (payload.constData());
-                otaImageBlockResponseStruct response;
-                QByteArray block;
-
-                if (!m_otaForce && (request->manufacturerCode != header.manufacturerCode || request->imageType != header.imageType || request->fileVersion != header.fileVersion))
-                {
-                    otaError(endpoint, manufacturerCode, transactionId, commandId, "OTA upgrade block request failed, header data mismatch request data");
-                    break;
-                }
-
-                m_otaFile.seek(qFromLittleEndian(request->fileOffset));
-                block = m_otaFile.read(request->maxDataSize);
-
-                response.status = 0x00;
-                response.manufacturerCode = request->manufacturerCode;
-                response.imageType = request->imageType;
-                response.fileVersion = request->fileVersion;
-                response.fileOffset = request->fileOffset;
-                response.dataSize = static_cast <quint8> (block.length());
-
-                logInfo << "Device" << device->name() << "OTA upgrade progress is" << QString::asprintf("%.2f%%", static_cast <double> (m_otaFile.pos() + block.size()) / m_otaFile.size() * 100).toUtf8().constData();
-                enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x05).append(reinterpret_cast <char*> (&response), sizeof(response)).append(block));
-                break;
-            }
-            case 0x06:
-            {
-                const otaUpgradeEndRequestStruct *request = reinterpret_cast <const otaUpgradeEndRequestStruct*> (payload.constData());
-                otaUpgradeEndResponseStruct response;
-
-                if (request->status)
-                {
-                    logWarning << "Device" << device->name() << "OTA upgrade finished with error, status code:" << QString::asprintf("0x%02x", request->status);
-                    break;
-                }
-
-                response.manufacturerCode = request->manufacturerCode;
-                response.imageType = request->imageType;
-                response.fileVersion = request->fileVersion;
-                response.currentTime = 0;
-                response.upgradeTime = 0;
-
-                logInfo << "Device" << device->name() << "OTA upgrade finished successfully";
-                enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x07).append(reinterpret_cast <char*> (&response), sizeof(response)));
-                m_devices->removeDevice(device);
-                break;
-            }
-
-            default:
-                logWarning << "Unrecognized OTA upgrade command" << QString::asprintf("0x%02x", commandId) << "received from device" << device->name() << "with payload:" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
-                break;
-        }
-
-        if (m_otaFile.isOpen())
-            m_otaFile.close();
-
-        return;
-    }
-
-    if (clusterId == CLUSTER_IAS_ZONE && commandId == 0x01)
-    {
-        iasZoneEnrollResponseStruct response;
-
-        if (m_debug)
-            logInfo << "Device" << device->name() << "requested IAS Zone enroll";
-
-        response.responseCode = 0x00;
-        response.zoneId = IAS_ZONE_ID;
-
-        enqueueRequest(device, endpoint->id(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x00).append(reinterpret_cast <char*> (&response), sizeof(response)));
-        return;
-    }
-
-    if (clusterId == CLUSTER_TUYA_DATA)
-    {
-        switch (commandId)
-        {
-            case 0x24:
-            {
-                QDateTime now = QDateTime::currentDateTime();
-                quint32 value = now.toTime_t();
-                tuyaTimeStruct response;
+                iasZoneEnrollResponseStruct response;
 
                 if (m_debug)
-                    logInfo << "Device" << device->name() << "requested TUYA time synchronization";
+                    logInfo << "Device" << device->name() << "requested IAS Zone enroll";
 
-                response.payloadSize = qToLittleEndian <quint16> (8);
-                response.utcTimestamp = qToBigEndian(value);
-                response.localTimestamp = qToBigEndian(value + now.offsetFromUtc());
+                response.responseCode = 0x00;
+                response.zoneId = IAS_ZONE_ID;
 
-                enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x24).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                enqueueRequest(device, endpoint->id(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x00).append(reinterpret_cast <char*> (&response), sizeof(response)));
                 return;
             }
 
-            case 0x25:
+            break;
+        }
+
+        case CLUSTER_TUYA_DATA:
+        {
+            switch (commandId)
             {
-                enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x25).append(QByteArray::fromHex("010001")));
-                return;
+                case 0x24:
+                {
+                    QDateTime now = QDateTime::currentDateTime();
+                    quint32 value = now.toTime_t();
+                    tuyaTimeStruct response;
+
+                    if (m_debug)
+                        logInfo << "Device" << device->name() << "requested TUYA time synchronization";
+
+                    response.payloadSize = qToLittleEndian <quint16> (8);
+                    response.utcTimestamp = qToBigEndian(value);
+                    response.localTimestamp = qToBigEndian(value + now.offsetFromUtc());
+
+                    enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x24).append(reinterpret_cast <char*> (&response), sizeof(response)));
+                    return;
+                }
+
+                case 0x25:
+                {
+                    enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x25).append(QByteArray::fromHex("010001")));
+                    return;
+                }
             }
+
+            break;
         }
     }
 
-    if (!device->interviewFinished() || parseProperty(endpoint, clusterId, transactionId, commandId, payload, true) || !m_debug)
+    if (device->interviewStatus() != InterviewStatus::Finished || parseProperty(endpoint, clusterId, transactionId, commandId, payload, true) || !m_debug)
         return;
 
     logWarning << "No property found for device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
@@ -1280,12 +1298,15 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 if (dataType != DATA_TYPE_NO_DATA && dataType != DATA_TYPE_OCTET_STRING && dataType != DATA_TYPE_CHARACTER_STRING && !size)
                 {
                     logWarning << "Unrecognized attribute" << QString::asprintf("0x%04x", attributeId) << "type" << QString::asprintf("0x%02x", dataType) << "received from device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << "with payload:" << payload.mid(offset).toHex(':');
-                    return;
+                    break;
                 }
 
                 parseAttribute(endpoint, clusterId, transactionId, attributeId, dataType, payload.mid(offset, size));
                 payload.remove(0, offset + size);
             }
+
+            if (device->interviewStatus() != InterviewStatus::Finished && clusterId == CLUSTER_BASIC)
+                interviewDevice(device);
 
             break;
         }
@@ -1443,8 +1464,8 @@ void ZigBee::coordinatorReady(void)
     device->setModelName(m_adapter->modelName());
     device->setDiscovery(false);
     device->setCloud(false);
-    device->setInterviewFinished(true);
     device->setRemoved(false);
+    device->setInterviewStatus(InterviewStatus::Finished);
     device->setLogicalType(LogicalType::Coordinator);
     device->setFirmware(m_adapter->firmware());
 
@@ -1527,7 +1548,7 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         it.value()->setNetworkAddress(networkAddress);
     }
 
-    if (!it.value()->interviewFinished() && !it.value()->timer()->isActive())
+    if (it.value()->interviewStatus() != InterviewStatus::Finished && !it.value()->timer()->isActive())
     {
         logInfo << "Device" << it.value()->name() << "interview started...";
         interviewDevice(it.value());
@@ -1572,14 +1593,13 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
         {
             const nodeDescriptorResponseStruct *response = reinterpret_cast <const nodeDescriptorResponseStruct*> (payload.constData());
 
-            if (device->interviewFinished())
+            if (device->interviewStatus() == InterviewStatus::Finished)
                 break;
 
             if (!response->status)
             {
                 device->setLogicalType(static_cast <LogicalType> (response->logicalType & 0x03));
                 device->setManufacturerCode(qFromLittleEndian(response->manufacturerCode));
-                device->setDescriptorReceived();
 
                 logInfo << "Device" << device->name() << "node descriptor received, manufacturer code is" << QString::asprintf("0x%04x", device->manufacturerCode()) << "and logical type is" << QString(device->logicalType() == LogicalType::Router ? "router" : "end device");
                 interviewDevice(device);
@@ -1595,7 +1615,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
             const simpleDescriptorResponseStruct *response = reinterpret_cast <const simpleDescriptorResponseStruct*> (payload.constData());
             Endpoint endpoint = m_devices->endpoint(device, response->status ? device->interviewEndpointId() : response->endpointId);
 
-            if (device->interviewFinished())
+            if (device->interviewStatus() == InterviewStatus::Finished)
                 break;
 
             if (!response->status)
@@ -1635,7 +1655,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
         {
             const activeEndpointsResponseStruct *response = reinterpret_cast <const activeEndpointsResponseStruct*> (payload.constData());
 
-            if (device->interviewFinished())
+            if (device->interviewStatus() == InterviewStatus::Finished)
                 break;
 
             if (!response->status)
@@ -1652,8 +1672,6 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
 
                     list.append(QString::asprintf("0x%02x", endpointId));
                 }
-
-                device->setEndpointsReceived();
 
                 logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");
                 interviewDevice(device);
@@ -1752,7 +1770,7 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
     else
         globalCommandReceived(endpoint, clusterId, manufacturerCode, transactionId, commandId, data);
 
-    if (device->interviewFinished() && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
+    if (device->interviewStatus() == InterviewStatus::Finished && (frameControl & FC_CLUSTER_SPECIFIC || commandId == CMD_REPORT_ATTRIBUTES) && !(frameControl & FC_DISABLE_DEFAULT_RESPONSE))
     {
         defaultResponseStruct response;
 
@@ -1973,7 +1991,7 @@ void ZigBee::interviewTimeout(void)
 {
     Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
 
-    if (device->interviewFinished())
+    if (device->interviewStatus() == InterviewStatus::Finished)
         return;
 
     interviewTimeoutHandler(device);

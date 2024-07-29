@@ -18,6 +18,22 @@
 #include "property.h"
 #include "reporting.h"
 
+
+enum class InterviewStatus
+{
+    NodeDescriptor,
+    ActiveEndpoints,
+    SimpleDescriptors,
+    ApplicationVersion,
+    ManufacturerName,
+    ModelName,
+    PowerSource,
+    FirmwareVersion,
+    ColorCapabilities,
+    ZoneEnroll,
+    Finished
+};
+
 enum class ZoneStatus
 {
     Unknown,
@@ -89,22 +105,13 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_descriptorReceived(false), m_endpointsReceived(false), m_interviewFinished(false), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
 
     inline quint16 networkAddress(void) { return m_networkAddress; }
     inline void setNetworkAddress(quint16 value) { m_networkAddress = value; }
-
-    inline bool descriptorReceived(void) { return m_descriptorReceived; }
-    inline void setDescriptorReceived(void) { m_descriptorReceived = true; }
-
-    inline bool endpointsReceived(void) { return m_endpointsReceived; }
-    inline void setEndpointsReceived(void) { m_endpointsReceived = true; }
-
-    inline bool interviewFinished(void) { return m_interviewFinished; }
-    inline void setInterviewFinished(bool value) { m_interviewFinished = value; }
 
     inline bool removed(void) { return m_removed; }
     inline void setRemoved(bool value) { m_removed = value; }
@@ -117,6 +124,9 @@ public:
 
     inline quint8 lqiRequestIndex(void) { return m_lqiRequestIndex; }
     inline void setLqiRequestIndex(quint8 value) { m_lqiRequestIndex = value; }
+
+    inline InterviewStatus interviewStatus(void) { return m_interviewStatus; }
+    inline void setInterviewStatus(InterviewStatus value) { m_interviewStatus = value; }
 
     inline LogicalType logicalType(void) { return m_logicalType; }
     inline void setLogicalType(LogicalType value) { m_logicalType = value; }
@@ -150,10 +160,12 @@ private:
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;
 
-    bool m_removed, m_supported, m_descriptorReceived, m_endpointsReceived, m_interviewFinished;
     quint8 m_interviewEndpointId, m_lqiRequestIndex;
+    bool m_removed, m_supported;
 
+    InterviewStatus m_interviewStatus;
     LogicalType m_logicalType;
+
     quint16 m_manufacturerCode;
     quint8 m_powerSource;
     QString m_firmware;
