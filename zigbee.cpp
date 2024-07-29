@@ -1321,7 +1321,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 payload.remove(0, offset + size);
             }
 
-            if (device->interviewStatus() != InterviewStatus::Finished && clusterId == CLUSTER_BASIC)
+            if (clusterId == CLUSTER_BASIC && device->interviewStatus() != InterviewStatus::Finished && static_cast <int> (device->interviewStatus()) >= static_cast <int> (InterviewStatus::BasicAttributes))
             {
                 device->setInterviewStatus(device->interviewStatus() == InterviewStatus::BasicAttributes ? InterviewStatus::ColorCapabilities : static_cast <InterviewStatus> (static_cast <int> (device->interviewStatus()) + 1));
                 interviewDevice(device);
