@@ -444,7 +444,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
-                if (it.value()->descriptorReceived())
+                if (it.value()->descriptorStatus() != DescriptorStatus::Pending)
                     continue;
 
                 device->setInterviewEndpointId(it.key());
@@ -801,7 +801,7 @@ bool ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
     }
 
     if (reporting->name() == "battery")
-        enqueueRequest(device, endpoint->id(), CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()));
+        enqueueRequest(device, endpoint->id(), CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()), "battery status");
 
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << reporting->name().toUtf8().constData() << "reporting configuration request finished successfully";
     return true;
@@ -1722,7 +1722,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
             }
 
             logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "simple descriptor" << (response->status ? "unavailable" : "received");
-            endpoint->setDescriptorReceived();
+            endpoint->setDescriptorStatus(DescriptorStatus::Received);
             interviewDevice(device);
             break;
         }
@@ -1741,12 +1741,9 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
 
                 for (int i = 0; i < data.length(); i++)
                 {
-                    quint8 endpointId = static_cast <quint8> (data.at(i));
-
-                    if (device->endpoints().find(endpointId) == device->endpoints().end())
-                        device->endpoints().insert(endpointId, Endpoint(new EndpointObject(endpointId, device)));
-
-                    list.append(QString::asprintf("0x%02x", endpointId));
+                    Endpoint endpoint = m_devices->endpoint(device, static_cast <quint8> (data.at(i)));
+                    endpoint->setDescriptorStatus(DescriptorStatus::Pending);
+                    list.append(QString::asprintf("0x%02x", endpoint->id()));
                 }
 
                 logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");

@@ -1065,19 +1065,6 @@ QJsonArray DeviceList::serializeDevices(void)
             QJsonObject json;
             QJsonArray bindings;
 
-            if (!it.value()->profileId() && !it.value()->deviceId())
-                continue;
-
-            json.insert("endpointId", it.key());
-            json.insert("profileId", it.value()->profileId());
-            json.insert("deviceId", it.value()->deviceId());
-
-            if (it.value()->colorCapabilities() && it.value()->colorCapabilities() != 0xFFFF)
-                json.insert("colorCapabilities", it.value()->colorCapabilities());
-
-            if (it.value()->zoneType())
-                json.insert("zoneType", it.value()->zoneType());
-
             if (!it.value()->inClusters().isEmpty())
             {
                 QJsonArray inClusters;
@@ -1117,7 +1104,23 @@ QJsonArray DeviceList::serializeDevices(void)
             if (!bindings.isEmpty())
                 json.insert("bindings", bindings);
 
-            endpoints.append(json);
+            if (it.value()->profileId())
+               json.insert("profileId", it.value()->profileId());
+
+            if (it.value()->deviceId())
+                json.insert("deviceId", it.value()->deviceId());
+
+            if (it.value()->colorCapabilities() && it.value()->colorCapabilities() != 0xFFFF)
+                json.insert("colorCapabilities", it.value()->colorCapabilities());
+
+            if (it.value()->zoneType())
+                json.insert("zoneType", it.value()->zoneType());
+
+            if (!json.isEmpty())
+            {
+                json.insert("endpointId", it.key());
+                endpoints.append(json);
+            }
         }
 
         if (!endpoints.isEmpty())
