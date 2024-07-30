@@ -175,7 +175,7 @@ private:
     void interviewFinished(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 
-    bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
+    bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
     bool configureReporting(const Endpoint &endpoint, const Reporting &reporting);
     bool configureDevice(const Device &device);
 

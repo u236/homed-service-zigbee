@@ -232,7 +232,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             quint16 value = qToLittleEndian <quint16> (dstName.toInt());
 
             if (value)
-                bindRequest(endpoint, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind);
+                bindRequest(endpoint, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind, true);
 
             break;
         }
@@ -242,7 +242,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             Device destination = m_devices->byName(dstName.toString());
 
             if (!destination.isNull() && !destination->removed() && destination->active())
-                bindRequest(endpoint, clusterId, destination->ieeeAddress(), dstEndpointId, unbind);
+                bindRequest(endpoint, clusterId, destination->ieeeAddress(), dstEndpointId, unbind, true);
 
             break;
         }
@@ -614,7 +614,7 @@ bool ZigBee::interviewQuirks(const Device &device)
         quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
         bool check = list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75);
 
-        if ((check && !bindRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF)) || (!check && !bindRequest(endpoint, CLUSTER_ON_OFF)))
+        if (check ? !bindRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF) : !bindRequest(endpoint, CLUSTER_ON_OFF))
             return false;
     }
 
@@ -694,7 +694,7 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
     device->timer()->stop();
 }
 
-bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind)
+bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind, bool manual)
 {
     const Device &device = endpoint->device();
 
@@ -723,6 +723,36 @@ bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
     }
 
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "finished successfully";
+
+    if (manual)
+    {
+        Binding binding(new BindingObject(clusterId, address, dstEndpointId));
+        bool check = true;
+
+        for (int i = 0; i < endpoint->bindings().count(); i++)
+        {
+            const Binding &item = endpoint->bindings().at(i);
+
+            if (!item->name().isEmpty() || item->clusterId() != binding->clusterId() || item->address() != binding->address() || item->endpointId() != binding->endpointId())
+                continue;
+
+            if (unbind)
+            {
+                endpoint->bindings().removeAt(i);
+                m_devices->storeDatabase();
+            }
+
+            check = false;
+            break;
+        }
+
+        if (check)
+        {
+            endpoint->bindings().append(binding);
+            m_devices->storeDatabase();
+        }
+    }
+
     return true;
 }
 
@@ -780,14 +810,30 @@ bool ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
 bool ZigBee::configureDevice(const Device &device)
 {
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
         for (int i = 0; i < it.value()->bindings().count(); i++)
-            if (!bindRequest(it.value(), it.value()->bindings().at(i)->clusterId()))
-                return false;
+        {
+            const Binding &binding = it.value()->bindings().at(i);
+
+            if (bindRequest(it.value(), binding->clusterId(), binding->address(), binding->endpointId()))
+                continue;
+
+            return false;
+        }
+    }
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
         for (int i = 0; i < it.value()->reportings().count(); i++)
-            if (!configureReporting(it.value(), it.value()->reportings().at(i)))
-                return false;
+        {
+            const Reporting &reporting = it.value()->reportings().at(i);
+
+            if (configureReporting(it.value(), reporting))
+                continue;
+
+            return false;
+        }
+    }
 
     return true;
 }
@@ -1477,6 +1523,9 @@ void ZigBee::coordinatorReady(void)
 
     for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
+        if (it.value()->removed()) // fix for old-style removed devices
+            continue;
+
         if (it.value()->logicalType() == LogicalType::Coordinator && it.key() != device->ieeeAddress())
         {
             logWarning << "Coordinator" << it.value()->ieeeAddress().toHex(':') << "removed";
@@ -1487,14 +1536,14 @@ void ZigBee::coordinatorReady(void)
             break;
     }
 
-    device->setManufacturerName(m_adapter->manufacturerName());
-    device->setModelName(m_adapter->modelName());
-    device->setDiscovery(false);
-    device->setCloud(false);
     device->setRemoved(false);
     device->setInterviewStatus(InterviewStatus::Finished);
     device->setLogicalType(LogicalType::Coordinator);
     device->setFirmware(m_adapter->firmware());
+    device->setManufacturerName(m_adapter->manufacturerName());
+    device->setModelName(m_adapter->modelName());
+    device->setDiscovery(false);
+    device->setCloud(false);
 
     connect(m_adapter, &Adapter::deviceJoined, this, &ZigBee::deviceJoined, Qt::UniqueConnection);
     connect(m_adapter, &Adapter::deviceLeft, this, &ZigBee::deviceLeft, Qt::UniqueConnection);

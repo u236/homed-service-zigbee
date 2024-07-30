@@ -13,10 +13,15 @@ class BindingObject
 public:
 
     BindingObject(const QString &name, quint16 clusterId) :
-        m_name(name), m_clusterId(clusterId) {}
+        m_name(name), m_clusterId(clusterId), m_endpointId(0x00) {}
+
+    BindingObject(quint16 clusterId, const QByteArray &address, quint8 endpointId) :
+        m_clusterId(clusterId), m_address(address), m_endpointId(endpointId) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
+    inline QByteArray address(void) { return m_address; }
+    inline quint8 endpointId(void) { return m_endpointId; }
 
     static void registerMetaTypes(void);
 
@@ -24,6 +29,8 @@ protected:
 
     QString m_name;
     quint16 m_clusterId;
+    QByteArray m_address;
+    quint8 m_endpointId;
 
 };
 

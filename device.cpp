@@ -1,3 +1,4 @@
+#include <QtEndian>
 #include <QFile>
 #include "actions/common.h"
 #include "actions/other.h"
@@ -194,10 +195,22 @@ void DeviceList::setupDevice(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
+        auto i = it.value()->bindings().begin();
+
+        while (i != it.value()->bindings().end())
+        {
+            if (!i->data()->name().isEmpty())
+            {
+                i = it.value()->bindings().erase(i);
+                continue;
+            }
+
+            i++;
+        }
+
         it.value()->timer()->stop();
         it.value()->properties().clear();
         it.value()->actions().clear();
-        it.value()->bindings().clear();
         it.value()->reportings().clear();
         it.value()->polls().clear();
         it.value()->exposes().clear();
@@ -880,51 +893,63 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
         if (json.contains("ieeeAddress") && json.contains("networkAddress"))
         {
             Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt()), json.value("name").toString(), json.value("removed").toBool()));
+            QJsonArray endpoints = json.value("endpoints").toArray(), neighbors = json.value("neighbors").toArray();
 
+            device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
+            device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
+            device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
+            device->setFirmware(json.value("firmware").toString());
+            device->setLastSeen(json.value("lastSeen").toInt());
+            device->setLinkQuality(json.value("linkQuality").toInt());
+            device->setVersion(static_cast <quint8> (json.value("version").toInt()));
+            device->setManufacturerName(json.value("manufacturerName").toString());
+            device->setModelName(json.value("modelName").toString());
             device->setNote(json.value("note").toString());
             device->setActive(json.value("active").toBool());
             device->setDiscovery(json.value("discovery").toBool());
             device->setCloud(json.value("cloud").toBool());
 
+            for (auto it = endpoints.begin(); it != endpoints.end(); it++)
+            {
+                QJsonObject json = it->toObject();
+
+                if (json.contains("endpointId"))
+                {
+                    quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
+                    Endpoint endpoint(new EndpointObject(endpointId, device));
+                    QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray(), bindings = json.value("bindings").toArray();
+
+                    endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
+                    endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
+                    endpoint->setColorCapabilities(static_cast <quint16> (json.value("colorCapabilities").toInt()));
+                    endpoint->setZoneType(static_cast <quint16> (json.value("zoneType").toInt()));
+
+                    for (int i = 0; i < inClusters.count(); i++)
+                        endpoint->inClusters().append(static_cast <quint16> (inClusters.at(i).toInt()));
+
+                    for (int i = 0; i < outClusters.count(); i++)
+                        endpoint->outClusters().append(static_cast <quint16> (outClusters.at(i).toInt()));
+
+                    for (int i = 0; i < bindings.count(); i++)
+                    {
+                        QJsonObject json = bindings.at(i).toObject();
+
+                        if (json.contains("groupId"))
+                        {
+                            quint16 groupId = qFromLittleEndian <quint16> (json.value("groupId").toInt());
+                            endpoint->bindings().append(Binding(new BindingObject(static_cast <quint16> (json.value("clusterId").toInt()), QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF)));
+                            continue;
+                        }
+
+                        endpoint->bindings().append(Binding(new BindingObject(static_cast <quint16> (json.value("clusterId").toInt()), QByteArray::fromHex(json.value("device").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()))));
+                    }
+
+                    device->endpoints().insert(endpointId, endpoint);
+                }
+            }
+
             if (!device->removed())
             {
-                QJsonArray endpoints = json.value("endpoints").toArray(), neighbors = json.value("neighbors").toArray();
-
-                device->setVersion(static_cast <quint8> (json.value("version").toInt()));
-                device->setManufacturerName(json.value("manufacturerName").toString());
-                device->setModelName(json.value("modelName").toString());
-                device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
-                device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
-                device->setPowerSource(static_cast <quint8> (json.value("powerSource").toInt()));
-                device->setFirmware(json.value("firmware").toString());
-                device->setLastSeen(json.value("lastSeen").toInt());
-                device->setLinkQuality(json.value("linkQuality").toInt());
-
-                for (auto it = endpoints.begin(); it != endpoints.end(); it++)
-                {
-                    QJsonObject json = it->toObject();
-
-                    if (json.contains("endpointId"))
-                    {
-                        quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
-                        Endpoint endpoint(new EndpointObject(endpointId, device));
-                        QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray();
-
-                        endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
-                        endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
-                        endpoint->setColorCapabilities(static_cast <quint16> (json.value("colorCapabilities").toInt()));
-                        endpoint->setZoneType(static_cast <quint16> (json.value("zoneType").toInt()));
-
-                        for (const QJsonValue &clusterId : inClusters)
-                            endpoint->inClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-                        for (const QJsonValue &clusterId : outClusters)
-                            endpoint->outClusters().append(static_cast <quint16> (clusterId.toInt()));
-
-                        device->endpoints().insert(endpointId, endpoint);
-                    }
-                }
-
                 for (auto it = neighbors.begin(); it != neighbors.end(); it++)
                 {
                     QJsonObject json = it->toObject();
@@ -991,116 +1016,121 @@ QJsonArray DeviceList::serializeDevices(void)
     for (auto it = begin(); it != end(); it++)
     {
         const Device &device = it.value();
-        QJsonObject json = {{"ieeeAddress", QString(device->ieeeAddress().toHex(':'))}, {"networkAddress", device->networkAddress()}};
+        QJsonObject json = {{"ieeeAddress", QString(device->ieeeAddress().toHex(':'))}, {"networkAddress", device->networkAddress()}, {"logicalType", static_cast <quint8> (device->logicalType())}};
+        QJsonArray endpoints;
+
+        if (device->name() != device->ieeeAddress().toHex(':'))
+            json.insert("name", device->name());
+
+        if (!device->manufacturerName().isEmpty())
+            json.insert("manufacturerName", device->manufacturerName());
+
+        if (!device->modelName().isEmpty())
+            json.insert("modelName", device->modelName());
+
+        if (!device->firmware().isEmpty())
+            json.insert("firmware", device->firmware());
 
         if (device->logicalType() != LogicalType::Coordinator)
         {
-            if (!device->note().isEmpty())
-                json.insert("note", device->note());
-
+            json.insert("supported", device->supported());
+            json.insert("interviewFinished", device->interviewStatus() == InterviewStatus::Finished ? true : false);
+            json.insert("manufacturerCode", device->manufacturerCode());
+            json.insert("powerSource", device->powerSource());
             json.insert("active", device->active());
             json.insert("discovery", device->discovery());
             json.insert("cloud", device->cloud());
+
+            if (device->removed())
+                json.insert("removed", true);
+
+            if (device->lastSeen())
+                json.insert("lastSeen", device->lastSeen());
+
+            if (device->linkQuality())
+                json.insert("linkQuality", device->linkQuality());
+
+            if (device->version())
+                json.insert("version", device->version());
+
+            if (!device->description().isEmpty())
+                json.insert("description", device->description());
+
+            if (!device->note().isEmpty())
+                json.insert("note", device->note());
         }
 
-        if (!device->removed())
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
-            json.insert("logicalType", static_cast <quint8> (device->logicalType()));
+            QJsonObject json;
+            QJsonArray bindings;
 
-            if (device->name() != device->ieeeAddress().toHex(':'))
-                json.insert("name", device->name());
+            if (!it.value()->profileId() && !it.value()->deviceId())
+                continue;
 
-            if (!device->manufacturerName().isEmpty())
-                json.insert("manufacturerName", device->manufacturerName());
+            json.insert("endpointId", it.key());
+            json.insert("profileId", it.value()->profileId());
+            json.insert("deviceId", it.value()->deviceId());
 
-            if (!device->modelName().isEmpty())
-                json.insert("modelName", device->modelName());
+            if (it.value()->colorCapabilities() && it.value()->colorCapabilities() != 0xFFFF)
+                json.insert("colorCapabilities", it.value()->colorCapabilities());
 
-            if (!device->firmware().isEmpty())
-                json.insert("firmware", device->firmware());
+            if (it.value()->zoneType())
+                json.insert("zoneType", it.value()->zoneType());
 
-            if (device->logicalType() != LogicalType::Coordinator)
+            if (!it.value()->inClusters().isEmpty())
             {
-                json.insert("interviewFinished", device->interviewStatus() == InterviewStatus::Finished ? true : false);
-                json.insert("supported", device->supported());
-                json.insert("manufacturerCode", device->manufacturerCode());
-                json.insert("powerSource", device->powerSource());
+                QJsonArray inClusters;
 
-                if (device->version())
-                    json.insert("version", device->version());
+                for (int i = 0; i < it.value()->inClusters().count(); i++)
+                    inClusters.append(it.value()->inClusters().at(i));
 
-                if (device->lastSeen())
-                    json.insert("lastSeen", device->lastSeen());
-
-                if (device->linkQuality())
-                    json.insert("linkQuality", device->linkQuality());
-
-                if (!device->description().isEmpty())
-                    json.insert("description", device->description());
+                json.insert("inClusters", inClusters);
             }
 
-            if (!device->endpoints().isEmpty())
+            if (!it.value()->outClusters().isEmpty())
             {
-                QJsonArray endpoints;
+                QJsonArray outClusters;
 
-                for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+                for (int i = 0; i < it.value()->outClusters().count(); i++)
+                    outClusters.append(it.value()->outClusters().at(i));
+
+                json.insert("outClusters", outClusters);
+            }
+
+            for (int i = 0; i < it.value()->bindings().count(); i++)
+            {
+                const Binding &binding = it.value()->bindings().at(i);
+
+                if (!binding->name().isEmpty())
+                    continue;
+
+                if (binding->endpointId() == 0xFF)
                 {
-                    QJsonObject json;
-
-                    if (!it.value()->profileId() && !it.value()->deviceId())
-                        continue;
-
-                    json.insert("endpointId", it.key());
-                    json.insert("profileId", it.value()->profileId());
-                    json.insert("deviceId", it.value()->deviceId());
-
-                    if (it.value()->colorCapabilities())
-                        json.insert("colorCapabilities", it.value()->colorCapabilities());
-
-                    if (it.value()->zoneType())
-                        json.insert("zoneType", it.value()->zoneType());
-
-                    if (!it.value()->inClusters().isEmpty())
-                    {
-                        QJsonArray inClusters;
-
-                        for (int i = 0; i < it.value()->inClusters().count(); i++)
-                            inClusters.append(it.value()->inClusters().at(i));
-
-                        json.insert("inClusters", inClusters);
-                    }
-
-                    if (!it.value()->outClusters().isEmpty())
-                    {
-                        QJsonArray outClusters;
-
-                        for (int i = 0; i < it.value()->outClusters().count(); i++)
-                            outClusters.append(it.value()->outClusters().at(i));
-
-                        json.insert("outClusters", outClusters);
-                    }
-
-                    endpoints.append(json);
+                    bindings.append(QJsonObject {{"clusterId", binding->clusterId()}, {"groupId", qFromLittleEndian <quint16> (*(reinterpret_cast <quint16*> (binding->address().data())))}});
+                    continue;
                 }
 
-                if (!endpoints.isEmpty())
-                    json.insert("endpoints", endpoints);
+                bindings.append(QJsonObject {{"clusterId", binding->clusterId()}, {"device", QString(binding->address().toHex(':'))}, {"endpointId", binding->endpointId()}});
             }
 
-            if (!device->neighbors().isEmpty())
-            {
-                QJsonArray neighbors;
+            if (!bindings.isEmpty())
+                json.insert("bindings", bindings);
 
-                for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
-                    neighbors.append(QJsonObject {{"networkAddress", it.key()}, {"linkQuality", it.value()}});
-
-                json.insert("neighbors", neighbors);
-            }
+            endpoints.append(json);
         }
-        else
+
+        if (!endpoints.isEmpty())
+            json.insert("endpoints", endpoints);
+
+        if (!device->removed() && !device->neighbors().isEmpty())
         {
-            json.insert("name", device->name());
-            json.insert("removed", true);
+            QJsonArray neighbors;
+
+            for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
+                neighbors.append(QJsonObject {{"networkAddress", it.key()}, {"linkQuality", it.value()}});
+
+            json.insert("neighbors", neighbors);
         }
 
         array.append(json);

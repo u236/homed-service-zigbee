@@ -199,6 +199,7 @@ public:
 
     Device byName(const QString &name);
     Device byNetwork(quint16 networkAddress);
+
     Endpoint endpoint(const Device &device, quint8 endpointId);
 
     void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
