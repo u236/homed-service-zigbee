@@ -317,7 +317,7 @@ void DeviceList::setupDevice(const Device &device)
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
 {
-    Device device = endpoint->device();
+    const Device &device = endpoint->device();
     QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), bindings = json.value("bindings").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), exposes = json.value("exposes").toArray();
     bool startTimer = false;
 

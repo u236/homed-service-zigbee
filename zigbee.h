@@ -175,11 +175,11 @@ private:
     void interviewFinished(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 
-    bool bindRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
-    bool configureReporting(const Device &device, quint8 endpointId, const Reporting &reporting);
+    bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false);
+    bool configureReporting(const Endpoint &endpoint, const Reporting &reporting);
     bool configureDevice(const Device &device);
-    bool parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 itemId, const QByteArray &data, bool command = false);
 
+    bool parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 itemId, const QByteArray &data, bool command = false);
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data);
     void clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QByteArray &payload);
     void globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, QByteArray payload);
