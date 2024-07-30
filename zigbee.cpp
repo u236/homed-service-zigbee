@@ -429,7 +429,6 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
                 return false;
             }
 
-            device->setInterviewStatus(InterviewStatus::ActiveEndpoints);
             return true;
 
         case InterviewStatus::ActiveEndpoints:
@@ -440,7 +439,6 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
                 return false;
             }
 
-            device->setInterviewStatus(InterviewStatus::SimpleDescriptors);
             return true;
 
         case InterviewStatus::SimpleDescriptors:
@@ -1619,14 +1617,16 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
         {
             const nodeDescriptorResponseStruct *response = reinterpret_cast <const nodeDescriptorResponseStruct*> (payload.constData());
 
-            if (device->interviewStatus() == InterviewStatus::Finished)
+            if (device->interviewStatus() != InterviewStatus::NodeDescriptor)
                 break;
 
             if (!response->status)
             {
                 device->setLogicalType(static_cast <LogicalType> (response->logicalType & 0x03));
                 device->setManufacturerCode(qFromLittleEndian(response->manufacturerCode));
+
                 logInfo << "Device" << device->name() << "node descriptor received, manufacturer code is" << QString::asprintf("0x%04x", device->manufacturerCode()) << "and logical type is" << QString(device->logicalType() == LogicalType::Router ? "router" : "end device");
+                device->setInterviewStatus(InterviewStatus::ActiveEndpoints);
                 interviewDevice(device);
                 break;
             }
@@ -1640,7 +1640,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
             const simpleDescriptorResponseStruct *response = reinterpret_cast <const simpleDescriptorResponseStruct*> (payload.constData());
             Endpoint endpoint = m_devices->endpoint(device, response->status ? device->interviewEndpointId() : response->endpointId);
 
-            if (device->interviewStatus() == InterviewStatus::Finished)
+            if (device->interviewStatus() != InterviewStatus::SimpleDescriptors)
                 break;
 
             if (!response->status)
@@ -1669,8 +1669,8 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 }
             }
 
-            endpoint->setDescriptorReceived();
             logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "simple descriptor" << (response->status ? "unavailable" : "received");
+            endpoint->setDescriptorReceived();
             interviewDevice(device);
             break;
         }
@@ -1679,7 +1679,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
         {
             const activeEndpointsResponseStruct *response = reinterpret_cast <const activeEndpointsResponseStruct*> (payload.constData());
 
-            if (device->interviewStatus() == InterviewStatus::Finished)
+            if (device->interviewStatus() != InterviewStatus::ActiveEndpoints)
                 break;
 
             if (!response->status)
@@ -1698,6 +1698,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 }
 
                 logInfo << "Device" << device->name() << "active endpoints received:" << list.join(", ");
+                device->setInterviewStatus(InterviewStatus::SimpleDescriptors);
                 interviewDevice(device);
                 break;
             }
