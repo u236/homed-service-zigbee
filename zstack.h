@@ -7,6 +7,8 @@
 
 #define ZSTACK_SKIP_BOOTLOADER                  0xEF
 #define ZSTACK_PACKET_FLAG                      0xFE
+
+#define ZSTACK_NOT_STARTED_AUTOMATICALLY        0x00
 #define ZSTACK_COORDINATOR_STARTED              0x09
 
 #define ZSTACK_AF_ACK_REQUEST                   0x10

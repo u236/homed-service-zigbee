@@ -239,10 +239,14 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         case ZSTACK_APP_CNF_BDB_COMMISSIONING:
         {
-            // TODO: check for network formation errors
+            if (data.at(2))
+                break;
 
-            if (!data.at(2) && m_status == ZSTACK_COORDINATOR_STARTED)
-                emit coordinatorReady();
+            switch (m_status)
+            {
+                case ZSTACK_NOT_STARTED_AUTOMATICALLY: logWarning << "Network not started, PAN ID collision detected"; break;
+                case ZSTACK_COORDINATOR_STARTED: emit coordinatorReady(); break;
+            };
 
             break;
         }
