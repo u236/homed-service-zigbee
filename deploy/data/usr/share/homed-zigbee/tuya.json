@@ -1021,7 +1021,7 @@
     },
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay",
-      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
+      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_mw1pqqqt", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["switchType", "powerOnStatus"],
@@ -1029,7 +1029,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
+      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_mw1pqqqt", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
