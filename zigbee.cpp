@@ -169,7 +169,7 @@ void ZigBee::setupDevice(const QString &deviceName, bool reportings)
 
     if (!reportings)
     {
-        logInfo << "Device" << device->name() << "configuration updated without reportings";
+        logInfo << "Device" << device->name() << "configuration updated (without reportings)";
         return;
     }
 
@@ -801,7 +801,7 @@ bool ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &repor
     }
 
     if (reporting->name() == "battery")
-        enqueueRequest(device, endpoint->id(), CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()), "battery status");
+        enqueueRequest(device, endpoint->id(), CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()), "battery status request");
 
     logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << reporting->name().toUtf8().constData() << "reporting configuration request finished successfully";
     return true;
@@ -1064,7 +1064,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                                 break;
 
                             default:
-                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << (commandId ? "remove" : "add") << "command status" << QString::asprintf("0x%02x", response->status) << "unrecognized";
+                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << (commandId ? "remove" : "add") << "group" << qFromLittleEndian(response->groupId) << "response status" << QString::asprintf("0x%02x", response->status) << "unrecognized";
                                 break;
                         }
 
@@ -1555,7 +1555,7 @@ void ZigBee::coordinatorReady(void)
     connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
     connect(m_pingTimer, &QTimer::timeout, this, &ZigBee::pingDevices, Qt::UniqueConnection);
 
-    logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':').constData();
+    logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':');
     m_adapter->setPermitJoin(m_devices->permitJoin());
 
     if (!m_requests.isEmpty())

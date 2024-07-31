@@ -51,7 +51,7 @@ QByteArray ActionsIAS::Warning::request(const QString &name, const QVariant &dat
         strobeLevel = 0;
     }
 
-    payload.warning = sirenMode << 4 |  strobe << 2 | sirenLevel;
+    payload.warning = sirenMode << 4 | strobe << 2 | sirenLevel;
     payload.duration = qToLittleEndian <quint16> (map.value("duration").toInt());
     payload.dutyCycle = static_cast <quint8> (map.value("dutyCycle").toInt());
     payload.strobeLevel = static_cast <quint8> (strobeLevel);

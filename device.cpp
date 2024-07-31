@@ -332,6 +332,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 {
     const Device &device = endpoint->device();
     QJsonArray properties = json.value("properties").toArray(), actions = json.value("actions").toArray(), bindings = json.value("bindings").toArray(), reportings = json.value("reportings").toArray(), polls = json.value("polls").toArray(), exposes = json.value("exposes").toArray();
+    int bindingIndex = 0;
     bool startTimer = false;
 
     for (auto it = properties.begin(); it != properties.end(); it++)
@@ -431,7 +432,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Binding binding(reinterpret_cast <BindingObject*> (QMetaType::create(type)));
-            endpoint->bindings().append(binding);
+            endpoint->bindings().insert(bindingIndex++, binding);
             continue;
         }
 
@@ -782,7 +783,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(property->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "properties recognized:" << list.join(", ");
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "properties recognized:" << list.join(", ").toUtf8().constData();
         }
 
         if (!it.value()->actions().isEmpty())
@@ -801,7 +802,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(action->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "actions recognized:" << list.join(", ");
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "actions recognized:" << list.join(", ").toUtf8().constData();
         }
 
         if (!it.value()->exposes().isEmpty())
@@ -829,7 +830,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(expose->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "exposes:" << list.join(", ");
+            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "exposes recognized:" << list.join(", ").toUtf8().constData();
         }
     }
 }
