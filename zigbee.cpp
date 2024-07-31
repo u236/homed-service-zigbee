@@ -515,7 +515,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
-                if (device->batteryPowered() || !it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) || it.value()->colorCapabilities() == 0xFFFF)
+                if (device->batteryPowered() || !it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) || it.value()->colorCapabilities() != 0xFFFF)
                     continue;
 
                 if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
@@ -969,17 +969,13 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
         case CLUSTER_COLOR_CONTROL:
 
-            if (attributeId == 0x400A)
+            if (attributeId == 0x400A && dataType == DATA_TYPE_16BIT_BITMAP)
             {
-                quint16 value = 0xFFFF;
+                quint16 value;
 
-                if (dataType == DATA_TYPE_16BIT_BITMAP)
-                {
-                    memcpy(&value, data.constData(), data.length());
-                    value = qFromLittleEndian(value);
-                }
+                memcpy(&value, data.constData(), sizeof(value));
+                endpoint->setColorCapabilities(qFromLittleEndian(value));
 
-                endpoint->setColorCapabilities(value);
                 logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "color capabilities:" << QString::asprintf("0x%04x", endpoint->colorCapabilities());
                 interviewDevice(device);
             }
@@ -1009,7 +1005,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                     if (dataType == DATA_TYPE_16BIT_ENUM)
                     {
                         quint16 value;
-                        memcpy(&value, data.constData(), data.length());
+                        memcpy(&value, data.constData(), sizeof(value));
                         endpoint->setZoneType(qFromLittleEndian(value));
                         logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "IAS zone type:" << QString::asprintf("0x%04x", endpoint->zoneType());
                     }
