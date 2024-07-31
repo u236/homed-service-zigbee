@@ -697,20 +697,34 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
 bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind, bool manual)
 {
     const Device &device = endpoint->device();
+    QString action = unbind ? "unbinding from " : "binding to ";
 
     m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
     m_replyId = m_requestId;
     m_replyReceived = false;
 
+    switch (address.length())
+    {
+        case 0: action.append("coordinator"); break;
+        case 2: action.append(QString::asprintf("group %d", qFromLittleEndian <quint16> (*(reinterpret_cast <const quint16*> (address.data()))))); break;
+
+        default:
+        {
+            const Device &device = m_devices->value(address);
+            action.append(QString::asprintf("device \"%s\" endpoint \"0x%02x\"", device.isNull() ? address.toHex(':').constData() : device->name().toUtf8().constData(), dstEndpointId ? dstEndpointId : 0x01)); break;
+            break;
+        }
+    }
+
     if (!m_adapter->bindRequest(m_requestId, device->networkAddress(), endpoint->id(), clusterId, address, dstEndpointId, unbind))
     {
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "request aborted";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << action.toUtf8().constData() << "request aborted";
         return false;
     }
 
     if (!m_replyReceived && !m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
     {
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "timed out";
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << action.toUtf8().constData() << "timed out";
         return false;
     }
 
@@ -718,11 +732,11 @@ bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
 
     if (m_requestStatus)
     {
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
+        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << action.toUtf8().constData() << "failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
         return false;
     }
 
-    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << (unbind ? "unbinding" : "binding") << "finished successfully";
+    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", clusterId) << action.toUtf8().constData() << "finished successfully";
 
     if (manual)
     {
