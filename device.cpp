@@ -184,11 +184,28 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
 
 void DeviceList::setupDevice(const Device &device)
 {
+    QMap <QString, QVariant> userOptions;
     QList <QDir> list = {m_externalDir, m_libraryDir};
     QString manufacturerName, modelName;
 
     if (device->logicalType() == LogicalType::Coordinator)
         return;
+
+    if (m_optionsFile.open(QFile::ReadOnly))
+    {
+        QString ieeeAddress = device->ieeeAddress().toHex(':');
+        QJsonObject json = QJsonDocument::fromJson(m_optionsFile.readAll()).object(), options = json.value(json.contains(ieeeAddress) ? ieeeAddress : device->name()).toObject();
+
+        for (auto it = options.begin(); it != options.end(); it++)
+        {
+            if (it.key().endsWith("Divider") && !it.value().toDouble())
+                continue;
+
+            userOptions.insert(it.key(), it.value().toVariant());
+        }
+
+        m_optionsFile.close();
+    }
 
     device->setSupported(false);
     device->options().clear();
@@ -286,6 +303,8 @@ void DeviceList::setupDevice(const Device &device)
                             device->options().insert(options.toVariantMap());
                     }
 
+                    device->options().insert(userOptions);
+
                     for (int i = 0; i < endpoints.count(); i++)
                         setupEndpoint(endpoint(device, static_cast <quint8> (endpoints.at(i).toInt())), json, endpoinId.type() == QJsonValue::Array);
 
@@ -296,22 +315,6 @@ void DeviceList::setupDevice(const Device &device)
                 }
             }
         }
-    }
-
-    if (m_optionsFile.open(QFile::ReadOnly))
-    {
-        QString ieeeAddress = device->ieeeAddress().toHex(':');
-        QJsonObject json = QJsonDocument::fromJson(m_optionsFile.readAll()).object(), options = json.value(json.contains(ieeeAddress) ? ieeeAddress : device->name()).toObject();
-
-        for (auto it = options.begin(); it != options.end(); it++)
-        {
-            if (it.key().endsWith("Divider") && !it.value().toDouble())
-                continue;
-
-            device->options().insert(it.key(), it.value().toVariant());
-        }
-
-        m_optionsFile.close();
     }
 
     if (device->options().contains("logicalType"))
