@@ -1228,7 +1228,7 @@
       "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "tuyaMagic": true}
     },
     {
-      "description":    "TUYA TS0121 Smart Plug with Power Monitoring",
+      "description":    "TUYA TS0121 Smart Plug with Power Monitoring Polling",
       "modelNames":     ["TS0121"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],

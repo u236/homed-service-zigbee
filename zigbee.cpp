@@ -223,7 +223,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    endpoint = m_devices->endpoint(device, endpointId);
+    endpoint = m_devices->endpoint(device, endpointId ? endpointId : 0x01);
 
     switch (dstName.type())
     {
@@ -693,6 +693,88 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
     device->timer()->stop();
 }
 
+bool ZigBee::configureDevice(const Device &device)
+{
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->bindings().count(); i++)
+        {
+            const Binding &binding = it.value()->bindings().at(i);
+
+            if (bindRequest(it.value(), binding->clusterId(), binding->address(), binding->endpointId()))
+                continue;
+
+            return false;
+        }
+    }
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->reportings().count(); i++)
+        {
+            const Reporting &reporting = it.value()->reportings().at(i);
+
+            if (configureReporting(it.value(), reporting))
+                continue;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)
+{
+    const Device &device = endpoint->device();
+    QMap <QString, QVariant> options = device->options().value(device->options().contains("reporting") ? "reporting" : QString(reporting->name()).append("Reporting")).toMap();
+    QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
+
+    for (int i = 0; i < reporting->attributes().count(); i++)
+    {
+        configureReportingStruct item;
+
+        item.direction = 0x00;
+        item.attributeId = qToLittleEndian(reporting->attributes().at(i));
+        item.dataType = reporting->dataType();
+        item.minInterval = qToLittleEndian <quint16> (options.contains("minInterval") ? options.value("minInterval").toInt() : reporting->minInterval());
+        item.maxInterval = qToLittleEndian <quint16> (options.contains("maxInterval") ? options.value("maxInterval").toInt() : reporting->maxInterval());
+        item.valueChange = qToLittleEndian <quint64> (options.contains("valueChange") ? options.value("valueChange").toInt() : reporting->valueChange());
+
+        request.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
+    }
+
+    m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
+    m_replyId = m_requestId;
+    m_replyReceived = false;
+
+    if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpoint->id(), reporting->clusterId(), request))
+    {
+        logWarning << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request aborted";
+        return false;
+    }
+
+    if (!m_replyReceived && !m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
+    {
+        logWarning << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request timed out";
+        return false;
+    }
+
+    m_requestId++;
+
+    if (m_requestStatus)
+    {
+        logWarning << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
+        return false;
+    }
+
+    if (reporting->name() == "battery")
+        enqueueRequest(device, endpoint->id(), CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()), "battery status request");
+
+    logInfo << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request finished successfully";
+    return true;
+}
+
 bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind, bool manual)
 {
     const Device &device = endpoint->device();
@@ -763,88 +845,6 @@ bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
         {
             endpoint->bindings().append(binding);
             m_devices->storeDatabase();
-        }
-    }
-
-    return true;
-}
-
-bool ZigBee::configureReporting(const Endpoint &endpoint, const Reporting &reporting)
-{
-    const Device &device = endpoint->device();
-    QMap <QString, QVariant> options = device->options().value(device->options().contains("reporting") ? "reporting" : QString(reporting->name()).append("Reporting")).toMap();
-    QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
-
-    for (int i = 0; i < reporting->attributes().count(); i++)
-    {
-        configureReportingStruct item;
-
-        item.direction = 0x00;
-        item.attributeId = qToLittleEndian(reporting->attributes().at(i));
-        item.dataType = reporting->dataType();
-        item.minInterval = qToLittleEndian <quint16> (options.contains("minInterval") ? options.value("minInterval").toInt() : reporting->minInterval());
-        item.maxInterval = qToLittleEndian <quint16> (options.contains("maxInterval") ? options.value("maxInterval").toInt() : reporting->maxInterval());
-        item.valueChange = qToLittleEndian <quint64> (options.contains("valueChange") ? options.value("valueChange").toInt() : reporting->valueChange());
-
-        request.append(reinterpret_cast <char*> (&item), sizeof(item) - sizeof(item.valueChange) + zclDataSize(item.dataType));
-    }
-
-    m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
-    m_replyId = m_requestId;
-    m_replyReceived = false;
-
-    if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpoint->id(), reporting->clusterId(), request))
-    {
-        logWarning << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request aborted";
-        return false;
-    }
-
-    if (!m_replyReceived && !m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
-    {
-        logWarning << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request timed out";
-        return false;
-    }
-
-    m_requestId++;
-
-    if (m_requestStatus)
-    {
-        logWarning << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
-        return false;
-    }
-
-    if (reporting->name() == "battery")
-        enqueueRequest(device, endpoint->id(), CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()), "battery status request");
-
-    logInfo << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request finished successfully";
-    return true;
-}
-
-bool ZigBee::configureDevice(const Device &device)
-{
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        for (int i = 0; i < it.value()->bindings().count(); i++)
-        {
-            const Binding &binding = it.value()->bindings().at(i);
-
-            if (bindRequest(it.value(), binding->clusterId(), binding->address(), binding->endpointId()))
-                continue;
-
-            return false;
-        }
-    }
-
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-    {
-        for (int i = 0; i < it.value()->reportings().count(); i++)
-        {
-            const Reporting &reporting = it.value()->reportings().at(i);
-
-            if (configureReporting(it.value(), reporting))
-                continue;
-
-            return false;
         }
     }
 

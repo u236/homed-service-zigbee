@@ -175,9 +175,9 @@ private:
     void interviewFinished(const Device &device);
     void interviewError(const Device &device, const QString &reason);
 
-    bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
-    bool configureReporting(const Endpoint &endpoint, const Reporting &reporting);
     bool configureDevice(const Device &device);
+    bool configureReporting(const Endpoint &endpoint, const Reporting &reporting);
+    bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
 
     bool parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 itemId, const QByteArray &data, bool command = false);
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data);
