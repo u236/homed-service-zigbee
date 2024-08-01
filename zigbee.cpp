@@ -694,6 +694,8 @@ void ZigBee::interviewError(const Device &device, const QString &reason)
 
 bool ZigBee::configureDevice(const Device &device)
 {
+    bool groups = false;
+
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
         for (int i = 0; i < it.value()->bindings().count(); i++)
@@ -709,6 +711,9 @@ bool ZigBee::configureDevice(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
+        if (!it.value()->groups().isEmpty())
+            groups = true;
+
         for (int i = 0; i < it.value()->reportings().count(); i++)
         {
             const Reporting &reporting = it.value()->reportings().at(i);
@@ -720,17 +725,10 @@ bool ZigBee::configureDevice(const Device &device)
         }
     }
 
-    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    if (groups && !device->batteryPowered())
     {
-        for (int i = 0; i < it.value()->groups().count(); i++)
-        {
-            quint16 groupId = it.value()->groups().at(i);
-
-            if (groupRequest(it.value(), groupId))
-                continue;
-
-            return false;
-        }
+        logInfo << device << "groups will be restored in 10 seconds...";
+        QTimer::singleShot(10000, this, [this, device] () { restoreGroups(device); });
     }
 
     return true;
@@ -870,19 +868,20 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
     QString action;
 
     m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
-    m_replyId = m_requestId;
-    m_replyReceived = false;
 
-    if (!removeAll)
+    if (removeAll)
     {
-        request = zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00);
-        action = QString("%1 group request").arg(remove ? "remove" : "add");
-        groupId = qFromLittleEndian(groupId);
+        m_replyReceived = false;
+        m_replyId = m_requestId;
+        request = zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04);
+        action = "remove all groups request";
     }
     else
     {
-        request = zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04);
-        action = "remove all groups request";
+        m_groupRequestFinished = false;
+        groupId = qToLittleEndian(groupId);
+        request = zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00);
+        action = QString("%1 group request").arg(remove ? "remove" : "add");
     }
 
     if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpoint->id(), CLUSTER_GROUPS, request))
@@ -891,7 +890,7 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
         return false;
     }
 
-    if ((!removeAll || !m_replyReceived) && !m_adapter->waitForSignal(this, removeAll ? SIGNAL(replyReceived()) : SIGNAL(groupRequestFinished()), NETWORK_REQUEST_TIMEOUT))
+    if (removeAll ? !m_replyReceived : !m_groupRequestFinished && !m_adapter->waitForSignal(this, removeAll ? SIGNAL(replyReceived()) : SIGNAL(groupRequestFinished()), NETWORK_REQUEST_TIMEOUT))
     {
         logWarning << device << action.toUtf8().constData() << "timed out";
         return false;
@@ -899,7 +898,13 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
 
     m_requestId++;
 
-    if (!removeAll)
+    if (removeAll)
+    {
+        logInfo << device << action.toUtf8().constData() << "finished successfully";
+        endpoint->groups().clear();
+        m_devices->storeDatabase();
+    }
+    else
     {
         bool check = true;
 
@@ -926,12 +931,6 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
             endpoint->groups().append(groupId);
             m_devices->storeDatabase();
         }
-    }
-    else
-    {
-        logInfo << device << action.toUtf8().constData() << "finished successfully";
-        endpoint->groups().clear();
-        m_devices->storeDatabase();
     }
 
     return true;
@@ -1153,6 +1152,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                                 break;
                         }
 
+                        m_groupRequestFinished = true;
                         m_groupsUpdated = response->status == STATUS_SUCCESS ? true : false;
                         emit groupRequestFinished();
                         break;
@@ -1572,6 +1572,21 @@ void ZigBee::rejoinHandler(const Device &device)
 
     if (device->options().value("tuyaDataQuery").toBool())
         enqueueRequest(device, 0x01, CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x03), "data query request");
+}
+
+void ZigBee::restoreGroups(const Device &device)
+{
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->groups().count(); i++)
+        {
+            if (groupRequest(it.value(), it.value()->groups().at(i)))
+                continue;
+
+            logWarning << device << "groups restore failed";
+            return;
+        }
+    }
 }
 
 void ZigBee::otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error)

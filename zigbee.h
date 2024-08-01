@@ -155,7 +155,7 @@ private:
 
     QMetaEnum m_events;
     quint8 m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
-    bool m_replyReceived, m_groupsUpdated, m_interPanLock;
+    bool m_replyReceived, m_groupRequestFinished, m_groupsUpdated, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin;
     bool m_debounce, m_discovery, m_cloud, m_debug;
@@ -190,6 +190,7 @@ private:
 
     void interviewTimeoutHandler(const Device &device);
     void rejoinHandler(const Device &device);
+    void restoreGroups(const Device &device);
 
     void otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error = QString());
     void blink(quint16 timeout);
