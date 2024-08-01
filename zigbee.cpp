@@ -259,8 +259,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    groupId = qFromLittleEndian(groupId);
-    enqueueRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00), QString("%1 group request").arg(remove ? "remove" : "add"));
+    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), groupId, remove);
 }
 
 void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
@@ -270,7 +269,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    enqueueRequest(device, endpointId ? endpointId : 0x01, CLUSTER_GROUPS, zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04), QString("remove all groups request"));
+    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, true, true);
 }
 
 void ZigBee::otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName, bool force)
@@ -721,6 +720,19 @@ bool ZigBee::configureDevice(const Device &device)
         }
     }
 
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->groups().count(); i++)
+        {
+            quint16 groupId = it.value()->groups().at(i);
+
+            if (groupRequest(it.value(), groupId))
+                continue;
+
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -846,6 +858,80 @@ bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
             endpoint->bindings().append(binding);
             m_devices->storeDatabase();
         }
+    }
+
+    return true;
+}
+
+bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove, bool removeAll)
+{
+    const Device &device = endpoint->device();
+    QByteArray request;
+    QString action;
+
+    m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
+    m_replyId = m_requestId;
+    m_replyReceived = false;
+
+    if (!removeAll)
+    {
+        request = zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, remove ? 0x03 : 0x00).append(reinterpret_cast <char*> (&groupId), sizeof(groupId)).append(remove ? 0 : 1, 0x00);
+        action = QString("%1 group request").arg(remove ? "remove" : "add");
+        groupId = qFromLittleEndian(groupId);
+    }
+    else
+    {
+        request = zclHeader(FC_CLUSTER_SPECIFIC, m_requestId, 0x04);
+        action = "remove all groups request";
+    }
+
+    if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpoint->id(), CLUSTER_GROUPS, request))
+    {
+        logWarning << device << action.toUtf8().constData() << "aborted";
+        return false;
+    }
+
+    if ((!removeAll || !m_replyReceived) && !m_adapter->waitForSignal(this, removeAll ? SIGNAL(replyReceived()) : SIGNAL(groupRequestFinished()), NETWORK_REQUEST_TIMEOUT))
+    {
+        logWarning << device << action.toUtf8().constData() << "timed out";
+        return false;
+    }
+
+    m_requestId++;
+
+    if (!removeAll)
+    {
+        bool check = true;
+
+        if (!m_groupsUpdated)
+            return true;
+
+        for (int i = 0; i < endpoint->groups().count(); i++)
+        {
+            if (endpoint->groups().at(i) != groupId)
+                continue;
+
+            if (remove)
+            {
+                endpoint->groups().removeAt(i);
+                m_devices->storeDatabase();
+            }
+
+            check = false;
+            break;
+        }
+
+        if (check)
+        {
+            endpoint->groups().append(groupId);
+            m_devices->storeDatabase();
+        }
+    }
+    else
+    {
+        logInfo << device << action.toUtf8().constData() << "finished successfully";
+        endpoint->groups().clear();
+        m_devices->storeDatabase();
     }
 
     return true;
@@ -1053,35 +1139,27 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 case 0x03:
                 {
                         const groupControlResponseStruct *response = reinterpret_cast <const groupControlResponseStruct*> (payload.constData());
+                        quint16 groupId = qFromLittleEndian(response->groupId);
 
                         switch (response->status)
                         {
-                            case STATUS_SUCCESS:
-                                logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "successfully" << (commandId ? "removed" : "added");
-                                break;
-
-                            case STATUS_INSUFFICIENT_SPACE:
-                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "not added, no free space available";
-                                break;
-
-                            case STATUS_DUPLICATE_EXISTS:
-                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "already exists";
-                                break;
-
-                            case STATUS_NOT_FOUND:
-                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "group" << qFromLittleEndian(response->groupId) << "not found";
-                                break;
+                            case STATUS_SUCCESS: logInfo << device << endpoint << "group" << groupId << "successfully" << (commandId ? "removed" : "added"); break;
+                            case STATUS_INSUFFICIENT_SPACE: logWarning << device << endpoint << "group" << groupId << "not added, no free space available"; break;
+                            case STATUS_DUPLICATE_EXISTS: logWarning << device << endpoint << "group" << groupId << "already exists";  break;
+                            case STATUS_NOT_FOUND: logWarning << device << endpoint << "group" << groupId << "not found"; break;
 
                             default:
-                                logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << (commandId ? "remove" : "add") << "group" << qFromLittleEndian(response->groupId) << "response status" << QString::asprintf("0x%02x", response->status) << "unrecognized";
+                                logWarning << device << endpoint << (commandId ? "remove" : "add") << "group" << groupId << "response status" << QString::asprintf("0x%02x", response->status) << "unrecognized";
                                 break;
                         }
 
+                        m_groupsUpdated = response->status == STATUS_SUCCESS ? true : false;
+                        emit groupRequestFinished();
                         break;
                 }
 
                 default:
-                    logWarning << "Unrecognized group control command" << QString::asprintf("0x%02x", commandId) << "received from device" << device->name() << "with payload:" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+                    logWarning << "Unrecognized group control command" << QString::asprintf("0x%02x", commandId) << "received from" << device << endpoint << "with payload:" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
                     break;
             }
 

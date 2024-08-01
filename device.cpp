@@ -918,7 +918,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                 {
                     quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
                     Endpoint endpoint(new EndpointObject(endpointId, device));
-                    QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray(), bindings = json.value("bindings").toArray();
+                    QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray(), bindings = json.value("bindings").toArray(), groups = json.value("groups").toArray();
 
                     endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
                     endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
@@ -943,6 +943,16 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                         }
 
                         endpoint->bindings().append(Binding(new BindingObject(static_cast <quint16> (json.value("clusterId").toInt()), QByteArray::fromHex(json.value("device").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()))));
+                    }
+
+                    for (int i = 0; i < groups.count(); i++)
+                    {
+                        quint16 groupId = static_cast <quint16> (groups.at(i).toInt());
+
+                        if (endpoint->groups().contains(groupId))
+                            continue;
+
+                        endpoint->groups().append(groupId);
                     }
 
                     device->endpoints().insert(endpointId, endpoint);
@@ -1064,7 +1074,7 @@ QJsonArray DeviceList::serializeDevices(void)
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
             QJsonObject json;
-            QJsonArray bindings;
+            QJsonArray bindings, groups;
 
             if (!it.value()->inClusters().isEmpty())
             {
@@ -1102,8 +1112,14 @@ QJsonArray DeviceList::serializeDevices(void)
                 bindings.append(QJsonObject {{"clusterId", binding->clusterId()}, {"device", QString(binding->address().toHex(':'))}, {"endpointId", binding->endpointId()}});
             }
 
+            for (int i = 0; i < it.value()->groups().count(); i++)
+                groups.append(it.value()->groups().at(i));
+
             if (!bindings.isEmpty())
                 json.insert("bindings", bindings);
+
+            if (!groups.isEmpty())
+                json.insert("groups", groups);
 
             if (it.value()->profileId())
                json.insert("profileId", it.value()->profileId());

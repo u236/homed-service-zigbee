@@ -155,7 +155,7 @@ private:
 
     QMetaEnum m_events;
     quint8 m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
-    bool m_replyReceived, m_interPanLock;
+    bool m_replyReceived, m_groupsUpdated, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin;
     bool m_debounce, m_discovery, m_cloud, m_debug;
@@ -178,6 +178,7 @@ private:
     bool configureDevice(const Device &device);
     bool configureReporting(const Endpoint &endpoint, const Reporting &reporting);
     bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
+    bool groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove = false, bool removeAll = false);
 
     bool parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 itemId, const QByteArray &data, bool command = false);
     void parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data);
@@ -223,6 +224,7 @@ signals:
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void statusUpdated(const QJsonObject &json);
     void replyReceived(void);
+    void groupRequestFinished(void);
 
 };
 

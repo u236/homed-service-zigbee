@@ -86,6 +86,7 @@ public:
     inline QList <Binding> &bindings(void) { return m_bindings; }
     inline QList <Reporting> &reportings(void) { return m_reportings; }
     inline QList <Poll> &polls(void) { return m_polls; }
+    inline QList <quint16> &groups(void) { return m_groups; }
 
 private:
 
@@ -106,6 +107,7 @@ private:
     QList <Binding> m_bindings;
     QList <Reporting> m_reportings;
     QList <Poll> m_polls;
+    QList <quint16> m_groups;
 
 };
 
