@@ -322,7 +322,7 @@ void DeviceList::setupDevice(const Device &device)
 
     if (!device->supported())
     {
-        logWarning << "Device" << device->name() << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
+        logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
         device->setDescription(QString("%1/%2").arg(device->manufacturerName(), device->modelName()));
         recognizeDevice(device);
     }
@@ -387,7 +387,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "property" << it->toString() << "unrecognized";
+        logWarning << device << endpoint << "property" << it->toString() << "unrecognized";
     }
 
     for (auto it = actions.begin(); it != actions.end(); it++)
@@ -422,7 +422,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "action" << it->toString() << "unrecognized";
+        logWarning << device << endpoint << "action" << it->toString() << "unrecognized";
     }
 
     for (auto it = bindings.begin(); it != bindings.end(); it++)
@@ -436,7 +436,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "binding" << it->toString() << "unrecognized";
+        logWarning << device << endpoint << "binding" << it->toString() << "unrecognized";
     }
 
     for (auto it = reportings.begin(); it != reportings.end(); it++)
@@ -450,7 +450,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "reporting" << it->toString() << "unrecognized";
+        logWarning << device << endpoint << "reporting" << it->toString() << "unrecognized";
     }
 
     for (auto it = polls.begin(); it != polls.end(); it++)
@@ -464,7 +464,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        logWarning << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "poll" << it->toString() << "unrecognized";
+        logWarning << device << endpoint << "poll" << it->toString() << "unrecognized";
     }
 
     for (auto it = exposes.begin(); it != exposes.end(); it++)
@@ -783,7 +783,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(property->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "properties recognized:" << list.join(", ").toUtf8().constData();
+            logInfo << device << it.value() << "properties recognized:" << list.join(", ").toUtf8().constData();
         }
 
         if (!it.value()->actions().isEmpty())
@@ -802,7 +802,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(action->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "actions recognized:" << list.join(", ").toUtf8().constData();
+            logInfo << device << it.value() << "actions recognized:" << list.join(", ").toUtf8().constData();
         }
 
         if (!it.value()->exposes().isEmpty())
@@ -830,7 +830,7 @@ void DeviceList::recognizeDevice(const Device &device)
                 list.append(expose->name());
             }
 
-            logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", it.value()->id()) << "exposes recognized:" << list.join(", ").toUtf8().constData();
+            logInfo << device << it.value() << "exposes recognized:" << list.join(", ").toUtf8().constData();
         }
     }
 }

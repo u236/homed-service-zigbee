@@ -256,4 +256,7 @@ signals:
 
 };
 
+inline QDebug operator << (QDebug debug, const Endpoint &endpoint) { return debug << "endpoint" << QString::asprintf("0x%02x", endpoint->id()); }
+inline QDebug operator << (QDebug debug, const Device &device) { return debug << "device" << device->name(); }
+
 #endif
