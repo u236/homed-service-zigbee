@@ -886,13 +886,13 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
 
     if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpoint->id(), CLUSTER_GROUPS, request))
     {
-        logWarning << device << action.toUtf8().constData() << "aborted";
+        logWarning << device << endpoint << action.toUtf8().constData() << "aborted";
         return false;
     }
 
     if (removeAll ? !m_replyReceived : !m_groupRequestFinished && !m_adapter->waitForSignal(this, removeAll ? SIGNAL(replyReceived()) : SIGNAL(groupRequestFinished()), NETWORK_REQUEST_TIMEOUT))
     {
-        logWarning << device << action.toUtf8().constData() << "timed out";
+        logWarning << device << endpoint << action.toUtf8().constData() << "timed out";
         return false;
     }
 
@@ -900,7 +900,7 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
 
     if (removeAll)
     {
-        logInfo << device << action.toUtf8().constData() << "finished successfully";
+        logInfo << device << endpoint << action.toUtf8().constData() << "finished successfully";
         endpoint->groups().clear();
         m_devices->storeDatabase();
     }
@@ -1144,7 +1144,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                         {
                             case STATUS_SUCCESS: logInfo << device << endpoint << "group" << groupId << "successfully" << (commandId ? "removed" : "added"); break;
                             case STATUS_INSUFFICIENT_SPACE: logWarning << device << endpoint << "group" << groupId << "not added, no free space available"; break;
-                            case STATUS_DUPLICATE_EXISTS: logWarning << device << endpoint << "group" << groupId << "already exists";  break;
+                            case STATUS_DUPLICATE_EXISTS: logWarning << device << endpoint << "group" << groupId << "already added";  break;
                             case STATUS_NOT_FOUND: logWarning << device << endpoint << "group" << groupId << "not found"; break;
 
                             default:

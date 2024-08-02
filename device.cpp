@@ -928,15 +928,15 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                     endpoint->setColorCapabilities(static_cast <quint16> (json.value("colorCapabilities").toInt()));
                     endpoint->setZoneType(static_cast <quint16> (json.value("zoneType").toInt()));
 
-                    for (int i = 0; i < inClusters.count(); i++)
-                        endpoint->inClusters().append(static_cast <quint16> (inClusters.at(i).toInt()));
+                    for (auto it = inClusters.begin(); it != inClusters.end(); it++)
+                        endpoint->inClusters().append(static_cast <quint16> (it->toInt()));
 
-                    for (int i = 0; i < outClusters.count(); i++)
-                        endpoint->outClusters().append(static_cast <quint16> (outClusters.at(i).toInt()));
+                    for (auto it = outClusters.begin(); it != outClusters.end(); it++)
+                        endpoint->outClusters().append(static_cast <quint16> (it->toInt()));
 
-                    for (int i = 0; i < bindings.count(); i++)
+                    for (auto it = bindings.begin(); it != bindings.end(); it++)
                     {
-                        QJsonObject json = bindings.at(i).toObject();
+                        QJsonObject json = it->toObject();
 
                         if (json.contains("groupId"))
                         {
@@ -948,9 +948,9 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                         endpoint->bindings().append(Binding(new BindingObject(static_cast <quint16> (json.value("clusterId").toInt()), QByteArray::fromHex(json.value("device").toString().toUtf8()), static_cast <quint8> (json.value("endpointId").toInt()))));
                     }
 
-                    for (int i = 0; i < groups.count(); i++)
+                    for (auto it = groups.begin(); it != groups.end(); it++)
                     {
-                        quint16 groupId = static_cast <quint16> (groups.at(i).toInt());
+                        quint16 groupId = static_cast <quint16> (it->toInt());
 
                         if (endpoint->groups().contains(groupId))
                             continue;
