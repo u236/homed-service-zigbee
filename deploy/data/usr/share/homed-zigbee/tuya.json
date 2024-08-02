@@ -992,6 +992,32 @@
       "modelNames":     ["_TZ3000_5k5vh43t", "_TZ3000_gszjt2xx", "_TZ3000_m0vaazab", "_TZ3000_misw04hq", "_TZ3000_nkkl7uzv", "_TZ3000_nlsszmzl", "_TZ3000_ufttklsz", "_TZ3000_wlquqiiz"]
     },
     {
+      "description":    "TUYA TS0001 Fingerbot",
+      "modelNames":     ["_TZ3210_dse8ogfy", "_TZ3210_j4pdtz9v"],
+      "properties":     ["status", "tuyaDataPoints"],
+      "actions":        ["status", "tuyaDataPoints"],
+      "exposes":        ["battery", "status", "operationMode", "reverse", "touchControl", "lowerLimit", "upperLimit", "delay"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "101":  [{"name": "operationMode", "type": "enum", "action": true}],
+                            "102":  [{"name": "lowerLimit", "type": "value", "action": true}],
+                            "103":  [{"name": "delay", "type": "value", "action": true}],
+                            "104":  [{"name": "reverse", "type": "enum", "action": true}],
+                            "105":  [{"name": "battery", "type": "value"}],
+                            "106":  [{"name": "upperLimit", "type": "value", "action": true}],
+                            "107":  [{"name": "touchControl", "type": "bool", "action": true}]
+
+                          },
+                          "operationMode": {"enum": ["click", "switch", "program"]},
+                          "lowerLimit": {"min": 50, "max": 100},
+                          "delay": {"min": 0, "max": 10},
+                          "reverse": {"enum": [false, true]},
+                          "upperLimit": {"min": 0, "max": 50},
+                          "tuyaMagic": true
+                        }
+    },
+    {
       "description":    "TUYA TS0001/TS0011 1-Channel Relay",
       "modelNames":     ["_TZ3000_3a9beq8a", "_TZ3000_46t1rvdu", "_TZ3000_4rbqgcuv", "_TZ3000_5ng23zjs", "_TZ3000_6axxqqi2", "_TZ3000_ark8nv4y", "_TZ3000_fdxihpp7", "_TZ3000_gjrubzje", "_TZ3000_hafsqare", "_TZ3000_hbxsdd6k", "_TZ3000_hktqahrq", "_TZ3000_ji4araar", "_TZ3000_m9af2l6g", "_TZ3000_majwnphg", "_TZ3000_mx3vgyea", "_TZ3000_npzfdcof", "_TZ3000_q6a3tepg", "_TZ3000_qmi1cfuq", "_TZ3000_qsp2pwtf", "_TZ3000_rmjr4ufz", "_TZ3000_skueekg3", "_TZ3000_tqlv4ug4", "_TZ3000_txpirhfq", "_TZ3000_tygpxwqa", "_TZ3000_v7gnj3ad", "_TZ3000_v7sopte0", "_TZ3000_zw7yf6yk"],
       "properties":     ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
