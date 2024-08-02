@@ -24,13 +24,14 @@
       "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo", "_TZE204_wbhaespm"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power", "frequency"],
+      "exposes":        ["switch", "energy", "producedEnergy", "voltage", "current", "power", "frequency"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "energy", "type": "value", "divider": 100}],
                             "6":    [{"name": "elictricity", "type": "raw"}],
                             "16":   [{"name": "status", "type": "bool", "action": true}],
+                            "102":  [{"name": "producedEnergy", "type": "value", "divider": 100}],
                             "103":  [{"name": "power", "type": "value", "divider": 100}],
                             "105":  [{"name": "frequency", "type": "value", "divider": 100}],
                             "111":  [{"name": "powerFactor", "type": "value", "divider": 10}]
@@ -75,12 +76,35 @@
       "modelNames":     ["_TZE200_bcusnqt8"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["energy", "voltage", "current", "power"],
+      "exposes":        ["energy", "producedEnergy", "voltage", "current", "power"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "energy", "type": "value", "divider": 100}],
+                            "2":    [{"name": "producedEnergy", "type": "value", "divider": 100}],
                             "6":    [{"name": "elictricity", "type": "raw"}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Electricity Meter (Type F)",
+      "modelNames":     ["_TZE204_81yrt3lo"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["voltage", "frequency", "energy_1", "energy_2", "producedEnergy_1", "producedEnergy_2", "current_1", "current_2", "power_1", "power_2"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "101":  [{"name": "power_1", "type": "value", "divider": 10}],
+                            "105":  [{"name": "power_1", "type": "value", "divider": 10}],
+                            "106":  [{"name": "energy_1", "type": "value", "divider": 100}],
+                            "107":  [{"name": "producedEnergy_1", "type": "value", "divider": 100}],
+                            "108":  [{"name": "energy_2", "type": "value", "divider": 100}],
+                            "109":  [{"name": "producedEnergy_2", "type": "value", "divider": 100}],
+                            "111":  [{"name": "frequency", "type": "value", "divider": 100}],
+                            "112":  [{"name": "voltage", "type": "value", "divider": 10}],
+                            "113":  [{"name": "current_1", "type": "value", "divider": 1000}],
+                            "114":  [{"name": "current_2", "type": "value", "divider": 1000}]
                           }
                         }
     },
