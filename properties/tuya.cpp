@@ -11,6 +11,7 @@ void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteAr
     {
         case 0x01:
         case 0x02:
+        case 0x05:
         case 0x06:
             data = parseData(header, payload.mid(sizeof(tuyaHeaderStruct)));
             break;

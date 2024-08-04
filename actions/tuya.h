@@ -11,7 +11,7 @@ namespace ActionsTUYA
 
     protected:
 
-        QByteArray makeRequest(quint8 transactionId, quint8 dataPoint, quint8 dataType, void *data, quint8 length = 0);
+        QByteArray makeRequest(quint8 transactionId, quint8 commandId, quint8 dataPoint, quint8 dataType, void *data, quint8 length = 0);
 
     };
 

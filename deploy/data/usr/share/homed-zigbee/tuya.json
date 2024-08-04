@@ -1009,11 +1009,12 @@
                             "107":  [{"name": "touchControl", "type": "bool", "action": true}]
 
                           },
-                          "operationMode": {"enum": ["click", "switch", "program"]},
+                          "operationMode": {"enum": ["click", "switch"]},
                           "lowerLimit": {"min": 50, "max": 100},
                           "delay": {"min": 0, "max": 10},
                           "reverse": {"enum": [false, true]},
                           "upperLimit": {"min": 0, "max": 50},
+                          "tuyaCustomCommand": true,
                           "tuyaMagic": true
                         }
     },
