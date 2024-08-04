@@ -323,6 +323,7 @@ private:
 
     QTimer *m_timer;
     quint8 m_version, m_stackStatus, m_sequenceId, m_acknowledgeId;
+    bool m_watchdog;
 
     QByteArray m_replyData;
     bool m_replyReceived, m_errorReceived;

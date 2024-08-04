@@ -26,6 +26,8 @@ static const uint16_t crcTable[256] =
 
 EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0)
 {
+    m_watchdog = config->value("zigbee/watchdog", true).toBool();
+
     m_config.append({EZSP_CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S,  qToLittleEndian <quint16> (0x005A)});
     m_config.append({EZSP_CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE,      qToLittleEndian <quint16> (0x0002)});
     m_config.append({EZSP_CONFIG_FRAGMENT_DELAY_MS,                    qToLittleEndian <quint16> (0x0032)});
@@ -226,7 +228,9 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
         control |= 0x08;
     }
 
-    handleError(QString("Request failed after %1 retries").arg(ASH_REQUEST_RETRIES));
+    if (m_watchdog)
+        handleError(QString("Request failed after %1 retries").arg(ASH_REQUEST_RETRIES));
+
     return false;
 }
 
