@@ -306,7 +306,7 @@ void Adapter::socketConnected(void)
     setsockopt(descriptor, SOL_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
     setsockopt(descriptor, SOL_TCP, TCP_KEEPCNT, &count, sizeof(count));
 
-    logInfo << "Successfully connected to" << m_adddress.toString();
+    logInfo << "Successfully connected to" << QString("%1:%2").arg(m_adddress.toString()).arg(m_port);
 
     m_connected = true;
     reset();
