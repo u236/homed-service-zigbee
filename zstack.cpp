@@ -7,7 +7,6 @@ ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_
 {
     quint32 channelList = qToLittleEndian <quint32> (1 << m_channel);
 
-    m_nvItems.insert(ZCD_NV_MARKER,            QByteArray(1, ZSTACK_CONFIGURATION_MARKER));
     m_nvItems.insert(ZCD_NV_PRECFGKEY,         m_networkKey);
     m_nvItems.insert(ZCD_NV_PRECFGKEYS_ENABLE, QByteArray(1, 0x01));
     m_nvItems.insert(ZCD_NV_PANID,             QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId)));
@@ -145,13 +144,6 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
     switch (command)
     {
-        case ZSTACK_ZDO_NODE_DESC_RSP:
-        case ZSTACK_ZDO_SIMPLE_DESC_RSP:
-        case ZSTACK_ZDO_ACTIVE_EP_RSP:
-        case ZSTACK_ZDO_MGMT_LQI_RSP:
-        case ZSTACK_ZDO_BIND_RSP:
-        case ZSTACK_ZDO_UNBIND_RSP:
-        case ZSTACK_ZDO_MGMT_LEAVE_RSP:
         case ZSTACK_ZDO_MGMT_PERMIT_JOIN_RSP:
         case ZSTACK_ZDO_MGMT_NWK_UPDATE_RSP:
         case ZSTACK_ZDO_SRC_RTG_IND:
@@ -401,18 +393,6 @@ bool ZStack::startCoordinator(void)
     }
     else
     {
-        zstackNvInitStruct request;
-
-        request.id = qToLittleEndian <quint16> (ZCD_NV_MARKER);
-        request.itemLength = qToLittleEndian <quint16> (static_cast <quint16> (m_nvItems.value(ZCD_NV_MARKER).length()));
-        request.dataLength = static_cast <quint8> (m_nvItems.value(ZCD_NV_MARKER).length());
-
-        if (!sendRequest(ZSTACK_SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(m_nvItems.value(ZCD_NV_MARKER))) || (m_replyStatus && m_replyStatus != 0x09))
-        {
-            logWarning << "NV item" << QString::asprintf("0x%04x", ZCD_NV_MARKER) << "init request failed";
-            return false;
-        }
-
         logInfo << "Starting new network...";
         m_clear = false;
 

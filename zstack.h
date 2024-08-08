@@ -1,7 +1,6 @@
 #ifndef ZSTACK_H
 #define ZSTACK_H
 
-#define ZSTACK_CONFIGURATION_MARKER             0x42
 #define ZSTACK_CLEAR_DELAY                      4000
 #define ZSTACK_REQUEST_TIMEOUT                  10000
 
@@ -11,14 +10,10 @@
 #define ZSTACK_NOT_STARTED_AUTOMATICALLY        0x00
 #define ZSTACK_COORDINATOR_STARTED              0x09
 
-#define ZSTACK_AF_ACK_REQUEST                   0x10
 #define ZSTACK_AF_DISCV_ROUTE                   0x20
-#define ZSTACK_AF_EN_SECURITY                   0x40
-#define ZSTACK_AF_SKIP_ROUTING                  0x80
 #define ZSTACK_AF_DEFAULT_RADIUS                0x0F
 
 #define ZSTACK_SYS_VERSION                      0x2102
-#define ZSTACK_SYS_OSAL_NV_ITEM_INIT            0x2107
 #define ZSTACK_SYS_OSAL_NV_READ                 0x2108
 #define ZSTACK_SYS_OSAL_NV_WRITE                0x2109
 #define ZSTACK_SYS_SET_TX_POWER                 0x2114
@@ -26,13 +21,6 @@
 #define ZSTACK_AF_DATA_REQUEST                  0x2401
 #define ZSTACK_AF_DATA_REQUEST_EXT              0x2402
 #define ZSTACK_AF_INTER_PAN_CTL                 0x2410
-#define ZSTACK_ZDO_NODE_DESC_REQ                0x2502
-#define ZSTACK_ZDO_SIMPLE_DESC_REQ              0x2504
-#define ZSTACK_ZDO_ACTIVE_EP_REQ                0x2505
-#define ZSTACK_ZDO_BIND_REQ                     0x2521
-#define ZSTACK_ZDO_UNBIND_REQ                   0x2522
-#define ZSTACK_ZDO_MGMT_LQI_REQ                 0x2531
-#define ZSTACK_ZDO_MGMT_LEAVE_REQ               0x2534
 #define ZSTACK_ZDO_MGMT_PERMIT_JOIN_REQ         0x2536
 #define ZSTACK_ZDO_MSG_CB_REGISTER              0x253E
 #define ZSTACK_ZDO_STARTUP_FROM_APP             0x2540
@@ -47,13 +35,6 @@
 #define ZSTACK_AF_DATA_CONFIRM                  0x4480
 #define ZSTACK_AF_INCOMING_MSG                  0x4481
 #define ZSTACK_AF_INCOMING_MSG_EXT              0x4482
-#define ZSTACK_ZDO_NODE_DESC_RSP                0x4582
-#define ZSTACK_ZDO_SIMPLE_DESC_RSP              0x4584
-#define ZSTACK_ZDO_ACTIVE_EP_RSP                0x4585
-#define ZSTACK_ZDO_BIND_RSP                     0x45A1
-#define ZSTACK_ZDO_UNBIND_RSP                   0x45A2
-#define ZSTACK_ZDO_MGMT_LQI_RSP                 0x45B1
-#define ZSTACK_ZDO_MGMT_LEAVE_RSP               0x45B4
 #define ZSTACK_ZDO_MGMT_PERMIT_JOIN_RSP         0x45B6
 #define ZSTACK_ZDO_MGMT_NWK_UPDATE_RSP          0x45B8
 #define ZSTACK_ZDO_STATE_CHANGE_IND             0x45C0
@@ -67,7 +48,6 @@
 #define ZSTACK_APP_CNF_BDB_COMMISSIONING        0x4F80
 
 #define ZCD_NV_STARTUP_OPTION                   0x0003
-#define ZCD_NV_MARKER                           0x0060
 #define ZCD_NV_PRECFGKEY                        0x0062
 #define ZCD_NV_PRECFGKEYS_ENABLE                0x0063
 #define ZCD_NV_PANID                            0x0083
@@ -156,13 +136,6 @@ struct zstackNvReplyStruct
 {
     quint8  status;
     quint8  length;
-};
-
-struct zstackNvInitStruct
-{
-    quint16 id;
-    quint16 itemLength;
-    quint8  dataLength;
 };
 
 struct zstackNvWriteStruct
