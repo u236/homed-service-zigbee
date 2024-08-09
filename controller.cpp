@@ -151,16 +151,16 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     }
     else if (subTopic.startsWith(QString("td/%1/").arg(serviceTopic())))
     {
-        QList <QString> list = subTopic.split('/');
+        QList <QString> list = subTopic.remove(QString("td/%1/").arg(serviceTopic())).split('/');
 
-        if (list.value(3) != "group")
+        if (list.value(0) != "group")
         {
             for (auto it = json.begin(); it != json.end(); it++)
             {
                 if (!it.value().toVariant().isValid())
                     continue;
 
-                m_zigbee->deviceAction(list.value(3), static_cast <quint8> (list.value(4).toInt()), it.key(), it.value().toVariant());
+                m_zigbee->deviceAction(list.value(0), static_cast <quint8> (list.value(1).toInt()), it.key(), it.value().toVariant());
             }
         }
         else
@@ -170,7 +170,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 if (!it.value().toVariant().isValid())
                     continue;
 
-                m_zigbee->groupAction(static_cast <quint16> (list.value(4).toInt()), it.key(), it.value().toVariant());
+                m_zigbee->groupAction(static_cast <quint16> (list.value(1).toInt()), it.key(), it.value().toVariant());
             }
         }
     }
