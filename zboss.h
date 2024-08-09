@@ -28,10 +28,13 @@
 #define ZBOSS_SET_PAN_ID                                0x000a
 #define ZBOSS_GET_LOCAL_IEEE_ADDR                       0x000b
 #define ZBOSS_SET_TX_POWER                              0x0011
+#define ZBOSS_SET_RX_ON_WHEN_IDLE                       0x0013
+#define ZBOSS_SET_ED_TIMEOUT                            0x0017
 #define ZBOSS_SET_NWK_KEY                               0x001b
 #define ZBOSS_GET_NWK_KEYS                              0x001e
 #define ZBOSS_NCP_RESET_IND                             0x002b
 #define ZBOSS_SET_TC_POLICY                             0x0032
+#define ZBOSS_SET_MAX_CHILDREN                          0x0034
 #define ZBOSS_AF_SET_SIMPLE_DESC                        0x0101
 #define ZBOSS_ZDO_NODE_DESC_REQ                         0x0204
 #define ZBOSS_ZDO_SIMPLE_DESC_REQ                       0x0205
