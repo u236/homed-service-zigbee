@@ -548,6 +548,15 @@ bool ZBoss::startCoordinator(void)
     if (!sendRequest(ZBOSS_SET_TX_POWER, QByteArray(1, static_cast <char> (m_power))) || m_replyStatus)
         logWarning << "Set TX power request failed";
 
+    if (!sendRequest(ZBOSS_SET_RX_ON_WHEN_IDLE, QByteArray(1, 0x01)) || m_replyStatus)
+        logWarning << "Set RX enabled when idle request failed";
+
+    if (!sendRequest(ZBOSS_SET_ED_TIMEOUT, QByteArray(1, 0x08)) || m_replyStatus)
+        logWarning << "Set end device timeout request failed";
+
+    if (!sendRequest(ZBOSS_SET_MAX_CHILDREN, QByteArray(1, 0x64)) || m_replyStatus)
+        logWarning << "Set maximum children number request failed";
+
     ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
