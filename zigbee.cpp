@@ -963,7 +963,7 @@ bool ZigBee::dataRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
         return false;
     }
 
-    logWarning << device << endpoint << name.toUtf8().constData() << "finised successfully";
+    logWarning << device << endpoint << name.toUtf8().constData() << "finished successfully";
     return true;
 }
 

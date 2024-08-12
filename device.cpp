@@ -1225,7 +1225,6 @@ void DeviceList::writeDatabase(void)
 {
     QJsonObject json = {{"devices", serializeDevices()}, {"names", m_names}, {"permitJoin", m_permitJoin}, {"timestamp", QDateTime::currentSecsSinceEpoch()}, {"version", SERVICE_VERSION}};
 
-    m_databaseTimer->start(STORE_DATABASE_INTERVAL);
     emit statusUpdated(json);
 
     if (!m_sync)

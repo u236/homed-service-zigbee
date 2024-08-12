@@ -1,7 +1,6 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#define STORE_DATABASE_INTERVAL     60000
 #define STORE_DATABASE_DELAY        20
 #define STORE_PROPERTIES_DELAY      1000
 
