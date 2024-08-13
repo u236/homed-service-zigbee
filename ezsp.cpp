@@ -24,7 +24,7 @@ static const uint16_t crcTable[256] =
     0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0), m_errorCount(0)
 {
     m_watchdog = config->value("zigbee/watchdog", true).toBool();
 
@@ -220,16 +220,21 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
         sendRequest(control, payload);
 
         if (waitForSignal(this, SIGNAL(dataReceived()), ASH_REQUEST_TIMEOUT) && m_replyReceived)
+        {
+            m_errorCount = 0;
             return true;
+        }
 
         if (m_errorReceived)
-            return false;
+            break;
 
         control |= 0x08;
     }
 
-    if (m_watchdog)
-        handleError(QString("Request failed after %1 retries").arg(ASH_REQUEST_RETRIES));
+    m_errorCount++;
+
+    if (m_watchdog && m_errorCount == EZSP_MAX_ERRORS)
+        handleError(QString("Watchdog triggered after %1 request errors...").arg(EZSP_MAX_ERRORS));
 
     return false;
 }
