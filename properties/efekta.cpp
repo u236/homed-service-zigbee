@@ -211,7 +211,7 @@ void PropertiesEfekta::VOCSensor::parseAttribte(quint16, quint16 attributeId, co
                 return;
 
             memcpy(&value, data.constData(), data.length());
-            map.insert(endpointId() == 0x01 ? "voc" : "eco2", qFromLittleEndian(value));
+            map.insert("voc", qFromLittleEndian(value));
             break;
         }
 

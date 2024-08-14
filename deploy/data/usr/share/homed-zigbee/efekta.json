@@ -29,7 +29,7 @@
       "properties":     ["temperature", "humidity", "co2", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
       "actions":        ["efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
       "bindings":       ["analogInput", "temperature", "humidity", "co2"],
-      "exposes":        ["temperature", "humidity", "co2", "eco2", "voc", "reportingDelay", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow", "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset", "vocLow", "vocHigh", "vocRelay", "vocRelayInvert"],
+      "exposes":        ["temperature", "humidity", "co2", "voc", "reportingDelay", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow", "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset", "vocLow", "vocHigh", "vocRelay", "vocRelayInvert"],
       "options":        {
                           "reportingDelay": {"min": 5, "max": 300},
                           "altitude": {"min": 0, "max": 3000, "step": 10},
@@ -46,12 +46,6 @@
                           "vocHigh": {"min": 0, "max": 1000, "step": 5}
                         },
       "endpointId":     1
-    },
-    {
-      "modelNames":     ["EFEKTA_CO2_Smart_Monitor_V2"],
-      "properties":     ["efektaVOCSensor"],
-      "bindings":       ["analogInput"],
-      "endpointId":     2
     },
     {
       "description":    "EFEKTA AQ Smart Monitor",
