@@ -186,6 +186,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 void Controller::updateAvailability(void)
 {
     qint64 time = QDateTime::currentSecsSinceEpoch();
+    QJsonObject json;
 
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
     {
@@ -203,7 +204,12 @@ void Controller::updateAvailability(void)
         if (it.value()->availability() == check && m_lastSeen.value(it.value()->ieeeAddress()) == it.value()->lastSeen())
             continue;
 
-        mqttPublish(mqttTopic("device/%1/%2").arg(serviceTopic(), m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), {{"lastSeen", it.value()->lastSeen()}, {"status", it.value()->availability() == Availability::Online ? "online" : "offline"}}, true);
+        json = {{"lastSeen", it.value()->lastSeen()}, {"status", it.value()->availability() == Availability::Online ? "online" : "offline"}};
+
+        if (it.value()->otaProgress() > 0)
+            json.insert("otaProgress", static_cast <quint8> (it.value()->otaProgress()));
+
+        mqttPublish(mqttTopic("device/%1/%2").arg(serviceTopic(), m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), json, true);
         m_lastSeen.insert(it.value()->ieeeAddress(), it.value()->lastSeen());
     }
 }

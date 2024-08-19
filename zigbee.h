@@ -9,6 +9,7 @@
 #define STATUS_LED_TIMEOUT              500
 
 #define TIME_OFFSET                     946684800
+#define OTA_MAX_LENGTH                  10485760
 #define IAS_ZONE_ID                     0x42
 
 #include <QMetaEnum>
@@ -112,6 +113,9 @@ public:
         interviewFinished,
         interviewError,
         interviewTimeout,
+        otaUpgradeStarted,
+        otaUpgradeFinished,
+        otaUpgradeError,
         clusterRequest,
         globalRequest,
         requestFinished
@@ -160,10 +164,6 @@ private:
     QString m_statusLedPin, m_blinkLedPin;
     bool m_debounce, m_discovery, m_cloud, m_debug;
 
-    Device m_otaDevice;
-    QFile m_otaFile;
-    bool m_otaForce;
-
     QMap <quint8, Request> m_requests;
 
     void enqueueRequest(const Device &device, quint8 endpointId, quint16 clusterId, const QByteArray &data, const QString &name = QString(), bool debug = false, quint16 manufacturerCode = 0, const Action &action = Action());
@@ -193,7 +193,7 @@ private:
     void rejoinHandler(const Device &device);
     void restoreGroups(const Device &device);
 
-    void otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error = QString());
+    void otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error = QString(), bool response = true);
     void blink(quint16 timeout);
 
 private slots:

@@ -116,7 +116,7 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_otaProgress(0), m_otaForce(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -162,6 +162,13 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
 
+    inline double otaProgress(void) { return m_otaProgress; }
+    inline void setOtaProgress(double value) { m_otaProgress = value; }
+
+    inline bool otaForce(void) { return m_otaForce; }
+    inline void setOtaForce(bool value) { m_otaForce = value; }
+
+    inline QByteArray &otaData(void) { return m_otaData; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
 private:
@@ -184,6 +191,10 @@ private:
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
 
+    double m_otaProgress;
+    bool m_otaForce;
+
+    QByteArray m_otaData;
     QMap <quint16, quint8> m_neighbors;
 
 };
