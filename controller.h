@@ -30,7 +30,7 @@ public:
         addGroup,
         removeGroup,
         removeAllGroups,
-        otaUpdate,
+        otaRefresh,
         otaUpgrade,
         getProperties,
         clusterRequest,

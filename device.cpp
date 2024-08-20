@@ -8,7 +8,7 @@
 #include "controller.h"
 #include "logger.h"
 
-void OTAData::update(const QDir &dir)
+void OTAData::refresh(const QDir &dir)
 {
     QList <QString> list = dir.entryList(QDir::Files);
     otaFileHeaderStruct header;
@@ -47,7 +47,7 @@ void OTAData::update(const QDir &dir)
         if (m_manufacturerCode != qFromLittleEndian(header.manufacturerCode) || m_imageType != qFromLittleEndian(header.imageType) || file.size() < qFromLittleEndian(header.imageSize))
             continue;
 
-        m_fileName = file.fileName();
+        m_fileName = list.at(i);
         m_fileVersion = qFromLittleEndian(header.fileVersion);
         m_imageSize = qFromLittleEndian(header.imageSize);
         break;
@@ -1020,6 +1020,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                     device->otaData().setManufacturerCode(static_cast <quint16> (ota.value("manufacturerCode").toInt()));
                     device->otaData().setImageType(static_cast <quint16> (ota.value("imageType").toInt()));
                     device->otaData().setCurrentVersion(static_cast <quint32> (ota.value("currentVersion").toInt()));
+                    device->otaData().setAvailable();
                 }
 
                 for (auto it = neighbors.begin(); it != neighbors.end(); it++)
@@ -1206,7 +1207,7 @@ QJsonArray DeviceList::serializeDevices(void)
 
         if (!device->removed())
         {
-            if (device->otaData().manufacturerCode() && device->otaData().imageType())
+            if (device->otaData().available())
             {
                 QJsonObject ota = {{"manufacturerCode", device->otaData().manufacturerCode()}, {"imageType", device->otaData().imageType()}, {"currentVersion", QJsonValue::fromVariant(device->otaData().currentVersion())}};
 

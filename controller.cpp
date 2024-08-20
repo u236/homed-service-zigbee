@@ -128,7 +128,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->removeAllGroups(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()));
                 break;
 
-            case Command::otaUpdate:
+            case Command::otaRefresh:
                 m_zigbee->otaControl(json.value("device").toString(), true, false);
                 break;
 

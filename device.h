@@ -54,7 +54,7 @@ class OTAData
 
 public:
 
-    OTAData(void) : m_manufacturerCode(0), m_imageType(0), m_currentVersion(0), m_progress(0), m_upgrade(false) {}
+    OTAData(void) : m_manufacturerCode(0), m_imageType(0), m_currentVersion(0), m_progress(0), m_available(false), m_upgrade(false) {}
 
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
     inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
@@ -68,6 +68,9 @@ public:
     inline double progress(void) { return m_progress; }
     inline void setProgress(double value) { m_progress = value; }
 
+    inline bool available(void) { return m_available; }
+    inline void setAvailable(void) { m_available = true; }
+
     inline bool upgrade(void) { return m_upgrade; }
     inline void setUpgrade(bool value) { m_upgrade = value; }
 
@@ -78,7 +81,7 @@ public:
     inline quint32 imageOffset(void) { return m_imageOffset; }
     inline quint32 imageSize(void) { return m_imageSize; }
 
-    void update(const QDir &dir);
+    void refresh(const QDir &dir);
 
 private:
 
@@ -86,7 +89,7 @@ private:
     quint32 m_currentVersion;
 
     double m_progress;
-    bool m_upgrade;
+    bool m_available, m_upgrade;
 
     QString m_fileName;
     quint32 m_fileVersion, m_imageOffset, m_imageSize;

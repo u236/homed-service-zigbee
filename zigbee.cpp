@@ -272,7 +272,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, true, true);
 }
 
-void ZigBee::otaControl(const QString &deviceName, bool update, bool upgrade)
+void ZigBee::otaControl(const QString &deviceName, bool refresh, bool upgrade)
 {
     const Device &device = m_devices->byName(deviceName);
     Endpoint endpoint;
@@ -280,7 +280,7 @@ void ZigBee::otaControl(const QString &deviceName, bool update, bool upgrade)
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    if (update)
+    if (refresh)
         device->otaData().clearFileName();
 
     device->otaData().setUpgrade(upgrade);
@@ -1224,17 +1224,19 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     device->otaData().setManufacturerCode(qFromLittleEndian(request->manufacturerCode));
                     device->otaData().setImageType(qFromLittleEndian(request->imageType));
                     device->otaData().setCurrentVersion(qFromLittleEndian(request->currentVersion));
+                    device->otaData().setAvailable();
 
                     logInfo << device << "OTA upgrade image request received, manufacturer code is" << QString::asprintf("0x%04x", device->otaData().manufacturerCode()) << "and image type is" << QString::asprintf("0x%04x", device->otaData().imageType());
 
                     if (device->otaData().fileName().isEmpty())
-                        device->otaData().update(m_devices->otaDir());
+                        device->otaData().refresh(m_devices->otaDir());
 
                     m_devices->storeDatabase();
 
                     if (device->otaData().fileName().isEmpty())
                     {
-                        otaError(endpoint, manufacturerCode, transactionId, commandId, "OTA upgrade image file not found");
+                        logInfo << device << "OTA upgrade image file not found";
+                        otaError(endpoint, manufacturerCode, transactionId, commandId);
                         break;
                     }
 
@@ -1242,7 +1244,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
                     if (device->otaData().currentVersion() == device->otaData().fileVersion() || !device->otaData().upgrade())
                     {
-                        otaError(endpoint, manufacturerCode, transactionId, commandId, QString::asprintf("OTA upgrade %s", device->otaData().upgrade() ? "not started, version match" : "skipped"));
+                        logInfo << device << "OTA upgrade" << (device->otaData().upgrade() ? "not started, version match" : "skipped");
+                        otaError(endpoint, manufacturerCode, transactionId, commandId);
                         break;
                     }
 
@@ -1261,9 +1264,15 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 case 0x03:
                 {
                     const otaImageBlockRequestStruct *request = reinterpret_cast <const otaImageBlockRequestStruct*> (payload.constData());
-                    otaImageBlockResponseStruct response;
-                    QFile file(device->otaData().fileName());
+                    QFile file(QString("%1/%2").arg(m_devices->otaDir().path(), device->otaData().fileName()));
                     QByteArray buffer;
+                    otaImageBlockResponseStruct response;
+
+                    if (file.fileName().isEmpty())
+                    {
+                        otaError(endpoint, manufacturerCode, transactionId, commandId);
+                        break;
+                    }
 
                     if (!file.open(QFile::ReadOnly))
                     {
@@ -1291,6 +1300,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 case 0x06:
                 {
                     const otaUpgradeEndRequestStruct *request = reinterpret_cast <const otaUpgradeEndRequestStruct*> (payload.constData());
+                    quint32 time = qToLittleEndian <quint32> (QDateTime::currentSecsSinceEpoch() - TIME_OFFSET);
                     otaUpgradeEndResponseStruct response;
 
                     if (request->status)
@@ -1302,8 +1312,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     response.manufacturerCode = request->manufacturerCode;
                     response.imageType = request->imageType;
                     response.fileVersion = request->fileVersion;
-                    response.currentTime = 0;
-                    response.upgradeTime = 0;
+                    response.currentTime = time;
+                    response.upgradeTime = time;
 
                     logInfo << device << "OTA upgrade finished successfully";
                     device->setInterviewStatus(InterviewStatus::BasicAttributes);
