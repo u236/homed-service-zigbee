@@ -139,8 +139,7 @@ public:
     void bindingControl(const QString &deviceName, quint8 endpointId, quint16 clusterId, const QVariant &dstAddress, quint8 dstEndpointId, bool unbind);
     void groupControl(const QString &deviceName, quint8 endpointId, quint16 groupId, bool remove);
     void removeAllGroups(const QString &deviceName, quint8 endpointId);
-
-    void otaUpgrade(const QString &deviceName, quint8 endpointId, const QString &fileName, bool force);
+    void otaControl(const QString &deviceName, bool update, bool upgrade);
     void getProperties(const QString &deviceName);
 
     void clusterRequest(const QString &deviceName, quint8 endpointId, quint16 clusterId, quint16 manufacturerCode, quint8 commandId, const QByteArray &payload, bool global);

@@ -49,6 +49,50 @@ enum class ZoneStatus
     Enrolled
 };
 
+class OTAData
+{
+
+public:
+
+    OTAData(void) : m_manufacturerCode(0), m_imageType(0), m_currentVersion(0), m_progress(0), m_upgrade(false) {}
+
+    inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
+    inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
+
+    inline quint16 imageType(void) { return m_imageType; }
+    inline void setImageType(quint16 value) { m_imageType = value; }
+
+    inline quint32 currentVersion(void) { return m_currentVersion; }
+    inline void setCurrentVersion(quint32 value) { m_currentVersion = value; }
+
+    inline double progress(void) { return m_progress; }
+    inline void setProgress(double value) { m_progress = value; }
+
+    inline bool upgrade(void) { return m_upgrade; }
+    inline void setUpgrade(bool value) { m_upgrade = value; }
+
+    inline QString fileName(void) { return m_fileName; }
+    inline void clearFileName(void) { m_fileName.clear(); }
+
+    inline quint32 fileVersion(void) { return m_fileVersion; }
+    inline quint32 imageOffset(void) { return m_imageOffset; }
+    inline quint32 imageSize(void) { return m_imageSize; }
+
+    void update(const QDir &dir);
+
+private:
+
+    quint16 m_manufacturerCode, m_imageType;
+    quint32 m_currentVersion;
+
+    double m_progress;
+    bool m_upgrade;
+
+    QString m_fileName;
+    quint32 m_fileVersion, m_imageOffset, m_imageSize;
+
+};
+
 class EndpointObject : public AbstractEndpointObject, public EndpointDataObject
 {
 
@@ -116,7 +160,7 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_otaProgress(0), m_otaForce(false) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -162,13 +206,7 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
 
-    inline double otaProgress(void) { return m_otaProgress; }
-    inline void setOtaProgress(double value) { m_otaProgress = value; }
-
-    inline bool otaForce(void) { return m_otaForce; }
-    inline void setOtaForce(bool value) { m_otaForce = value; }
-
-    inline QByteArray &otaData(void) { return m_otaData; }
+    inline OTAData &otaData(void) { return m_otaData; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
 private:
@@ -191,10 +229,7 @@ private:
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
 
-    double m_otaProgress;
-    bool m_otaForce;
-
-    QByteArray m_otaData;
+    OTAData m_otaData;
     QMap <quint16, quint8> m_neighbors;
 
 };
@@ -208,6 +243,8 @@ public:
     DeviceList(QSettings *config, QObject *parent);
     ~DeviceList(void);
 
+    inline QDir otaDir(void) { return m_otaDir; }
+
     inline bool names(void) { return m_names; }
     inline void setNames(bool value) { m_names = value; }
 
@@ -220,11 +257,9 @@ public:
 
     Device byName(const QString &name);
     Device byNetwork(quint16 networkAddress);
-
     Endpoint endpoint(const Device &device, quint8 endpointId);
 
     void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
-
     void setupDevice(const Device &device);
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
 
@@ -240,7 +275,7 @@ private:
     QTimer *m_databaseTimer, *m_propertiesTimer;
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
-    QDir m_externalDir, m_libraryDir;
+    QDir m_otaDir, m_externalDir, m_libraryDir;
     bool m_names, m_permitJoin, m_sync;
 
     QMap <QString, QVariant> m_exposeOptions;

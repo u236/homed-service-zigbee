@@ -1,3 +1,4 @@
+#include <math.h>
 #include "controller.h"
 #include "logger.h"
 
@@ -127,8 +128,12 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->removeAllGroups(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()));
                 break;
 
+            case Command::otaUpdate:
+                m_zigbee->otaControl(json.value("device").toString(), true, false);
+                break;
+
             case Command::otaUpgrade:
-                m_zigbee->otaUpgrade(json.value("device").toString(), static_cast <quint8> (json.value("endpointId").toInt()), json.value("fileName").toString(), json.value("force").toBool());
+                m_zigbee->otaControl(json.value("device").toString(), false, true);
                 break;
 
             case  Command::getProperties:
@@ -206,8 +211,8 @@ void Controller::updateAvailability(void)
 
         json = {{"lastSeen", it.value()->lastSeen()}, {"status", it.value()->availability() == Availability::Online ? "online" : "offline"}};
 
-        if (it.value()->otaProgress() > 0)
-            json.insert("otaProgress", static_cast <quint8> (it.value()->otaProgress()));
+        if (it.value()->otaData().progress() > 0)
+            json.insert("otaProgress", round(it.value()->otaData().progress()));
 
         mqttPublish(mqttTopic("device/%1/%2").arg(serviceTopic(), m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), json, true);
         m_lastSeen.insert(it.value()->ieeeAddress(), it.value()->lastSeen());

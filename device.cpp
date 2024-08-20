@@ -8,6 +8,52 @@
 #include "controller.h"
 #include "logger.h"
 
+void OTAData::update(const QDir &dir)
+{
+    QList <QString> list = dir.entryList(QDir::Files);
+    otaFileHeaderStruct header;
+
+    for (int i = 0; i < list.count(); i++)
+    {
+        QFile file(QString("%1/%2").arg(dir.path(), list.at(i)));
+
+        m_fileName.clear();
+        m_fileVersion = 0;
+        m_imageOffset = 0;
+
+        if (!file.open(QFile::ReadOnly))
+            continue;
+
+        while (m_imageOffset < file.size())
+        {
+            file.seek(m_imageOffset);
+
+            if (file.read(4) == QByteArray::fromHex("1ef1ee0b"))
+                break;
+
+            m_imageOffset++;
+        }
+
+        if (m_imageOffset == file.size())
+        {
+            file.close();
+            continue;
+        }
+
+        file.seek(m_imageOffset);
+        memcpy(&header, file.read(sizeof(header)).constData(), sizeof(header));
+        file.close();
+
+        if (m_manufacturerCode != qFromLittleEndian(header.manufacturerCode) || m_imageType != qFromLittleEndian(header.imageType) || file.size() < qFromLittleEndian(header.imageSize))
+            continue;
+
+        m_fileName = file.fileName();
+        m_fileVersion = qFromLittleEndian(header.fileVersion);
+        m_imageSize = qFromLittleEndian(header.imageSize);
+        break;
+    }
+}
+
 DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
 {
     QFile file(m_config->value("device/expose", "/usr/share/homed-common/expose.json").toString());
@@ -22,6 +68,8 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     m_databaseFile.setFileName(m_config->value("device/database", "/opt/homed-zigbee/database.json").toString());
     m_propertiesFile.setFileName(m_config->value("device/properties", "/opt/homed-zigbee/properties.json").toString());
     m_optionsFile.setFileName(m_config->value("device/options", "/opt/homed-zigbee/options.json").toString());
+
+    m_otaDir.setPath(m_config->value("device/ota", "/opt/homed-zigbee/ota").toString());
     m_externalDir.setPath(m_config->value("device/external", "/opt/homed-zigbee/external").toString());
     m_libraryDir.setPath(m_config->value("device/library", "/usr/share/homed-zigbee").toString());
 
@@ -897,7 +945,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
         if (json.contains("ieeeAddress") && json.contains("networkAddress"))
         {
             Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt()), json.value("name").toString(), json.value("removed").toBool()));
-            QJsonArray endpoints = json.value("endpoints").toArray(), neighbors = json.value("neighbors").toArray();
+            QJsonArray endpoints = json.value("endpoints").toArray();
 
             device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
             device->setManufacturerCode(static_cast <quint16> (json.value("manufacturerCode").toInt()));
@@ -964,6 +1012,16 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
             if (!device->removed())
             {
+                QJsonObject ota = json.value("ota").toObject();
+                QJsonArray neighbors = json.value("neighbors").toArray();
+
+                if (!ota.isEmpty())
+                {
+                    device->otaData().setManufacturerCode(static_cast <quint16> (ota.value("manufacturerCode").toInt()));
+                    device->otaData().setImageType(static_cast <quint16> (ota.value("imageType").toInt()));
+                    device->otaData().setCurrentVersion(static_cast <quint32> (ota.value("currentVersion").toInt()));
+                }
+
                 for (auto it = neighbors.begin(); it != neighbors.end(); it++)
                 {
                     QJsonObject json = it->toObject();
@@ -1146,14 +1204,30 @@ QJsonArray DeviceList::serializeDevices(void)
         if (!endpoints.isEmpty())
             json.insert("endpoints", endpoints);
 
-        if (!device->removed() && !device->neighbors().isEmpty())
+        if (!device->removed())
         {
-            QJsonArray neighbors;
+            if (device->otaData().manufacturerCode() && device->otaData().imageType())
+            {
+                QJsonObject ota = {{"manufacturerCode", device->otaData().manufacturerCode()}, {"imageType", device->otaData().imageType()}, {"currentVersion", QJsonValue::fromVariant(device->otaData().currentVersion())}};
 
-            for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
-                neighbors.append(QJsonObject {{"networkAddress", it.key()}, {"linkQuality", it.value()}});
+                if (!device->otaData().fileName().isEmpty())
+                {
+                    ota.insert("fileName", device->otaData().fileName());
+                    ota.insert("fileVersion", QJsonValue::fromVariant(device->otaData().fileVersion()));
+                }
 
-            json.insert("neighbors", neighbors);
+                json.insert("ota", ota);
+            }
+
+            if (!device->neighbors().isEmpty())
+            {
+                QJsonArray neighbors;
+
+                for (auto it = device->neighbors().begin(); it != device->neighbors().end(); it++)
+                    neighbors.append(QJsonObject {{"networkAddress", it.key()}, {"linkQuality", it.value()}});
+
+                json.insert("neighbors", neighbors);
+            }
         }
 
         array.append(json);

@@ -204,7 +204,7 @@ struct otaNextImageRequestStruct
     quint8  fieldControl;
     quint16 manufacturerCode;
     quint16 imageType;
-    quint32 fileVersion;
+    quint32 currentVersion;
 };
 
 struct otaNextImageResponseStruct
