@@ -1030,8 +1030,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 {
     const Device &device = endpoint->device();
 
-    if (m_debug)
-        logInfo << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
+    logDebug(m_debug) << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
 
     if (device->interviewStatus() == InterviewStatus::Finished)
     {
@@ -1039,16 +1038,13 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
         {
             QDateTime now = QDateTime::currentDateTime();
             quint32 value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - TIME_OFFSET);
-
-            if (m_debug)
-                logInfo << device << "requested EFEKTA time synchronization";
-
+            logDebug(m_debug) << device << "requested EFEKTA time synchronization";
             enqueueRequest(device, endpoint->id(), CLUSTER_TIME, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_UTC_TIME, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))));
             return;
         }
 
-        if (!parseProperty(endpoint, clusterId, transactionId, attributeId, data) && m_debug)
-            logWarning << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+        if (!parseProperty(endpoint, clusterId, transactionId, attributeId, data))
+            logDebug(m_debug) << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
 
         return;
     }
@@ -1168,8 +1164,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 {
     const Device &device = endpoint->device();
 
-    if (m_debug)
-        logInfo << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':')) << "and transaction id" << transactionId;
+    logDebug(m_debug) << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "received with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':')) << "and transaction id" << transactionId;
 
     switch (clusterId)
     {
@@ -1226,7 +1221,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     device->otaData().setCurrentVersion(qFromLittleEndian(request->currentVersion));
                     device->otaData().setAvailable();
 
-                    logInfo << device << "OTA upgrade image request received, manufacturer code is" << QString::asprintf("0x%04x", device->otaData().manufacturerCode()) << "and image type is" << QString::asprintf("0x%04x", device->otaData().imageType());
+                    logDebug(m_debug) << device << "OTA upgrade image request received, manufacturer code is" << QString::asprintf("0x%04x", device->otaData().manufacturerCode()) << "and image type is" << QString::asprintf("0x%04x", device->otaData().imageType());
 
                     if (device->otaData().fileName().isEmpty())
                         device->otaData().refresh(m_devices->otaDir());
@@ -1235,16 +1230,16 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
                     if (device->otaData().fileName().isEmpty())
                     {
-                        logInfo << device << "OTA upgrade image file not found";
+                        logDebug(m_debug) << device << "OTA upgrade image file not found";
                         otaError(endpoint, manufacturerCode, transactionId, commandId);
                         break;
                     }
 
-                    logInfo << device << "OTA upgrade image file" << device->otaData().fileName() << "version is" << QString::asprintf("0x%08x", device->otaData().fileVersion());
+                    logDebug(m_debug) << device << "OTA upgrade image file" << device->otaData().fileName() << "version is" << QString::asprintf("0x%08x", device->otaData().fileVersion());
 
                     if (device->otaData().currentVersion() == device->otaData().fileVersion() || !device->otaData().upgrade())
-                    {
-                        logInfo << device << "OTA upgrade" << (device->otaData().upgrade() ? "not started, version match" : "skipped");
+                    {                        
+                        logDebug(m_debug) << device << "OTA upgrade" << (device->otaData().upgrade() ? "not started, version match" : "skipped");
                         otaError(endpoint, manufacturerCode, transactionId, commandId);
                         break;
                     }
@@ -1341,13 +1336,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             if (commandId == 0x01)
             {
                 iasZoneEnrollResponseStruct response;
-
-                if (m_debug)
-                    logInfo << device << "requested IAS Zone enroll";
-
+                logDebug(m_debug) << device << "requested IAS Zone enroll";
                 response.responseCode = 0x00;
                 response.zoneId = IAS_ZONE_ID;
-
                 enqueueRequest(device, endpoint->id(), CLUSTER_IAS_ZONE, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x00).append(reinterpret_cast <char*> (&response), sizeof(response)));
                 return;
             }
@@ -1364,14 +1355,10 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     QDateTime now = QDateTime::currentDateTime();
                     quint32 value = now.toTime_t();
                     tuyaTimeStruct response;
-
-                    if (m_debug)
-                        logInfo << device << "requested TUYA time synchronization";
-
+                    logDebug(m_debug) << device << "requested TUYA time synchronization";
                     response.payloadSize = qToLittleEndian <quint16> (8);
                     response.utcTimestamp = qToBigEndian(value);
                     response.localTimestamp = qToBigEndian(value + now.offsetFromUtc());
-
                     enqueueRequest(device, endpoint->id(), CLUSTER_TUYA_DATA, zclHeader(FC_CLUSTER_SPECIFIC | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x24).append(reinterpret_cast <char*> (&response), sizeof(response)));
                     return;
                 }
@@ -1387,10 +1374,10 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
         }
     }
 
-    if (device->interviewStatus() != InterviewStatus::Finished || parseProperty(endpoint, clusterId, transactionId, commandId, payload, true) || !m_debug)
+    if (device->interviewStatus() != InterviewStatus::Finished || parseProperty(endpoint, clusterId, transactionId, commandId, payload, true))
         return;
 
-    logWarning << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
+    logDebug(m_debug) << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", commandId) << "with payload" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
 }
 
 void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, QByteArray payload)
@@ -1443,28 +1430,19 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     switch (attributeId)
                     {
                         case 0x0000:
-
-                            if (m_debug)
-                                logInfo << device << "requested UTC time";
-
+                            logDebug(m_debug) << device << "requested UTC time";
                             value = qToLittleEndian <quint32> (now.toTime_t() + (device->options().value("utcTime").toBool() ? now.offsetFromUtc() : 0) - TIME_OFFSET);
                             response.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0002:
-
-                            if (m_debug)
-                                logInfo << device << "requested time zone";
-
+                            logDebug(m_debug)<< device << "requested time zone";
                             value = qToLittleEndian <quint32> (now.offsetFromUtc());
                             response.append(1, static_cast <char> (DATA_TYPE_32BIT_SIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0007:
-
-                            if (m_debug)
-                                logInfo << device << "requested local time";
-
+                            logDebug(m_debug)<< device << "requested local time";
                             value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - TIME_OFFSET);
                             response.append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;

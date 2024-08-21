@@ -112,8 +112,7 @@ bool ZiGate::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     zigateHeaderStruct header;
     QByteArray payload;
 
-    if (m_adapterDebug)
-        logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
+    logDebug(m_adapterDebug) << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     m_commandReply = data.isEmpty();
     m_command = command;
@@ -139,8 +138,7 @@ bool ZiGate::sendRequest(quint16 command, const QByteArray &data, quint8 id)
 
 void ZiGate::parsePacket(quint16 command, const QByteArray &payload)
 {
-    if (m_adapterDebug)
-        logInfo << "<--" << QString::asprintf("0x%04x", command) << payload.toHex(':');
+    logDebug(m_adapterDebug) << "<--" << QString::asprintf("0x%04x", command) << payload.toHex(':');
 
     if (command == (m_command | 0x8000))
     {
@@ -377,9 +375,7 @@ void ZiGate::parseData(QByteArray &buffer)
         if (!buffer.startsWith(0x01) || length < 6)
             return;
 
-        if (m_portDebug)
-            logInfo << "Frame received:" << buffer.mid(0, length + 1).toHex(':');
-
+        logDebug(m_portDebug) << "Frame received:" << buffer.mid(0, length + 1).toHex(':');
         frame = buffer.mid(1, length - 1);
 
         for (int i = 0; i < frame.length(); i++)

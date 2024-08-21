@@ -199,8 +199,7 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     QByteArray payload;
     quint16 crc;
 
-    if (m_adapterDebug)
-        logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
+    logDebug(m_adapterDebug) << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     m_command = command;
     m_replyStatus = 0xFF;
@@ -240,8 +239,7 @@ void ZBoss::sendAcknowledge(void)
 
 void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 {
-    if (m_adapterDebug)
-        logInfo << "<--" << QString::asprintf("0x%04x", command) << data.toHex(':');
+    logDebug(m_adapterDebug) << "<--" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     if (type == ZBOSS_TYPE_RESPONSE && command == m_command)
     {
@@ -350,9 +348,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         default:
         {
-            if (type != ZBOSS_TYPE_RESPONSE && m_adapterDebug)
-                logWarning << "Unrecognized ZBoss command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
-
+            logDebug(type != ZBOSS_TYPE_RESPONSE && m_adapterDebug) << "Unrecognized ZBoss command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
             break;
         }
     }
@@ -585,8 +581,7 @@ void ZBoss::parseData(QByteArray &buffer)
             return;
         }
 
-        if (m_portDebug)
-            logInfo << "Frame received:" << buffer.mid(0, length).toHex(':');
+        logDebug(m_portDebug) << "Frame received:" << buffer.mid(0, length).toHex(':');
 
         if (lowLevelHeader->flags & ZBOSS_FLAG_ACK)
         {

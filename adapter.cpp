@@ -269,9 +269,7 @@ void Adapter::reset(void)
 
 void Adapter::sendData(const QByteArray &buffer)
 {
-    if (m_portDebug)
-        logInfo << "Serial data sent:" << buffer.toHex(':');
-
+    logDebug(m_portDebug) << "Serial data sent:" << buffer.toHex(':');
     m_device->write(buffer);
 }
 
@@ -321,10 +319,9 @@ void Adapter::readyRead(void)
 {
     QByteArray buffer = m_device->readAll();
 
-    if (m_portDebug)
-        logInfo << "Serial data received:" << buffer.toHex(':');
-
+    logDebug(m_portDebug)  << "Serial data received:" << buffer.toHex(':');
     parseData(buffer);
+
     QTimer::singleShot(0, this, &Adapter::handleQueue);
 }
 

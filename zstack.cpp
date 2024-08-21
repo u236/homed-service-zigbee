@@ -107,8 +107,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
     QByteArray request;
     quint8 fcs = 0;
 
-    if (m_adapterDebug)
-        logInfo << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
+    logDebug(m_adapterDebug) << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     m_command = qToBigEndian(command);
     m_replyStatus = 0xFF;
@@ -127,8 +126,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
 
 void ZStack::parsePacket(quint16 command, const QByteArray &data)
 {
-    if (m_adapterDebug)
-        logInfo << "<--" << QString::asprintf("0x%04x", command) << data.toHex(':');
+    logDebug(m_adapterDebug) << "<--" << QString::asprintf("0x%04x", command) << data.toHex(':');
 
     if (command & 0x2000)
     {
@@ -245,9 +243,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
         default:
         {
-            if (m_adapterDebug)
-                logWarning << "Unrecognized Z-Stack command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
-
+            logDebug(m_adapterDebug) << "Unrecognized Z-Stack command" << QString::asprintf("0x%04x", command) << "with data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
             break;
         }
     }
@@ -538,8 +534,7 @@ void ZStack::parseData(QByteArray &buffer)
         if (buffer.length() < length + 5)
             break;
 
-        if (m_portDebug)
-            logInfo << "Frame received:" << buffer.mid(0, length + 5).toHex(':');
+        logDebug(m_portDebug) << "Frame received:" << buffer.mid(0, length + 5).toHex(':');
 
         for (quint8 i = 1; i < length + 4; i++)
             fcs ^= buffer.at(i);
