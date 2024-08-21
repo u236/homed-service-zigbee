@@ -1263,7 +1263,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     QByteArray buffer;
                     otaImageBlockResponseStruct response;
 
-                    if (file.fileName().isEmpty())
+                    if (device->otaData().fileName().isEmpty())
                     {
                         otaError(endpoint, manufacturerCode, transactionId, commandId);
                         break;
@@ -1316,6 +1316,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     device->otaData().setManufacturerCode(qFromLittleEndian(request->manufacturerCode));
                     device->otaData().setImageType(qFromLittleEndian(request->imageType));
                     device->otaData().setCurrentVersion(qFromLittleEndian(request->fileVersion));
+                    device->otaData().setProgress(0);
                     device->otaData().setUpgrade(false);
 
                     enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x07).append(reinterpret_cast <char*> (&response), sizeof(response)));
@@ -1388,24 +1389,16 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
     {
         case CMD_CONFIGURE_REPORTING_RESPONSE:
 
-            if (!payload.at(0))
-                break;
+            if (payload.at(0))
+                logWarning << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "reporting configuration error, status code:" << QString::asprintf("0x%02x", static_cast <quint8> (payload.at(0)));
 
-            logWarning << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "reporting configuration error, status code:" << QString::asprintf("0x%02x", static_cast <quint8> (payload.at(0)));
             break;
 
         case CMD_DEFAULT_RESPONSE:
 
-            if (!payload.at(1))
-                break;
+            if (payload.at(1))
+                logWarning << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", payload.at(0)) << "default response received with error, status code:" << QString::asprintf("0x%02x", static_cast <quint8> (payload.at(1)));
 
-            if (clusterId == CLUSTER_OTA_UPGRADE)
-            {
-                otaError(endpoint, manufacturerCode, transactionId, commandId, QString::asprintf("OTA upgrade request failed, status code: \"0x%02x\"", payload.at(1)), false);
-                break;
-            }
-
-            logWarning << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "command" << QString::asprintf("0x%02x", payload.at(0)) << "default response received with error, status code:" << QString::asprintf("0x%02x", static_cast <quint8> (payload.at(1)));
             break;
 
         case CMD_READ_ATTRIBUTES:

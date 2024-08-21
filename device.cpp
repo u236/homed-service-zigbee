@@ -16,6 +16,7 @@ void OTAData::refresh(const QDir &dir)
     for (int i = 0; i < list.count(); i++)
     {
         QFile file(QString("%1/%2").arg(dir.path(), list.at(i)));
+        bool check = false;
 
         m_fileName.clear();
         m_fileVersion = 0;
@@ -24,33 +25,29 @@ void OTAData::refresh(const QDir &dir)
         if (!file.open(QFile::ReadOnly))
             continue;
 
-        while (m_imageOffset < file.size())
+        while (m_imageOffset + sizeof(header) <= static_cast <size_t> (file.size()))
         {
             file.seek(m_imageOffset);
+            memcpy(&header, file.read(sizeof(header)).constData(), sizeof(header));
 
-            if (file.read(4) == QByteArray::fromHex("1ef1ee0b"))
+            if (qFromLittleEndian(header.fileIdentifier) == 0x0beef11e)
+            {
+                check = true;
                 break;
+            }
 
             m_imageOffset++;
         }
 
-        if (m_imageOffset == file.size())
-        {
-            file.close();
-            continue;
-        }
-
-        file.seek(m_imageOffset);
-        memcpy(&header, file.read(sizeof(header)).constData(), sizeof(header));
         file.close();
 
-        if (m_manufacturerCode != qFromLittleEndian(header.manufacturerCode) || m_imageType != qFromLittleEndian(header.imageType) || file.size() < qFromLittleEndian(header.imageSize))
-            continue;
-
-        m_fileName = list.at(i);
-        m_fileVersion = qFromLittleEndian(header.fileVersion);
-        m_imageSize = qFromLittleEndian(header.imageSize);
-        break;
+        if (check && qFromLittleEndian(header.manufacturerCode) == m_manufacturerCode &&  qFromLittleEndian(header.imageType) == m_imageType && qFromLittleEndian(header.imageSize) <= file.size())
+        {
+            m_fileName = list.at(i);
+            m_fileVersion = qFromLittleEndian(header.fileVersion);
+            m_imageSize = qFromLittleEndian(header.imageSize);
+            break;
+        }
     }
 }
 
@@ -1021,6 +1018,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                     device->otaData().setImageType(static_cast <quint16> (ota.value("imageType").toInt()));
                     device->otaData().setCurrentVersion(static_cast <quint32> (ota.value("currentVersion").toInt()));
                     device->otaData().setAvailable();
+                    device->otaData().refresh(m_otaDir);
                 }
 
                 for (auto it = neighbors.begin(); it != neighbors.end(); it++)
