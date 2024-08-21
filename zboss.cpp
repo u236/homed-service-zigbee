@@ -395,7 +395,7 @@ bool ZBoss::startCoordinator(void)
 
         m_manufacturerName = "Nordic Semiconductor";
         m_modelName = QString::asprintf("ZBOSS NCP");
-        m_firmware = QString::asprintf("%d.%d.%d", static_cast <quint8> (m_replyData.at(1)), static_cast <quint8> (m_replyData.at(2)), static_cast <quint8> (m_replyData.at(3)));
+        m_firmware = QString::asprintf("%d.%d.%d.%d", static_cast <quint8> (m_replyData.at(3)), static_cast <quint8> (m_replyData.at(2)), static_cast <quint8> (m_replyData.at(1), static_cast <quint8> (m_replyData.at(0)));
 
         logInfo << QString("Adapter type: %1 (%2)").arg(m_modelName, m_firmware).toUtf8().constData();
 
