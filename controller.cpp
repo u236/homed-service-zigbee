@@ -211,8 +211,8 @@ void Controller::updateAvailability(void)
 
         json = {{"lastSeen", it.value()->lastSeen()}, {"status", it.value()->availability() == Availability::Online ? "online" : "offline"}};
 
-        if (it.value()->otaData().progress() > 0)
-            json.insert("otaProgress", round(it.value()->otaData().progress()));
+        if (it.value()->ota().running())
+            json.insert("otaProgress", round(it.value()->ota().progress()));
 
         mqttPublish(mqttTopic("device/%1/%2").arg(serviceTopic(), m_zigbee->devices()->names() ? it.value()->name() : it.value()->ieeeAddress().toHex(':')), json, true);
         m_lastSeen.insert(it.value()->ieeeAddress(), it.value()->lastSeen());

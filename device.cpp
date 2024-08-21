@@ -8,7 +8,7 @@
 #include "controller.h"
 #include "logger.h"
 
-void OTAData::refresh(const QDir &dir)
+void OTA::refresh(const QDir &dir)
 {
     QList <QString> list = dir.entryList(QDir::Files);
     otaFileHeaderStruct header;
@@ -1014,11 +1014,11 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
                 if (!ota.isEmpty())
                 {
-                    device->otaData().setManufacturerCode(static_cast <quint16> (ota.value("manufacturerCode").toInt()));
-                    device->otaData().setImageType(static_cast <quint16> (ota.value("imageType").toInt()));
-                    device->otaData().setCurrentVersion(static_cast <quint32> (ota.value("currentVersion").toInt()));
-                    device->otaData().setAvailable();
-                    device->otaData().refresh(m_otaDir);
+                    device->ota().setManufacturerCode(static_cast <quint16> (ota.value("manufacturerCode").toInt()));
+                    device->ota().setImageType(static_cast <quint16> (ota.value("imageType").toInt()));
+                    device->ota().setCurrentVersion(static_cast <quint32> (ota.value("currentVersion").toInt()));
+                    device->ota().setAvailable();
+                    device->ota().refresh(m_otaDir);
                 }
 
                 for (auto it = neighbors.begin(); it != neighbors.end(); it++)
@@ -1205,14 +1205,14 @@ QJsonArray DeviceList::serializeDevices(void)
 
         if (!device->removed())
         {
-            if (device->otaData().available())
+            if (device->ota().available())
             {
-                QJsonObject ota = {{"manufacturerCode", device->otaData().manufacturerCode()}, {"imageType", device->otaData().imageType()}, {"currentVersion", QJsonValue::fromVariant(device->otaData().currentVersion())}};
+                QJsonObject ota = {{"manufacturerCode", device->ota().manufacturerCode()}, {"imageType", device->ota().imageType()}, {"currentVersion", QJsonValue::fromVariant(device->ota().currentVersion())}, {"running", device->ota().running()}};
 
-                if (!device->otaData().fileName().isEmpty())
+                if (!device->ota().fileName().isEmpty())
                 {
-                    ota.insert("fileName", device->otaData().fileName());
-                    ota.insert("fileVersion", QJsonValue::fromVariant(device->otaData().fileVersion()));
+                    ota.insert("fileName", device->ota().fileName());
+                    ota.insert("fileVersion", QJsonValue::fromVariant(device->ota().fileVersion()));
                 }
 
                 json.insert("ota", ota);

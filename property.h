@@ -50,6 +50,7 @@ public:
     inline void clearValue(void) { m_value = QVariant(); }
 
     inline QQueue <PropertyRequest> &queue(void) { return m_queue; }
+
     static void registerMetaTypes(void);
 
 protected:

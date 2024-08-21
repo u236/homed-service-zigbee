@@ -49,12 +49,12 @@ enum class ZoneStatus
     Enrolled
 };
 
-class OTAData
+class OTA
 {
 
 public:
 
-    OTAData(void) : m_manufacturerCode(0), m_imageType(0), m_currentVersion(0), m_progress(0), m_available(false), m_upgrade(false) {}
+    OTA(void) : m_manufacturerCode(0), m_imageType(0), m_currentVersion(0), m_available(false), m_upgrade(false), m_running(false), m_progress(0) {}
 
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
     inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
@@ -65,8 +65,12 @@ public:
     inline quint32 currentVersion(void) { return m_currentVersion; }
     inline void setCurrentVersion(quint32 value) { m_currentVersion = value; }
 
-    inline double progress(void) { return m_progress; }
-    inline void setProgress(double value) { m_progress = value; }
+    inline QString fileName(void) { return m_fileName; }
+    inline void clearFileName(void) { m_fileName.clear(); }
+
+    inline quint32 fileVersion(void) { return m_fileVersion; }
+    inline quint32 imageOffset(void) { return m_imageOffset; }
+    inline quint32 imageSize(void) { return m_imageSize; }
 
     inline bool available(void) { return m_available; }
     inline void setAvailable(void) { m_available = true; }
@@ -74,12 +78,13 @@ public:
     inline bool upgrade(void) { return m_upgrade; }
     inline void setUpgrade(bool value) { m_upgrade = value; }
 
-    inline QString fileName(void) { return m_fileName; }
-    inline void clearFileName(void) { m_fileName.clear(); }
+    inline bool running(void) { return m_running; }
+    inline void setRunning(bool value) { m_running = value; }
 
-    inline quint32 fileVersion(void) { return m_fileVersion; }
-    inline quint32 imageOffset(void) { return m_imageOffset; }
-    inline quint32 imageSize(void) { return m_imageSize; }
+    inline double progress(void) { return m_progress; }
+    inline void setProgress(double value) { m_progress = value; }
+
+    inline void reset(void) { m_upgrade = false; m_running = false; m_progress = 0; }
 
     void refresh(const QDir &dir);
 
@@ -88,11 +93,11 @@ private:
     quint16 m_manufacturerCode, m_imageType;
     quint32 m_currentVersion;
 
-    double m_progress;
-    bool m_available, m_upgrade;
-
     QString m_fileName;
     quint32 m_fileVersion, m_imageOffset, m_imageSize;
+
+    bool m_available, m_upgrade, m_running;
+    double m_progress;
 
 };
 
@@ -209,7 +214,7 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
 
-    inline OTAData &otaData(void) { return m_otaData; }
+    inline OTA &ota(void) { return m_otaData; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
 private:
@@ -232,7 +237,7 @@ private:
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
 
-    OTAData m_otaData;
+    OTA m_otaData;
     QMap <quint16, quint8> m_neighbors;
 
 };
