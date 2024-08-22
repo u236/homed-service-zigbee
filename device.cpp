@@ -51,7 +51,7 @@ void OTA::refresh(const QDir &dir)
     }
 }
 
-DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false), m_sync(false)
+DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false)
 {
     QFile file(m_config->value("device/expose", "/usr/share/homed-common/expose.json").toString());
 
@@ -87,8 +87,6 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
 
 DeviceList::~DeviceList(void)
 {
-    m_sync = true;
-
     writeDatabase();
     writeProperties();
 }
@@ -122,7 +120,6 @@ void DeviceList::init(void)
 
 void DeviceList::storeDatabase(void)
 {
-    m_sync = true;
     m_databaseTimer->start(STORE_DATABASE_DELAY);
 }
 
@@ -295,7 +292,7 @@ void DeviceList::setupDevice(const Device &device)
             {
                 if (!m_brokenFiles.contains(file.fileName()))
                 {
-                    logWarning << "Cant't open library file" << file.fileName();
+                    logWarning << "Unable to open library file" << file.fileName();
                     m_brokenFiles.append(file.fileName());
                 }
 
@@ -1299,11 +1296,6 @@ void DeviceList::writeDatabase(void)
     QJsonObject json = {{"devices", serializeDevices()}, {"names", m_names}, {"permitJoin", m_permitJoin}, {"timestamp", QDateTime::currentSecsSinceEpoch()}, {"version", SERVICE_VERSION}};
 
     emit statusUpdated(json);
-
-    if (!m_sync)
-        return;
-
-    m_sync = false;
 
     if (writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact), true))
         return;

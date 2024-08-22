@@ -85,7 +85,6 @@ public:
     inline void setProgress(double value) { m_progress = value; }
 
     inline void reset(void) { m_upgrade = false; m_running = false; m_progress = 0; }
-
     void refresh(const QDir &dir);
 
 private:
@@ -284,7 +283,7 @@ private:
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_otaDir, m_externalDir, m_libraryDir;
-    bool m_names, m_permitJoin, m_sync;
+    bool m_names, m_permitJoin;
 
     QMap <QString, QVariant> m_exposeOptions;
     QList <QString> m_specialExposes, m_brokenFiles;

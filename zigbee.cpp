@@ -259,7 +259,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), groupId, remove);
+    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), groupId, false, remove);
 }
 
 void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
@@ -269,7 +269,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, true, true);
+    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, false, true);
 }
 
 void ZigBee::otaControl(const QString &deviceName, bool refresh, bool upgrade)
@@ -875,7 +875,7 @@ bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
     return true;
 }
 
-bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove, bool removeAll)
+bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool removeAll, bool remove)
 {
     const Device &device = endpoint->device();
     QByteArray request;
@@ -1272,7 +1272,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
                     if (!file.open(QFile::ReadOnly))
                     {
-                        otaError(endpoint, manufacturerCode, transactionId, commandId, QString::asprintf("unable to open file \"%s\"", device->ota().fileName().toUtf8().constData()));
+                        otaError(endpoint, manufacturerCode, transactionId, commandId, QString::asprintf("OTA upgrade failed, unable to open image file \"%s\"", device->ota().fileName().toUtf8().constData()));
                         break;
                     }
 
@@ -1641,6 +1641,7 @@ void ZigBee::restoreGroups(const Device &device)
 void ZigBee::otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error, bool response)
 {
     const Device &device = endpoint->device();
+    bool check = device->ota().running();
 
     if (!error.isEmpty())
     {
@@ -1652,6 +1653,11 @@ void ZigBee::otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8
         enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, commandId == 0x01 ? 0x02 : 0x05, manufacturerCode).append(STATUS_NO_IMAGE_AVAILABLE));
 
     device->ota().reset();
+
+    if (!check)
+        return;
+
+    m_devices->storeDatabase();
 }
 
 void ZigBee::blink(quint16 timeout)

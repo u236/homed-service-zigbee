@@ -177,7 +177,7 @@ private:
     bool configureDevice(const Device &device);
     bool configureReporting(const Endpoint &endpoint, const Reporting &reporting);
     bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
-    bool groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove = false, bool removeAll = false);
+    bool groupRequest(const Endpoint &endpoint, quint16 groupId, bool removeAll = false, bool remove = false);
     bool dataRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &data, const QString &name);
 
     bool parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 itemId, const QByteArray &data, bool command = false);
