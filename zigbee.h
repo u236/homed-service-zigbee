@@ -191,6 +191,7 @@ private:
     void interviewTimeoutHandler(const Device &device);
     void rejoinHandler(const Device &device);
     void restoreGroups(const Device &device);
+    void storeNeighbors(void);
 
     void otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error = QString(), bool response = true);
     void blink(quint16 timeout);

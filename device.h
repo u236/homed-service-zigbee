@@ -167,7 +167,7 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_lqiRequestPending(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -181,14 +181,11 @@ public:
     inline bool supported(void) { return m_supported; }
     inline void setSupported(bool value) { m_supported = value; }
 
-    inline quint8 interviewEndpointId(void) { return m_interviewEndpointId; }
-    inline void setInterviewEndpointId(quint8 value) { m_interviewEndpointId = value; }
-
-    inline quint8 lqiRequestIndex(void) { return m_lqiRequestIndex; }
-    inline void setLqiRequestIndex(quint8 value) { m_lqiRequestIndex = value; }
-
     inline InterviewStatus interviewStatus(void) { return m_interviewStatus; }
     inline void setInterviewStatus(InterviewStatus value) { m_interviewStatus = value; }
+
+    inline quint8 interviewEndpointId(void) { return m_interviewEndpointId; }
+    inline void setInterviewEndpointId(quint8 value) { m_interviewEndpointId = value; }
 
     inline LogicalType logicalType(void) { return m_logicalType; }
     inline void setLogicalType(LogicalType value) { m_logicalType = value; }
@@ -213,6 +210,12 @@ public:
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
 
+    inline quint8 lqiRequestIndex(void) { return m_lqiRequestIndex; }
+    inline void setLqiRequestIndex(quint8 value) { m_lqiRequestIndex = value; }
+
+    inline bool lqiRequestPending(void) { return m_lqiRequestPending; }
+    inline void setLqiRequestPending(bool value) { m_lqiRequestPending = value; }
+
     inline OTA &ota(void) { return m_otaData; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
@@ -222,19 +225,21 @@ private:
 
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;
-
-    quint8 m_interviewEndpointId, m_lqiRequestIndex;
     bool m_removed, m_supported;
 
     InterviewStatus m_interviewStatus;
-    LogicalType m_logicalType;
+    quint8 m_interviewEndpointId;
 
+    LogicalType m_logicalType;
     quint16 m_manufacturerCode;
     quint8 m_powerSource;
     QString m_firmware;
 
     qint64 m_joinTime, m_lastSeen;
     quint8 m_linkQuality;
+
+    quint8 m_lqiRequestIndex;
+    bool m_lqiRequestPending;
 
     OTA m_otaData;
     QMap <quint16, quint8> m_neighbors;

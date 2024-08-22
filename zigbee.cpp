@@ -269,7 +269,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, false, true);
+    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, true);
 }
 
 void ZigBee::otaControl(const QString &deviceName, bool refresh, bool upgrade)
@@ -1638,6 +1638,15 @@ void ZigBee::restoreGroups(const Device &device)
     }
 }
 
+void ZigBee::storeNeighbors(void)
+{
+    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
+        if (it.value()->lqiRequestPending())
+            return;
+
+    m_devices->storeDatabase();
+}
+
 void ZigBee::otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error, bool response)
 {
     const Device &device = endpoint->device();
@@ -1942,11 +1951,12 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 {
                     device->setLqiRequestIndex(response->index + response->count);
                     enqueueRequest(device, RequestType::LQI);
+                    break;
                 }
-
-                break;
             }
 
+            device->setLqiRequestPending(false);
+            storeNeighbors();
             break;
         }
 
@@ -2101,6 +2111,17 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             break;
         }
 
+        case RequestType::LQI:
+        {
+            if (status)
+            {
+                qvariant_cast <Device> (it.value()->data())->setLqiRequestPending(false);
+                storeNeighbors();
+            }
+
+            break;
+        }
+
         default:
             break;
     }
@@ -2199,6 +2220,7 @@ void ZigBee::updateNeighbors(void)
             continue;
 
         it.value()->setLqiRequestIndex(0);
+        it.value()->setLqiRequestPending(true);
         enqueueRequest(it.value(), RequestType::LQI);
     }
 }
