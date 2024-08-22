@@ -2,7 +2,7 @@
 #include "controller.h"
 #include "logger.h"
 
-Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_avaliabilityTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
+Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_deviceDataTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
 {
     logInfo << "Starting version" << SERVICE_VERSION;
     logInfo << "Configuration file is" << getConfig()->fileName();
@@ -11,7 +11,7 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_a
     m_haStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
     m_haEnabled = getConfig()->value("homeassistant/enabled", false).toBool();
 
-    connect(m_avaliabilityTimer, &QTimer::timeout, this, &Controller::updateAvailability);
+    connect(m_deviceDataTimer, &QTimer::timeout, this, &Controller::updateDeviceData);
     connect(m_propertiesTimer, &QTimer::timeout, this, &Controller::updateProperties);
 
     connect(m_zigbee, &ZigBee::networkStarted, this, &Controller::networkStarted);
@@ -19,7 +19,7 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_a
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
     connect(m_zigbee, &ZigBee::statusUpdated, this, &Controller::statusUpdated);
 
-    m_avaliabilityTimer->start(UPDATE_AVAILABILITY_INTERVAL);
+    m_deviceDataTimer->start(UPDATE_DEVICE_DATA_INTERVAL);
     m_propertiesTimer->setSingleShot(true);
 
     m_zigbee->devices()->setNames(getConfig()->value("mqtt/names", false).toBool());
@@ -188,7 +188,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
     }
 }
 
-void Controller::updateAvailability(void)
+void Controller::updateDeviceData(void)
 {
     qint64 time = QDateTime::currentSecsSinceEpoch();
     QJsonObject json;

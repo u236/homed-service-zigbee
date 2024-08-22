@@ -1,8 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION                 "3.8.1"
-#define UPDATE_AVAILABILITY_INTERVAL    5000
+#define SERVICE_VERSION                 "3.8.2"
+#define UPDATE_DEVICE_DATA_INTERVAL     5000
 #define UPDATE_PROPERTIES_DELAY         1000
 
 #include "homed.h"
@@ -43,7 +43,7 @@ public:
 
 private:
 
-    QTimer *m_avaliabilityTimer, *m_propertiesTimer;
+    QTimer *m_deviceDataTimer, *m_propertiesTimer;
     ZigBee *m_zigbee;
 
     QMetaEnum m_commands;
@@ -64,7 +64,7 @@ private slots:
     void mqttConnected(void) override;
     void mqttReceived(const QByteArray &message, const QMqttTopicName &topic) override;
 
-    void updateAvailability(void);
+    void updateDeviceData(void);
     void updateProperties(void);
 
     void networkStarted(void);
