@@ -1644,6 +1644,7 @@ void ZigBee::storeNeighbors(void)
         if (it.value()->lqiRequestPending())
             return;
 
+    logInfo << "Neighbors data collected";
     m_devices->storeDatabase();
 }
 
