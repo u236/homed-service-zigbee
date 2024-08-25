@@ -1715,6 +1715,7 @@ void ZigBee::coordinatorReady(void)
     device->setFirmware(m_adapter->firmware());
     device->setManufacturerName(m_adapter->manufacturerName());
     device->setModelName(m_adapter->modelName());
+    device->setActive(true);
     device->setDiscovery(false);
     device->setCloud(false);
 
