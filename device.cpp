@@ -589,14 +589,15 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_ON_OFF:
 
-                    if (device->batteryPowered())
-                        break;
+                    if (!device->batteryPowered())
+                    {
+                        it.value()->properties().append(Property(new Properties::Status));
+                        it.value()->actions().append(Action(new Actions::Status));
+                        it.value()->bindings().append(Binding(new Bindings::Status));
+                        it.value()->reportings().append(Reporting(new Reportings::Status));
+                        it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
+                    }
 
-                    it.value()->properties().append(Property(new Properties::Status));
-                    it.value()->actions().append(Action(new Actions::Status));
-                    it.value()->bindings().append(Binding(new Bindings::Status));
-                    it.value()->reportings().append(Reporting(new Reportings::Status));
-                    it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
                     break;
 
                 case CLUSTER_LEVEL_CONTROL:
@@ -604,16 +605,16 @@ void DeviceList::recognizeDevice(const Device &device)
                     if (!device->batteryPowered())
                     {
                         QList <QVariant> options = device->options().value(QString("light_%1").arg(it.key())).toList();
+
                         it.value()->properties().append(Property(new Properties::Level));
                         it.value()->actions().append(Action(new Actions::Level));
                         it.value()->bindings().append(Binding(new Bindings::Level));
                         it.value()->reportings().append(Reporting(new Reportings::Level));
+
                         options.append("level");
                         device->options().insert(QString("light_%1").arg(it.key()), options);
-                        break;
                     }
 
-                    it.value()->properties().append(Property(new Properties::LevelAction));
                     break;
 
                 case CLUSTER_ANALOG_INPUT:
