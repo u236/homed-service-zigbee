@@ -86,6 +86,24 @@
       "exposes":        ["switch", "powerOnStatus"]
     },
     {
+      "description":    "Sonoff Motion Sensor SNZB-03P",
+      "modelNames":     ["SNZB-03P"],
+      "properties":     ["batteryPercentage", "occupancy", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "occupancy", "occupancyTimeout", "illumination"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "occupancyTimeout": {"type": "value", "clusterId": 1030,  "attributeId": 32,   "dataType": 33, "action": true},
+                            "illumination":     {"type": "enum",  "clusterId": 64529, "attributeId": 8193, "dataType": 32}
+                          },
+                          "occupancyTimeout": {"min": 5, "max": 60},
+                          "illumination": {"enum": ["dim", "bright"]}
+                        }
+    },
+    {
       "description":    "Sonoff Human Presense Sensor SNZB-06P",
       "modelNames":     ["SNZB-06P"],
       "properties":     ["occupancy", "customAttributes"],
