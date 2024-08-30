@@ -40,7 +40,7 @@ void Controller::serviceOnline(void)
 {
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
     {
-        if (it.value()->removed())
+        if (it.value()->removed() || it.value()->logicalType() == LogicalType::Coordinator)
             continue;
 
         publishExposes(it.value().data());

@@ -226,6 +226,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
 
 void DeviceList::setupDevice(const Device &device)
 {
+    Expose expose(new SensorObject("linkQuality"));
     QMap <QString, QVariant> userOptions;
     QList <QDir> list = {m_externalDir, m_libraryDir};
     QString manufacturerName, modelName;
@@ -371,6 +372,9 @@ void DeviceList::setupDevice(const Device &device)
         device->setDescription(QString("%1/%2").arg(device->manufacturerName(), device->modelName()));
         recognizeDevice(device);
     }
+
+    expose->setParent(device->endpoints().first().data());
+    device->endpoints().first()->exposes().append(expose);
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
