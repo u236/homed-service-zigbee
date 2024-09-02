@@ -912,7 +912,7 @@
     },
     {
       "description":    "TUYA TS0601 Roller Blind Motor (Type A)",
-      "modelNames":     ["_TZE200_fctwhugx", "_TZE200_hsgrhjpf", "_TZE200_pw7mji0l"],
+      "modelNames":     ["_TZE200_fctwhugx", "_TZE200_pw7mji0l"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
       "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
       "exposes":        ["cover", "reverse", "speed"],
@@ -949,7 +949,7 @@
     },
     {
       "description":    "TUYA TS0601 Roller Blind Motor (Type C)",
-      "modelNames":     ["_TZE200_zah67ekd"],
+      "modelNames":     ["_TZE200_hsgrhjpf", "_TZE200_icka1clh", "_TZE200_zah67ekd"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
       "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
       "exposes":        ["cover", "operationMode", "reverse", "setLowerLimit", "setUpperLimit", "speed", "resetLimits"],
