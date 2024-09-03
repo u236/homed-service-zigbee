@@ -32,7 +32,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
     }
     else
     {
-        QList <QString> list = portName.remove("tcp://").split(":");
+        QList <QString> list = portName.remove("tcp://").split(':');
 
         m_device = m_socket;
         m_adddress = QHostAddress(list.value(0));
