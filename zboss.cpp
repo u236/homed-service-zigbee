@@ -614,22 +614,23 @@ void ZBoss::parseData(QByteArray &buffer)
 
 bool ZBoss::permitJoin(bool enabled)
 {
+    quint16 networkAddress = enabled ? m_permitJoinAddress : PERMIT_JOIN_BROARCAST_ADDRESS;
     zbossPermitJoinStruct request;
 
     memset(&request, 0, sizeof(request));
     request.duration = enabled ? 0xF0 : 0x00;
 
-    if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
+    if (networkAddress == PERMIT_JOIN_BROARCAST_ADDRESS && (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus))
     {
         logWarning << "Local permit join request failed";
         return false;
     }
 
-    request.dstAddress = qToLittleEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
+    request.dstAddress = qToLittleEndian <quint16> (networkAddress);
 
     if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
     {
-        logWarning << "Broadcast permit join request failed";
+        logWarning << "Permit join request failed";
         return false;
     }
 

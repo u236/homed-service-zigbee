@@ -127,7 +127,7 @@ public:
     inline const char *eventName(Event event) { return m_events.valueToKey(static_cast <int> (event)); }
 
     void init(void);
-    void setPermitJoin(bool enabled);
+    void setPermitJoin(const QString &deviceName, bool enabled);
     void togglePermitJoin(void);
 
     void updateDevice(const QString &deviceName, const QString &name, const QString &note, bool active, bool discovery, bool cloud);

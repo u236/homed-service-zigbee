@@ -388,7 +388,7 @@ void ZiGate::parseData(QByteArray &buffer)
 
 bool ZiGate::permitJoin(bool enabled)
 {
-    quint16 dstAddress = qToBigEndian <quint16> (PERMIT_JOIN_BROARCAST_ADDRESS);
+    quint16 dstAddress = qToBigEndian <quint16> (enabled ? m_permitJoinAddress : PERMIT_JOIN_BROARCAST_ADDRESS);
 
     if (!sendRequest(ZIGATE_SET_PERMIT_JOIN, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(1, enabled ? 0xF0 : 0x00)) || m_replyStatus)
     {

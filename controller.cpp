@@ -91,7 +91,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 break;
 
             case Command::setPermitJoin:
-                m_zigbee->setPermitJoin(json.value("enabled").toBool());
+                m_zigbee->setPermitJoin(json.value("device").toString(), json.value("enabled").toBool());
                 break;
 
             case Command::togglePermitJoin:

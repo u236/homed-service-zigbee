@@ -175,6 +175,7 @@ public:
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
     inline quint8 replyStatus(void) { return m_replyStatus; }
 
+    inline void setPermitJoinAddress(quint16 value) { m_permitJoinAddress = value; }
     inline void setRequestParameters(const QByteArray &value, bool extendedTimeout = true) { m_requestAddress = value; m_extendedTimeout = extendedTimeout; }
 
     void init(void);
@@ -210,11 +211,13 @@ protected:
     QString m_manufacturerName, m_modelName, m_firmware;
     QByteArray m_networkKey, m_defaultKey, m_ieeeAddress;
 
-    quint8 m_replyStatus;
+    quint16 m_permitJoinAddress;
     bool m_permitJoin;
 
     QByteArray m_requestAddress;
     bool m_extendedTimeout;
+
+    quint8 m_replyStatus;
 
     QMap <quint8, EndpointData> m_endpoints;
     QList <quint16> m_multicast;

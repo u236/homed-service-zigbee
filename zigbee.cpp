@@ -69,11 +69,14 @@ void ZigBee::init(void)
     m_adapter->init();
 }
 
-void ZigBee::setPermitJoin(bool enabled)
+void ZigBee::setPermitJoin(const QString &deviceName, bool enabled)
 {
+    const Device &device = m_devices->byName(deviceName);
+
     if (!m_adapter)
         return;
 
+    m_adapter->setPermitJoinAddress(device.isNull() || device->logicalType() == LogicalType::EndDevice ? PERMIT_JOIN_BROARCAST_ADDRESS : device->networkAddress());
     m_adapter->setPermitJoin(enabled);
 }
 
