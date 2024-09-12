@@ -565,7 +565,7 @@
     },
     {
       "description":    "TUYA TS0601 Motion Sensor",
-      "modelNames":     ["_TZE200_1ibpyhdc", "_TZE200_3towulqd", "_TZE200_bh3n6gk8", "_TZE200_ttcovulf"],
+      "modelNames":     ["_TZE200_1ibpyhdc", "_TZE200_3towulqd", "_TZE200_bh3n6gk8", "_TZE200_gjldowol", "_TZE200_ttcovulf"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["battery", "occupancy", "illuminance", "sensitivityMode", "timeoutMode"],
