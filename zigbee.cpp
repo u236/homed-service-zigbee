@@ -2249,7 +2249,8 @@ void ZigBee::interviewTimeout(void)
 
 void ZigBee::pollRequest(EndpointObject *endpoint, const Poll &poll)
 {
-    enqueueRequest(endpoint->device(), endpoint->id(), poll->clusterId(), readAttributesRequest(m_requestId, 0x0000, poll->attributes()));
+    logDebug(m_debug) << endpoint->device() << "endpoint" << QString::asprintf("0x%02x", endpoint->id()) << "cluster" << QString::asprintf("0x%04x", poll->clusterId()) << "attribute" << QString::asprintf("0x%04x", poll->attributeId()) << "poll request enqueued";
+    enqueueRequest(endpoint->device(), endpoint->id(), poll->clusterId(), readAttributesRequest(m_requestId, 0x0000, {poll->attributeId()}));
 }
 
 void ZigBee::updateStatusLed(void)

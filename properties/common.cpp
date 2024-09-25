@@ -128,7 +128,10 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
             {
                 case 0x00: map.insert("systemMode", "off"); break;
                 case 0x01: map.insert("systemMode", "auto"); break;
+                case 0x03: map.insert("systemMode", "cool"); break;
                 case 0x04: map.insert("systemMode", "heat"); break;
+                case 0x07: map.insert("systemMode", "fan"); break;
+                case 0x08: map.insert("systemMode", "dry"); break;
             }
 
             break;

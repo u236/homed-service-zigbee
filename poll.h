@@ -12,24 +12,19 @@ class PollObject
 
 public:
 
-    PollObject(const QString &name, quint16 clusterId, QList <quint16> attributes) :
-        m_name(name), m_clusterId(clusterId), m_attributes(attributes) {}
-
     PollObject(const QString &name, quint16 clusterId, quint16 attributeId) :
-        m_name(name), m_clusterId(clusterId), m_attributes({attributeId}) {}
+        m_name(name), m_clusterId(clusterId), m_attributeId(attributeId) {}
 
     inline QString name(void) { return m_name; }
     inline quint16 clusterId(void) { return m_clusterId; }
-    inline QList <quint16> &attributes(void) { return m_attributes; }
+    inline quint16 attributeId(void) { return m_attributeId; }
 
     static void registerMetaTypes(void);
 
 protected:
 
     QString m_name;
-    quint16 m_clusterId;
-
-    QList <quint16> m_attributes;
+    quint16 m_clusterId, m_attributeId;
 
 };
 
@@ -41,6 +36,24 @@ namespace Polls
     public:
 
         Status(void) : PollObject("status", CLUSTER_ON_OFF, 0x0000) {}
+
+    };
+
+    class TargetTemperature : public PollObject
+    {
+
+    public:
+
+        TargetTemperature(void) : PollObject("targetTemperature", CLUSTER_THERMOSTAT, 0x0012) {}
+
+    };
+
+    class SystemMode : public PollObject
+    {
+
+    public:
+
+        SystemMode(void) : PollObject("systemMode", CLUSTER_THERMOSTAT, 0x001C) {}
 
     };
 

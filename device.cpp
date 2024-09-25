@@ -541,7 +541,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
     if (!endpoint->polls().isEmpty())
     {
-        quint32 pollInterval = static_cast <quint32> (device->options().value("pollInterval").toInt());
+        quint32 pollInterval = static_cast <quint32> (device->options().value(multiple ? QString("pollInterval_%1").arg(endpoint->id()) : "pollInterval").toInt());
 
         for (int i = 0; i < endpoint->polls().count(); i++)
         {
