@@ -1286,12 +1286,20 @@
       "options":        {"light": ["level"]}
     },
     {
-      "description":    "TUYA TS0502B Led Dimmer",
+      "description":    "TUYA TS0502B CCT Led Controller",
       "modelNames":     ["TS0502B"],
       "properties":     ["status", "level", "colorTemperature"],
       "actions":        ["status", "level", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "colorTemperature"]}
+    },
+    {
+      "description":    "TUYA TS0503B RGB Led Controller",
+      "modelNames":     ["TS0503B"],
+      "properties":     ["status", "level", "colorHS"],
+      "actions":        ["status", "level", "colorHS"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color"]}
     },
     {
       "description":    "TUYA TS0505B RGBW Bulb",
