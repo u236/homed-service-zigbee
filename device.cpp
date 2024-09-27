@@ -366,6 +366,9 @@ void DeviceList::setupDevice(const Device &device)
     if (device->options().contains("powerSource"))
         device->setPowerSource(static_cast <quint8> (device->options().value("powerSource").toInt()));
 
+    if (device->interviewStatus() != InterviewStatus::Finished && manufacturerName == "TUYA")
+        device->options().insert("tuyaMagic", true);
+
     if (!device->supported())
     {
         logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
