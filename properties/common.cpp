@@ -332,7 +332,7 @@ void Properties::Voltage::parseAttribte(quint16, quint16 attributeId, const QByt
     double divider = option("voltageDivider", 1).toDouble();
     qint16 value = 0;
 
-    if (attributeId != 0x0505 || static_cast <size_t> (data.length()) > sizeof(value))
+    if ((attributeId != 0x0100 && attributeId != 0x0505) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -344,7 +344,7 @@ void Properties::Current::parseAttribte(quint16, quint16 attributeId, const QByt
     double divider = option("currentDivider", 1).toDouble();
     qint16 value = 0;
 
-    if (attributeId != 0x0508 || static_cast <size_t> (data.length()) > sizeof(value))
+    if ((attributeId != 0x0103 && attributeId != 0x0508) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -356,7 +356,7 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
     double divider = option("powerDivider", 1).toDouble();
     qint16 value = 0;
 
-    if (attributeId != 0x050B || static_cast <size_t> (data.length()) > sizeof(value))
+    if ((attributeId != 0x0106 && attributeId != 0x050B) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());

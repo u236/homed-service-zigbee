@@ -377,7 +377,7 @@ void DeviceList::setupDevice(const Device &device)
     }
 
     expose->setParent(device->endpoints().first().data());
-    device->endpoints().first()->exposes().append(expose);
+    device->endpoints().last()->exposes().append(expose);
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
@@ -770,6 +770,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->bindings().append(Binding(new Bindings::Energy));
                     it.value()->reportings().append(Reporting(new Reportings::Energy));
                     it.value()->exposes().append(Expose(new SensorObject("energy")));
+                    device->options().insert(QString("energyDivider_%1").arg(it.key()), 1000);
                     break;
 
                 case CLUSTER_ELECTRICAL_MEASUREMENT:
@@ -783,6 +784,9 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->exposes().append(Expose(new SensorObject("voltage")));
                     it.value()->exposes().append(Expose(new SensorObject("current")));
                     it.value()->exposes().append(Expose(new SensorObject("power")));
+                    device->options().insert(QString("voltageDivider_%1").arg(it.key()), 100);
+                    device->options().insert(QString("currentDivider_%1").arg(it.key()), 1000);
+                    device->options().insert(QString("powerDivider_%1").arg(it.key()), 10);
                     break;
 
                 case CLUSTER_IAS_ZONE:
@@ -819,6 +823,12 @@ void DeviceList::recognizeDevice(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
+        if (device->manufacturerName() == "ptvo.info" && device->modelName() == "ptvo.switch")
+        {
+            it.value()->bindings().clear();
+            it.value()->reportings().clear();
+        }
+
         if (!it.value()->properties().isEmpty())
         {
             QList <QString> list;
