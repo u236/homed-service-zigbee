@@ -179,6 +179,36 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x00A0:
+        case 0x013A:
+        {
+            map.insert("smoke", data.at(0) ? true : false);
+            break;
+        }
+
+        case 0x00A1:
+        case 0x013B:
+        {
+            double value = 0;
+
+            switch (data.at(0))
+            {
+                case 0x01: value = 0.085; break;
+                case 0x02: value = 0.088; break;
+                case 0x03: value = 0.093; break;
+                case 0x04: value = 0.095; break;
+                case 0x05: value = 0.100; break;
+                case 0x06: value = 0.105; break;
+                case 0x07: value = 0.110; break;
+                case 0x08: value = 0.115; break;
+                case 0x09: value = 0.120; break;
+                case 0x0A: value = 0.125; break;
+            }
+
+            map.insert("smokeConcentration", value);
+            break;
+        }
+
         case 0x00F0:
         {
             map.insert("indicatorMode", enumValue("indicatorMode", static_cast <quint8> (data.at(0))));

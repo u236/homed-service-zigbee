@@ -365,6 +365,13 @@
       "options":        {"temperature": {"diagnostic": true}}
     },
     {
+      "description":    "Aqara Smoke Detector JY-GZ-01AQ",
+      "modelNames":     ["lumi.sensor_smoke.acn03"],
+      "properties":     ["batteryVoltage", "lumiData"],
+      "exposes":        ["battery", "smoke", "smokeConcentration"],
+      "options":        {"smokeConcentration": {"unit": "dB/m"}}
+    },
+    {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
       "properties":     ["lumiBasic", "lumiContact"],
