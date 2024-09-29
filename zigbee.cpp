@@ -675,11 +675,11 @@ void ZigBee::interviewFinished(const Device &device)
     }
     else
     {
-        device->setInterviewStatus(InterviewStatus::Finished);
         logInfo << device << "interview finished successfully";
         emit deviceEvent(device.data(), Event::interviewFinished);
     }
 
+    device->setInterviewStatus(InterviewStatus::Finished);
     m_devices->storeDatabase();
 }
 

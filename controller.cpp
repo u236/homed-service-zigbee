@@ -261,11 +261,12 @@ void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJ
             mqttPublish(mqttTopic("device/%1/%2").arg(serviceTopic(), m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), {{"lastSeen", device->lastSeen()}, {"status", device->availability() == Availability::Online ? "online" : "offline"}}, true);
             break;
 
+        case ZigBee::Event::interviewFinished:
+        case ZigBee::Event::interviewError:
+            break;
+
         default:
-
-            if (event != ZigBee::Event::interviewFinished)
-                check = false;
-
+            check = false;
             break;
     }
 
