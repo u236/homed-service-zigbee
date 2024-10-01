@@ -44,8 +44,7 @@
                           "co2ManualCalibration": {"min": 0, "max": 5000, "step": 10},
                           "vocLow": {"min": 0, "max": 1000, "step": 5},
                           "vocHigh": {"min": 0, "max": 1000, "step": 5}
-                        },
-      "endpointId":     1
+                        }
     },
     {
       "description":    "EFEKTA AQ Smart Monitor",
@@ -69,9 +68,6 @@
     {
       "description":    "EFEKTA CO2 Monitor with TFT Display iAQ",
       "modelNames":     ["EFEKTA_iAQ"],
-      "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
-      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
-      "bindings":       ["time", "temperature", "humidity", "co2"],
       "exposes":        ["illuminance", "temperature", "humidity", "co2", "altitude", "autoBrightness", "nightBacklight", "temperatureOffset", "humidityOffset", "co2LongChart", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset"],
       "options":        {
                           "altitude": {"min": 0, "max": 3000, "step": 10},
@@ -80,7 +76,13 @@
                           "co2Low": {"min": 400, "max": 5000, "step": 10},
                           "co2High": {"min": 400, "max": 5000, "step": 10},
                           "co2ManualCalibration": {"min": 0, "max": 5000, "step": 10}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["EFEKTA_iAQ"],
+      "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
+      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
+      "bindings":       ["time", "temperature", "humidity", "co2"],
       "endpointId":     1
     },
     {
@@ -92,10 +94,6 @@
     {
       "description":    "EFEKTA CO2 Monitor with TFT Display iAQ-S v1 or iAQ-S v2",
       "modelNames":     ["EFEKTA_iAQ_S", "EFEKTA_iAQ_S_II"],
-      "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
-      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
-      "bindings":       ["temperature", "humidity", "co2"],
-      "reportings":     ["temperature", "humidity", "co2"],
       "exposes":        ["illuminance", "temperature", "humidity", "pressure", "co2", "autoBrightness", "nightBacklight", "temperatureOffset", "humidityOffset", "pressureLongChart", "co2LongChart", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset"],
       "options":        {
                           "temperatureOffset": {"min": -50, "max": 50, "step": 0.5},
@@ -103,7 +101,14 @@
                           "co2Low": {"min": 400, "max": 5000, "step": 10},
                           "co2High": {"min": 400, "max": 5000, "step": 10},
                           "co2ManualCalibration": {"min": 0, "max": 5000, "step": 10}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["EFEKTA_iAQ_S", "EFEKTA_iAQ_S_II"],
+      "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
+      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
+      "bindings":       ["temperature", "humidity", "co2"],
+      "reportings":     ["temperature", "humidity", "co2"],
       "endpointId":     1
     },
     {
@@ -116,10 +121,6 @@
     {
       "description":    "EFEKTA CO2 Monitor with TFT Display iAQ-S v3",
       "modelNames":     ["EFEKTA_iAQ_S_III"],
-      "properties":     ["temperature", "humidity", "efektaTemperatureSettings", "efektaHumiditySettings"],
-      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings"],
-      "bindings":       ["temperature", "humidity"],
-      "reportings":     ["temperature", "humidity"],
       "exposes":        ["illuminance", "temperature", "humidity", "co2", "voc", "altitude", "autoBrightness", "nightBacklight", "temperatureOffset", "humidityOffset", "co2LongChart", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset", "vocLow", "vocHigh", "vocRelay", "vocRelayInvert"],
       "options":        {
                           "altitude": {"min": 0, "max": 3000, "step": 1},
@@ -130,7 +131,14 @@
                           "co2ManualCalibration": {"min": 0, "max": 5000, "step": 10},
                           "vocLow": {"min": 0, "max": 1000, "step": 5},
                           "vocHigh": {"min": 0, "max": 1000, "step": 5}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["EFEKTA_iAQ_S_III"],
+      "properties":     ["temperature", "humidity", "efektaTemperatureSettings", "efektaHumiditySettings"],
+      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings"],
+      "bindings":       ["temperature", "humidity"],
+      "reportings":     ["temperature", "humidity"],
       "endpointId":     1
     },
     {
@@ -156,11 +164,7 @@
     },
     {
       "description":    "EFEKTA Gas/Water Pressure Sensor PST v1",
-      "modelNames":     ["EFEKTA_PST_V1_LR"],
-      "properties":     ["batteryPercentage", "pressure", "customAttributes"],
-      "actions":        ["customAttributes"],
-      "bindings":       ["battery", "pressure"],
-      "reportings":     ["batteryPercentage", "pressure"],
+      "modelNames":     ["EFEKTA_PST_V1", "EFEKTA_PST_V1_LR"],
       "exposes":        ["battery", "temperature", "pressure", "temperatureOffset", "pressureOffset", "readInterval", "transmitPower", "enablePolling"],
       "options":        {
                           "customAttributes_1":
@@ -179,11 +183,18 @@
                           "transmitPower": {"type": "select", "enum": {"0": "0 dBm", "4": "4 dBm", "10": "10 dBm", "19": "19 dBm"}},
                           "pressureOffset": {"min": -100, "max": 100},
                           "temperatureOffset": {"min": -8192, "max": 8192, "unit": "points"}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["EFEKTA_PST_V1", "EFEKTA_PST_V1_LR"],
+      "properties":     ["batteryPercentage", "pressure", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["battery", "pressure"],
+      "reportings":     ["batteryPercentage", "pressure"],
       "endpointId":     1
     },
     {
-      "modelNames":     ["EFEKTA_PST_V1_LR"],
+      "modelNames":     ["EFEKTA_PST_V1", "EFEKTA_PST_V1_LR"],
       "properties":     ["temperature", "customAttributes"],
       "actions":        ["customAttributes"],
       "bindings":       ["temperature"],
@@ -249,10 +260,6 @@
     {
       "description":    "IKEA VINDRIKTNING Based EFEKTA Air Quality Sensor v3",
       "modelNames":     ["IKEA_VINDRIKTNING_EFEKTA III"],
-      "properties":     ["co2", "pm25", "efektaCO2Settings", "efektaPMSensor", "efektaVOCSensor"],
-      "actions":        ["efektaCO2Settings", "efektaPMSensor"],
-      "bindings":       ["analogInput", "co2", "pm25"],
-      "reportings":     ["co2", "efektaPMSensor", "efektaVOCSensor"],
       "exposes":        ["temperature", "humidity", "co2", "pm1", "pm10", "pm25", "voc", "readInterval", "altitude", "temperatureOffset", "humidityOffset", "co2AutoCalibration", "co2ForceCalibration", "co2FactoryReset", "pm25Low", "pm25High", "pm25Relay", "pm25RelayInvert"],
       "options":        {
                           "readInterval": {"min": 15, "max": 300},
@@ -261,7 +268,14 @@
                           "humidityOffset": {"min": -50, "max": 50},
                           "pm25Low": {"min": 0, "max": 1000},
                           "pm25High": {"min": 0, "max": 1000}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["IKEA_VINDRIKTNING_EFEKTA III"],
+      "properties":     ["co2", "pm25", "efektaCO2Settings", "efektaPMSensor", "efektaVOCSensor"],
+      "actions":        ["efektaCO2Settings", "efektaPMSensor"],
+      "bindings":       ["analogInput", "co2", "pm25"],
+      "reportings":     ["co2", "efektaPMSensor", "efektaVOCSensor"],
       "endpointId":     1
     },
     {
@@ -275,10 +289,6 @@
     {
       "description":    "EFEKTA Egony Soil Moisture Sensor",
       "modelNames":     ["Egony_Flower"],
-      "properties":     ["temperature", "customAttributes"],
-      "actions":        ["customAttributes"],
-      "bindings":       ["temperature"],
-      "reportings":     ["temperature"],
       "exposes":        ["battery", "illuminance", "temperature", "moisture", "readInterval", "transmitPower", "enablePolling", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh"],
       "options":        {
                           "customAttributes_1":
@@ -302,7 +312,14 @@
                           "moistureLow": {"min": 0, "max": 100},
                           "moistureHigh": {"min": 0, "max": 100},
                           "illuminance": {"raw": true}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["Egony_Flower"],
+      "properties":     ["temperature", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["temperature"],
+      "reportings":     ["temperature"],
       "endpointId":     1
     },
     {

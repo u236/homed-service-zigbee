@@ -173,14 +173,13 @@
     {
       "description":    "Aqara D1 3-Channel Wall Switch QBKG26LM",
       "modelNames":     ["lumi.switch.n3acn3"],
-      "options":        {"endpointName": {"1": "Left", "2": "Center", "3": "Right", "41": "Left", "42": "Center", "43": "Right", "51": "L+C", "52": "L+R", "53": "C+R", "61": "L+C+R"}}
+      "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
+      "options":        {"endpointName": {"1": "Left", "2": "Center", "3": "Right", "41": "Left", "42": "Center", "43": "Right", "51": "L+C", "52": "L+R", "53": "C+R", "61": "L+C+R"}, "indicatorMode": {"enum": ["default", "inverted"]}}
     },
     {
       "modelNames":     ["lumi.switch.n3acn3"],
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
-      "exposes":        ["energy", "voltage", "current", "power", "indicatorMode", "statusMemory"],
-      "options":        {"indicatorMode": {"enum": ["default", "inverted"]}},
       "endpointId":     1
     },
     {
@@ -242,19 +241,19 @@
     {
       "description":    "Aqara T1 1-Channel Relay DLKZMK11LM or SSM-U01",
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
-      "options":        {"powerSource": 1}
+      "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory", "switchType"],
+      "options":        {
+                          "customAttributes_1": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
+                          "switchType": {"enum": {"1": "toggle", "2": "momentary"}},
+                          "temperature": {"diagnostic": true},
+                          "powerSource": 1
+                        }
     },
     {
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "properties":     ["status", "lumiData", "customAttributes"],
       "actions":        ["status", "lumiSwitchStatusMemory", "customAttributes"],
       "bindings":       ["status"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory", "switchType"],
-      "options":        {
-                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
-                          "switchType": {"enum": {"1": "toggle", "2": "momentary"}},
-                          "temperature": {"diagnostic": true}
-                        },
       "endpointId":     1
     },
     {
@@ -294,12 +293,15 @@
     {
       "description":    "Aqara 10A Smart Plug SP-EUC01, ZNCZ04LM or ZNCZ12LM",
       "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
+      "options":        {"switch": "outlet", "temperature": {"diagnostic": true}}
+    },
+    {
+      "modelNames":     ["lumi.plug.maeu01", "lumi.plug.maus01", "lumi.plug.mmeu01"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchStatusMemory"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory"],
-      "options":        {"switch": "outlet", "temperature": {"diagnostic": true}},
       "endpointId":     1
     },
     {
@@ -451,10 +453,13 @@
     {
       "description":    "Aqara H1 Wireless Dimmer ZNXNKG02LM",
       "modelNames":     ["lumi.remote.rkba01"],
+      "exposes":        ["battery", "action", "temperature", "operationMode"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "release", "rotateLeft", "rotateRight", "stop"]}, "temperature": {"diagnostic": true}}
+    },
+    {
+      "modelNames":     ["lumi.remote.rkba01"],
       "properties":     ["lumiData", "lumiSwitchAction"],
       "actions":        ["lumiOperationMode"],
-      "exposes":        ["battery", "action", "temperature", "operationMode"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "release", "rotateLeft", "rotateRight", "stop"]}, "temperature": {"diagnostic": true}},
       "endpointId":     1
     },
     {

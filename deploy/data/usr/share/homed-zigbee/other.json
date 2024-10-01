@@ -96,27 +96,30 @@
     {
       "description":    "Lytko Themostat L101Z-SBN",
       "modelNames":     ["L101Z-SBN"],
-      "properties":     ["thermostat", "customAttributes"],
-      "actions":        ["thermostat", "customAttributes"],
-      "bindings":       ["thermostat"],
-      "reportings":     ["thermostat"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis"],
       "options":        {
-                          "customAttributes": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 30464, "dataType": 48, "action": true}},
+                          "customAttributes_3": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 30464, "dataType": 48, "action": true}},
                           "systemMode": {"enum": ["off", "heat"]},
                           "targetTemperature": {"min": 15, "max": 35, "step": 0.5},
                           "temperatureOffset": {"min": -3, "max": 3, "step": 0.1},
                           "hysteresis": {"min": 0, "max": 3, "step": 0.1},
                           "sensorType": {"enum": ["3K3", "5K", "6K8", "10K", "12K", "14K8", "15K", "20K", "33K", "47K"]},
                           "runningStatus": true
-                        },
-      "endpointId":     3
+                        }
     },
     {
       "modelNames":     ["L101Z-SBN"],
       "properties":     ["childLock"],
       "actions":        ["childLock"],
       "endpointId":     1
+    },
+    {
+      "modelNames":     ["L101Z-SBN"],
+      "properties":     ["thermostat", "customAttributes"],
+      "actions":        ["thermostat", "customAttributes"],
+      "bindings":       ["thermostat"],
+      "reportings":     ["thermostat"],
+      "endpointId":     3
     }
   ],
 
