@@ -155,6 +155,42 @@
       "endpointId":     4
     },
     {
+      "description":    "EFEKTA Gas/Water Pressure Sensor PST v1",
+      "modelNames":     ["EFEKTA_PST_V1_LR"],
+      "properties":     ["batteryPercentage", "pressure", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["battery", "pressure"],
+      "reportings":     ["batteryPercentage", "pressure"],
+      "exposes":        ["battery", "temperature", "pressure", "temperatureOffset", "pressureOffset", "readInterval", "transmitPower", "enablePolling"],
+      "options":        {
+                          "customAttributes_1":
+                          {
+                            "readInterval":       {"type": "value", "clusterId": 1,    "attributeId": 513, "dataType": 33, "action": true},
+                            "enablePolling":      {"type": "bool",  "clusterId": 1,    "attributeId": 534, "dataType": 16, "action": true},
+                            "transmitPower":      {"type": "enum",  "clusterId": 1,    "attributeId": 566, "dataType": 40, "action": true},
+                            "pressureOffset":     {"type": "value", "clusterId": 1027, "attributeId": 528, "dataType": 41, "action": true}
+                          },
+                          "customAttributes_2":
+                          {
+                            "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 8,   "dataType": 41, "action": true}
+                          },
+                          "readInterval": {"min": 5, "max": 360, "unit": "sec"},
+                          "enablePolling": {"type": "toggle"},
+                          "transmitPower": {"type": "select", "enum": {"0": "0 dBm", "4": "4 dBm", "10": "10 dBm", "19": "19 dBm"}},
+                          "pressureOffset": {"min": -100, "max": 100},
+                          "temperatureOffset": {"min": -8192, "max": 8192, "unit": "points"}
+                        },
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["EFEKTA_PST_V1_LR"],
+      "properties":     ["temperature", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["temperature"],
+      "reportings":     ["temperature"],
+      "endpointId":     2
+    },
+    {
       "description":    "EFEKTA Temperature and Humidity Sensor TH v1 or TH v2",
       "modelNames":     ["EFEKTA_TH", "EFEKTA_TH_LR", "EFEKTA_TH_v1_LR", "EFEKTA_TH_v2_LR"],
       "properties":     ["batteryPercentage", "temperature", "humidity", "efektaReportingDelay", "efektaTemperatureSettings", "efektaHumiditySettings"],
