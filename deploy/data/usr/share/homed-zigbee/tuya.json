@@ -1310,8 +1310,16 @@
       "options":        {"light": ["level", "color", "colorTemperature", "colorMode"], "colorTemperature": {"min": 143, "max": 500}, "powerSource": 1}
     },
     {
-      "description":    "TUYA TS0052/TS1101 1-Channel Dimmer",
-      "modelNames":     ["_TZ3000_mgusv51k", "_TZ3000_xfs39dbf"],
+      "description":    "TUYA TS0052 1-Channel Dimmer",
+      "modelNames":     ["_TZ3000_mgusv51k"],
+      "properties":     ["status", "level", "tuyaSwitchType", "customAttributes"],
+      "actions":        ["status", "level", "tuyaSwitchType", "customAttributes"],
+      "exposes":        ["light", "switchType", "powerOnStatus"],
+      "options":        {"customAttributes": {"powerOnStatus": {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}}, "light": ["level"], "switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}}
+    },
+    {
+      "description":    "TUYA TS1101 1-Channel Dimmer",
+      "modelNames":     ["_TZ3000_xfs39dbf"],
       "properties":     ["status", "level"],
       "actions":        ["status", "level"],
       "exposes":        ["light"],
@@ -1319,7 +1327,16 @@
     },
     {
       "description":    "TUYA TS0052/TS1101 2-Channel Dimmer",
-      "modelNames":     ["_TZ3000_7ysdnebc", "_TZ3000_kvwrdf47", "_TZ3000_zjtxnoft"],
+      "modelNames":     ["_TZ3000_kvwrdf47", "_TZ3000_zjtxnoft"],
+      "properties":     ["status", "level", "tuyaSwitchType", "customAttributes"],
+      "actions":        ["status", "level", "tuyaSwitchType", "customAttributes"],
+      "exposes":        ["light", "switchType", "powerOnStatus"],
+      "options":        {"customAttributes": {"powerOnStatus": {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}}, "light": ["level"], "switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TUYA TS1101 2-Channel Dimmer",
+      "modelNames":     ["_TZ3000_7ysdnebc"],
       "properties":     ["status", "level"],
       "actions":        ["status", "level"],
       "exposes":        ["light"],
