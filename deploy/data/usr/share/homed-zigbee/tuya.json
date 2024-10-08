@@ -1326,7 +1326,7 @@
       "options":        {"light": ["level"]}
     },
     {
-      "description":    "TUYA TS0052/TS1101 2-Channel Dimmer",
+      "description":    "TUYA TS0052 2-Channel Dimmer",
       "modelNames":     ["_TZ3000_kvwrdf47", "_TZ3000_zjtxnoft"],
       "properties":     ["status", "level", "tuyaSwitchType", "customAttributes"],
       "actions":        ["status", "level", "tuyaSwitchType", "customAttributes"],
