@@ -350,6 +350,14 @@
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]}
+    },
+    {
+      "description":    "YSRSAI 0/1-10V Dimmer S10",
+      "modelNames":     ["ZB-DL01"],
+      "properties":     ["status", "level"],
+      "actions":        ["status", "level"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level"]}
     }
   ],
 
