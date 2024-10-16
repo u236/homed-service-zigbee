@@ -62,7 +62,7 @@
       "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["on", "off"]}},
+      "options":        {"action": {"enum": ["singleClick"]}},
       "endpointId":     4
     },
     {
@@ -88,7 +88,7 @@
       "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["on", "off"]}},
+      "options":        {"action": {"enum": ["singleClick"]}},
       "endpointId":     [4, 5]
     },
     {
@@ -472,7 +472,7 @@
       "modelNames":     ["lumi.sensor_switch"],
       "properties":     ["lumiBasic", "lumiButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": {"enum": ["on", "off", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick"]}}
     },
     {
       "description":    "Aqara Wireless Button WXKG11LM",
@@ -565,7 +565,7 @@
       "modelNames":     ["lumi.sensor_86sw2", "lumi.sensor_86sw2.es1"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["on", "off"]}},
+      "options":        {"action": {"enum": ["singleClick"]}},
       "endpointId":     [1, 2, 3]
     },
     {
