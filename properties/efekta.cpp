@@ -134,7 +134,7 @@ void PropertiesEfekta::CO2Settings::parseAttribte(quint16, quint16 attributeId, 
                 case 0x0220: map.insert("co2Relay", value); break;
                 case 0x0225: map.insert("co2RelayInvert", value); break;
                 case 0x0244: map.insert("pressureLongChart", value); break;
-                case 0x0401: map.insert("nightBacklight", value); break;
+                case 0x0401: map.insert("backlight", value); break;
                 case 0x0402: map.insert("co2AutoCalibration", value); break;
             }
 

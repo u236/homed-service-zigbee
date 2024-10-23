@@ -115,7 +115,7 @@ QByteArray ActionsEfekta::CO2Settings::request(const QString &name, const QVaria
                 case 10: m_attributes = {0x0220}; break; // co2Relay
                 case 11: m_attributes = {0x0225}; break; // co2RelayInvert
                 case 12: m_attributes = {0x0244}; break; // pressureLongChart
-                case 13: m_attributes = {0x0401}; break; // nightBacklight
+                case 13: m_attributes = {0x0401}; break; // backlight
                 case 14: m_attributes = {0x0402}; break; // co2AutoCalibration
                 default: return QByteArray();
             }
