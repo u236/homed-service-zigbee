@@ -4,6 +4,8 @@
 #define ZBOSS_REQUEST_TIMEOUT                           2000
 #define ZBOSS_RESET_DELAY                               2000
 
+#define ZBOSS_ESP_BOOT_LOG                              0x4553502D524F4D3A
+
 #define ZBOSS_SIGNATURE                                 0xDEAD
 #define ZBOSS_PROTOCOL_VERSION                          0x00
 #define ZBOSS_NCP_API_HL                                0x06
@@ -16,7 +18,7 @@
 
 #define ZBOSS_FLAG_ACK                                  0x01
 #define ZBOSS_FLAG_FIRST_FRAGMENT                       0x40
-#define ZBISS_FLAG_LAST_FRAGMENT                        0x80
+#define ZBOSS_FLAG_LAST_FRAGMENT                        0x80
 
 #define ZBOSS_GET_MODULE_VERSION                        0x0001
 #define ZBOSS_NCP_RESET                                 0x0002

@@ -207,7 +207,7 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     lowLevelHeader.signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
     lowLevelHeader.length = data.length() + 12;
     lowLevelHeader.type = ZBOSS_NCP_API_HL;
-    lowLevelHeader.flags = m_sequenceId << 2 | ZBOSS_FLAG_FIRST_FRAGMENT | ZBISS_FLAG_LAST_FRAGMENT;
+    lowLevelHeader.flags = m_sequenceId << 2 | ZBOSS_FLAG_FIRST_FRAGMENT | ZBOSS_FLAG_LAST_FRAGMENT;
     lowLevelHeader.crc = getCRC8(reinterpret_cast <quint8*> (&lowLevelHeader) + 2, sizeof(lowLevelHeader) - 3);
 
     commonHeader.version = ZBOSS_PROTOCOL_VERSION;
@@ -361,7 +361,7 @@ bool ZBoss::startCoordinator(void)
     quint32 channelMask = qToLittleEndian <quint32> (1 << m_channel);
     quint64 ieeeAddress;
 
-    if (!sendRequest(ZBOSS_GET_LOCAL_IEEE_ADDR) || m_replyStatus)
+    if (!sendRequest(ZBOSS_GET_LOCAL_IEEE_ADDR, QByteArray(1, 0x00)) || m_replyStatus)
     {
         logWarning << "Local IEEE address request failed";
         return false;
@@ -431,17 +431,17 @@ bool ZBoss::startCoordinator(void)
             check = true;
         }
 
-        if (!sendRequest(ZBOSS_GET_NWK_KEYS) || m_replyStatus)
-        {
-            logWarning << "Get adapter network key request failed";
-            return false;
-        }
+        // if (!sendRequest(ZBOSS_GET_NWK_KEYS) || m_replyStatus)
+        // {
+        //     logWarning << "Get adapter network key request failed";
+        //     return false;
+        // }
 
-        if (m_replyData.mid(0, m_networkKey.length()) != m_networkKey)
-        {
-            logWarning << "Adapter network key doesn't match configuration";
-            check = true;
-        }
+        // if (m_replyData.mid(0, m_networkKey.length()) != m_networkKey)
+        // {
+        //     logWarning << "Adapter network key doesn't match configuration";
+        //     check = true;
+        // }
 
         if (check)
         {
@@ -575,6 +575,26 @@ void ZBoss::parseData(QByteArray &buffer)
         zbossLowLevelHeaderStruct *lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (buffer.data());
         quint16 length = qFromLittleEndian(lowLevelHeader->length) + 2;
 
+        quint64 bootLog;
+        memcpy(&bootLog, buffer.mid(0, 8), sizeof(bootLog));
+
+        if (bootLog == qToBigEndian <quint64> (ZBOSS_ESP_BOOT_LOG))
+        {
+            zbossCommonHeaderStruct commonHeader;
+            QByteArray payload;
+
+            commonHeader.version = ZBOSS_PROTOCOL_VERSION;
+            commonHeader.type = ZBOSS_TYPE_RESPONSE;
+            commonHeader.id = qToLittleEndian(ZBOSS_NCP_RESET);
+
+            payload.append(reinterpret_cast <char*> (&commonHeader), sizeof(commonHeader));
+            payload.append(4, static_cast <char> (0x00));
+
+            m_queue.enqueue(payload);
+            buffer.clear();
+            return;
+        }
+
         if (lowLevelHeader->signature != qToBigEndian <quint16> (ZBOSS_SIGNATURE))
             return;
 
@@ -622,19 +642,19 @@ bool ZBoss::permitJoin(bool enabled)
 
     memset(&request, 0, sizeof(request));
     request.duration = enabled ? 0xF0 : 0x00;
+    request.significance = 0x01;
 
     if (networkAddress == PERMIT_JOIN_BROARCAST_ADDRESS && (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus))
     {
         logWarning << "Local permit join request failed";
-        return false;
-    }
 
-    request.dstAddress = qToLittleEndian <quint16> (networkAddress);
+        request.dstAddress = qToLittleEndian <quint16> (networkAddress);
 
-    if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
-    {
-        logWarning << "Permit join request failed";
-        return false;
+        if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
+        {
+            logWarning << "Permit join request failed";
+            return false;
+        }
     }
 
     return true;
