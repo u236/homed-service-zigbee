@@ -4,8 +4,6 @@
 #define ZBOSS_REQUEST_TIMEOUT                           2000
 #define ZBOSS_RESET_DELAY                               2000
 
-#define ZBOSS_ESP_BOOT_LOG                              0x4553502D524F4D3A
-
 #define ZBOSS_SIGNATURE                                 0xDEAD
 #define ZBOSS_PROTOCOL_VERSION                          0x00
 #define ZBOSS_NCP_API_HL                                0x06
@@ -249,6 +247,7 @@ private:
     void sendAcknowledge(void);
     void parsePacket(quint8 type, quint16 command, const QByteArray &data);
 
+    void handleReset(void);
     bool startCoordinator(void);
 
     void softReset(void) override;

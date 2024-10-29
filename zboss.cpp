@@ -253,15 +253,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
         case ZBOSS_NCP_RESET:
         case ZBOSS_NCP_RESET_IND:
         {
-            m_sequenceId = 0;
-
-            if (!startCoordinator())
-            {
-                logWarning << "Coordinator startup failed";
-                break;
-            }
-
-            m_resetTimer->stop();
+            handleReset();
             break;
         }
 
@@ -356,6 +348,19 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
     emit requestFinished(static_cast <quint8> (data.at(0)), m_replyStatus);
 }
 
+void ZBoss::handleReset(void)
+{
+    m_sequenceId = 0;
+
+    if (!startCoordinator())
+    {
+        logWarning << "Coordinator startup failed";
+        return;
+    }
+
+    m_resetTimer->stop();
+}
+
 bool ZBoss::startCoordinator(void)
 {
     quint32 channelMask = qToLittleEndian <quint32> (1 << m_channel);
@@ -430,18 +435,6 @@ bool ZBoss::startCoordinator(void)
             logWarning << "Adapter panid doesn't match configuration";
             check = true;
         }
-
-        // if (!sendRequest(ZBOSS_GET_NWK_KEYS) || m_replyStatus)
-        // {
-        //     logWarning << "Get adapter network key request failed";
-        //     return false;
-        // }
-
-        // if (m_replyData.mid(0, m_networkKey.length()) != m_networkKey)
-        // {
-        //     logWarning << "Adapter network key doesn't match configuration";
-        //     check = true;
-        // }
 
         if (check)
         {
@@ -570,30 +563,16 @@ void ZBoss::softReset(void)
 
 void ZBoss::parseData(QByteArray &buffer)
 {
+    if (buffer.startsWith("ESP-ROM"))
+    {
+        handleReset();
+        return;
+    }
+
     while (!buffer.isEmpty())
     {
         zbossLowLevelHeaderStruct *lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (buffer.data());
         quint16 length = qFromLittleEndian(lowLevelHeader->length) + 2;
-
-        quint64 bootLog;
-        memcpy(&bootLog, buffer.mid(0, 8), sizeof(bootLog));
-
-        if (bootLog == qToBigEndian <quint64> (ZBOSS_ESP_BOOT_LOG))
-        {
-            zbossCommonHeaderStruct commonHeader;
-            QByteArray payload;
-
-            commonHeader.version = ZBOSS_PROTOCOL_VERSION;
-            commonHeader.type = ZBOSS_TYPE_RESPONSE;
-            commonHeader.id = qToLittleEndian(ZBOSS_NCP_RESET);
-
-            payload.append(reinterpret_cast <char*> (&commonHeader), sizeof(commonHeader));
-            payload.append(4, static_cast <char> (0x00));
-
-            m_queue.enqueue(payload);
-            buffer.clear();
-            return;
-        }
 
         if (lowLevelHeader->signature != qToBigEndian <quint16> (ZBOSS_SIGNATURE))
             return;
@@ -647,14 +626,15 @@ bool ZBoss::permitJoin(bool enabled)
     if (networkAddress == PERMIT_JOIN_BROARCAST_ADDRESS && (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus))
     {
         logWarning << "Local permit join request failed";
+        return false;
+    }
 
-        request.dstAddress = qToLittleEndian <quint16> (networkAddress);
+    request.dstAddress = qToLittleEndian <quint16> (networkAddress);
 
-        if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
-        {
-            logWarning << "Permit join request failed";
-            return false;
-        }
+    if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
+    {
+        logWarning << "Permit join request failed";
+        return false;
     }
 
     return true;
