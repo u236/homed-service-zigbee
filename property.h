@@ -47,7 +47,7 @@ public:
 
     inline QVariant value(void) { return m_value; }
     inline void setValue(const QVariant &value) { m_value = value; }
-    inline void clearValue(void) { m_value = QVariant(); }
+    inline void clearValue(void) { m_value.clear(); }
 
     inline QQueue <PropertyRequest> &queue(void) { return m_queue; }
     static void registerMetaTypes(void);

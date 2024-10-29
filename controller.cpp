@@ -30,7 +30,7 @@ void Controller::publishExposes(DeviceObject *device, bool remove)
 {
     device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), m_haPrefix, m_haEnabled, m_zigbee->devices()->names(), remove);
 
-    if (remove)
+    if (!m_haEnabled || remove)
         return;
 
     m_propertiesTimer->start(UPDATE_PROPERTIES_DELAY);
