@@ -56,13 +56,21 @@
       "options":        {"cover": "blind", "ikeaCover": true}
     },
     {
-      "description":    "TRADFRI Motion Sensor",
+      "description":    "TRADFRI Motion Sensor E1525 or E1745",
       "modelNames":     ["TRADFRI motion sensor"],
       "properties":     ["batteryPercentage", "ikeaOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy"],
       "options":        {"battery": {"undivided": true}, "occupancyResetTimeout": true}
+    },
+    {
+      "description":    "VALLHORN Motion Sensor E2134",
+      "modelNames":     ["VALLHORN Wireless Motion Sensor"],
+      "properties":     ["batteryPercentage", "occupancy", "illuminance"],
+      "bindings":       ["battery", "occupancy", "illuminance"],
+      "reportings":     ["batteryPercentage", "occupancy", "illuminance"],
+      "exposes":        ["battery", "occupancy", "illuminance"]
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
