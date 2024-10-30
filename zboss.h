@@ -16,7 +16,7 @@
 
 #define ZBOSS_FLAG_ACK                                  0x01
 #define ZBOSS_FLAG_FIRST_FRAGMENT                       0x40
-#define ZBISS_FLAG_LAST_FRAGMENT                        0x80
+#define ZBOSS_FLAG_LAST_FRAGMENT                        0x80
 
 #define ZBOSS_GET_MODULE_VERSION                        0x0001
 #define ZBOSS_NCP_RESET                                 0x0002
@@ -230,7 +230,7 @@ public:
 
 private:
 
-    bool m_clear;
+    bool m_clear, m_esp;
 
     quint16 m_command;
     QByteArray m_replyData;
@@ -247,6 +247,7 @@ private:
     void sendAcknowledge(void);
     void parsePacket(quint8 type, quint16 command, const QByteArray &data);
 
+    void handleReset(void);
     bool startCoordinator(void);
 
     void softReset(void) override;
