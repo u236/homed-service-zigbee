@@ -230,7 +230,7 @@ public:
 
 private:
 
-    bool m_clear;
+    bool m_clear, m_esp;
 
     quint16 m_command;
     QByteArray m_replyData;

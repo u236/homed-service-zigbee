@@ -43,7 +43,7 @@ static uint16_t const crc16Table[256] =
     0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
 
-ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_clear(false)
+ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_clear(false), m_esp(false)
 {
     m_policy.append({ZBOSS_POLICY_TC_LINK_KEYS_REQUIRED,           0x00});
     m_policy.append({ZBOSS_POLICY_IC_REQUIRED,                     0x00});
@@ -566,6 +566,7 @@ void ZBoss::parseData(QByteArray &buffer)
     if (buffer.startsWith("ESP-ROM"))
     {
         handleReset();
+        m_esp = true;
         return;
     }
 
@@ -631,7 +632,7 @@ bool ZBoss::permitJoin(bool enabled)
 
     request.dstAddress = qToLittleEndian <quint16> (networkAddress);
 
-    if (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
+    if (!m_esp && (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus))
     {
         logWarning << "Permit join request failed";
         return false;
