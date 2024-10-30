@@ -292,6 +292,30 @@
     }
   ],
 
+  "Tuya":
+  [
+    {
+      "description":    "TUYA Temperature and Humidity Sensor with PVVX Firmware",
+      "modelNames":     ["TH03Z-bz", "TH03Z-z", "TS0201-bz", "TS0201-z", "ZTH01-bz", "ZTH01-z", "ZTH02-bz", "ZTH02-z"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "customAttributes"],
+      "actions":        ["customAttributes"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity", "readInterval", "temperatureOffset", "humidityOffset"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "temperatureOffset":  {"type": "value", "clusterId": 516, "attributeId": 256, "dataType": 41, "divider": 100, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 516, "attributeId": 257, "dataType": 41, "divider": 100, "action": true},
+                            "readInterval":       {"type": "value", "clusterId": 516, "attributeId": 263, "dataType": 32, "action": true}
+                          },
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
+                          "humidityOffset": {"min": -50, "max": 50},
+                          "readInterval": {"min": 3, "max": 255}
+                        }
+    }
+  ],
+
   "Xiaomi":
   [
     {
@@ -327,8 +351,8 @@
                           "customAttributes":
                           {
                             "showSmiley":         {"type": "enum",  "clusterId": 516, "attributeId": 2,   "dataType": 48, "action": true},
-                            "temperatureOffset":  {"type": "value", "clusterId": 516, "attributeId": 256, "dataType": 41, "divider": 10, "action": true},
-                            "humidityOffset":     {"type": "value", "clusterId": 516, "attributeId": 257, "dataType": 41, "divider": 10, "action": true},
+                            "temperatureOffset":  {"type": "value", "clusterId": 516, "attributeId": 256, "dataType": 41, "divider": 100, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 516, "attributeId": 257, "dataType": 41, "divider": 100, "action": true},
                             "enableDisplay":      {"type": "enum",  "clusterId": 516, "attributeId": 262, "dataType": 48, "action": true},
                             "readInterval":       {"type": "value", "clusterId": 516, "attributeId": 263, "dataType": 32, "action": true}
                           },
