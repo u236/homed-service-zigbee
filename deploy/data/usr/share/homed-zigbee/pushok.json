@@ -5,6 +5,7 @@
       "description":    "PushOk Hardware Thermostat Relay POK008",
       "modelNames":     ["POK008"],
       "properties":     ["batteryPercentage", "status", "temperature", "customAttributes"],
+      "actions":        ["status", "customAttributes"],
       "exposes":        ["battery", "switch", "thermostat", "hysteresis"],
       "options":        {
                           "customAttributes":
@@ -22,6 +23,7 @@
       "description":    "PushOk Hardware Voltage Monitor POK009",
       "modelNames":     ["POK009"],
       "properties":     ["batteryPercentage", "customAttributes"],
+      "actions":        ["customAttributes"],
       "exposes":        ["battery", "voltage", "voltageLow", "voltageType", "threshold"],
       "options":        {
                           "customAttributes":
