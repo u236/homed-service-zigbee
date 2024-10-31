@@ -170,8 +170,8 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Multichannel Relay",
-      "modelNames":     ["_TZE200_vmcgja59", "_TZE204_vmcgja59"],
+      "description":    "TUYA TS0601 8-Channel Relay",
+      "modelNames":     ["_TZE204_dvosyycn", "_TZE200_vmcgja59", "_TZE200_wktrysab", "_TZE204_vmcgja59"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8"],
@@ -195,6 +195,42 @@
                           "status_6": {"enum": ["off", "on"]},
                           "status_7": {"enum": ["off", "on"]},
                           "status_8": {"enum": ["off", "on"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 12-Channel Relay",
+      "modelNames":     ["_TZE204_dqolcpcp"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8", "switch_9", "switch_10", "switch_11", "switch_12"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
+                            "2":    [{"name": "status_2", "type": "bool", "action": true}],
+                            "3":    [{"name": "status_3", "type": "bool", "action": true}],
+                            "4":    [{"name": "status_4", "type": "bool", "action": true}],
+                            "5":    [{"name": "status_5", "type": "bool", "action": true}],
+                            "6":    [{"name": "status_6", "type": "bool", "action": true}],
+                            "101":  [{"name": "status_7", "type": "bool", "action": true}],
+                            "102":  [{"name": "status_8", "type": "bool", "action": true}],
+                            "103":  [{"name": "status_9", "type": "bool", "action": true}],
+                            "104":  [{"name": "status_10", "type": "bool", "action": true}],
+                            "105":  [{"name": "status_11", "type": "bool", "action": true}],
+                            "106":  [{"name": "status_12", "type": "bool", "action": true}]
+                          },
+                          "status_1": {"enum": ["off", "on"]},
+                          "status_2": {"enum": ["off", "on"]},
+                          "status_3": {"enum": ["off", "on"]},
+                          "status_4": {"enum": ["off", "on"]},
+                          "status_5": {"enum": ["off", "on"]},
+                          "status_6": {"enum": ["off", "on"]},
+                          "status_7": {"enum": ["off", "on"]},
+                          "status_8": {"enum": ["off", "on"]},
+                          "status_9": {"enum": ["off", "on"]},
+                          "status_10": {"enum": ["off", "on"]},
+                          "status_11": {"enum": ["off", "on"]},
+                          "status_12": {"enum": ["off", "on"]}
                         }
     },
     {
