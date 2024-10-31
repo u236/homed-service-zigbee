@@ -1,0 +1,53 @@
+{
+  "PushOk Hardware":
+  [
+    {
+      "description":    "PushOk Hardware Thermostat Relay POK008",
+      "modelNames":     ["POK008"],
+      "properties":     ["batteryPercentage", "status", "temperature", "customAttributes"],
+      "exposes":        ["battery", "switch", "thermostat", "hysteresis"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "targetTemperature":  {"type": "value", "clusterId": 13, "attributeId": 85, "dataType": 57, "action": true},
+                            "hysteresis":         {"type": "value", "clusterId": 14, "attributeId": 85, "dataType": 57, "action": true},
+                            "systemMode":         {"type": "enum",  "clusterId": 19, "attributeId": 85, "dataType": 33, "action": true}
+                          },
+                          "targetTemperature": {"min": -45, "max": 125},
+                          "hysteresis": {"min": 0.1, "max": 10, "step": 0.1},
+                          "systemMode": {"enum": ["off", "heat", "cool"]}
+                        }
+    },
+    {
+      "description":    "PushOk Hardware Voltage Monitor POK009",
+      "modelNames":     ["POK009"],
+      "properties":     ["batteryPercentage", "customAttributes"],
+      "exposes":        ["battery", "voltage", "voltageLow", "voltageType", "threshold"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "voltage":      {"type": "value", "clusterId": 12, "attributeId": 85, "dataType": 57},
+                            "voltageLow":   {"type": "bool",  "clusterId": 15, "attributeId": 85, "dataType": 16},
+                            "voltageType":  {"type": "enum",  "clusterId": 19, "attributeId": 85, "dataType": 33, "action": true},
+                            "threshold":    {"type": "value", "clusterId": 20, "attributeId": 85, "dataType": 33, "action": true}
+                          },
+                          "voltageLow": {"type": "binary", "icon": "mdi:bell"},
+                          "voltageType": {"type": "select", "enum": ["AC", "DC"]},
+                          "threshold": {"min": 4, "max": 340, "unit": "V", "icon": "mdi:bell"}
+                        }
+    },
+    {
+      "description":    "PushOk Hardware Temperature and Humidity/Moisture Sensor POK002, POK005 or POK007",
+      "modelNames":     ["POK002", "POK005", "POK007"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity"]
+    },
+    {
+      "description":    "PushOk Hardware Temperature and Contact Sensor POK010",
+      "modelNames":     ["POK010"],
+      "properties":     ["batteryPercentage", "temperature", "customAttributes"],
+      "exposes":        ["battery", "temperature", "contact"],
+      "options":        {"customAttributes": {"contact": {"type": "bool", "clusterId": 15, "attributeId": 85, "dataType": 16}}}
+    }
+  ]
+}
