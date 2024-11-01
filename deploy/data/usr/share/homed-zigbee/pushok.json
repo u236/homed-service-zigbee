@@ -29,11 +29,11 @@
                           "customAttributes":
                           {
                             "voltage":      {"type": "value", "clusterId": 12, "attributeId": 85, "dataType": 57},
-                            "voltageLow":   {"type": "bool",  "clusterId": 15, "attributeId": 85, "dataType": 16},
+                            "voltageLow":   {"type": "enum",  "clusterId": 15, "attributeId": 85, "dataType": 16},
                             "voltageType":  {"type": "enum",  "clusterId": 19, "attributeId": 85, "dataType": 33, "action": true},
                             "threshold":    {"type": "value", "clusterId": 20, "attributeId": 85, "dataType": 33, "action": true}
                           },
-                          "voltageLow": {"type": "binary", "icon": "mdi:bell"},
+                          "voltageLow": {"type": "binary", "enum": [true, false], "icon": "mdi:bell"},
                           "voltageType": {"type": "select", "enum": ["AC", "DC"]},
                           "threshold": {"min": 4, "max": 340, "unit": "V", "icon": "mdi:bell"}
                         }
