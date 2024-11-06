@@ -67,10 +67,27 @@
     {
       "description":    "VALLHORN Motion Sensor E2134",
       "modelNames":     ["VALLHORN Wireless Motion Sensor"],
-      "properties":     ["batteryPercentage", "occupancy", "illuminance"],
-      "bindings":       ["battery", "occupancy", "illuminance"],
-      "reportings":     ["batteryPercentage", "occupancy", "illuminance"],
-      "exposes":        ["battery", "occupancy", "illuminance"]
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["VALLHORN Wireless Motion Sensor"],
+      "properties":     ["occupancy"],
+      "bindings":       ["occupancy"],
+      "reportings":     ["occupancy"],
+      "exposes":        ["occupancy"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["VALLHORN Wireless Motion Sensor"],
+      "properties":     ["illuminance"],
+      "bindings":       ["illuminance"],
+      "reportings":     ["illuminance"],
+      "exposes":        ["illuminance"],
+      "endpointId":     3
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1743",
