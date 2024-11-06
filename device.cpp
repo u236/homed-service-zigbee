@@ -655,7 +655,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->reportings().append(Reporting(new Reportings::Thermostat));
                     it.value()->exposes().append(Expose(new ThermostatObject));
                     device->options().insert(QString("targetTemperature_%1").arg(it.key()), QMap <QString, QVariant> {{"min", 7}, {"max", 30}, {"step", 0.1}, {"unit", "°C"}});
-                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "heat"})}});
+                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "auto", "heat"})}});
                     break;
 
                 case CLUSTER_FAN_CONTROL:
