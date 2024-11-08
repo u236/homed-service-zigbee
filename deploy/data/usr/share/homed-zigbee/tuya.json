@@ -1059,8 +1059,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "101":    [{"name": "illuminance", "type": "value"}],
-                            "105":    [{"name": "rainIntensity", "type": "value"}]
+                            "101":  [{"name": "illuminance", "type": "value"}],
+                            "105":  [{"name": "rainIntensity", "type": "value"}]
                           },
                           "rain": {"type": "binary", "icon": "mdi:weather-pouring"},
                           "illuminance": {"unit": "mV"},
@@ -1070,6 +1070,24 @@
     {
       "description":    "TUYA TS0207 Network Router",
       "modelNames":     ["_TZ3000_5k5vh43t", "_TZ3000_gszjt2xx", "_TZ3000_m0vaazab", "_TZ3000_misw04hq", "_TZ3000_nkkl7uzv", "_TZ3000_nlsszmzl", "_TZ3000_ufttklsz", "_TZ3000_wlquqiiz"]
+    },
+    {
+      "description":    "TUYA TS000F 1-Channel Relay with Temperature and Humidity Sensor",
+      "modelNames":     ["_TZ3218_7fiyo3kv"],
+      "properties":     ["status", "tuyaDataPoints"],
+      "actions":        ["status", "tuyaDataPoints"],
+      "exposes":        ["switch", "temperature", "humidity", "temperatureOffset", "humidityOffset"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "102":  [{"name": "temperature", "type": "value", "divider": 10}],
+                            "103":  [{"name": "humidity", "type": "value"}],
+                            "108":  [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "109":  [{"name": "humidityOffset", "type": "value", "action": true}]
+                          },
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
+                          "humidityOffset": {"min": -10, "max": 10}
+                        }
     },
     {
       "description":    "TUYA TS0001 Fingerbot",
