@@ -664,7 +664,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type A)",
-      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_qasjif9e", "_TZE204_ztc6ggyl"],
+      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_qasjif9e", "_TZE204_ztqnh5cg", "_TZE204_ztc6ggyl"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
@@ -1615,8 +1615,8 @@
       "endpointId":     [1, 2, 3, 4]
     },
     {
-      "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVB-AA",
-      "modelNames":     ["_TZ3000_ja5osu5g"],
+      "description":    "TUYA TS004F Wireless Dimmer (Type A)",
+      "modelNames":     ["_TZ3000_egvb1p2g", "_TZ3000_ja5osu5g", "_TZ3000_kjfzuycl"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
       "actions":        ["tuyaOperationMode"],
       "bindings":       ["battery", "status"],
@@ -1625,7 +1625,7 @@
       "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"enum": ["singleClick", "doubleClick", "hold"]}}
     },
     {
-      "description":    "TUYA TS004F Wireless Dimmer ERS-10TZBVK-AA",
+      "description":    "TUYA TS004F Wireless Dimmer (Type B)",
       "modelNames":     ["_TZ3000_402vrq2i", "_TZ3000_4fjiwweb", "_TZ3000_abrsvsou", "_TZ3000_ixla93vd", "_TZ3000_qja6nq5z", "_TZ3000_uri7ongn"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
       "actions":        ["tuyaOperationMode"],
