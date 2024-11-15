@@ -42,8 +42,8 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
         connect(m_socket, &QTcpSocket::connected, this, &Adapter::socketConnected);
     }
 
-    m_panId = static_cast <quint16> (config->value("zigbee/panid", "0x1010").toString().toInt(nullptr, 16));
-    m_channel = static_cast <quint8> (config->value("zigbee/channel", 11).toInt());
+    m_panId = static_cast <quint16> (config->value("zigbee/panid").toString().toInt(nullptr, 16));
+    m_channel = static_cast <quint8> (config->value("zigbee/channel").toInt());
     m_power = static_cast <quint8> (config->value("zigbee/power", 20).toInt());
 
     m_write = config->value("zigbee/write", false).toBool();

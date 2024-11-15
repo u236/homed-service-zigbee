@@ -1,11 +1,41 @@
-#include <math.h>
+#include <QRandomGenerator>
 #include "controller.h"
 #include "logger.h"
 
-Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_deviceDataTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(new ZigBee(getConfig(), this)), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
+Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_deviceDataTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(nullptr), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
 {
     logInfo << "Starting version" << SERVICE_VERSION;
     logInfo << "Configuration file is" << getConfig()->fileName();
+
+    if (getConfig()->value("zigbee/panid").toString().isEmpty())
+    {
+        QFile file(getConfig()->fileName());
+        bool check = false;
+
+        if (file.open(QFile::ReadWrite))
+        {
+            QByteArray data = file.readAll();
+            quint16 panId = static_cast <quint16> (QRandomGenerator::global()->generate());
+
+            data.replace("panid=", QString::asprintf("panid=0x%04x", panId).toUtf8());
+            file.seek(0);
+
+            if (file.write(data) == data.length())
+            {
+                logInfo << "New PAN ID" << QString::asprintf("0x%04x", panId) << "sucessfully stored";
+                check = true;
+            }
+
+            file.close();
+        }
+
+        if (!check)
+            logWarning << "New PAN ID not stored, config file write error";
+
+        return;
+    }
+
+    m_zigbee = new ZigBee(getConfig(), this);
 
     m_haPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
     m_haStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
@@ -55,7 +85,9 @@ void Controller::serviceOnline(void)
 
 void Controller::quit(void)
 {
-    delete m_zigbee;
+    if (m_zigbee)
+        delete m_zigbee;
+
     HOMEd::quit();
 }
 
