@@ -156,74 +156,6 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
     return it.value();
 }
 
-void DeviceList::identityHandler(const Device &device, QString &manufacturerName, QString &modelName)
-{
-    QList <QString> lumi =
-    {
-        "aqara",
-        "Aqara",
-        "XIAOMI"
-    };
-
-    QList <QString> orvibo =
-    {
-        "131c854783bc45c9b2ac58088d09571c",
-        "585fdfb8c2304119a2432e9845cf2623",
-        "52debf035a1b4a66af56415474646c02",
-        "75a4bfe8ef9c4350830a25d13e3ab068",
-        "b2e57a0f606546cd879a1a54790827d6",
-        "b7e305eb329f497384e966fe3fb0ac69",
-        "c670e231d1374dbc9e3c6a9fffbd0ae6",
-        "da2edf1ded0d44e1815d06f45ce02029",
-        "e70f96b3773a4c9283c6862dbafb6a99",
-        "fdd76effa0e146b4bdafa0c203a37192"
-    };
-
-    manufacturerName = device->manufacturerName();
-    modelName = device->modelName();
-
-    if (lumi.contains(manufacturerName))
-    {
-        manufacturerName = "LUMI";
-        return;
-    }
-
-    if (orvibo.contains(modelName))
-    {
-        manufacturerName = "ORVIBO";
-        return;
-    }
-
-    if (manufacturerName.contains("efekta", Qt::CaseInsensitive))
-    {
-        manufacturerName = "EFEKTA";
-        return;
-    }
-
-    if (manufacturerName == "GLEDOPTO" && modelName == "GL-C-007")
-    {
-        QMap <quint8, quint16> map;
-
-        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
-            map.insert(it.key(), it.value()->deviceId());
-
-        if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0x0210}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0C, 0x0102}, {0x0D, 0xE15E}})
-            modelName = "GL-C-007-1ID";
-        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0xE15E}, {0x0F, 0x0100}})
-            modelName = "GL-C-007-2ID";
-        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0xE15E}, {0x0F, 0x0220}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0C, 0x0102}, {0x0D, 0xE15E}, {0x0F, 0x0100}})
-            modelName = "GL-C-008-2ID";
-
-        return;
-    }
-
-    if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || QRegExp("^_TZ[2,3,E]\\d{3}_\\S+$").exactMatch(manufacturerName) || manufacturerName.startsWith("_TYZB01_") || manufacturerName.startsWith("TUYA"))
-    {
-        modelName = manufacturerName;
-        manufacturerName = "TUYA";
-    }
-}
-
 void DeviceList::setupDevice(const Device &device)
 {
     Expose expose(new SensorObject("linkQuality"));
@@ -378,6 +310,86 @@ void DeviceList::setupDevice(const Device &device)
 
     expose->setParent(device->endpoints().first().data());
     device->endpoints().last()->exposes().append(expose);
+}
+
+void DeviceList::removeDevice(const Device &device)
+{
+    if (device->name() != device->ieeeAddress().toHex(':'))
+    {
+        device->setRemoved(true);
+        device->setInterviewStatus(InterviewStatus::NodeDescriptor);
+        return;
+    }
+
+    remove(device->ieeeAddress());
+}
+
+void DeviceList::identityHandler(const Device &device, QString &manufacturerName, QString &modelName)
+{
+    QList <QString> lumi =
+    {
+        "aqara",
+        "Aqara",
+        "XIAOMI"
+    };
+
+    QList <QString> orvibo =
+    {
+        "131c854783bc45c9b2ac58088d09571c",
+        "585fdfb8c2304119a2432e9845cf2623",
+        "52debf035a1b4a66af56415474646c02",
+        "75a4bfe8ef9c4350830a25d13e3ab068",
+        "b2e57a0f606546cd879a1a54790827d6",
+        "b7e305eb329f497384e966fe3fb0ac69",
+        "c670e231d1374dbc9e3c6a9fffbd0ae6",
+        "da2edf1ded0d44e1815d06f45ce02029",
+        "e70f96b3773a4c9283c6862dbafb6a99",
+        "fdd76effa0e146b4bdafa0c203a37192"
+    };
+
+    manufacturerName = device->manufacturerName();
+    modelName = device->modelName();
+
+    if (lumi.contains(manufacturerName))
+    {
+        manufacturerName = "LUMI";
+        return;
+    }
+
+    if (orvibo.contains(modelName))
+    {
+        manufacturerName = "ORVIBO";
+        return;
+    }
+
+    if (manufacturerName.contains("efekta", Qt::CaseInsensitive))
+    {
+        manufacturerName = "EFEKTA";
+        return;
+    }
+
+    if (manufacturerName == "GLEDOPTO" && modelName == "GL-C-007")
+    {
+        QMap <quint8, quint16> map;
+
+        for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+            map.insert(it.key(), it.value()->deviceId());
+
+        if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0x0210}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0C, 0x0102}, {0x0D, 0xE15E}})
+            modelName = "GL-C-007-1ID";
+        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0xE15E}, {0x0F, 0x0100}})
+            modelName = "GL-C-007-2ID";
+        else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0xE15E}, {0x0F, 0x0220}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0C, 0x0102}, {0x0D, 0xE15E}, {0x0F, 0x0100}})
+            modelName = "GL-C-008-2ID";
+
+        return;
+    }
+
+    if (QRegExp("^TS\\d{3}[0-9F][AB]{0,1}$").exactMatch(modelName) || QRegExp("^_TZ[2,3,E]\\d{3}_\\S+$").exactMatch(manufacturerName) || manufacturerName.startsWith("_TYZB01_") || manufacturerName.startsWith("TUYA"))
+    {
+        modelName = manufacturerName;
+        manufacturerName = "TUYA";
+    }
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
@@ -932,18 +944,6 @@ void DeviceList::recognizeMultipleExpose(const Device &device, const Endpoint &e
             }
         }
     }
-}
-
-void DeviceList::removeDevice(const Device &device)
-{
-    if (device->name() != device->ieeeAddress().toHex(':'))
-    {
-        device->setRemoved(true);
-        device->setInterviewStatus(InterviewStatus::NodeDescriptor);
-        return;
-    }
-
-    remove(device->ieeeAddress());
 }
 
 void DeviceList::unserializeDevices(const QJsonArray &devices)

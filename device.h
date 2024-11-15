@@ -271,14 +271,7 @@ public:
     Device byNetwork(quint16 networkAddress);
     Endpoint endpoint(const Device &device, quint8 endpointId);
 
-    void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
     void setupDevice(const Device &device);
-    void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
-
-    void recognizeDevice(const Device &device);
-    void recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property);
-    void recognizeMultipleExpose(const Device &device, const Endpoint &endpoint, const Expose &expose);
-
     void removeDevice(const Device &device);
 
 private:
@@ -292,6 +285,13 @@ private:
 
     QMap <QString, QVariant> m_exposeOptions;
     QList <QString> m_specialExposes, m_brokenFiles;
+
+    void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
+    void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
+
+    void recognizeDevice(const Device &device);
+    void recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property);
+    void recognizeMultipleExpose(const Device &device, const Endpoint &endpoint, const Expose &expose);
 
     void unserializeDevices(const QJsonArray &devices);
     void unserializeProperties(const QJsonObject &properties);
