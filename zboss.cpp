@@ -445,7 +445,7 @@ bool ZBoss::startCoordinator(void)
             }
 
             m_clear = true;
-            reset();
+            softReset();
 
             return true;
         }

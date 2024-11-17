@@ -1846,7 +1846,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 break;
             }
 
-            interviewError(device, QString::asprintf("node descriptor response error %0x02x", response->status));
+            interviewError(device, QString::asprintf("node descriptor response error 0x%02x", response->status));
             break;
         }
 
@@ -1915,7 +1915,7 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
                 break;
             }
 
-            interviewError(device, QString::asprintf("active endpoints response error %0x02x", response->status));
+            interviewError(device, QString::asprintf("active endpoints response error 0x%02x", response->status));
             break;
         }
 
