@@ -1529,10 +1529,10 @@
                           "tuyaDataPoints":
                           {
                             "101":  [{"name": "action", "type": "enum"}],
-                            "102":  [{"name": "light", "type": "bool"}]
+                            "102":  [{"name": "illuminance", "type": "bool"}]
                           },
                           "action": {"enum": ["singleClick", "doubleClick", "hold"]},
-                          "light": {"enum": ["dark", "bright"]}
+                          "illuminance": {"enum": ["dark", "bright"]}
                         }
     },
     {
