@@ -285,7 +285,6 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 bool ZStack::startCoordinator(void)
 {
     zstackVersionStruct version;
-    zstackAddGroupStruct request;
 
     if (!sendRequest(ZSTACK_SYS_VERSION))
     {
@@ -484,13 +483,6 @@ bool ZStack::startCoordinator(void)
         logWarning << "Set Inter-PAN endpoint request failed";
         return false;
     }
-
-    request.endpointId = 0xF2;
-    request.groupId = qToLittleEndian <quint16> (GREEN_POWER_GROUP);
-    request.nameLength = 0x00;
-
-    if (!sendRequest(ZSTACK_ZDO_ADD_GROUP, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus)
-        logWarning << "Add GP group request failed";
 
     if (!sendRequest(ZSTACK_SYS_SET_TX_POWER, QByteArray(1, static_cast <char> (m_power))) || m_replyStatus)
         logWarning << "Set TX power request failed";

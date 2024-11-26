@@ -326,13 +326,16 @@ bool ZiGate::startCoordinator(bool clear)
     {
         zigateAddGroupStruct request;
 
+        if (m_multicast.at(i) == GREEN_POWER_GROUP)
+            continue;
+
         request.addressMode = ADDRESS_MODE_16_BIT;
         request.address = 0x0000;
         request.srcEndpointId = 0x01;
         request.dstEndpointId = 0x01;
         request.groupId = qToBigEndian(m_multicast.at(i));
 
-        if (sendRequest(ZIGATE_ADD_GROUP, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || !m_replyStatus)
+        if (sendRequest(ZIGATE_ADD_GROUP, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) && !m_replyStatus)
             continue;
 
         logWarning << "Add group" << QString::asprintf("0x%04x", m_multicast.at(i)) << "request failed";
