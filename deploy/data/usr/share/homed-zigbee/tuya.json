@@ -253,6 +253,26 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Fan Controller",
+      "modelNames":     ["_TZE200_r32ctezx", "_TZE204_r32ctezx"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch", "timer", "fanMode", "powerOnStatus"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status", "type": "bool", "action": true}],
+                            "2":    [{"name": "timer", "type": "value", "divider": 60, "action": true}],
+                            "3":    [{"name": "fanMode", "type": "enum", "action": true}],
+                            "11":   [{"name": "powerOnStatus", "type": "enum", "action": true}]
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "timer": {"min": 0, "max": 720},
+                          "fanMode": {"enum": ["min", "low", "medium", "high", "max"]},
+                          "powerOnStatus": {"enum": ["off", "on"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Radiator Thermostat (Type A)",
       "modelNames":     ["_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_lpwgshtl", "_TZE200_pvvbommb", "_TZE200_rufdtfyv", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj", "_TZE200_znlqjmih"],
       "properties":     ["tuyaDataPoints", "tuyaHolidayThermostatProgram"],
