@@ -1743,7 +1743,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": {"enum": ["disarm", "armDayZones", "armNightZones", "armAllZones", "exitDelay", "emergency"]}}
+      "options":        {"action": {"enum": ["disarm", "armDayZones", "armNightZones", "armAllZones", "exitDelay", "emergency"]}, "checkTransactionId": true}
     },
     {
       "description":    "Simon 2-Channel Switch S2100-1002",
