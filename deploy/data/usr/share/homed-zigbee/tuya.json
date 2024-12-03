@@ -341,6 +341,38 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Electric Thermostat",
+      "modelNames":     ["_TZE204_tagezcph"],
+      "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "ecoMode", "ecoTemperature", "floorTemperature", "sensorType", "temperatureOffset", "thermostatProgram"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
+                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
+                            "24":   [{"name": "temperature", "type": "value", "divider": 10}],
+                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
+                            "36":   [{"name": "running", "type": "bool", "invert": true}],
+                            "39":   [{"name": "childLock", "type": "bool", "action": true}],
+                            "40":   [{"name": "ecoMode", "type": "bool", "action": true}],
+                            "43":   [{"name": "sensorType", "type": "enum", "action": true}],
+                            "102":  [{"name": "floorTemperature", "type": "value", "divider": 10}],
+                            "112":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}]
+                          },
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "operationMode": {"enum": ["program", "manual"]},
+                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
+                          "temperatureOffset": {"min": -30, "max": 30},
+                          "floorTemperature": {"type": "sensor", "unit": "°C"},
+                          "ecoTemperature": {"min": 5, "max": 30},
+                          "thermostatProgram": "daily",
+                          "prorgamDataPoint": 101,
+                          "runningStatus": true
+                        }
+    },
+    {
       "description":    "TUYA TS0601 MOES Radiator Thermostat",
       "modelNames":     ["_TZE200_b6wax7g0"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],

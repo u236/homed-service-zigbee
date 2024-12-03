@@ -145,6 +145,7 @@ QByteArray ActionsTUYA::DailyThermostatProgram::request(const QString &name, con
     QList <QString> types = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload = QByteArray(1, static_cast <char> (types.indexOf(type) + 1));
+    quint8 start = static_cast <quint8> (option("prorgamDataPoint", 28).toInt());
 
     if (m_data.isEmpty() || meta().value("program").toBool())
     {
@@ -163,7 +164,7 @@ QByteArray ActionsTUYA::DailyThermostatProgram::request(const QString &name, con
         payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
     }
 
-    return makeRequest(m_transactionId++, 0x00, static_cast <quint8> (0x1C + types.indexOf(type)), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
+    return makeRequest(m_transactionId++, 0x00, static_cast <quint8> (start + types.indexOf(type)), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
 QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)

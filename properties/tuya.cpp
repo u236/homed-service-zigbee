@@ -198,11 +198,12 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
 void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
+    quint8 start = static_cast <quint8> (option("prorgamDataPoint", 28).toInt());
 
-    if (dataPoint >= 0x1C && dataPoint <= 0x22)
+    if (dataPoint >= start && dataPoint <= start + 6)
     {
         QList <QString> types = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-        QString type = types.value(dataPoint - 0x1C);
+        QString type = types.value(dataPoint - start);
         QByteArray program = data.toByteArray().mid(1);
 
         meta().insert(QString("%1Program").arg(type), true);
