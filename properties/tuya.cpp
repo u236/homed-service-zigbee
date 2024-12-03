@@ -266,11 +266,11 @@ void PropertiesTUYA::CoverSwitch::parseAttribte(quint16, quint16 attributeId, co
     {
         case 0xF000:
 
-            switch (data.at(0))
+            switch (static_cast <quint8> (data.at(0)))
             {
-                case 0: map.insert("event", option("invertCover").toBool() ? "close" : "open"); break;
-                case 1: map.insert("event", "stop"); break;
-                case 2: map.insert("event", option("invertCover").toBool() ? "open" : "close"); break;
+                case 0x00: map.insert("event", option("invertCover").toBool() ? "close" : "open"); break;
+                case 0x01: map.insert("event", "stop"); break;
+                case 0x02: map.insert("event", option("invertCover").toBool() ? "open" : "close"); break;
             }
 
             break;
@@ -296,7 +296,7 @@ void PropertiesTUYA::ButtonAction::parseCommand(quint16, quint8 commandId, const
     {
         case 0xFC:
 
-            switch (payload.at(0))
+            switch (static_cast <quint8> (payload.at(0)))
             {
                 case 0x00: m_value = "rotateRight"; break;
                 case 0x01: m_value = "rotateLeft"; break;
@@ -306,7 +306,7 @@ void PropertiesTUYA::ButtonAction::parseCommand(quint16, quint8 commandId, const
 
         case 0xFD:
 
-            switch (payload.at(0))
+            switch (static_cast <quint8> (payload.at(0)))
             {
                 case 0x00: m_value = "singleClick"; break;
                 case 0x01: m_value = "doubleClick"; break;

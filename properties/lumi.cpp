@@ -191,7 +191,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         {
             double value = 0;
 
-            switch (data.at(0))
+            switch (static_cast <quint8> (data.at(0)))
             {
                 case 0x01: value = 0.085; break;
                 case 0x02: value = 0.088; break;
