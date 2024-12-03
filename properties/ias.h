@@ -80,6 +80,16 @@ namespace PropertiesIAS
         Rain(void) : ZoneStatus("rain") {}
 
     };
+
+    class ContolAction : public PropertyObject
+    {
+
+    public:
+
+        ContolAction(const QString &name = "action") : PropertyObject(name, CLUSTER_IAS_ACE) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
 }
 
 #endif

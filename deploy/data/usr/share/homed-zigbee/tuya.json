@@ -1705,6 +1705,15 @@
       "exposes":        ["battery"]
     },
     {
+      "description":    "Smart9 Remote Control S9ZGBRC01",
+      "modelNames":     ["TS0215"],
+      "properties":     ["batteryPercentage", "iasContolAction"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"],
+      "options":        {"action": {"enum": ["disarm", "armDayZones", "armNightZones", "armAllZones", "exitDelay", "emergency"]}}
+    },
+    {
       "description":    "Simon 2-Channel Switch S2100-1002",
       "modelNames":     ["S2100-1002"],
       "properties":     ["status"],
