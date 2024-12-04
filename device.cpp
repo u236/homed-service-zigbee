@@ -589,13 +589,14 @@ void DeviceList::recognizeDevice(const Device &device)
             {
                 case CLUSTER_POWER_CONFIGURATION:
 
-                    if (!device->batteryPowered())
-                        break;
+                    if (device->batteryPowered())
+                    {
+                        it.value()->properties().append(Property(new Properties::BatteryPercentage));
+                        it.value()->bindings().append(Binding(new Bindings::Battery));
+                        it.value()->reportings().append(Reporting(new Reportings::BatteryPercentage));
+                        it.value()->exposes().append(Expose(new SensorObject("battery")));
+                    }
 
-                    it.value()->properties().append(Property(new Properties::BatteryPercentage));
-                    it.value()->bindings().append(Binding(new Bindings::Battery));
-                    it.value()->reportings().append(Reporting(new Reportings::BatteryPercentage));
-                    it.value()->exposes().append(Expose(new SensorObject("battery")));
                     break;
 
                 case CLUSTER_TEMPERATURE_CONFIGURATION:
@@ -718,7 +719,6 @@ void DeviceList::recognizeDevice(const Device &device)
                         break;
                     }
 
-                    it.value()->properties().append(Property(new Properties::ColorAction));
                     break;
 
                 case CLUSTER_ILLUMINANCE_MEASUREMENT:
