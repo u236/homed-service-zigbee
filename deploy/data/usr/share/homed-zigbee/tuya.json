@@ -274,10 +274,10 @@
     },
     {
       "description":    "TUYA TS0601 Radiator Thermostat (Type A)",
-      "modelNames":     ["_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_lpwgshtl", "_TZE200_pvvbommb", "_TZE200_rufdtfyv", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj", "_TZE200_znlqjmih"],
+      "modelNames":     ["_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_lpwgshtl", "_TZE200_pvvbommb", "_TZE200_rk1wojce", "_TZE200_rndg81sf", "_TZE200_rufdtfyv", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj", "_TZE200_znlqjmih"],
       "properties":     ["tuyaDataPoints", "tuyaHolidayThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaHolidayThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "awayDays", "boostTimeout", "temperatureOffset", "weekMode", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "awayDays", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "weekMode", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -287,6 +287,8 @@
                             "7":    [{"name": "childLock", "type": "bool", "action": true}],
                             "21":   [{"name": "battery", "type": "value"}],
                             "44":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "102":  [{"name": "temperatureLow", "type": "value", "action": true}],
+                            "103":  [{"name": "temperatureHigh", "type": "value", "action": true}],
                             "105":  [{"name": "boostTimeout", "type": "value", "action": true}],
                             "106":  [{"name": "systemMode", "type": "enum", "action": true}],
                             "107":  [{"name": "comfortTemperature", "type": "value", "action": true}],
@@ -299,6 +301,8 @@
                           "targetTemperature": {"min": 5, "max": 35},
                           "operationMode": {"enum": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.5},
+                          "temperatureLow": {"min": 1, "max": 15},
+                          "temperatureHigh": {"min": 15, "max": 70},
                           "boostTimeout": {"min": 0, "max": 900, "step": 10},
                           "systemMode": {"enum": ["auto", "heat", "off"]},
                           "comfortTemperature": {"min": 5, "max": 35},
@@ -313,7 +317,7 @@
       "modelNames":     ["_TZE204_g2ki0ejr"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "childLock", "holidayTemperature", "comfortTemperature", "frostProtection", "boost", "boostTimeout", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "childLock", "holidayTemperature", "comfortTemperature", "frostProtection", "boost", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -322,6 +326,8 @@
                             "5":    [{"name": "temperature", "type": "value", "divider": 10}],
                             "6":    [{"name": "battery", "type": "value"}],
                             "7":    [{"name": "childLock", "type": "bool", "action": true}],
+                            "9":    [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
+                            "10":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
                             "21":   [{"name": "holidayTemperature", "type": "value", "action": true}],
                             "24":   [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
                             "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
@@ -332,6 +338,8 @@
                           },
                           "operationMode": {"enum": ["program", "holiday", "manual", "comfort"]},
                           "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "temperatureHigh": {"min": 15, "max": 45},
+                          "temperatureLow": {"min": 5, "max": 15},
                           "holidayTemperature": {"min": 5, "max": 35},
                           "comfortTemperature": {"min": 5, "max": 35},
                           "boostTimeout": {"min": 0, "max": 465, "step": 5},
@@ -341,11 +349,40 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Electric Thermostat",
+      "description":    "TUYA TS0601 Electric Thermostat (Type A)",
+      "modelNames":     ["_TZE200_viy9ihs7", "_TZE204_lzriup1j", "_TZE204_xnbkhhdr"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["thermostat", "childLock", "frostProtection", "temperatureHigh", "temperatureOffset", "hysteresis"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
+                            "2":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
+                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "9":    [{"name": "childLock", "type": "bool", "action": true}],
+                            "15":   [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
+                            "19":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "101":  [{"name": "running", "type": "bool", "invert": true}],
+                            "102":  [{"name": "frostProtection", "type": "bool", "action": true}],
+                            "107":  [{"name": "hysteresis", "type": "value", "action": true}]
+                          },
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
+                          "operationMode": {"enum": ["program", "manual"]},
+                          "temperatureHigh": {"min": 15, "max": 90},
+                          "temperatureOffset": {"min": -9.9, "max": 9.9, "step": 0.1},
+                          "hysteresis": {"min": 0.5, "max": 10, "step": 0.5},
+                          "runningStatus": true
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Electric Thermostat (Type B)",
       "modelNames":     ["_TZE204_tagezcph"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["thermostat", "childLock", "ecoMode", "ecoTemperature", "floorTemperature", "sensorType", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "ecoMode", "ecoTemperature", "floorTemperature", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -359,6 +396,9 @@
                             "40":   [{"name": "ecoMode", "type": "bool", "action": true}],
                             "43":   [{"name": "sensorType", "type": "enum", "action": true}],
                             "102":  [{"name": "floorTemperature", "type": "value", "divider": 10}],
+                            "103":  [{"name": "hysteresis", "type": "value", "action": true}],
+                            "104":  [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
+                            "111":  [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
                             "112":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}]
                           },
                           "systemMode": {"enum": ["off", "heat"]},
@@ -366,6 +406,9 @@
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
                           "temperatureOffset": {"min": -30, "max": 30},
                           "floorTemperature": {"type": "sensor", "unit": "°C"},
+                          "hysteresis": {"min": 0, "max": 5},
+                          "temperatureHigh": {"min": 25, "max": 70},
+                          "temperatureLow": {"min": 0, "max": 10},
                           "ecoTemperature": {"min": 5, "max": 30},
                           "thermostatProgram": "daily",
                           "prorgamDataPoint": 101,
@@ -377,7 +420,7 @@
       "modelNames":     ["_TZE200_b6wax7g0"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "position", "childLock", "ecoMode", "ecoTemperature", "boost", "boostTimeout", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "position", "childLock", "ecoMode", "ecoTemperature", "boost", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -392,7 +435,9 @@
                             "104":  [{"name": "position", "type": "value"}],
                             "105":  [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "106":  [{"name": "ecoMode", "type": "bool", "action": true}],
-                            "107":  [{"name": "ecoTemperature", "type": "value", "action": true}]
+                            "107":  [{"name": "ecoTemperature", "type": "value", "action": true}],
+                            "108":  [{"name": "temperatureHigh", "type": "value", "action": true}],
+                            "109":  [{"name": "temperatureLow", "type": "value", "action": true}]
                           },
                           "operationMode": {"enum": ["program", "manual", "temporary", "holiday"]},
                           "targetTemperature": {"min": 10, "max": 30},
@@ -400,24 +445,28 @@
                           "position": {"type": "sensor", "icon": "mdi:valve"},
                           "temperatureOffset": {"min": -9, "max": 9},
                           "ecoTemperature": {"min": 10, "max": 30},
+                          "temperatureHigh": {"min": 15, "max": 45},
+                          "temperatureLow": {"min": 0, "max": 15},
                           "thermostatProgram": "moes",
                           "runningStatus": true
                         }
     },
     {
       "description":    "TUYA TS0601 MOES Electric Thermostat (Type A)",
-      "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE204_5toc8efa", "_TZE204_aoclfnxz"],
+      "modelNames":     ["_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE204_aoclfnxz", "_TZE204_u9bfwha0"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
-      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis", "thermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "systemMode", "type": "bool", "action": true}],
                             "2":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
+                            "18":   [{"name": "temperatureHigh", "type": "value", "action": true}],
                             "20":   [{"name": "hysteresis", "type": "value", "action": true}],
                             "24":   [{"name": "temperature", "type": "value", "divider": 10}],
+                            "26":   [{"name": "temperatureLow", "type": "value", "action": true}],
                             "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "36":   [{"name": "running", "type": "bool", "invert": true}],
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
@@ -426,7 +475,9 @@
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35},
+                          "temperatureHigh": {"min": 5, "max": 45},
                           "hysteresis": {"min": 0, "max": 5},
+                          "temperatureLow": {"min": 1, "max": 5},
                           "temperatureOffset": {"min": -30, "max": 30},
                           "thermostatProgram": "moes",
                           "runningStatus": true
@@ -434,18 +485,20 @@
     },
     {
       "description":    "TUYA TS0601 MOES Electric Thermostat (Type B)",
-      "modelNames":     ["_TZE200_5toc8efa", "_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
+      "modelNames":     ["_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
-      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis", "thermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "systemMode", "type": "bool", "action": true}],
                             "2":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
+                            "18":   [{"name": "temperatureHigh", "type": "value", "action": true}],
                             "20":   [{"name": "hysteresis", "type": "value", "action": true}],
                             "24":   [{"name": "temperature", "type": "value"}],
+                            "26":   [{"name": "temperatureLow", "type": "value", "action": true}],
                             "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "36":   [{"name": "running", "type": "bool", "invert": true}],
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
@@ -454,36 +507,43 @@
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 35},
+                          "temperatureHigh": {"min": 5, "max": 45},
                           "hysteresis": {"min": 0, "max": 5},
+                          "temperatureLow": {"min": 1, "max": 5},
                           "temperatureOffset": {"min": -30, "max": 30},
                           "thermostatProgram": "moes",
                           "runningStatus": true
                         }
     },
     {
-      "description":    "TUYA TS0601 Electric Thermostat ZWT198",
-      "modelNames":     ["_TZE200_viy9ihs7"],
-      "properties":     ["tuyaDataPoints"],
-      "actions":        ["tuyaDataPoints"],
-      "exposes":        ["thermostat", "childLock", "frostProtection", "temperatureOffset", "hysteresis"],
+      "description":    "TUYA TS0601 MOES Electric Thermostat (Type C)",
+      "modelNames":     ["_TZE200_5toc8efa", "_TZE204_5toc8efa"],
+      "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "systemMode", "type": "bool", "action": true}],
-                            "2":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "9":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "19":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "101":  [{"name": "running", "type": "bool", "invert": true}],
-                            "102":  [{"name": "frostProtection", "type": "bool", "action": true}],
-                            "107":  [{"name": "hysteresis", "type": "value", "action": true}]
+                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
+                            "18":   [{"name": "temperatureHigh", "type": "value", "action": true}],
+                            "20":   [{"name": "hysteresis", "type": "value", "action": true}],
+                            "24":   [{"name": "temperature", "type": "value"}],
+                            "26":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
+                            "27":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "36":   [{"name": "running", "type": "bool", "invert": true}],
+                            "40":   [{"name": "childLock", "type": "bool", "action": true}],
+                            "43":   [{"name": "sensorType", "type": "enum", "action": true}]
                           },
                           "systemMode": {"enum": ["off", "heat"]},
-                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
-                          "operationMode": {"enum": ["program", "manual"]},
-                          "temperatureOffset": {"min": -9.9, "max": 9.9, "step": 0.1},
-                          "hysteresis": {"min": 0.5, "max": 10, "step": 0.5},
+                          "operationMode": {"enum": ["manual", "program"]},
+                          "targetTemperature": {"min": 5, "max": 35},
+                          "temperatureHigh": {"min": 5, "max": 45},
+                          "hysteresis": {"min": 0, "max": 5},
+                          "temperatureLow": {"min": 1, "max": 5},
+                          "temperatureOffset": {"min": -30, "max": 30},
+                          "thermostatProgram": "moes",
                           "runningStatus": true
                         }
     },
