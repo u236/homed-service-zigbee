@@ -1616,7 +1616,7 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor with Timeout",
-      "modelNames":     ["_TYZB01_5nr7ncpl", "_TYZB01_bhxcjvlv", "_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
+      "modelNames":     ["_TYZB01_2jzbhomb", "_TYZB01_5nr7ncpl", "_TYZB01_bhxcjvlv", "_TYZB01_jytabjkb", "_TZ3000_lltemgsf", "_TZ3000_mg4dy6z6"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -1659,7 +1659,7 @@
     },
     {
       "description":    "TUYA TS0207 Water Leak Sensor",
-      "modelNames":     ["_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_k4ej3ww2", "_TZ3000_kstbkt6a", "_TZ3000_kyb656no", "_TZ3000_mugyhz0q", "_TZ3000_ocjlo4ea", "_TZ3000_qhozxs2b", "_TYZB01_sqmd19i1", "_TZ3000_t6jriawg", "_TZ3000_upgcbody"],
+      "modelNames":     ["_TZ3000_c8bqthpo", "_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_k4ej3ww2", "_TZ3000_kstbkt6a", "_TZ3000_kyb656no", "_TZ3000_mugyhz0q", "_TZ3000_ocjlo4ea", "_TZ3000_qhozxs2b", "_TYZB01_sqmd19i1", "_TZ3000_t6jriawg", "_TZ3000_upgcbody"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -1667,7 +1667,7 @@
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor (Type A)",
-      "modelNames":     ["_TZ2000_a476raq2", "_TZ2000_zsfvulde", "_TZ3000_0s1izerx", "_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_saiqcn0y", "_TZ3000_xr3htd96", "_TZ3000_yd2e749y", "_TZ3210_alxkwn0h", "_TZE200_ysm4dsb1", "_TZ3000_zl1kmjqx"],
+      "modelNames":     ["_TZ2000_a476raq2", "_TZ2000_zsfvulde", "_TZ3000_0s1izerx", "_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_saiqcn0y", "_TZ3000_xr3htd96", "_TZ3000_yd2e749y", "_TZ3210_alxkwn0h", "_TZE200_ysm4dsb1", "_TZ3000_zfirri2d", "_TZ3000_zl1kmjqx"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"]
     },
