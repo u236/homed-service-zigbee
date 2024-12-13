@@ -563,6 +563,8 @@ void ZBoss::softReset(void)
 
 void ZBoss::parseData(QByteArray &buffer)
 {
+    quint16 signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
+
     if (buffer.startsWith("ESP-ROM"))
     {
         handleReset();
@@ -572,19 +574,22 @@ void ZBoss::parseData(QByteArray &buffer)
 
     while (!buffer.isEmpty())
     {
-        zbossLowLevelHeaderStruct *lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (buffer.data());
-        quint16 length = qFromLittleEndian(lowLevelHeader->length) + 2;
+        int offset = buffer.indexOf(QByteArray(reinterpret_cast <char*> (&signature), sizeof(signature))), length;
+        zbossLowLevelHeaderStruct *lowLevelHeader;
 
-        if (lowLevelHeader->signature != qToBigEndian <quint16> (ZBOSS_SIGNATURE))
+        if (offset < 0)
             return;
+
+        lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (buffer.data() + offset);
+        length = qFromLittleEndian(lowLevelHeader->length) + 2;
 
         if (lowLevelHeader->crc != getCRC8(reinterpret_cast <quint8*> (lowLevelHeader) + 2, sizeof(zbossLowLevelHeaderStruct) - 3))
         {
-            logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(buffer.mid(0, length).toHex(':')));
+            logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(buffer.mid(offset, length).toHex(':')));
             return;
         }
 
-        logDebug(m_portDebug) << "Frame received:" << buffer.mid(0, length).toHex(':');
+        logDebug(m_portDebug) << "Frame received:" << buffer.mid(offset, length).toHex(':');
 
         if (lowLevelHeader->flags & ZBOSS_FLAG_ACK)
         {
@@ -602,16 +607,16 @@ void ZBoss::parseData(QByteArray &buffer)
 
         if (length > 9)
         {
-            if (*(reinterpret_cast <quint16*> (buffer.data() + 7)) != getCRC16(reinterpret_cast <quint8*> (buffer.data() + 9), length - 9))
+            if (*(reinterpret_cast <quint16*> (buffer.data() + offset + 7)) != getCRC16(reinterpret_cast <quint8*> (buffer.data() + offset + 9), length - 9))
             {
-                logWarning << QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(0, length).toHex(':')));
+                logWarning << QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(offset, length).toHex(':')));
                 return;
             }
 
-            m_queue.enqueue(buffer.mid(9, length - 9));
+            m_queue.enqueue(buffer.mid(offset + 9, length - 9));
         }
 
-        buffer.remove(0, length);
+        buffer.remove(0, offset + length);
     }
 }
 
