@@ -168,7 +168,7 @@ bool ZBoss::leaveRequest(quint8 id, quint16 networkAddress)
 bool ZBoss::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
 {
     quint16 dstAddress = qToLittleEndian(networkAddress);
-    m_lqiRequestAddress = networkAddress;
+    m_lqiRequests.insert(id, networkAddress);
     return sendRequest(ZBOSS_ZDO_MGMT_LQI_REQ, QByteArray(reinterpret_cast <char*> (&dstAddress), sizeof(dstAddress)).append(static_cast <char> (index)), id);
 }
 
@@ -311,7 +311,8 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
         case ZBOSS_ZDO_MGMT_LQI_REQ:
         {
-            emit zdoMessageReveived(m_lqiRequestAddress, ZDO_LQI_REQUEST, data.mid(2));
+            emit zdoMessageReveived(m_lqiRequests.value(static_cast <quint8> (data.at(0))), ZDO_LQI_REQUEST, data.mid(2));
+            m_lqiRequests.remove(static_cast <quint8> (data.at(0)));
             break;
         }
 

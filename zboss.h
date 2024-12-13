@@ -236,8 +236,8 @@ private:
     QByteArray m_replyData;
 
     quint8 m_sequenceId, m_acknowledgeId;
-    quint16 m_lqiRequestAddress;
 
+    QMap <quint8, quint16> m_lqiRequests;
     QList <zbossSetPolicyStruct> m_policy;
 
     quint8 getCRC8(quint8 *data, quint32 length);
