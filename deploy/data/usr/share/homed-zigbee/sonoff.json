@@ -61,14 +61,6 @@
                         }
     },
     {
-      "description":    "Sonoff Water Leak Sensor SNZB-05P",
-      "modelNames":     ["SNZB-05P"],
-      "properties":     ["batteryPercentage", "iasWaterLeak"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "waterLeak", "batteryLow"]
-    },
-    {
       "description":    "Sonoff Wireless Button SNZB-01 or SNZB-01P",
       "modelNames":     ["SNZB-01P", "WB01", "WB-01"],
       "properties":     ["batteryPercentage", "customCommands"],
@@ -120,6 +112,14 @@
                           "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}},
                           "illumination": {"enum": ["dim", "bright"]}
                         }
+    },
+    {
+      "description":    "Sonoff Water Leak Sensor SNZB-05P",
+      "modelNames":     ["SNZB-05P"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak", "batteryLow"]
     },
     {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02D",
