@@ -15,8 +15,9 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
         case QVariant::LongLong:
         {
             moveToLevelStruct payload;
+            int value = data.toInt();
 
-            payload.level = static_cast <quint8> (data.toInt() < 0xFE ? data.toInt() : 0xFE);
+            payload.level = static_cast <quint8> (value < 0x00 ? 0x00 : value > 0xFE ? 0xFE : value);
             payload.time = 0;
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x04).append(reinterpret_cast <char*> (&payload), sizeof(payload));
@@ -24,10 +25,11 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
 
         case QVariant::List:
         {
-            QList <QVariant> list = data.toList();
             moveToLevelStruct payload;
+            QList <QVariant> list = data.toList();
+            int value = list.value(0).toInt();
 
-            payload.level = static_cast <quint8> (list.value(0).toInt() < 0xFE ? list.value(0).toInt() : 0xFE);
+            payload.level = static_cast <quint8> (value < 0x00 ? 0x00 : value > 0xFE ? 0xFE : value);
             payload.time = qToLittleEndian <quint16> (list.value(1).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x04).append(reinterpret_cast <char*> (&payload), sizeof(payload));
@@ -75,32 +77,28 @@ QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
 
 QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data)
 {
-    quint8 value = static_cast <qint8> (data.toInt());
+    int value = data.toInt();
+    quint8 position = value < 0 ? 0 : value > 100 ? 100 : value;
 
     meta().insert("position", endpointProperty()->value().toMap().value("position"));
 
-    if (value > 100)
-        value = 100;
-
     if (!option("invertCover").toBool())
-        value = 100 - value;
+        position = 100 - position;
 
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(reinterpret_cast <char*> (&value), sizeof(value));
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(1, static_cast <char> (position));
 }
 
 QByteArray Actions::CoverTilt::request(const QString &, const QVariant &data)
 {
-    quint8 value = static_cast <qint8> (data.toInt());
+    int value = data.toInt();
+    quint8 position = value < 0 ? 0 : value > 100 ? 100 : value;
 
     meta().insert("tilt", endpointProperty()->value().toMap().value("tilt"));
 
-    if (value > 100)
-        value = 100;
-
     if (!option("invertCover").toBool())
-        value = 100 - value;
+        position = 100 - position;
 
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x08).append(reinterpret_cast <char*> (&value), sizeof(value));
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x08).append(1, static_cast <char> (position));
 }
 
 QByteArray Actions::Thermostat::request(const QString &name, const QVariant &data)
@@ -145,8 +143,8 @@ QByteArray Actions::ColorHS::request(const QString &, const QVariant &data)
     {
         case QVariant::List:
         {
-            QList <QVariant> list = data.toList();
             moveToColorHSStruct payload;
+            QList <QVariant> list = data.toList();
             Color color(list.value(0).toDouble() / 0xFF, list.value(1).toDouble() / 0xFF, list.value(2).toDouble() / 0xFF);
             double colorH, colorS;
 
@@ -154,8 +152,8 @@ QByteArray Actions::ColorHS::request(const QString &, const QVariant &data)
             colorH *= 0xFF;
             colorS *= 0xFF;
 
-            payload.colorH = static_cast <quint8> (colorH < 0xFE ? colorH : 0xFE);
-            payload.colorS = static_cast <quint8> (colorS < 0xFE ? colorS : 0xFE);
+            payload.colorH = static_cast <quint8> (colorH > 0xFE ? 0xFE : colorS);
+            payload.colorS = static_cast <quint8> (colorS > 0xFE ? 0xFE : colorH);
             payload.time = qToLittleEndian <quint16> (list.value(3).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x06).append(reinterpret_cast <char*> (&payload), sizeof(payload));
@@ -172,8 +170,8 @@ QByteArray Actions::ColorXY::request(const QString &, const QVariant &data)
     {
         case QVariant::List:
         {
-            QList <QVariant> list = data.toList();
             moveToColorXYStruct payload;
+            QList <QVariant> list = data.toList();
             Color color(list.value(0).toDouble() / 0xFF, list.value(1).toDouble() / 0xFF, list.value(2).toDouble() / 0xFF);
             double colorX, colorY;
 
@@ -181,8 +179,8 @@ QByteArray Actions::ColorXY::request(const QString &, const QVariant &data)
             colorX *= 0xFFFF;
             colorY *= 0xFFFF;
 
-            payload.colorX = qToLittleEndian <quint16> (colorX < 0xFEFF ? colorX : 0xFEFF);
-            payload.colorY = qToLittleEndian <quint16> (colorY < 0xFEFF ? colorY : 0xFEFF);
+            payload.colorX = qToLittleEndian <quint16> (colorX > 0xFEFF ? 0xFEFF : colorX);
+            payload.colorY = qToLittleEndian <quint16> (colorY > 0xFEFF ? 0xFEFF : colorY);
             payload.time = qToLittleEndian <quint16> (list.value(3).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x07).append(reinterpret_cast <char*> (&payload), sizeof(payload));
@@ -200,8 +198,9 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
         case QVariant::LongLong:
         {
             moveToColorTemperatureStruct payload;
+            int value = data.toInt();
 
-            payload.colorTemperature = qToLittleEndian <quint16> (data.toInt() < 0xFEFF ? data.toInt() : 0xFEFF);
+            payload.colorTemperature = qToLittleEndian <quint16> (value < 0x0000 ? 0x0000 : value > 0xFEFF ? 0xFEFF : value);
             payload.time = 0;
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
@@ -209,10 +208,11 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
 
         case QVariant::List:
         {
-            QList <QVariant> list = data.toList();
             moveToColorTemperatureStruct payload;
+            QList <QVariant> list = data.toList();
+            int value = list.value(0).toInt();
 
-            payload.colorTemperature = qToLittleEndian <quint16> (list.value(0).toInt() < 0xFEFF ? list.value(0).toInt() : 0xFEFF);
+            payload.colorTemperature = qToLittleEndian <quint16> (value < 0x0000 ? 0x0000 : value > 0xFEFF ? 0xFEFF : value);
             payload.time = qToLittleEndian <quint16> (list.value(1).toInt());
 
             return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0A).append(reinterpret_cast <char*> (&payload), sizeof(payload));
