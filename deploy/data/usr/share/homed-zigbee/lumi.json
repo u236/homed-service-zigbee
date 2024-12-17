@@ -205,10 +205,17 @@
     {
       "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
       "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
-      "properties":     ["status", "lumiData", "lumiSwitchAction"],
+      "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick"]}, "temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"]}, "switchMode": {"enum": ["decoupled", "relay"]}}
+      "options":        {"temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"]}, "switchMode": {"enum": ["decoupled", "relay"]}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
+      "properties":     ["lumiSwitchAction"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick"]}},
+      "endpointId":     41
     },
     {
       "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
