@@ -182,30 +182,33 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         case 0x00A0:
         case 0x013A:
         {
-            map.insert("smoke", data.at(0) ? true : false);
+            map.insert(modelName() == "lumi.sensor_gas.acn02" ? "gas" : "smoke", data.at(0) ? true : false);
             break;
         }
 
         case 0x00A1:
         case 0x013B:
         {
-            double value = 0;
+            if (modelName() == "lumi.sensor_gas.acn02")
+            {
+                map.insert("gasConcentration", static_cast <quint8>(data.at(0)));
+                break;
+            }
 
             switch (static_cast <quint8> (data.at(0)))
             {
-                case 0x01: value = 0.085; break;
-                case 0x02: value = 0.088; break;
-                case 0x03: value = 0.093; break;
-                case 0x04: value = 0.095; break;
-                case 0x05: value = 0.100; break;
-                case 0x06: value = 0.105; break;
-                case 0x07: value = 0.110; break;
-                case 0x08: value = 0.115; break;
-                case 0x09: value = 0.120; break;
-                case 0x0A: value = 0.125; break;
+                case 0x01: map.insert("smokeConcentration", 0.085); break;
+                case 0x02: map.insert("smokeConcentration", 0.088); break;
+                case 0x03: map.insert("smokeConcentration", 0.093); break;
+                case 0x04: map.insert("smokeConcentration", 0.095); break;
+                case 0x05: map.insert("smokeConcentration", 0.100); break;
+                case 0x06: map.insert("smokeConcentration", 0.105); break;
+                case 0x07: map.insert("smokeConcentration", 0.110); break;
+                case 0x08: map.insert("smokeConcentration", 0.115); break;
+                case 0x09: map.insert("smokeConcentration", 0.120); break;
+                case 0x0A: map.insert("smokeConcentration", 0.125); break;
             }
 
-            map.insert("smokeConcentration", value);
             break;
         }
 
