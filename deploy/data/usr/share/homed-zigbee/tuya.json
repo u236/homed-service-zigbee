@@ -345,6 +345,7 @@
                           "boostTimeout": {"min": 0, "max": 465, "step": 5},
                           "temperatureOffset": {"min": -9, "max": 9},
                           "thermostatProgram": "daily",
+                          "prorgamDataPoints": [28, 29, 30, 31, 32, 33, 34],
                           "runningStatus": true
                         }
     },
@@ -377,7 +378,7 @@
                           "comfortTemperature": {"min": 5, "max": 30},
                           "ecoTemperature": {"min": 5, "max": 30},
                           "thermostatProgram": "daily",
-                          "prorgamDataPoint": 102,
+                          "prorgamDataPoints": [102, 103, 104, 105, 106, 107, 108],
                           "runningStatus": true
                         }
     },
@@ -444,7 +445,7 @@
                           "temperatureLow": {"min": 0, "max": 10},
                           "ecoTemperature": {"min": 5, "max": 30},
                           "thermostatProgram": "daily",
-                          "prorgamDataPoint": 101,
+                          "prorgamDataPoints": [101, 105, 106, 107, 108, 109, 110],
                           "runningStatus": true
                         }
     },
