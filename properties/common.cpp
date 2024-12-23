@@ -255,6 +255,11 @@ void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QBy
 
     memcpy(&value, data.constData(), data.length());
     m_value = qFromLittleEndian(value) / option("humidityDivider", 100).toDouble();
+
+    if (m_value.toDouble() <= 100)
+        return;
+
+    m_value = m_value.toDouble() / 10;
 }
 
 void Properties::Occupancy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

@@ -1707,7 +1707,7 @@
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor (Type B)",
-      "modelNames":     ["_TZ3000_itnrsufe", "_TZ3000_ywagc4rj"],
+      "modelNames":     ["_TZ3000_itnrsufe", "_TZ3210_ncw88jfq", "_TZ3000_ywagc4rj"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"],
       "options":        {"humidityDivider": 10}
