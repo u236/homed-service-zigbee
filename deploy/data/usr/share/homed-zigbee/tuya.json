@@ -277,7 +277,7 @@
       "modelNames":     ["_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl", "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf", "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_lpwgshtl", "_TZE200_pvvbommb", "_TZE200_rk1wojce", "_TZE200_rndg81sf", "_TZE200_rufdtfyv", "_TZE200_xby0s3ta", "_TZE200_ywdxldoj", "_TZE200_znlqjmih"],
       "properties":     ["tuyaDataPoints", "tuyaHolidayThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaHolidayThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "awayDays", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "weekMode", "thermostatProgram"],
+      "exposes":        ["thermostat", "batteryLow", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "awayDays", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "weekMode", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -285,7 +285,6 @@
                             "3":    [{"name": "temperature", "type": "value", "divider": 10}],
                             "4":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "7":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "21":   [{"name": "battery", "type": "value"}],
                             "44":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
                             "102":  [{"name": "temperatureLow", "type": "value", "action": true}],
                             "103":  [{"name": "temperatureHigh", "type": "value", "action": true}],
@@ -294,6 +293,7 @@
                             "107":  [{"name": "comfortTemperature", "type": "value", "action": true}],
                             "108":  [{"name": "ecoTemperature", "type": "value", "action": true}],
                             "109":  [{"name": "running", "type": "bool"}, {"name": "position", "type": "value"}],
+                            "110":  [{"name": "batteryLow", "type": "bool"}],
                             "111":  [{"name": "weekMode", "type": "enum", "action": true}],
                             "114":  [{"name": "awayTemperature", "type": "value", "action": true}],
                             "117":  [{"name": "awayDays", "type": "value", "action": true}]
@@ -561,11 +561,11 @@
                             "1":    [{"name": "systemMode", "type": "bool", "action": true}],
                             "2":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
-                            "18":   [{"name": "temperatureHigh", "type": "value", "action": true}],
-                            "20":   [{"name": "hysteresis", "type": "value", "action": true}],
+                            "18":   [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
+                            "20":   [{"name": "hysteresis", "type": "value", "divider": 10, "action": true}],
                             "24":   [{"name": "temperature", "type": "value"}],
                             "26":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "27":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "36":   [{"name": "running", "type": "bool", "invert": true}],
                             "40":   [{"name": "childLock", "type": "bool", "action": true}],
                             "43":   [{"name": "sensorType", "type": "enum", "action": true}]
