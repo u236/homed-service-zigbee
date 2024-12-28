@@ -3,7 +3,7 @@
 #include "logger.h"
 #include "zboss.h"
 
-static uint8_t const crc8Table[256] =
+static quint8 const crc8Table[256] =
 {
     0xea, 0xd4, 0x96, 0xa8, 0x12, 0x2c, 0x6e, 0x50, 0x7f, 0x41, 0x03, 0x3d, 0x87, 0xb9, 0xfb, 0xc5,
     0xa5, 0x9b, 0xd9, 0xe7, 0x5d, 0x63, 0x21, 0x1f, 0x30, 0x0e, 0x4c, 0x72, 0xc8, 0xf6, 0xb4, 0x8a,
@@ -23,7 +23,7 @@ static uint8_t const crc8Table[256] =
     0xd0, 0xee, 0xac, 0x92, 0x28, 0x16, 0x54, 0x6a, 0x45, 0x7b, 0x39, 0x07, 0xbd, 0x83, 0xc1, 0xff
 };
 
-static uint16_t const crc16Table[256] =
+static quint16 const crc16Table[256] =
 {
     0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf, 0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
     0x1081, 0x0108, 0x3393, 0x221a, 0x56a5, 0x472c, 0x75b7, 0x643e, 0x9cc9, 0x8d40, 0xbfdb, 0xae52, 0xdaed, 0xcb64, 0xf9ff, 0xe876,
@@ -562,35 +562,36 @@ void ZBoss::softReset(void)
     sendRequest(ZBOSS_NCP_RESET, QByteArray(1, m_clear ? 0x02 : 0x00));
 }
 
-void ZBoss::parseData(QByteArray &buffer)
+void ZBoss::parseData(void)
 {
     quint16 signature = qToBigEndian <quint16> (ZBOSS_SIGNATURE);
 
-    if (buffer.startsWith("ESP-ROM"))
+    if (m_buffer.startsWith("ESP-ROM"))
     {
         handleReset();
         m_esp = true;
         return;
     }
 
-    while (!buffer.isEmpty())
+    while (!m_buffer.isEmpty())
     {
-        int offset = buffer.indexOf(QByteArray(reinterpret_cast <char*> (&signature), sizeof(signature))), length;
+        int offset = m_buffer.indexOf(QByteArray(reinterpret_cast <char*> (&signature), sizeof(signature))), length;
         zbossLowLevelHeaderStruct *lowLevelHeader;
 
-        if (offset < 0)
+        if (offset < 0 || static_cast <size_t> (m_buffer.length() - offset) < sizeof(zbossLowLevelHeaderStruct))
             return;
 
-        lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (buffer.data() + offset);
+        lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (m_buffer.data() + offset);
         length = qFromLittleEndian(lowLevelHeader->length) + 2;
 
         if (lowLevelHeader->crc != getCRC8(reinterpret_cast <quint8*> (lowLevelHeader) + 2, sizeof(zbossLowLevelHeaderStruct) - 3))
         {
-            logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(buffer.mid(offset, length).toHex(':')));
+            logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(m_buffer.mid(offset, length).toHex(':')));
+            m_buffer.clear();
             return;
         }
 
-        logDebug(m_portDebug) << "Frame received:" << buffer.mid(offset, length).toHex(':');
+        logDebug(m_portDebug) << "Frame received:" << m_buffer.mid(offset, length).toHex(':');
 
         if (lowLevelHeader->flags & ZBOSS_FLAG_ACK)
         {
@@ -608,16 +609,17 @@ void ZBoss::parseData(QByteArray &buffer)
 
         if (length > 9)
         {
-            if (*(reinterpret_cast <quint16*> (buffer.data() + offset + 7)) != getCRC16(reinterpret_cast <quint8*> (buffer.data() + offset + 9), length - 9))
+            if (*(reinterpret_cast <quint16*> (m_buffer.data() + offset + 7)) != getCRC16(reinterpret_cast <quint8*> (m_buffer.data() + offset + 9), length - 9))
             {
-                logWarning << QString("Packet %1 CRC mismatch").arg(QString(buffer.mid(offset, length).toHex(':')));
+                logWarning << QString("Packet %1 CRC mismatch").arg(QString(m_buffer.mid(offset, length).toHex(':')));
+                m_buffer.clear();
                 return;
             }
 
-            m_queue.enqueue(buffer.mid(offset + 9, length - 9));
+            m_queue.enqueue(m_buffer.mid(offset + 9, length - 9));
         }
 
-        buffer.remove(0, offset + length);
+        m_buffer.remove(0, offset + length);
     }
 }
 

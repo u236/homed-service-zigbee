@@ -251,7 +251,7 @@ private:
     bool startCoordinator(void);
 
     void softReset(void) override;
-    void parseData(QByteArray &buffer) override;
+    void parseData(void) override;
     bool permitJoin(bool enabled) override;
 
 private slots:

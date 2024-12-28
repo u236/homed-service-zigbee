@@ -134,11 +134,12 @@ void Adapter::init(void)
         if (m_serial->isOpen())
             m_serial->close();
 
-        if (m_serial->open(QIODevice::ReadWrite))
-        {
-            logInfo << "Port" << m_serial->portName() << "opened successfully";
-            reset();
-        }
+        if (!m_serial->open(QIODevice::ReadWrite))
+            return;
+
+        logInfo << "Port" << m_serial->portName() << "opened successfully";
+        m_serial->clear();
+        reset();
     }
     else
     {
@@ -317,10 +318,21 @@ void Adapter::startTimer(void)
 
 void Adapter::readyRead(void)
 {
-    QByteArray buffer = m_device->readAll();
+    QByteArray data = m_device->readAll();
 
-    logDebug(m_portDebug)  << "Serial data received:" << buffer.toHex(':');
-    parseData(buffer);
+    logDebug(m_portDebug) << "Serial data received:" << data.toHex(':');
+    m_buffer.append(data);
+
+    if (m_buffer.length() >= BUFFER_LENGTH_LIMIT)
+    {
+        m_buffer.clear();
+        return;
+    }
+
+    parseData();
+
+    if (m_queue.isEmpty())
+        return;
 
     QTimer::singleShot(0, this, &Adapter::handleQueue);
 }

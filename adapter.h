@@ -1,7 +1,8 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
-#define RECEIVE_TIMEOUT                 20
+#define RECEIVE_TIMEOUT                 10
+#define BUFFER_LENGTH_LIMIT             8192
 
 #define PERMIT_JOIN_TIMEOUT             60000
 #define PERMIT_JOIN_BROARCAST_ADDRESS   0xFFFC
@@ -217,6 +218,7 @@ protected:
     QByteArray m_requestAddress;
     bool m_extendedTimeout;
 
+    QByteArray m_buffer;
     quint8 m_replyStatus;
 
     QMap <quint8, EndpointData> m_endpoints;
@@ -229,7 +231,7 @@ protected:
 private:
 
     virtual void softReset(void) = 0;
-    virtual void parseData(QByteArray &buffer) = 0;
+    virtual void parseData(void) = 0;
     virtual bool permitJoin(bool enabled) = 0;
 
 protected slots:

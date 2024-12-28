@@ -368,24 +368,27 @@ void ZiGate::softReset(void)
     sendRequest(ZIGATE_RESET);
 }
 
-void ZiGate::parseData(QByteArray &buffer)
+void ZiGate::parseData(void)
 {
-    while (!buffer.isEmpty())
+    while (!m_buffer.isEmpty())
     {
-        int length = buffer.indexOf(0x03);
+        int length = m_buffer.indexOf(0x03);
         QByteArray frame, packet;
 
-        if (!buffer.startsWith(0x01) || length < 6)
+        if (m_buffer.at(0) != 0x01 || length < 6) // TODO: use offset
+        {
+            m_buffer.clear();
             return;
+        }
 
-        logDebug(m_portDebug) << "Frame received:" << buffer.mid(0, length + 1).toHex(':');
-        frame = buffer.mid(1, length - 1);
+        logDebug(m_portDebug) << "Frame received:" << m_buffer.mid(0, length + 1).toHex(':');
+        frame = m_buffer.mid(1, length - 1);
 
         for (int i = 0; i < frame.length(); i++)
             packet.append(1, frame.at(i) == 0x02 ? frame.at(++i) ^ 0x10 : frame.at(i));
 
         m_queue.enqueue(packet);
-        buffer.remove(0, length + 1);
+        m_buffer.remove(0, length + 1);
     }
 }
 
