@@ -246,6 +246,34 @@
       "endpointId":     [41, 42, 51]
     },
     {
+      "description":    "Aqara E1 3-Channel Wall Switch ZNQBKG31LM",
+      "modelNames":     ["lumi.switch.acn040"],
+      "options":        {"endpointName": {"1": "Left", "2": "Center", "3": "Right", "41": "Left", "42": "Center", "43": "Right", "51": "L+C", "52": "L+R", "53": "C+R", "61": "L+C+R"}}
+    },
+    {
+      "modelNames":     ["lumi.switch.acn040"],
+      "properties":     ["lumiData"],
+      "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
+      "exposes":        ["temperature", "indicatorMode", "statusMemory"],
+      "options":        {"temperature": {"diagnostic": true}, "indicatorMode": {"enum": ["default", "inverted"]}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.acn040"],
+      "properties":     ["status", "lumiData"],
+      "actions":        ["status", "lumiSwitchMode"],
+      "exposes":        ["switch", "switchMode"],
+      "options":        {"switchMode": {"enum": ["decoupled", "relay"]}},
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "modelNames":     ["lumi.switch.acn040"],
+      "properties":     ["lumiSwitchAction"],
+      "exposes":        ["action"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick"]}},
+      "endpointId":     [41, 42, 43, 51, 52, 53, 61]
+    },
+    {
       "description":    "Aqara T1 1-Channel Relay DLKZMK11LM or SSM-U01",
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory", "switchType"],
