@@ -1565,8 +1565,8 @@
     {
       "description":    "TUYA TS0505B RGBW Bulb",
       "modelNames":     ["TS0505B"],
-      "properties":     ["status", "level", "colorHS", "colorTemperature", "colorMode"],
-      "actions":        ["status", "level", "colorHS", "colorTemperature"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color", "colorTemperature", "colorMode"], "colorTemperature": {"min": 143, "max": 500}, "powerSource": 1}
     },
