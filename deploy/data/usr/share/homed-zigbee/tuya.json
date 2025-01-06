@@ -1771,6 +1771,21 @@
       "endpointId":     [1, 2, 3, 4]
     },
     {
+      "description":    "TUYA TS0046 6-Button Wireless Switch",
+      "modelNames":     ["TS0046"],
+      "properties":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "options":        {"checkTransactionId": true},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0046"],
+      "properties":     ["tuyaButtonAction"],
+      "exposes":        ["action"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}},
+      "endpointId":     [1, 2, 3, 4, 5, 6]
+    },
+    {
       "description":    "TUYA TS004F Wireless Dimmer (Type A)",
       "modelNames":     ["_TZ3000_egvb1p2g", "_TZ3000_ja5osu5g", "_TZ3000_kjfzuycl"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
