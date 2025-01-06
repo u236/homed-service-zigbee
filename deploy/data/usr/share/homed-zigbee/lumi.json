@@ -429,6 +429,12 @@
       "options":        {"temperature": {"diagnostic": true}}
     },
     {
+      "description":    "Xiaomi Door and Window Sensor MCCGQ12LM",
+      "modelNames":     ["lumi.magnet.agl02"],
+      "properties":     ["lumiBasic", "iasContact"],
+      "exposes":        ["battery", "contact"]
+    },
+    {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
       "properties":     ["occupancy", "lumiBasic"],
