@@ -327,7 +327,7 @@
     },
     {
       "description":    "EFEKTA Egony Soil Moisture Sensor",
-      "modelNames":     ["Egony_Flower"],
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
       "exposes":        ["battery", "illuminance", "temperature", "moisture", "readInterval", "transmitPower", "enablePolling", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh"],
       "options":        {
                           "customAttributes_1":
@@ -354,7 +354,7 @@
                         }
     },
     {
-      "modelNames":     ["Egony_Flower"],
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
       "properties":     ["temperature", "customAttributes"],
       "actions":        ["customAttributes"],
       "bindings":       ["temperature"],
@@ -362,7 +362,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["Egony_Flower"],
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
       "properties":     ["batteryPercentage", "moisture", "customAttributes"],
       "actions":        ["customAttributes"],
       "bindings":       ["battery", "moisture"],
@@ -370,7 +370,7 @@
       "endpointId":     2
     },
     {
-      "modelNames":     ["Egony_Flower"],
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
       "properties":     ["illuminance"],
       "bindings":       ["illuminance"],
       "reportings":     ["illuminance"],
