@@ -951,10 +951,35 @@
                             "108":  [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
                             "111":  [{"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true}]
                           },
-                          "fadingTime": {"min": 0, "max": 300, "step": 10},
-                          "distanceMax": {"min": 1.5, "max": 6, "step": 0.1},
-                          "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
-                          "sensitivity": {"min": 0, "max": 7}
+                          "fadingTime": {"min": 1, "max": 59},
+                          "distanceMax": {"min": 0, "max": 8.4, "step": 0.1},
+                          "distanceMin": {"min": 0, "max": 8.4, "step": 0.1},
+                          "sensitivity": {"min": 1, "max": 10}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type G)",
+      "modelNames":     ["_TZE204_laokfqwu"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "occupancy", "type": "bool"}],
+                            "2":    [{"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true}],
+                            "3":    [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
+                            "4":    [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
+                            "9":    [{"name": "targetDistance", "type": "value", "divider": 100}],
+                            "103":  [{"name": "illuminance", "type": "value"}],
+                            "105":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}],
+                            "106":  [{"name": "fadingTime", "type": "value", "action": true}]
+                          },
+                          "sensitivity": {"min": 1, "max": 9},
+                          "distanceMin": {"min": 0, "max": 10, "step": 0.1},
+                          "distanceMax": {"min": 0, "max": 10, "step": 0.1},
+                          "detectionDelay": {"min": 0, "max": 10, "step": 0.1},
+                          "fadingTime": {"min": 0, "max": 1500, "step": 10}
                         }
     },
     {
