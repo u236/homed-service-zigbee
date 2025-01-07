@@ -1244,6 +1244,31 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Remote Control PCI-E Card",
+      "modelNames":     ["_TZE204_6fk3gewc"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch", "powerOnStatus", "restartMode", "childLock", "buzzerFeedback", "remoteControl", "pairing"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status", "type": "bool", "action": true}],
+                            "101":  [{"name": "restartMode", "type": "enum", "action": true}],
+                            "102":  [{"name": "remoteControl", "type": "enum", "action": true}],
+                            "103":  [{"name": "pairing", "type": "bool", "action": true}],
+                            "104":  [{"name": "buzzerFeedback", "type": "enum", "action": true}],
+                            "105":  [{"name": "powerOnStatus", "type": "enum", "action": true}],
+                            "106":  [{"name": "childLock", "type": "bool", "action": true}]
+
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "restartMode": {"type": "select", "enum": ["graceful", "force", "disabled"]},
+                          "remoteControl": {"type": "toggle", "icon": "mdi:remote"},
+                          "pairing": {"type": "toggle", "icon": "mdi:remote"},
+                          "powerOnStatus": {"enum": ["off", "on"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0207 Rain Sensor WKD-LS100",
       "modelNames":     ["_TZ3210_tgvtvdoc"],
       "properties":     ["batteryPercentage", "iasRain", "tuyaDataPoints"],
