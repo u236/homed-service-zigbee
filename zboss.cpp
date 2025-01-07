@@ -2,6 +2,7 @@
 #include <QThread>
 #include "logger.h"
 #include "zboss.h"
+#include "zcl.h"
 
 static quint8 const crc8Table[256] =
 {
@@ -43,7 +44,7 @@ static quint16 const crc16Table[256] =
     0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
 
-ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_clear(false), m_esp(false)
+ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_clear(false), m_esp(false)
 {
     m_policy.append({ZBOSS_POLICY_TC_LINK_KEYS_REQUIRED,           0x00});
     m_policy.append({ZBOSS_POLICY_IC_REQUIRED,                     0x00});
@@ -51,6 +52,9 @@ ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_cl
     m_policy.append({ZBOSS_POLICY_IGNORE_TC_REJOIN,                0x00});
     m_policy.append({ZBOSS_POLICY_APS_INSECURE_JOIN,               0x00});
     m_policy.append({ZBOSS_POLICY_DISABLE_NWK_MGMT_CHANNEL_UPDATE, 0x00});
+
+    connect(m_timer, &QTimer::timeout, this, &ZBoss::resetManufacturerCode);
+    m_timer->setSingleShot(true);
 }
 
 bool ZBoss::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointId, quint8 dstEndPointId, quint16 clusterId, const QByteArray &payload)
@@ -319,8 +323,16 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
         case ZBOSS_ZDO_DEV_ANNCE_IND:
         {
             const zbossDeviceAnnounceStruct *message = reinterpret_cast <const zbossDeviceAnnounceStruct*> (data.constData());
-            quint64 ieeeAddress = qToBigEndian <quint64> (message->ieeeAddress);
-            emit deviceJoined(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), message->networkAddress);
+            quint64 address = qToBigEndian <quint64> (message->ieeeAddress);
+            QByteArray ieeeAddress(reinterpret_cast <char*> (&address), sizeof(address));
+
+            if (ieeeAddress.startsWith(QByteArray::fromHex("04cffc")) || ieeeAddress.startsWith(QByteArray::fromHex("54ef44")))
+            {
+                setManufacturerCode(MANUFACTURER_CODE_LUMI);
+                m_timer->start(20000);
+            }
+
+            emit deviceJoined(ieeeAddress, message->networkAddress);
             break;
         }
 
@@ -557,6 +569,16 @@ bool ZBoss::startCoordinator(void)
     return true;
 }
 
+void ZBoss::setManufacturerCode(quint16 value)
+{
+    value = qToBigEndian(value);
+
+    if (sendRequest(ZBOSS_ZDO_SET_NODE_DESC_MANUF_CODE, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))))
+        return;
+
+    logWarning << "Set manufacturer code request failed";
+}
+
 void ZBoss::softReset(void)
 {
     sendRequest(ZBOSS_NCP_RESET, QByteArray(1, m_clear ? 0x02 : 0x00));
@@ -647,6 +669,11 @@ bool ZBoss::permitJoin(bool enabled)
     }
 
     return true;
+}
+
+void ZBoss::resetManufacturerCode(void)
+{
+    setManufacturerCode(MANUFACTURER_CODE_NORDIC);
 }
 
 void ZBoss::serialError(QSerialPort::SerialPortError error)
