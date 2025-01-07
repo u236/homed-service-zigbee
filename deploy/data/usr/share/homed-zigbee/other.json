@@ -225,6 +225,19 @@
     }
   ],
 
+  "Sprut.device":
+  [
+      {
+        "description":    "Drivent Smart Window Driver",
+        "modelNames":     ["Drivent"],
+        "properties":     ["coverPosition"],
+        "actions":        ["coverStatus", "coverPosition"],
+        "bindings":       ["cover"],
+        "reportings":     ["coverPosition"],
+        "exposes":        ["cover"]
+      }
+  ],
+
   "Sunricher":
   [
     {
