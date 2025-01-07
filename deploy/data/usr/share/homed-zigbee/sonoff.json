@@ -89,18 +89,36 @@
       "options":        {"powerSource": 1}
     },
     {
-      "description":    "Sonoff 16A Smart Plug S26R2ZB",
-      "modelNames":     ["S26R2ZB"],
-      "properties":     ["status"],
-      "actions":        ["status"],
-      "exposes":        ["switch"]
-    },
-    {
       "description":    "Sonoff 1-Channel Relay ZBMINI-L or ZBMINI-L2",
       "modelNames":     ["ZBMINI-L", "ZBMINIL2"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
       "exposes":        ["switch", "powerOnStatus"]
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay ZBMINI-R2",
+      "modelNames":     ["ZBMINIR2"],
+      "properties":     ["status", "powerOnStatus", "customAttributes", "customCommands"],
+      "actions":        ["status", "powerOnStatus", "customAttributes"],
+      "exposes":        ["switch", "powerOnStatus", "switchType", "switchMode", "action"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "switchType": {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
+                            "switchMode": {"type": "enum", "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true}
+                          },
+                          "customCommands": {"action": {"clusterId": 6}},
+                          "switchType": {"enum": ["toggle", "momentary"]},
+                          "switchMode": {"enum": ["relay", "decoupled"]},
+                          "action": {"enum": {"2": "toggle"}}
+                        }
+    },
+    {
+      "description":    "Sonoff 16A Smart Plug S26R2ZB",
+      "modelNames":     ["S26R2ZB"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"]
     },
     {
       "description":    "Sonoff Human Presense Sensor SNZB-06P",
