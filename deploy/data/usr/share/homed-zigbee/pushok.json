@@ -10,7 +10,7 @@
       "options":        {
                           "customAttributes":
                           {
-                            "valveStatus":  {"type": "value", "clusterId": 18, "attributeId": 85, "dataType": 33},
+                            "valveStatus":  {"type": "enum",  "clusterId": 18, "attributeId": 85, "dataType": 33},
                             "stallTime":    {"type": "value", "clusterId": 20, "attributeId": 85, "dataType": 33, "action": true}
                           },
                           "valveStatus": {"enum": ["closed", "open", "moving", "stuck"], "icon": "mdi:valve"},
