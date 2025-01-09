@@ -2,6 +2,22 @@
   "PushOk Hardware":
   [
     {
+      "description":    "PushOk Hardware Garden Valve POK006",
+      "modelNames":     ["POK006"],
+      "properties":     ["batteryPercentage", "status", "customAttributes"],
+      "actions":        ["status", "customAttributes"],
+      "exposes":        ["battery", "switch", "stallTime", "valveStatus"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "valveStatus":  {"type": "value", "clusterId": 18, "attributeId": 85, "dataType": 33},
+                            "stallTime":    {"type": "value", "clusterId": 20, "attributeId": 85, "dataType": 33, "action": true}
+                          },
+                          "valveStatus": {"enum": ["closed", "open", "moving", "stuck"], "icon": "mdi:valve"},
+                          "stallTime": {"min": 0, "max": 60, "unit": "s", "icon": "mdi:timer"}
+                        }
+    },
+    {
       "description":    "PushOk Hardware Thermostat Relay POK008",
       "modelNames":     ["POK008"],
       "properties":     ["batteryPercentage", "status", "temperature", "customAttributes"],
