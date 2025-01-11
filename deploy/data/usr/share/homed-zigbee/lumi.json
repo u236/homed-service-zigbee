@@ -638,6 +638,7 @@
       "description":    "Aqara E1 1-Key Wireless Switch WXKG16LM",
       "modelNames":     ["lumi.remote.acn003"],
       "properties":     ["lumiData", "lumiSwitchAction", "customAttributes"],
+      "actions":        ["customAttributes"],
       "exposes":        ["battery", "switchType", "action"],
       "options":        {
                           "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 293, "dataType": 32, "action": true}},
