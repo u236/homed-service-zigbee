@@ -24,7 +24,7 @@ static const uint16_t crcTable[256] =
     0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0), m_errorCount(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0), m_reset(true), m_errorCount(0)
 {
     m_watchdog = config->value("zigbee/watchdog", true).toBool();
 
@@ -708,6 +708,7 @@ void EZSP::handleError(const QString &reason)
     m_errorReceived = true;
     emit dataReceived();
 
+    m_reset = true;
     reset();
 }
 
@@ -722,9 +723,6 @@ void EZSP::parseData(void)
     {
         quint16 length, crc;
         QByteArray packet;
-
-        if (m_buffer.startsWith(QByteArray::fromHex("1ac102")) || m_buffer.startsWith(QByteArray::fromHex("1ac202")))
-            m_buffer.remove(0, 1);
 
         if (m_buffer.length() < 4 || !m_buffer.contains(static_cast <char> (ASH_PACKET_FLAG)))
             return;
@@ -764,6 +762,9 @@ void EZSP::parseData(void)
                     break;
             }
         }
+
+        if (m_reset && packet.contains(0x1A))
+            packet.remove(0, packet.indexOf(0x1A) + 1);
 
         memcpy(&crc, packet.constData() + packet.length() - 2, sizeof(crc));
 
@@ -854,6 +855,7 @@ void EZSP::handleQueue(void)
         {
             m_sequenceId = 0;
             m_acknowledgeId = 0;
+            m_reset = false;
 
             if (!startCoordinator())
             {
