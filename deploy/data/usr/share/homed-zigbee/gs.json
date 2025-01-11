@@ -68,7 +68,7 @@
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "waterLeak", "batteryLow"]
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
     },
     {
       "description":    "GS Temperature and Humidity Sensor STHM-I1H",
