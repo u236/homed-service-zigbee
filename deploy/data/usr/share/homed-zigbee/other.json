@@ -2,7 +2,7 @@
   "Bacchus":
   [
     {
-      "description":    ["MODKAM Soil Moisture Sensor with Bacchus Firmware"],
+      "description":    "MODKAM Soil Moisture Sensor with Bacchus Firmware",
       "modelNames":     ["Flower_sensor_v2a"],
       "properties":     ["batteryPercentage", "illuminance", "temperature", "humidity"],
       "bindings":       ["battery", "illuminance", "temperature", "humidity"],

@@ -13,8 +13,8 @@
                             "valveStatus":  {"type": "enum",  "clusterId": 18, "attributeId": 85, "dataType": 33},
                             "stallTime":    {"type": "value", "clusterId": 20, "attributeId": 85, "dataType": 33, "action": true}
                           },
-                          "valveStatus": {"enum": ["closed", "open", "moving", "stuck"], "icon": "mdi:valve"},
-                          "stallTime": {"min": 0, "max": 60, "unit": "s", "icon": "mdi:timer"}
+                          "valveStatus": {"type": "sensor", "enum": ["closed", "open", "moving", "stuck"], "icon": "mdi:valve"},
+                          "stallTime": {"type": "number", "min": 0, "max": 60, "unit": "s", "icon": "mdi:timer"}
                         }
     },
     {
