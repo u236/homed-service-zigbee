@@ -729,7 +729,7 @@
     },
     {
       "description":    "TUYA TS0601 Smoke Detector (Type A)",
-      "modelNames":     ["_TZE200_m9skfctm", "_TZE200_rccxox8p"],
+      "modelNames":     ["_TZE200_m9skfctm", "_TZE200_rccxox8p", "_TZE284_rccxox8p"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["battery", "smoke", "concentration", "test", "fault"],
       "options":        {
