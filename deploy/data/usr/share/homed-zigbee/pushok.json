@@ -6,7 +6,7 @@
       "modelNames":     ["POK006"],
       "properties":     ["batteryPercentage", "status", "customAttributes"],
       "actions":        ["status", "customAttributes"],
-      "exposes":        ["battery", "switch", "stallTime", "valveStatus"],
+      "exposes":        ["battery", "lock", "stallTime", "valveStatus"],
       "options":        {
                           "customAttributes":
                           {
@@ -14,7 +14,8 @@
                             "stallTime":    {"type": "value", "clusterId": 20, "attributeId": 85, "dataType": 33, "action": true}
                           },
                           "valveStatus": {"type": "sensor", "enum": ["closed", "open", "moving", "stuck"], "icon": "mdi:valve"},
-                          "stallTime": {"type": "number", "min": 0, "max": 60, "unit": "s", "icon": "mdi:timer"}
+                          "stallTime": {"type": "number", "min": 0, "max": 60, "unit": "s", "icon": "mdi:timer"},
+                          "lock": "valve"
                         }
     },
     {
