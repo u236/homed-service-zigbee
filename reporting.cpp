@@ -10,7 +10,6 @@ void ReportingObject::registerMetaTypes(void)
     qRegisterMetaType <Reportings::AnalogInput>             ("analogInputReporting");
     qRegisterMetaType <Reportings::AnalogOutput>            ("analogOutputReporting");
     qRegisterMetaType <Reportings::CoverPosition>           ("coverPositionReporting");
-    qRegisterMetaType <Reportings::CoverTilt>               ("coverTiltReporting");
     qRegisterMetaType <Reportings::Thermostat>              ("thermostatReporting");
     qRegisterMetaType <Reportings::ColorHS>                 ("colorHSReporting");
     qRegisterMetaType <Reportings::ColorXY>                 ("colorXYReporting");

@@ -16,7 +16,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::AnalogInput>                     ("analogInputProperty");
     qRegisterMetaType <Properties::AnalogOutput>                    ("analogOutputProperty");
     qRegisterMetaType <Properties::CoverPosition>                   ("coverPositionProperty");
-    qRegisterMetaType <Properties::CoverTilt>                       ("coverTiltProperty");
     qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");
     qRegisterMetaType <Properties::ColorXY>                         ("colorXYProperty");

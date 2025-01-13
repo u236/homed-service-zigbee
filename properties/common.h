@@ -86,16 +86,6 @@ namespace Properties
 
     };
 
-    class CoverTilt : public PropertyObject
-    {
-
-    public:
-
-        CoverTilt(void) : PropertyObject("tilt", CLUSTER_WINDOW_COVERING) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class Thermostat : public PropertyObject
     {
 

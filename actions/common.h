@@ -56,16 +56,6 @@ namespace Actions
 
     };
 
-    class CoverTilt : public ActionObject
-    {
-
-    public:
-
-        CoverTilt(void) : ActionObject("tilt", CLUSTER_WINDOW_COVERING, 0x0000, 0x0009) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
-
-    };
-
     class Thermostat : public ActionObject
     {
 

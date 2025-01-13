@@ -13,7 +13,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <Actions::AnalogOutput>                   ("analogOutputAction");
     qRegisterMetaType <Actions::CoverStatus>                    ("coverStatusAction");
     qRegisterMetaType <Actions::CoverPosition>                  ("coverPositionAction");
-    qRegisterMetaType <Actions::CoverTilt>                      ("coverTiltAction");
     qRegisterMetaType <Actions::Thermostat>                     ("thermostatAction");
     qRegisterMetaType <Actions::ColorHS>                        ("colorHSAction");
     qRegisterMetaType <Actions::ColorXY>                        ("colorXYAction");

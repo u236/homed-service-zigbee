@@ -83,19 +83,6 @@ void Properties::CoverPosition::parseAttribte(quint16, quint16 attributeId, cons
     m_value = map;
 }
 
-void Properties::CoverTilt::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
-{
-    QMap <QString, QVariant> map;
-    qint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.at(0) : 100 - data.at(0));
-
-    if (attributeId != 0x0009 || value == meta().value("tilt", 0xFF).toInt())
-        return;
-
-    map.insert("cover", value ? "open" : "closed");
-    map.insert("tilt", value);
-    m_value = map;
-}
-
 void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();

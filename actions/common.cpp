@@ -88,19 +88,6 @@ QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(1, static_cast <char> (position));
 }
 
-QByteArray Actions::CoverTilt::request(const QString &, const QVariant &data)
-{
-    int value = data.toInt();
-    quint8 position = value < 0 ? 0 : value > 100 ? 100 : value;
-
-    meta().insert("tilt", endpointProperty()->value().toMap().value("tilt"));
-
-    if (!option("invertCover").toBool())
-        position = 100 - position;
-
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x08).append(1, static_cast <char> (position));
-}
-
 QByteArray Actions::Thermostat::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);

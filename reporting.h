@@ -123,15 +123,6 @@ namespace Reportings
 
     };
 
-    class CoverTilt : public ReportingObject
-    {
-
-    public:
-
-        CoverTilt(void) : ReportingObject("coverTilt", CLUSTER_WINDOW_COVERING, 0x0009, DATA_TYPE_8BIT_UNSIGNED, 1, 3600, 1) {}
-
-    };
-
     class Thermostat : public ReportingObject
     {
 
