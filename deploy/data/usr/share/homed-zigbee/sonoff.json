@@ -28,7 +28,7 @@
     },
     {
       "description":    "Sonoff Door and Window Sensor SNZB-04 or SNZB-04P",
-      "modelNames":     ["DS01", "SNZB-04P"],
+      "modelNames":     ["DS01", "SNZB-04", "SNZB-04P"],
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],

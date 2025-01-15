@@ -87,7 +87,7 @@ namespace PropertiesCustom
     public:
 
         Attribute(const QString &name, const QString &type, quint16 clusterId, quint16 attributeId, quint8 dataType, double divider) :
-            PropertyObject(name, clusterId), m_type(type), m_attributeId(attributeId), m_dataType(dataType), m_divider(divider) {}
+            PropertyObject(name, clusterId), m_type(type), m_attributeId(attributeId), m_dataType(dataType), m_divider(divider > 0 ? divider : 1) {}
 
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 

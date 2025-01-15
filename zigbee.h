@@ -121,8 +121,6 @@ public:
         requestFinished
     };
 
-    Q_ENUM(Event)
-
     inline DeviceList *devices(void) { return m_devices; }
     inline const char *eventName(Event event) { return m_events.valueToKey(static_cast <int> (event)); }
 
@@ -147,6 +145,8 @@ public:
 
     void deviceAction(const QString &deviceName, quint8 endpointId, const QString &name, const QVariant &data);
     void groupAction(quint16 groupId, const QString &name, const QVariant &data);
+
+    Q_ENUM(Event)
 
 private:
 

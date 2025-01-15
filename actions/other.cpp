@@ -28,20 +28,20 @@ QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &da
     {
         case DATA_TYPE_SINGLE_PRECISION:
         {
-            float buffer = qToLittleEndian(value.toFloat());
-            return writeAttribute(m_dataType, &buffer, sizeof(buffer));
+            float number = qToLittleEndian(value.toFloat());
+            return writeAttribute(m_dataType, &number, sizeof(number));
         }
 
         case DATA_TYPE_DOUBLE_PRECISION:
         {
-            double buffer = qToLittleEndian(value.toDouble());
-            return writeAttribute(m_dataType, &buffer, sizeof(buffer));
+            double number = qToLittleEndian(value.toDouble());
+            return writeAttribute(m_dataType, &number, sizeof(number));
         }
 
         default:
         {
-            qint64 buffer = qToLittleEndian <qint64> (value.toDouble());
-            return writeAttribute(m_dataType, &buffer, zclDataSize(m_dataType));
+            qint64 number = qToLittleEndian <qint64> (value.toDouble());
+            return writeAttribute(m_dataType, &number, zclDataSize(m_dataType));
         }
     }
 }

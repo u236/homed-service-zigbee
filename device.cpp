@@ -442,7 +442,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             for (auto it = options.begin(); it != options.end(); it++)
             {
                 QMap <QString, QVariant> option = it.value().toMap();
-                Property property(new PropertiesCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider", 1).toDouble()));
+                Property property(new PropertiesCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider").toDouble()));
                 property->setParent(endpoint.data());
                 property->setMultiple(multiple);
                 endpoint->properties().append(property);
@@ -478,7 +478,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
                 if (!option.value("action").toBool())
                     continue;
 
-                action = Action(new ActionsCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("manufacturerCode").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider", 1).toDouble()));
+                action = Action(new ActionsCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("manufacturerCode").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider").toDouble()));
                 action->setParent(endpoint.data());
                 endpoint->actions().append(action);
             }

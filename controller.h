@@ -14,8 +14,6 @@ class Controller : public HOMEd
 
 public:
 
-    Controller(const QString &configFile);
-
     enum class Command
     {
         restartService,
@@ -38,6 +36,8 @@ public:
         touchLinkScan,
         touchLinkReset
     };
+
+    Controller(const QString &configFile);
 
     Q_ENUM(Command)
 

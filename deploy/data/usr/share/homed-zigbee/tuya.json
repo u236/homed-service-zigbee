@@ -712,22 +712,24 @@
                             "9":    [{"name": "test", "type": "enum"}],
                             "11":   [{"name": "fault", "type": "bool"}]
                           },
-                          "test": {"type": "sensor", "enum": ["checking", "success", "failed", "other"]}
+                          "test": {"enum": ["checking", "success", "failed", "other"]}
                         }
     },
     {
       "description":    "TUYA TS0601 Gas Sensor (Type B)",
       "modelNames":     ["_TZE200_yojqa8xn", "_TZE204_chbyv06x", "_TZE204_yojqa8xn", "_TZE204_zougpkpy"],
       "properties":     ["tuyaDataPoints"],
-      "exposes":        ["gas", "concentration", "test"],
+      "exposes":        ["gas", "concentration", "test", "melody"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "gas", "type": "bool", "invert": true}],
                             "2":    [{"name": "concentration", "type": "value", "divider": 10}],
+                            "6":    [{"name": "melody", "type": "enum", "action": true}],
                             "9":    [{"name": "test", "type": "enum"}]
                           },
-                          "test": {"type": "sensor", "enum": ["checking", "success", "failed", "other"]}
+                          "melody": {"min": 0, "max": 4},
+                          "test": {"enum": ["checking", "success", "failed", "other"]}
                         }
     },
     {
@@ -763,7 +765,7 @@
     },
     {
       "description":    "TUYA TS0601 Carbon Monoxide Detector",
-      "modelNames":     ["_TZE200_rjxqso4a"],
+      "modelNames":     ["_TZE200_hr0tdd47", "_TZE200_rjxqso4a", "_TZE284_rjxqso4a"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["battery", "carbonMonoxide", "concentration", "test"],
       "options":        {
@@ -774,7 +776,7 @@
                             "9":    [{"name": "test", "type": "bool"}],
                             "15":   [{"name": "battery", "type": "value"}]
                           },
-                          "test": {"type": "sensor", "enum": ["checking", "success", "failed", "other"]}
+                          "test": {"enum": ["checking", "success", "failed", "other"]}
                         }
     },
     {
@@ -811,8 +813,8 @@
                             "104":  [{"name": "duration", "type": "value", "action": true}]
                           },
                           "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
-                          "volume": {"type": "number", "min": 0, "max": 100, "unit": "%"},
-                          "duration": {"min": 1, "max": 1800}
+                          "volume": {"type": "number", "min": 1, "max": 100, "unit": "%"},
+                          "duration": {"min": 3, "max": 180}
                         }
     },
     {
@@ -1136,7 +1138,7 @@
     },
     {
       "description":    "TUYA TS0601 Smart Air House Keeper",
-      "modelNames":     ["_TZE200_dwcarsat", "_TZE200_mja3fuja"],
+      "modelNames":     ["_TZE200_dwcarsat", "_TZE200_mja3fuja", "_TZE204_dwcarsat"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["temperature", "humidity", "co2", "voc", "formaldehyde", "pm25"],
       "options":        {
@@ -1145,8 +1147,8 @@
                             "2":    [{"name": "pm25", "type": "value"}],
                             "18":   [{"name": "temperature", "type": "value", "divider": 10}],
                             "19":   [{"name": "humidity", "type": "value", "divider": 10}],
-                            "20":   [{"name": "formaldehyde", "type": "value", "divider": 1000}],
-                            "21":   [{"name": "voc", "type": "value", "divider": 1000}],
+                            "20":   [{"name": "formaldehyde", "type": "value"}],
+                            "21":   [{"name": "voc", "type": "value"}],
                             "22":   [{"name": "co2", "type": "value"}]
                           },
                           "pm25": {"max": 1000}
@@ -1804,7 +1806,7 @@
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor (Type B)",
-      "modelNames":     ["_TZ3000_itnrsufe", "_TZ3210_ncw88jfq", "_TZ3000_ywagc4rj"],
+      "modelNames":     ["_TZ3000_3xduwekl", "_TZ3000_itnrsufe", "_TZ3210_ncw88jfq", "_TZ3000_ywagc4rj"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"],
       "options":        {"humidityDivider": 10}
