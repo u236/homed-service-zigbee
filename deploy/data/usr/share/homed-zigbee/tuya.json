@@ -1774,7 +1774,7 @@
       "properties":     ["batteryPercentage", "iasOccupancy", "tuyaDataPoints"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy", "light", "action"],
+      "exposes":        ["battery", "occupancy", "illuminance", "action"],
       "options":        {
                           "tuyaDataPoints":
                           {
