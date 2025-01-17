@@ -74,6 +74,11 @@
   "SONOFF":
   [
     {
+      "description":    "Sonoff Dongle E Router",
+      "modelNames":     ["DONGLE-E_R"],
+      "options":        {"powerSource": 1}
+    },
+    {
       "description":    "Sonoff 1-Channel Relay BASICZBR3",
       "modelNames":     ["BASICZBR3"],
       "properties":     ["status"],
