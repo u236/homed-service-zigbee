@@ -1317,6 +1317,37 @@
       "modelNames":     ["_TZ3000_5k5vh43t", "_TZ3000_gszjt2xx", "_TZ3000_m0vaazab", "_TZ3000_misw04hq", "_TZ3000_nkkl7uzv", "_TZ3000_nlsszmzl", "_TZ3000_ufttklsz", "_TZ3000_wlquqiiz"]
     },
     {
+      "description":    "TUYA TS0225 Dual Band Human Presence Sensor",
+      "modelNames":     ["_TZE200_2aaelwxk"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "illuminance", "motionStatus",  "smallMotionSensitivity", "smallMotionDistance", "mediumMotionSensitivity", "mediumMotionDistance", "largeMotionSensitivity", "largeMotionDistance", "fadingTime", "indicator"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "occupancy", "type": "bool"}],
+                            "2":    [{"name": "largeMotionSensitivity", "type": "value", "action": true}],
+                            "4":    [{"name": "largeMotionDistance", "type": "value", "divider": 100, "action": true}],
+                            "101":  [{"name": "motionStatus", "type": "enum"}],
+                            "102":  [{"name": "fadingTime", "type": "value", "action": true}],
+                            "104":  [{"name": "mediumMotionDistance", "type": "value", "divider": 100, "action": true}],
+                            "105":  [{"name": "mediumMotionSensitivity", "action": true}],
+                            "106":  [{"name": "illuminance", "type": "value"}],
+                            "107":  [{"name": "indicator", "type": "bool", "action": true}],
+                            "108":  [{"name": "smallMotionDistance", "type": "value", "divider": 100, "action": true}],
+                            "109":  [{"name": "smallMotionSensitivity", "type": "value", "action": true}]
+                          },
+                          "largeMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"},
+                          "largeMotionDistance": {"type": "number", "min": 0, "max": 10, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "motionStatus": {"enum": ["none", "large", "medium", "small"]},
+                          "fadingTime": {"min": 0, "max": 28800, "step": 10},
+                          "mediumMotionDistance": {"type": "number", "min": 0, "max": 6, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "mediumMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"},
+                          "smallMotionDistance": {"type": "number", "min": 0, "max": 6, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "smallMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"}
+                        }
+    },
+    {
       "description":    "TUYA TS000F 1-Channel Relay with Temperature and Humidity Sensor",
       "modelNames":     ["_TZ3218_7fiyo3kv"],
       "properties":     ["status", "tuyaDataPoints"],
