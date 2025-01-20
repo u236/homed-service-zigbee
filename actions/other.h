@@ -13,7 +13,7 @@ namespace ActionsCustom
         Attribute(const QString &name, const QString &type, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId, quint8 dataType, double divider) :
             ActionObject(name, clusterId, manufacturerCode, attributeId), m_type(type), m_dataType(dataType), m_divider(divider > 0 ? divider : 1) {}
 
-        QByteArray request(const QString &name, const QVariant &data) override;
+        QVariant request(const QString &name, const QVariant &data) override;
 
     private:
 

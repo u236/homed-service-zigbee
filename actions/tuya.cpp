@@ -33,7 +33,7 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 comman
     return zclHeader(FC_CLUSTER_SPECIFIC, transactionId, commandId).append(reinterpret_cast <char*> (&header), sizeof(header)).append(reinterpret_cast <char*> (data), header.length);
 }
 
-QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant &data)
+QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &data)
 {
     QMap <QString, QVariant> map = option().toMap(), options = option(name).toMap();
     QList <QString> types = {"bool", "value", "enum"};
@@ -113,7 +113,7 @@ QByteArray ActionsTUYA::DataPoints::request(const QString &name, const QVariant 
     return QByteArray();
 }
 
-QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, const QVariant &data)
+QVariant ActionsTUYA::HolidayThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
     QList <QString> types = {"weekday", "holiday"};
@@ -139,7 +139,7 @@ QByteArray ActionsTUYA::HolidayThermostatProgram::request(const QString &name, c
     return makeRequest(m_transactionId++, 0x00, static_cast <quint8> (0x70 + types.indexOf(type)), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
-QByteArray ActionsTUYA::DailyThermostatProgram::request(const QString &name, const QVariant &data)
+QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
     QList <QVariant> list = option("prorgamDataPoints").toList();
@@ -167,7 +167,7 @@ QByteArray ActionsTUYA::DailyThermostatProgram::request(const QString &name, con
     return makeRequest(m_transactionId++, 0x00, static_cast <quint8> (list.value(types.indexOf(type)).toInt()), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
-QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)
+QVariant ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
     QList <QString> types = {"weekday", "saturday", "sunday"};
@@ -192,7 +192,7 @@ QByteArray ActionsTUYA::MoesThermostatProgram::request(const QString &name, cons
     return makeRequest(m_transactionId++, 0x00, 0x65, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
 }
 
-QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant &data)
+QVariant ActionsTUYA::CoverMotor::request(const QString &name, const QVariant &data)
 {
     switch (m_actions.indexOf(name))
     {
@@ -226,7 +226,7 @@ QByteArray ActionsTUYA::CoverMotor::request(const QString &name, const QVariant 
     return QByteArray();
 }
 
-QByteArray ActionsTUYA::CoverSwitch::request(const QString &name, const QVariant &data)
+QVariant ActionsTUYA::CoverSwitch::request(const QString &name, const QVariant &data)
 {
     qint8 value;
 
@@ -239,13 +239,13 @@ QByteArray ActionsTUYA::CoverSwitch::request(const QString &name, const QVariant
     return writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
 }
 
-QByteArray ActionsTUYA::ChildLock::request(const QString &, const QVariant &data)
+QVariant ActionsTUYA::ChildLock::request(const QString &, const QVariant &data)
 {
     qint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
-QByteArray ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
+QVariant ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
 {
     QByteArray message = QJsonDocument(QJsonObject {{"delay", 300}, {"key1", QJsonObject {{"freq", 38000}, {"key_code", data.toString()}, {"num", 1}, {"type", 1}}}, {"key_num", 1}}).toJson(QJsonDocument::Compact);
     quint32 length = qToLittleEndian <quint32> (message.length());
@@ -253,7 +253,7 @@ QByteArray ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(2, 0x00).append(reinterpret_cast <char*> (&length), sizeof(length)).append(QByteArray::fromHex("0000000004e001020000"));
 }
 
-QByteArray ActionsTUYA::IRLearn::request(const QString &, const QVariant &data)
+QVariant ActionsTUYA::IRLearn::request(const QString &, const QVariant &data)
 {
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(QJsonDocument(QJsonObject {{"study", data.toBool() ? 0 : 1}}).toJson(QJsonDocument::Compact));
 }

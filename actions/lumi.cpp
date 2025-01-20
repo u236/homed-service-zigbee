@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "lumi.h"
 
-QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVariant &data)
+QVariant ActionsLUMI::PresenceSensor::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -31,7 +31,7 @@ QByteArray ActionsLUMI::PresenceSensor::request(const QString &name, const QVari
     return QByteArray();
 }
 
-QByteArray ActionsLUMI::Thermostat::request(const QString &name, const QVariant &data)
+QVariant ActionsLUMI::Thermostat::request(const QString &name, const QVariant &data)
 {
     quint64 value;
 
@@ -75,7 +75,7 @@ QByteArray ActionsLUMI::Thermostat::request(const QString &name, const QVariant 
     return writeAttribute(DATA_TYPE_64BIT_UNSIGNED, &value, sizeof(value));
 }
 
-QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant &data)
+QVariant ActionsLUMI::ButtonMode::request(const QString &name, const QVariant &data)
 {
     QList <QString> list = {"relay", "leftRelay", "rightRelay", "decoupled"};
     qint8 value;
@@ -98,19 +98,19 @@ QByteArray ActionsLUMI::ButtonMode::request(const QString &name, const QVariant 
     return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
 
-QByteArray ActionsLUMI::SwitchStatusMemory::request(const QString &, const QVariant &data)
+QVariant ActionsLUMI::SwitchStatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
-QByteArray ActionsLUMI::LightStatusMemory::request(const QString &, const QVariant &data)
+QVariant ActionsLUMI::LightStatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
-QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &data)
+QVariant ActionsLUMI::CoverPosition::request(const QString &, const QVariant &data)
 {
     float value = data.toFloat();
 
@@ -124,7 +124,7 @@ QByteArray ActionsLUMI::CoverPosition::request(const QString &, const QVariant &
     return writeAttribute(DATA_TYPE_SINGLE_PRECISION, &value, sizeof(value));
 }
 
-QByteArray ActionsLUMI::VibrationSensitivity::request(const QString &, const QVariant &data)
+QVariant ActionsLUMI::VibrationSensitivity::request(const QString &, const QVariant &data)
 {
     qint8 value = listIndex({"high", "medium", "low"}, data);
 

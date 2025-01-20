@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "ias.h"
 
-QByteArray ActionsIAS::Warning::request(const QString &name, const QVariant &data)
+QVariant ActionsIAS::Warning::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
     QMap <QString, QVariant> map = property->value().toMap();

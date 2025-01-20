@@ -118,7 +118,7 @@ int ActionObject::enumIndex(const QString name, const QVariant &value)
     return -1;
 }
 
-QByteArray EnumAction::request(const QString &, const QVariant &data)
+QVariant EnumAction::request(const QString &, const QVariant &data)
 {
     int index = enumIndex(m_name, data);
     quint8 value = static_cast <quint8> (index);

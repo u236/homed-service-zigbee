@@ -2,7 +2,7 @@
 #include "other.h"
 #include "zcl.h"
 
-QByteArray ActionsCustom::Attribute::request(const QString &, const QVariant &data)
+QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data)
 {
     QList <QString> types = {"bool", "value", "enum"}; // TODO: refactor this
     QVariant value;

@@ -1,13 +1,13 @@
 #include <QtEndian>
 #include "efekta.h"
 
-QByteArray ActionsEfekta::ReportingDelay::request(const QString &, const QVariant &data)
+QVariant ActionsEfekta::ReportingDelay::request(const QString &, const QVariant &data)
 {
     quint16 value = qToLittleEndian <quint16> (data.toInt());
     return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
 }
 
-QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, const QVariant &data)
+QVariant ActionsEfekta::TemperatureSettings::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -40,7 +40,7 @@ QByteArray ActionsEfekta::TemperatureSettings::request(const QString &name, cons
     return QByteArray();
 }
 
-QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const QVariant &data)
+QVariant ActionsEfekta::HumiditySettings::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -73,7 +73,7 @@ QByteArray ActionsEfekta::HumiditySettings::request(const QString &name, const Q
     return QByteArray();
 }
 
-QByteArray ActionsEfekta::CO2Settings::request(const QString &name, const QVariant &data)
+QVariant ActionsEfekta::CO2Settings::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -125,7 +125,7 @@ QByteArray ActionsEfekta::CO2Settings::request(const QString &name, const QVaria
     }
 }
 
-QByteArray ActionsEfekta::PMSensor::request(const QString &name, const QVariant &data)
+QVariant ActionsEfekta::PMSensor::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -157,7 +157,7 @@ QByteArray ActionsEfekta::PMSensor::request(const QString &name, const QVariant 
     return QByteArray();
 }
 
-QByteArray ActionsEfekta::VOCSensor::request(const QString &name, const QVariant &data)
+QVariant ActionsEfekta::VOCSensor::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 

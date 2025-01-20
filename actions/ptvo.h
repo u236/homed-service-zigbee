@@ -12,7 +12,7 @@ namespace ActionsPTVO
     public:
 
         Status(const QString &name) : ActionObject(name, CLUSTER_ON_OFF, 0x0000, 0x0000) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
+        QVariant request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -22,7 +22,7 @@ namespace ActionsPTVO
     public:
 
         AnalogInput(const QString &name) : ActionObject(name, CLUSTER_ANALOG_INPUT, 0x0000, 0x0055) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
+        QVariant request(const QString &name, const QVariant &data) override;
 
     };
 
@@ -59,7 +59,7 @@ namespace ActionsPTVO
     public:
 
         SerialData(void) : ActionObject("data", CLUSTER_MULTISTATE_VALUE) {}
-        QByteArray request(const QString &name, const QVariant &data) override;
+        QVariant request(const QString &name, const QVariant &data) override;
 
     };
 }

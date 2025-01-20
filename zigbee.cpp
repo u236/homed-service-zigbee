@@ -361,13 +361,18 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
 
             if (action->name() == name || action->name() == "tuyaDataPoints" || action->actions().contains(name))
             {
-                QByteArray request = action->request(name, data);
+                QVariant request = action->request(name, data);
+                QList <QVariant> list = request.type() == QVariant::List ? request.toList() : QList <QVariant> {request};
 
-                if (request.isEmpty())
-                    continue;
+                for (int i = 0; i < list.count(); i++)
+                {
+                    QByteArray payload = list.at(i).toByteArray();
 
-                if (data.type() != QVariant::String || !data.toString().isEmpty())
-                    enqueueRequest(device, it.key(), action->clusterId(), request, QString("%1 action request").arg(name), false, action->manufacturerCode(), action);
+                    if (payload.isEmpty() || (data.type() == QVariant::String && data.toString().isEmpty()))
+                        continue;
+
+                    enqueueRequest(device, it.key(), action->clusterId(), payload,  list.count() > 1 ? QString("%1 action request %2 of %3").arg(name).arg(i + 1).arg(list.count()) : QString("%1 action request").arg(name), false, action->manufacturerCode(), action);
+                }
 
                 break;
             }
@@ -382,18 +387,24 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
     if (type)
     {
         Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
-        QByteArray request = action->request(name, data);
+        QVariant request = action->request(name, data);
+        QList <QVariant> list = request.type() == QVariant::List ? request.toList() : QList <QVariant> {request};
 
-        if (request.isEmpty() || (data.type() == QVariant::String && data.toString().isEmpty()))
-            return;
-
-        if (!m_adapter->multicastRequest(m_requestId, groupId, 0x01, 0xFF, action->clusterId(), request))
+        for (int i = 0; i < list.count(); i++)
         {
-            logWarning << "Group" << groupId << action->name().toUtf8().constData() << "action request aborted";
-            return;
-        }
+            QByteArray payload = list.at(i).toByteArray();
 
-        logInfo << "Group" << groupId << action->name().toUtf8().constData() << "action request sent";
+            if (payload.isEmpty() || (data.type() == QVariant::String && data.toString().isEmpty()))
+                continue;
+
+            if (!m_adapter->multicastRequest(m_requestId, groupId, 0x01, 0xFF, action->clusterId(), payload))
+            {
+                logWarning << "Group" << groupId << action->name().toUtf8().constData() << (list.count() > 1 ? QString("action request %1 of %2 aborted").arg(i + 1).arg(list.count()).toUtf8().constData() : "action request aborted");
+                continue;
+            }
+
+            logInfo << "Group" << groupId << action->name().toUtf8().constData() << (list.count() > 1 ? QString("action request %1 of %2 sent").arg(i + 1).arg(list.count()).toUtf8().constData() : "action request sent");
+        }
     }
 }
 

@@ -2,13 +2,13 @@
 #include "color.h"
 #include "common.h"
 
-QByteArray Actions::Status::request(const QString &, const QVariant &data)
+QVariant Actions::Status::request(const QString &, const QVariant &data)
 {
     qint8 command = listIndex({"off", "on", "toggle"}, data);
     return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
-QByteArray Actions::Level::request(const QString &, const QVariant &data)
+QVariant Actions::Level::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -62,20 +62,20 @@ QByteArray Actions::Level::request(const QString &, const QVariant &data)
     }
 }
 
-QByteArray Actions::AnalogOutput::request(const QString &, const QVariant &data)
+QVariant Actions::AnalogOutput::request(const QString &, const QVariant &data)
 {
     float value = qToLittleEndian(data.toFloat());
     return writeAttribute(DATA_TYPE_SINGLE_PRECISION, &value, sizeof(value));
 }
 
-QByteArray Actions::CoverStatus::request(const QString &, const QVariant &data)
+QVariant Actions::CoverStatus::request(const QString &, const QVariant &data)
 {
     QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};
     qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
     return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
 
-QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data)
+QVariant Actions::CoverPosition::request(const QString &, const QVariant &data)
 {
     int value = data.toInt();
     quint8 position = value < 0 ? 0 : value > 100 ? 100 : value;
@@ -88,7 +88,7 @@ QByteArray Actions::CoverPosition::request(const QString &, const QVariant &data
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(1, static_cast <char> (position));
 }
 
-QByteArray Actions::Thermostat::request(const QString &name, const QVariant &data)
+QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -124,7 +124,7 @@ QByteArray Actions::Thermostat::request(const QString &name, const QVariant &dat
     return QByteArray();
 }
 
-QByteArray Actions::ColorHS::request(const QString &, const QVariant &data)
+QVariant Actions::ColorHS::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -151,7 +151,7 @@ QByteArray Actions::ColorHS::request(const QString &, const QVariant &data)
     }
 }
 
-QByteArray Actions::ColorXY::request(const QString &, const QVariant &data)
+QVariant Actions::ColorXY::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -178,7 +178,7 @@ QByteArray Actions::ColorXY::request(const QString &, const QVariant &data)
     }
 }
 
-QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &data)
+QVariant Actions::ColorTemperature::request(const QString &, const QVariant &data)
 {
     switch (data.type())
     {
@@ -230,13 +230,13 @@ QByteArray Actions::ColorTemperature::request(const QString &, const QVariant &d
     }
 }
 
-QByteArray Actions::OccupancyTimeout::request(const QString &, const QVariant &data)
+QVariant Actions::OccupancyTimeout::request(const QString &, const QVariant &data)
 {
     quint16 value = qToLittleEndian <quint16> (data.toInt());
     return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
 }
 
-QByteArray Actions::ChildLock::request(const QString &, const QVariant &data)
+QVariant Actions::ChildLock::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;
     return writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
