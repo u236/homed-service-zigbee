@@ -110,6 +110,24 @@ QVariant ActionsLUMI::LightStatusMemory::request(const QString &, const QVariant
     return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
+QVariant ActionsLUMI::BasicStatusMemory::request(const QString &, const QVariant &data)
+{
+    QList <QVariant> list;
+
+    if (data.toBool())
+    {
+        list.append(writeAttribute(0x41, QByteArray::fromHex("aa8005d14707011001")));
+        list.append(writeAttribute(0x41, QByteArray::fromHex("aa8003d3070801")));
+    }
+    else
+    {
+        list.append(writeAttribute(0x41, QByteArray::fromHex("aa8005d14709011000")));
+        list.append(writeAttribute(0x41, QByteArray::fromHex("aa8003d3070a01")));
+    }
+
+    return list;
+}
+
 QVariant ActionsLUMI::CoverPosition::request(const QString &, const QVariant &data)
 {
     float value = data.toFloat();

@@ -44,7 +44,10 @@ protected:
     QList <QString> m_actions;
 
     Property endpointProperty(const QString &name = QString());
+
     QByteArray writeAttribute(quint8 dataType, void *value, size_t length);
+    QByteArray writeAttribute(quint8 dataType, const QByteArray &data);
+
     qint8 listIndex(const QList <QString> &list, const QVariant &value);
     int enumIndex(const QString name, const QVariant &value);
 };

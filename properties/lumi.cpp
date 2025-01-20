@@ -337,6 +337,20 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 case 0x15: map.insert("sensitivityMode", "low"); break;
             }
         }
+
+        case 0xFFF0:
+        {
+            QList <QByteArray> list = {QByteArray::fromHex("aa8003d3070801"), QByteArray::fromHex("aa8003d3070a01")};
+
+            switch (list.indexOf(data))
+            {
+                case 0: map.insert("statusMemory", true); break;
+                case 1: map.insert("statusMemory", false); break;
+            }
+
+            break;
+        }
+
     }
 }
 

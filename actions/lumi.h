@@ -56,6 +56,16 @@ namespace ActionsLUMI
 
     };
 
+    class BasicStatusMemory : public ActionObject
+    {
+
+    public:
+
+        BasicStatusMemory(void) : ActionObject("statusMemory", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, 0xFFF0) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
     class CoverPosition : public ActionObject
     {
 

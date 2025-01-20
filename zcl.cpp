@@ -34,7 +34,7 @@ QByteArray writeAttributeRequest(quint8 transactionId, quint16 manufacturerCode,
     payload.attributeId = qToLittleEndian(attributeId);
     payload.dataType = dataType;
 
-    return zclHeader(FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_WRITE_ATTRIBUTES, manufacturerCode).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(data);
+    return zclHeader(FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_WRITE_ATTRIBUTES, manufacturerCode).append(reinterpret_cast <char*> (&payload), sizeof(payload)).append(dataType == DATA_TYPE_OCTET_STRING || dataType == DATA_TYPE_CHARACTER_STRING ? QByteArray(1, static_cast <char> (data.length())).append(data) : data);
 }
 
 quint8 zclDataSize(quint8 dataType)
