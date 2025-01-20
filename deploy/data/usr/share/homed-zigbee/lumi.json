@@ -203,8 +203,8 @@
       "endpointId":     [41, 42, 43, 51, 52, 53, 61]
     },
     {
-      "description":    "Aqara E1 1-Channel Wall Switch QBKG38LM or QBKG40LM",
-      "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
+      "description":    "Aqara E1/H1 1-Channel Wall Switch QBKG38LM, QBKG40LM or WS-EUK01",
+      "modelNames":     ["lumi.switch.l1aeu1", "lumi.switch.b1nc01", "lumi.switch.b1lc04"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
@@ -212,18 +212,18 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.switch.b1nc01", "lumi.switch.b1lc04"],
+      "modelNames":     ["lumi.switch.l1aeu1", "lumi.switch.b1nc01", "lumi.switch.b1lc04"],
       "properties":     ["lumiSwitchAction"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick"]}},
       "endpointId":     41
     },
     {
-      "description":    "Aqara E1 2-Channel Wall Switch QBKG39LM or QBKG41LM",
-      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "description":    "Aqara E1/H1 2-Channel Wall Switch QBKG39LM, QBKG41LM or WS-EUK02",
+      "modelNames":     ["lumi.switch.l2aeu1", "lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "options":        {"endpointName": {"1": "Left", "2": "Right", "41": "Left", "42": "Right", "51": "Both"}}
     },
     {
-      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "modelNames":     ["lumi.switch.l2aeu1", "lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
@@ -231,7 +231,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "modelNames":     ["lumi.switch.l2aeu1", "lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchMode"],
       "exposes":        ["switch", "switchMode"],
@@ -239,7 +239,7 @@
       "endpointId":     [1, 2]
     },
     {
-      "modelNames":     ["lumi.switch.b2nc01", "lumi.switch.b2lc04"],
+      "modelNames":     ["lumi.switch.l2aeu1", "lumi.switch.b2nc01", "lumi.switch.b2lc04"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick"]}},
