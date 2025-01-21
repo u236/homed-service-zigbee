@@ -232,7 +232,7 @@ public:
 private:
 
     QTimer *m_timer;
-    bool m_clear, m_esp;
+    bool m_clear, m_check, m_esp;
 
     quint16 m_command;
     QByteArray m_replyData;

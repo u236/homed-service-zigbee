@@ -44,7 +44,7 @@ static quint16 const crc16Table[256] =
     0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
 
-ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_clear(false), m_esp(false)
+ZBoss::ZBoss(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_clear(false), m_check(false), m_esp(false)
 {
     m_policy.append({ZBOSS_POLICY_TC_LINK_KEYS_REQUIRED,           0x00});
     m_policy.append({ZBOSS_POLICY_IC_REQUIRED,                     0x00});
@@ -445,7 +445,13 @@ bool ZBoss::startCoordinator(void)
 
         if (*(reinterpret_cast <quint16*> (m_replyData.data())) != qToLittleEndian(m_panId))
         {
-            logWarning << "Adapter panid doesn't match configuration";
+            if (m_check)
+            {
+                logWarning << "Network not started, PAN ID collision detected";
+                return false;
+            }
+
+            logWarning << "Adapter PAN ID doesn't match configuration";
             check = true;
         }
 
@@ -459,7 +465,6 @@ bool ZBoss::startCoordinator(void)
 
             m_clear = true;
             softReset();
-
             return true;
         }
 
@@ -490,13 +495,13 @@ bool ZBoss::startCoordinator(void)
 
         if (!sendRequest(ZBOSS_SET_PAN_ID, QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId))) || m_replyStatus)
         {
-            logWarning << "Set panid request failed";
+            logWarning << "Set PAN ID request failed";
             return false;
         }
 
         if (!sendRequest(ZBOSS_SET_NWK_KEY, QByteArray(m_networkKey).append(1, 0x00)) || m_replyStatus)
         {
-            logWarning << "Set nwk request failed";
+            logWarning << "Set networt key request failed";
             return false;
         }
 
@@ -512,6 +517,10 @@ bool ZBoss::startCoordinator(void)
             logWarning << "Network startup failed";
             return false;
         }
+
+        m_check = true;
+        softReset();
+        return true;
     }
 
     for (auto it = m_endpoints.begin(); it != m_endpoints.end(); it++)
