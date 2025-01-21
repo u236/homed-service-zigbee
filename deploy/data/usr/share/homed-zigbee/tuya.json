@@ -1331,7 +1331,7 @@
                             "101":  [{"name": "motionStatus", "type": "enum"}],
                             "102":  [{"name": "fadingTime", "type": "value", "action": true}],
                             "104":  [{"name": "mediumMotionDistance", "type": "value", "divider": 100, "action": true}],
-                            "105":  [{"name": "mediumMotionSensitivity", "action": true}],
+                            "105":  [{"name": "mediumMotionSensitivity", "type": "value", "action": true}],
                             "106":  [{"name": "illuminance", "type": "value"}],
                             "107":  [{"name": "indicator", "type": "bool", "action": true}],
                             "108":  [{"name": "smallMotionDistance", "type": "value", "divider": 100, "action": true}],

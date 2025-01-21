@@ -352,10 +352,12 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
+        bool check = false;
+
         if (endpointId && it.key() != endpointId)
             continue;
 
-        for (int i = 0; i < it.value()->actions().count(); i++)
+        for (int i = 0; i < it.value()->actions().count() && !check; i++)
         {
             const Action &action = it.value()->actions().at(i);
 
@@ -372,9 +374,8 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                         continue;
 
                     enqueueRequest(device, it.key(), action->clusterId(), payload,  list.count() > 1 ? QString("%1 action request %2 of %3").arg(name).arg(i + 1).arg(list.count()) : QString("%1 action request").arg(name), false, action->manufacturerCode(), action);
+                    check = true;
                 }
-
-                break;
             }
         }
     }
