@@ -16,12 +16,36 @@ namespace ActionsLUMI
 
     };
 
-    class Thermostat : public ActionObject
+    class RadiatorThermostat : public ActionObject
     {
 
     public:
 
-        Thermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"targetTemperature", "systemMode", "fanMode"}) {}
+        RadiatorThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"sensorType", "exeternalTemperature"}) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    private:
+
+        QByteArray header(quint8 length, quint8 counter, quint8 action);
+
+    };
+
+    class ElectricThermostat : public ActionObject
+    {
+
+    public:
+
+        ElectricThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"targetTemperature", "systemMode", "fanMode"}) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class SensorType : public ActionObject
+    {
+
+    public:
+
+        SensorType(void) : ActionObject("sensorType", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0xFFF2) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };

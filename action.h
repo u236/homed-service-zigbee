@@ -43,6 +43,7 @@ protected:
     QList <quint16> m_attributes;
     QList <QString> m_actions;
 
+    QByteArray ieeeAddress(void);
     Property endpointProperty(const QString &name = QString());
 
     QByteArray writeAttribute(quint8 dataType, void *value, size_t length);

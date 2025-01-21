@@ -28,7 +28,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsIAS::Warning>                     ("iasWarningAction");
 
     qRegisterMetaType <ActionsLUMI::PresenceSensor>             ("lumiPresenceSensorAction");
-    qRegisterMetaType <ActionsLUMI::Thermostat>                 ("lumiThermostatAction");
+    qRegisterMetaType <ActionsLUMI::RadiatorThermostat>         ("lumiRadiatorThermostatAction");
+    qRegisterMetaType <ActionsLUMI::ElectricThermostat>         ("lumiElectricThermostatAction");
     qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchStatusMemory>         ("lumiSwitchStatusMemoryAction");
     qRegisterMetaType <ActionsLUMI::LightStatusMemory>          ("lumiLightStatusMemoryAction");
@@ -65,6 +66,11 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
+}
+
+QByteArray ActionObject::ieeeAddress(void)
+{
+    return static_cast <EndpointObject*> (m_parent)->device()->ieeeAddress();
 }
 
 Property ActionObject::endpointProperty(const QString &name)
