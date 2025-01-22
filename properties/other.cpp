@@ -50,7 +50,7 @@ void PropertiesIKEA::Occupancy::resetValue(void)
 
 void PropertiesIKEA::StatusAction::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
-    if (meta().value("time").toLongLong() + 1000 > QDateTime::currentMSecsSinceEpoch())
+    if (meta("time").toLongLong() + 1000 > QDateTime::currentMSecsSinceEpoch())
         return;
 
     switch (commandId)
@@ -73,19 +73,19 @@ void PropertiesIKEA::ArrowAction::parseCommand(quint16, quint8 commandId, const 
             break;
 
         case 0x08:
-            meta().insert("arrow", payload.at(0) ? "left" : "right");
-            m_value = meta().value("arrow").toString().append("Hold");
+            setMeta("arrow", payload.at(0) ? "left" : "right");
+            m_value = meta("arrow").toString().append("Hold");
             break;
 
         case 0x09:
 
-            meta().insert("time", QDateTime::currentMSecsSinceEpoch());
+            setMeta("time", QDateTime::currentMSecsSinceEpoch());
 
-            if (!meta().contains("arrow"))
+            if (meta("arrow").isValid())
                 return;
 
-            m_value = meta().value("arrow").toString().append("Release");
-            meta().remove("arrow");
+            m_value = meta("arrow").toString().append("Release");
+            clearMeta("arrow");
             break;
     }
 }

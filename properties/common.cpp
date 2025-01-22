@@ -75,7 +75,7 @@ void Properties::CoverPosition::parseAttribte(quint16, quint16 attributeId, cons
     QMap <QString, QVariant> map;
     qint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.at(0) : 100 - data.at(0));
 
-    if (attributeId != 0x0008 || value == meta().value("position", 0xFF).toInt())
+    if (attributeId != 0x0008 || value == meta("position", 0xFF).toInt())
         return;
 
     map.insert("cover", value ? "open" : "closed");

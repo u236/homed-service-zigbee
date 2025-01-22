@@ -185,7 +185,7 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
         QString type = types.value(dataPoint - 0x70);
         QByteArray program = data.toByteArray();
 
-        meta().insert(QString("%1Program").arg(type), true);
+        setMeta(QString("%1Program").arg(type), true);
 
         for (int i = 0; i < 18; i++)
         {
@@ -208,7 +208,7 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
         QString type = types.value(list.indexOf(dataPoint));
         QByteArray program = data.toByteArray().mid(1);
 
-        meta().insert(QString("%1Program").arg(type), true);
+        setMeta(QString("%1Program").arg(type), true);
 
         for (int i = 0; i < 4; i++)
         {
@@ -235,7 +235,7 @@ void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVari
         QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
         QByteArray program = data.toByteArray();
 
-        meta().insert("program", true);
+        setMeta("program", true);
 
         for (int i = 0; i < 36; i++)
         {
@@ -350,7 +350,7 @@ void PropertiesTUYA::IRCode::parseCommand(quint16, quint8 commandId, const QByte
             memcpy(&position, payload.constData() + 2, sizeof(position));
             position = qFromLittleEndian(position);
             size = static_cast <quint8> (payload.at(payload.length() - 1));
-            data = meta().value("message").toByteArray().mid(position, size);
+            data = meta("message").toByteArray().mid(position, size);
 
             for (int i = 0; i < data.length(); i++)
                 crc += data.at(i);

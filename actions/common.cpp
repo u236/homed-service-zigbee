@@ -80,7 +80,7 @@ QVariant Actions::CoverPosition::request(const QString &, const QVariant &data)
     int value = data.toInt();
     quint8 position = value < 0 ? 0 : value > 100 ? 100 : value;
 
-    meta().insert("position", endpointProperty()->value().toMap().value("position"));
+    setMeta("position", endpointProperty()->value().toMap().value("position"));
 
     if (!option("invertCover").toBool())
         position = 100 - position;

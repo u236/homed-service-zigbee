@@ -120,10 +120,10 @@ QVariant ActionsTUYA::HolidayThermostatProgram::request(const QString &name, con
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload;
 
-    if (m_data.isEmpty() || meta().value("program").toBool())
+    if (m_data.isEmpty() || meta("program").toBool())
     {
         m_data = property->value().toMap();
-        meta().insert(QString("%1Program").arg(type), false);
+        setMeta(QString("%1Program").arg(type), false);
     }
 
     m_data.insert(name, data.toDouble());
@@ -147,10 +147,10 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload = QByteArray(1, static_cast <char> (types.indexOf(type) + 1));
 
-    if (m_data.isEmpty() || meta().value("program").toBool())
+    if (m_data.isEmpty() || meta("program").toBool())
     {
         m_data = property->value().toMap();
-        meta().insert(QString("%1Program").arg(type), false);
+        setMeta(QString("%1Program").arg(type), false);
     }
 
     m_data.insert(name, data.toDouble());
@@ -173,10 +173,10 @@ QVariant ActionsTUYA::MoesThermostatProgram::request(const QString &name, const 
     QList <QString> types = {"weekday", "saturday", "sunday"};
     QByteArray payload;
 
-    if (m_data.isEmpty() || meta().value("program").toBool())
+    if (m_data.isEmpty() || meta("program").toBool())
     {
         m_data = property->value().toMap();
-        meta().insert("program", false);
+        setMeta("program", false);
     }
 
     m_data.insert(name, data.toDouble());
@@ -249,7 +249,7 @@ QVariant ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
 {
     QByteArray message = QJsonDocument(QJsonObject {{"delay", 300}, {"key1", QJsonObject {{"freq", 38000}, {"key_code", data.toString()}, {"num", 1}, {"type", 1}}}, {"key_num", 1}}).toJson(QJsonDocument::Compact);
     quint32 length = qToLittleEndian <quint32> (message.length());
-    meta().insert("message", message);
+    setMeta("message", message);
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(2, 0x00).append(reinterpret_cast <char*> (&length), sizeof(length)).append(QByteArray::fromHex("0000000004e001020000"));
 }
 
