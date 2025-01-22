@@ -1425,26 +1425,26 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     QDateTime now = QDateTime::currentDateTime();
                     quint32 value;
 
-                    response.append(1, static_cast <char> (STATUS_SUCCESS));
+                    response.append(static_cast <char> (STATUS_SUCCESS));
 
                     switch (attributeId)
                     {
                         case 0x0000:
                             logDebug(m_debug) << device << "requested UTC time";
                             value = qToLittleEndian <quint32> (now.toTime_t() + (device->options().value("utcTime").toBool() ? now.offsetFromUtc() : 0) - TIME_OFFSET);
-                            response.append(1, static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            response.append(static_cast <char> (DATA_TYPE_UTC_TIME)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0002:
                             logDebug(m_debug)<< device << "requested time zone";
                             value = qToLittleEndian <quint32> (now.offsetFromUtc());
-                            response.append(1, static_cast <char> (DATA_TYPE_32BIT_SIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            response.append(static_cast <char> (DATA_TYPE_32BIT_SIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
 
                         case 0x0007:
                             logDebug(m_debug)<< device << "requested local time";
                             value = qToLittleEndian <quint32> (now.toTime_t() + now.offsetFromUtc() - TIME_OFFSET);
-                            response.append(1, static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
+                            response.append(static_cast <char> (DATA_TYPE_32BIT_UNSIGNED)).append(reinterpret_cast <char*> (&value), sizeof(value));
                             break;
                     }
 
@@ -1452,7 +1452,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 }
 
                 logWarning << device << "requested unrecognized attribute" << QString::asprintf("0x%04x", attributeId) << "from cluster" << QString::asprintf("0x%04x", clusterId);
-                response.append(1, static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
+                response.append(static_cast <char> (STATUS_UNSUPPORTED_ATTRIBUTE));
             }
 
             enqueueRequest(device, endpoint->id(), clusterId, response);

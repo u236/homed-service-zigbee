@@ -11,7 +11,7 @@ QByteArray zclHeader(quint8 frameControl, quint8 transactionId, quint8 commandId
         header.append(reinterpret_cast <char*> (&manufacturerCode), sizeof(manufacturerCode));
     }
 
-    return header.append(1, static_cast <char> (transactionId)).append(1, static_cast <char> (commandId));
+    return header.append(static_cast <char> (transactionId)).append(static_cast <char> (commandId));
 }
 
 QByteArray readAttributesRequest(quint8 transactionId, quint16 manufacturerCode, QList <quint16> attributes)

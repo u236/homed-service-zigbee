@@ -233,7 +233,7 @@ bool Adapter::leaveRequest(quint8 id, quint16 networkAddress)
 
 bool Adapter::lqiRequest(quint8 id, quint16 networkAddress, quint8 index)
 {
-    return unicastRequest(id, networkAddress, 0x00, 0x00, ZDO_LQI_REQUEST, QByteArray(1, static_cast <char> (id)).append(1, static_cast <char> (index)));
+    return unicastRequest(id, networkAddress, 0x00, 0x00, ZDO_LQI_REQUEST, QByteArray(1, static_cast <char> (id)).append(static_cast <char> (index)));
 }
 
 void Adapter::reset(void)

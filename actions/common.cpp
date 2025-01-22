@@ -85,7 +85,7 @@ QVariant Actions::CoverPosition::request(const QString &, const QVariant &data)
     if (!option("invertCover").toBool())
         position = 100 - position;
 
-    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(1, static_cast <char> (position));
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x05).append(static_cast <char> (position));
 }
 
 QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)

@@ -219,7 +219,7 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     commonHeader.id = qToLittleEndian(command);
 
     payload.append(reinterpret_cast <char*> (&commonHeader), sizeof(commonHeader));
-    payload.append(1, static_cast <char> (id));
+    payload.append(static_cast <char> (id));
     payload.append(data);
 
     crc = getCRC16(reinterpret_cast <quint8*> (payload.data()), payload.length());
@@ -269,7 +269,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
             memcpy(&networkAddress, m_replyData.mid(m_replyData.length() - sizeof(networkAddress)), sizeof(networkAddress));
 
-            payload.append(1, static_cast <char> (m_replyStatus));
+            payload.append(static_cast <char> (m_replyStatus));
             payload.append(reinterpret_cast <const char*> (&networkAddress), sizeof(networkAddress));
             payload.append(reinterpret_cast <const char*> (message), sizeof(zbossNodeDescriptorResponseStruct));
 
@@ -285,13 +285,13 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
             memcpy(&networkAddress, data.mid(data.length() - sizeof(networkAddress)), sizeof(networkAddress));
 
-            payload.append(1, static_cast <char> (m_replyStatus));
+            payload.append(static_cast <char> (m_replyStatus));
             payload.append(reinterpret_cast <const char*> (&networkAddress), sizeof(networkAddress));
-            payload.append(1, static_cast <char> (message->inClusterCount * 2 + message->outClusterCount * 2) + sizeof(zbossSimpleDescriptorResponseStruct));
+            payload.append(static_cast <char> (message->inClusterCount * 2 + message->outClusterCount * 2) + sizeof(zbossSimpleDescriptorResponseStruct));
             payload.append(reinterpret_cast <const char*> (message), sizeof(zbossSimpleDescriptorResponseStruct) - 2);
-            payload.append(1, static_cast <char> (message->inClusterCount));
+            payload.append(static_cast <char> (message->inClusterCount));
             payload.append(m_replyData.mid(sizeof(zbossSimpleDescriptorResponseStruct), message->inClusterCount * 2));
-            payload.append(1, static_cast <char> (message->outClusterCount));
+            payload.append(static_cast <char> (message->outClusterCount));
             payload.append(m_replyData.mid(sizeof(zbossSimpleDescriptorResponseStruct) + message->inClusterCount * 2), message->outClusterCount * 2);
 
             emit zdoMessageReveived(networkAddress, ZDO_SIMPLE_DESCRIPTOR_REQUEST, payload);
@@ -305,7 +305,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
 
             memcpy(&networkAddress, data.mid(data.length() - sizeof(networkAddress)), sizeof(networkAddress));
 
-            payload.append(1, static_cast <char> (m_replyStatus));
+            payload.append(static_cast <char> (m_replyStatus));
             payload.append(reinterpret_cast <char*> (&networkAddress), sizeof(networkAddress));
             payload.append(data.mid(3, data.length() - 5));
 
