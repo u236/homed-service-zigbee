@@ -318,7 +318,7 @@
       "modelNames":     ["_TZE204_g2ki0ejr"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "childLock", "holidayTemperature", "comfortTemperature", "frostProtection", "boost", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "childLock", "comfortTemperature", "awayTemperature", "frostProtection", "boost", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -329,7 +329,7 @@
                             "7":    [{"name": "childLock", "type": "bool", "action": true}],
                             "9":    [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
                             "10":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "21":   [{"name": "holidayTemperature", "type": "value", "action": true}],
+                            "21":   [{"name": "awayTemperature", "type": "value", "action": true}],
                             "24":   [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
                             "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
                             "37":   [{"name": "boost", "type": "bool", "action": true}],
@@ -337,11 +337,11 @@
                             "47":   [{"name": "temperatureOffset", "type": "value", "action": true}],
                             "49":   [{"name": "running", "type": "bool"}]
                           },
-                          "operationMode": {"enum": ["program", "holiday", "manual", "comfort"]},
-                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "operationMode": {"enum": ["program", "away", "manual", "comfort"]},
+                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
                           "temperatureHigh": {"min": 15, "max": 45},
                           "temperatureLow": {"min": 5, "max": 15},
-                          "holidayTemperature": {"min": 5, "max": 35},
+                          "awayTemperature": {"min": 5, "max": 35},
                           "comfortTemperature": {"min": 5, "max": 35},
                           "boostTimeout": {"min": 0, "max": 465, "step": 5},
                           "temperatureOffset": {"min": -9, "max": 9},
@@ -355,12 +355,12 @@
       "modelNames":     ["_TZE204_ltwbm23f", "_TZE204_qyr2m29i"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "3":    [{"name": "running", "type": "bool", "invert": true}],
+                            "3":    [{"name": "running", "type": "bool"}],
                             "4":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
                             "5":    [{"name": "temperature", "type": "value", "divider": 10}],
                             "6":    [{"name": "battery", "type": "value"}],
@@ -368,18 +368,20 @@
                             "9":    [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
                             "10":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
                             "47":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "114":  [{"name": "position", "type": "value"}],
+                            "114":  [{"name": "position", "type": "value", "divider": 10}],
                             "119":  [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
-                            "120":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}]
+                            "120":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}],
+                            "121":  [{"name": "awayTemperature", "type": "value", "divider": 10, "action": true}]
                           },
-                          "operationMode": {"enum": ["standby", "antifrost", "eco", "comfort", "program", "manual"]},
+                          "operationMode": {"enum": ["standby", "away", "eco", "comfort", "program", "manual"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
                           "temperatureHigh": {"min": 15, "max": 35},
-                          "temperatureLow": {"min": 0, "max": 15},
-                          "temperatureOffset": {"min": -30, "max": 30},
+                          "temperatureLow": {"min": 1, "max": 15},
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
                           "position": {"type": "sensor", "icon": "mdi:valve"},
-                          "comfortTemperature": {"min": 5, "max": 30},
-                          "ecoTemperature": {"min": 5, "max": 30},
+                          "comfortTemperature": {"min": 5, "max": 35},
+                          "ecoTemperature": {"min": 5, "max": 35},
+                          "awayTemperature": {"min": 5, "max": 35},
                           "thermostatProgram": "daily",
                           "programDataPoints": [102, 103, 104, 105, 106, 107, 108],
                           "runningStatus": true
@@ -446,7 +448,7 @@
                           "hysteresis": {"min": 0, "max": 5},
                           "temperatureHigh": {"min": 25, "max": 70},
                           "temperatureLow": {"min": 0, "max": 10},
-                          "ecoTemperature": {"min": 5, "max": 30},
+                          "ecoTemperature": {"min": 5, "max": 35},
                           "thermostatProgram": "daily",
                           "programDataPoints": [101, 105, 106, 107, 108, 109, 110],
                           "runningStatus": true
@@ -476,7 +478,7 @@
                             "108":  [{"name": "temperatureHigh", "type": "value", "action": true}],
                             "109":  [{"name": "temperatureLow", "type": "value", "action": true}]
                           },
-                          "operationMode": {"enum": ["program", "manual", "temporary", "holiday"]},
+                          "operationMode": {"enum": ["program", "manual", "temporary", "away"]},
                           "targetTemperature": {"min": 10, "max": 30},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10},
                           "position": {"type": "sensor", "icon": "mdi:valve"},
