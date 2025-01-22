@@ -142,7 +142,7 @@ QVariant ActionsTUYA::HolidayThermostatProgram::request(const QString &name, con
 QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty();
-    QList <QVariant> list = option("prorgamDataPoints").toList();
+    QList <QVariant> list = option("programDataPoints").toList();
     QList <QString> types = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload = QByteArray(1, static_cast <char> (types.indexOf(type) + 1));
