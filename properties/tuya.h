@@ -16,7 +16,6 @@ namespace PropertiesTUYA
 
     private:
 
-        QVariant parseData(const tuyaHeaderStruct *header, const QByteArray &data);
         virtual void update(quint8 dataPoint, const QVariant &data) = 0;
 
     };
