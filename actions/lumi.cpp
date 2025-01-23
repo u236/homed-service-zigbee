@@ -102,7 +102,7 @@ QVariant ActionsLUMI::ElectricThermostat::request(const QString &name, const QVa
                 break;
             }
 
-            switch (enumIndex(name, data.toString()))
+            switch (enumIndex(name, data))
             {
                 case 0:  value = 0xF0; break;
                 case 1:  value = 0x0F; break;
@@ -116,7 +116,7 @@ QVariant ActionsLUMI::ElectricThermostat::request(const QString &name, const QVa
 
 
         case 2: // fanMode
-            value = static_cast <quint64> (0x0F - enumIndex(name, data.toString())) << 20;
+            value = static_cast <quint64> (0x0F - enumIndex(name, data)) << 20;
             break;
 
         default:

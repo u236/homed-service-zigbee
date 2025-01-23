@@ -22,7 +22,7 @@ QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data
 
         case 2: // enum
         {
-            int index = enumIndex(m_name, data.toString());
+            int index = enumIndex(m_name, data);
 
             if (index < 0)
                 return QByteArray();

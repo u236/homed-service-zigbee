@@ -9,8 +9,16 @@
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "switchMode", "powerMode", "indicator"],
-      "options":        {"switchMode": {"enum": ["relay", "decoupledOn", "decoupledBoth", "decoupledOff"]}},
+      "options":        {"switchMode": {"enum": ["relay", "decoupledOn", "decoupled", "decoupledOff"]}},
       "endpointId":     1
+    },
+    {
+      "modelNames":     ["YNDX-00531"],
+      "properties":     ["customCommands"],
+      "bindings":       ["status"],
+      "exposes":        ["action"],
+      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
+      "endpointId":     [2, 3]
     },
     {
       "description":    "Yandex 2-Channel Switch YNDX-00532",
@@ -27,8 +35,16 @@
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "switchMode", "powerMode", "indicator"],
-      "options":        {"switchMode": {"enum": ["relay", "decoupledOn", "decoupledBoth", "decoupledOff"]}},
+      "options":        {"switchMode": {"enum": ["relay", "decoupledOn", "decoupled", "decoupledOff"]}},
       "endpointId":     [1, 2]
+    },
+    {
+      "modelNames":     ["YNDX-00532"],
+      "properties":     ["customCommands"],
+      "bindings":       ["status"],
+      "exposes":        ["action"],
+      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
+      "endpointId":     [3, 4, 5, 6]
     },
     {
       "modelNames":     ["YNDX-00534"],
