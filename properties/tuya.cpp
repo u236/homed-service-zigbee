@@ -210,16 +210,26 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
 
         setMeta(QString("%1Program").arg(type), true);
 
-        for (int i = 0; i < 4; i++)
+        if (option("thermostatProgram").toString() != "extended")
         {
-            QString key = QString("%1P%2").arg(type).arg(i + 1);
-            quint16 tempertarure;
-
-            memcpy(&tempertarure, program.constData() + i * 4 + 2, sizeof(tempertarure));
-
-            map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
-            map.insert(QString("%1Minute").arg(key), static_cast <quint8> (program.at(i * 4 + 1)));
-            map.insert(QString("%1Temperature").arg(key), qFromBigEndian(tempertarure) / 10.0);
+            for (int i = 0; i < 4; i++)
+            {
+                QString key = QString("%1P%2").arg(type).arg(i + 1);
+                map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
+                map.insert(QString("%1Minute").arg(key), static_cast <quint8> (program.at(i * 4 + 1)));
+                map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) / 10.0);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                QString key = QString("%1P%2").arg(type).arg(i + 1);
+                quint16 time = qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4))) & 0x0FFF;
+                map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
+                map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
+                map.insert(QString("%1Temperature").arg(key), (qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) & 0x0FFF) / 10.0);
+            }
         }
     }
 

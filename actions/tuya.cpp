@@ -155,13 +155,28 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
 
     m_data.insert(name, data.toDouble());
 
-    for (int i = 0; i < 4; i++)
+    if (option("thermostatProgram").toString() != "extended")
     {
-        QString key = QString("%1P%2").arg(type).arg(i + 1);
-        quint16 temperature = qToBigEndian <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 10);
-        payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt()));
-        payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
-        payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
+        for (int i = 0; i < 4; i++)
+        {
+            QString key = QString("%1P%2").arg(type).arg(i + 1);
+            quint16 temperature = qToBigEndian <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 10);
+            payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt()));
+            payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+            payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
+        }
+    }
+    else
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            QString key = QString("%1P%2").arg(type).arg(i + 1);
+            quint16 time = qToBigEndian <quint16> (0xA000 | static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+            quint16 temperature = qToBigEndian <quint16> (0x4000 | static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 10));
+            payload.append(reinterpret_cast <char*> (&time), sizeof(time));
+            payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
+        }
+
     }
 
     return makeRequest(m_transactionId++, 0x00, static_cast <quint8> (list.value(types.indexOf(type)).toInt()), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
