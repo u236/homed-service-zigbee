@@ -2,6 +2,20 @@
 #define ACTIONS_OTHER_H
 
 #include "action.h"
+#include "zcl.h"
+
+namespace ActionsYandex
+{
+    class Settings : public ActionObject
+    {
+
+    public:
+
+        Settings(void) : ActionObject("settings", CLUSTER_YANDEX, 0x140A, QList <QString> {"switchMode", "switchType", "powerMode", "indicator", "interlock"}) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+}
 
 namespace ActionsCustom
 {

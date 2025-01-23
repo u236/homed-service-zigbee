@@ -419,44 +419,6 @@
     }
   ],
 
-  "Yandex":
-  [
-    {
-      "description":    "Yandex 1-Key Wireless Switch YNDX-00534",
-      "modelNames":     ["YNDX-00534"],
-      "properties":     ["batteryPercentage"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery"],
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["YNDX-00534"],
-      "properties":     ["customCommands"],
-      "bindings":       ["status"],
-      "exposes":        ["action"],
-      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
-      "endpointId":     [1, 2]
-    },
-    {
-      "description":    "Yandex 2-Key Wireless Switch YNDX-00535",
-      "modelNames":     ["YNDX-00535"],
-      "properties":     ["batteryPercentage"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery"],
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["YNDX-00535"],
-      "properties":     ["customCommands"],
-      "bindings":       ["status"],
-      "exposes":        ["action"],
-      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
-      "endpointId":     [1, 2, 3, 4]
-    }
-  ],
-
   "eWeLight":
   [
     {

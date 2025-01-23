@@ -2,6 +2,14 @@
 #include "other.h"
 #include "zcl.h"
 
+QVariant ActionsYandex::Settings::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+    qint8 value = index < 3 ? static_cast <qint8> (enumIndex(name, data)) : data.toBool() ? 1 : 0, commandId = index + 1;
+    m_attributes = {static_cast <quint16> (index + 1)};
+    return value < 0 ? QByteArray() : zclHeader(FC_DISABLE_DEFAULT_RESPONSE, m_transactionId++, commandId, m_manufacturerCode).append(value);
+}
+
 QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data)
 {
     QList <QString> types = {"bool", "value", "enum"}; // TODO: refactor this

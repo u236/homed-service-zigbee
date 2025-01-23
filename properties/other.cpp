@@ -90,6 +90,22 @@ void PropertiesIKEA::ArrowAction::parseCommand(quint16, quint8 commandId, const 
     }
 }
 
+void PropertiesYandex::Settings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (attributeId)
+    {
+        case 0x0001: map.insert("switchMode", enumValue("switchMode", static_cast <quint8> (data.at(0)))); break;
+        case 0x0002: map.insert("switchType", enumValue("switchType", static_cast <quint8> (data.at(0)))); break;
+        case 0x0003: map.insert("powerMode", enumValue("powerMode", static_cast <quint8> (data.at(0)))); break;
+        case 0x0004: map.insert("indicator", data.at(0) ? true : false); break;
+        case 0x0005: map.insert("interlock", data.at(0) ? true : false); break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
 void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QByteArray &)
 {
     m_value = enumValue(m_name, commandId);
@@ -167,4 +183,3 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
         case 2: m_value = enumValue(m_name, value.toInt()); break; // enum
     }
 }
-

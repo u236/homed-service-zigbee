@@ -2,6 +2,7 @@
 #include "actions/efekta.h"
 #include "actions/ias.h"
 #include "actions/lumi.h"
+#include "actions/other.h"
 #include "actions/ptvo.h"
 #include "actions/tuya.h"
 #include "device.h"
@@ -66,6 +67,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");
     qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
+
+    qRegisterMetaType <ActionsYandex::Settings>                 ("yandexSettingsAction");
 }
 
 QByteArray ActionObject::ieeeAddress(void)

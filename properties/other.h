@@ -69,6 +69,19 @@ namespace PropertiesIKEA
     };
 }
 
+namespace PropertiesYandex
+{
+    class Settings : public PropertyObject
+    {
+
+    public:
+
+        Settings(void) : PropertyObject("settings", CLUSTER_YANDEX) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+}
+
 namespace PropertiesCustom
 {
     class Command : public PropertyObject

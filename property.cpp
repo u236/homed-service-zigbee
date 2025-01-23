@@ -108,6 +108,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIKEA::Occupancy>                   ("ikeaOccupancyProperty");
     qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
     qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
+
+    qRegisterMetaType <PropertiesYandex::Settings>                  ("yandexSettingsProperty");
 }
 
 quint8 PropertyObject::percentage(double min, double max, double value)
