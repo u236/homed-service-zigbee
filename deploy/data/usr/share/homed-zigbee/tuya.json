@@ -355,7 +355,7 @@
       "modelNames":     ["_TZE204_ltwbm23f", "_TZE204_qyr2m29i"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "controlMode", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -371,7 +371,8 @@
                             "114":  [{"name": "position", "type": "value", "divider": 10}],
                             "119":  [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
                             "120":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}],
-                            "121":  [{"name": "awayTemperature", "type": "value", "divider": 10, "action": true}]
+                            "121":  [{"name": "awayTemperature", "type": "value", "divider": 10, "action": true}],
+                            "127":  [{"name": "controlMode", "type": "enum", "action": true}]
                           },
                           "operationMode": {"enum": ["standby", "away", "eco", "comfort", "program", "force"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
@@ -382,6 +383,7 @@
                           "comfortTemperature": {"min": 5, "max": 35},
                           "ecoTemperature": {"min": 5, "max": 35},
                           "awayTemperature": {"min": 5, "max": 35},
+                          "controlMode": {"type": "select", "enum": ["pid", "toggle"]},
                           "thermostatProgram": "extended",
                           "programDataPoints": [102, 103, 104, 105, 106, 107, 108],
                           "runningStatus": true
