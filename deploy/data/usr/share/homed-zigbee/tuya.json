@@ -355,7 +355,7 @@
       "modelNames":     ["_TZE204_ltwbm23f", "_TZE204_qyr2m29i"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "controlMode", "position", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "controlMode", "thrustMode", "position", "displayBrightness", "displayOrientation", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -368,6 +368,9 @@
                             "9":    [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
                             "10":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
                             "47":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
+                            "110":  [{"name": "thrustMode", "type": "enum", "action": true}],
+                            "111":  [{"name": "displayBrightness", "type": "enum", "action": true}],
+                            "113":  [{"name": "displayOrientation", "type": "enum", "action": true}],
                             "114":  [{"name": "position", "type": "value", "divider": 10}],
                             "119":  [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
                             "120":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}],
@@ -379,6 +382,9 @@
                           "temperatureHigh": {"min": 15, "max": 35},
                           "temperatureLow": {"min": 1, "max": 15},
                           "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
+                          "thrustMode": {"type": "select", "enum": ["high", "medium", "low"]},
+                          "displayBrightness": {"type": "select", "enum": ["high", "medium", "low"]},
+                          "displayOrientation": {"type": "select", "enum": ["up", "down"]},
                           "position": {"type": "sensor", "icon": "mdi:valve"},
                           "comfortTemperature": {"min": 5, "max": 35},
                           "ecoTemperature": {"min": 5, "max": 35},
