@@ -871,7 +871,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type B)",
-      "modelNames":     ["_TZE204_sxm7l9xa"],
+      "modelNames":     ["_TZE204_e5m9c5hl", "_TZE204_sxm7l9xa"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
