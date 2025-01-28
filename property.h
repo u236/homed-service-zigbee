@@ -66,7 +66,7 @@ protected:
     QQueue <PropertyRequest> m_queue;
 
     quint8 percentage(double min, double max, double value);
-    QVariant enumValue(const QString &name, int index);
+    QVariant enumValue(const QString &name, int index, const QVariant &defaultValue = QVariant());
 
 };
 
