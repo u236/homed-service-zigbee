@@ -4,12 +4,12 @@
     {
       "description":    "Yandex 1-Channel Switch YNDX-00531",
       "modelNames":     ["YNDX-00531"],
-      "properties":     ["status", "yandexSettings"],
-      "actions":        ["status", "yandexSettings"],
+      "properties":     ["status", "powerOnStatus", "yandexSettings"],
+      "actions":        ["status", "powerOnStatus", "yandexSettings"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "switchMode", "powerMode", "indicator"],
-      "options":        {"switchMode": {"enum": ["relay", "decoupledOn", "decoupled", "decoupledOff"]}},
+      "exposes":        ["switch", "powerOnStatus", "switchMode", "powerMode", "indicator"],
+      "options":        {"switchMode": {"enum": ["relay", "upDecoupled", "decoupled", "downDecoupled"]}},
       "endpointId":     1
     },
     {
@@ -30,12 +30,12 @@
     },
     {
       "modelNames":     ["YNDX-00532"],
-      "properties":     ["status", "yandexSettings"],
-      "actions":        ["status", "yandexSettings"],
+      "properties":     ["status", "powerOnStatus", "yandexSettings"],
+      "actions":        ["status", "powerOnStatus", "yandexSettings"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "switchMode", "powerMode", "indicator"],
-      "options":        {"switchMode": {"enum": ["relay", "decoupledOn", "decoupled", "decoupledOff"]}},
+      "exposes":        ["switch", "powerOnStatus", "switchMode"],
+      "options":        {"switchMode": {"enum": ["relay", "upDecoupled", "decoupled", "downDecoupled"]}},
       "endpointId":     [1, 2]
     },
     {

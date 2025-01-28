@@ -98,9 +98,9 @@ void PropertiesYandex::Settings::parseAttribte(quint16, quint16 attributeId, con
     {
         case 0x0001: map.insert("switchMode", enumValue("switchMode", static_cast <quint8> (data.at(0)))); break;
         case 0x0002: map.insert("switchType", enumValue("switchType", static_cast <quint8> (data.at(0)))); break;
-        case 0x0003: map.insert("powerMode", enumValue("powerMode", static_cast <quint8> (data.at(0)))); break;
-        case 0x0004: map.insert("indicator", data.at(0) ? true : false); break;
-        case 0x0005: map.insert("interlock", data.at(0) ? true : false); break;
+        case 0x0003: map.insert("powerMode", enumValue("powerMode", static_cast <quint8> (data.at(0)), "full")); break;
+        case 0x0005: map.insert("indicator", data.at(0) ? false : true); break;
+        case 0x0007: map.insert("interlock", data.at(0) ? false : true); break;
     }
 
     m_value = map.isEmpty() ? QVariant() : map;
