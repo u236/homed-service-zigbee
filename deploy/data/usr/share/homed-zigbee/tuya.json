@@ -96,7 +96,7 @@
                           "tuyaDataPoints":
                           {
                             "101":  [{"name": "power_1", "type": "value", "divider": 10}],
-                            "105":  [{"name": "power_1", "type": "value", "divider": 10}],
+                            "105":  [{"name": "power_2", "type": "value", "divider": 10}],
                             "106":  [{"name": "energy_1", "type": "value", "divider": 100}],
                             "107":  [{"name": "producedEnergy_1", "type": "value", "divider": 100}],
                             "108":  [{"name": "energy_2", "type": "value", "divider": 100}],
