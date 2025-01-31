@@ -4,7 +4,7 @@
     {
       "description":    "Aqara E1 Radiator Thermostat SRTS-A01",
       "modelNames":     ["lumi.airrtc.agl001"],
-      "properties":     ["thermostat", "customAttributes"],
+      "properties":     ["thermostat", "lumiData", "customAttributes"],
       "actions":        ["thermostat", "lumiRadiatorThermostat", "customAttributes"],
       "exposes":        ["battery", "thermostat", "windowOpen", "windowDetection", "childLock", "awayTemperature", "sensorType", "externalTemperature"],
       "options":        {

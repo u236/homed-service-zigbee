@@ -313,6 +313,12 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x027E:
+        {
+            map.insert("sensorType", data.at(0) ? "external" : "internal");
+            break;
+        }
+
         case 0xFF02:
         {
             quint16 value = 0;

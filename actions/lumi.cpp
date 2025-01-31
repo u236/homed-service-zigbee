@@ -33,7 +33,7 @@ QVariant ActionsLUMI::PresenceSensor::request(const QString &name, const QVarian
 
 QVariant ActionsLUMI::RadiatorThermostat::request(const QString &name, const QVariant &data)
 {
-    QByteArray sensor = ieeeAddress().append(QByteArray::fromHex("00158d00019d1b98")), value; // TODO: check random sensor address
+    QByteArray sensor = ieeeAddress().append(QByteArray::fromHex("00158d000ab7156d")), value;
     QList <QVariant> list;
 
     switch (m_actions.indexOf(name))
@@ -45,28 +45,37 @@ QVariant ActionsLUMI::RadiatorThermostat::request(const QString &name, const QVa
             if (data.toString() == "external")
             {
                 value = QByteArray(reinterpret_cast <char*> (&timestamp), sizeof(timestamp)).append(QByteArray::fromHex("3d04")).append(ieeeAddress()).append(sensor).append(QByteArray::fromHex("00010055130a0200006404cec2b6c80000000000013d6465"));
-                list.append(writeAttribute(DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x02).append(value)));
+                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x02).append(value)));
 
                 value = QByteArray(reinterpret_cast <char*> (&timestamp), sizeof(timestamp)).append(QByteArray::fromHex("3d05")).append(ieeeAddress()).append(sensor).append(QByteArray::fromHex("080007fd160a020ac9e8b1b8d4dacfdfc0eb0000000000013d0465"));
-                list.append(writeAttribute(DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x13, 0x02).append(value)));
+                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x13, 0x02).append(value)));
             }
             else
             {
                 value = QByteArray(reinterpret_cast <char*> (&timestamp), sizeof(timestamp)).append(QByteArray::fromHex("3d05")).append(ieeeAddress()).append(12, 0x00);
-                list.append(writeAttribute(DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x02).append(value)));
+                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x02).append(value)));
 
                 value = QByteArray(reinterpret_cast <char*> (&timestamp), sizeof(timestamp)).append(QByteArray::fromHex("3d04")).append(ieeeAddress()).append(12, 0x00);
-                list.append(writeAttribute(DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x13, 0x02).append(value)));
+                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x13, 0x02).append(value)));
             }
 
+            m_attributes = {0x027E};
             return list;
         }
 
-        case 1: // exeternalTemperature
+        case 1: // externalTemperature
         {
+            const Property &property = endpointProperty("lumiData");
+            QMap <QString, QVariant> map = property->value().toMap();
             quint32 temperature = qToBigEndian <quint32> (data.toDouble() * 100);
+
+            map.insert("externalTemperature", data.toBool());
+            property->setValue(map);
+            m_properyUpdated = true;
+            m_attributes.clear();
+
             value = QByteArray(sensor).append(QByteArray::fromHex("00010055")).append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
-            return writeAttribute(DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x05).append(value));
+            return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x05).append(value));
         }
     }
 
