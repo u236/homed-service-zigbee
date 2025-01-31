@@ -315,6 +315,32 @@
     },
     {
       "description":    "TUYA TS0601 Radiator Thermostat (Type B)",
+      "modelNames":     ["_TZE200_6rdj8dzm", "_TZE200_9xfjixap", "_TZE200_bvu2wnxz", "_TZE200_hvaxb2tc", "_TZE200_jkfbph7l", "_TZE200_p3dbf6qs", "_TZE200_rxntag7i", "_TZE200_rxq4iti9", "_TZE200_yqgbrdyo", "_TZE204_o3x45p96", "_TZE204_ogx8u5z6", "_TZE284_p3dbf6qs", "_TZE284_c6wv4xyo", "_TZE284_o3x45p96"],
+      "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "exposes":        ["thermostat", "batteryLow", "childLock", "frostProtection", "temperatureOffset", "thermostatProgram"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
+                            "3":    [{"name": "running", "type": "bool", "invert": true}],
+                            "4":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
+                            "5":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "7":    [{"name": "childLock", "type": "bool", "action": true}],
+                            "35":   [{"name": "batteryLow", "type": "bool"}],
+                            "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
+                            "47":   [{"name": "temperatureOffset", "type": "value", "action": true}]
+                          },
+                          "operationMode": {"enum": ["program", "manua", "standby"]},
+                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
+                          "temperatureOffset": {"min": -9, "max": 9},
+                          "thermostatProgram": "daily",
+                          "programDataPoints": [28, 29, 30, 31, 32, 33, 34],
+                          "runningStatus": true
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Radiator Thermostat (Type C)",
       "modelNames":     ["_TZE204_g2ki0ejr"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
@@ -351,7 +377,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Radiator Thermostat (Type C)",
+      "description":    "TUYA TS0601 Radiator Thermostat (Type D)",
       "modelNames":     ["_TZE204_ltwbm23f", "_TZE204_qyr2m29i"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
