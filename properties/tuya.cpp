@@ -68,7 +68,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     QList <QVariant> list = option().toMap().value(QString::number(dataPoint)).toList();
-    QList <QString> types = {"raw", "bool", "value", "enum"};
+    QList <QString> typeList = {"raw", "bool", "value", "enum"};
 
     for (int i = 0; i < list.count(); i++)
     {
@@ -80,7 +80,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
         options = option(name).toMap();
 
-        switch (types.indexOf(item.value("type").toString()))
+        switch (typeList.indexOf(item.value("type").toString()))
         {
             case 0: // raw
             {
@@ -181,8 +181,8 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
 
     if (dataPoint == 0x70 || dataPoint == 0x71)
     {
-        QList <QString> types = {"weekday", "holiday"}, names = {"Hour", "Minute", "Temperature"};
-        QString type = types.value(dataPoint - 0x70);
+        QList <QString> typeList = {"weekday", "holiday"}, nameList = {"Hour", "Minute", "Temperature"};
+        QString type = typeList.value(dataPoint - 0x70);
         QByteArray program = data.toByteArray();
 
         setMeta(QString("%1Program").arg(type), true);
@@ -190,7 +190,7 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
         for (int i = 0; i < 18; i++)
         {
             quint8 value = static_cast <quint8> (program.at(i));
-            map.insert(QString("%1P%2%3").arg(type).arg(i / 3 + 1).arg(names.value(i % 3)), value);
+            map.insert(QString("%1P%2%3").arg(type).arg(i / 3 + 1).arg(nameList.value(i % 3)), value);
         }
     }
 
@@ -204,15 +204,15 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
 
     if (list.contains(dataPoint))
     {
-        QList <QString> types = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-        QString type = types.value(list.indexOf(dataPoint));
+        QList <QString> modelList = {"_TZE204_ltwbm23f", "_TZE204_qyr2m29i"}, typeList = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+        QString type = typeList.value(list.indexOf(dataPoint));
         QByteArray program = data.toByteArray().mid(1);
 
         setMeta(QString("%1Program").arg(type), true);
 
-        if (option("thermostatProgram").toString() != "extended")
+        if (!modelList.contains(manufacturerName()))
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < (option("thermostatProgram").toString() != "extended" ? 4 : 6); i++)
             {
                 QString key = QString("%1P%2").arg(type).arg(i + 1);
                 map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
@@ -242,7 +242,7 @@ void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVari
 
     if (dataPoint == 0x65)
     {
-        QList <QString> types = {"weekday", "saturday", "sunday"}, names = {"Hour", "Minute", "Temperature"};
+        QList <QString> typeList = {"weekday", "saturday", "sunday"}, nameList = {"Hour", "Minute", "Temperature"};
         QByteArray program = data.toByteArray();
 
         setMeta("program", true);
@@ -250,7 +250,7 @@ void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVari
         for (int i = 0; i < 36; i++)
         {
             double value = static_cast <double> (program.at(i));
-            map.insert(QString("%1P%2%3").arg(types.value(i / 12)).arg(i / 3 % 4 + 1).arg(names.value(i % 3)), (i + 1) % 3 ? value : value / 2);
+            map.insert(QString("%1P%2%3").arg(typeList.value(i / 12)).arg(i / 3 % 4 + 1).arg(nameList.value(i % 3)), (i + 1) % 3 ? value : value / 2);
         }
     }
 
