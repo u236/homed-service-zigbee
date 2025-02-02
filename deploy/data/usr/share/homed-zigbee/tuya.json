@@ -858,7 +858,7 @@
       "modelNames":     ["_TZE200_1ibpyhdc", "_TZE200_3towulqd", "_TZE200_bh3n6gk8", "_TZE200_gjldowol", "_TZE200_ttcovulf"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "occupancy", "illuminance", "sensitivityMode", "timeoutMode"],
+      "exposes":        ["battery", "occupancy", "illuminance", "sensitivityMode", "timeoutMode", "illuminanceDelay"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -866,8 +866,10 @@
                             "4":    [{"name": "battery", "type": "value"}],
                             "9":    [{"name": "sensitivityMode", "type": "enum", "action": true}],
                             "10":   [{"name": "timeoutMode", "type": "enum", "action": true}],
-                            "12":   [{"name": "illuminance", "type": "value"}]
-                          }
+                            "12":   [{"name": "illuminance", "type": "value"}],
+                            "102":  [{"name": "illuminanceDelay", "type": "value", "action": true}]
+                          },
+                          "illuminanceDelay": {"min": 1, "max": 720}
                         }
     },
     {
