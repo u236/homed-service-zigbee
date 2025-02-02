@@ -1407,7 +1407,7 @@
       "modelNames":     ["_TZ3218_ya5d6wth"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["temperature", "humidity", "temperatureOffset", "humidityOffset"],
+      "exposes":        ["temperature", "humidity"],
       "options":        {
                           "tuyaDataPoints":
                           {
