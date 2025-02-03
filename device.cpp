@@ -308,6 +308,9 @@ void DeviceList::setupDevice(const Device &device)
         recognizeDevice(device);
     }
 
+    if (!device->endpoints().count())
+        device->endpoints().insert(1, Endpoint(new EndpointObject(1, device)));
+
     expose->setParent(device->endpoints().first().data());
     device->endpoints().last()->exposes().append(expose);
 }
