@@ -123,7 +123,7 @@ void ZigBee::updateDevice(const QString &deviceName, const QString &name, const 
     device->setCloud(cloud);
 
     emit deviceEvent(device.data(), Event::deviceUpdated);
-    m_devices->storeDatabase();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::removeDevice(const QString &deviceName, bool force)
@@ -143,7 +143,7 @@ void ZigBee::removeDevice(const QString &deviceName, bool force)
     emit deviceEvent(device.data(), Event::deviceRemoved);
 
     m_devices->removeDevice(device);
-    m_devices->storeDatabase();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::setupDevice(const QString &deviceName, bool reportings)
@@ -692,7 +692,7 @@ void ZigBee::interviewFinished(const Device &device)
     }
 
     device->setInterviewStatus(InterviewStatus::Finished);
-    m_devices->storeDatabase();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::interviewError(const Device &device, const QString &reason)
@@ -858,7 +858,7 @@ bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
             if (unbind)
             {
                 endpoint->bindings().removeAt(i);
-                m_devices->storeDatabase();
+                m_devices->storeDatabase(true);
             }
 
             check = false;
@@ -868,7 +868,7 @@ bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
         if (check)
         {
             endpoint->bindings().append(binding);
-            m_devices->storeDatabase();
+            m_devices->storeDatabase(true);
         }
     }
 
@@ -916,7 +916,7 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
     {
         logInfo << device << endpoint << name.toUtf8().constData() << "finished successfully";
         endpoint->groups().clear();
-        m_devices->storeDatabase();
+        m_devices->storeDatabase(true);
     }
     else
     {
@@ -933,7 +933,7 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
             if (remove)
             {
                 endpoint->groups().removeAt(i);
-                m_devices->storeDatabase();
+                m_devices->storeDatabase(true);
             }
 
             check = false;
@@ -943,7 +943,7 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
         if (check)
         {
             endpoint->groups().append(groupId);
-            m_devices->storeDatabase();
+            m_devices->storeDatabase(true);
         }
     }
 
@@ -1226,7 +1226,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     if (device->ota().fileName().isEmpty())
                         device->ota().refresh(m_devices->otaDir());
 
-                    m_devices->storeDatabase();
+                    m_devices->storeDatabase(true);
 
                     if (device->ota().fileName().isEmpty())
                     {
@@ -1290,7 +1290,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     if (!device->ota().running())
                     {
                         device->ota().setRunning(true);
-                        m_devices->storeDatabase();
+                        m_devices->storeDatabase(true);
                     }
 
                     device->ota().setProgress(static_cast <double> (qFromLittleEndian(request->fileOffset) + buffer.length()) / device->ota().imageSize() * 100);
@@ -1645,7 +1645,7 @@ void ZigBee::storeNeighbors(void)
             return;
 
     logInfo << "Neighbors data collected";
-    m_devices->storeDatabase();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8 transactionId, quint8 commandId, const QString &error, bool response)
@@ -1667,7 +1667,7 @@ void ZigBee::otaError(const Endpoint &endpoint, quint16 manufacturerCode, quint8
     if (!check)
         return;
 
-    m_devices->storeDatabase();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::blink(quint16 timeout)
@@ -1761,7 +1761,7 @@ void ZigBee::permitJoinUpdated(bool enabled)
     }
 
     m_devices->setPermitJoin(enabled);
-    m_devices->storeDatabase();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
@@ -1822,7 +1822,7 @@ void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
     emit deviceEvent(it.value().data(), Event::deviceLeft);
 
     m_devices->removeDevice(it.value());
-    m_devices->storeDatabase();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const QByteArray &payload)
@@ -2109,7 +2109,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             emit deviceEvent(device.data(), Event::deviceRemoved);
 
             m_devices->removeDevice(device);
-            m_devices->storeDatabase();
+            m_devices->storeDatabase(true);
             break;
         }
 

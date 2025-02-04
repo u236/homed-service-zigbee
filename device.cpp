@@ -51,7 +51,7 @@ void OTA::refresh(const QDir &dir)
     }
 }
 
-DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_permitJoin(false)
+DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_sync(false), m_permitJoin(false)
 {
     QFile file(m_config->value("device/expose", "/usr/share/homed-common/expose.json").toString());
 
@@ -118,8 +118,9 @@ void DeviceList::init(void)
     m_propertiesFile.close();
 }
 
-void DeviceList::storeDatabase(void)
+void DeviceList::storeDatabase(bool sync)
 {
+    m_sync = sync;
     m_databaseTimer->start(STORE_DATABASE_DELAY);
 }
 
@@ -1288,7 +1289,7 @@ QJsonObject DeviceList::serializeProperties(void)
     return json;
 }
 
-bool DeviceList::writeFile(QFile &file, const QByteArray &data, bool sync)
+bool DeviceList::writeFile(QFile &file, const QByteArray &data)
 {
     bool check = true;
 
@@ -1306,7 +1307,7 @@ bool DeviceList::writeFile(QFile &file, const QByteArray &data, bool sync)
 
     file.close();
 
-    if (check && sync)
+    if (check)
         system("sync");
 
     return check;
@@ -1318,7 +1319,12 @@ void DeviceList::writeDatabase(void)
 
     emit statusUpdated(json);
 
-    if (writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact), true))
+    if (!m_sync)
+        return;
+
+    m_sync = false;
+
+    if (writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
 
     logWarning << "Database not stored, file" << m_databaseFile.fileName() << "error:" << m_databaseFile.errorString();

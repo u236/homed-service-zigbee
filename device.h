@@ -264,7 +264,7 @@ public:
     inline void setPermitJoin(bool value) { m_permitJoin = value; }
 
     void init(void);
-    void storeDatabase(void);
+    void storeDatabase(bool sync = false);
     void storeProperties(void);
 
     Device byName(const QString &name);
@@ -281,7 +281,7 @@ private:
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_otaDir, m_externalDir, m_libraryDir;
-    bool m_names, m_permitJoin;
+    bool m_names, m_sync, m_permitJoin;
 
     QMap <QString, QVariant> m_exposeOptions;
     QList <QString> m_specialExposes, m_brokenFiles;
@@ -299,7 +299,7 @@ private:
     QJsonArray serializeDevices(void);
     QJsonObject serializeProperties(void);
 
-    bool writeFile(QFile &file, const QByteArray &data, bool sync = false);
+    bool writeFile(QFile &file, const QByteArray &data);
 
 private slots:
 
