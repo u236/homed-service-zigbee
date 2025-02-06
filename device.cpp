@@ -685,26 +685,23 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_COLOR_CONTROL:
 
-                    if (!device->batteryPowered() && it.value()->colorCapabilities() && it.value()->colorCapabilities() <= 0x001F)
+                    if (!device->batteryPowered() && it.value()->meta().value("colorCapabilities").isValid())
                     {
                         QList <QVariant> options = device->options().value(QString("light_%1").arg(it.key())).toList();
+                        quint16 capabilities = static_cast <quint16> (it.value()->meta().value("colorCapabilities").toInt());
 
-                        if (it.value()->colorCapabilities() & 0x0001)
+                        if (!capabilities || capabilities > 0x001F)
+                            break;
+
+                        if (capabilities & 0x0009)
                         {
-                            it.value()->properties().append(Property(new Properties::ColorHS));
-                            it.value()->actions().append(Action(new Actions::ColorHS));
-                            it.value()->reportings().append(Reporting(new Reportings::ColorHS));
-                            options.append("color");
-                        }
-                        else if (it.value()->colorCapabilities() & 0x0008)
-                        {
-                            it.value()->properties().append(Property(new Properties::ColorXY));
-                            it.value()->actions().append(Action(new Actions::ColorXY));
-                            it.value()->reportings().append(Reporting(new Reportings::ColorXY));
+                            it.value()->properties().append(capabilities & 0x0008 ? Property(new Properties::ColorXY) : Property(new Properties::ColorHS));
+                            it.value()->actions().append(capabilities & 0x0008 ? Action(new Actions::ColorXY) : Action(new Actions::ColorHS));
+                            it.value()->reportings().append(capabilities & 0x0008 ? Reporting(new Reportings::ColorXY) : Reporting(new Reportings::ColorHS));
                             options.append("color");
                         }
 
-                        if (it.value()->colorCapabilities() & 0x0010)
+                        if (capabilities & 0x0010)
                         {
                             it.value()->properties().append(Property(new Properties::ColorTemperature));
                             it.value()->actions().append(Action(new Actions::ColorTemperature));
@@ -807,7 +804,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_IAS_ZONE:
 
-                    switch (it.value()->zoneType())
+                    switch (static_cast <quint16> (it.value()->meta().value("zoneType").toInt()))
                     {
                         case 0x000D:
                             it.value()->properties().append(Property(new PropertiesIAS::Occupancy));
@@ -987,11 +984,6 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                     Endpoint endpoint(new EndpointObject(endpointId, device));
                     QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray(), bindings = json.value("bindings").toArray(), groups = json.value("groups").toArray();
 
-                    endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
-                    endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
-                    endpoint->setColorCapabilities(static_cast <quint16> (json.value("colorCapabilities").toInt()));
-                    endpoint->setZoneType(static_cast <quint16> (json.value("zoneType").toInt()));
-
                     for (auto it = inClusters.begin(); it != inClusters.end(); it++)
                         endpoint->inClusters().append(static_cast <quint16> (it->toInt()));
 
@@ -1021,6 +1013,10 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
                         endpoint->groups().append(groupId);
                     }
+
+                    endpoint->setProfileId(static_cast <quint16> (json.value("profileId").toInt()));
+                    endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
+                    endpoint->meta().insert(json.value("meta").toObject().toVariantMap());
 
                     device->endpoints().insert(endpointId, endpoint);
                 }
@@ -1206,11 +1202,8 @@ QJsonArray DeviceList::serializeDevices(void)
             if (it.value()->deviceId())
                 json.insert("deviceId", it.value()->deviceId());
 
-            if (it.value()->colorCapabilities() && it.value()->colorCapabilities() != 0xFFFF)
-                json.insert("colorCapabilities", it.value()->colorCapabilities());
-
-            if (it.value()->zoneType())
-                json.insert("zoneType", it.value()->zoneType());
+            if (!it.value()->meta().isEmpty())
+                json.insert("meta", QJsonObject::fromVariantMap(it.value()->meta()));
 
             if (!json.isEmpty())
             {

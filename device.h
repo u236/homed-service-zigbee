@@ -106,7 +106,7 @@ class EndpointObject : public AbstractEndpointObject, public EndpointDataObject
 public:
 
     EndpointObject(quint8 id, Device device, quint16 profileId = 0, quint16 deviceId = 0) :
-        AbstractEndpointObject(id, device), EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_pollInterval(0), m_pollTime(0), m_colorCapabilities(0xFFFF), m_zoneType(0), m_descriptorStatus(DescriptorStatus::Unknown), m_zoneStatus(ZoneStatus::Unknown), m_updated(false) {}
+        AbstractEndpointObject(id, device), EndpointDataObject(profileId, deviceId), m_timer(new QTimer(this)), m_pollInterval(0), m_pollTime(0), m_descriptorStatus(DescriptorStatus::Unknown), m_zoneStatus(ZoneStatus::Unknown), m_updated(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
 
@@ -115,12 +115,6 @@ public:
 
     inline qint64 pollTime(void) { return m_pollTime; }
     inline void setPollTime(qint64 value) { m_pollTime = value; }
-
-    inline quint16 colorCapabilities(void) { return m_colorCapabilities; }
-    inline void setColorCapabilities(quint16 value) { m_colorCapabilities = value; }
-
-    inline quint16 zoneType(void) { return m_zoneType; }
-    inline void setZoneType(quint16 value) { m_zoneType = value; }
 
     inline DescriptorStatus descriptorStatus(void) { return m_descriptorStatus; }
     inline void setDescriptorStatus(DescriptorStatus value) { m_descriptorStatus = value; }
@@ -144,8 +138,6 @@ private:
 
     quint32 m_pollInterval;
     qint64 m_pollTime;
-
-    quint16 m_colorCapabilities, m_zoneType;
 
     DescriptorStatus m_descriptorStatus;
     ZoneStatus m_zoneStatus;
