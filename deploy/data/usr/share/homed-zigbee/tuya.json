@@ -234,7 +234,31 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 1-Channel Switch",
+      "modelNames":     ["_TZE200_ojtqawav", "_TZE204_gbagoilo", "_TZE204_ojtqawav"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch"],
+      "options":        {"tuyaDataPoints": {"1": [{"name": "status", "type": "bool", "action": true}]}, "status": {"enum": ["off", "on"]}}
+    },
+    {
       "description":    "TUYA TS0601 2-Channel Switch",
+      "modelNames":     ["_TZE200_3t91nb6k", "_TZE200_ji1gn7rw", "_TZE200_nh9m9emk", "_TZE200_nkjintbl", "_TZE204_3t91nb6k", "_TZE204_wvovwe9h"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch_1", "switch_2"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
+                            "2":    [{"name": "status_2", "type": "bool", "action": true}]
+                          },
+                          "status_1": {"enum": ["off", "on"]},
+                          "status_2": {"enum": ["off", "on"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Configurable 2-Channel Switch",
       "modelNames":     ["_TZE200_wunufsil"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -250,6 +274,24 @@
                           "status_1": {"enum": ["off", "on"]},
                           "status_2": {"enum": ["off", "on"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 3-Channel Switch",
+      "modelNames":     ["_TZE200_2hf7x9n3", "_TZE204_2imwyigp", "_TZE200_atpwqgml", "_TZE200_bynnczcb", "_TZE200_go3tvswy", "_TZE200_kyfqmmyl", "_TZE204_atpwqgml"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch_1", "switch_2", "switch_3"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
+                            "2":    [{"name": "status_2", "type": "bool", "action": true}],
+                            "3":    [{"name": "status_3", "type": "bool", "action": true}]
+                          },
+                          "status_1": {"enum": ["off", "on"]},
+                          "status_2": {"enum": ["off", "on"]},
+                          "status_3": {"enum": ["off", "on"]}
                         }
     },
     {
