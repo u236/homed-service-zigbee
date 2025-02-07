@@ -160,12 +160,9 @@
                             "10":   [{"name": "lightType_2", "type": "enum", "action": true}],
                             "14":   [{"name": "powerOnStatus", "type": "enum", "action": true}]
                           },
-                          "status_1": {"enum": ["off", "on"]},
-                          "status_2": {"enum": ["off", "on"]},
-                          "light_1": ["level"],
-                          "light_2": ["level"],
-                          "lightType_1": {"type": "select", "enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
-                          "lightType_2": {"type": "select", "enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
+                          "status": {"enum": ["off", "on"]},
+                          "light": ["level"],
+                          "lightType": {"type": "select", "enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]}
                         }
     },
@@ -187,14 +184,7 @@
                             "101":  [{"name": "status_7", "type": "bool", "action": true}],
                             "102":  [{"name": "status_8", "type": "bool", "action": true}]
                           },
-                          "status_1": {"enum": ["off", "on"]},
-                          "status_2": {"enum": ["off", "on"]},
-                          "status_3": {"enum": ["off", "on"]},
-                          "status_4": {"enum": ["off", "on"]},
-                          "status_5": {"enum": ["off", "on"]},
-                          "status_6": {"enum": ["off", "on"]},
-                          "status_7": {"enum": ["off", "on"]},
-                          "status_8": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]}
                         }
     },
     {
@@ -219,18 +209,7 @@
                             "105":  [{"name": "status_11", "type": "bool", "action": true}],
                             "106":  [{"name": "status_12", "type": "bool", "action": true}]
                           },
-                          "status_1": {"enum": ["off", "on"]},
-                          "status_2": {"enum": ["off", "on"]},
-                          "status_3": {"enum": ["off", "on"]},
-                          "status_4": {"enum": ["off", "on"]},
-                          "status_5": {"enum": ["off", "on"]},
-                          "status_6": {"enum": ["off", "on"]},
-                          "status_7": {"enum": ["off", "on"]},
-                          "status_8": {"enum": ["off", "on"]},
-                          "status_9": {"enum": ["off", "on"]},
-                          "status_10": {"enum": ["off", "on"]},
-                          "status_11": {"enum": ["off", "on"]},
-                          "status_12": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]}
                         }
     },
     {
@@ -253,8 +232,7 @@
                             "1":    [{"name": "status_1", "type": "bool", "action": true}],
                             "2":    [{"name": "status_2", "type": "bool", "action": true}]
                           },
-                          "status_1": {"enum": ["off", "on"]},
-                          "status_2": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]}
                         }
     },
     {
@@ -271,8 +249,7 @@
                             "14":   [{"name": "powerOnStatus", "type": "enum", "action": true}],
                             "16":   [{"name": "backlight", "type": "bool", "action": true}]
                           },
-                          "status_1": {"enum": ["off", "on"]},
-                          "status_2": {"enum": ["off", "on"]},
+                          "status": {"enum": ["off", "on"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]}
                         }
     },
@@ -289,9 +266,7 @@
                             "2":    [{"name": "status_2", "type": "bool", "action": true}],
                             "3":    [{"name": "status_3", "type": "bool", "action": true}]
                           },
-                          "status_1": {"enum": ["off", "on"]},
-                          "status_2": {"enum": ["off", "on"]},
-                          "status_3": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]}
                         }
     },
     {

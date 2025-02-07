@@ -280,7 +280,7 @@
       "modelNames":     ["lumi.switch.n0acn2", "lumi.switch.n0agl1"],
       "exposes":        ["switch", "energy", "voltage", "current", "power", "temperature", "statusMemory", "switchType"],
       "options":        {
-                          "customAttributes_1": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
+                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
                           "switchType": {"enum": {"1": "toggle", "2": "momentary"}},
                           "temperature": {"diagnostic": true},
                           "powerSource": 1

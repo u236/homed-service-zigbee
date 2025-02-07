@@ -111,7 +111,7 @@
       "modelNames":     ["L101Z-SBN"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis"],
       "options":        {
-                          "customAttributes_3": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 30464, "dataType": 48, "action": true}},
+                          "customAttributes": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 30464, "dataType": 48, "action": true}},
                           "systemMode": {"enum": ["off", "heat"]},
                           "targetTemperature": {"min": 15, "max": 35, "step": 0.5},
                           "temperatureOffset": {"min": -3, "max": 3, "step": 0.1},
@@ -139,7 +139,7 @@
       "modelNames":     ["L101Ze-SBN"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis"],
       "options":        {
-                          "customAttributes_3": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 65280, "dataType": 48, "action": true}},
+                          "customAttributes": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 65280, "dataType": 48, "action": true}},
                           "systemMode": {"enum": ["off", "heat"]},
                           "targetTemperature": {"min": 15, "max": 35, "step": 0.5},
                           "temperatureOffset": {"min": -2.5, "max": 2.5, "step": 0.1},
