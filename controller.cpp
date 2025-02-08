@@ -4,10 +4,12 @@
 
 Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_deviceDataTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(nullptr), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
 {
+    bool panId = getConfig()->value("zigbee/panid").toString().isEmpty(), key = getConfig()->value("security/key").toString().isEmpty();
+
     logInfo << "Starting version" << SERVICE_VERSION;
     logInfo << "Configuration file is" << getConfig()->fileName();
 
-    if (getConfig()->value("zigbee/panid").toString().isEmpty())
+    if (panId || key)
     {
         QFile file(getConfig()->fileName());
         bool check = false;
@@ -15,22 +17,38 @@ Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_d
         if (file.open(QFile::ReadWrite))
         {
             QByteArray data = file.readAll();
-            quint16 panId = static_cast <quint16> (QRandomGenerator::global()->generate());
 
-            data.replace("panid=", QString::asprintf("panid=0x%04x", panId).toUtf8());
+            if (panId)
+            {
+                QByteArray value;
+
+                for (int i = 0; i < 2; i++)
+                    value.append(static_cast <char> (QRandomGenerator::global()->generate()));
+
+                data.replace("panid=", QString("panid=0x%1").arg(QString(value.toHex())).toUtf8());
+            }
+
+            if (key)
+            {
+                QByteArray value;
+
+                for (int i = 0; i < 16; i++)
+                    value.append(static_cast <char> (QRandomGenerator::global()->generate()));
+
+                data.replace("key=", QString("key=0x%1").arg(QString(value.toHex())).toUtf8());
+            }
+
             file.seek(0);
 
             if (file.write(data) == data.length())
-            {
-                logInfo << "New PAN ID" << QString::asprintf("0x%04x", panId) << "sucessfully stored";
                 check = true;
-            }
 
             file.close();
+            system("sync");
         }
 
         if (!check)
-            logWarning << "New PAN ID not stored, config file write error";
+            logWarning << "Settings not stored, config file write error";
 
         return;
     }
