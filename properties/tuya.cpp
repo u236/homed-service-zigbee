@@ -84,14 +84,14 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         {
             case 0: // raw
             {
-                QList <QString> modelList = {"_TZE200_bcusnqt8", "_TZE200_lsanae15", "_TZE200_ves1ycwx", "_TZE204_lsanae15", "_TZE204_ves1ycwx"}, nameList = name.split('_');
+                QList <QString> modelList = {"_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo", "_TZE204_wbhaespm"}, nameList = name.split('_');
                 QByteArray payload = data.toByteArray();
                 quint16 value = 0;
 
-                if (nameList.value(0) != "elictricity")
+                if (nameList.value(0) != "electricity")
                     break;
 
-                if (modelList.contains(manufacturerName()))
+                if (!modelList.contains(manufacturerName()))
                 {
                     quint8 id = static_cast <quint8> (nameList.value(1).toInt());
 

@@ -29,7 +29,7 @@
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "elictricity", "type": "raw"}],
+                            "6":    [{"name": "electricity", "type": "raw"}],
                             "16":   [{"name": "status", "type": "bool", "action": true}],
                             "102":  [{"name": "producedEnergy", "type": "value", "divider": 100}],
                             "103":  [{"name": "power", "type": "value", "divider": 100}],
@@ -65,7 +65,7 @@
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "elictricity", "type": "raw"}],
+                            "6":    [{"name": "electricity", "type": "raw"}],
                             "16":   [{"name": "status", "type": "bool", "action": true}]
                           },
                           "status": {"enum": ["off", "on"]}
@@ -82,7 +82,7 @@
                           {
                             "1":    [{"name": "energy", "type": "value", "divider": 100}],
                             "2":    [{"name": "producedEnergy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "elictricity", "type": "raw"}]
+                            "6":    [{"name": "electricity", "type": "raw"}]
                           }
                         }
     },
@@ -109,18 +109,37 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 3-Phase Electricity Meter",
+      "description":    "TUYA TS0601 3-Phase Electricity Meter (Type A)",
       "modelNames":     ["_TZE200_ves1ycwx", "_TZE204_ves1ycwx"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["energy", "voltage_1", "current_1", "power_1", "voltage_2", "current_2", "power_2", "voltage_3", "current_3", "power_3"],
+      "exposes":        ["energy", "producedEnergy", "voltage_1", "current_1", "power_1", "voltage_2", "current_2", "power_2", "voltage_3", "current_3", "power_3"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "elictricity_1", "type": "raw"}],
-                            "7":    [{"name": "elictricity_2", "type": "raw"}],
-                            "8":    [{"name": "elictricity_3", "type": "raw"}]
+                            "2":    [{"name": "producedEnergy", "type": "value", "divider": 100}],
+                            "6":    [{"name": "electricity_1", "type": "raw"}],
+                            "7":    [{"name": "electricity_2", "type": "raw"}],
+                            "8":    [{"name": "electricity_3", "type": "raw"}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 3-Phase Electricity Meter (Type B)",
+      "modelNames":     ["_TZE284_a14rjslz"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["energy", "producedEnergy", "voltage_1", "current_1", "power_1", "voltage_2", "current_2", "power_2", "voltage_3", "current_3", "power_3", "powerFactor"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
+                            "6":    [{"name": "electricity_1", "type": "raw"}],
+                            "7":    [{"name": "electricity_2", "type": "raw"}],
+                            "8":    [{"name": "electricity_3", "type": "raw"}],
+                            "23":   [{"name": "producedEnergy", "type": "value", "divider": 100}],
+                            "50":   [{"name": "powerFactor", "type": "value"}]
                           }
                         }
     },
