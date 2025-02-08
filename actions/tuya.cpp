@@ -67,16 +67,16 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
                 case 1: // value
                 {
                     bool hasMin, hasMax;
-                    double check = data.toDouble(), min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax);
+                    double number = data.toDouble(), min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax);
                     qint32 value;
 
-                    if (hasMin && check < min)
-                        check = min;
+                    if (hasMin && number < min)
+                        number = min;
 
-                    if (hasMax && check > max)
-                        check = max;
+                    if (hasMax && number > max)
+                        number = max;
 
-                    value = qToBigEndian <qint32> (check * item.value("divider", 1).toDouble() * item.value("actionDivider", 1).toDouble() - item.value("offset").toDouble());
+                    value = qToBigEndian <qint32> ((number - item.value("offset").toDouble()) * item.value("divider", 1).toDouble() * item.value("actionDivider", 1).toDouble());
                     return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
                 }
 
