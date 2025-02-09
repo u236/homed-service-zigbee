@@ -86,6 +86,9 @@ void Controller::publishExposes(DeviceObject *device, bool remove)
 
 void Controller::serviceOnline(void)
 {
+    if (m_haEnabled)
+        mqttPublishDiscovery("ZigBee", SERVICE_VERSION, m_haPrefix, true);
+
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
     {
         if (it.value()->removed() || it.value()->logicalType() == LogicalType::Coordinator)
@@ -93,9 +96,6 @@ void Controller::serviceOnline(void)
 
         publishExposes(it.value().data());
     }
-
-    if (m_haEnabled)
-        mqttPublishDiscovery("ZigBee", SERVICE_VERSION, m_haPrefix, true);
 
     m_zigbee->devices()->storeDatabase();
     mqttPublishStatus();
