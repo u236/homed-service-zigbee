@@ -1698,19 +1698,16 @@ void ZigBee::coordinatorReady(void)
         m_devices->insert(device->ieeeAddress(), device);
     }
 
-    for (auto it = m_devices->begin(); it != m_devices->end(); it++)
+    for (auto it = m_devices->begin(); it != m_devices->end(); NULL)
     {
-        if (it.value()->removed()) // fix for old-style removed devices
-            continue;
-
         if (it.value()->logicalType() == LogicalType::Coordinator && it.key() != device->ieeeAddress())
         {
             logWarning << "Coordinator" << it.value()->ieeeAddress().toHex(':') << "removed";
-            m_devices->erase(it++);
+            it = m_devices->erase(it);
+            continue;
         }
 
-        if (it == m_devices->end())
-            break;
+        it++;
     }
 
     device->setRemoved(false);
@@ -2206,13 +2203,15 @@ void ZigBee::handleRequests(void)
         it.value()->setStatus(RequestStatus::Sent);
     }
 
-    for (auto it = m_requests.begin(); it != m_requests.end(); it++)
+    for (auto it = m_requests.begin(); it != m_requests.end(); NULL)
     {
         if (it.value()->status() == RequestStatus::Finished || it.value()->status() == RequestStatus::Aborted)
-            m_requests.erase(it++);
+        {
+            it = m_requests.erase(it);
+            continue;
+        }
 
-        if (it == m_requests.end())
-            break;
+        it++;
     }
 
     m_requestTimer->stop();
