@@ -2,7 +2,7 @@
 #define ZBOSS_H
 
 #define ZBOSS_REQUEST_TIMEOUT                           2000
-#define ZBOSS_RESET_DELAY                               2000
+#define ZBOSS_RESET_DELAY                               5000
 
 #define ZBOSS_SIGNATURE                                 0xDEAD
 #define ZBOSS_PROTOCOL_VERSION                          0x00
