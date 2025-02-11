@@ -77,7 +77,7 @@ class RequestObject
 public:
 
     RequestObject(const QVariant &data, RequestType type) :
-        m_data(data), m_type(type), m_status(RequestStatus::Pending) {}
+        m_data(data), m_type(type), m_status(RequestStatus::Pending), m_timestamp(QDateTime::currentMSecsSinceEpoch()) {}
 
     inline QVariant data(void) { return m_data; }
     inline RequestType type(void) { return m_type; }
@@ -85,11 +85,14 @@ public:
     inline RequestStatus status(void) { return m_status; }
     inline void setStatus(RequestStatus value) { m_status = value; }
 
+    inline qint64 timestamp(void) { return m_timestamp; }
+
 private:
 
     QVariant m_data;
     RequestType m_type;
     RequestStatus m_status;
+    qint64 m_timestamp;
 
 };
 

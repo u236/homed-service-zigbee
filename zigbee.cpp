@@ -2205,7 +2205,7 @@ void ZigBee::handleRequests(void)
 
     for (auto it = m_requests.begin(); it != m_requests.end(); NULL)
     {
-        if (it.value()->status() == RequestStatus::Finished || it.value()->status() == RequestStatus::Aborted)
+        if (it.value()->status() == RequestStatus::Finished || it.value()->status() == RequestStatus::Aborted || QDateTime::currentMSecsSinceEpoch() - it.value()->timestamp() > NETWORK_REQUEST_TIMEOUT)
         {
             it = m_requests.erase(it);
             continue;
