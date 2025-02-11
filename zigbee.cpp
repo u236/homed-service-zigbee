@@ -1970,6 +1970,9 @@ void ZigBee::zdoMessageReveived(quint16 networkAddress, quint16 clusterId, const
         }
     }
 
+    if (payload.at(0))
+        return;
+
     device->updateLastSeen();
 }
 
@@ -2116,9 +2119,11 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
 
         case RequestType::LQI:
         {
-            if (status)
+            const Device &device = qvariant_cast <Device> (it.value()->data());
+
+            if (status && device->lqiRequestPending())
             {
-                qvariant_cast <Device> (it.value()->data())->setLqiRequestPending(false);
+                device->setLqiRequestPending(false);
                 storeNeighbors();
             }
 
