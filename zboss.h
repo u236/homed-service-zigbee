@@ -1,7 +1,6 @@
 #ifndef ZBOSS_H
 #define ZBOSS_H
 
-#define ZBOSS_REQUEST_TIMEOUT                           2000
 #define ZBOSS_RESET_DELAY                               5000
 
 #define ZBOSS_SIGNATURE                                 0xDEAD

@@ -24,10 +24,8 @@ static const uint16_t crcTable[256] =
     0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8, 0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
 };
 
-EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0), m_reset(true), m_errorCount(0)
+EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0), m_reset(true)
 {
-    m_watchdog = config->value("zigbee/watchdog", true).toBool();
-
     m_config.append({EZSP_CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S,  qToLittleEndian <quint16> (0x005A)});
     m_config.append({EZSP_CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE,      qToLittleEndian <quint16> (0x0002)});
     m_config.append({EZSP_CONFIG_FRAGMENT_DELAY_MS,                    qToLittleEndian <quint16> (0x0032)});
@@ -215,7 +213,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 
         sendRequest(control, payload);
 
-        if (waitForSignal(this, SIGNAL(dataReceived()), ASH_REQUEST_TIMEOUT) && m_replyReceived)
+        if (waitForSignal(this, SIGNAL(dataReceived()), ADAPTER_REQUEST_TIMEOUT) && m_replyReceived)
         {
             m_errorCount = 0;
             return true;
@@ -229,8 +227,8 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
 
     m_errorCount++;
 
-    if (m_watchdog && m_errorCount == EZSP_MAX_ERRORS)
-        handleError(QString("Watchdog triggered after %1 request errors...").arg(EZSP_MAX_ERRORS));
+    if (m_watchdog && m_errorCount == WATCHDOG_ERROR_COUNT)
+        handleError(QString("Watchdog triggered after %1 request errors...").arg(WATCHDOG_ERROR_COUNT));
 
     return false;
 }
@@ -402,7 +400,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
             return false;
         }
 
-        if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
+        if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
         {
             logWarning << "Stack status handler timed out";
             return false;
@@ -622,7 +620,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ASH_REQUEST_TIMEOUT))
+    if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
     {
         logWarning << "Stack status handler timed out";
         return false;
@@ -705,7 +703,9 @@ void EZSP::handleError(const QString &reason)
 {
     logWarning << reason.toUtf8().constData();
 
+    m_errorCount = 0;
     m_errorReceived = true;
+
     emit dataReceived();
 
     m_reset = true;

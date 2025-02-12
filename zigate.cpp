@@ -133,7 +133,7 @@ bool ZiGate::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     if (command == ZIGATE_RESET || command == ZIGATE_ERASE_PERSISTENT_DATA)
         return true;
 
-    return waitForSignal(this, SIGNAL(dataReceived()), ZIGATE_REQUEST_TIMEOUT);
+    return waitForSignal(this, SIGNAL(dataReceived()), ADAPTER_REQUEST_TIMEOUT);
 }
 
 void ZiGate::parsePacket(quint16 command, const QByteArray &payload)

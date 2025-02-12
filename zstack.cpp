@@ -121,7 +121,7 @@ bool ZStack::sendRequest(quint16 command, const QByteArray &data)
         fcs ^= request[i];
 
     sendData(request.append(static_cast <char> (fcs)));
-    return waitForSignal(this, SIGNAL(dataReceived()), ZSTACK_REQUEST_TIMEOUT);
+    return waitForSignal(this, SIGNAL(dataReceived()), ADAPTER_REQUEST_TIMEOUT);
 }
 
 void ZStack::parsePacket(quint16 command, const QByteArray &data)

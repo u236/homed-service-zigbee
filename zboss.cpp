@@ -223,9 +223,24 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     payload.append(data);
 
     crc = getCRC16(reinterpret_cast <quint8*> (payload.data()), payload.length());
-
     sendData(QByteArray(reinterpret_cast <char*> (&lowLevelHeader), sizeof(lowLevelHeader)).append(reinterpret_cast <char*> (&crc), sizeof(crc)).append(payload));
-    return waitForSignal(this, command & 0x0200 && command != ZBOSS_ZDO_PERMIT_JOINING_REQ ? SIGNAL(acknowledgeReceived()) : SIGNAL(dataReceived()), ZBOSS_REQUEST_TIMEOUT);
+
+    if (waitForSignal(this, command & 0x0200 && command != ZBOSS_ZDO_PERMIT_JOINING_REQ ? SIGNAL(acknowledgeReceived()) : SIGNAL(dataReceived()), ADAPTER_REQUEST_TIMEOUT))
+    {
+        m_errorCount = 0;
+        return true;
+    }
+
+    m_errorCount++;
+
+    if (m_watchdog && m_errorCount == WATCHDOG_ERROR_COUNT)
+    {
+        logWarning << "Watchdog triggered after" << WATCHDOG_ERROR_COUNT << "request errors...";
+        m_errorCount = 0;
+        reset();
+    }
+
+    return false;
 }
 
 void ZBoss::sendAcknowledge(void)

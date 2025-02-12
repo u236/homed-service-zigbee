@@ -7,7 +7,7 @@
 #include "logger.h"
 #include "zcl.h"
 
-Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_serialError(false), m_connected(false), m_permitJoinAddress(PERMIT_JOIN_BROARCAST_ADDRESS), m_permitJoin(false)
+Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_serialError(false), m_connected(false), m_permitJoinAddress(PERMIT_JOIN_BROARCAST_ADDRESS), m_permitJoin(false), m_errorCount(0)
 {
     QString portName = config->value("zigbee/port", "/dev/ttyUSB0").toString();
 
@@ -47,6 +47,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
     m_power = static_cast <quint8> (config->value("zigbee/power", 20).toInt());
 
     m_write = config->value("zigbee/write", false).toBool();
+    m_watchdog = config->value("zigbee/watchdog", true).toBool();
     m_portDebug = config->value("debug/port", false).toBool();
     m_adapterDebug = config->value("debug/adapter", false).toBool();
 

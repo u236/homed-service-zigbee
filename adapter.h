@@ -4,6 +4,9 @@
 #define RECEIVE_TIMEOUT                 10
 #define BUFFER_LENGTH_LIMIT             8192
 
+#define ADAPTER_REQUEST_TIMEOUT         2000
+#define WATCHDOG_ERROR_COUNT            10
+
 #define PERMIT_JOIN_TIMEOUT             60000
 #define PERMIT_JOIN_BROARCAST_ADDRESS   0xFFFC
 
@@ -207,7 +210,7 @@ protected:
     QString m_bootPin, m_resetPin, m_reset;
     quint16 m_panId;
     quint8 m_channel, m_power;
-    bool m_write, m_portDebug, m_adapterDebug;
+    bool m_write, m_watchdog, m_portDebug, m_adapterDebug;
 
     QString m_manufacturerName, m_modelName, m_firmware;
     QByteArray m_networkKey, m_defaultKey, m_ieeeAddress;
@@ -219,7 +222,7 @@ protected:
     bool m_extendedTimeout;
 
     QByteArray m_buffer;
-    quint8 m_replyStatus;
+    quint8 m_replyStatus, m_errorCount;
 
     QMap <quint8, EndpointData> m_endpoints;
     QList <quint16> m_multicast;

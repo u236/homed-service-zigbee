@@ -1,7 +1,6 @@
 #ifndef ZIGATE_H
 #define ZIGATE_H
 
-#define ZIGATE_REQUEST_TIMEOUT              2000
 #define ZIGATE_SECURITY_MODE                0x02
 #define ZIGATE_RADIUS                       0x1E
 
