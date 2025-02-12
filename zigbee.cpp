@@ -373,7 +373,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
                     if (payload.isEmpty() || (data.type() == QVariant::String && data.toString().isEmpty()))
                         continue;
 
-                    enqueueRequest(device, it.key(), action->clusterId(), payload,  list.count() > 1 ? QString("%1 action request %2 of %3").arg(name).arg(i + 1).arg(list.count()) : QString("%1 action request").arg(name), false, action->manufacturerCode(), action);
+                    enqueueRequest(device, it.key(), action->clusterId(), payload, list.count() > 1 ? QString("%1 action request %2 of %3").arg(name).arg(i + 1).arg(list.count()) : QString("%1 action request").arg(name), false, action->manufacturerCode(), action);
                     check = true;
                 }
             }

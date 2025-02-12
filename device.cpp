@@ -41,7 +41,7 @@ void OTA::refresh(const QDir &dir)
 
         file.close();
 
-        if (check && qFromLittleEndian(header.manufacturerCode) == m_manufacturerCode &&  qFromLittleEndian(header.imageType) == m_imageType && qFromLittleEndian(header.imageSize) <= file.size())
+        if (check && qFromLittleEndian(header.manufacturerCode) == m_manufacturerCode && qFromLittleEndian(header.imageType) == m_imageType && qFromLittleEndian(header.imageSize) <= file.size())
         {
             m_fileName = list.at(i);
             m_fileVersion = qFromLittleEndian(header.fileVersion);

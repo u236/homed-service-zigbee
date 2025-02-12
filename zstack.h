@@ -1,6 +1,7 @@
 #ifndef ZSTACK_H
 #define ZSTACK_H
 
+#define ZSTACK_REQUEST_TIMEOUT                  10000
 #define ZSTACK_SKIP_BOOTLOADER                  0xEF
 #define ZSTACK_PACKET_FLAG                      0xFE
 

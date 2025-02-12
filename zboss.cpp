@@ -373,7 +373,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
         }
     }
 
-    emit requestFinished(static_cast <quint8> (data.at(0)), m_replyStatus);
+    emit requestFinished(static_cast <quint8> (data.at(0)), static_cast <quint8> (data.at(2)));
 }
 
 void ZBoss::handleReset(void)

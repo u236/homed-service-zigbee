@@ -199,7 +199,7 @@ bool EZSP::sendFrame(quint16 frameId, const QByteArray &data, bool version)
         header.frameControlHigh = 0x01;
         header.frameId = qToLittleEndian(frameId);
 
-        logDebug(m_adapterDebug) << "-->" << QString::asprintf("0x%02x", m_sequenceId) <<  QString::asprintf("0x%02x%02x", header.frameControlLow, header.frameControlHigh) << QString::asprintf("0x%04x", frameId) << data.toHex(':');
+        logDebug(m_adapterDebug) << "-->" << QString::asprintf("0x%02x", m_sequenceId) << QString::asprintf("0x%02x%02x", header.frameControlLow, header.frameControlHigh) << QString::asprintf("0x%04x", frameId) << data.toHex(':');
         payload.append(reinterpret_cast <char*> (&header), sizeof(header));
     }
 
@@ -267,7 +267,7 @@ void EZSP::parsePacket(const QByteArray &payload)
     const ezspHeaderStruct *header = reinterpret_cast <const ezspHeaderStruct*> (payload.constData());
     QByteArray data = payload.mid(sizeof(ezspHeaderStruct));
 
-    logDebug(m_adapterDebug) << "<--" << QString::asprintf("0x%02x", header->sequence) <<  QString::asprintf("0x%02x%02x", header->frameControlLow, header->frameControlHigh) << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId)) << data.toHex(':');
+    logDebug(m_adapterDebug) << "<--" << QString::asprintf("0x%02x", header->sequence) << QString::asprintf("0x%02x%02x", header->frameControlLow, header->frameControlHigh) << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId)) << data.toHex(':');
 
     if (!(header->frameControlLow & 0x18) && header->sequence == m_sequenceId)
     {

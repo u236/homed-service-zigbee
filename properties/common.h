@@ -139,7 +139,7 @@ namespace Properties
 
     public:
 
-        ColorMode(void) :  PropertyObject("colorMode", CLUSTER_COLOR_CONTROL) {}
+        ColorMode(void) : PropertyObject("colorMode", CLUSTER_COLOR_CONTROL) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

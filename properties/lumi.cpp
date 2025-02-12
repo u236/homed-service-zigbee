@@ -150,7 +150,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
-            memcpy(&value, data.constData(),  data.length());
+            memcpy(&value, data.constData(), data.length());
             map.insert("voltage", round(qFromLittleEndian(value)) / 10);
             break;
         }
@@ -162,7 +162,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             if (static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
-            memcpy(&value, data.constData(),  data.length());
+            memcpy(&value, data.constData(), data.length());
             map.insert("current", modelName() == "lumi.relay.c2acn01" ? qFromLittleEndian(value) : round(qFromLittleEndian(value)) / 1000);
             break;
         }
@@ -342,6 +342,8 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
                 case 0x0B: map.insert("sensitivityMode", "medium"); break;
                 case 0x15: map.insert("sensitivityMode", "low"); break;
             }
+
+            break;
         }
 
         case 0xFFF0:

@@ -115,7 +115,7 @@ namespace PropertiesLUMI
 
     public:
 
-        CubeMovement(void) :  PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
+        CubeMovement(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -125,7 +125,7 @@ namespace PropertiesLUMI
 
     public:
 
-        Vibration(void) :  PropertyObject("vibration", CLUSTER_DOOR_LOCK) {}
+        Vibration(void) : PropertyObject("vibration", CLUSTER_DOOR_LOCK) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void resetValue(void) override;
 

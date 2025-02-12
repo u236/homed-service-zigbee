@@ -186,7 +186,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->otaControl(json.value("device").toString(), false, true);
                 break;
 
-            case  Command::getProperties:
+            case Command::getProperties:
                 m_zigbee->getProperties(json.value("device").toString());
                 break;
 
