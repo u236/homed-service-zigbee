@@ -7,7 +7,7 @@
       "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],
       "exposes":        ["light"],
-      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]},
+      "options":        {"light": ["level", "color", "colorTemperature", "colorMode"], "colorTemperature": {"min": 167, "max": 333}},
       "endpointId":     11
     }
   ],
