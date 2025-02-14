@@ -1095,6 +1095,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
         case CLUSTER_COLOR_CONTROL:
 
+            if (device->interviewStatus() == InterviewStatus::Finished)
+                break;
+
             if (attributeId == 0x400A && dataType == DATA_TYPE_16BIT_BITMAP)
             {
                 quint16 value;
@@ -1104,9 +1107,11 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
                 logInfo << device << endpoint << "color capabilities:" << QString::asprintf("0x%04x", value);
                 endpoint->meta().insert("colorCapabilities", value);
-                interviewDevice(device);
             }
+            else
+                endpoint->meta().insert("colorCapabilities", 0x0000);
 
+            interviewDevice(device);
             break;
 
         case CLUSTER_IAS_ZONE:
