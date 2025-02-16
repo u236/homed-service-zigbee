@@ -309,50 +309,56 @@ void Properties::PM25::parseAttribte(quint16, quint16 attributeId, const QByteAr
 
 void Properties::Energy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
+    QMap <QString, QVariant> map = m_value.toMap();
     double divider = option("energyDivider", 1).toDouble();
-    qint64 value = 0;
+    quint32 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
+    memcpy(&value, data.constData(), sizeof(value));
+    value = qFromLittleEndian(value);
 
-    memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / divider;
+    switch (attributeId)
+    {
+        case 0x0000: map.insert("energy",   value / divider); break;
+        case 0x0100: map.insert("energyT1", value / divider); break;
+        case 0x0102: map.insert("energyT2", value / divider); break;
+        case 0x0104: map.insert("energyT3", value / divider); break;
+        case 0x0106: map.insert("energyT4", value / divider); break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void Properties::Voltage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    double divider = option("voltageDivider", 1).toDouble();
     qint16 value = 0;
 
     if ((attributeId != 0x0100 && attributeId != 0x0505) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / divider;
+    m_value = qFromLittleEndian(value) / option("voltageDivider", 1).toDouble();
 }
 
 void Properties::Current::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    double divider = option("currentDivider", 1).toDouble();
     qint16 value = 0;
 
     if ((attributeId != 0x0103 && attributeId != 0x0508) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / divider;
+    m_value = qFromLittleEndian(value) / option("currentDivider", 1).toDouble();
 }
 
 void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    double divider = option("powerDivider", 1).toDouble();
     qint16 value = 0;
 
     if ((attributeId != 0x0106 && attributeId != 0x050B) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / divider;
+    m_value = qFromLittleEndian(value) / option("powerDivider", 1).toDouble();
 }
 
 void ChildLock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

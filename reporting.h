@@ -240,6 +240,42 @@ namespace Reportings
 
     };
 
+    class EnergyT1 : public ReportingObject
+    {
+
+    public:
+
+        EnergyT1(void) : ReportingObject("energyT1", CLUSTER_SMART_ENERGY_METERING, 0x0100, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+
+    };
+
+    class EnergyT2 : public ReportingObject
+    {
+
+    public:
+
+        EnergyT2(void) : ReportingObject("energyT2", CLUSTER_SMART_ENERGY_METERING, 0x0102, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+
+    };
+
+    class EnergyT3 : public ReportingObject
+    {
+
+    public:
+
+        EnergyT3(void) : ReportingObject("energyT3", CLUSTER_SMART_ENERGY_METERING, 0x0104, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+
+    };
+
+    class EnergyT4 : public ReportingObject
+    {
+
+    public:
+
+        EnergyT4(void) : ReportingObject("energyT4", CLUSTER_SMART_ENERGY_METERING, 0x0106, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+
+    };
+
     class Voltage : public ReportingObject
     {
 
