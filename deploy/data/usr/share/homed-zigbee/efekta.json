@@ -178,7 +178,7 @@
                           {
                             "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 8,   "dataType": 41, "action": true}
                           },
-                          "readInterval": {"min": 5, "max": 360, "unit": "sec"},
+                          "readInterval": {"min": 5, "max": 360},
                           "enablePolling": {"type": "toggle"},
                           "transmitPower": {"type": "select", "enum": {"0": "0 dBm", "4": "4 dBm", "10": "10 dBm", "19": "19 dBm"}},
                           "pressureOffset": {"min": -100, "max": 100},
@@ -216,7 +216,7 @@
                             "enablePolling":  {"type": "bool",  "clusterId": 1, "attributeId": 534, "dataType": 16, "action": true},
                             "transmitPower":  {"type": "enum",  "clusterId": 1, "attributeId": 566, "dataType": 40, "action": true}
                           },
-                          "readInterval": {"min": 5, "max": 360, "unit": "sec"},
+                          "readInterval": {"min": 5, "max": 360},
                           "enablePolling": {"type": "toggle"},
                           "transmitPower": {"type": "select", "enum": {"0": "0 dBm", "4": "4 dBm", "10": "10 dBm", "19": "19 dBm"}}
                         },
