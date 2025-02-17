@@ -86,15 +86,18 @@ void Controller::publishExposes(DeviceObject *device, bool remove)
 
 void Controller::serviceOnline(void)
 {
-    if (m_haEnabled)
-        mqttPublishDiscovery("ZigBee", SERVICE_VERSION, m_haPrefix, true);
-
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
     {
         if (it.value()->removed() || it.value()->logicalType() == LogicalType::Coordinator)
             continue;
 
         publishExposes(it.value().data());
+    }
+
+    if (m_haEnabled)
+    {
+        mqttPublishDiscovery("ZigBee", SERVICE_VERSION, m_haPrefix, true);
+        mqttSubscribe(m_haStatus);
     }
 
     m_zigbee->devices()->storeDatabase();
@@ -113,9 +116,6 @@ void Controller::mqttConnected(void)
 {
     mqttSubscribe(mqttTopic("command/%1").arg(serviceTopic()));
     mqttSubscribe(mqttTopic("td/%1/#").arg(serviceTopic()));
-
-    if (m_haEnabled)
-        mqttSubscribe(m_haStatus);
 
     if (!m_networkStarted)
         return;
@@ -254,7 +254,7 @@ void Controller::updateDeviceData(void)
         if (!timeout)
             timeout = it.value()->batteryPowered() ? 86400 : 600;
 
-        it.value()->setAvailability(it.value()->active() ? time - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline : Availability::Inactive);
+        it.value()->setAvailability(it.value()->active() && time - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline);
 
         if (it.value()->availability() == check && m_lastSeen.value(it.value()->ieeeAddress()) == it.value()->lastSeen())
             continue;

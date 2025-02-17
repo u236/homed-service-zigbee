@@ -114,7 +114,7 @@ void ZigBee::updateDevice(const QString &deviceName, const QString &name, const 
 
     if (device->active() != active)
     {
-        device->setAvailability(active ? Availability::Unknown : Availability::Inactive);
+        device->setAvailability(active ? Availability::Unknown : Availability::Offline);
         device->setActive(active);
     }
 
