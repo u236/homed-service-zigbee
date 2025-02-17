@@ -59,14 +59,16 @@
       "modelNames":     ["RGB Strip"],
       "properties":     ["ptvoChangePattern", "ptvoPattern"],
       "actions":        ["ptvoChangePattern", "ptvoPattern"],
-      "exposes":        ["pattern"],
-      "options":        {"pattern": {"min": 0, "max": 62}},
+      "exposes":        ["changePattern", "pattern"],
+      "options":        {"changePattern": {"type": "toggle"}, "pattern": {"min": 0, "max": 62}},
       "endpointId":     2
     },
     {
       "modelNames":     ["RGB Strip"],
       "properties":     ["ptvoCount"],
       "actions":        ["ptvoCount"],
+      "exposes":        ["count"],
+      "options":        {"count": {"type": "number", "min": 1, "max": 1000}},
       "endpointId":     3
     },
     {

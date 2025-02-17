@@ -109,7 +109,7 @@ void ZigBee::updateDevice(const QString &deviceName, const QString &name, const 
         if (!other.isNull() && other->removed())
             m_devices->remove(other->ieeeAddress());
 
-        device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : name.trimmed());
+        device->setName(name.isEmpty() ? device->ieeeAddress().toHex(':') : mqttSafe(name.trimmed()));
     }
 
     if (device->active() != active)
