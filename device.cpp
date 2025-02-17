@@ -957,7 +957,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
         if (json.contains("ieeeAddress") && json.contains("networkAddress"))
         {
-            Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt()), json.value("name").toString(), json.value("removed").toBool()));
+            Device device(new DeviceObject(QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()), static_cast <quint16> (json.value("networkAddress").toInt()), mqttSafe(json.value("name").toString()), json.value("removed").toBool()));
             QJsonArray endpoints = json.value("endpoints").toArray();
 
             device->setLogicalType(static_cast <LogicalType> (json.value("logicalType").toInt()));
