@@ -2,21 +2,56 @@
   "eWeLink":
   [
     {
-      "description":    "Sonoff 1-Channel Relay SWITCH-ZR02 or ZB-SW01",
-      "modelNames":     ["SWITCH-ZR02", "ZB-SW01"],
+      "description":    "Sonoff 1-Channel Relay SWITCH-ZR02",
+      "modelNames":     ["SWITCH-ZR02"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "exposes":        ["switch", "powerOnStatus"]
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay SA-030-1, SWITCH-ZR03-1 or ZB-SW01",
+      "modelNames":     ["SA-030-1", "SWITCH-ZR03-1", "ZB-SW01"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
       "exposes":        ["switch"]
     },
     {
-      "description":    "Sonoff 2-Channel Relay ZB-SW02",
-      "modelNames":     ["E220-KR2N0Z0-HA", "ZB-SW02"],
+      "description":    "Sonoff 2-Channel Relay E220-KR2N0Z0-HA, SWITCH-ZR03-2 or ZB-SW02",
+      "modelNames":     ["E220-KR2N0Z0-HA", "SWITCH-ZR03-2", "ZB-SW02"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
       "exposes":        ["switch"],
       "endpointId":     [1, 2]
+    },
+    {
+      "description":    "Sonoff 3-Channel Relay ZB-SW03",
+      "modelNames":     ["ZB-SW03"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "description":    "Sonoff 4-Channel Relay ZB-SW04",
+      "modelNames":     ["ZB-SW04"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "Sonoff 5-Channel Relay ZB-SW05",
+      "modelNames":     ["ZB-SW05"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2, 3, 4, 5]
     },
     {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02 or SNZB-02P",

@@ -759,6 +759,31 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Smart Irrigation Valve",
+      "modelNames":     ["_TZE200_7ytb3h8u", "_TZE200_a7sghmms", "_TZE204_7ytb3h8u", "_TZE204_a7sghmms", "_TZE284_7ytb3h8u"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "lock", "operationMode", "target", "interval", "count", "volume"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "operationMode", "type": "bool", "action": true}],
+                            "2":    [{"name": "status", "type": "bool", "action": true}],
+                            "103":  [{"name": "count", "type": "value", "action": true}],
+                            "104":  [{"name": "target", "type": "value", "action": true}],
+                            "105":  [{"name": "interval", "type": "value", "action": true}],
+                            "108":  [{"name": "battery", "type": "value"}],
+                            "111":  [{"name": "volume", "type": "value"}]
+                          },
+                          "operationMode": {"enum": ["duration", "calpacity"]},
+                          "status": {"enum": ["off", "on"]},
+                          "count": {"type": "number", "min": 0, "max": 100},
+                          "target": {"type": "number", "min": 0, "max": 43200, "unut": "sec|L"},
+                          "interval": {"type": "number", "min": 0, "max": 43200, "unut": "sec"},
+                          "lock": "valve"
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Garage Door Controller",
       "modelNames":     ["_TZE200_wfxuhoea", "_TZE200_nklqjk62", "_TZE204_nklqjk62"],
       "properties":     ["tuyaDataPoints"],
