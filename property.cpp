@@ -83,7 +83,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::SwitchType>                  ("tuyaSwitchTypeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>               ("tuyaPowerOnStatusProperty");
 
-    qRegisterMetaType <PropertiesEfekta::ReportingDelay>            ("efektaReportingDelayProperty");
+    qRegisterMetaType <PropertiesEfekta::ReadInterval>              ("efektaReadIntervalProperty");
     qRegisterMetaType <PropertiesEfekta::TemperatureSettings>       ("efektaTemperatureSettingsProperty");
     qRegisterMetaType <PropertiesEfekta::HumiditySettings>          ("efektaHumiditySettingsProperty");
     qRegisterMetaType <PropertiesEfekta::CO2Settings>               ("efektaCO2SettingsProperty");

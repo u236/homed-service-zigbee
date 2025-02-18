@@ -6,12 +6,12 @@
 
 namespace PropertiesEfekta
 {
-    class ReportingDelay : public PropertyObject
+    class ReadInterval : public PropertyObject
     {
 
     public:
 
-        ReportingDelay(void) : PropertyObject("reportingDelay", CLUSTER_POWER_CONFIGURATION) {}
+        ReadInterval(void) : PropertyObject("readInterval", CLUSTER_POWER_CONFIGURATION) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

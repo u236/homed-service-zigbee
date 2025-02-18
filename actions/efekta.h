@@ -6,12 +6,12 @@
 
 namespace ActionsEfekta
 {
-    class ReportingDelay : public ActionObject
+    class ReadInterval : public ActionObject
     {
 
     public:
 
-        ReportingDelay(void) : ActionObject("reportingDelay", CLUSTER_POWER_CONFIGURATION, 0x0000, 0x0201) {}
+        ReadInterval(void) : ActionObject("readInterval", CLUSTER_POWER_CONFIGURATION, 0x0000, 0x0201) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };

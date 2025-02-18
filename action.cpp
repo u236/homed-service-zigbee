@@ -56,7 +56,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::SwitchType>                 ("tuyaSwitchTypeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
 
-    qRegisterMetaType <ActionsEfekta::ReportingDelay>           ("efektaReportingDelayAction");
+    qRegisterMetaType <ActionsEfekta::ReadInterval>             ("efektaReadIntervalAction");
     qRegisterMetaType <ActionsEfekta::TemperatureSettings>      ("efektaTemperatureSettingsAction");
     qRegisterMetaType <ActionsEfekta::HumiditySettings>         ("efektaHumiditySettingsAction");
     qRegisterMetaType <ActionsEfekta::CO2Settings>              ("efektaCO2SettingsAction");

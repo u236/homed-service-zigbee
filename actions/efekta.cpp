@@ -1,7 +1,7 @@
 #include <QtEndian>
 #include "efekta.h"
 
-QVariant ActionsEfekta::ReportingDelay::request(const QString &, const QVariant &data)
+QVariant ActionsEfekta::ReadInterval::request(const QString &, const QVariant &data)
 {
     quint16 value = qToLittleEndian <quint16> (data.toInt());
     return writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));

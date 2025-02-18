@@ -2,7 +2,7 @@
 #include <QtMath>
 #include "efekta.h"
 
-void PropertiesEfekta::ReportingDelay::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::ReadInterval::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
