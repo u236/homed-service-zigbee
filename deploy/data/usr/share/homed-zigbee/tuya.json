@@ -2022,7 +2022,7 @@
     },
     {
       "description":    "TUYA TS0207 Water Leak Sensor",
-      "modelNames":     ["_TZ3000_c8bqthpo", "_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_k4ej3ww2", "_TZ3000_kstbkt6a", "_TZ3000_kyb656no", "_TZ3000_mugyhz0q", "_TZ3000_ocjlo4ea", "_TZ3000_qhozxs2b", "_TYZB01_sqmd19i1", "_TZ3000_t6jriawg", "_TZ3000_upgcbody"],
+      "modelNames":     ["_TZ3000_85czd6fy", "_TZ3000_c8bqthpo", "_TZ3000_d16y6col", "_TZ3000_it1hm1cr", "_TZ3000_k4ej3ww2", "_TZ3000_kstbkt6a", "_TZ3000_kyb656no", "_TZ3000_mugyhz0q", "_TZ3000_ocjlo4ea", "_TZ3000_qhozxs2b", "_TYZB01_sqmd19i1", "_TZ3000_t6jriawg", "_TZ3000_upgcbody"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -2036,6 +2036,14 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "vibration", "batteryLow", "tamper"],
       "options":        {"vibrationResetTimeout": 60}
+    },
+    {
+      "description":    "TUYA TS0222 Illuminance Sensor",
+      "modelNames":     ["_TYZB01_4mdqxxnn", "_TZ3000_8uxxzz4b", "_TZ3000_9kbbfeho", "_TZ3000_do6txrcw", "_TZ3000_hy6ncvmw", "_TZ3000_l6rsaipj", "_TYZB01_m6ec2pgj"],
+      "properties":     ["batteryPercentage", "illuminance"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "illuminance"]
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor (Type A)",

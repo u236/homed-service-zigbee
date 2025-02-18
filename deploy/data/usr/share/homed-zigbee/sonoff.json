@@ -71,7 +71,7 @@
     },
     {
       "description":    "Sonoff Motion Sensor SNZB-03",
-      "modelNames":     ["MS01"],
+      "modelNames":     ["MS01", "MSO1", "SNZB-03"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
