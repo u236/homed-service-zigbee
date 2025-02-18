@@ -416,7 +416,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             property->setMultiple(multiple);
             property->setTimeout(static_cast <quint32> (timeout.toInt()));
 
-            if (timeout.toBool() || property->clusters().contains(CLUSTER_IAS_WD))
+            if (property->timeout() || property->clusters().contains(CLUSTER_IAS_WD))
                 startTimer = true;
 
             endpoint->properties().append(property);
@@ -819,6 +819,11 @@ void DeviceList::recognizeDevice(const Device &device)
                         case 0x002A:
                             it.value()->properties().append(Property(new PropertiesIAS::WaterLeak));
                             it.value()->exposes().append(Expose(new BinaryObject("waterLeak")));
+                            break;
+
+                        case 0x002D:
+                            it.value()->properties().append(Property(new PropertiesIAS::Vibration));
+                            it.value()->exposes().append(Expose(new BinaryObject("vibration")));
                             break;
 
                         default:

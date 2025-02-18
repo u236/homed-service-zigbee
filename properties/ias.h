@@ -72,6 +72,15 @@ namespace PropertiesIAS
 
     };
 
+    class Vibration : public ZoneStatus
+    {
+
+    public:
+
+        Vibration(void) : ZoneStatus("vibration") {}
+
+    };
+
     class Rain : public ZoneStatus
     {
 
