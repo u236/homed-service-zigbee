@@ -1139,6 +1139,52 @@
     },
     {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type A)",
+      "modelNames":     ["_TZE200_44af8vyi", "_TZE200_bq5c8xfe"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "temperature", "humidity"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "2":    [{"name": "humidity", "type": "value"}],
+                            "4":    [{"name": "battery", "type": "value"}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type B)",
+      "modelNames":     ["_TZE200_bjawzodf", "_TZE200_zl1kmjqx"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "temperature", "humidity"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "2":    [{"name": "humidity", "type": "value", "divider": 10}],
+                            "4":    [{"name": "battery", "type": "value"}]
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type C)",
+      "modelNames":     ["_TZE200_qyflbnbj", "_TZE204_qyflbnbj", "_TZE284_qyflbnbj"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["batteryStatus", "temperature", "humidity"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
+                            "2":    [{"name": "humidity", "type": "value"}],
+                            "3":    [{"name": "batteryStatus", "type": "enum"}]
+                          },
+                          "batteryStatus": {"enum": ["low", "medium", "high"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type D)",
       "modelNames":     ["_TZE200_a8sdabtg", "_TZE200_dikkika5", "_TZE200_qoy0ekbd", "_TZE200_znbl8dj5"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1157,7 +1203,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type B)",
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type E)",
       "modelNames":     ["_TZE200_9yapgbuv", "_TZE200_cirvgep4", "_TZE200_upagmta9", "_TZE200_yjjdcqsq", "_TZE204_upagmta9", "_TZE204_yjjdcqsq"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1175,7 +1221,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type C)",
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type F)",
       "modelNames":     ["_TZE200_c7emyjom", "_TZE200_eanjj2pa", "_TZE200_locansqn", "_TZE200_lve3dvpy", "_TZE200_qrztc3ev", "_TZE200_snloy4rw", "_TZE200_vvmbj46n"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1919,7 +1965,7 @@
     },
     {
       "description":    "TUYA TS0202 Motion Sensor",
-      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_rwb0hxtf", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_jmrgyl7o", "_TZ3000_kmh5qpmb", "_TZ3000_lf56vpxj", "_TZ3000_mmtwjmaq", "_TZ3000_nss8amz9", "_TZ3000_otvn3lne", "_TZ3000_qomxlryd", "_TZ3000_sr0vaafi", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz", "_TZ3040_bb6xaihh", "_TZ3040_wqmtjsyk", "_TZE200_bq5c8xfe"],
+      "modelNames":     ["_TYZB01_2b8f6cio", "_TYZB01_71kfvvma", "_TYZB01_dl7cejts", "_TYZB01_dr6sduka", "_TYZB01_ef5xlc9q", "_TYZB01_hqbdru35", "_TYZB01_qjqgmqxr", "_TYZB01_rwb0hxtf", "_TYZB01_tv3wxhcz", "_TYZB01_vwqnz1sn", "_TYZB01_zwvaj5wy", "_TZ3000_bsvqrxru", "_TZ3000_h4wnrtck", "_TZ3000_hgu1dlak", "_TZ3000_jmrgyl7o", "_TZ3000_kmh5qpmb", "_TZ3000_lf56vpxj", "_TZ3000_mmtwjmaq", "_TZ3000_nss8amz9", "_TZ3000_otvn3lne", "_TZ3000_qomxlryd", "_TZ3000_sr0vaafi", "_TZ3000_tiwq83wk", "_TZ3000_ykwcwxmz", "_TZ3040_bb6xaihh", "_TZ3040_wqmtjsyk"],
       "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
