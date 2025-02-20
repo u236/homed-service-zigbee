@@ -33,7 +33,7 @@ QVariant ActionsLUMI::PresenceSensor::request(const QString &name, const QVarian
 
 QVariant ActionsLUMI::RadiatorThermostat::request(const QString &name, const QVariant &data)
 {
-    QByteArray sensor = ieeeAddress().append(QByteArray::fromHex("00158d000ab7156d")), value;
+    QByteArray sensor = QByteArray::fromHex("00158d000ab7156d"), value;
     QList <QVariant> list;
 
     switch (m_actions.indexOf(name))
@@ -53,10 +53,10 @@ QVariant ActionsLUMI::RadiatorThermostat::request(const QString &name, const QVa
             else
             {
                 value = QByteArray(reinterpret_cast <char*> (&timestamp), sizeof(timestamp)).append(QByteArray::fromHex("3d05")).append(ieeeAddress()).append(12, 0x00);
-                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x02).append(value)));
+                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x04).append(value)));
 
                 value = QByteArray(reinterpret_cast <char*> (&timestamp), sizeof(timestamp)).append(QByteArray::fromHex("3d04")).append(ieeeAddress()).append(12, 0x00);
-                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x13, 0x02).append(value)));
+                list.append(writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x13, 0x04).append(value)));
             }
 
             m_attributes = {0x027E};
@@ -67,9 +67,9 @@ QVariant ActionsLUMI::RadiatorThermostat::request(const QString &name, const QVa
         {
             const Property &property = endpointProperty("lumiData");
             QMap <QString, QVariant> map = property->value().toMap();
-            quint32 temperature = qToBigEndian <quint32> (data.toDouble() * 100);
+            float temperature = qToBigEndian <float> (data.toDouble() * 100);
 
-            map.insert("externalTemperature", data.toBool());
+            map.insert("externalTemperature", data.toDouble());
             property->setValue(map);
             m_properyUpdated = true;
             m_attributes.clear();
@@ -88,7 +88,7 @@ QByteArray ActionsLUMI::RadiatorThermostat::header(quint8 length, quint8 counter
     QByteArray header(reinterpret_cast <char*> (data), sizeof(data));
 
     for (size_t i = 0; i < sizeof(data); i++)
-        checksum -= data[i];
+        checksum += data[i];
 
     return header.append(static_cast <char> (512 - checksum)).append(static_cast <char> (action)).append(0x41).append(static_cast <char> (length));
 }
