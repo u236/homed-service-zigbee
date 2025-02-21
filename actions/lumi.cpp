@@ -91,7 +91,7 @@ QVariant ActionsLUMI::RadiatorThermostat::request(const QString &name, const QVa
                 setMeta("program", false);
             }
 
-            m_data.insert(name, data.toDouble());
+            m_data.insert(name, data);
 
             for (int i = 0; i < list.count(); i++)
                 if (m_data.value(QString("schedule%1").arg(list.at(i))).toBool())
