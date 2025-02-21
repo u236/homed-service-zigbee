@@ -126,7 +126,7 @@ QVariant ActionsTUYA::HolidayThermostatProgram::request(const QString &name, con
         setMeta(QString("%1Program").arg(type), false);
     }
 
-    m_data.insert(name, data.toDouble());
+    m_data.insert(name, data);
 
     for (int i = 0; i < 6; i++)
     {
@@ -153,7 +153,7 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
         setMeta(QString("%1Program").arg(type), false);
     }
 
-    m_data.insert(name, data.toDouble());
+    m_data.insert(name, data);
 
     if (!modelList.contains(manufacturerName()))
     {
@@ -195,7 +195,7 @@ QVariant ActionsTUYA::MoesThermostatProgram::request(const QString &name, const 
         setMeta("program", false);
     }
 
-    m_data.insert(name, data.toDouble());
+    m_data.insert(name, data);
 
     for (int i = 0; i < 12; i++)
     {
