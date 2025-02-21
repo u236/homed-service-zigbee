@@ -21,11 +21,12 @@ namespace ActionsLUMI
 
     public:
 
-        RadiatorThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"sensorType", "externalTemperature"}) {}
+        RadiatorThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"sensorType", "externalTemperature", "scheduleMonday", "scheduleTuesday", "scheduleWednesday", "scheduleThursday", "scheduleFriday", "scheduleSaturday", "scheduleSunday", "scheduleP1Hour", "scheduleP1Minute", "scheduleP1Temperature", "scheduleP2Hour", "scheduleP2Minute", "scheduleP2Temperature", "scheduleP3Hour", "scheduleP3Minute", "scheduleP3Temperature", "scheduleP4Hour", "scheduleP4Minute", "scheduleP4Temperature"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
 
+        QMap <QString, QVariant> m_data;
         QByteArray header(quint8 length, quint8 counter, quint8 action);
 
     };

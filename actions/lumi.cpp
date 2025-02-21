@@ -77,6 +77,41 @@ QVariant ActionsLUMI::RadiatorThermostat::request(const QString &name, const QVa
             value = QByteArray(sensor).append(QByteArray::fromHex("00010055")).append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
             return writeAttributeRequest(m_transactionId++, m_manufacturerCode, 0xFFF2, DATA_TYPE_OCTET_STRING, header(static_cast <quint8> (value.length()), 0x12, 0x05).append(value));
         }
+
+        default:
+        {
+            const Property &property = endpointProperty("lumiData");
+            QList <QString> list = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+            QByteArray payload = QByteArray(1, 0x04);
+            char days = 0;
+
+            if (m_data.isEmpty() || meta("program").toBool())
+            {
+                m_data = property->value().toMap();
+                setMeta("program", false);
+            }
+
+            m_data.insert(name, data.toDouble());
+
+            for (int i = 0; i < list.count(); i++)
+                if (m_data.value(QString("schedule%1").arg(list.at(i))).toBool())
+                    days |= 1 << (i + 1);
+
+            payload.append(days);
+
+            for (int i = 0; i < 4; i++)
+            {
+                QString key = QString("scheduleP%1").arg(i + 1);
+                quint16 time = qToBigEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+                quint16 temperature = qToBigEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
+                payload.append(reinterpret_cast <char*> (&time), sizeof(time));
+                payload.append(2, 0x00);
+                payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
+            }
+
+            m_attributes = {0x0276};
+            return writeAttribute(DATA_TYPE_OCTET_STRING, payload);
+        }
     }
 
     return QByteArray();

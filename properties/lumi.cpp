@@ -313,6 +313,27 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x0276:
+        {
+            QList <QString> list = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
+            setMeta("program", true);
+
+            for (int i = 0; i < list.count(); i++)
+                map.insert(QString("schedule%1").arg(list.at(i)), data.at(1) >> (i + 1) & 1 ? true : false);
+
+            for (int i = 0; i < 4; i++)
+            {
+                QString key = QString("scheduleP%1").arg(i + 1);
+                quint16 time = qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (data.constData() + i * 6 + 2))) & 0x7FFF;
+                map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
+                map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
+                map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (data.constData() + i * 6 + 6))) / 100.0);
+            }
+
+            break;
+        }
+
         case 0x027E:
         {
             map.insert("sensorType", data.at(0) ? "external" : "internal");
