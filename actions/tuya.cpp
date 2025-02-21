@@ -120,7 +120,7 @@ QVariant ActionsTUYA::HolidayThermostatProgram::request(const QString &name, con
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload;
 
-    if (m_data.isEmpty() || meta("program").toBool())
+    if (m_data.isEmpty() || meta(QString("%1Program").arg(type)).toBool())
     {
         m_data = property->value().toMap();
         setMeta(QString("%1Program").arg(type), false);
@@ -147,7 +147,7 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload = QByteArray(1, static_cast <char> (typeList.indexOf(type) + 1));
 
-    if (m_data.isEmpty() || meta("program").toBool())
+    if (m_data.isEmpty() || meta(QString("%1Program").arg(type)).toBool())
     {
         m_data = property->value().toMap();
         setMeta(QString("%1Program").arg(type), false);
@@ -178,7 +178,6 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
             payload.append(reinterpret_cast <char*> (&time), sizeof(time));
             payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
         }
-
     }
 
     return makeRequest(m_transactionId++, 0x00, static_cast <quint8> (list.value(typeList.indexOf(type)).toInt()), TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
