@@ -455,6 +455,7 @@ void PropertiesLUMI::ButtonAction::parseAttribte(quint16, quint16 attributeId, c
     {
         m_check = false;
         m_hold = false;
+        m_value = "release";
         return;
     }
 
@@ -475,8 +476,8 @@ void PropertiesLUMI::ButtonAction::resetValue(void)
     if (!m_check)
         return;
 
-    m_value = "hold";
     m_hold = true;
+    m_value = "hold";
 }
 
 void PropertiesLUMI::SwitchAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
