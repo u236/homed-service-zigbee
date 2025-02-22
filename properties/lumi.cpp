@@ -451,14 +451,32 @@ void PropertiesLUMI::ButtonAction::parseAttribte(quint16, quint16 attributeId, c
     if (attributeId != 0x0000 && attributeId != 0x8000)
         return;
 
+    if (m_hold)
+    {
+        m_check = false;
+        m_hold = false;
+        return;
+    }
+
     switch (static_cast <quint8> (data.at(0)))
     {
-        case 0x00: m_value = "singleClick"; break;
+        case 0x01: m_value = "singleClick"; break;
         case 0x02: m_value = "doubleClick"; break;
         case 0x03: m_value = "tripleClick"; break;
         case 0x04: m_value = "quadrupleClick"; break;
         case 0x80: m_value = "multipleClick"; break;
     }
+
+    m_check = data.at(0) ? false : true;
+}
+
+void PropertiesLUMI::ButtonAction::resetValue(void)
+{
+    if (!m_check)
+        return;
+
+    m_value = "hold";
+    m_hold = true;
 }
 
 void PropertiesLUMI::SwitchAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)

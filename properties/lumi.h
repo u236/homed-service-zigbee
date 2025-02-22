@@ -75,8 +75,13 @@ namespace PropertiesLUMI
 
     public:
 
-        ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF) {}
+        ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF), m_check(false), m_hold(false) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void resetValue(void) override;
+
+    private:
+
+        bool m_check, m_hold;
 
     };
 
