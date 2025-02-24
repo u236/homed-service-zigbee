@@ -150,7 +150,7 @@
                             "switchMode": {"type": "enum", "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true}
                           },
                           "customCommands": {"action": {"clusterId": 6}},
-                          "switchType": {"enum": ["toggle", "momentary"]},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
                           "switchMode": {"enum": ["relay", "decoupled"]},
                           "action": {"enum": {"2": "toggle"}}
                         }
