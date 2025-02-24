@@ -61,8 +61,8 @@ QVariant ActionsIAS::Warning::request(const QString &name, const QVariant &data)
 
     if (sirenMode || strobe)
     {
-        property->setTimeout(qFromLittleEndian(payload.duration));
-        property->setTime(QDateTime::currentSecsSinceEpoch());
+        property->setTimeout(qFromLittleEndian(payload.duration) * 1000);
+        property->setTime(QDateTime::currentMSecsSinceEpoch());
     }
 
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x00).append(reinterpret_cast <char*> (&payload), sizeof(payload));

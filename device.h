@@ -3,6 +3,7 @@
 
 #define STORE_DATABASE_DELAY        20
 #define STORE_PROPERTIES_DELAY      1000
+#define UPDATE_ENDPOINT_INTERVAL    100
 
 #include <QDateTime>
 #include <QDir>
@@ -297,7 +298,7 @@ private slots:
 
     void writeDatabase(void);
     void writeProperties(void);
-    void endpointTimeout(void);
+    void updateEndpoint(void);
 
 signals:
 

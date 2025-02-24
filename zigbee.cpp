@@ -1013,7 +1013,7 @@ bool ZigBee::parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 t
             }
 
             if (property->timeout())
-                property->setTime(QDateTime::currentSecsSinceEpoch());
+                property->setTime(QDateTime::currentMSecsSinceEpoch());
 
             if (m_debounce && property->value() == value)
                 continue;

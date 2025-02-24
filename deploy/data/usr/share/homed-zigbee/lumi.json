@@ -66,7 +66,7 @@
       "modelNames":     ["lumi.ctrl_neutral1", "lumi.switch.b1lacn02"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["singleClick", "hold", "release"]}, "actionResetTimeout": 1},
+      "options":        {"action": {"enum": ["singleClick", "hold", "release"]}, "actionResetTimeout": 1.5},
       "endpointId":     4
     },
     {
@@ -92,7 +92,7 @@
       "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["singleClick", "hold", "release"]}, "actionResetTimeout": 1},
+      "options":        {"action": {"enum": ["singleClick", "hold", "release"]}, "actionResetTimeout": 1.5},
       "endpointId":     [4, 5]
     },
     {
@@ -532,7 +532,7 @@
       "modelNames":     ["lumi.sensor_switch"],
       "properties":     ["lumiBasic", "lumiButtonAction"],
       "exposes":        ["battery", "action"],
-      "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick", "hold", "release"]}, "actionResetTimeout": 1}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick", "hold", "release"]}, "actionResetTimeout": 1.5}
     },
     {
       "description":    "Aqara Wireless Button WXKG11LM",
@@ -625,7 +625,7 @@
       "modelNames":     ["lumi.sensor_86sw2", "lumi.sensor_86sw2.es1"],
       "properties":     ["lumiButtonAction"],
       "exposes":        ["action"],
-      "options":        {"action": {"enum": ["singleClick", "hold", "release"]}, "actionResetTimeout": 1},
+      "options":        {"action": {"enum": ["singleClick", "hold", "release"]}, "actionResetTimeout": 1.5},
       "endpointId":     [1, 2, 3]
     },
     {

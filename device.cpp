@@ -410,11 +410,10 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (type)
         {
             Property property(reinterpret_cast <PropertyObject*> (QMetaType::create(type)));
-            QVariant timeout = device->options().value(QString(property->name()).append("ResetTimeout"));
 
             property->setParent(endpoint.data());
             property->setMultiple(multiple);
-            property->setTimeout(static_cast <quint32> (timeout.toInt()));
+            property->setTimeout(static_cast <quint32> (device->options().value(QString(property->name()).append("ResetTimeout")).toDouble() * 1000));
 
             if (property->timeout() || property->clusters().contains(CLUSTER_IAS_WD))
                 startTimer = true;
@@ -560,7 +559,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
     if (!endpoint->polls().isEmpty())
     {
-        quint32 pollInterval = static_cast <quint32> (device->options().value(multiple ? QString("pollInterval_%1").arg(endpoint->id()) : "pollInterval").toInt());
+        quint32 pollInterval = static_cast <quint32> (device->options().value(multiple ? QString("pollInterval_%1").arg(endpoint->id()) : "pollInterval").toDouble() * 1000);
 
         for (int i = 0; i < endpoint->polls().count(); i++)
         {
@@ -579,8 +578,8 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
     if (!startTimer)
         return;
 
-    connect(endpoint->timer(), &QTimer::timeout, this, &DeviceList::endpointTimeout, Qt::UniqueConnection);
-    endpoint->timer()->start(1000);
+    connect(endpoint->timer(), &QTimer::timeout, this, &DeviceList::updateEndpoint, Qt::UniqueConnection);
+    endpoint->timer()->start(UPDATE_ENDPOINT_INTERVAL);
 }
 
 void DeviceList::recognizeDevice(const Device &device)
@@ -1338,10 +1337,10 @@ void DeviceList::writeProperties(void)
     logWarning << "Properties not stored, file" << m_propertiesFile.fileName() << "error:" << m_propertiesFile.errorString();
 }
 
-void DeviceList::endpointTimeout(void)
+void DeviceList::updateEndpoint(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
-    qint64 time = QDateTime::currentSecsSinceEpoch();
+    qint64 time = QDateTime::currentMSecsSinceEpoch();
 
     for (int i = 0; i < endpoint->properties().count(); i++)
     {
