@@ -293,6 +293,12 @@
       "reportings":     ["energy"],
       "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37}}},
       "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TS0601 NDIR CO2 Sensor With Slacky Firmware",
+      "modelNames":     ["Tuya_CO2Sensor_r01"],
+      "properties":     ["co2"],
+      "options":        {"reporting": {"maxInterval": 300}}
     }
   ],
 
