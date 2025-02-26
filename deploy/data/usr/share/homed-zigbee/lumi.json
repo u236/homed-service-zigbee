@@ -10,7 +10,6 @@
       "options":        {
                           "customAttributes":
                           {
-                            "systemMode":        {"type": "enum",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 625,  "dataType": 32, "action": true},
                             "operationMode":     {"type": "enum",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 626,  "dataType": 32, "action": true},
                             "windowDetection":   {"type": "bool",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 627,  "dataType": 32, "action": true},
                             "childLock":         {"type": "bool",  "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 631,  "dataType": 32, "action": true},
@@ -20,7 +19,6 @@
                           },
                           "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
                           "temperatureOffset": {"min": -2.5, "max": 2.5, "step" : 0.1},
-                          "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program", "away"]},
                           "awayTemperature": {"min": 5, "max": 30, "step": 0.5},
                           "sensorType": {"enum": ["internal", "external"]},
