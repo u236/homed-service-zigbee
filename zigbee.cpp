@@ -361,7 +361,7 @@ void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QS
         {
             const Action &action = it.value()->actions().at(i);
 
-            if (action->name() == name || action->name() == "tuyaDataPoints" || action->actions().contains(name))
+            if (action->name() == name || action->actions().contains(name) || action->name() == "tuyaDataPoints"|| (action->name() == "thermostatProgram" && QRegExp("^[a-z]+P[0-9]+(Hour|Minute|Temperature)$").exactMatch(name)))
             {
                 QVariant request = action->request(name, data);
                 QList <QVariant> list = request.type() == QVariant::List ? request.toList() : QList <QVariant> {request};

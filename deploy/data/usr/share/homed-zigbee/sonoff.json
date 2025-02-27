@@ -117,8 +117,8 @@
       "description":    "Sonoff Radiator Thermostat TRVZB",
       "modelNames":     ["TRVZB"],
       "properties":     ["batteryPercentage", "thermostat", "customAttributes"],
-      "actions":        ["thermostat", "customAttributes"],
-      "exposes":        ["battery", "thermostat", "temperatureOffset", "childLock", "awayTemperature", "sensorType", "externalTemperature", "valveOpenLimit", "valveCloseLimit", "thermostatProgram"],
+      "actions":        ["thermostat", "thermostatProgram", "customAttributes"],
+      "exposes":        ["battery", "thermostat", "temperatureOffset", "childLock", "awayTemperature", "valveOpenLimit", "valveCloseLimit", "sensorType", "externalTemperature", "thermostatProgram"],
       "options":        {
                           "customAttributes":
                           {

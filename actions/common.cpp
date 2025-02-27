@@ -119,38 +119,40 @@ QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
             m_attributes = {0x001C};
             return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
         }
-
-        default:
-        {
-            const Property &property = endpointProperty();
-            QList <QString> typeList = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
-            QString type = name.mid(0, name.indexOf('P'));
-            QByteArray payload;
-
-            payload.append(static_cast <char> (option("programTransitions", 4).toInt()));
-            payload.append(static_cast <char> (1 << typeList.indexOf(type)));
-            payload.append(0x01);
-
-            if (m_data.isEmpty() || meta(QString("%1Program").arg(type)).toBool())
-            {
-                m_data = property->value().toMap();
-                setMeta(QString("%1Program").arg(type), false);
-            }
-
-            m_data.insert(name, data);
-
-            for (int i = 0; i < payload.at(0); i++)
-            {
-                QString key = QString("%1P%2").arg(type).arg(i + 1);
-                quint16 time = i ? qToLittleEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt())) : 0;
-                quint16 temperature = qToLittleEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
-                payload.append(reinterpret_cast <char*> (&time), sizeof(time));
-                payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
-            }
-
-            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x01).append(payload);
-        }
     }
+
+    return QByteArray();
+}
+
+QVariant Actions::ThermostatProgram::request(const QString &name, const QVariant &data)
+{
+    const Property &property = endpointProperty("thermostat");
+    QList <QString> typeList = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
+    QString type = name.mid(0, name.indexOf('P'));
+    QByteArray payload;
+
+    payload.append(static_cast <char> (option("programTransitions", 4).toInt()));
+    payload.append(static_cast <char> (1 << typeList.indexOf(type)));
+    payload.append(0x01);
+
+    if (m_data.isEmpty() || meta(QString("%1Program").arg(type)).toBool())
+    {
+        m_data = property->value().toMap();
+        setMeta(QString("%1Program").arg(type), false);
+    }
+
+    m_data.insert(name, data);
+
+    for (int i = 0; i < payload.at(0); i++)
+    {
+        QString key = QString("%1P%2").arg(type).arg(i + 1);
+        quint16 time = qToLittleEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        quint16 temperature = qToLittleEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
+        payload.append(reinterpret_cast <char*> (&time), sizeof(time));
+        payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
+    }
+
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x01).append(payload);
 }
 
 QVariant Actions::ColorHS::request(const QString &, const QVariant &data)
