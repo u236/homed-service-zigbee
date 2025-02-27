@@ -157,13 +157,13 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
 
     if (!modelList.contains(manufacturerName()))
     {
-        bool extended = option("thermostatProgram").toString() == "extended" ? true : false;
+        int transitions = option("programTransitions", 4).toInt();
 
-        for (int i = 0; i < (extended ? 6 : 4); i++)
+        for (int i = 0; i < transitions; i++)
         {
             QString key = QString("%1P%2").arg(type).arg(i + 1);
             quint16 temperature = qToBigEndian <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 10);
-            payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * (extended ? 4 : 6)).toInt()));
+            payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * transitions).toInt()));
             payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
             payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
         }

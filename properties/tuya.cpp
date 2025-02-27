@@ -212,7 +212,7 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
 
         if (!modelList.contains(manufacturerName()))
         {
-            for (int i = 0; i < (option("thermostatProgram").toString() != "extended" ? 4 : 6); i++)
+            for (int i = 0; i < option("programTransitions", 4).toInt(); i++)
             {
                 QString key = QString("%1P%2").arg(type).arg(i + 1);
                 map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
