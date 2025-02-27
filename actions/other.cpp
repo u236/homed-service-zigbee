@@ -31,7 +31,7 @@ QVariant ActionsYandex::Settings::request(const QString &name, const QVariant &d
 
 QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data)
 {
-    QList <QString> types = {"bool", "value", "enum"}; // TODO: refactor this
+    QList <QString> types = {"bool", "value", "enum", "time"};
     QVariant value;
 
     switch (types.indexOf(m_type))
@@ -47,6 +47,13 @@ QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data
                 return QByteArray();
 
             value = index;
+            break;
+        }
+
+        case 3:
+        {
+            QList <QString> list = data.toString().split(':');
+            value = list.value(0).toInt() * 3600 + list.value(1).toInt() * 60;
             break;
         }
     }

@@ -113,7 +113,7 @@ void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QB
 
 void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    QList <QString> types = {"bool", "value", "enum"}; // TODO: refactor this
+    QList <QString> types = {"bool", "value", "enum", "time"};
     QByteArray buffer = data;
     QVariant value;
 
@@ -178,8 +178,9 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
 
     switch (types.indexOf(m_type))
     {
-        case 0: m_value = value.toInt() ? true : false; break;     // bool
-        case 1: m_value = value.toDouble() / m_divider; break;     // value
-        case 2: m_value = enumValue(m_name, value.toInt()); break; // enum
+        case 0: m_value = value.toInt() ? true : false; break;                                                    // bool
+        case 1: m_value = value.toDouble() / m_divider; break;                                                    // value
+        case 2: m_value = enumValue(m_name, value.toInt()); break;                                                // enum
+        case 3: m_value = QString::asprintf("%02d:%02d", value.toInt() / 3600, value.toInt() % 3600 / 60); break; // time
     }
 }

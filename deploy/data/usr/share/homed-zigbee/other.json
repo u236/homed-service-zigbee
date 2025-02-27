@@ -32,6 +32,41 @@
       "endpointId":     2
     },
     {
+      "description":    "Bacchus Human Presence Sensor",
+      "modelNames":     ["Presence_Sensor_v2.6"],
+      "properties":     ["status", "occupancy", "illuminance", "customAttributes"],
+      "actions":        ["status", "customAttributes"],
+      "bindings":       ["occupancy", "illuminance", "time"],
+      "reportings":     ["occupancy", "illuminance"],
+      "exposes":        ["switch", "occupancy", "illuminance", "targetDistance", "motionStatus", "readInterval", "startTime", "endTime", "illuminanceHigh"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "startTime":        {"type": "time",  "clusterId": 10,   "attributeId": 3,     "dataType": 35, "action": true},
+                            "endTime":          {"type": "time",  "clusterId": 10,   "attributeId": 4,     "dataType": 35, "action": true},
+                            "illuminanceHigh":  {"type": "value", "clusterId": 1024, "attributeId": 61441, "dataType": 33, "action": true},
+                            "targetDistance":   {"type": "value", "clusterId": 1030, "attributeId": 61445, "dataType": 33, "divider": 100},
+                            "motionStatus":     {"type": "enum",  "clusterId": 1030, "attributeId": 61446, "dataType": 48},
+                            "readInterval":     {"type": "value", "clusterId": 1030, "attributeId": 61447, "dataType": 33, "action": true}
+                          },
+                          "reporting": {"minInterval": 0, "maxInterval": 600, "valueChange": 0},
+                          "startTime": {"type": "time"},
+                          "endTime": {"type": "time"},
+                          "illuminanceHigh": {"type": "number", "min": 0, "max": 50000, "unit": "lx"},
+                          "motionStatus": {"enum": ["none", "moving", "standing", "mixed"]},
+                          "readInterval": {"min": 0, "max": 30}
+                        },
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["Presence_Sensor_v2.6"],
+      "properties":     ["customAttributes"],
+      "actions":        ["customAttributes"],
+      "exposes":        ["indicatorMode"],
+      "options":        {"customAttributes": {"indicatorMode": {"type": "enum", "clusterId": 6, "attributeId": 61444, "dataType": 48, "action": true}}, "indicatorMode": {"enum": ["on", "off", "night"]}},
+      "endpointId":     3
+    },
+    {
       "description":    "MODKAM Soil Moisture Sensor with Bacchus Firmware",
       "modelNames":     ["Flower_sensor_v2a"],
       "properties":     ["batteryPercentage", "illuminance", "temperature", "humidity"],
