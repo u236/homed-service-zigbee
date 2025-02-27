@@ -118,7 +118,7 @@
       "modelNames":     ["TRVZB"],
       "properties":     ["batteryPercentage", "thermostat", "customAttributes"],
       "actions":        ["thermostat", "customAttributes"],
-      "exposes":        ["battery", "thermostat", "temperatureOffset", "childLock", "awayTemperature", "sensorType", "externalTemperature", "valveOpenLimit", "valveCloseLimit"],
+      "exposes":        ["battery", "thermostat", "temperatureOffset", "childLock", "awayTemperature", "sensorType", "externalTemperature", "valveOpenLimit", "valveCloseLimit", "thermostatProgram"],
       "options":        {
                           "customAttributes":
                           {
@@ -129,14 +129,16 @@
                             "externalTemperature":  {"type": "value", "clusterId": 64529, "attributeId": 24589, "dataType": 41, "divider": 100, "action": true},
                             "sensorType":           {"type": "enum",  "clusterId": 64529, "attributeId": 24590, "dataType": 32, "action": true}
                           },
-                          "systemMode": {"enum": ["off", "heat"]},
+                          "systemMode": {"enum": ["off", "auto", "heat"]},
                           "targetTemperature": {"min": 4, "max": 35, "step": 0.5},
                           "temperatureOffset": {"min": -7, "max": 7, "step": 0.2},
                           "valveOpenLimit": {"type": "number", "min": 0, "max": 100, "unit": "%"},
                           "valveCloseLimit": {"type": "number", "min": 0, "max": 100, "unit": "%"},
                           "awayTemperature": {"min": 4, "max": 35, "step": 0.5},
                           "externalTemperature": {"min": 0, "max": 55, "step": 0.1},
-                          "sensorType": {"enum": ["internal", "external"]}
+                          "sensorType": {"enum": ["internal", "external"]},
+                          "thermostatProgram": "daily",
+                          "programTransitions": 6
                         }
     },
     {

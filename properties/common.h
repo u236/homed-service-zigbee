@@ -93,6 +93,7 @@ namespace Properties
 
         Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     };
 

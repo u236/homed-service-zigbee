@@ -134,6 +134,38 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
+void Thermostat::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    QList <QString> typeList = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
+    QString type;
+
+    if (commandId != 0x00)
+        return;
+
+    for (int i = 0; i < typeList.count(); i++)
+    {
+        if (payload.at(1) & (1 << i))
+        {
+            type = typeList.at(i);
+            break;
+        }
+    }
+
+    setMeta(QString("%1Program").arg(type), true);
+
+    for (int i = 0; i < payload.at(0); i++)
+    {
+        QString key = QString("%1P%2").arg(type).arg(i + 1);
+        quint16 time = qFromLittleEndian <quint16> (*(reinterpret_cast <const quint16*> (payload.constData() + i * 4 + 3)));
+        map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
+        map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
+        map.insert(QString("%1Temperature").arg(key), (qFromLittleEndian <quint16> (*(reinterpret_cast <const quint16*> (payload.constData() + i * 4 + 5)))) / 100.0);
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
 void Properties::ColorHS::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
