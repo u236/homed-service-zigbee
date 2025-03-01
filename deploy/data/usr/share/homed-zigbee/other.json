@@ -333,6 +333,9 @@
       "description":    "TS0601 NDIR CO2 Sensor With Slacky Firmware",
       "modelNames":     ["Tuya_CO2Sensor_r01"],
       "properties":     ["co2"],
+      "exposes":        ["co2"],
+      "bindings":       ["co2"],
+      "reportings":     ["co2"],
       "options":        {"reporting": {"maxInterval": 300}}
     }
   ],
