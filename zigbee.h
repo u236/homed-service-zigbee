@@ -3,7 +3,10 @@
 
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define PING_DEVICES_INTERVAL           300000
+
 #define NETWORK_REQUEST_TIMEOUT         8000
+#define NETWORK_REQUEST_RETRIES         2
+
 #define DEVICE_REJOIN_TIMEOUT           5000
 #define INTER_PAN_CHANNEL_TIMEOUT       100
 #define STATUS_LED_TIMEOUT              500
@@ -178,8 +181,8 @@ private:
     void interviewError(const Device &device, const QString &reason);
 
     bool configureDevice(const Device &device);
-    bool configureReporting(const Endpoint &endpoint, const Reporting &reporting);
     bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
+    bool reportingRequest(const Endpoint &endpoint, const Reporting &reporting);
     bool groupRequest(const Endpoint &endpoint, quint16 groupId, bool removeAll = false, bool remove = false);
     bool dataRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &data, const QString &name);
 

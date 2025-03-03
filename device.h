@@ -160,7 +160,7 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_lqiRequestPending(false) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_interviewRetry(0), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_lqiRequestPending(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -176,6 +176,9 @@ public:
 
     inline InterviewStatus interviewStatus(void) { return m_interviewStatus; }
     inline void setInterviewStatus(InterviewStatus value) { m_interviewStatus = value; }
+
+    inline quint8 interviewRetry(void) { return m_interviewRetry; }
+    inline void setInterviewRetry(quint8 value) { m_interviewRetry = value; }
 
     inline quint8 interviewEndpointId(void) { return m_interviewEndpointId; }
     inline void setInterviewEndpointId(quint8 value) { m_interviewEndpointId = value; }
@@ -221,7 +224,7 @@ private:
     bool m_removed, m_supported;
 
     InterviewStatus m_interviewStatus;
-    quint8 m_interviewEndpointId;
+    quint8 m_interviewRetry, m_interviewEndpointId;
 
     LogicalType m_logicalType;
     quint16 m_manufacturerCode;
