@@ -1269,7 +1269,7 @@
     },
     {
       "description":    "TUYA TS0601 Air Quality Sensor",
-      "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k"],
+      "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k", "_TZE204_c2fmom5z", "_TZE204_yvx5lh6k"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["temperature", "humidity", "co2", "voc", "formaldehyde"],
       "options":        {
