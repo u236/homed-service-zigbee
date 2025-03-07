@@ -299,9 +299,6 @@ void DeviceList::setupDevice(const Device &device)
     if (device->options().contains("powerSource"))
         device->setPowerSource(static_cast <quint8> (device->options().value("powerSource").toInt()));
 
-    if (device->interviewStatus() != InterviewStatus::Finished && manufacturerName == "TUYA")
-        device->options().insert("tuyaMagic", true);
-
     if (!device->supported())
     {
         logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
@@ -391,6 +388,7 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
 
     if (QRegExp("^TS\\d{3}[0-9EF][AB]{0,1}$").exactMatch(modelName) || QRegExp("^_TZ[2,3,E]\\d{3}_\\S+$").exactMatch(manufacturerName) || manufacturerName.startsWith("_TYZB01_") || manufacturerName.startsWith("TUYA"))
     {
+        device->options().insert("tuyaMagic", true);
         modelName = manufacturerName;
         manufacturerName = "TUYA";
     }
