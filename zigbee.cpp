@@ -220,7 +220,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             quint16 value = qToLittleEndian <quint16> (dstName.toInt());
 
             if (value)
-                bindRequest(endpoint, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind, true);
+                emit deviceEvent(device.data(), Event::bindingRequest, {{"success", bindingRequest(endpoint, clusterId, QByteArray(reinterpret_cast <char*> (&value), sizeof(value)), 0xFF, unbind, true)}});
 
             break;
         }
@@ -230,7 +230,7 @@ void ZigBee::bindingControl(const QString &deviceName, quint8 endpointId, quint1
             const Device &destination = m_devices->byName(dstName.toString());
 
             if (!destination.isNull() && !destination->removed() && destination->active())
-                bindRequest(endpoint, clusterId, destination->ieeeAddress(), dstEndpointId, unbind, true);
+                emit deviceEvent(device.data(), Event::bindingRequest, {{"success", bindingRequest(endpoint, clusterId, destination->ieeeAddress(), dstEndpointId, unbind, true)}});
 
             break;
         }
@@ -247,7 +247,7 @@ void ZigBee::groupControl(const QString &deviceName, quint8 endpointId, quint16 
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), groupId, false, remove);
+    emit deviceEvent(device.data(), Event::groupRequest, {{"success", groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), groupId, false, remove)}});
 }
 
 void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
@@ -257,7 +257,7 @@ void ZigBee::removeAllGroups(const QString &deviceName, quint8 endpointId)
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
 
-    groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, true);
+    emit deviceEvent(device.data(), Event::groupRequest, {{"success", groupRequest(m_devices->endpoint(device, endpointId ? endpointId : 0x01), 0x0000, true)}});
 }
 
 void ZigBee::otaControl(const QString &deviceName, bool refresh, bool upgrade)
@@ -625,7 +625,7 @@ bool ZigBee::interviewQuirks(const Device &device)
         quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
         bool check = list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75);
 
-        if (check ? !bindRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF) : !bindRequest(endpoint, CLUSTER_ON_OFF))
+        if (check ? !bindingRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF) : !bindingRequest(endpoint, CLUSTER_ON_OFF))
             return false;
     }
 
@@ -716,7 +716,7 @@ bool ZigBee::configureDevice(const Device &device)
         {
             const Binding &binding = it.value()->bindings().at(i);
 
-            if (bindRequest(it.value(), binding->clusterId(), binding->address(), binding->endpointId()))
+            if (bindingRequest(it.value(), binding->clusterId(), binding->address(), binding->endpointId()))
                 continue;
 
             return false;
@@ -748,7 +748,7 @@ bool ZigBee::configureDevice(const Device &device)
     return true;
 }
 
-bool ZigBee::bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind, bool manual)
+bool ZigBee::bindingRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind, bool manual)
 {
     const Device &device = endpoint->device();
     QString name = unbind ? "unbinding from " : "binding to ";

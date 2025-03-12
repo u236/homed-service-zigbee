@@ -122,6 +122,8 @@ public:
         otaUpgradeStarted,
         otaUpgradeFinished,
         otaUpgradeError,
+        bindingRequest,
+        groupRequest,
         clusterRequest,
         globalRequest,
         requestFinished
@@ -181,7 +183,7 @@ private:
     void interviewError(const Device &device, const QString &reason);
 
     bool configureDevice(const Device &device);
-    bool bindRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
+    bool bindingRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &address = QByteArray(), quint8 dstEndpointId = 0, bool unbind = false, bool manual = false);
     bool reportingRequest(const Endpoint &endpoint, const Reporting &reporting);
     bool groupRequest(const Endpoint &endpoint, quint16 groupId, bool removeAll = false, bool remove = false);
     bool dataRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &data, const QString &name);
