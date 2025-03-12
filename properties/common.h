@@ -107,7 +107,7 @@ namespace Properties
 
     private:
 
-        QVariant m_colorH, m_colorS;
+        QVariant m_h, m_s;
 
     };
 
@@ -121,7 +121,7 @@ namespace Properties
 
     private:
 
-        QVariant m_colorX, m_colorY;
+        QVariant m_x, m_y;
 
     };
 
@@ -281,7 +281,7 @@ namespace Properties
 
     public:
 
-        ChildLock(void) : PropertyObject("childLock", CLUSTER_THERMOSTAT_UI_CONFIGURATION) {}
+        ChildLock(void) : PropertyObject("childLock", CLUSTER_UI_CONFIGURATION) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -377,7 +377,7 @@ namespace Properties
 
     public:
 
-        DisplayMode(void) : EnumProperty("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000) {}
+        DisplayMode(void) : EnumProperty("displayMode", CLUSTER_UI_CONFIGURATION, 0x0000) {}
 
     };
 }

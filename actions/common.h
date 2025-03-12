@@ -125,7 +125,7 @@ namespace Actions
 
     public:
 
-        ChildLock(void) : ActionObject("childLock", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0001) {}
+        ChildLock(void) : ActionObject("childLock", CLUSTER_UI_CONFIGURATION, 0x0000, 0x0001) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -171,7 +171,7 @@ namespace Actions
 
     public:
 
-        DisplayMode(void) : EnumAction("displayMode", CLUSTER_THERMOSTAT_UI_CONFIGURATION, 0x0000, 0x0000, DATA_TYPE_8BIT_ENUM) {}
+        DisplayMode(void) : EnumAction("displayMode", CLUSTER_UI_CONFIGURATION, 0x0000, 0x0000, DATA_TYPE_8BIT_ENUM) {}
 
     };
 }

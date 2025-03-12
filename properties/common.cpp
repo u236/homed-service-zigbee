@@ -171,17 +171,17 @@ void Properties::ColorHS::parseAttribte(quint16, quint16 attributeId, const QByt
     switch (attributeId)
     {
         case 0x0000:
-            m_colorH = static_cast <quint8> (data.at(0));
+            m_h = static_cast <quint8> (data.at(0));
             break;
 
         case 0x0001:
-            m_colorS = static_cast <quint8> (data.at(0));
+            m_s = static_cast <quint8> (data.at(0));
             break;
     }
 
-    if (m_colorH.isValid() || m_colorS.isValid())
+    if (m_h.isValid() || m_s.isValid())
     {
-        Color color = Color::fromHS(m_colorH.toDouble() / 0xFF, m_colorS.toDouble() / 0xFF);
+        Color color = Color::fromHS(m_h.toDouble() / 0xFF, m_s.toDouble() / 0xFF);
         m_value = QList <QVariant> {static_cast <quint8> (color.r() * 0xFF), static_cast <quint8> (color.g() * 0xFF), static_cast <quint8> (color.b() * 0xFF)};
     }
 }
@@ -197,18 +197,18 @@ void Properties::ColorXY::parseAttribte(quint16, quint16 attributeId, const QByt
     {
         case 0x0003:
             memcpy(&value, data.constData(), data.length());
-            m_colorX = qFromLittleEndian(value);
+            m_x = qFromLittleEndian(value);
             break;
 
         case 0x0004:
             memcpy(&value, data.constData(), data.length());
-            m_colorY = qFromLittleEndian(value);
+            m_y = qFromLittleEndian(value);
             break;
     }
 
-    if (m_colorX.isValid() || m_colorY.isValid())
+    if (m_x.isValid() || m_y.isValid())
     {
-        Color color = Color::fromXY(m_colorX.toDouble() / 0xFFFF, m_colorY.toDouble() / 0xFFFF);
+        Color color = Color::fromXY(m_x.toDouble() / 0xFFFF, m_y.toDouble() / 0xFFFF);
         m_value = QList <QVariant> {static_cast <quint8> (color.r() * 0xFF), static_cast <quint8> (color.g() * 0xFF), static_cast <quint8> (color.b() * 0xFF)};
     }
 }
