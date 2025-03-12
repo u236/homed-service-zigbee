@@ -996,27 +996,38 @@ bool ZigBee::dataRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
     m_replyId = m_requestId;
     m_replyReceived = false;
 
-    if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpoint->id(), clusterId, data))
+    for (int i = 0; i < NETWORK_REQUEST_RETRIES + 1; i++)
     {
-        logWarning << device << endpoint << name.toUtf8().constData() << "aborted";
-        return false;
+        if (!m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, endpoint->id(), clusterId, data))
+        {
+            if (i < NETWORK_REQUEST_RETRIES)
+                continue;
+
+            logWarning << device << endpoint << name.toUtf8().constData() << "aborted";
+            return false;
+        }
+
+        if (!m_replyReceived && !m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
+        {
+            if (i < NETWORK_REQUEST_RETRIES)
+                continue;
+
+            logWarning << device << endpoint << name.toUtf8().constData() << "timed out";
+            return false;
+        }
+
+        if (m_requestStatus)
+        {
+            if (i < NETWORK_REQUEST_RETRIES)
+                continue;
+
+            logWarning << device << endpoint << name.toUtf8().constData() << "failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
+            return false;
+        }
     }
 
-    if (!m_replyReceived && !m_adapter->waitForSignal(this, SIGNAL(replyReceived()), NETWORK_REQUEST_TIMEOUT))
-    {
-        logWarning << device << endpoint << name.toUtf8().constData() << "timed out";
-        return false;
-    }
-
+    logInfo << device << endpoint << name.toUtf8().constData() << "finished successfully";
     m_requestId++;
-
-    if (m_requestStatus)
-    {
-        logWarning << device << endpoint << name.toUtf8().constData() << "failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
-        return false;
-    }
-
-    logWarning << device << endpoint << name.toUtf8().constData() << "finished successfully";
     return true;
 }
 

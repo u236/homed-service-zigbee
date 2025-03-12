@@ -111,10 +111,10 @@ QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
 
         case 3: // systemMode
         {
-            qint8 value = listIndex({"off", "auto", "heat"}, data);
+            qint8 value = listIndex({"off", "auto", "cool", "heat", "fan", "dry"}, data);
 
-            if (value == 2)
-                value = 0x04;
+            if (value > 1)
+                value += value > 3 ? 3 : 1;
 
             m_attributes = {0x001C};
             return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
