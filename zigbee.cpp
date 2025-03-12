@@ -818,20 +818,16 @@ bool ZigBee::bindingRequest(const Endpoint &endpoint, quint16 clusterId, const Q
                 continue;
 
             if (unbind)
-            {
                 endpoint->bindings().removeAt(i);
-                m_devices->storeDatabase(true);
-            }
 
             check = false;
             break;
         }
 
         if (check)
-        {
             endpoint->bindings().append(binding);
-            m_devices->storeDatabase(true);
-        }
+
+        m_devices->storeDatabase(true);
     }
 
     return true;
@@ -961,7 +957,7 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
         bool check = true;
 
         if (!m_groupsUpdated)
-            return true;
+            return false;
 
         for (int i = 0; i < endpoint->groups().count(); i++)
         {
@@ -969,20 +965,16 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
                 continue;
 
             if (remove)
-            {
                 endpoint->groups().removeAt(i);
-                m_devices->storeDatabase(true);
-            }
 
             check = false;
             break;
         }
 
         if (check)
-        {
             endpoint->groups().append(groupId);
-            m_devices->storeDatabase(true);
-        }
+
+        m_devices->storeDatabase(true);
     }
 
     return true;
@@ -1252,7 +1244,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                         }
 
                         m_groupRequestFinished = true;
-                        m_groupsUpdated = response->status == STATUS_SUCCESS ? true : false;
+                        m_groupsUpdated = response->status != STATUS_INSUFFICIENT_SPACE ? true : false;
                         emit groupRequestFinished();
                         break;
                 }
@@ -2080,6 +2072,7 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
             json.insert("manufacturerCode", manufacturerCode);
 
         emit deviceEvent(device.data(), frameControl & FC_CLUSTER_SPECIFIC ? Event::clusterRequest : Event::globalRequest, json);
+        m_requests.remove(transactionId);
     }
 
     if (frameControl & FC_CLUSTER_SPECIFIC)
@@ -2136,7 +2129,10 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             const Device &device = request->device();
 
             if (request->debug())
+            {
                 emit deviceEvent(device.data(), Event::requestFinished, {{"status", status}});
+                return;
+            }
 
             if (status)
             {
