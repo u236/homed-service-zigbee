@@ -132,7 +132,7 @@
       "bindings":       ["battery", "status", "level"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": {"undivided": true}, "action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}}
+      "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}}
     }
   ]
 }
