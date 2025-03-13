@@ -70,6 +70,16 @@ namespace ActionsTUYA
 
     };
 
+    class LedController: public Request, public ActionObject
+    {
+
+    public:
+
+        LedController(void) : ActionObject("ledController", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"color", "colorTemperature"}) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
     class CoverMotor : public Request, public ActionObject
     {
 

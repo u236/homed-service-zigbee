@@ -144,6 +144,28 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 SPI Led Controller",
+      "modelNames":     ["_TZE204_8fffc3kb"],
+      "properties":     ["tuyaDataPoints", "tuyaLedController"],
+      "actions":        ["tuyaDataPoints", "tuyaLedController"],
+      "exposes":        ["light", "stripType", "ledCount", "colorOrder"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    [{"name": "status", "type": "bool", "action": true}],
+                            "3":    [{"name": "level", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true}],
+                            "53":   [{"name": "ledCount", "type": "value", "action": true}],
+                            "101":  [{"name": "stripType", "type": "enum", "action": true}],
+                            "102":  [{"name": "colorOrder", "type": "enum", "action": true}]
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "ledCount": {"type": "number", "min": 100, "max": 7870, "icon": "mdi:ruler"},
+                          "stripType": {"type": "select", "enum": ["TM1803", "TM1809", "TM1829", "TLS3001", "GW6205", "MBI6120", "TM1814B", "SK6812", "UCS8904B", "LPD6803", "LPD8806", "WS2801", "P9813", "SK9822", "MBI6020", "TM1914A", "GS8206", "UCS2904", "SM16904", "SM16825", "SM16714", "UCS5603", "UCS2603", "SM16714D", "UCS7604", "UCS7804"], "icon": "mdi:led-strip-variant"},
+                          "colorOrder": {"type": "select", "enum": ["RGB", "RBG", "GRB", "GBR", "BRG", "BGR", "RGBW", "RBGW", "GRBW", "GBRW", "BRGW", "BGRW", "WRGB", "WRBG", "WGRB", "WGBR", "WBRG", "WBGR"], "icon": "mdi:cog"},
+                          "light": ["level", "color", "colorTemperature", "colorMode"]
+                        }
+    },
+    {
       "description":    "TUYA TS0601 1-Channel Dimmer",
       "modelNames":     ["_TZE200_1agwnems", "_TZE200_3p5ydos3", "_TZE200_4mh6tyyo", "_TZE200_579lguh2", "_TZE200_9i9dt8is", "_TZE200_dfxkcots", "_TZE200_w4cryh2i", "_TZE200_ip2akl4w", "_TZE200_la2c2uo9", "_TZE200_p0gzbqct", "_TZE200_vucankjx"],
       "properties":     ["tuyaDataPoints"],

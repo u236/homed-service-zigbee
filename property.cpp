@@ -73,6 +73,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::HolidayThermostatProgram>    ("tuyaHolidayThermostatProgramProperty");
     qRegisterMetaType <PropertiesTUYA::DailyThermostatProgram>      ("tuyaDailyThermostatProgramProperty");
     qRegisterMetaType <PropertiesTUYA::MoesThermostatProgram>       ("tuyaMoesThermostatProgramProperty");
+    qRegisterMetaType <PropertiesTUYA::LedController>               ("tuyaLedControllerProperty");
     qRegisterMetaType <PropertiesTUYA::CoverMotor>                  ("tuyaCoverMotorProperty");
     qRegisterMetaType <PropertiesTUYA::CoverSwitch>                 ("tuyaCoverSwitchProperty");
     qRegisterMetaType <PropertiesTUYA::ChildLock>                   ("tuyaChildLockProperty");

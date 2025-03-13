@@ -1,5 +1,6 @@
 #include <QtEndian>
 #include <QtMath>
+#include "color.h"
 #include "tuya.h"
 
 void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
@@ -251,6 +252,37 @@ void PropertiesTUYA::MoesThermostatProgram::update(quint8 dataPoint, const QVari
         {
             double value = static_cast <double> (program.at(i));
             map.insert(QString("%1P%2%3").arg(typeList.value(i / 12)).arg(i / 3 % 4 + 1).arg(nameList.value(i % 3)), (i + 1) % 3 ? value : value / 2);
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesTUYA::LedController::update(quint8 dataPoint, const QVariant &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    if (dataPoint == 0x3D)
+    {
+        QList <QByteArray> list = {QByteArray::fromHex("0001001400"), QByteArray::fromHex("0000001400")};
+        QByteArray payload = data.toByteArray();
+
+        switch (list.indexOf(payload.mid(0, 5)))
+        {
+            case 0:
+            {
+                Color color = Color::fromHS(qFromBigEndian(*reinterpret_cast <const quint16*> (payload.constData() + 5)) / 360.0, qFromBigEndian(*reinterpret_cast <const quint16*> (payload.constData() + 7)) / 1000.0);
+                map.insert("color", QList <QVariant> {static_cast <quint8> (color.r() * 0xFF), static_cast <quint8> (color.g() * 0xFF), static_cast <quint8> (color.b() * 0xFF)});
+                map.insert("colorMode", true);
+                break;
+            }
+
+            case 1:
+            {
+                map.insert("colorTemperature", round((1000 - qFromBigEndian(*reinterpret_cast <const quint16*> (payload.constData() + 7))) * 347 / 1000.0 + 153));
+                map.insert("colorMode", false);
+                break;
+            }
         }
     }
 

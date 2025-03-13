@@ -1,4 +1,5 @@
 #include <QtEndian>
+#include "color.h"
 #include "tuya.h"
 
 QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 commandId, quint8 dataPoint, quint8 dataType, void *data, quint8 length)
@@ -206,6 +207,43 @@ QVariant ActionsTUYA::MoesThermostatProgram::request(const QString &name, const 
     }
 
     return makeRequest(m_transactionId++, 0x00, 0x65, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
+}
+
+QVariant ActionsTUYA::LedController::request(const QString &name, const QVariant &data)
+{
+    const Property &property = endpointProperty("tuyaDataPoints");
+    quint16 level = property->value().toMap().value("level", 255).toDouble() * 1000 / 255;
+
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // color
+        {
+            QByteArray payload = QByteArray::fromHex("0001001400");
+            QList <QVariant> list = data.toList();
+            Color color(list.value(0).toDouble() / 0xFF, list.value(1).toDouble() / 0xFF, list.value(2).toDouble() / 0xFF);
+            double h, s;
+            quint16 value[3];
+
+            color.toHS(&h, &s);
+
+            value[0] = qToBigEndian <quint16> (h * 360);
+            value[1] = qToBigEndian <quint16> (s * 1000);
+            value[2] = qToBigEndian <quint16> (level);
+
+            payload.append(reinterpret_cast <char*> (&value), sizeof(value));
+            return makeRequest(m_transactionId++, 0x00, 0x3D, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
+        }
+
+        case 1: // colorTemperature
+        {
+            QByteArray payload = QByteArray::fromHex("0000001400");
+            quint16 value[2] = {qToBigEndian <quint16> (level), qToBigEndian <quint16> (1000 - (data.toDouble() - 153) * 1000 / 347)};
+            payload.append(reinterpret_cast <char*> (&value), sizeof(value));
+            return makeRequest(m_transactionId++, 0x00, 0x3D, TUYA_TYPE_RAW, payload.data(), static_cast <quint8> (payload.length()));
+        }
+    }
+
+    return QByteArray();
 }
 
 QVariant ActionsTUYA::CoverMotor::request(const QString &name, const QVariant &data)

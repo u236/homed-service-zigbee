@@ -72,6 +72,19 @@ namespace PropertiesTUYA
 
     };
 
+    class LedController : public Data
+    {
+
+    public:
+
+        LedController(void) : Data("ledController") {}
+
+    private:
+
+        void update(quint8 dataPoint, const QVariant &data) override;
+
+    };
+
     class CoverMotor : public Data
     {
 
