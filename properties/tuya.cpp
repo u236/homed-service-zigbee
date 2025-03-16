@@ -160,16 +160,6 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
                 map.insert(name, data.toInt());
                 break;
             }
-
-            default:
-            {
-                QVariant value = item.value("value");
-
-                if (value.isValid())
-                    map.insert(name, value);
-
-                break;
-            }
         }
     }
 

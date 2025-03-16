@@ -593,7 +593,7 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "operationMode", "type": "enum", "action": true}, {"name": "systemMode", "value": "heat"}],
+                            "1":    [{"name": "operationMode", "type": "enum", "action": true}],
                             "2":    [{"name": "targetTemperature", "type": "value", "action": true}],
                             "3":    [{"name": "temperature", "type": "value", "divider": 10}],
                             "4":    [{"name": "boost", "type": "bool", "action": true}],

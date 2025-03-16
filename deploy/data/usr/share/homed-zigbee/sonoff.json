@@ -54,6 +54,13 @@
       "endpointId":     [1, 2, 3, 4, 5]
     },
     {
+      "description":    "Sonoff 10A Smart Plug CK-BL702-MSW-01(7010)",
+      "modelNames":     ["CK-BL702-MSW-01(7010)"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"]
+    },
+    {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02 or SNZB-02P",
       "modelNames":     ["SNZB-02P", "TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],

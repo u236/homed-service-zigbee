@@ -615,7 +615,7 @@ bool ZigBee::interviewQuirks(const Device &device)
     {
         quint32 value = qToLittleEndian <quint32> (172800);
 
-        if (device->firmware().split('.').first().toInt() >= 24 && !dataRequest(endpoint, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "polling configuration request"))
+        if (device->firmware().split('.').value(0).toInt() >= 24 && !dataRequest(endpoint, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "polling configuration request"))
             return false;
     }
 
