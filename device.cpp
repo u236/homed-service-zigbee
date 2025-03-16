@@ -339,7 +339,9 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         "131c854783bc45c9b2ac58088d09571c",
         "585fdfb8c2304119a2432e9845cf2623",
         "52debf035a1b4a66af56415474646c02",
+        "700ae5aab3414ec09c1872efe7b8755a",
         "75a4bfe8ef9c4350830a25d13e3ab068",
+        "895a2d80097f4ae2b2d40500d5e03dcc",
         "b2e57a0f606546cd879a1a54790827d6",
         "b7e305eb329f497384e966fe3fb0ac69",
         "c670e231d1374dbc9e3c6a9fffbd0ae6",
@@ -382,6 +384,16 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
             modelName = "GL-C-007-2ID";
         else if (map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0D, 0xE15E}, {0x0F, 0x0220}} || map == QMap <quint8, quint16> {{0x0B, 0x0210}, {0x0C, 0x0102}, {0x0D, 0xE15E}, {0x0F, 0x0100}})
             modelName = "GL-C-008-2ID";
+
+        return;
+    }
+
+    if (manufacturerName == "IKEA of Sweden" && modelName != "RODRET Dimmer" && device->batteryPowered())
+    {
+        QList <QString> list = device->firmware().split('.');
+
+        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 4))
+            device->options().insert("battery", QMap <QString, QVariant> {{"undivided", true}});
 
         return;
     }

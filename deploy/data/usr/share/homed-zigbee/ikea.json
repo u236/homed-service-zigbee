@@ -62,7 +62,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy"],
-      "options":        {"battery": {"undivided": true}, "occupancyResetTimeout": true}
+      "options":        {"occupancyResetTimeout": true}
     },
     {
       "description":    "VALLHORN Motion Sensor E2134",
@@ -96,7 +96,7 @@
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": {"undivided": true}, "action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}, "ikeaRemote": true}
+      "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}, "ikeaRemote": true}
     },
     {
       "description":    "TRADFRI Wireless Dimmer E1810",
@@ -123,7 +123,7 @@
       "bindings":       ["battery", "scene", "status", "level"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
-      "options":        {"battery": {"undivided": true}, "action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}}
+      "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel", "leftClick", "leftHold", "leftRelease", "rightClick", "rightHold", "rightRelease"]}}
     },
     {
       "description":    "RODRET Wireless Dimmer E2201",

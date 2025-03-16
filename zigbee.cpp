@@ -623,9 +623,8 @@ bool ZigBee::interviewQuirks(const Device &device)
     {
         QList <QString> list = device->firmware().split('.');
         quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
-        bool check = list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 3) || (list.value(0).toInt() == 2 && list.value(1).toInt() == 3 && list.value(2).toInt() < 75);
 
-        if (check ? !bindingRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF) : !bindingRequest(endpoint, CLUSTER_ON_OFF))
+        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 4) ? !bindingRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF) : !bindingRequest(endpoint, CLUSTER_ON_OFF))
             return false;
     }
 
