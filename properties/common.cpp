@@ -7,7 +7,7 @@ using namespace Properties;
 
 void Properties::BatteryVoltage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0020)
+    if (attributeId != 0x0020 || data.at(0) == 0xFF)
         return;
 
     m_value = percentage(2850, 3000, static_cast <quint8> (data.at(0)) * 100);
@@ -15,7 +15,7 @@ void Properties::BatteryVoltage::parseAttribte(quint16, quint16 attributeId, con
 
 void Properties::BatteryPercentage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0021)
+    if (attributeId != 0x0021 || data.at(0) == 0xFF)
         return;
 
     m_value = static_cast <quint8> (data.at(0)) / (option().toMap().value("undivided").toBool() ? 1.0 : 2.0);
