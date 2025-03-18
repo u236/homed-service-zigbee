@@ -2042,7 +2042,7 @@
     },
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor",
-      "modelNames":     ["_TZ3000_6ygjfyll", "_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3040_6ygjfyll", "_TZ3040_fwxuzcf4", "_TZ3040_msl6wxk9"],
+      "modelNames":     ["_TZ3000_6ygjfyll", "_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3000_o4mkahk", "_TZ3040_6ygjfyll", "_TZ3040_fwxuzcf4", "_TZ3040_msl6wxk9"],
       "properties":     ["batteryPercentage", "iasOccupancy", "customAttributes"],
       "actions":        ["customAttributes"],
       "bindings":       ["battery"],
