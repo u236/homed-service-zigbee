@@ -42,71 +42,66 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
 
     for (auto it = map.begin(); it != map.end(); it++)
     {
-        QList <QVariant> list = it.value().toList();
+        QMap <QString, QVariant> item = it.value().toMap();
 
-        for (int i = 0; i < list.count(); i++)
+        if (item.value("name").toString() != name || !item.value("action").toBool())
+            continue;
+
+        switch (typeList.indexOf(item.value("type").toString()))
         {
-            QMap <QString, QVariant> item = list.at(i).toMap();
-
-            if (item.value("name").toString() != name || !item.value("action").toBool())
-                continue;
-
-            switch (typeList.indexOf(item.value("type").toString()))
+            case 0: // bool
             {
-                case 0: // bool
+                QList <QString> actionList = option(name).toMap().value("enum").toStringList(), nameList = name.split('_');
+                qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
+                bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
+
+                if (value < 0)
+                    value = nameList.value(0) == "status" ? (endpointProperty()->value().toMap().value(name).toString() != "on" ? 0x01 : 0x00) : (check ? 0x01 : 0x00);
+
+                return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
+            }
+
+            case 1: // value
+            {
+                bool hasMin, hasMax;
+                double number = data.toDouble(), min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax);
+                qint32 value;
+
+                if (hasMin && number < min)
+                    number = min;
+
+                if (hasMax && number > max)
+                    number = max;
+
+                value = qToBigEndian <qint32> ((number - item.value("offset").toDouble()) * item.value("divider", 1).toDouble() * item.value("actionDivider", 1).toDouble());
+                return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
+            }
+
+            case 2: // enum
+            {
+                qint8 value;
+
+                if (options.contains("min") && options.contains("max"))
                 {
-                    QList <QString> actionList = option(name).toMap().value("enum").toStringList(), nameList = name.split('_');
-                    qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
-                    bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
+                    qint8 min = static_cast <qint8> (options.value("min").toInt()), max = static_cast <qint8> (options.value("max").toInt());
+
+                    value = static_cast <qint8> (data.toInt());
+
+                    if (value < min)
+                        value = min;
+
+                    if (value > max)
+                        value = max;
+                }
+                else
+                {
+                    value = static_cast <qint8> (options.value("enum").toStringList().indexOf(data.toString()));
 
                     if (value < 0)
-                        value = nameList.value(0) == "status" ? (endpointProperty()->value().toMap().value(name).toString() != "on" ? 0x01 : 0x00) : (check ? 0x01 : 0x00);
-
-                    return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
+                        return QByteArray();
                 }
 
-                case 1: // value
-                {
-                    bool hasMin, hasMax;
-                    double number = data.toDouble(), min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax);
-                    qint32 value;
-
-                    if (hasMin && number < min)
-                        number = min;
-
-                    if (hasMax && number > max)
-                        number = max;
-
-                    value = qToBigEndian <qint32> ((number - item.value("offset").toDouble()) * item.value("divider", 1).toDouble() * item.value("actionDivider", 1).toDouble());
-                    return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_VALUE, &value);
-                }
-
-                case 2: // enum
-                {
-                    qint8 value;
-
-                    if (options.contains("min") && options.contains("max"))
-                    {
-                        qint8 min = static_cast <qint8> (options.value("min").toInt()), max = static_cast <qint8> (options.value("max").toInt());
-
-                        value = static_cast <qint8> (data.toInt());
-
-                        if (value < min)
-                            value = min;
-
-                        if (value > max)
-                            value = max;
-                    }
-                    else
-                    {
-                        value = static_cast <qint8> (options.value("enum").toStringList().indexOf(data.toString()));
-
-                        if (value < 0)
-                            return QByteArray();
-                    }
-
-                    return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_ENUM, &value);
-                }
+                return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_ENUM, &value);
             }
         }
     }

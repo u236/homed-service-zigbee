@@ -67,99 +67,93 @@ void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteAr
 
 void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 {
-    QMap <QString, QVariant> map = m_value.toMap();
-    QList <QVariant> list = option().toMap().value(QString::number(dataPoint)).toList();
+    QMap <QString, QVariant> map = m_value.toMap(), item = option().toMap().value(QString::number(dataPoint)).toMap(), options;
     QList <QString> typeList = {"raw", "bool", "value", "enum"};
+    QString name = item.value("name").toString();
 
-    for (int i = 0; i < list.count(); i++)
+    if (name.isEmpty())
+        return;
+
+    options = option(name).toMap();
+
+    switch (typeList.indexOf(item.value("type").toString()))
     {
-        QMap <QString, QVariant> item = list.at(i).toMap(), options;
-        QString name = item.value("name").toString();
-
-        if(name.isEmpty())
-            continue;
-
-        options = option(name).toMap();
-
-        switch (typeList.indexOf(item.value("type").toString()))
+        case 0: // raw
         {
-            case 0: // raw
-            {
-                QList <QString> modelList = {"_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo", "_TZE204_wbhaespm"}, nameList = name.split('_');
-                QByteArray payload = data.toByteArray();
-                quint16 value = 0;
+            QList <QString> modelList = {"_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo", "_TZE204_wbhaespm"}, nameList = name.split('_');
+            QByteArray payload = data.toByteArray();
+            quint16 value = 0;
 
-                if (nameList.value(0) != "electricity")
-                    break;
-
-                if (!modelList.contains(manufacturerName()))
-                {
-                    quint8 id = static_cast <quint8> (nameList.value(1).toInt());
-
-                    memcpy(&value, payload.constData(), sizeof(value));
-                    map.insert(id ? QString("voltage_%1").arg(id) : "voltage", qFromBigEndian(value) / 10.0);
-
-                    memcpy(&value, payload.constData() + 3, sizeof(value));
-                    map.insert(id ? QString("current_%1").arg(id) : "current", qFromBigEndian(value) / 1000.0);
-
-                    memcpy(&value, payload.constData() + 6, sizeof(value));
-                    map.insert(id ? QString("power_%1").arg(id) : "power", qFromBigEndian(value));
-                }
-                else
-                {
-                    memcpy(&value, payload.constData() + 11, sizeof(value));
-                    map.insert("current", qFromBigEndian(value) / 1000.0);
-
-                    memcpy(&value, payload.constData() + 13, sizeof(value));
-                    map.insert("voltage", qFromBigEndian(value) / 10.0);
-                }
-
+            if (nameList.value(0) != "electricity")
                 break;
+
+            if (!modelList.contains(manufacturerName()))
+            {
+                quint8 id = static_cast <quint8> (nameList.value(1).toInt());
+
+                memcpy(&value, payload.constData(), sizeof(value));
+                map.insert(id ? QString("voltage_%1").arg(id) : "voltage", qFromBigEndian(value) / 10.0);
+
+                memcpy(&value, payload.constData() + 3, sizeof(value));
+                map.insert(id ? QString("current_%1").arg(id) : "current", qFromBigEndian(value) / 1000.0);
+
+                memcpy(&value, payload.constData() + 6, sizeof(value));
+                map.insert(id ? QString("power_%1").arg(id) : "power", qFromBigEndian(value));
+            }
+            else
+            {
+                memcpy(&value, payload.constData() + 11, sizeof(value));
+                map.insert("current", qFromBigEndian(value) / 1000.0);
+
+                memcpy(&value, payload.constData() + 13, sizeof(value));
+                map.insert("voltage", qFromBigEndian(value) / 10.0);
             }
 
-            case 1: // bool
-            {
-                bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
-                QString value = option(name).toMap().value("enum").toStringList().value(check ? 1 : 0);
+            break;
+        }
 
-                if (value.isEmpty())
-                    map.insert(name, check);
-                else
+        case 1: // bool
+        {
+            bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
+            QString value = option(name).toMap().value("enum").toStringList().value(check ? 1 : 0);
+
+            if (value.isEmpty())
+                map.insert(name, check);
+            else
+                map.insert(name, value);
+
+            break;
+        }
+
+        case 2: // value
+        {
+            bool hasMin, hasMax;
+            double min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
+
+            if (item.value("round").toBool())
+                value = round(value);
+
+            if ((hasMin && value < min) || (hasMax && value > max))
+                break;
+
+            map.insert(name, value);
+            break;
+        }
+
+        case 3: // enum
+        {
+            if (options.contains("enum"))
+            {
+                QString value = options.value("enum").toStringList().value(data.toInt());
+
+                if (!value.isEmpty())
                     map.insert(name, value);
 
                 break;
             }
 
-            case 2: // value
-            {
-                bool hasMin, hasMax;
-                double min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
-
-                if (item.value("round").toBool())
-                    value = round(value);
-
-                if ((hasMin && value < min) || (hasMax && value > max))
-                    break;
-
-                map.insert(name, value);
-                break;
-            }
-
-            case 3: // enum
-            {
-                if (options.contains("enum"))
-                {
-                    QString value = options.value("enum").toStringList().value(data.toInt());
-
-                    if (!value.isEmpty())
-                        map.insert(name, value);
-
-                    break;
-                }
-
-                map.insert(name, data.toInt());
-                break;
-            }
+            map.insert(name, data.toInt());
+            break;
         }
     }
 

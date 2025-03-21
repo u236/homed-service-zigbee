@@ -10,11 +10,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "17":   [{"name": "energy", "type": "value", "divider": 100}],
-                            "18":   [{"name": "current", "type": "value", "divider": 1000}],
-                            "19":   [{"name": "power", "type": "value", "divider": 10}],
-                            "20":   [{"name": "voltage", "type": "value", "divider": 10}]
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "17":   {"name": "energy", "type": "value", "divider": 100},
+                            "18":   {"name": "current", "type": "value", "divider": 1000},
+                            "19":   {"name": "power", "type": "value", "divider": 10},
+                            "20":   {"name": "voltage", "type": "value", "divider": 10}
                           },
                           "status": {"enum": ["off", "on"]}
                         }
@@ -28,13 +28,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "electricity", "type": "raw"}],
-                            "16":   [{"name": "status", "type": "bool", "action": true}],
-                            "102":  [{"name": "producedEnergy", "type": "value", "divider": 100}],
-                            "103":  [{"name": "power", "type": "value", "divider": 100}],
-                            "105":  [{"name": "frequency", "type": "value", "divider": 100}],
-                            "111":  [{"name": "powerFactor", "type": "value", "divider": 10}]
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "6":    {"name": "electricity", "type": "raw"},
+                            "16":   {"name": "status", "type": "bool", "action": true},
+                            "102":  {"name": "producedEnergy", "type": "value", "divider": 100},
+                            "103":  {"name": "power", "type": "value", "divider": 100},
+                            "105":  {"name": "frequency", "type": "value", "divider": 100},
+                            "111":  {"name": "powerFactor", "type": "value", "divider": 10}
                           },
                           "status": {"enum": ["off", "on"]}
                         }
@@ -48,10 +48,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "18":   [{"name": "current", "type": "value", "divider": 1000}],
-                            "19":   [{"name": "power", "type": "value", "divider": 10}],
-                            "20":   [{"name": "voltage", "type": "value", "divider": 10}],
-                            "101":  [{"name": "energy", "type": "value", "divider": 1000}]
+                            "18":   {"name": "current", "type": "value", "divider": 1000},
+                            "19":   {"name": "power", "type": "value", "divider": 10},
+                            "20":   {"name": "voltage", "type": "value", "divider": 10},
+                            "101":  {"name": "energy", "type": "value", "divider": 1000}
                           }
                         }
     },
@@ -64,9 +64,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "electricity", "type": "raw"}],
-                            "16":   [{"name": "status", "type": "bool", "action": true}]
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "6":    {"name": "electricity", "type": "raw"},
+                            "16":   {"name": "status", "type": "bool", "action": true}
                           },
                           "status": {"enum": ["off", "on"]}
                         }
@@ -80,9 +80,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "2":    [{"name": "producedEnergy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "electricity", "type": "raw"}]
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "2":    {"name": "producedEnergy", "type": "value", "divider": 100},
+                            "6":    {"name": "electricity", "type": "raw"}
                           }
                         }
     },
@@ -95,16 +95,16 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "101":  [{"name": "power_1", "type": "value", "divider": 10}],
-                            "105":  [{"name": "power_2", "type": "value", "divider": 10}],
-                            "106":  [{"name": "energy_1", "type": "value", "divider": 100}],
-                            "107":  [{"name": "producedEnergy_1", "type": "value", "divider": 100}],
-                            "108":  [{"name": "energy_2", "type": "value", "divider": 100}],
-                            "109":  [{"name": "producedEnergy_2", "type": "value", "divider": 100}],
-                            "111":  [{"name": "frequency", "type": "value", "divider": 100}],
-                            "112":  [{"name": "voltage", "type": "value", "divider": 10}],
-                            "113":  [{"name": "current_1", "type": "value", "divider": 1000}],
-                            "114":  [{"name": "current_2", "type": "value", "divider": 1000}]
+                            "101":  {"name": "power_1", "type": "value", "divider": 10},
+                            "105":  {"name": "power_2", "type": "value", "divider": 10},
+                            "106":  {"name": "energy_1", "type": "value", "divider": 100},
+                            "107":  {"name": "producedEnergy_1", "type": "value", "divider": 100},
+                            "108":  {"name": "energy_2", "type": "value", "divider": 100},
+                            "109":  {"name": "producedEnergy_2", "type": "value", "divider": 100},
+                            "111":  {"name": "frequency", "type": "value", "divider": 100},
+                            "112":  {"name": "voltage", "type": "value", "divider": 10},
+                            "113":  {"name": "current_1", "type": "value", "divider": 1000},
+                            "114":  {"name": "current_2", "type": "value", "divider": 1000}
                           }
                         }
     },
@@ -117,11 +117,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "2":    [{"name": "producedEnergy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "electricity_1", "type": "raw"}],
-                            "7":    [{"name": "electricity_2", "type": "raw"}],
-                            "8":    [{"name": "electricity_3", "type": "raw"}]
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "2":    {"name": "producedEnergy", "type": "value", "divider": 100},
+                            "6":    {"name": "electricity_1", "type": "raw"},
+                            "7":    {"name": "electricity_2", "type": "raw"},
+                            "8":    {"name": "electricity_3", "type": "raw"}
                           }
                         }
     },
@@ -134,12 +134,12 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "energy", "type": "value", "divider": 100}],
-                            "6":    [{"name": "electricity_1", "type": "raw"}],
-                            "7":    [{"name": "electricity_2", "type": "raw"}],
-                            "8":    [{"name": "electricity_3", "type": "raw"}],
-                            "23":   [{"name": "producedEnergy", "type": "value", "divider": 100}],
-                            "50":   [{"name": "powerFactor", "type": "value"}]
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "6":    {"name": "electricity_1", "type": "raw"},
+                            "7":    {"name": "electricity_2", "type": "raw"},
+                            "8":    {"name": "electricity_3", "type": "raw"},
+                            "23":   {"name": "producedEnergy", "type": "value", "divider": 100},
+                            "50":   {"name": "powerFactor", "type": "value"}
                           }
                         }
     },
@@ -152,11 +152,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "3":    [{"name": "level", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true}],
-                            "53":   [{"name": "ledCount", "type": "value", "action": true}],
-                            "101":  [{"name": "stripType", "type": "enum", "action": true}],
-                            "102":  [{"name": "colorOrder", "type": "enum", "action": true}]
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "3":    {"name": "level", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true},
+                            "53":   {"name": "ledCount", "type": "value", "action": true},
+                            "101":  {"name": "stripType", "type": "enum", "action": true},
+                            "102":  {"name": "colorOrder", "type": "enum", "action": true}
                           },
                           "status": {"enum": ["off", "on"]},
                           "ledCount": {"type": "number", "min": 100, "max": 7870, "icon": "mdi:ruler"},
@@ -174,10 +174,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "2":    [{"name": "level", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true}],
-                            "4":    [{"name": "lightType", "type": "enum", "action": true}],
-                            "14":   [{"name": "powerOnStatus", "type": "enum", "action": true}]
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "2":    {"name": "level", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true},
+                            "4":    {"name": "lightType", "type": "enum", "action": true},
+                            "14":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
                           "status": {"enum": ["off", "on"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
@@ -193,13 +193,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
-                            "2":    [{"name": "level_1", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true}],
-                            "4":    [{"name": "lightType_1", "type": "enum", "action": true}],
-                            "7":    [{"name": "status_2", "type": "bool", "action": true}],
-                            "8":    [{"name": "level_2", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true}],
-                            "10":   [{"name": "lightType_2", "type": "enum", "action": true}],
-                            "14":   [{"name": "powerOnStatus", "type": "enum", "action": true}]
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "level_1", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true},
+                            "4":    {"name": "lightType_1", "type": "enum", "action": true},
+                            "7":    {"name": "status_2", "type": "bool", "action": true},
+                            "8":    {"name": "level_2", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true},
+                            "10":   {"name": "lightType_2", "type": "enum", "action": true},
+                            "14":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
                           "status": {"enum": ["off", "on"]},
                           "lightType": {"type": "select", "enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
@@ -216,14 +216,14 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
-                            "2":    [{"name": "status_2", "type": "bool", "action": true}],
-                            "3":    [{"name": "status_3", "type": "bool", "action": true}],
-                            "4":    [{"name": "status_4", "type": "bool", "action": true}],
-                            "5":    [{"name": "status_5", "type": "bool", "action": true}],
-                            "6":    [{"name": "status_6", "type": "bool", "action": true}],
-                            "101":  [{"name": "status_7", "type": "bool", "action": true}],
-                            "102":  [{"name": "status_8", "type": "bool", "action": true}]
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true},
+                            "3":    {"name": "status_3", "type": "bool", "action": true},
+                            "4":    {"name": "status_4", "type": "bool", "action": true},
+                            "5":    {"name": "status_5", "type": "bool", "action": true},
+                            "6":    {"name": "status_6", "type": "bool", "action": true},
+                            "101":  {"name": "status_7", "type": "bool", "action": true},
+                            "102":  {"name": "status_8", "type": "bool", "action": true}
                           },
                           "status": {"enum": ["off", "on"]}
                         }
@@ -237,18 +237,18 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
-                            "2":    [{"name": "status_2", "type": "bool", "action": true}],
-                            "3":    [{"name": "status_3", "type": "bool", "action": true}],
-                            "4":    [{"name": "status_4", "type": "bool", "action": true}],
-                            "5":    [{"name": "status_5", "type": "bool", "action": true}],
-                            "6":    [{"name": "status_6", "type": "bool", "action": true}],
-                            "101":  [{"name": "status_7", "type": "bool", "action": true}],
-                            "102":  [{"name": "status_8", "type": "bool", "action": true}],
-                            "103":  [{"name": "status_9", "type": "bool", "action": true}],
-                            "104":  [{"name": "status_10", "type": "bool", "action": true}],
-                            "105":  [{"name": "status_11", "type": "bool", "action": true}],
-                            "106":  [{"name": "status_12", "type": "bool", "action": true}]
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true},
+                            "3":    {"name": "status_3", "type": "bool", "action": true},
+                            "4":    {"name": "status_4", "type": "bool", "action": true},
+                            "5":    {"name": "status_5", "type": "bool", "action": true},
+                            "6":    {"name": "status_6", "type": "bool", "action": true},
+                            "101":  {"name": "status_7", "type": "bool", "action": true},
+                            "102":  {"name": "status_8", "type": "bool", "action": true},
+                            "103":  {"name": "status_9", "type": "bool", "action": true},
+                            "104":  {"name": "status_10", "type": "bool", "action": true},
+                            "105":  {"name": "status_11", "type": "bool", "action": true},
+                            "106":  {"name": "status_12", "type": "bool", "action": true}
                           },
                           "status": {"enum": ["off", "on"]}
                         }
@@ -259,7 +259,7 @@
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch"],
-      "options":        {"tuyaDataPoints": {"1": [{"name": "status", "type": "bool", "action": true}]}, "status": {"enum": ["off", "on"]}}
+      "options":        {"tuyaDataPoints": {"1": {"name": "status", "type": "bool", "action": true}}, "status": {"enum": ["off", "on"]}}
     },
     {
       "description":    "TUYA TS0601 2-Channel Switch",
@@ -270,8 +270,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
-                            "2":    [{"name": "status_2", "type": "bool", "action": true}]
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true}
                           },
                           "status": {"enum": ["off", "on"]}
                         }
@@ -285,10 +285,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
-                            "2":    [{"name": "status_2", "type": "bool", "action": true}],
-                            "14":   [{"name": "powerOnStatus", "type": "enum", "action": true}],
-                            "16":   [{"name": "backlight", "type": "bool", "action": true}]
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true},
+                            "14":   {"name": "powerOnStatus", "type": "enum", "action": true},
+                            "16":   {"name": "backlight", "type": "bool", "action": true}
                           },
                           "status": {"enum": ["off", "on"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]}
@@ -303,9 +303,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status_1", "type": "bool", "action": true}],
-                            "2":    [{"name": "status_2", "type": "bool", "action": true}],
-                            "3":    [{"name": "status_3", "type": "bool", "action": true}]
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true},
+                            "3":    {"name": "status_3", "type": "bool", "action": true}
                           },
                           "status": {"enum": ["off", "on"]}
                         }
@@ -319,10 +319,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "2":    [{"name": "timer", "type": "value", "divider": 60, "action": true}],
-                            "3":    [{"name": "fanMode", "type": "enum", "action": true}],
-                            "11":   [{"name": "powerOnStatus", "type": "enum", "action": true}]
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "2":    {"name": "timer", "type": "value", "divider": 60, "action": true},
+                            "3":    {"name": "fanMode", "type": "enum", "action": true},
+                            "11":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
                           "status": {"enum": ["off", "on"]},
                           "timer": {"min": 0, "max": 720},
@@ -339,22 +339,22 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "2":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "7":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "44":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "102":  [{"name": "temperatureLow", "type": "value", "action": true}],
-                            "103":  [{"name": "temperatureHigh", "type": "value", "action": true}],
-                            "105":  [{"name": "boostTimeout", "type": "value", "action": true}],
-                            "106":  [{"name": "systemMode", "type": "enum", "action": true}],
-                            "107":  [{"name": "comfortTemperature", "type": "value", "action": true}],
-                            "108":  [{"name": "ecoTemperature", "type": "value", "action": true}],
-                            "109":  [{"name": "running", "type": "bool"}, {"name": "position", "type": "value"}],
-                            "110":  [{"name": "batteryLow", "type": "bool"}],
-                            "111":  [{"name": "weekMode", "type": "enum", "action": true}],
-                            "114":  [{"name": "awayTemperature", "type": "value", "action": true}],
-                            "117":  [{"name": "awayDays", "type": "value", "action": true}]
+                            "2":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "3":    {"name": "temperature", "type": "value", "divider": 10},
+                            "4":    {"name": "operationMode", "type": "enum", "action": true},
+                            "7":    {"name": "childLock", "type": "bool", "action": true},
+                            "44":   {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "102":  {"name": "temperatureLow", "type": "value", "action": true},
+                            "103":  {"name": "temperatureHigh", "type": "value", "action": true},
+                            "105":  {"name": "boostTimeout", "type": "value", "action": true},
+                            "106":  {"name": "systemMode", "type": "enum", "action": true},
+                            "107":  {"name": "comfortTemperature", "type": "value", "action": true},
+                            "108":  {"name": "ecoTemperature", "type": "value", "action": true},
+                            "109":  {"name": "position", "type": "value"},
+                            "110":  {"name": "batteryLow", "type": "bool"},
+                            "111":  {"name": "weekMode", "type": "enum", "action": true},
+                            "114":  {"name": "awayTemperature", "type": "value", "action": true},
+                            "117":  {"name": "awayDays", "type": "value", "action": true}
                           },
                           "targetTemperature": {"min": 5, "max": 35},
                           "operationMode": {"enum": ["away", "program", "manual", "comfort", "eco", "boost", "complex"]},
@@ -367,8 +367,7 @@
                           "ecoTemperature": {"min": 5, "max": 35},
                           "position": {"type": "sensor", "icon": "mdi:valve"},
                           "awayTemperature": {"min": 5, "max": 35},
-                          "awayDays": {"min": 0, "max": 100},
-                          "runningStatus": true
+                          "awayDays": {"min": 0, "max": 100}
                         }
     },
     {
@@ -380,14 +379,14 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "3":    [{"name": "running", "type": "bool", "invert": true}],
-                            "4":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "5":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "7":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "35":   [{"name": "batteryLow", "type": "bool"}],
-                            "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
-                            "47":   [{"name": "temperatureOffset", "type": "value", "action": true}]
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "3":    {"name": "running", "type": "bool", "invert": true},
+                            "4":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "5":    {"name": "temperature", "type": "value", "divider": 10},
+                            "7":    {"name": "childLock", "type": "bool", "action": true},
+                            "35":   {"name": "batteryLow", "type": "bool"},
+                            "36":   {"name": "frostProtection", "type": "bool", "action": true},
+                            "47":   {"name": "temperatureOffset", "type": "value", "action": true}
                           },
                           "operationMode": {"enum": ["program", "manual", "standby"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
@@ -407,20 +406,20 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "4":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "5":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "6":    [{"name": "battery", "type": "value"}],
-                            "7":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "9":    [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
-                            "10":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "21":   [{"name": "awayTemperature", "type": "value", "divider": 10, "action": true}],
-                            "24":   [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
-                            "36":   [{"name": "frostProtection", "type": "bool", "action": true}],
-                            "37":   [{"name": "boost", "type": "bool", "action": true}],
-                            "38":   [{"name": "boostTimeout", "type": "value", "action": true}],
-                            "47":   [{"name": "temperatureOffset", "type": "value", "action": true}],
-                            "49":   [{"name": "running", "type": "bool"}]
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "4":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "5":    {"name": "temperature", "type": "value", "divider": 10},
+                            "6":    {"name": "battery", "type": "value"},
+                            "7":    {"name": "childLock", "type": "bool", "action": true},
+                            "9":    {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "10":   {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
+                            "21":   {"name": "awayTemperature", "type": "value", "divider": 10, "action": true},
+                            "24":   {"name": "comfortTemperature", "type": "value", "divider": 10, "action": true},
+                            "36":   {"name": "frostProtection", "type": "bool", "action": true},
+                            "37":   {"name": "boost", "type": "bool", "action": true},
+                            "38":   {"name": "boostTimeout", "type": "value", "action": true},
+                            "47":   {"name": "temperatureOffset", "type": "value", "action": true},
+                            "49":   {"name": "running", "type": "bool"}
                           },
                           "operationMode": {"enum": ["program", "away", "manual", "comfort"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
@@ -444,23 +443,23 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "3":    [{"name": "running", "type": "bool"}],
-                            "4":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "5":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "6":    [{"name": "battery", "type": "value"}],
-                            "7":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "9":    [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
-                            "10":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "47":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "110":  [{"name": "thrustMode", "type": "enum", "action": true}],
-                            "111":  [{"name": "displayBrightness", "type": "enum", "action": true}],
-                            "113":  [{"name": "displayOrientation", "type": "enum", "action": true}],
-                            "114":  [{"name": "position", "type": "value", "divider": 10}],
-                            "119":  [{"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}],
-                            "120":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}],
-                            "121":  [{"name": "awayTemperature", "type": "value", "divider": 10, "action": true}],
-                            "127":  [{"name": "controlMode", "type": "enum", "action": true}]
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "3":    {"name": "running", "type": "bool"},
+                            "4":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "5":    {"name": "temperature", "type": "value", "divider": 10},
+                            "6":    {"name": "battery", "type": "value"},
+                            "7":    {"name": "childLock", "type": "bool", "action": true},
+                            "9":    {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "10":   {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
+                            "47":   {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "110":  {"name": "thrustMode", "type": "enum", "action": true},
+                            "111":  {"name": "displayBrightness", "type": "enum", "action": true},
+                            "113":  {"name": "displayOrientation", "type": "enum", "action": true},
+                            "114":  {"name": "position", "type": "value", "divider": 10},
+                            "119":  {"name": "comfortTemperature", "type": "value", "divider": 10, "action": true},
+                            "120":  {"name": "ecoTemperature", "type": "value", "divider": 10, "action": true},
+                            "121":  {"name": "awayTemperature", "type": "value", "divider": 10, "action": true},
+                            "127":  {"name": "controlMode", "type": "enum", "action": true}
                           },
                           "operationMode": {"enum": ["standby", "away", "eco", "comfort", "program", "force"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
@@ -490,19 +489,19 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "2":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "6":    [{"name": "running", "type": "bool"}],
-                            "12":   [{"name": "childLock", "type": "bool", "action": true}],
-                            "13":   [{"name": "battery", "type": "value"}],
-                            "15":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "16":   [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
-                            "101":  [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "108":  [{"name": "position", "type": "value", "divider": 10}],
-                            "111":  [{"name": "displayBrightness", "type": "enum", "action": true}],
-                            "113":  [{"name": "displayOrientation", "type": "enum", "action": true}],
-                            "114":  [{"name": "ecoMode", "type": "bool", "action": true}]
+                            "1":    {"name": "operationMode", "type": "enum", "action": true},
+                            "2":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "3":    {"name": "temperature", "type": "value", "divider": 10},
+                            "6":    {"name": "running", "type": "bool"},
+                            "12":   {"name": "childLock", "type": "bool", "action": true},
+                            "13":   {"name": "battery", "type": "value"},
+                            "15":   {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
+                            "16":   {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "101":  {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "108":  {"name": "position", "type": "value", "divider": 10},
+                            "111":  {"name": "displayBrightness", "type": "enum", "action": true},
+                            "113":  {"name": "displayOrientation", "type": "enum", "action": true},
+                            "114":  {"name": "ecoMode", "type": "bool", "action": true}
                           },
                           "operationMode": {"enum": ["progran", "manual", "standby", "force"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
@@ -526,16 +525,16 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
-                            "2":    [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "9":    [{"name": "childLock", "type": "bool", "action": true}],
-                            "15":   [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
-                            "19":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "101":  [{"name": "running", "type": "bool", "invert": true}],
-                            "102":  [{"name": "frostProtection", "type": "bool", "action": true}],
-                            "107":  [{"name": "hysteresis", "type": "value", "action": true}]
+                            "1":    {"name": "systemMode", "type": "bool", "action": true},
+                            "2":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "3":    {"name": "temperature", "type": "value", "divider": 10},
+                            "4":    {"name": "operationMode", "type": "enum", "action": true},
+                            "9":    {"name": "childLock", "type": "bool", "action": true},
+                            "15":   {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "19":   {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "101":  {"name": "running", "type": "bool", "invert": true},
+                            "102":  {"name": "frostProtection", "type": "bool", "action": true},
+                            "107":  {"name": "hysteresis", "type": "value", "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
@@ -555,20 +554,20 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
-                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "16":   [{"name": "targetTemperature", "type": "value", "divider": 10, "action": true}],
-                            "24":   [{"name": "temperature", "type": "value", "divider": 10}],
-                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
-                            "36":   [{"name": "running", "type": "bool", "invert": true}],
-                            "39":   [{"name": "childLock", "type": "bool", "action": true}],
-                            "40":   [{"name": "ecoMode", "type": "bool", "action": true}],
-                            "43":   [{"name": "sensorType", "type": "enum", "action": true}],
-                            "102":  [{"name": "floorTemperature", "type": "value", "divider": 10}],
-                            "103":  [{"name": "hysteresis", "type": "value", "action": true}],
-                            "104":  [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
-                            "111":  [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "112":  [{"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}]
+                            "1":    {"name": "systemMode", "type": "bool", "action": true},
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "16":   {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "24":   {"name": "temperature", "type": "value", "divider": 10},
+                            "27":   {"name": "temperatureOffset", "type": "value", "action": true},
+                            "36":   {"name": "running", "type": "bool", "invert": true},
+                            "39":   {"name": "childLock", "type": "bool", "action": true},
+                            "40":   {"name": "ecoMode", "type": "bool", "action": true},
+                            "43":   {"name": "sensorType", "type": "enum", "action": true},
+                            "102":  {"name": "floorTemperature", "type": "value", "divider": 10},
+                            "103":  {"name": "hysteresis", "type": "value", "action": true},
+                            "104":  {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "111":  {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
+                            "112":  {"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["program", "manual"]},
@@ -593,20 +592,20 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "2":    [{"name": "targetTemperature", "type": "value", "action": true}],
-                            "3":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "4":    [{"name": "boost", "type": "bool", "action": true}],
-                            "7":    [{"name": "running", "type": "bool", "invert": true}],
-                            "13":   [{"name": "childLock", "type": "bool", "action": true}],
-                            "14":   [{"name": "battery", "type": "value"}],
-                            "103":  [{"name": "boostTimeout", "type": "value", "action": true}],
-                            "104":  [{"name": "position", "type": "value"}],
-                            "105":  [{"name": "temperatureOffset", "type": "value", "action": true}],
-                            "106":  [{"name": "ecoMode", "type": "bool", "action": true}],
-                            "107":  [{"name": "ecoTemperature", "type": "value", "action": true}],
-                            "108":  [{"name": "temperatureHigh", "type": "value", "action": true}],
-                            "109":  [{"name": "temperatureLow", "type": "value", "action": true}]
+                            "1":    {"name": "operationMode", "type": "enum", "action": true},
+                            "2":    {"name": "targetTemperature", "type": "value", "action": true},
+                            "3":    {"name": "temperature", "type": "value", "divider": 10},
+                            "4":    {"name": "boost", "type": "bool", "action": true},
+                            "7":    {"name": "running", "type": "bool", "invert": true},
+                            "13":   {"name": "childLock", "type": "bool", "action": true},
+                            "14":   {"name": "battery", "type": "value"},
+                            "103":  {"name": "boostTimeout", "type": "value", "action": true},
+                            "104":  {"name": "position", "type": "value"},
+                            "105":  {"name": "temperatureOffset", "type": "value", "action": true},
+                            "106":  {"name": "ecoMode", "type": "bool", "action": true},
+                            "107":  {"name": "ecoTemperature", "type": "value", "action": true},
+                            "108":  {"name": "temperatureHigh", "type": "value", "action": true},
+                            "109":  {"name": "temperatureLow", "type": "value", "action": true}
                           },
                           "operationMode": {"enum": ["program", "manual", "temporary", "away"]},
                           "targetTemperature": {"min": 10, "max": 30},
@@ -629,17 +628,17 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
-                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
-                            "18":   [{"name": "temperatureHigh", "type": "value", "action": true}],
-                            "20":   [{"name": "hysteresis", "type": "value", "action": true}],
-                            "24":   [{"name": "temperature", "type": "value", "divider": 10}],
-                            "26":   [{"name": "temperatureLow", "type": "value", "action": true}],
-                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
-                            "36":   [{"name": "running", "type": "bool", "invert": true}],
-                            "40":   [{"name": "childLock", "type": "bool", "action": true}],
-                            "43":   [{"name": "sensorType", "type": "enum", "action": true}]
+                            "1":    {"name": "systemMode", "type": "bool", "action": true},
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "16":   {"name": "targetTemperature", "type": "value", "action": true},
+                            "18":   {"name": "temperatureHigh", "type": "value", "action": true},
+                            "20":   {"name": "hysteresis", "type": "value", "action": true},
+                            "24":   {"name": "temperature", "type": "value", "divider": 10},
+                            "26":   {"name": "temperatureLow", "type": "value", "action": true},
+                            "27":   {"name": "temperatureOffset", "type": "value", "action": true},
+                            "36":   {"name": "running", "type": "bool", "invert": true},
+                            "40":   {"name": "childLock", "type": "bool", "action": true},
+                            "43":   {"name": "sensorType", "type": "enum", "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
@@ -661,17 +660,17 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
-                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
-                            "18":   [{"name": "temperatureHigh", "type": "value", "action": true}],
-                            "20":   [{"name": "hysteresis", "type": "value", "action": true}],
-                            "24":   [{"name": "temperature", "type": "value"}],
-                            "26":   [{"name": "temperatureLow", "type": "value", "action": true}],
-                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
-                            "36":   [{"name": "running", "type": "bool", "invert": true}],
-                            "40":   [{"name": "childLock", "type": "bool", "action": true}],
-                            "43":   [{"name": "sensorType", "type": "enum", "action": true}]
+                            "1":    {"name": "systemMode", "type": "bool", "action": true},
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "16":   {"name": "targetTemperature", "type": "value", "action": true},
+                            "18":   {"name": "temperatureHigh", "type": "value", "action": true},
+                            "20":   {"name": "hysteresis", "type": "value", "action": true},
+                            "24":   {"name": "temperature", "type": "value"},
+                            "26":   {"name": "temperatureLow", "type": "value", "action": true},
+                            "27":   {"name": "temperatureOffset", "type": "value", "action": true},
+                            "36":   {"name": "running", "type": "bool", "invert": true},
+                            "40":   {"name": "childLock", "type": "bool", "action": true},
+                            "43":   {"name": "sensorType", "type": "enum", "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
@@ -693,17 +692,17 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "systemMode", "type": "bool", "action": true}],
-                            "2":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "16":   [{"name": "targetTemperature", "type": "value", "action": true}],
-                            "18":   [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
-                            "20":   [{"name": "hysteresis", "type": "value", "divider": 10, "action": true}],
-                            "24":   [{"name": "temperature", "type": "value"}],
-                            "26":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "27":   [{"name": "temperatureOffset", "type": "value", "action": true}],
-                            "36":   [{"name": "running", "type": "bool", "invert": true}],
-                            "40":   [{"name": "childLock", "type": "bool", "action": true}],
-                            "43":   [{"name": "sensorType", "type": "enum", "action": true}]
+                            "1":    {"name": "systemMode", "type": "bool", "action": true},
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "16":   {"name": "targetTemperature", "type": "value", "action": true},
+                            "18":   {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "20":   {"name": "hysteresis", "type": "value", "divider": 10, "action": true},
+                            "24":   {"name": "temperature", "type": "value"},
+                            "26":   {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
+                            "27":   {"name": "temperatureOffset", "type": "value", "action": true},
+                            "36":   {"name": "running", "type": "bool", "invert": true},
+                            "40":   {"name": "childLock", "type": "bool", "action": true},
+                            "43":   {"name": "sensorType", "type": "enum", "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
@@ -725,11 +724,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "5":    [{"name": "volumeMode", "type": "enum", "action": true}],
-                            "7":    [{"name": "duration", "type": "value", "action": true}],
-                            "13":   [{"name": "alarm", "type": "bool", "action": true}],
-                            "15":   [{"name": "battery", "type": "value"}],
-                            "21":   [{"name": "melody", "type": "enum", "action": true}]
+                            "5":    {"name": "volumeMode", "type": "enum", "action": true},
+                            "7":    {"name": "duration", "type": "value", "action": true},
+                            "13":   {"name": "alarm", "type": "bool", "action": true},
+                            "15":   {"name": "battery", "type": "value"},
+                            "21":   {"name": "melody", "type": "enum", "action": true}
                           },
                           "duration": {"min": 1, "max": 1800},
                           "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
@@ -746,19 +745,19 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "101":  [{"name": "batteryStatus", "type": "enum"}],
-                            "102":  [{"name": "melody", "type": "enum", "action": true}],
-                            "103":  [{"name": "duration", "type": "value", "action": true}],
-                            "104":  [{"name": "alarm", "type": "bool", "action": true}],
-                            "105":  [{"name": "temperature", "type": "value", "divider": 10}],
-                            "106":  [{"name": "humidity", "type": "value"}],
-                            "107":  [{"name": "temperatureLow", "type": "value", "action": true}],
-                            "108":  [{"name": "temperatureHigh", "type": "value", "action": true}],
-                            "109":  [{"name": "humidityLow", "type": "value", "aaction": true}],
-                            "110":  [{"name": "humidityHigh", "type": "value", "action": true}],
-                            "113":  [{"name": "temperatureAlarm", "type": "bool", "action": true}],
-                            "114":  [{"name": "humidityAlarm", "type": "bool", "action": true}],
-                            "116":  [{"name": "volumeMode", "type": "enum", "action": true}]
+                            "101":  {"name": "batteryStatus", "type": "enum"},
+                            "102":  {"name": "melody", "type": "enum", "action": true},
+                            "103":  {"name": "duration", "type": "value", "action": true},
+                            "104":  {"name": "alarm", "type": "bool", "action": true},
+                            "105":  {"name": "temperature", "type": "value", "divider": 10},
+                            "106":  {"name": "humidity", "type": "value"},
+                            "107":  {"name": "temperatureLow", "type": "value", "action": true},
+                            "108":  {"name": "temperatureHigh", "type": "value", "action": true},
+                            "109":  {"name": "humidityLow", "type": "value", "aaction": true},
+                            "110":  {"name": "humidityHigh", "type": "value", "action": true},
+                            "113":  {"name": "temperatureAlarm", "type": "bool", "action": true},
+                            "114":  {"name": "humidityAlarm", "type": "bool", "action": true},
+                            "116":  {"name": "volumeMode", "type": "enum", "action": true}
                           },
                           "batteryStatus": {"enum": ["full", "high", "meduim", "low", "usb"]},
                           "melody": {"min": 0, "max": 17},
@@ -783,13 +782,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "5":    [{"name": "volumeMode", "type": "enum", "action": true}],
-                            "6":    [{"name": "powerStatus", "type": "enum"}],
-                            "7":    [{"name": "duration", "type": "value", "action": true}],
-                            "13":   [{"name": "alarm", "type": "bool", "action": true}],
-                            "14":   [{"name": "batteryStatus", "type": "enum"}],
-                            "15":   [{"name": "battery", "type": "value"}],
-                            "21":   [{"name": "melody", "type": "enum", "action": true}]
+                            "5":    {"name": "volumeMode", "type": "enum", "action": true},
+                            "6":    {"name": "powerStatus", "type": "enum"},
+                            "7":    {"name": "duration", "type": "value", "action": true},
+                            "13":   {"name": "alarm", "type": "bool", "action": true},
+                            "14":   {"name": "batteryStatus", "type": "enum"},
+                            "15":   {"name": "battery", "type": "value"},
+                            "21":   {"name": "melody", "type": "enum", "action": true}
                           },
                           "volumeMode": {"enum": ["low", "medium", "high", "mute"]},
                           "powerStatus": {"type": "sensor", "enum": ["normal", "backup"], "icon": "mdi:power-plug-battery"},
@@ -808,9 +807,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "9":    [{"name": "timer", "type": "value", "divider": 60, "action": true}],
-                            "101":  [{"name": "threshold", "type": "value", "action": true}]
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "9":    {"name": "timer", "type": "value", "divider": 60, "action": true},
+                            "101":  {"name": "threshold", "type": "value", "action": true}
                           },
                           "status": {"enum": ["off", "on"]},
                           "timer": {"min": 0, "max": 600},
@@ -827,13 +826,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "operationMode", "type": "bool", "action": true}],
-                            "2":    [{"name": "status", "type": "bool", "action": true}],
-                            "103":  [{"name": "count", "type": "value", "action": true}],
-                            "104":  [{"name": "target", "type": "value", "action": true}],
-                            "105":  [{"name": "interval", "type": "value", "action": true}],
-                            "108":  [{"name": "battery", "type": "value"}],
-                            "111":  [{"name": "volume", "type": "value"}]
+                            "1":    {"name": "operationMode", "type": "bool", "action": true},
+                            "2":    {"name": "status", "type": "bool", "action": true},
+                            "103":  {"name": "count", "type": "value", "action": true},
+                            "104":  {"name": "target", "type": "value", "action": true},
+                            "105":  {"name": "interval", "type": "value", "action": true},
+                            "108":  {"name": "battery", "type": "value"},
+                            "111":  {"name": "volume", "type": "value"}
                           },
                           "operationMode": {"enum": ["duration", "calpacity"]},
                           "status": {"enum": ["off", "on"]},
@@ -852,8 +851,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "trigger", "type": "bool", "action": true}],
-                            "3":    [{"name": "contact", "type": "bool"}]
+                            "1":    {"name": "trigger", "type": "bool", "action": true},
+                            "3":    {"name": "contact", "type": "bool"}
                           }
                         }
     },
@@ -865,9 +864,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "gas", "type": "bool", "invert": true}],
-                            "9":    [{"name": "test", "type": "enum"}],
-                            "11":   [{"name": "fault", "type": "bool"}]
+                            "1":    {"name": "gas", "type": "bool", "invert": true},
+                            "9":    {"name": "test", "type": "enum"},
+                            "11":   {"name": "fault", "type": "bool"}
                           },
                           "test": {"enum": ["checking", "success", "failed", "other"]}
                         }
@@ -880,10 +879,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "gas", "type": "bool", "invert": true}],
-                            "2":    [{"name": "concentration", "type": "value", "divider": 10}],
-                            "6":    [{"name": "melody", "type": "enum", "action": true}],
-                            "9":    [{"name": "test", "type": "enum"}]
+                            "1":    {"name": "gas", "type": "bool", "invert": true},
+                            "2":    {"name": "concentration", "type": "value", "divider": 10},
+                            "6":    {"name": "melody", "type": "enum", "action": true},
+                            "9":    {"name": "test", "type": "enum"}
                           },
                           "melody": {"min": 0, "max": 4},
                           "test": {"enum": ["checking", "success", "failed", "other"]}
@@ -897,11 +896,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "smoke", "type": "bool", "invert": true}],
-                            "2":    [{"name": "concentration", "type": "value", "divider": 10}],
-                            "11":   [{"name": "fault", "type": "bool"}],
-                            "15":   [{"name": "battery", "type": "value"}],
-                            "101":  [{"name": "test", "type": "bool"}]
+                            "1":    {"name": "smoke", "type": "bool", "invert": true},
+                            "2":    {"name": "concentration", "type": "value", "divider": 10},
+                            "11":   {"name": "fault", "type": "bool"},
+                            "15":   {"name": "battery", "type": "value"},
+                            "101":  {"name": "test", "type": "bool"}
                           },
                           "test": {"type": "binary"}
                         }
@@ -914,9 +913,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "smoke", "type": "bool", "invert": true}],
-                            "4":    [{"name": "tamper", "type": "bool"}],
-                            "14":   [{"name": "batteryLow", "type": "bool", "invert": true}]
+                            "1":    {"name": "smoke", "type": "bool", "invert": true},
+                            "4":    {"name": "tamper", "type": "bool"},
+                            "14":   {"name": "batteryLow", "type": "bool", "invert": true}
                           }
                         }
     },
@@ -928,10 +927,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "carbonMonoxide", "type": "bool", "invert": true}],
-                            "2":    [{"name": "concentration", "type": "value"}],
-                            "9":    [{"name": "test", "type": "bool"}],
-                            "15":   [{"name": "battery", "type": "value"}]
+                            "1":    {"name": "carbonMonoxide", "type": "bool", "invert": true},
+                            "2":    {"name": "concentration", "type": "value"},
+                            "9":    {"name": "test", "type": "bool"},
+                            "15":   {"name": "battery", "type": "value"}
                           },
                           "test": {"enum": ["checking", "success", "failed", "other"]}
                         }
@@ -945,10 +944,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "contact", "type": "bool"}],
-                            "2":    [{"name": "battery", "type": "value"}],
-                            "101":  [{"name": "illuminance", "type": "value"}],
-                            "102":  [{"name": "illuminanceDelay", "type": "value", "action": true}]
+                            "1":    {"name": "contact", "type": "bool"},
+                            "2":    {"name": "battery", "type": "value"},
+                            "101":  {"name": "illuminance", "type": "value"},
+                            "102":  {"name": "illuminanceDelay", "type": "value", "action": true}
                           },
                           "illuminanceDelay": {"min": 1, "max": 720}
                         }
@@ -962,12 +961,12 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "contact", "type": "bool"}],
-                            "2":    [{"name": "battery", "type": "value"}],
-                            "101":  [{"name": "alarm", "type": "bool", "action": true}],
-                            "102":  [{"name": "strobe", "type": "bool", "action": true}],
-                            "103":  [{"name": "volume", "type": "value", "action": true}],
-                            "104":  [{"name": "duration", "type": "value", "action": true}]
+                            "1":    {"name": "contact", "type": "bool"},
+                            "2":    {"name": "battery", "type": "value"},
+                            "101":  {"name": "alarm", "type": "bool", "action": true},
+                            "102":  {"name": "strobe", "type": "bool", "action": true},
+                            "103":  {"name": "volume", "type": "value", "action": true},
+                            "104":  {"name": "duration", "type": "value", "action": true}
                           },
                           "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
                           "volume": {"type": "number", "min": 1, "max": 100, "unit": "%"},
@@ -983,12 +982,12 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool", "invert": true}],
-                            "4":    [{"name": "battery", "type": "value"}],
-                            "9":    [{"name": "sensitivityMode", "type": "enum", "action": true}],
-                            "10":   [{"name": "timeoutMode", "type": "enum", "action": true}],
-                            "12":   [{"name": "illuminance", "type": "value"}],
-                            "102":  [{"name": "illuminanceDelay", "type": "value", "action": true}]
+                            "1":    {"name": "occupancy", "type": "bool", "invert": true},
+                            "4":    {"name": "battery", "type": "value"},
+                            "9":    {"name": "sensitivityMode", "type": "enum", "action": true},
+                            "10":   {"name": "timeoutMode", "type": "enum", "action": true},
+                            "12":   {"name": "illuminance", "type": "value"},
+                            "102":  {"name": "illuminanceDelay", "type": "value", "action": true}
                           },
                           "illuminanceDelay": {"min": 1, "max": 720}
                         }
@@ -1002,14 +1001,14 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool"}],
-                            "2":    [{"name": "sensitivity", "type": "value", "action": true}],
-                            "3":    [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
-                            "4":    [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                            "9":    [{"name": "targetDistance", "type": "value", "divider": 100}],
-                            "101":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}],
-                            "102":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
-                            "104":  [{"name": "illuminance", "type": "value"}]
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "sensitivity", "type": "value", "action": true},
+                            "3":    {"name": "distanceMin", "type": "value", "divider": 100, "action": true},
+                            "4":    {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "9":    {"name": "targetDistance", "type": "value", "divider": 100},
+                            "101":  {"name": "detectionDelay", "type": "value", "divider": 10, "action": true},
+                            "102":  {"name": "fadingTime", "type": "value", "divider": 10, "action": true},
+                            "104":  {"name": "illuminance", "type": "value"}
                           },
                           "sensitivity": {"min": 0, "max": 9},
                           "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
@@ -1027,14 +1026,14 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "104":  [{"name": "illuminance", "type": "value"}],
-                            "105":  [{"name": "occupancy", "type": "bool"}],
-                            "106":  [{"name": "sensitivity", "type": "value", "action": true}],
-                            "107":  [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                            "108":  [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
-                            "109":  [{"name": "targetDistance", "type": "value", "divider": 100}],
-                            "110":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
-                            "111":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}]
+                            "104":  {"name": "illuminance", "type": "value"},
+                            "105":  {"name": "occupancy", "type": "bool"},
+                            "106":  {"name": "sensitivity", "type": "value", "action": true},
+                            "107":  {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "108":  {"name": "distanceMin", "type": "value", "divider": 100, "action": true},
+                            "109":  {"name": "targetDistance", "type": "value", "divider": 100},
+                            "110":  {"name": "fadingTime", "type": "value", "divider": 10, "action": true},
+                            "111":  {"name": "detectionDelay", "type": "value", "divider": 10, "action": true}
                           },
                           "sensitivity": {"min": 0, "max": 9},
                           "distanceMax": {"min": 0, "max": 9.5, "step": 0.1},
@@ -1052,15 +1051,15 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool"}],
-                            "2":    [{"name": "sensitivity", "type": "value", "action": true}],
-                            "3":    [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
-                            "4":    [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                            "101":  [{"name": "illuminance", "type": "value"}],
-                            "102":  [{"name": "fadingTime", "type": "value", "divider": 10, "action": true}],
-                            "103":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}],
-                            "112":  [{"name": "radarScene", "type": "enum", "action": true}],
-                            "105":  [{"name": "targetDistance", "type": "value", "divider": 100}]
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "sensitivity", "type": "value", "action": true},
+                            "3":    {"name": "distanceMin", "type": "value", "divider": 100, "action": true},
+                            "4":    {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "101":  {"name": "illuminance", "type": "value"},
+                            "102":  {"name": "fadingTime", "type": "value", "divider": 10, "action": true},
+                            "103":  {"name": "detectionDelay", "type": "value", "divider": 10, "action": true},
+                            "112":  {"name": "radarScene", "type": "enum", "action": true},
+                            "105":  {"name": "targetDistance", "type": "value", "divider": 100}
                           },
                           "sensitivity": {"min": 0, "max": 9},
                           "distanceMin": {"min": 0, "max": 9.5, "step": 0.1},
@@ -1078,14 +1077,14 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "104":  [{"name": "illuminance", "type": "value"}],
-                            "105":  [{"name": "presenceStatus", "type": "enum"}],
-                            "106":  [{"name": "motionSensitivity", "type": "value", "propertyDivider": 10, "action": true}],
-                            "107":  [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                            "109":  [{"name": "targetDistance", "type": "value", "divider": 100}],
-                            "110":  [{"name": "fadingTime", "type": "value", "action": true}],
-                            "111":  [{"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true}],
-                            "112":  [{"name": "occupancy", "type": "bool"}]
+                            "104":  {"name": "illuminance", "type": "value"},
+                            "105":  {"name": "presenceStatus", "type": "enum"},
+                            "106":  {"name": "motionSensitivity", "type": "value", "propertyDivider": 10, "action": true},
+                            "107":  {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "109":  {"name": "targetDistance", "type": "value", "divider": 100},
+                            "110":  {"name": "fadingTime", "type": "value", "action": true},
+                            "111":  {"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true},
+                            "112":  {"name": "occupancy", "type": "bool"}
                           },
                           "presenceStatus": {"enum": ["none", "present", "moving"]},
                           "motionSensitivity": {"min": 1, "max": 10},
@@ -1103,13 +1102,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool"}],
-                            "11":   [{"name": "motionStatus", "type": "enum"}],
-                            "12":   [{"name": "fadingTime", "type": "value", "action": true}],
-                            "13":   [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                            "15":   [{"name": "sensitivity", "type": "value", "action": true}],
-                            "16":   [{"name": "motionSensitivity", "type": "value", "action": true}],
-                            "19":   [{"name": "targetDistance", "type": "value", "divider": 100}]
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "11":   {"name": "motionStatus", "type": "enum"},
+                            "12":   {"name": "fadingTime", "type": "value", "action": true},
+                            "13":   {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "15":   {"name": "sensitivity", "type": "value", "action": true},
+                            "16":   {"name": "motionSensitivity", "type": "value", "action": true},
+                            "19":   {"name": "targetDistance", "type": "value", "divider": 100}
                           },
 
                           "motionStatus": {"enum": ["none", "small", "large"]},
@@ -1128,13 +1127,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool"}],
-                            "101":  [{"name": "targetDistance", "type": "value", "divider": 100}],
-                            "102":  [{"name": "illuminance", "type": "value"}],
-                            "103":  [{"name": "fadingTime", "type": "value", "action": true}],
-                            "107":  [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                            "108":  [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
-                            "111":  [{"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true}]
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "101":  {"name": "targetDistance", "type": "value", "divider": 100},
+                            "102":  {"name": "illuminance", "type": "value"},
+                            "103":  {"name": "fadingTime", "type": "value", "action": true},
+                            "107":  {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "108":  {"name": "distanceMin", "type": "value", "divider": 100, "action": true},
+                            "111":  {"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true}
                           },
                           "fadingTime": {"min": 1, "max": 59},
                           "distanceMax": {"min": 0, "max": 8.4, "step": 0.1},
@@ -1151,14 +1150,14 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool"}],
-                            "2":    [{"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true}],
-                            "3":    [{"name": "distanceMin", "type": "value", "divider": 100, "action": true}],
-                            "4":    [{"name": "distanceMax", "type": "value", "divider": 100, "action": true}],
-                            "9":    [{"name": "targetDistance", "type": "value", "divider": 100}],
-                            "103":  [{"name": "illuminance", "type": "value"}],
-                            "105":  [{"name": "detectionDelay", "type": "value", "divider": 10, "action": true}],
-                            "106":  [{"name": "fadingTime", "type": "value", "action": true}]
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true},
+                            "3":    {"name": "distanceMin", "type": "value", "divider": 100, "action": true},
+                            "4":    {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "9":    {"name": "targetDistance", "type": "value", "divider": 100},
+                            "103":  {"name": "illuminance", "type": "value"},
+                            "105":  {"name": "detectionDelay", "type": "value", "divider": 10, "action": true},
+                            "106":  {"name": "fadingTime", "type": "value", "action": true}
                           },
                           "sensitivity": {"min": 1, "max": 9},
                           "distanceMin": {"min": 0, "max": 10, "step": 0.1},
@@ -1176,18 +1175,18 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool"}],
-                            "2":    [{"name": "sensitivity", "type": "value", "action": true}],
-                            "102":  [{"name": "motion", "type": "bool", "invert": true}],
-                            "103":  [{"name": "illuminance", "type": "value"}],
-                            "105":  [{"name": "tumbleSwitch", "type": "bool", "action": true}],
-                            "106":  [{"name": "tumbleAlarmTime", "type": "value", "offset": 1, "action": true}],
-                            "112":  [{"name": "radarScene", "type": "enum", "action": true}],
-                            "114":  [{"name": "motionStatus", "type": "enum"}],
-                            "115":  [{"name": "motionSpeed", "type": "value"}],
-                            "116":  [{"name": "fallStatus", "type": "enum"}],
-                            "117":  [{"name": "staticDwellAlarm", "type": "value"}],
-                            "118":  [{"name": "fallSensitivity", "type": "value", "action": true}]
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "sensitivity", "type": "value", "action": true},
+                            "102":  {"name": "motion", "type": "bool", "invert": true},
+                            "103":  {"name": "illuminance", "type": "value"},
+                            "105":  {"name": "tumbleSwitch", "type": "bool", "action": true},
+                            "106":  {"name": "tumbleAlarmTime", "type": "value", "offset": 1, "action": true},
+                            "112":  {"name": "radarScene", "type": "enum", "action": true},
+                            "114":  {"name": "motionStatus", "type": "enum"},
+                            "115":  {"name": "motionSpeed", "type": "value"},
+                            "116":  {"name": "fallStatus", "type": "enum"},
+                            "117":  {"name": "staticDwellAlarm", "type": "value"},
+                            "118":  {"name": "fallSensitivity", "type": "value", "action": true}
                           },
                           "sensitivity": {"min": 0, "max": 10},
                           "tumbleAlarmTime": {"min": 0, "max": 9},
@@ -1206,9 +1205,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "2":    [{"name": "humidity", "type": "value"}],
-                            "4":    [{"name": "battery", "type": "value"}]
+                            "1":    {"name": "temperature", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value"},
+                            "4":    {"name": "battery", "type": "value"}
                           }
                         }
     },
@@ -1221,9 +1220,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "2":    [{"name": "humidity", "type": "value", "divider": 10}],
-                            "4":    [{"name": "battery", "type": "value"}]
+                            "1":    {"name": "temperature", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value", "divider": 10},
+                            "4":    {"name": "battery", "type": "value"}
                           }
                         }
     },
@@ -1236,9 +1235,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "2":    [{"name": "humidity", "type": "value"}],
-                            "3":    [{"name": "batteryStatus", "type": "enum"}]
+                            "1":    {"name": "temperature", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value"},
+                            "3":    {"name": "batteryStatus", "type": "enum"}
                           },
                           "batteryStatus": {"enum": ["low", "medium", "high"]}
                         }
@@ -1252,11 +1251,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "2":    [{"name": "humidity", "type": "value"}],
-                            "4":    [{"name": "battery", "type": "value"}],
-                            "23":   [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "24":   [{"name": "humidityOffset", "type": "value", "action": true}]
+                            "1":    {"name": "temperature", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value"},
+                            "4":    {"name": "battery", "type": "value"},
+                            "23":   {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "24":   {"name": "humidityOffset", "type": "value", "action": true}
                           },
                           "temperatureOffset": {"min": -2, "max": 2, "step": 0.1},
                           "humidityOffset": {"min": -30, "max": 30}
@@ -1271,10 +1270,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "2":    [{"name": "humidity", "type": "value"}],
-                            "3":    [{"name": "batteryStatus", "type": "enum"}],
-                            "9":    [{"name": "displayMode", "type": "enum", "action": true}]
+                            "1":    {"name": "temperature", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value"},
+                            "3":    {"name": "batteryStatus", "type": "enum"},
+                            "9":    {"name": "displayMode", "type": "enum", "action": true}
                           },
                           "batteryStatus": {"enum": ["low", "medium", "high"]},
                           "tuyaDataQuery": true
@@ -1289,16 +1288,16 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "2":    [{"name": "humidity", "type": "value"}],
-                            "4":    [{"name": "battery", "type": "value"}],
-                            "9":    [{"name": "displayMode", "type": "enum",  "action": true}],
-                            "10":   [{"name": "temperatureHigh", "type": "value", "divider": 10, "action": true}],
-                            "11":   [{"name": "temperatureLow", "type": "value", "divider": 10, "action": true}],
-                            "12":   [{"name": "humidityHigh", "type": "value", "action": true}],
-                            "13":   [{"name": "humidityLow", "type": "value", "action": true}],
-                            "14":   [{"name": "temperatureAlarm", "type": "enum"}],
-                            "15":   [{"name": "humidityAlarm", "type": "enum"}]
+                            "1":    {"name": "temperature", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value"},
+                            "4":    {"name": "battery", "type": "value"},
+                            "9":    {"name": "displayMode", "type": "enum",  "action": true},
+                            "10":   {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "11":   {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
+                            "12":   {"name": "humidityHigh", "type": "value", "action": true},
+                            "13":   {"name": "humidityLow", "type": "value", "action": true},
+                            "14":   {"name": "temperatureAlarm", "type": "enum"},
+                            "15":   {"name": "humidityAlarm", "type": "enum"}
                           },
                           "temperatureHigh": {"min": -20, "max": 60},
                           "temperatureLow": {"min": -20, "max": 60},
@@ -1317,10 +1316,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "3":    [{"name": "moisture", "type": "value"}],
-                            "5":    [{"name": "temperature", "type": "value", "divider": 10}],
-                            "14":   [{"name": "batteryStatus", "type": "enum"}],
-                            "15":   [{"name": "battery", "type": "value"}]
+                            "3":    {"name": "moisture", "type": "value"},
+                            "5":    {"name": "temperature", "type": "value", "divider": 10},
+                            "14":   {"name": "batteryStatus", "type": "enum"},
+                            "15":   {"name": "battery", "type": "value"}
                           },
                           "batteryStatus": {"enum": ["low", "medium", "high"]}
                         }
@@ -1333,11 +1332,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "2":    [{"name": "formaldehyde", "type": "value", "divider": 100}],
-                            "18":   [{"name": "temperature", "type": "value", "divider": 10}],
-                            "19":   [{"name": "humidity", "type": "value", "divider": 10}],
-                            "21":   [{"name": "voc", "type": "value", "divider": 100}],
-                            "22":   [{"name": "co2", "type": "value", "divider": 100}]
+                            "2":    {"name": "formaldehyde", "type": "value", "divider": 100},
+                            "18":   {"name": "temperature", "type": "value", "divider": 10},
+                            "19":   {"name": "humidity", "type": "value", "divider": 10},
+                            "21":   {"name": "voc", "type": "value", "divider": 100},
+                            "22":   {"name": "co2", "type": "value", "divider": 100}
                           }
                         }
     },
@@ -1349,12 +1348,12 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "2":    [{"name": "pm25", "type": "value"}],
-                            "18":   [{"name": "temperature", "type": "value", "divider": 10}],
-                            "19":   [{"name": "humidity", "type": "value", "divider": 10}],
-                            "20":   [{"name": "formaldehyde", "type": "value"}],
-                            "21":   [{"name": "voc", "type": "value"}],
-                            "22":   [{"name": "co2", "type": "value"}]
+                            "2":    {"name": "pm25", "type": "value"},
+                            "18":   {"name": "temperature", "type": "value", "divider": 10},
+                            "19":   {"name": "humidity", "type": "value", "divider": 10},
+                            "20":   {"name": "formaldehyde", "type": "value"},
+                            "21":   {"name": "voc", "type": "value"},
+                            "22":   {"name": "co2", "type": "value"}
                           },
                           "pm25": {"max": 1000}
                         }
@@ -1367,9 +1366,9 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "2":    [{"name": "co2", "type": "value"}],
-                            "18":   [{"name": "temperature", "type": "value", "divider": 10}],
-                            "19":   [{"name": "humidity", "type": "value", "divider": 10}]
+                            "2":    {"name": "co2", "type": "value"},
+                            "18":   {"name": "temperature", "type": "value", "divider": 10},
+                            "19":   {"name": "humidity", "type": "value", "divider": 10}
                           }
                         }
     },
@@ -1378,12 +1377,7 @@
       "modelNames":     ["_TZE200_ogkdpgy2"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["co2"],
-      "options":        {
-                          "tuyaDataPoints":
-                          {
-                            "2":    [{"name": "co2", "type": "value"}]
-                          }
-                        }
+      "options":        {"tuyaDataPoints": {"2": {"name": "co2", "type": "value"}}}
     },
     {
       "description":    "TUYA TS0601 Curtain Motor",
@@ -1394,8 +1388,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
-                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                            "5":    {"name": "reverse", "type": "bool", "action": true},
+                            "105":  {"name": "speed", "type": "value", "action": true}
                           },
                           "speed": {"min": 1, "max": 255}
                         }
@@ -1409,8 +1403,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
-                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                            "5":    {"name": "reverse", "type": "bool", "action": true},
+                            "105":  {"name": "speed", "type": "value", "action": true}
                           },
                           "speed": {"min": 1, "max": 255}
                         }
@@ -1424,8 +1418,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
-                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                            "5":    {"name": "reverse", "type": "bool", "action": true},
+                            "105":  {"name": "speed", "type": "value", "action": true}
                           },
                           "speed": {"min": 1, "max": 255},
                           "cover": "blind"
@@ -1440,11 +1434,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "4":    [{"name": "operationMode", "type": "enum", "action": true}],
-                            "13":   [{"name": "battery", "type": "value"}],
-                            "101":  [{"name": "reverse", "type": "bool", "action": true}],
-                            "102":  [{"name": "setUpperLimit", "type": "enum", "action": true}],
-                            "107":  [{"name": "resetLimits", "type": "enum", "action": true}]
+                            "4":    {"name": "operationMode", "type": "enum", "action": true},
+                            "13":   {"name": "battery", "type": "value"},
+                            "101":  {"name": "reverse", "type": "bool", "action": true},
+                            "102":  {"name": "setUpperLimit", "type": "enum", "action": true},
+                            "107":  {"name": "resetLimits", "type": "enum", "action": true}
                           },
                           "operationMode": {"enum": ["tilt", "lift"]},
                           "setUpperLimit": {"enum": ["start", "stop"]},
@@ -1461,12 +1455,12 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "5":    [{"name": "reverse", "type": "bool", "action": true}],
-                            "101":  [{"name": "operationMode", "type": "enum", "action": true}],
-                            "102":  [{"name": "resetLimits", "type": "enum", "action": true}],
-                            "103":  [{"name": "setUpperLimit", "type": "enum", "action": true}],
-                            "104":  [{"name": "setLowerLimit", "type": "enum", "action": true}],
-                            "105":  [{"name": "speed", "type": "value", "action": true}]
+                            "5":    {"name": "reverse", "type": "bool", "action": true},
+                            "101":  {"name": "operationMode", "type": "enum", "action": true},
+                            "102":  {"name": "resetLimits", "type": "enum", "action": true},
+                            "103":  {"name": "setUpperLimit", "type": "enum", "action": true},
+                            "104":  {"name": "setLowerLimit", "type": "enum", "action": true},
+                            "105":  {"name": "speed", "type": "value", "action": true}
                           },
                           "operationMode": {"enum": ["tilt", "lift"]},
                           "resetLimits": {"enum": ["true"]},
@@ -1483,13 +1477,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "status", "type": "bool", "action": true}],
-                            "101":  [{"name": "restartMode", "type": "enum", "action": true}],
-                            "102":  [{"name": "remoteControl", "type": "enum", "action": true}],
-                            "103":  [{"name": "pairing", "type": "bool", "action": true}],
-                            "104":  [{"name": "buzzerFeedback", "type": "enum", "action": true}],
-                            "105":  [{"name": "powerOnStatus", "type": "enum", "action": true}],
-                            "106":  [{"name": "childLock", "type": "bool", "action": true}]
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "101":  {"name": "restartMode", "type": "enum", "action": true},
+                            "102":  {"name": "remoteControl", "type": "enum", "action": true},
+                            "103":  {"name": "pairing", "type": "bool", "action": true},
+                            "104":  {"name": "buzzerFeedback", "type": "enum", "action": true},
+                            "105":  {"name": "powerOnStatus", "type": "enum", "action": true},
+                            "106":  {"name": "childLock", "type": "bool", "action": true}
 
                           },
                           "status": {"enum": ["off", "on"]},
@@ -1509,8 +1503,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "101":  [{"name": "illuminance", "type": "value"}],
-                            "105":  [{"name": "rainIntensity", "type": "value"}]
+                            "101":  {"name": "illuminance", "type": "value"},
+                            "105":  {"name": "rainIntensity", "type": "value"}
                           },
                           "rain": {"type": "binary", "icon": "mdi:weather-pouring"},
                           "illuminance": {"unit": "mV"},
@@ -1530,17 +1524,17 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    [{"name": "occupancy", "type": "bool"}],
-                            "2":    [{"name": "largeMotionSensitivity", "type": "value", "action": true}],
-                            "4":    [{"name": "largeMotionDistance", "type": "value", "divider": 100, "action": true}],
-                            "101":  [{"name": "motionStatus", "type": "enum"}],
-                            "102":  [{"name": "fadingTime", "type": "value", "action": true}],
-                            "104":  [{"name": "mediumMotionDistance", "type": "value", "divider": 100, "action": true}],
-                            "105":  [{"name": "mediumMotionSensitivity", "type": "value", "action": true}],
-                            "106":  [{"name": "illuminance", "type": "value"}],
-                            "107":  [{"name": "indicator", "type": "bool", "action": true}],
-                            "108":  [{"name": "smallMotionDistance", "type": "value", "divider": 100, "action": true}],
-                            "109":  [{"name": "smallMotionSensitivity", "type": "value", "action": true}]
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "largeMotionSensitivity", "type": "value", "action": true},
+                            "4":    {"name": "largeMotionDistance", "type": "value", "divider": 100, "action": true},
+                            "101":  {"name": "motionStatus", "type": "enum"},
+                            "102":  {"name": "fadingTime", "type": "value", "action": true},
+                            "104":  {"name": "mediumMotionDistance", "type": "value", "divider": 100, "action": true},
+                            "105":  {"name": "mediumMotionSensitivity", "type": "value", "action": true},
+                            "106":  {"name": "illuminance", "type": "value"},
+                            "107":  {"name": "indicator", "type": "bool", "action": true},
+                            "108":  {"name": "smallMotionDistance", "type": "value", "divider": 100, "action": true},
+                            "109":  {"name": "smallMotionSensitivity", "type": "value", "action": true}
                           },
                           "largeMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"},
                           "largeMotionDistance": {"type": "number", "min": 0, "max": 10, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
@@ -1561,10 +1555,10 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "102":  [{"name": "temperature", "type": "value", "divider": 10}],
-                            "103":  [{"name": "humidity", "type": "value"}],
-                            "108":  [{"name": "temperatureOffset", "type": "value", "divider": 10, "action": true}],
-                            "109":  [{"name": "humidityOffset", "type": "value", "action": true}]
+                            "102":  {"name": "temperature", "type": "value", "divider": 10},
+                            "103":  {"name": "humidity", "type": "value"},
+                            "108":  {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "109":  {"name": "humidityOffset", "type": "value", "action": true}
                           },
                           "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
                           "humidityOffset": {"min": -10, "max": 10},
@@ -1580,8 +1574,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "102":  [{"name": "temperature", "type": "value", "divider": 10}],
-                            "103":  [{"name": "humidity", "type": "value"}]
+                            "102":  {"name": "temperature", "type": "value", "divider": 10},
+                            "103":  {"name": "humidity", "type": "value"}
                           }
                         },
       "endpointId":     1
@@ -1605,13 +1599,13 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "101":  [{"name": "operationMode", "type": "enum", "action": true}],
-                            "102":  [{"name": "lowerLimit", "type": "value", "action": true}],
-                            "103":  [{"name": "delay", "type": "value", "action": true}],
-                            "104":  [{"name": "reverse", "type": "enum", "action": true}],
-                            "105":  [{"name": "battery", "type": "value"}],
-                            "106":  [{"name": "upperLimit", "type": "value", "action": true}],
-                            "107":  [{"name": "touchControl", "type": "bool", "action": true}]
+                            "101":  {"name": "operationMode", "type": "enum", "action": true},
+                            "102":  {"name": "lowerLimit", "type": "value", "action": true},
+                            "103":  {"name": "delay", "type": "value", "action": true},
+                            "104":  {"name": "reverse", "type": "enum", "action": true},
+                            "105":  {"name": "battery", "type": "value"},
+                            "106":  {"name": "upperLimit", "type": "value", "action": true},
+                            "107":  {"name": "touchControl", "type": "bool", "action": true}
 
                           },
                           "operationMode": {"enum": ["click", "switch"]},
@@ -2067,8 +2061,8 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "101":  [{"name": "action", "type": "enum"}],
-                            "102":  [{"name": "illuminance", "type": "bool"}]
+                            "101":  {"name": "action", "type": "enum"},
+                            "102":  {"name": "illuminance", "type": "bool"}
                           },
                           "action": {"enum": ["singleClick", "doubleClick", "hold"]},
                           "illuminance": {"enum": ["dark", "bright"]}
