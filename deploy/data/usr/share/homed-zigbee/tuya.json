@@ -517,6 +517,38 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Radiator Thermostat (Type F)",
+      "modelNames":     ["_TZE204_eekpf0ft"],
+      "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "exposes":        ["battery", "thermostat", "childLock", "comfortTemperature", "ecoTemperature", "awayTemperature", "temperatureOffset", "thermostatProgram"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "3":    {"name": "running", "type": "bool"},
+                            "4":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "5":    {"name": "temperature", "type": "value", "divider": 10},
+                            "6":    {"name": "battery", "type": "value"},
+                            "7":    {"name": "childLock", "type": "bool", "action": true},
+                            "21":   {"name": "awayTemperature", "type": "value", "divider": 10, "action": true},
+                            "47":   {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "103":  {"name": "ecoTemperature", "type": "value", "divider": 10, "action": true},
+                            "104":  {"name": "comfortTemperature", "type": "value", "divider": 10, "action": true}
+                          },
+                          "operationMode": {"enum": ["manual", "program", "eco", "comfort", "frostProtection", "away", "standby"]},
+                          "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
+                          "awayTemperature": {"min": 5, "max": 35, "step": 0.5},
+                          "temperatureOffset": {"min": -9.5, "max": 9.5, "step": 0.5},
+                          "ecoTemperature": {"min": 5, "max": 35, "step": 0.5},
+                          "comfortTemperature": {"min": 5, "max": 35, "step": 0.5},
+                          "thermostatProgram": "daily",
+                          "programTransitions": 6,
+                          "programDataPoints": [28, 29, 30, 31, 32, 33, 34],
+                          "runningStatus": true
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Electric Thermostat (Type A)",
       "modelNames":     ["_TZE200_viy9ihs7", "_TZE204_lzriup1j", "_TZE204_xnbkhhdr"],
       "properties":     ["tuyaDataPoints"],
