@@ -159,7 +159,7 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
         {
             QString key = QString("%1P%2").arg(type).arg(i + 1);
             quint16 temperature = qToBigEndian <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 10);
-            payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * transitions).toInt()));
+            payload.append(static_cast <char> (m_data.value(QString("%1Hour").arg(key), i * (24 / transitions)).toInt()));
             payload.append(static_cast <char> (m_data.value(QString("%1Minute").arg(key), 0).toInt()));
             payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
         }
