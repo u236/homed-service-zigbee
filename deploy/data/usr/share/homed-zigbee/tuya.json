@@ -875,6 +875,32 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Liquid Level Sensor",
+      "modelNames":     ["_TZE284_kyyu8rbj"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["liquidVolume", "liquidDepth", "liquidLevel", "emptyHeight", "fullHeight", "levelLow", "levelHigh"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "liquidVolume", "type": "enum"},
+                            "2":    {"name": "liquidDepth", "type": "value", "divider": 100},
+                            "7":    {"name": "levelHigh", "type": "value", "action": true},
+                            "8":    {"name": "levelLow", "type": "value", "action": true},
+                            "19":   {"name": "emptyHeight", "type": "value", "divider": 100, "action": true},
+                            "21":   {"name": "fullHeight", "type": "value", "divider": 100, "action": true},
+                            "22":   {"name": "liquidLevel", "type": "value"}
+                          },
+                          "liquidVolume": {"type": "sensor", "enum": ["low", "medium", "high"], "icon": "mdi:water"},
+                          "liquidDepth": {"type": "sensor", "unit": "m", "icon": "mdi:ruler"},
+                          "levelHigh": {"type": "number", "min": 0, "max": 100, "unit": "%", "icon": "mdi:water-percent"},
+                          "levelLow": {"type": "number", "min": 0, "max": 100, "unit": "%", "icon": "mdi:water-percent"},
+                          "emptyHeight": {"type": "number", "min": 0.1, "max": 4, "step": 0.01, "unit": "m", "icon": "mdi:ruler"},
+                          "fullHeight": {"type": "number", "min": 0.1, "max": 4, "step": 0.01, "unit": "m", "icon": "mdi:ruler"},
+                          "liquidLevel": {"type": "sensor", "unit": "%", "icon": "mdi:water-percent"}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Garage Door Controller",
       "modelNames":     ["_TZE200_wfxuhoea", "_TZE200_nklqjk62", "_TZE204_nklqjk62"],
       "properties":     ["tuyaDataPoints"],
