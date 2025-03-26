@@ -493,6 +493,27 @@
     }
   ],
 
+  "easyiot":
+  [
+    {
+      "description":    "ZB-WB08 8-Key Wireless Switch",
+      "modelNames":     ["ZB-WB08"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["ZB-WB08"],
+      "properties":     ["customCommands"],
+      "bindings":       ["status"],
+      "exposes":        ["action"],
+      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
+      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
+    }
+  ],
+
   "eWeLight":
   [
     {
