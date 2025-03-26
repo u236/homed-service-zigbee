@@ -24,7 +24,7 @@
       "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo", "_TZE204_wbhaespm"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["switch", "energy", "producedEnergy", "voltage", "current", "power", "frequency"],
+      "exposes":        ["switch", "energy", "producedEnergy", "voltage", "current", "power", "powerFactor", "frequency"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -88,7 +88,28 @@
     },
     {
       "description":    "TUYA TS0601 Electricity Meter (Type F)",
-      "modelNames":     ["_TZE204_81yrt3lo"],
+      "modelNames":     ["_TZE284_6ocnqlhn"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power", "powerFactor", "frequency", "temperature"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "6":    {"name": "electricity", "type": "raw"},
+                            "15":   {"name": "leakageCurrent", "type": "value"},
+                            "16":   {"name": "status", "type": "bool", "action": true},
+                            "32":   {"name": "frequency", "type": "value", "divider": 100},
+                            "50":   {"name": "powerFactor", "type": "value"},
+                            "131":  {"name": "temperature", "type": "value", "divider": 10}
+                          },
+                          "leakageCurrent": {"type": "sensor", "unit": "mA", "icon": "mdi:current-ac"},
+                          "status": {"enum": ["off", "on"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Electricity Meter (Type G)",
+      "modelNames":     ["_TZE204_81yrt3lo", "_TZE284_81yrt3lo"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["voltage", "frequency", "energy_1", "energy_2", "producedEnergy_1", "producedEnergy_2", "current_1", "current_2", "power_1", "power_2"],
