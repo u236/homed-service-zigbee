@@ -389,12 +389,20 @@
       "modelNames":     ["lumi.curtain.acn003", "lumi.curtain.agl001"],
       "properties":     ["batteryPercentage", "lumiCover", "lumiData", "customAttributes"],
       "actions":        ["coverStatus", "lumiCoverPosition", "customAttributes"],
-      "exposes":        ["battery", "cover", "temperature"],
+      "exposes":        ["battery", "cover", "calibration", "temperature"],
       "options":        {
                           "customAttributes": {"calibration": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1031, "dataType": 32, "action": true}},
                           "calibration": {"type": "select", "enum": ["reset", "start", "stop"], "icon": "mdi:swap-horizontal-bold"},
                           "temperature": {"diagnostic": true}
                         }
+    },
+    {
+      "description":    "Aqara Roller Blind Motor ZNJLBL01LM",
+      "modelNames":     ["lumi.curtain.acn002"],
+      "properties":     ["batteryPercentage", "lumiCover", "lumiData"],
+      "actions":        ["coverStatus", "lumiCoverPosition"],
+      "exposes":        ["battery", "cover", "temperature"],
+      "options":        {"temperature": {"diagnostic": true}, "powerSource": 3}
     },
     {
       "description":    "Xiaomi Gas Detector JTQJ-BF-01LM/BW",
