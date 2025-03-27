@@ -203,7 +203,7 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     QByteArray payload;
     quint16 crc;
 
-    logDebug(m_adapterDebug) << "-->" << QString::asprintf("0x%04x", command) << data.toHex(':');
+    logDebug(m_adapterDebug) << "-->" << QString::asprintf("0x%04x", command) << QByteArray(1, static_cast <char> (id)).append(data).toHex(':');
 
     m_command = command;
     m_replyStatus = 0xFF;
