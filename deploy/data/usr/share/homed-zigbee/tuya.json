@@ -747,10 +747,10 @@
                           {
                             "1":    {"name": "systemMode", "type": "bool", "action": true},
                             "2":    {"name": "operationMode", "type": "enum", "action": true},
-                            "16":   {"name": "targetTemperature", "type": "value", "action": true},
+                            "16":   {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
                             "18":   {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
                             "20":   {"name": "hysteresis", "type": "value", "divider": 10, "action": true},
-                            "24":   {"name": "temperature", "type": "value"},
+                            "24":   {"name": "temperature", "type": "value", "divider": 10},
                             "26":   {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
                             "27":   {"name": "temperatureOffset", "type": "value", "action": true},
                             "36":   {"name": "running", "type": "bool", "invert": true},
