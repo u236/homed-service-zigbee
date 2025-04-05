@@ -97,7 +97,7 @@ QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
         case 0: // temperatureOffset
         case 1: // hysteresis
         {
-            qint8 value = static_cast <qint8> (data.toDouble() * 10);
+            qint8 value = static_cast <qint8> (data.toDouble() * option(QString(name).append("Divider"), 10).toDouble());
             m_attributes = {static_cast <quint16> (index == 0 ? 0x0010 : 0x0019)};
             return writeAttribute(DATA_TYPE_8BIT_SIGNED, &value, sizeof(value));
         }

@@ -105,7 +105,8 @@ void Properties::Thermostat::parseAttribte(quint16, quint16 attributeId, const Q
         case 0x0010:
         case 0x0019:
         {
-            map.insert(attributeId == 0x0010 ? "temperatureOffset" : "hysteresis", static_cast <qint8> (data.at(0)) / 10.0);
+            QString name = attributeId == 0x0010 ? "temperatureOffset" : "hysteresis";
+            map.insert(name, static_cast <qint8> (data.at(0)) / option(QString(name).append("Divider"), 10).toDouble());
             break;
         }
 
