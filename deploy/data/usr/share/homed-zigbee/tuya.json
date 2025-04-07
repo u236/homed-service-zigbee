@@ -2180,7 +2180,7 @@
     },
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor (Type A)",
-      "modelNames":     ["_TZ2000_a476raq2", "_TZ2000_zsfvulde", "_TZ3000_0s1izerx", "_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_saiqcn0y", "_TZ3000_xr3htd96", "_TZ3000_yd2e749y", "_TZ3210_alxkwn0h", "_TZE200_ysm4dsb1", "_TZ3000_zfirri2d", "_TZ3000_zl1kmjqx"],
+      "modelNames":     ["_TZ2000_a476raq2", "_TZ2000_zsfvulde", "_TZ3000_0s1izerx", "_TZ3000_6uzkisv2", "_TZ3000_8ybe88nf", "_TZ3000_bguser20", "_TZ3000_dowj6gyi", "_TZ3000_fllyghyj", "_TZ3000_lqmvrwa2", "_TZ3000_mxzo5rhf", "_TZ3000_saiqcn0y", "_TZ3000_v1w2k9dd", "_TZ3000_xr3htd96", "_TZ3000_yd2e749y", "_TZ3000_zfirri2d", "_TZ3000_zl1kmjqx", "_TZ3210_alxkwn0h", "_TZE200_ysm4dsb1"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"]
     },
