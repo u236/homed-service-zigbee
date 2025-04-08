@@ -1923,7 +1923,15 @@
     },
     {
       "description":    "TUYA TS011F 2-Channel Relay MOES MS-104BZ",
-      "modelNames":     ["_TZ3000_pmz6mjyu"],
+      "modelNames":     ["_TZ3000_iv6ph5tr", "_TZ3000_pmz6mjyu"],
+      "properties":     ["tuyaPowerOnStatus"],
+      "actions":        ["tuyaPowerOnStatus"],
+      "exposes":        ["powerOnStatus"],
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TZ3000_iv6ph5tr", "_TZ3000_pmz6mjyu"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
