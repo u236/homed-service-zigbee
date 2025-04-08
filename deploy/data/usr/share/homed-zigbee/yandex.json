@@ -14,7 +14,6 @@
     },
     {
       "modelNames":     ["YNDX-00531"],
-      "properties":     ["customCommands"],
       "bindings":       ["status"],
       "exposes":        ["action"],
       "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
@@ -40,7 +39,6 @@
     },
     {
       "modelNames":     ["YNDX-00532"],
-      "properties":     ["customCommands"],
       "bindings":       ["status"],
       "exposes":        ["action"],
       "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
@@ -57,7 +55,6 @@
     },
     {
       "modelNames":     ["YNDX-00534"],
-      "properties":     ["customCommands"],
       "bindings":       ["status"],
       "exposes":        ["action"],
       "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
@@ -74,7 +71,6 @@
     },
     {
       "modelNames":     ["YNDX-00535"],
-      "properties":     ["customCommands"],
       "bindings":       ["status"],
       "exposes":        ["action"],
       "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
