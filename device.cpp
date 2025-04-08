@@ -432,38 +432,6 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             continue;
         }
 
-        if (it->toString() == "customCommands")
-        {
-            QMap <QString, QVariant> options = device->options().value(multiple ? QString("customCommands_%2").arg(QString::number(endpoint->id())) : "customCommands").toMap();
-
-            for (auto it = options.begin(); it != options.end(); it++)
-            {
-                QMap <QString, QVariant> option = it.value().toMap();
-                Property property(new PropertiesCustom::Command(it.key(), static_cast <quint16> (option.value("clusterId").toInt())));
-                property->setParent(endpoint.data());
-                property->setMultiple(multiple);
-                endpoint->properties().append(property);
-            }
-
-            continue;
-        }
-
-        if (it->toString() == "customAttributes")
-        {
-            QMap <QString, QVariant> options = device->options().value(QString("customAttributes_%2").arg(QString::number(endpoint->id())), device->options().value("customAttributes")).toMap();
-
-            for (auto it = options.begin(); it != options.end(); it++)
-            {
-                QMap <QString, QVariant> option = it.value().toMap();
-                Property property(new PropertiesCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider").toDouble()));
-                property->setParent(endpoint.data());
-                property->setMultiple(multiple);
-                endpoint->properties().append(property);
-            }
-
-            continue;
-        }
-
         logWarning << device << endpoint << "property" << it->toString() << "unrecognized";
     }
 
@@ -476,26 +444,6 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
             action->setParent(endpoint.data());
             endpoint->actions().append(action);
-            continue;
-        }
-
-        if (it->toString() == "customAttributes")
-        {
-            QMap <QString, QVariant> options = device->options().value(QString("customAttributes_%2").arg(QString::number(endpoint->id())), device->options().value("customAttributes")).toMap();
-
-            for (auto it = options.begin(); it != options.end(); it++)
-            {
-                QMap <QString, QVariant> option = it.value().toMap();
-                Action action;
-
-                if (!option.value("action").toBool())
-                    continue;
-
-                action = Action(new ActionsCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("manufacturerCode").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider").toDouble()));
-                action->setParent(endpoint.data());
-                endpoint->actions().append(action);
-            }
-
             continue;
         }
 
@@ -542,6 +490,69 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         }
 
         logWarning << device << endpoint << "poll" << it->toString() << "unrecognized";
+    }
+
+    if (device->options().contains("customAttributes"))
+    {
+        QMap <QString, QVariant> options = device->options().value(QString("customAttributes_%2").arg(QString::number(endpoint->id())), device->options().value("customAttributes")).toMap();
+
+        for (auto it = options.begin(); it != options.end(); it++)
+        {
+            QMap <QString, QVariant> option = it.value().toMap();
+
+            Property property(new PropertiesCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider").toDouble()));
+            property->setParent(endpoint.data());
+            property->setMultiple(multiple);
+            endpoint->properties().append(property);
+
+            if (option.value("action", false).toBool())
+            {
+                Action action = Action(new ActionsCustom::Attribute(it.key(), option.value("type").toString(), static_cast <quint16> (option.value("clusterId").toInt()), static_cast <quint16> (option.value("manufacturerCode").toInt()), static_cast <quint16> (option.value("attributeId").toInt()), static_cast <quint8> (option.value("dataType").toInt()), option.value("divider").toDouble()));
+                action->setParent(endpoint.data());
+                endpoint->actions().append(action);
+            }
+
+            if (option.value("binding", false).toBool())
+            {
+                quint16 clusterId = option.value("clusterId").toInt();
+                bool bound = false;
+                for (int i = 0; i < endpoint->bindings().count(); i++)
+                {
+                    if (endpoint->bindings().at(i)->clusterId() == clusterId)
+                    {
+                        bound = true;
+                        logInfo << device << endpoint << "skipping binding for" << it.key() << "cluster" << clusterId << "already binding in" << endpoint->bindings().at(i)->name();
+                        break;
+                    }
+                }
+                if (!bound)
+                {
+                    Binding binding = Binding(new BindingObject(it.key(), clusterId));
+                    endpoint->bindings().append(binding);
+                }
+            }
+
+            if (option.contains("reporting"))
+            {
+                QMap <QString, QVariant> reportingOptions = option.value("reporting").toMap();
+                Reporting reporting = Reporting(new ReportingObject(it.key(), option.value("clusterId").toInt(), option.value("attributeId").toInt(), option.value("dataType").toInt(), reportingOptions.value("minInterval", 0).toInt(), reportingOptions.value("maxInterval", 3600).toInt(), reportingOptions.value("valueChange", 0).toInt()));
+                endpoint->reportings().append(reporting);
+            }
+        }
+    }
+
+    if (device->options().contains("customCommands"))
+    {
+        QMap <QString, QVariant> options = device->options().value(multiple ? QString("customCommands_%2").arg(QString::number(endpoint->id())) : "customCommands").toMap();
+
+        for (auto it = options.begin(); it != options.end(); it++)
+        {
+            QMap <QString, QVariant> option = it.value().toMap();
+            Property property(new PropertiesCustom::Command(it.key(), static_cast <quint16> (option.value("clusterId").toInt())));
+            property->setParent(endpoint.data());
+            property->setMultiple(multiple);
+            endpoint->properties().append(property);
+        }
     }
 
     for (auto it = exposes.begin(); it != exposes.end(); it++)
