@@ -13,8 +13,7 @@
     {
       "description":    "MODKAM AirSense CO2 Sensor",
       "modelNames":     ["DIYRuZ_AirSense"],
-      "properties":     ["temperature", "humidity", "pressure", "co2", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["temperature", "humidity", "pressure", "co2"],
       "bindings":       ["temperature", "humidity", "pressure", "co2"],
       "reportings":     ["temperature", "humidity", "pressure", "co2"],
       "exposes":        ["temperature", "humidity", "pressure", "co2", "temperatureOffset", "humidityOffset", "pressureOffset", "co2Low", "co2High", "co2AutoCalibration", "ledFeedback"],
@@ -40,8 +39,6 @@
     {
       "description":    "MODKAM Radioactivity Sensor",
       "modelNames":     ["DIYRuZ_Geiger"],
-      "properties":     ["customCommands", "customAttributes"],
-      "actions":        ["customAttributes"],
       "bindings":       ["status", "illuminance"],
       "reportings":     ["modkamEventsPerMinute", "modkamDosePerHour"],
       "exposes":        ["alarm", "eventsPerMinute", "dosePerHour", "sensorType", "sensorCount", "sensitivity", "threshold", "ledFeedback", "buzzerFeedback"],
@@ -101,7 +98,7 @@
     },
     {
       "modelNames":     ["DIYRuZ_FreePad", "FreePadLeTV8"],
-      "properties":     ["switchType", "switchMode", "customAttributes"],
+      "properties":     ["switchType", "switchMode"],
       "actions":        ["switchType", "switchMode"],
       "bindings":       ["multistateInput"],
       "exposes":        ["action", "switchType", "switchMode"],
@@ -123,7 +120,7 @@
     },
     {
       "modelNames":     ["FreePad_LeTV_8"],
-      "properties":     ["switchType", "switchMode", "customAttributes"],
+      "properties":     ["switchType", "switchMode"],
       "actions":        ["switchType", "switchMode"],
       "bindings":       ["multistateInput"],
       "exposes":        ["action", "switchType", "switchMode"],

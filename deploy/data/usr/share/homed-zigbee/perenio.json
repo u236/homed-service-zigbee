@@ -24,8 +24,8 @@
     {
       "description":    "Perenio 16A Smart Plug PEHPL0X",
       "modelNames":     ["PEHPL0X"],
-      "properties":     ["status", "customAttributes"],
-      "actions":        ["status", "customAttributes"],
+      "properties":     ["status"],
+      "actions":        ["status"],
       "bindings":       ["status", "perenio"],
       "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "power"],

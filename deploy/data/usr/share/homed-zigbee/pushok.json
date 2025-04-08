@@ -4,8 +4,8 @@
     {
       "description":    "PushOk Hardware Garden Valve POK006",
       "modelNames":     ["POK006"],
-      "properties":     ["batteryPercentage", "status", "customAttributes"],
-      "actions":        ["status", "customAttributes"],
+      "properties":     ["batteryPercentage", "status"],
+      "actions":        ["status"],
       "exposes":        ["battery", "lock", "stallTime", "valveStatus"],
       "options":        {
                           "customAttributes":
@@ -21,8 +21,8 @@
     {
       "description":    "PushOk Hardware Thermostat Relay POK008",
       "modelNames":     ["POK008"],
-      "properties":     ["batteryPercentage", "status", "temperature", "customAttributes"],
-      "actions":        ["status", "customAttributes"],
+      "properties":     ["batteryPercentage", "status", "temperature"],
+      "actions":        ["status"],
       "exposes":        ["battery", "switch", "thermostat", "hysteresis"],
       "options":        {
                           "customAttributes":
@@ -39,8 +39,7 @@
     {
       "description":    "PushOk Hardware Voltage Monitor POK009",
       "modelNames":     ["POK009"],
-      "properties":     ["batteryPercentage", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["batteryPercentage"],
       "exposes":        ["battery", "voltage", "voltageLow", "voltageType", "threshold"],
       "options":        {
                           "customAttributes":
@@ -64,7 +63,7 @@
     {
       "description":    "PushOk Hardware Temperature and Contact Sensor POK010",
       "modelNames":     ["POK010"],
-      "properties":     ["batteryPercentage", "temperature", "customAttributes"],
+      "properties":     ["batteryPercentage", "temperature"],
       "exposes":        ["battery", "temperature", "contact"],
       "options":        {"customAttributes": {"contact": {"type": "bool", "clusterId": 15, "attributeId": 85, "dataType": 16}}}
     }

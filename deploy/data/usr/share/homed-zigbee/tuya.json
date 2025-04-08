@@ -1661,8 +1661,8 @@
     },
     {
       "modelNames":     ["_TZ3218_ya5d6wth"],
-      "properties":     ["status", "customAttributes"],
-      "actions":        ["status", "customAttributes"],
+      "properties":     ["status"],
+      "actions":        ["status"],
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus"],
@@ -1808,16 +1808,14 @@
     {
       "description":    "TUYA TS0004 4-Channel Relay (Type B)",
       "modelNames":     ["_TZ3000_gexniqbq", "_TZ3000_imaccztn", "_TZ3000_mdj7kra9", "_TZ3000_nivavasg"],
-      "properties":     ["customAttributes"],
-      "actions":        ["customAttributes"],
       "exposes":        ["indicator"],
       "options":        {"customAttributes": {"indicator": {"type": "bool", "clusterId": 6, "attributeId": 20480, "dataType": 48, "action": true}}, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
       "modelNames":     ["_TZ3000_gexniqbq", "_TZ3000_imaccztn", "_TZ3000_mdj7kra9", "_TZ3000_nivavasg"],
-      "properties":     ["status", "customAttributes"],
-      "actions":        ["status", "customAttributes"],
+      "properties":     ["status"],
+      "actions":        ["status"],
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus"],
@@ -1870,8 +1868,8 @@
     },
     {
       "modelNames":     ["_TZ3002_vaq2bfcu"],
-      "properties":     ["status", "customAttributes"],
-      "actions":        ["status", "customAttributes"],
+      "properties":     ["status"],
+      "actions":        ["status"],
       "bindings":       ["status"],
       "exposes":        ["switch", "powerOnStatus", "switchMode"],
       "options":        {
@@ -2029,8 +2027,8 @@
     {
       "description":    "TUYA TS0052 1-Channel Dimmer",
       "modelNames":     ["_TZ3000_mgusv51k"],
-      "properties":     ["status", "level", "tuyaSwitchType", "customAttributes"],
-      "actions":        ["status", "level", "tuyaSwitchType", "customAttributes"],
+      "properties":     ["status", "level", "tuyaSwitchType"],
+      "actions":        ["status", "level", "tuyaSwitchType"],
       "exposes":        ["light", "switchType", "powerOnStatus"],
       "options":        {"customAttributes": {"powerOnStatus": {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}}, "light": ["level"], "switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}}
     },
@@ -2045,8 +2043,8 @@
     {
       "description":    "TUYA TS0052 2-Channel Dimmer",
       "modelNames":     ["_TZ3000_kvwrdf47", "_TZ3000_zjtxnoft"],
-      "properties":     ["status", "level", "tuyaSwitchType", "customAttributes"],
-      "actions":        ["status", "level", "tuyaSwitchType", "customAttributes"],
+      "properties":     ["status", "level", "tuyaSwitchType"],
+      "actions":        ["status", "level", "tuyaSwitchType"],
       "exposes":        ["light", "switchType", "powerOnStatus"],
       "options":        {"customAttributes": {"powerOnStatus": {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true}}, "light": ["level"], "switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     [1, 2]
@@ -2116,8 +2114,7 @@
     {
       "description":    "TUYA TS0202 Configurable Motion Sensor",
       "modelNames":     ["_TZ3000_6ygjfyll", "_TZ3000_mcxw5ehu", "_TZ3000_msl6wxk9", "_TZ3000_o4mkahk", "_TZ3040_6ygjfyll", "_TZ3040_fwxuzcf4", "_TZ3040_msl6wxk9"],
-      "properties":     ["batteryPercentage", "iasOccupancy", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["batteryPercentage", "iasOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy", "batteryLow", "tamper", "sensitivityMode", "timeoutMode"],

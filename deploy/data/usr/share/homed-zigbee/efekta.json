@@ -190,16 +190,15 @@
     },
     {
       "modelNames":     ["EFEKTA_PST_V1", "EFEKTA_PST_V1_LR"],
-      "properties":     ["batteryPercentage", "pressure", "efektaReadInterval", "customAttributes"],
-      "actions":        ["efektaReadInterval", "customAttributes"],
+      "properties":     ["batteryPercentage", "pressure", "efektaReadInterval"],
+      "actions":        ["efektaReadInterval"],
       "bindings":       ["battery", "pressure"],
       "reportings":     ["batteryPercentage", "pressure"],
       "endpointId":     1
     },
     {
       "modelNames":     ["EFEKTA_PST_V1", "EFEKTA_PST_V1_LR"],
-      "properties":     ["temperature", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["temperature"],
       "bindings":       ["temperature"],
       "reportings":     ["temperature"],
       "endpointId":     2
@@ -207,8 +206,8 @@
     {
       "description":    "EFEKTA 2-Channel Gas/Water Pressure Sensor PST DUO v1",
       "modelNames":     ["EFEKTA_PST_DUO_V1", "EFEKTA_PST_DUO_V1_LR"],
-      "properties":     ["batteryPercentage", "efektaReadInterval", "customAttributes"],
-      "actions":        ["efektaReadInterval", "customAttributes"],
+      "properties":     ["batteryPercentage", "efektaReadInterval"],
+      "actions":        ["efektaReadInterval"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "readInterval", "enableReporting", "comparePrevious", "transmitPower", "enablePolling"],
@@ -230,8 +229,7 @@
     },
     {
       "modelNames":     ["EFEKTA_PST_DUO_V1", "EFEKTA_PST_DUO_V1_LR"],
-      "properties":     ["temperature", "pressure", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["temperature", "pressure"],
       "bindings":       ["temperature", "pressure"],
       "reportings":     ["temperature", "pressure"],
       "exposes":        ["temperature", "pressure", "temperatureOffset", "pressureOffset"],
@@ -249,8 +247,8 @@
     {
       "description":    "EFEKTA Temperature and Humidity Sensor TH v1 or TH v2",
       "modelNames":     ["EFEKTA_TH", "EFEKTA_TH_LR", "EFEKTA_TH_v1_LR", "EFEKTA_TH_v2", "EFEKTA_TH_v2_LR"],
-      "properties":     ["batteryPercentage", "temperature", "humidity", "efektaReadInterval", "efektaTemperatureSettings", "efektaHumiditySettings", "customAttributes"],
-      "actions":        ["efektaReadInterval", "efektaTemperatureSettings", "efektaHumiditySettings", "customAttributes"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "efektaReadInterval", "efektaTemperatureSettings", "efektaHumiditySettings"],
+      "actions":        ["efektaReadInterval", "efektaTemperatureSettings", "efektaHumiditySettings"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity", "readInterval", "enableReporting", "comparePrevious", "temperatureLow",  "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert"],
@@ -272,8 +270,8 @@
     {
       "description":    "EFEKTA Plant Watering Sensor miniPWS",
       "modelNames":     ["EFEKTA_miniPWS"],
-      "properties":     ["batteryPercentage", "temperature", "moisture", "efektaTemperatureSettings", "customAttributes"],
-      "actions":        ["efektaTemperatureSettings", "customAttributes"],
+      "properties":     ["batteryPercentage", "temperature", "moisture", "efektaTemperatureSettings"],
+      "actions":        ["efektaTemperatureSettings"],
       "bindings":       ["battery", "temperature", "moisture"],
       "exposes":        ["battery", "temperature", "moisture", "reportingDelay", "temperatureOffset"],
       "options":        {
@@ -368,16 +366,15 @@
     },
     {
       "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
-      "properties":     ["temperature", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["temperature"],
       "bindings":       ["temperature"],
       "reportings":     ["temperature"],
       "endpointId":     1
     },
     {
       "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
-      "properties":     ["batteryPercentage", "moisture", "efektaReadInterval", "customAttributes"],
-      "actions":        ["efektaReadInterval", "customAttributes"],
+      "properties":     ["batteryPercentage", "moisture", "efektaReadInterval"],
+      "actions":        ["efektaReadInterval"],
       "bindings":       ["battery", "moisture"],
       "reportings":     ["batteryPercentage", "moisture"],
       "endpointId":     2

@@ -87,8 +87,7 @@
     {
       "description":    "Sonoff Motion Sensor SNZB-03P",
       "modelNames":     ["SNZB-03P"],
-      "properties":     ["batteryPercentage", "occupancy", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["batteryPercentage", "occupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "occupancy", "occupancyTimeout", "illumination"],
@@ -105,7 +104,7 @@
     {
       "description":    "Sonoff Wireless Button SNZB-01 or SNZB-01P",
       "modelNames":     ["SNZB-01P", "WB01", "WB-01"],
-      "properties":     ["batteryPercentage", "customCommands"],
+      "properties":     ["batteryPercentage"],
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
@@ -123,8 +122,8 @@
     {
       "description":    "Sonoff Radiator Thermostat TRVZB",
       "modelNames":     ["TRVZB"],
-      "properties":     ["batteryPercentage", "thermostat", "customAttributes"],
-      "actions":        ["thermostat", "thermostatProgram", "customAttributes"],
+      "properties":     ["batteryPercentage", "thermostat"],
+      "actions":        ["thermostat", "thermostatProgram"],
       "exposes":        ["battery", "thermostat", "temperatureOffset", "childLock", "awayTemperature", "valveOpenLimit", "valveCloseLimit", "sensorType", "externalTemperature", "thermostatProgram"],
       "options":        {
                           "customAttributes":
@@ -173,8 +172,8 @@
     {
       "description":    "Sonoff 1-Channel Relay ZBMINI-R2",
       "modelNames":     ["ZBMINIR2"],
-      "properties":     ["status", "powerOnStatus", "customAttributes", "customCommands"],
-      "actions":        ["status", "powerOnStatus", "customAttributes"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "switchType", "switchMode", "action"],
@@ -200,8 +199,7 @@
     {
       "description":    "Sonoff Human Presense Sensor SNZB-06P",
       "modelNames":     ["SNZB-06P"],
-      "properties":     ["occupancy", "customAttributes"],
-      "actions":        ["customAttributes"],
+      "properties":     ["occupancy"],
       "exposes":        ["occupancy", "occupancyTimeout", "sensitivityMode", "illumination"],
       "options":        {
                           "customAttributes":
