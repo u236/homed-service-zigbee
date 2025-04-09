@@ -138,6 +138,7 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
 
         case DATA_TYPE_16BIT_BITMAP:
         case DATA_TYPE_16BIT_UNSIGNED:
+        case DATA_TYPE_16BIT_ENUM:
             value = qFromLittleEndian <quint16> (*(reinterpret_cast <quint16*> (buffer.data())));
             break;
 
