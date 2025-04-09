@@ -128,6 +128,7 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
         case DATA_TYPE_BOOLEAN:
         case DATA_TYPE_8BIT_ENUM:
         case DATA_TYPE_8BIT_UNSIGNED:
+        case DATA_TYPE_8BIT_BITMAP:
             value = static_cast <quint8> (buffer.at(0));
             break;
 
@@ -136,6 +137,7 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
             break;
 
         case DATA_TYPE_16BIT_UNSIGNED:
+        case DATA_TYPE_16BIT_BITMAP:
             value = qFromLittleEndian <quint16> (*(reinterpret_cast <quint16*> (buffer.data())));
             break;
 
@@ -145,6 +147,8 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
 
         case DATA_TYPE_24BIT_UNSIGNED:
         case DATA_TYPE_32BIT_UNSIGNED:
+        case DATA_TYPE_24BIT_BITMAP:
+        case DATA_TYPE_32BIT_BITMAP:
             value = qFromLittleEndian <quint32> (*(reinterpret_cast <quint32*> (buffer.data())));
             break;
 
@@ -157,6 +161,10 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
         case DATA_TYPE_48BIT_UNSIGNED:
         case DATA_TYPE_56BIT_UNSIGNED:
         case DATA_TYPE_64BIT_UNSIGNED:
+        case DATA_TYPE_40BIT_BITMAP:
+        case DATA_TYPE_48BIT_BITMAP:
+        case DATA_TYPE_56BIT_BITMAP:
+        case DATA_TYPE_64BIT_BITMAP:
             value = qFromLittleEndian <quint64> (*(reinterpret_cast <quint64*> (buffer.data())));
             break;
 
