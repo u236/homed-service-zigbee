@@ -588,6 +588,7 @@ bool ZBoss::startCoordinator(void)
 
     ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
+    m_ready = true;
 
     emit coordinatorReady();
     return true;

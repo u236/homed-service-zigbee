@@ -685,6 +685,8 @@ bool EZSP::startCoordinator(void)
     m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
     setManufacturerCode(MANUFACTURER_CODE_SILABS);
+    m_ready = true;
+
     emit coordinatorReady();
     return true;
 }

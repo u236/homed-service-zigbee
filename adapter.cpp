@@ -7,7 +7,7 @@
 #include "logger.h"
 #include "zcl.h"
 
-Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_serialError(false), m_connected(false), m_permitJoinAddress(PERMIT_JOIN_BROARCAST_ADDRESS), m_permitJoin(false), m_errorCount(0)
+Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_ready(false), m_serialError(false), m_connected(false), m_permitJoinAddress(PERMIT_JOIN_BROARCAST_ADDRESS), m_permitJoin(false), m_errorCount(0)
 {
     QString portName = config->value("zigbee/port", "/dev/ttyUSB0").toString();
 
@@ -130,6 +130,8 @@ Adapter::~Adapter(void)
 
 void Adapter::init(void)
 {
+    m_ready = false;
+
     if (m_device == m_serial)
     {
         if (m_serial->isOpen())

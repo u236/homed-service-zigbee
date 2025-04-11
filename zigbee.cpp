@@ -325,7 +325,7 @@ void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint1
 
 void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
 {
-    if (m_interPanLock)
+    if (!m_adapter->ready() || m_interPanLock)
         return;
 
     m_interPanLock = true;
@@ -385,6 +385,9 @@ void ZigBee::groupAction(quint16 groupId, const QString &name, const QVariant &d
 {
     int type = QMetaType::type(QString(name).append("Action").toUtf8());
 
+    if (!m_adapter->ready())
+        return;
+
     if (type)
     {
         Action action(reinterpret_cast <ActionObject*> (QMetaType::create(type)));
@@ -413,6 +416,9 @@ void ZigBee::enqueueRequest(const Device &device, quint8 endpointId, quint16 clu
 {
     DataRequest request(new DataRequestObject(device, endpointId, clusterId, data, name, debug, manufacturerCode, action));
 
+    if (!m_adapter->ready())
+        return;
+
     if (!m_requestTimer->isActive() && !m_interPanLock)
         m_requestTimer->start();
 
@@ -421,6 +427,9 @@ void ZigBee::enqueueRequest(const Device &device, quint8 endpointId, quint16 clu
 
 void ZigBee::enqueueRequest(const Device &device, RequestType type)
 {
+    if (!m_adapter->ready())
+        return;
+
     if (!m_requestTimer->isActive() && !m_interPanLock)
         m_requestTimer->start();
 
@@ -752,6 +761,9 @@ bool ZigBee::bindingRequest(const Endpoint &endpoint, quint16 clusterId, const Q
     const Device &device = endpoint->device();
     QString name = unbind ? "unbinding from " : "binding to ";
 
+    if (!m_adapter->ready())
+        return false;
+
     switch (address.length())
     {
         case 0: name.append("coordinator"); break;
@@ -838,6 +850,9 @@ bool ZigBee::reportingRequest(const Endpoint &endpoint, const Reporting &reporti
     QMap <QString, QVariant> options = device->options().value(device->options().contains("reporting") ? "reporting" : QString(reporting->name()).append("Reporting")).toMap();
     QByteArray request = zclHeader(0x00, m_requestId, CMD_CONFIGURE_REPORTING);
 
+    if (!m_adapter->ready())
+        return false;
+
     for (int i = 0; i < reporting->attributes().count(); i++)
     {
         configureReportingStruct item;
@@ -902,6 +917,9 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
     const Device &device = endpoint->device();
     QByteArray request;
     QString name;
+
+    if (!m_adapter->ready())
+        return false;
 
     m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
 
@@ -982,6 +1000,9 @@ bool ZigBee::groupRequest(const Endpoint &endpoint, quint16 groupId, bool remove
 bool ZigBee::dataRequest(const Endpoint &endpoint, quint16 clusterId, const QByteArray &data, const QString &name)
 {
     const Device &device = endpoint->device();
+
+    if (!m_adapter->ready())
+        return false;
 
     m_adapter->setRequestParameters(device->ieeeAddress(), device->batteryPowered());
     m_replyId = m_requestId;
@@ -1786,9 +1807,6 @@ void ZigBee::coordinatorReady(void)
 
     logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':');
     m_adapter->setPermitJoin(m_devices->permitJoin());
-
-    if (!m_requests.isEmpty())
-        m_requestTimer->start();
 
     if (!m_neignborsTimer->isActive())
         m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);

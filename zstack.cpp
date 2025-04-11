@@ -197,7 +197,10 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
                 m_status = static_cast <quint8> (data.at(0));
 
             if (m_version == ZStackVersion::ZStack12x && m_status == ZSTACK_COORDINATOR_STARTED)
+            {
+                m_ready = true;
                 emit coordinatorReady();
+            }
 
             break;
         }
@@ -235,7 +238,7 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
             switch (m_status)
             {
                 case ZSTACK_NOT_STARTED_AUTOMATICALLY: logWarning << "Network not started, PAN ID collision detected"; break;
-                case ZSTACK_COORDINATOR_STARTED: emit coordinatorReady(); break;
+                case ZSTACK_COORDINATOR_STARTED: m_ready = true; emit coordinatorReady(); break;
             };
 
             break;

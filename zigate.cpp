@@ -342,6 +342,8 @@ bool ZiGate::startCoordinator(bool clear)
     }
 
     logInfo << "ZiGate managed PAN ID:" << QString::asprintf("0x%04x", qFromBigEndian(networkStatus.panId));
+    m_ready = true;
+
     emit coordinatorReady();
     return true;
 }
