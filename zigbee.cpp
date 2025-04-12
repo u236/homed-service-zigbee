@@ -1573,6 +1573,9 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
 
             if (clusterId == CLUSTER_BASIC && device->interviewStatus() != InterviewStatus::Finished && static_cast <int> (device->interviewStatus()) >= static_cast <int> (InterviewStatus::BasicAttributes))
             {
+                if (device->interviewStatus() == InterviewStatus::BasicAttributes && device->manufacturerName().isEmpty())
+                    break;
+
                 device->setInterviewStatus(device->interviewStatus() == InterviewStatus::BasicAttributes ? InterviewStatus::ColorCapabilities : static_cast <InterviewStatus> (static_cast <int> (device->interviewStatus()) + 1));
                 interviewDevice(device);
             }
