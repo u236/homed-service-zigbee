@@ -1,6 +1,7 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#define OTA_FILE_BUFFER_SIZE        1048576
 #define STORE_DATABASE_DELAY        20
 #define STORE_PROPERTIES_DELAY      1000
 #define UPDATE_ENDPOINT_INTERVAL    100

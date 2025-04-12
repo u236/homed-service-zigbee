@@ -11,7 +11,9 @@
 void OTA::refresh(const QDir &dir)
 {
     QList <QString> list = dir.entryList(QDir::Files);
+    QByteArray signature = QByteArray::fromHex("1ef1ee0b"), buffer;
     otaFileHeaderStruct header;
+    int position;
 
     for (int i = 0; i < list.count(); i++)
     {
@@ -25,21 +27,15 @@ void OTA::refresh(const QDir &dir)
         if (!file.open(QFile::ReadOnly))
             continue;
 
-        while (m_imageOffset + sizeof(header) <= static_cast <size_t> (file.size()))
+        buffer = file.read(OTA_FILE_BUFFER_SIZE);
+        position = buffer.indexOf(signature);
+
+        if (position >= 0 && position + sizeof(header) <= static_cast <size_t> (file.size()))
         {
-            file.seek(m_imageOffset);
+            file.seek(position);
             memcpy(&header, file.read(sizeof(header)).constData(), sizeof(header));
-
-            if (qFromLittleEndian(header.fileIdentifier) == 0x0beef11e)
-            {
-                check = true;
-                break;
-            }
-
-            m_imageOffset++;
+            check = true;
         }
-
-        file.close();
 
         if (check && qFromLittleEndian(header.manufacturerCode) == m_manufacturerCode && qFromLittleEndian(header.imageType) == m_imageType && qFromLittleEndian(header.imageSize) <= file.size())
         {
