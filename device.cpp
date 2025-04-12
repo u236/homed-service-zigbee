@@ -315,6 +315,15 @@ void DeviceList::setupDevice(const Device &device)
 
 void DeviceList::removeDevice(const Device &device)
 {
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        if (!it.value()->timer()->isActive())
+            continue;
+
+        disconnect(it.value()->timer(), &QTimer::timeout, this, &DeviceList::updateEndpoint);
+        it.value()->timer()->stop();
+    }
+
     if (device->name() != device->ieeeAddress().toHex(':'))
     {
         device->setRemoved(true);
