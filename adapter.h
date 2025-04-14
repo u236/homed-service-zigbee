@@ -1,9 +1,7 @@
 #ifndef ADAPTER_H
 #define ADAPTER_H
 
-#define RECEIVE_TIMEOUT                 10
 #define BUFFER_LENGTH_LIMIT             8192
-
 #define ADAPTER_REQUEST_TIMEOUT         2000
 #define WATCHDOG_ERROR_COUNT            10
 
@@ -209,7 +207,7 @@ protected:
     quint16 m_port;
 
     QString m_bootPin, m_resetPin, m_reset;
-    quint16 m_panId;
+    quint16 m_timeout, m_panId;
     quint8 m_channel, m_power;
     bool m_write, m_watchdog, m_portDebug, m_adapterDebug;
 

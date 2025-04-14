@@ -631,6 +631,13 @@ void ZBoss::parseData(void)
         lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (m_buffer.data() + offset);
         length = qFromLittleEndian(lowLevelHeader->length) + 2;
 
+        if (m_buffer.length() < length)
+        {
+            logWarning << QString("Frame %1 length (%2 bytes) is less thаn expected (%3 bytes)").arg(QString(m_buffer.mid(offset, length).toHex(':'))).arg(m_buffer.length()).arg(length);
+            m_buffer.clear();
+            return;
+        }
+
         if (lowLevelHeader->crc != getCRC8(reinterpret_cast <quint8*> (lowLevelHeader) + 2, sizeof(zbossLowLevelHeaderStruct) - 3))
         {
             logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(m_buffer.mid(offset, length).toHex(':')));
