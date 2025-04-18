@@ -132,6 +132,27 @@
     }
   ],
 
+  "Legrand":
+  [
+    {
+      "description":    "Legrand 2-Key Wireless Switch",
+      "modelNames":     ["Double gangs remote switch"],
+      "properties":     ["batteryVoltage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryVoltage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["Double gangs remote switch"],
+      "properties":     ["statusAction", "levelAction"],
+      "bindings":       ["status", "level"],
+      "exposes":        ["action"],
+      "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}},
+      "endpointId":     [1, 2]
+    }
+  ],
+
   "LifeConrol":
   [
     {
