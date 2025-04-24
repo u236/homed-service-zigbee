@@ -187,11 +187,11 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 1-Channel Dimmer",
+      "description":    "TUYA TS0601 1-Channel Dimmer (Type A)",
       "modelNames":     ["_TZE200_1agwnems", "_TZE200_3p5ydos3", "_TZE200_4mh6tyyo", "_TZE200_579lguh2", "_TZE200_9i9dt8is", "_TZE200_dfxkcots", "_TZE200_w4cryh2i", "_TZE200_ip2akl4w", "_TZE200_la2c2uo9", "_TZE200_p0gzbqct", "_TZE200_vucankjx"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["light", "lightType"],
+      "exposes":        ["light", "powerOnStatus", "lightType"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -202,6 +202,27 @@
                           },
                           "status": {"enum": ["off", "on"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "light": ["level"]
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 1-Channel Dimmer (Type B)",
+      "modelNames":     ["_TZE204_dcnsggvz"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["light", "powerOnStatus", "lightType", "switchType"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "2":    {"name": "level", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true},
+                            "4":    {"name": "lightType", "type": "enum", "action": true},
+                            "14":   {"name": "powerOnStatus", "type": "enum", "action": true},
+                            "57":   {"name": "switchType", "type": "enum", "action": true}
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "switchType": {"enum": ["toggle", "static", "momentary"]},
                           "light": ["level"]
                         }
     },
