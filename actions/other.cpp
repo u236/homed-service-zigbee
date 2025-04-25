@@ -2,7 +2,32 @@
 #include "other.h"
 #include "zcl.h"
 
-QVariant ActionsYandex::Settings::request(const QString &name, const QVariant &data)
+QVariant ActionsYandex::CommonSettings::request(const QString &name, const QVariant &data)
+{
+    int index = m_actions.indexOf(name);
+
+    switch (index)
+    {
+        case 0: // powerMode
+        case 1: // interlock
+        {
+            qint8 value = index ? data.toBool() ? 0x01 : 0x00 : static_cast <qint8> (enumIndex(name, data));
+            m_attributes = {static_cast <quint16> (index ? 0x0007 : 0x0003)};
+            return value < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (m_attributes.at(0)), m_manufacturerCode).append(value);
+        }
+
+        case 2: // indicator
+        {
+            quint8 value = data.toBool() ? 0x00 : 0x01;
+            m_attributes = {0x0005};
+            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
+        }
+    }
+
+    return QByteArray();
+}
+
+QVariant ActionsYandex::SwitchSettings::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);
 
@@ -10,19 +35,10 @@ QVariant ActionsYandex::Settings::request(const QString &name, const QVariant &d
     {
         case 0: // switchMode
         case 1: // switchType
-        case 2: // powerMode
         {
             qint8 value = static_cast <qint8> (enumIndex(name, data));
-            m_attributes = {static_cast <quint16> (index + 1)};
+            m_attributes = {static_cast <quint16> (index ? 0x0002 : 0x0001)};
             return value < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (m_attributes.at(0)), m_manufacturerCode).append(value);
-        }
-
-        case 3: // indicator
-        case 4: // interlock
-        {
-            quint8 value = data.toBool() ? 0x00 : 0x01;
-            m_attributes = {static_cast <quint16> (index == 3 ? 0x0005 : 00007)};
-            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }
 

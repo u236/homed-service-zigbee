@@ -6,12 +6,22 @@
 
 namespace ActionsYandex
 {
-    class Settings : public ActionObject
+    class CommonSettings : public ActionObject
     {
 
     public:
 
-        Settings(void) : ActionObject("settings", CLUSTER_YANDEX, 0x140A, QList <QString> {"switchMode", "switchType", "powerMode", "indicator", "interlock"}) {}
+        CommonSettings(void) : ActionObject("settings", CLUSTER_YANDEX, 0x140A, QList <QString> {"powerMode", "interlock", "indicator"}) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class SwitchSettings : public ActionObject
+    {
+
+    public:
+
+        SwitchSettings(void) : ActionObject("settings", CLUSTER_YANDEX, 0x140A, QList <QString> {"switchMode", "switchType"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };

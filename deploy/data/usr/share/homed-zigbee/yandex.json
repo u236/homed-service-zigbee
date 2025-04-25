@@ -5,10 +5,10 @@
       "description":    "Yandex 1-Channel Switch YNDX-00531",
       "modelNames":     ["YNDX-00531"],
       "properties":     ["status", "powerOnStatus", "yandexSettings"],
-      "actions":        ["status", "powerOnStatus", "yandexSettings"],
+      "actions":        ["status", "powerOnStatus", "yandexCommonSettings", "yandexSwitchSettings"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "powerOnStatus", "switchMode", "powerMode", "indicator"],
+      "exposes":        ["switch", "powerOnStatus", "powerMode", "indicator", "switchMode"],
       "options":        {"switchMode": {"enum": ["relay", "upDecoupled", "decoupled", "downDecoupled"]}},
       "endpointId":     1
     },
@@ -23,14 +23,14 @@
       "description":    "Yandex 2-Channel Switch YNDX-00532",
       "modelNames":     ["YNDX-00532"],
       "properties":     ["yandexSettings"],
-      "actions":        ["yandexSettings"],
+      "actions":        ["yandexCommonSettings"],
       "exposes":        ["powerMode", "indicator"],
       "endpointId":     1
     },
     {
       "modelNames":     ["YNDX-00532"],
       "properties":     ["status", "powerOnStatus", "yandexSettings"],
-      "actions":        ["status", "powerOnStatus", "yandexSettings"],
+      "actions":        ["status", "powerOnStatus", "yandexSwitchSettings"],
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "switchMode"],
@@ -43,6 +43,49 @@
       "exposes":        ["action"],
       "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
       "endpointId":     [3, 4, 5, 6]
+    },
+    {
+      "description":    "Yandex 1-Channel Relay YNDX-00537",
+      "modelNames":     ["YNDX-00537"],
+      "properties":     ["status", "powerOnStatus", "yandexSettings"],
+      "actions":        ["status", "powerOnStatus", "yandexCommonSettings", "yandexSwitchSettings"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus", "powerMode", "switchMode"],
+      "options":        {"switchType": {"enum": ["toggle", "momentary", "decoupled"]}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["YNDX-00537"],
+      "bindings":       ["status"],
+      "exposes":        ["action"],
+      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
+      "endpointId":     2
+    },
+    {
+      "description":    "Yandex 2-Channel Relay YNDX-00538",
+      "modelNames":     ["YNDX-00538"],
+      "properties":     ["yandexSettings"],
+      "actions":        ["yandexCommonSettings"],
+      "exposes":        ["powerMode", "interlock"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["YNDX-00538"],
+      "properties":     ["status", "powerOnStatus", "yandexSettings"],
+      "actions":        ["status", "powerOnStatus", "yandexSwitchSettings"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus", "switchType"],
+      "options":        {"switchType": {"enum": ["toggle", "momentary", "decoupled"]}},
+      "endpointId":     [1, 2]
+    },
+    {
+      "modelNames":     ["YNDX-00538"],
+      "bindings":       ["status"],
+      "exposes":        ["action"],
+      "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
+      "endpointId":     [3, 4]
     },
     {
       "description":    "Yandex 1-Key Wireless Switch YNDX-00534",

@@ -71,7 +71,8 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
 
-    qRegisterMetaType <ActionsYandex::Settings>                 ("yandexSettingsAction");
+    qRegisterMetaType <ActionsYandex::CommonSettings>           ("yandexCommonSettingsAction");
+    qRegisterMetaType <ActionsYandex::SwitchSettings>           ("yandexSwitchSettingsAction");
 }
 
 QByteArray ActionObject::ieeeAddress(void)
