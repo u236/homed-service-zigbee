@@ -24,6 +24,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Illuminance>                     ("illuminanceProperty");
     qRegisterMetaType <Properties::Temperature>                     ("temperatureProperty");
     qRegisterMetaType <Properties::Pressure>                        ("pressureProperty");
+    qRegisterMetaType <Properties::Flow>                            ("flowProperty");
     qRegisterMetaType <Properties::Humidity>                        ("humidityProperty");
     qRegisterMetaType <Properties::Occupancy>                       ("occupancyProperty");
     qRegisterMetaType <Properties::OccupancyTimeout>                ("occupancyTimeoutProperty");

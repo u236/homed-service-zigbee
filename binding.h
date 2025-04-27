@@ -189,6 +189,15 @@ namespace Bindings
 
     };
 
+    class Flow : public BindingObject
+    {
+
+    public:
+
+        Flow(void) : BindingObject("flow", CLUSTER_FLOW_MEASUREMENT) {}
+
+    };
+
     class Humidity : public BindingObject
     {
 

@@ -175,6 +175,16 @@ namespace Properties
 
     };
 
+    class Flow : public PropertyObject
+    {
+
+    public:
+
+        Flow(void) : PropertyObject("flow", CLUSTER_FLOW_MEASUREMENT) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Humidity : public PropertyObject
     {
 

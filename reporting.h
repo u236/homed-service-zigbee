@@ -186,6 +186,15 @@ namespace Reportings
 
     };
 
+    class Flow : public ReportingObject
+    {
+
+    public:
+
+        Flow(void) : ReportingObject("flow", CLUSTER_FLOW_MEASUREMENT, 0x0000, DATA_TYPE_16BIT_UNSIGNED, 10, 3600, 10) {}
+
+    };
+
     class Humidity : public ReportingObject
     {
 

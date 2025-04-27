@@ -266,6 +266,17 @@ void Properties::Pressure::parseAttribte(quint16, quint16 attributeId, const QBy
     m_value = qFromLittleEndian(value) / 10.0;
 }
 
+void Properties::Flow::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    quint16 value = 0;
+
+    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) / 10.0;
+}
+
 void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
