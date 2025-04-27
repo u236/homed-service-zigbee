@@ -87,11 +87,30 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Electricity Meter (Type F)",
+        "description":    "TUYA TS0601 Electricity Meter (Type F)",
+        "modelNames":     ["_TZE200_abatw3kj", "_TZE204_fhvdgeuh"],
+        "properties":     ["tuyaDataPoints"],
+        "actions":        ["tuyaDataPoints"],
+        "exposes":        ["switch", "energy", "voltage", "current", "power", "leakageCurrent", "temperature"],
+        "options":        {
+                            "tuyaDataPoints":
+                            {
+                              "1":    {"name": "energy", "type": "value", "divider": 100},
+                              "6":    {"name": "electricity", "type": "raw"},
+                              "15":   {"name": "leakageCurrent", "type": "value"},
+                              "16":   {"name": "status", "type": "bool", "action": true},
+                              "103":  {"name": "temperature", "type": "value"}
+                            },
+                            "leakageCurrent": {"type": "sensor", "unit": "mA", "icon": "mdi:current-ac"},
+                            "status": {"enum": ["off", "on"]}
+                          }
+      },
+    {
+      "description":    "TUYA TS0601 Electricity Meter (Type G)",
       "modelNames":     ["_TZE284_6ocnqlhn"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["switch", "energy", "voltage", "current", "power", "powerFactor", "frequency", "temperature"],
+      "exposes":        ["switch", "energy", "voltage", "current", "power", "powerFactor", "frequency", "leakageCurrent", "temperature"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -108,7 +127,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Electricity Meter (Type G)",
+      "description":    "TUYA TS0601 Electricity Meter (Type H)",
       "modelNames":     ["_TZE204_81yrt3lo", "_TZE284_81yrt3lo"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
