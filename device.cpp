@@ -1363,6 +1363,9 @@ void DeviceList::updateEndpoint(void)
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
     qint64 time = QDateTime::currentMSecsSinceEpoch();
 
+    if (!endpoint->device()->active())
+        return;
+
     for (int i = 0; i < endpoint->properties().count(); i++)
     {
         const Property &property = endpoint->properties().at(i);

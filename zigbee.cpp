@@ -689,7 +689,7 @@ void ZigBee::interviewFinished(const Device &device)
     if (!device->description().isEmpty())
         logInfo << device << "identified as" << device->description();
 
-    if (!interviewQuirks(device) || !configureDevice(device))
+    if (!configureDevice(device) || !interviewQuirks(device))
     {
         logWarning << device << "interview finished with errors";
         emit deviceEvent(device.data(), Event::interviewError);
