@@ -269,8 +269,25 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 4-Channel Relay",
+      "modelNames":     ["_TZE200_aqnazj70", "_TZE200_di3tfv5b", "_TZE200_mexisfik", "_TZE204_6wi2mope", "_TZE204_aagrxlbd", "_TZE204_f5efvtbv", "_TZE204_iik0pquw", "_TZE284_f5efvtbv"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch_1", "switch_2", "switch_3", "switch_4"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true},
+                            "3":    {"name": "status_3", "type": "bool", "action": true},
+                            "4":    {"name": "status_4", "type": "bool", "action": true}
+                          },
+                          "status": {"enum": ["off", "on"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 8-Channel Relay",
-      "modelNames":     ["_TZE204_dvosyycn", "_TZE200_vmcgja59", "_TZE200_wktrysab", "_TZE204_vmcgja59"],
+      "modelNames":     ["_TZE200_vmcgja59", "_TZE200_wktrysab", "_TZE204_dvosyycn", "_TZE204_vmcgja59"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8"],
