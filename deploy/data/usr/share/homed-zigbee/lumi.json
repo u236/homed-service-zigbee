@@ -298,6 +298,18 @@
       "endpointId":     21
     },
     {
+      "description":    "Aqara T1 1-Channel Relay DLKZMK12LM or SSM-U02",
+      "modelNames":     ["lumi.switch.l0acn1", "lumi.switch.l0agl1"],
+      "properties":     ["status", "lumiData"],
+      "actions":        ["status", "lumiSwitchStatusMemory"],
+      "exposes":        ["switch", "statusMemory", "switchType"],
+      "options":        {
+                          "customAttributes": {"switchType": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 10, "dataType": 32, "action": true}},
+                          "switchType": {"enum": {"1": "toggle", "2": "momentary"}},
+                          "powerSource": 1
+                        }
+    },
+    {
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
       "modelNames":     ["lumi.relay.c2acn01"],
       "properties":     ["lumiBasic", "lumiPower"],
