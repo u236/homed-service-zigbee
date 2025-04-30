@@ -1095,6 +1095,9 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
     if (device->interviewStatus() == InterviewStatus::Finished)
     {
+        if ((clusterId == CLUSTER_BASIC && !attributeId) || parseProperty(endpoint, clusterId, transactionId, attributeId, data))
+            return;
+
         if (clusterId == CLUSTER_TIME && device->manufacturerName().contains("efekta", Qt::CaseInsensitive))
         {
             QDateTime now = QDateTime::currentDateTime();
@@ -1104,9 +1107,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
             return;
         }
 
-        if (!parseProperty(endpoint, clusterId, transactionId, attributeId, data))
-            logDebug(m_debug) << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
-
+        logDebug(m_debug) << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
         return;
     }
 
@@ -1155,9 +1156,6 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
             break;
 
         case CLUSTER_COLOR_CONTROL:
-
-            if (device->interviewStatus() == InterviewStatus::Finished)
-                break;
 
             if (attributeId == 0x400A && dataType == DATA_TYPE_16BIT_BITMAP)
             {
@@ -2327,11 +2325,10 @@ void ZigBee::pingDevices(void)
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
-            if (it.value()->inClusters().contains(CLUSTER_BASIC))
-            {
-                enqueueRequest(device, it.key(), CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0000}));
-                break;
-            }
+            if (!it.value()->inClusters().contains(CLUSTER_BASIC))
+                continue;
+
+            enqueueRequest(device, it.key(), CLUSTER_BASIC, readAttributesRequest(m_requestId, 0x0000, {0x0000}));
         }
     }
 }
