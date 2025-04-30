@@ -56,6 +56,21 @@
       "options":        {"cover": "blind", "ikeaCover": true}
     },
     {
+      "description":    "PARASOLL Door and Window Sensor E2013",
+      "modelNames":     ["PARASOLL Door/Window Sensor"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["PARASOLL Door/Window Sensor"],
+      "properties":     ["iasContact"],
+      "exposes":        ["contact"],
+      "endpointId":     2
+    },
+    {
       "description":    "TRADFRI Motion Sensor E1525 or E1745",
       "modelNames":     ["TRADFRI motion sensor"],
       "properties":     ["batteryPercentage", "ikeaOccupancy"],
@@ -133,21 +148,6 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}}
-    },
-    {
-      "description":    "PARASOLL Door/Window Sensor E2013",
-      "modelNames":     ["PARASOLL Door/Window Sensor"],
-      "properties":     ["batteryPercentage"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery"],
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["PARASOLL Door/Window Sensor"],
-      "properties":     ["iasContact"],
-      "exposes":        ["contact"],
-      "endpointId":     2
     }
   ]
 }
