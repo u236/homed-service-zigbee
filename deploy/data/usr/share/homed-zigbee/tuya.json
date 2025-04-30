@@ -1685,9 +1685,9 @@
     {
       "description":    "TUYA TS000F 1-Channel Relay with Temperature and Humidity Sensor",
       "modelNames":     ["_TZ3218_7fiyo3kv"],
-      "properties":     ["status", "powerOnStatus","tuyaDataPoints"],
-      "actions":        ["status", "powerOnStatus","tuyaDataPoints"],
-      "exposes":        ["switch", "powerOnStatus","temperature", "humidity", "temperatureOffset", "humidityOffset"],
+      "properties":     ["status", "tuyaPowerOnStatus", "tuyaDataPoints"],
+      "actions":        ["status", "tuyaPowerOnStatus", "tuyaDataPoints"],
+      "exposes":        ["switch", "powerOnStatus", "temperature", "humidity", "temperatureOffset", "humidityOffset"],
       "options":        {
                           "tuyaDataPoints":
                           {
