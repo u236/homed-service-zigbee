@@ -16,6 +16,16 @@
       "options":        {"switch": "outlet"}
     },
     {
+      "description":    "TRETAKT 15A Smart plug E2204 or E2214",
+      "modelNames":     ["TRETAKT Smart plug"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"switch": "outlet"}
+    },
+    {
       "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
       "modelNames":     ["TRADFRI bulb E14 WS 470lm", "TRADFRI bulb E27 WS opal 1000lm", "TRADFRIbulbE14WScandleopal470lm", "TRADFRIbulbG125E27WSopal470lm", "TRADFRIbulbT120E27WSopal470lm"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
