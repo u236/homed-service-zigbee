@@ -22,7 +22,6 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "polls":          ["status"],
       "exposes":        ["switch", "powerOnStatus"],
       "options":        {"switch": "outlet"}
     },
