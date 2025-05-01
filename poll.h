@@ -39,24 +39,6 @@ namespace Polls
 
     };
 
-    class TargetTemperature : public PollObject
-    {
-
-    public:
-
-        TargetTemperature(void) : PollObject("targetTemperature", CLUSTER_THERMOSTAT, 0x0012) {}
-
-    };
-
-    class SystemMode : public PollObject
-    {
-
-    public:
-
-        SystemMode(void) : PollObject("systemMode", CLUSTER_THERMOSTAT, 0x001C) {}
-
-    };
-
     class Energy : public PollObject
     {
 
