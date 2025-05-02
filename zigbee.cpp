@@ -700,6 +700,19 @@ void ZigBee::interviewFinished(const Device &device)
         emit deviceEvent(device.data(), Event::interviewFinished);
     }
 
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        for (int i = 0; i < it.value()->actions().count(); i++)
+        {
+            const Action action = it.value()->actions().at(i);
+
+            if (action->attributes().isEmpty())
+                continue;
+
+            enqueueRequest(device, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes()));
+        }
+    }
+
     m_devices->storeDatabase(true);
 }
 
