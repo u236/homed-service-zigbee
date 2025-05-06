@@ -284,6 +284,8 @@ private:
     QList <QString> m_specialExposes, m_brokenFiles;
 
     void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
+
+    bool bindingExists(const Endpoint &endpoint, quint16 clusterId);
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
 
     void recognizeDevice(const Device &device);

@@ -411,6 +411,15 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
     }
 }
 
+bool DeviceList::bindingExists(const Endpoint &endpoint, quint16 clusterId)
+{
+    for (int i = 0; i < endpoint->bindings().count(); i++)
+        if (endpoint->bindings().at(i)->clusterId() == clusterId)
+            return true;
+
+    return false;
+}
+
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
 {
     const Device &device = endpoint->device();
@@ -501,10 +510,15 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
     for (auto it = customCommands.begin(); it != customCommands.end(); it++)
     {
         QMap <QString, QVariant> option = it.value().toMap();
-        Property property(new PropertiesCustom::Command(it.key(), static_cast <quint16> (option.value("clusterId").toInt())));
+        quint16 clusterId = static_cast <quint16> (option.value("clusterId").toInt());
+        Property property(new PropertiesCustom::Command(it.key(), clusterId));
+
         property->setParent(endpoint.data());
         property->setMultiple(multiple);
         endpoint->properties().append(property);
+
+        if (option.value("binding").toBool() && !bindingExists(endpoint, clusterId))
+            endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
     }
 
     for (auto it = customAttributes.begin(); it != customAttributes.end(); it++)
@@ -531,22 +545,8 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             endpoint->actions().append(action);
         }
 
-        if (option.value("binding").toBool())
-        {
-            bool check = true;
-
-            for (int i = 0; i < endpoint->bindings().count(); i++)
-            {
-                if (endpoint->bindings().at(i)->clusterId() == clusterId)
-                {
-                    check = false;
-                    break;
-                }
-            }
-
-            if (check)
-                endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
-        }
+        if (option.value("binding").toBool() && !bindingExists(endpoint, clusterId))
+            endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
 
         if (option.contains("reporting"))
         {
