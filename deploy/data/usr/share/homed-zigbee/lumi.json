@@ -528,6 +528,21 @@
       "exposes":        ["battery", "illuminance"]
     },
     {
+      "description":    "Aqara Air Quality Sensor VOCKQJK11LM",
+      "modelNames":     ["lumi.airmonitor.acn01"],
+      "properties":     ["batteryVoltage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity", "analogInput"],
+      "reportings":     ["batteryVoltage", "temperature", "humidity", "analogInput"],
+      "exposes":        ["battery", "temperature", "humidity", "voc", "airQuality"],
+      "options":        {
+                          "customAttributes": {
+                            "voc":        {"type": "value", "clusterId": 12,    "attributeId": 85,  "dataType": 57},
+                            "airQuality": {"type": "enum",  "clusterId": 64704, "attributeId": 297, "dataType": 32}
+                          },
+                          "airQuality": {"type": "sensor", "enum": ["unknown", "excellent", "good", "moderate", "poor", "unhealthy"], "icon": "mdi:air-filter"}
+                        }
+    },
+    {
       "description":    "Aqara H1 Wireless Dimmer ZNXNKG02LM",
       "modelNames":     ["lumi.remote.rkba01"],
       "exposes":        ["battery", "action", "temperature", "operationMode"],
