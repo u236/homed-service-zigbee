@@ -134,6 +134,8 @@ public:
     inline QList <Poll> &polls(void) { return m_polls; }
     inline QList <quint16> &groups(void) { return m_groups; }
 
+    bool bindingExists(quint16 clusterId);
+
 private:
 
     QTimer *m_timer;
@@ -216,6 +218,8 @@ public:
     inline OTA &ota(void) { return m_otaData; }
     inline QMap <quint16, quint8> &neighbors(void) { return m_neighbors; }
 
+    int checkVersion(const QString &version);
+
 private:
 
     QTimer *m_timer;
@@ -284,8 +288,6 @@ private:
     QList <QString> m_specialExposes, m_brokenFiles;
 
     void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
-
-    bool bindingExists(const Endpoint &endpoint, quint16 clusterId);
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
 
     void recognizeDevice(const Device &device);

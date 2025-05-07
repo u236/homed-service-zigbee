@@ -47,6 +47,33 @@ void OTA::refresh(const QDir &dir)
     }
 }
 
+bool EndpointObject::bindingExists(quint16 clusterId)
+{
+    for (int i = 0; i < m_bindings.count(); i++)
+        if (m_bindings.at(i)->clusterId() == clusterId)
+            return true;
+
+    return false;
+}
+
+int DeviceObject::checkVersion(const QString &version)
+{
+    QList <QString> a = m_firmware.split('.'), b = version.split('.');
+
+    for (int i = 0; i < qMax(a.count(), b.count()); i++)
+    {
+        int x = a.value(i).toInt(), y = b.value(i).toInt();
+
+        if (x > y)
+            return 1;
+
+        if (x < y)
+            return -1;
+    }
+
+    return 0;
+}
+
 DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_sync(false), m_permitJoin(false)
 {
     QFile file(m_config->value("device/expose", "/usr/share/homed-common/expose.json").toString());
@@ -295,6 +322,9 @@ void DeviceList::setupDevice(const Device &device)
     if (device->options().contains("powerSource"))
         device->setPowerSource(static_cast <quint8> (device->options().value("powerSource").toInt()));
 
+    if (device->options().value("ikeaBatterty").toBool() && device->checkVersion("2.4.0") < 0)
+        device->options().insert("battery", QMap <QString, QVariant> {{"undivided", true}});
+
     if (!device->supported())
     {
         logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
@@ -393,31 +423,12 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         return;
     }
 
-    if (manufacturerName == "IKEA of Sweden" && modelName != "RODRET Dimmer" && device->batteryPowered())
-    {
-        QList <QString> list = device->firmware().split('.');
-
-        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 4))
-            device->options().insert("battery", QMap <QString, QVariant> {{"undivided", true}});
-
-        return;
-    }
-
     if (QRegExp("^TS\\d{3}[0-9EF][AB]{0,1}$").exactMatch(modelName) || QRegExp("^_TZ[2,3,E]\\d{3}_\\S+$").exactMatch(manufacturerName) || manufacturerName.startsWith("_TYZB01_") || manufacturerName.startsWith("TUYA"))
     {
         device->options().insert("tuyaMagic", true);
         modelName = manufacturerName;
         manufacturerName = "TUYA";
     }
-}
-
-bool DeviceList::bindingExists(const Endpoint &endpoint, quint16 clusterId)
-{
-    for (int i = 0; i < endpoint->bindings().count(); i++)
-        if (endpoint->bindings().at(i)->clusterId() == clusterId)
-            return true;
-
-    return false;
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
@@ -517,7 +528,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         property->setMultiple(multiple);
         endpoint->properties().append(property);
 
-        if (option.value("binding").toBool() && !bindingExists(endpoint, clusterId))
+        if (option.value("binding").toBool() && !endpoint->bindingExists(clusterId))
             endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
     }
 
@@ -545,7 +556,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             endpoint->actions().append(action);
         }
 
-        if (option.value("binding").toBool() && !bindingExists(endpoint, clusterId))
+        if (option.value("binding").toBool() && !endpoint->bindingExists(clusterId))
             endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
 
         if (option.contains("reporting"))

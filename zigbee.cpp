@@ -624,16 +624,15 @@ bool ZigBee::interviewQuirks(const Device &device)
     {
         quint32 value = qToLittleEndian <quint32> (172800);
 
-        if (device->firmware().split('.').value(0).toInt() >= 24 && !dataRequest(endpoint, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "polling configuration request"))
+        if (device->checkVersion("24.0.0") >= 0 && !dataRequest(endpoint, CLUSTER_POLL_CONTROL, writeAttributeRequest(m_requestId, 0x0000, 0x0000, DATA_TYPE_32BIT_UNSIGNED, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))), "polling configuration request"))
             return false;
     }
 
     if (device->options().value("ikeaRemote").toBool())
     {
-        QList <QString> list = device->firmware().split('.');
         quint16 groupId = qToLittleEndian <quint16> (IKEA_GROUP);
 
-        if (list.value(0).toInt() < 2 || (list.value(0).toInt() == 2 && list.value(1).toInt() < 4) ? !bindingRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF) : !bindingRequest(endpoint, CLUSTER_ON_OFF))
+        if (device->checkVersion("2.4.0") < 0 ? !bindingRequest(endpoint, CLUSTER_ON_OFF, QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF) : !bindingRequest(endpoint, CLUSTER_ON_OFF))
             return false;
     }
 
