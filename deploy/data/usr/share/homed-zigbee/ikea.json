@@ -158,6 +158,21 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}}
+    },
+    {
+      "description":    "SOMRIG Wireless Button E2213",
+      "modelNames":     ["SOMRIG shortcut button"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["SOMRIG shortcut button"],
+      "exposes":        ["action"],
+      "options":        {"customCommands": {"action": {"clusterId": 64640, "binding": true}}, "action": {"enum": {"1": "initialClick", "2": "hold", "3": "singleClick", "4": "release", "6": "doubleClick"}}},
+      "endpointId":     [1, 2]
     }
   ]
 }
