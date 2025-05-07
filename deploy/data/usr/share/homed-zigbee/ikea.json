@@ -160,7 +160,7 @@
       "options":        {"action": {"enum": ["on", "off", "moveLevelUp", "moveLevelDown", "stopLevel"]}}
     },
     {
-      "description":    "SOMRIG shortcut button E2213",
+      "description":    "SOMRIG Wireless Button E2213",
       "modelNames":     ["SOMRIG shortcut button"],
       "properties":     ["batteryPercentage"],
       "bindings":       ["battery"],
