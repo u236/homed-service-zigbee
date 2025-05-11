@@ -153,7 +153,7 @@
       "modelNames":     ["_TZE200_iwn0gpzz", "_TZE204_iwn0gpzz", "_TZE284_iwn0gpzz"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["energy", "producedEnergy", "frequency", "powerFactor", "voltage", "current", "power"],
+      "exposes":        ["energy", "producedEnergy", "voltage", "current", "power", "powerFactor", "frequency"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -1361,7 +1361,7 @@
       "modelNames":     ["_TZE200_lu01t0zl", "_TZE200_vrfecyku"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["occupancy", "motion", "motionStatus", "motionSpeed", "fallStatus", "staticDwellAlarm", "illuminance",  "sensitivity", "fallSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene"],
+      "exposes":        ["occupancy", "motion", "motionStatus", "motionSpeed", "fallStatus", "staticDwellAlarm", "illuminance", "sensitivity", "fallSensitivity", "tumbleSwitch", "tumbleAlarmTime", "radarScene"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -1481,7 +1481,7 @@
                             "1":    {"name": "temperature", "type": "value", "divider": 10},
                             "2":    {"name": "humidity", "type": "value"},
                             "4":    {"name": "battery", "type": "value"},
-                            "9":    {"name": "displayMode", "type": "enum",  "action": true},
+                            "9":    {"name": "displayMode", "type": "enum", "action": true},
                             "10":   {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
                             "11":   {"name": "temperatureLow", "type": "value", "divider": 10, "action": true},
                             "12":   {"name": "humidityHigh", "type": "value", "action": true},
@@ -1710,7 +1710,7 @@
       "modelNames":     ["_TZE200_2aaelwxk"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["occupancy", "illuminance", "motionStatus",  "smallMotionSensitivity", "smallMotionDistance", "mediumMotionSensitivity", "mediumMotionDistance", "largeMotionSensitivity", "largeMotionDistance", "fadingTime", "indicator"],
+      "exposes":        ["occupancy", "illuminance", "motionStatus", "smallMotionSensitivity", "smallMotionDistance", "mediumMotionSensitivity", "mediumMotionDistance", "largeMotionSensitivity", "largeMotionDistance", "fadingTime", "indicator"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -1824,7 +1824,7 @@
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true}
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}}
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay",
@@ -1850,7 +1850,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     1
     },
     {
@@ -1886,7 +1886,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     1
     },
     {
@@ -1939,7 +1939,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     1
     },
     {
@@ -1957,7 +1957,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     1
     },
     {

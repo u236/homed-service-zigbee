@@ -7,7 +7,7 @@
       "properties":     ["temperature", "humidity", "co2", "efektaReadInterval", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
       "actions":        ["efektaReadInterval", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings", "efektaVOCSensor"],
       "bindings":       ["analogInput", "temperature", "humidity", "co2"],
-      "exposes":        ["temperature", "humidity", "co2", "readInterval", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow",  "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset"],
+      "exposes":        ["temperature", "humidity", "co2", "readInterval", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "temperatureLow", "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityOffset", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset"],
       "options":        {
                           "readInterval": {"min": 5, "max": 300},
                           "altitude": {"min": 0, "max": 3000, "step": 10},
@@ -276,7 +276,7 @@
       "actions":        ["efektaReadInterval", "efektaTemperatureSettings", "efektaHumiditySettings"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity", "readInterval", "enableReporting", "comparePrevious", "temperatureLow",  "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert"],
+      "exposes":        ["battery", "temperature", "humidity", "readInterval", "enableReporting", "comparePrevious", "temperatureLow", "temperatureHigh", "temperatureRelay", "temperatureRelayInvert", "humidityLow", "humidityHigh", "humidityRelay", "humidityRelayInvert"],
       "options":        {
                           "customAttributes":
                           {
@@ -455,7 +455,7 @@
       "actions":        ["efektaPMSensor"],
       "bindings":       ["pm25"],
       "reportings":     ["efektaPMSensor"],
-      "exposes":        ["pm1", "pm10", "pm25", "readInterval", "pm25Low",  "pm25High", "pm25Relay", "pm25RelayInvert"],
+      "exposes":        ["pm1", "pm10", "pm25", "readInterval", "pm25Low", "pm25High", "pm25Relay", "pm25RelayInvert"],
       "options":        {
                           "readInterval": {"min": 15, "max": 300},
                           "pm25Low": {"min": 0, "max": 1000},
@@ -469,7 +469,7 @@
       "actions":        ["efektaPMSensor"],
       "bindings":       ["analogInput", "pm25"],
       "reportings":     ["efektaPMSensor", "efektaVOCSensor"],
-      "exposes":        ["pm1", "pm10", "pm25", "voc", "readInterval", "pm25Low",  "pm25High", "pm25Relay", "pm25RelayInvert"],
+      "exposes":        ["pm1", "pm10", "pm25", "voc", "readInterval", "pm25Low", "pm25High", "pm25Relay", "pm25RelayInvert"],
       "options":        {
                           "readInterval": {"min": 15, "max": 300},
                           "pm25Low": {"min": 0, "max": 1000},
