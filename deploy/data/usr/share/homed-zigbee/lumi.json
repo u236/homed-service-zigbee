@@ -417,6 +417,16 @@
       "options":        {"temperature": {"diagnostic": true}, "powerSource": 3}
     },
     {
+      "description":    "Aqara T1 Gas/Water Valve Motor VC-X01D",
+      "modelNames":     ["lumi.valve.agl001"],
+      "properties":     ["batteryPercentage", "status"],
+      "actions":        ["status"],
+      "bindings":       ["battery", "status"],
+      "reportings":     ["batteryPercentage", "status"],
+      "exposes":        ["battery", "lock"],
+      "options":        {"lock": "valve"}
+    },
+    {
       "description":    "Xiaomi Gas Detector JTQJ-BF-01LM/BW",
       "modelNames":     ["lumi.sensor_natgas"],
       "properties":     ["iasGas"],
