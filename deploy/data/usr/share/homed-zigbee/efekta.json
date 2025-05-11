@@ -306,6 +306,149 @@
                         }
     },
     {
+      "description":    "EFEKTA Plant Watering Sensor eFlora Pro",
+      "modelNames":     ["EFEKTA_eFlora_Pro"],
+      "exposes":        ["battery", "illuminance", "temperature", "humidity", "moisture", "readInterval", "invertDisplay", "fastMode", "temperatureCompensation", "moistureLow", "moistureHigh"],
+      "options":        {
+                          "customAttributes_1":
+                          {
+                            "invertDisplay":            {"type": "bool",  "clusterId": 1,    "attributeId": 61444, "dataType": 32, "action": true},
+                            "fastMode":                 {"type": "bool",  "clusterId": 1,    "attributeId": 61445, "dataType": 32, "action": true}
+                          },
+                          "customAttributes_3":
+                          {
+                            "moistureLow":              {"type": "value", "clusterId": 1032, "attributeId": 1282,  "dataType": 33, "action": true},
+                            "moistureHigh":             {"type": "value", "clusterId": 1032, "attributeId": 1283,  "dataType": 33, "action": true},
+                            "temperatureCompensation":  {"type": "bool",  "clusterId": 1032, "attributeId": 1285,  "dataType": 16, "action": true}
+                          },
+                          "invertDisplay": {"type": "toggle"},
+                          "fastMode": {"type": "toggle"},
+                          "moistureLow": {"min": 0, "max": 100},
+                          "moistureHigh": {"min": 0, "max": 100},
+                          "temperatureCompensation": {"type": "toggle"},
+                          "readInterval": {"min": 1, "max": 360, "unit": "min"}
+                        }
+    },
+    {
+      "modelNames":     ["EFEKTA_eFlora_Pro"],
+      "properties":     ["batteryPercentage", "efektaReadInterval"],
+      "actions":        ["efektaReadInterval"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["EFEKTA_eFlora_Pro"],
+      "properties":     ["temperature", "humidity", "illuminance"],
+      "bindings":       ["temperature", "humidity", "illuminance"],
+      "reportings":     ["temperature", "humidity", "illuminance"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["EFEKTA_eFlora_Pro"],
+      "properties":     ["moisture"],
+      "bindings":       ["moisture"],
+      "reportings":     ["moisture"],
+      "endpointId":     3
+    },
+    {
+      "description":    "EFEKTA Plant Watering Sensor eFlora Max Pro",
+      "modelNames":     ["EFEKTA_eFlora_Max_Pro"],
+      "exposes":        ["battery", "illuminance", "temperature", "humidity", "moisture", "readInterval", "transmitPower", "invertDisplay", "fastMode", "temperatureCompensation", "moistureLow", "moistureHigh"],
+      "options":        {
+                          "customAttributes_1":
+                          {
+                            "transmitPower":            {"type": "enum",  "clusterId": 1,    "attributeId": 566,   "dataType": 40, "action": true},
+                            "invertDisplay":            {"type": "bool",  "clusterId": 1,    "attributeId": 61444, "dataType": 32, "action": true},
+                            "fastMode":                 {"type": "bool",  "clusterId": 1,    "attributeId": 61445, "dataType": 32, "action": true}
+                          },
+                          "customAttributes_3":
+                          {
+                            "moistureLow":              {"type": "value", "clusterId": 1032, "attributeId": 1282,  "dataType": 33, "action": true},
+                            "moistureHigh":             {"type": "value", "clusterId": 1032, "attributeId": 1283,  "dataType": 33, "action": true},
+                            "temperatureCompensation":  {"type": "bool",  "clusterId": 1032, "attributeId": 1285,  "dataType": 16, "action": true}
+                          },
+                          "transmitPower": {"type": "select", "enum": {"0": "0 dBm", "4": "4 dBm", "10": "10 dBm", "19": "19 dBm"}},
+                          "invertDisplay": {"type": "toggle"},
+                          "fastMode": {"type": "toggle"},
+                          "moistureLow": {"min": 0, "max": 100},
+                          "moistureHigh": {"min": 0, "max": 100},
+                          "temperatureCompensation": {"type": "toggle"},
+                          "readInterval": {"min": 1, "max": 360, "unit": "min"}
+                        }
+    },
+    {
+      "modelNames":     ["EFEKTA_eFlora_Max_Pro"],
+      "properties":     ["batteryPercentage", "efektaReadInterval"],
+      "actions":        ["efektaReadInterval"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["EFEKTA_eFlora_Max_Pro"],
+      "properties":     ["temperature", "humidity", "illuminance"],
+      "bindings":       ["temperature", "humidity", "illuminance"],
+      "reportings":     ["temperature", "humidity", "illuminance"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["EFEKTA_eFlora_Max_Pro"],
+      "properties":     ["moisture"],
+      "bindings":       ["moisture"],
+      "reportings":     ["moisture"],
+      "endpointId":     3
+    },
+    {
+      "description":    "EFEKTA Egony Soil Moisture Sensor",
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
+      "exposes":        ["battery", "illuminance", "temperature", "moisture", "readInterval", "transmitPower", "enablePolling", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh"],
+      "options":        {
+                          "customAttributes_1":
+                          {
+                            "temperatureOffset":        {"type": "value", "clusterId": 1026, "attributeId": 1040, "dataType": 41, "divider": 10, "action": true},
+                            "temperatureCompensation":  {"type": "bool",  "clusterId": 1026, "attributeId": 1284, "dataType": 16, "action": true}
+                          },
+                          "customAttributes_2":
+                          {
+                            "enablePolling":            {"type": "bool",  "clusterId": 1,    "attributeId": 534,  "dataType": 16, "action": true},
+                            "transmitPower":            {"type": "value", "clusterId": 1,    "attributeId": 566,  "dataType": 40, "action": true},
+                            "moistureLow":              {"type": "value", "clusterId": 1032, "attributeId": 1282, "dataType": 33, "action": true},
+                            "moistureHigh":             {"type": "value", "clusterId": 1032, "attributeId": 1283, "dataType": 33, "action": true}
+                          },
+                          "temperatureOffset": {"min": -50, "max": 50, "step": 0.5},
+                          "temperatureCompensation": {"type": "toggle"},
+                          "enablePolling": {"type": "toggle"},
+                          "transmitPower": {"min": -4, "max": 4, "step": 4},
+                          "moistureLow": {"min": 0, "max": 100},
+                          "moistureHigh": {"min": 0, "max": 100},
+                          "readInterval": {"min": 1, "max": 360, "unit": "min"},
+                          "illuminance": {"raw": true}
+                        }
+    },
+    {
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
+      "properties":     ["temperature"],
+      "bindings":       ["temperature"],
+      "reportings":     ["temperature"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
+      "properties":     ["batteryPercentage", "moisture", "efektaReadInterval"],
+      "actions":        ["efektaReadInterval"],
+      "bindings":       ["battery", "moisture"],
+      "reportings":     ["batteryPercentage", "moisture"],
+      "endpointId":     2
+    },
+    {
+      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
+      "properties":     ["illuminance"],
+      "bindings":       ["illuminance"],
+      "reportings":     ["illuminance"],
+      "endpointId":     3
+    },
+    {
       "description":    "IKEA VINDRIKTNING Based EFEKTA Air Quality Sensor v1",
       "modelNames":     ["IKEA_VINDRIKTNING_EFEKTA"],
       "properties":     ["pm25", "efektaPMSensor"],
@@ -361,55 +504,6 @@
       "bindings":       ["temperature", "humidity"],
       "reportings":     ["temperature", "humidity"],
       "endpointId":     2
-    },
-    {
-      "description":    "EFEKTA Egony Soil Moisture Sensor",
-      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
-      "exposes":        ["battery", "illuminance", "temperature", "moisture", "readInterval", "transmitPower", "enablePolling", "temperatureOffset", "temperatureCompensation", "moistureLow", "moistureHigh"],
-      "options":        {
-                          "customAttributes_1":
-                          {
-                            "temperatureOffset":        {"type": "value", "clusterId": 1026, "attributeId": 1040, "dataType": 41, "divider": 10, "action": true},
-                            "temperatureCompensation":  {"type": "bool",  "clusterId": 1026, "attributeId": 1284, "dataType": 16, "action": true}
-                          },
-                          "customAttributes_2":
-                          {
-                            "enablePolling":            {"type": "bool",  "clusterId": 1,    "attributeId": 534,  "dataType": 16, "action": true},
-                            "transmitPower":            {"type": "value", "clusterId": 1,    "attributeId": 566,  "dataType": 40, "action": true},
-                            "moistureLow":              {"type": "value", "clusterId": 1032, "attributeId": 1282, "dataType": 33, "action": true},
-                            "moistureHigh":             {"type": "value", "clusterId": 1032, "attributeId": 1283, "dataType": 33, "action": true}
-                          },
-                          "temperatureOffset": {"min": -50, "max": 50, "step": 0.5},
-                          "temperatureCompensation": {"type": "toggle"},
-                          "enablePolling": {"type": "toggle"},
-                          "transmitPower": {"min": -4, "max": 4, "step": 4},
-                          "moistureLow": {"min": 0, "max": 100},
-                          "moistureHigh": {"min": 0, "max": 100},
-                          "readInterval": {"min": 1, "max": 360, "unit": "min"},
-                          "illuminance": {"raw": true}
-                        }
-    },
-    {
-      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
-      "properties":     ["temperature"],
-      "bindings":       ["temperature"],
-      "reportings":     ["temperature"],
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
-      "properties":     ["batteryPercentage", "moisture", "efektaReadInterval"],
-      "actions":        ["efektaReadInterval"],
-      "bindings":       ["battery", "moisture"],
-      "reportings":     ["batteryPercentage", "moisture"],
-      "endpointId":     2
-    },
-    {
-      "modelNames":     ["EFEKTA_Egony_Flower", "Egony_Flower"],
-      "properties":     ["illuminance"],
-      "bindings":       ["illuminance"],
-      "reportings":     ["illuminance"],
-      "endpointId":     3
     }
   ]
 }
