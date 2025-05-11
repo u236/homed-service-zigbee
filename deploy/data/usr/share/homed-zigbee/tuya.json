@@ -149,6 +149,25 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Electricity Meter (Type I)",
+      "modelNames":     ["_TZE200_iwn0gpzz", "_TZE204_iwn0gpzz", "_TZE284_iwn0gpzz"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["energy", "producedEnergy", "frequency", "powerFactor", "voltage", "current", "power"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "23":   {"name": "producedEnergy", "type": "value", "divider": 100},
+                            "32":   {"name": "frequency", "type": "value", "divider": 100},
+                            "50":   {"name": "powerFactor", "type": "value"},
+                            "102":  {"name": "voltage", "type": "value", "divider": 10},
+                            "103":  {"name": "current", "type": "value", "divider": 1000},
+                            "104":  {"name": "power", "type": "value"}
+                          }
+                        }
+    },
+    {
       "description":    "TUYA TS0601 3-Phase Electricity Meter (Type A)",
       "modelNames":     ["_TZE200_v9hkz2yn", "_TZE200_ves1ycwx", "_TZE204_v9hkz2yn", "_TZE204_ves1ycwx", "_TZE284_v9hkz2yn"],
       "properties":     ["tuyaDataPoints"],
