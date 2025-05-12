@@ -1381,7 +1381,7 @@
                           "motionStatus": {"enum": ["none", "large", "medium", "small"]},
                           "fadingTime": {"min": 0, "max": 28800, "step": 10},
                           "detectionMode": {"enum": ["pir", "both", "radar"]},
-                          "motionSensitivity": {"min": 0, "max": 10},
+                          "motionSensitivity": {"min": 0, "max": 10}
                         }
     },
     {
