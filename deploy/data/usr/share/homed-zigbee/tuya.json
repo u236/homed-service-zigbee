@@ -1381,7 +1381,7 @@
                           "motionStatus": {"enum": ["none", "large", "medium", "small"]},
                           "fadingTime": {"min": 0, "max": 28800, "step": 10},
                           "detectionMode": {"enum": ["pir", "both", "radar"]},
-                          "motionSensitivity": {"min": 0, "max": 10},
+                          "motionSensitivity": {"min": 0, "max": 10}
                         }
     },
     {
@@ -1613,7 +1613,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Tubular Motor",
+      "description":    "TUYA TS0601 Tubular Motor (Type A)",
       "modelNames":     ["_TZE200_3ylew7b4", "_TZE200_5sbebbzs", "_TZE200_68nvbio9", "_TZE200_llm0epxg", "_TZE200_udank5zs", "_TZE200_zuz7f94z"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
       "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
@@ -1625,6 +1625,22 @@
                             "105":  {"name": "speed", "type": "value", "action": true}
                           },
                           "speed": {"min": 1, "max": 255}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Tubular Motor (Type B)",
+      "modelNames":     ["_TZE200_fzo2pocs"],
+      "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
+      "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse", "setLowerLimit", "setUpperLimit"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "5":    {"name": "reverse", "type": "bool", "action": true},
+                            "103":  {"name": "setUpperLimit", "type": "enum", "action": true},
+                            "105":  {"name": "setLowerLimit", "type": "enum", "action": true}
+                          },
+                          "cover": "blind"
                         }
     },
     {
