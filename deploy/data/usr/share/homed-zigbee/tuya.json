@@ -1636,7 +1636,7 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "5":  {"name": "reverse", "type": "bool", "action": true},
+                            "5":    {"name": "reverse", "type": "bool", "action": true},
                             "103":  {"name": "setUpperLimit", "type": "enum", "action": true},
                             "105":  {"name": "setLowerLimit", "type": "enum", "action": true}
                           },
