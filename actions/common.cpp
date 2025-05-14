@@ -70,7 +70,7 @@ QVariant Actions::AnalogOutput::request(const QString &, const QVariant &data)
 
 QVariant Actions::CoverStatus::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};
+    QList <QString> list = (option("invertCover").toBool() != option("invertCoverControls").toBool()) ? QList <QString> {"close", "open", "stop"} : QList <QString> {"open", "close", "stop"};
     qint8 command = static_cast <qint8> (list.indexOf(data.toString()));
     return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
 }
