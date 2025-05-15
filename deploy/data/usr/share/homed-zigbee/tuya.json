@@ -1625,7 +1625,7 @@
                             "105":  {"name": "speed", "type": "value", "action": true}
                           },
                           "speed": {"min": 1, "max": 255},
-                          "invertCoverControls": true
+                          "invertControls": true
                         }
     },
     {
@@ -1656,8 +1656,8 @@
                             "103":  {"name": "setUpperLimit", "type": "enum", "action": true},
                             "105":  {"name": "setLowerLimit", "type": "enum", "action": true}
                           },
-                          "cover": "blind",
-                          "invertCoverControls": true
+                          "invertControls": true,
+                          "cover": "blind"
                         }
     },
     {
