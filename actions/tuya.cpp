@@ -247,13 +247,13 @@ QVariant ActionsTUYA::CoverMotor::request(const QString &name, const QVariant &d
     {
         case 0: // cover
         {
-            QList <QString> modelList = {"_TYST11_cowvfni3", "_TZE200_cowvfni3", "_TZE200_wmcdj3aq", "_TZE204_r0jdjrvi"}, actionList = modelList.contains(manufacturerName()) ? QList <QString> {"close", "stop", "open"} : QList <QString> {"open", "stop", "close"};
+            QList <QString> list = QList <QString> {"open", "stop", "close"};
             qint8 value;
 
-            if (option("invertCover").toBool())
-                actionList = QList <QString> (actionList.rbegin(), actionList.rend());
+            if (option("invertCover").toBool() != option("invertControls").toBool())
+                list = QList <QString> (list.rbegin(), list.rend());
 
-            value = static_cast <qint8> (actionList.indexOf(data.toString()));
+            value = static_cast <qint8> (list.indexOf(data.toString()));
             return value < 0 ? QByteArray() : makeRequest(m_transactionId++, 0x00, 0x01, TUYA_TYPE_ENUM, &value);
         }
 
