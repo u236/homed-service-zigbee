@@ -57,6 +57,18 @@
     }
   ],
 
+  "Heiman":
+  [
+    {
+      "description":    "Hommyn Water Leak Sensor WS-20-Z",
+      "modelNames":     ["2f077707a13f4120846e0775df7e2efe"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
+    }
+  ],
+
   "Legrand":
   [
     {
