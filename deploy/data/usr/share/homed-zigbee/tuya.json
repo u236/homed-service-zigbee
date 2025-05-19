@@ -1361,7 +1361,7 @@
       "modelNames":     ["_TZE200_kb5noeto"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "occupancy", "illuminance", "motionStatus", "sensitivity", "motionSensitivity", "distanceMax", "fadingTime", "detectionMode", "indicator"],
+      "exposes":        ["battery", "occupancy", "illuminance", "motionStatus", "sensitivity", "motionSensitivity", "distanceMax", "fadingTime", "detectionMode"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -1371,7 +1371,6 @@
                             "101":  {"name": "motionStatus", "type": "enum"},
                             "102":  {"name": "fadingTime", "type": "value", "action": true},
                             "106":  {"name": "illuminance", "type": "value"},
-                            "107":  {"name": "indicator", "type": "bool", "action": true},
                             "121":  {"name": "battery", "type": "value"},
                             "122":  {"name": "detectionMode", "type": "enum", "action": true},
                             "109":  {"name": "motionSensitivity", "type": "value", "action": true}

@@ -67,7 +67,7 @@
                           },
                           "deviceAddress": {"type": "number", "min": 0, "max": 100000000},
                           "readInterval": {"min": 10, "max": 600},
-                          "energyDivider": 100
+                          "energyDivider": 1000
                         },
       "endpointId":     2
     },
