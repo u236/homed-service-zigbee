@@ -2072,13 +2072,23 @@
       "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "skipAttributeRead": true}
     },
     {
-      "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring",
-      "modelNames":     ["_TZ3000_303avxxt", "_TZ3000_8bxrzyxz", "_TZ3000_cayepv1a", "_TZ3000_ky0fq4ho", "_TZ3000_lepzuhto", "_TZ3000_qeuvnohg", "_TZ3000_qystbcjg"],
+      "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring (Type A)",
+      "modelNames":     ["_TZ3000_8bxrzyxz", "_TZ3000_ky0fq4ho", "_TZ3000_qeuvnohg"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
+    },
+    {
+      "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring (Type B)",
+      "modelNames":     ["_TZ3000_303avxxt", "_TZ3000_cayepv1a", "_TZ3000_lepzuhto", "_TZ3000_qystbcjg", "_TZ3000_zjchz7pd", "_TZ3000_zrm3oxsh"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "temperature", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "bindings":       ["status", "energy", "power", "temperature"],
+      "reportings":     ["status", "energy", "voltage", "current", "power", "temperature"],
+      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power", "temperature"],
       "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
     },
     {

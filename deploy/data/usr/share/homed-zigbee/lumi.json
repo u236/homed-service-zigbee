@@ -93,6 +93,28 @@
       "endpointId":     [4, 5]
     },
     {
+      "description":    "Aqara D1 1-Channel Wall Switch QBKG11LM",
+      "modelNames":     ["lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1"],
+      "exposes":        ["switch", "action", "buttonMode", "energy", "power", "temperature"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "release"]}, "temperature": {"diagnostic": true}, "powerSource": 1}
+    },
+    {
+      "modelNames":     ["lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1"],
+      "properties":     ["status", "lumiBasic", "lumiButtonMode", "lumiPower"],
+      "actions":        ["status", "lumiBasic", "lumiButtonMode"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.switch.b1nacn02"],
+      "properties":     ["lumiPower"],
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1"],
+      "properties":     ["lumiSwitchAction"],
+      "endpointId":     5
+    },
+    {
       "description":    "Aqara D1 2-Channel Wall Switch QBKG12LM",
       "modelNames":     ["lumi.ctrl_ln2", "lumi.ctrl_ln2.aq1"],
       "options":        {"endpointName": {"1": "Left", "2": "Right", "5": "Left", "6": "Right", "7": "Both"}, "powerSource": 1}
@@ -358,6 +380,30 @@
       "endpointId":     21
     },
     {
+      "description":    "Aqara 16A Wall Outlet WP-P01D",
+      "modelNames":     ["lumi.plug.aeu001"],
+      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power", "temperature"],
+      "options":        {
+                          "customAttributes_1": {"powerOnStatus": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1303, "dataType": 32, "action": true}},
+                          "powerOnStatus": {"enum": ["on", "previous", "off", "toggle"]},
+                          "switch": "outlet",
+                          "temperature": {"diagnostic": true}
+                        }
+    },
+    {
+      "modelNames":     ["lumi.plug.aeu001"],
+      "properties":     ["status", "lumiData"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["lumi.plug.aeu001"],
+      "properties":     ["lumiPower"],
+      "endpointId":     21
+    },
+    {
       "description":    "Aqara Dimmable Bulb with Changable Color Temperature ZNLDP12LM",
       "modelNames":     ["lumi.light.aqcn02"],
       "properties":     ["status", "level", "colorTemperature", "lumiBasic"],
@@ -399,7 +445,7 @@
     {
       "description":    "Aqara Curtain Motor ZNCLBL01LM",
       "modelNames":     ["lumi.curtain.acn003", "lumi.curtain.agl001"],
-      "properties":     ["batteryPercentage", "lumiCover", "lumiData"],
+      "properties":     ["batteryPercentage", "lumiData", "lumiCover"],
       "actions":        ["coverStatus", "lumiCoverPosition"],
       "exposes":        ["battery", "cover", "calibration", "temperature"],
       "options":        {
@@ -411,7 +457,7 @@
     {
       "description":    "Aqara Roller Blind Motor ZNJLBL01LM",
       "modelNames":     ["lumi.curtain.acn002"],
-      "properties":     ["batteryPercentage", "lumiCover", "lumiData"],
+      "properties":     ["batteryPercentage", "lumiData", "lumiCover"],
       "actions":        ["coverStatus", "lumiCoverPosition"],
       "exposes":        ["battery", "cover", "temperature"],
       "options":        {"temperature": {"diagnostic": true}, "powerSource": 3}
@@ -545,7 +591,8 @@
       "reportings":     ["batteryVoltage", "temperature", "humidity", "analogInput"],
       "exposes":        ["battery", "temperature", "humidity", "voc", "airQuality"],
       "options":        {
-                          "customAttributes": {
+                          "customAttributes":
+                          {
                             "voc":        {"type": "value", "clusterId": 12,    "attributeId": 85,  "dataType": 57},
                             "airQuality": {"type": "enum",  "clusterId": 64704, "attributeId": 297, "dataType": 32}
                           },
