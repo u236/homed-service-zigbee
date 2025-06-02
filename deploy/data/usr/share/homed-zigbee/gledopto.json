@@ -94,6 +94,17 @@
       "exposes":        ["light", "powerOnStatus"],
       "options":        {"light": ["level"]},
       "endpointId":     11
+    },
+    {
+      "description":    "GLEDOPTO AC Dimmer GL-SD-301P",
+      "modelNames":     ["GL-SD-301P"],
+      "properties":     ["status", "powerOnStatus", "level"],
+      "actions":        ["status", "powerOnStatus", "level"],
+      "bindings":       ["status", "level"],
+      "reportings":     ["status", "level"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {"light": ["level"]},
+      "endpointId":     11
     }
   ]
 }
