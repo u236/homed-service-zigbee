@@ -1527,7 +1527,7 @@
     },
     {
       "description":    "TUYA TS0601 Soil Moisture Sensor",
-      "modelNames":     ["_TZE284_aao3yzhs", "_TZE284_g2e6cpnw"],
+      "modelNames":     ["_TZE284_aao3yzhs", "_TZE284_g2e6cpnw", "_TZE284_nhgdf6qr"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["battery", "batteryStatus", "temperature", "moisture"],
       "options":        {
