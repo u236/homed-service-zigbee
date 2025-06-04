@@ -2264,6 +2264,16 @@
       "options":        {"lock": "valve", "powerOnStatus": {"enum": ["off", "on", "previous"]}}
     },
     {
+      "description":    "TUYA MOES TS0049 Garden Valve",
+      "modelNames":     ["_TZ3000_cjfmu5he", "_TZ3000_kz1anoi8", "_TZ3000_mq4wujmp"],
+      "properties":     ["batteryPercentage", "status"],
+      "actions":        ["status"],
+      "bindings":       ["battery", "status"],
+      "reportings":     ["batteryPercentage", "status"],
+      "exposes":        ["battery", "lock"],
+      "options":        {"lock": "valve"}
+    },
+    {
       "description":    "TUYA TS0204 Gas Detector",
       "modelNames":     ["TS0204"],
       "properties":     ["batteryPercentage", "iasGas"],
