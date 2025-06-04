@@ -21,7 +21,7 @@
     },
     {
       "description":    "TUYA TS0601 Electricity Meter (Type B)",
-      "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo", "_TZE204_wbhaespm"],
+      "modelNames":     ["_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch", "energy", "producedEnergy", "voltage", "current", "power", "powerFactor", "frequency"],
@@ -32,7 +32,7 @@
                             "6":    {"name": "electricity", "type": "raw"},
                             "16":   {"name": "status", "type": "bool", "action": true},
                             "102":  {"name": "producedEnergy", "type": "value", "divider": 100},
-                            "103":  {"name": "power", "type": "value", "divider": 100},
+                            "103":  {"name": "power", "type": "value"},
                             "105":  {"name": "frequency", "type": "value", "divider": 100},
                             "111":  {"name": "powerFactor", "type": "value", "divider": 10}
                           },
