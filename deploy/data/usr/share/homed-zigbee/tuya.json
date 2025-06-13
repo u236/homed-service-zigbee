@@ -1461,7 +1461,7 @@
     },
     {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type D)",
-      "modelNames":     ["_TZE200_a8sdabtg", "_TZE200_dikkika5", "_TZE200_qoy0ekbd", "_TZE200_znbl8dj5"],
+      "modelNames":     ["_TZE200_a8sdabtg", "_TZE200_dikkika5", "_TZE200_qoy0ekbd", "_TZE200_vs0skpuc", "_TZE200_znbl8dj5"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["battery", "temperature", "humidity", "temperatureOffset", "humidityOffset"],
@@ -1970,7 +1970,7 @@
     },
     {
       "description":    "TUYA TS0003/TS0013 3-Channel Relay",
-      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_mw1pqqqt", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
+      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["switchType", "powerOnStatus"],
@@ -1978,7 +1978,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_mw1pqqqt", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
+      "modelNames":     ["_TZ3000_4o16jdca", "_TZ3000_hbic3ka3", "_TZ3000_lvhy15ix", "_TZ3000_odzoiovu", "_TZ3000_vsasbzkf", "_TZ3000_ypgri8yz"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
