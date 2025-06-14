@@ -111,7 +111,7 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
 
 QVariant ActionsTUYA::HolidayThermostatProgram::request(const QString &name, const QVariant &data)
 {
-    const Property &property = endpointProperty();
+    const Property &property = endpointProperty("holidayThermostatProgram");
     QList <QString> typeList = {"weekday", "holiday"};
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload;
@@ -137,7 +137,7 @@ QVariant ActionsTUYA::HolidayThermostatProgram::request(const QString &name, con
 
 QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const QVariant &data)
 {
-    const Property &property = endpointProperty();
+    const Property &property = endpointProperty("dailyThermostatProgram");
     QList <QVariant> list = option("programDataPoints").toList();
     QList <QString> modelList = {"_TZE204_ltwbm23f", "_TZE204_qyr2m29i"}, typeList = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
     QString type = name.mid(0, name.indexOf('P'));
@@ -181,7 +181,7 @@ QVariant ActionsTUYA::DailyThermostatProgram::request(const QString &name, const
 
 QVariant ActionsTUYA::MoesThermostatProgram::request(const QString &name, const QVariant &data)
 {
-    const Property &property = endpointProperty();
+    const Property &property = endpointProperty("moesThermostatProgram");
     QList <QString> typeList = {"weekday", "saturday", "sunday"};
     QByteArray payload;
 
