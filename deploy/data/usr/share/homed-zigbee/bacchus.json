@@ -39,13 +39,13 @@
       "options":        {
                           "customAttributes":
                           {
-                            "voltage_1":  {"type": "value", "clusterId": 2820, "attributeId": 1285, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 10},
+                            "voltage_1":  {"type": "value", "clusterId": 2820, "attributeId": 1285, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 100},
                             "current_1":  {"type": "value", "clusterId": 2820, "attributeId": 1288, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 100},
                             "power_1":    {"type": "value", "clusterId": 2820, "attributeId": 1291, "dataType": 33, "reporting": {"maxInterval": 3600}},
-                            "voltage_2":  {"type": "value", "clusterId": 2820, "attributeId": 2309, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 10},
+                            "voltage_2":  {"type": "value", "clusterId": 2820, "attributeId": 2309, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 100},
                             "current_2":  {"type": "value", "clusterId": 2820, "attributeId": 2312, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 100},
                             "power_2":    {"type": "value", "clusterId": 2820, "attributeId": 2315, "dataType": 33, "reporting": {"maxInterval": 3600}},
-                            "voltage_3":  {"type": "value", "clusterId": 2820, "attributeId": 2565, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 10},
+                            "voltage_3":  {"type": "value", "clusterId": 2820, "attributeId": 2565, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 100},
                             "current_3":  {"type": "value", "clusterId": 2820, "attributeId": 2568, "dataType": 33, "reporting": {"maxInterval": 3600}, "divider": 100},
                             "power_3":    {"type": "value", "clusterId": 2820, "attributeId": 2571, "dataType": 33, "reporting": {"maxInterval": 3600}}
                           },
