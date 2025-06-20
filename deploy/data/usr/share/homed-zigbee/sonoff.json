@@ -61,14 +61,6 @@
       "exposes":        ["switch"]
     },
     {
-      "description":    "Sonoff Dimmable Bulb with Changable Color Temperature CK-BL702-AL-01",
-      "modelNames":     ["CK-BL702-AL-01(7008_Z102LG01-1)"],
-      "properties":     ["status", "level", "colorTemperature"],
-      "actions":        ["status", "level", "colorTemperature"],
-      "exposes":        ["light"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 142, "max": 500}}
-    },
-    {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02 or SNZB-02P",
       "modelNames":     ["SNZB-02P", "TH01"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
