@@ -1598,7 +1598,7 @@
     },
     {
       "description":    "TUYA TS0601 Curtain Motor (Type A)",
-      "modelNames":     ["_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_b2u1drdv", "_TZE200_cf1sl3tj", "_TZE200_fdtjuw7u", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_tvrvdj6o", "_TZE200_xaabybja", "_TZE200_xuzcvlku", "_TZE200_zpzndjez", "_TZE204_txrzy8hs"],
+      "modelNames":     ["_TZE200_1fuxihti", "_TZE200_2odrmqwq", "_TZE200_3i3exuay", "_TZE200_4vobcgd3", "_TZE200_5zbp6j0u", "_TZE200_7shyddj3", "_TZE200_b2u1drdv", "_TZE200_bjzrowv2", "_TZE200_bqcqqjpb", "_TZE200_cf1sl3tj", "_TZE200_en3wvcbx", "_TZE200_fdtjuw7u", "_TZE200_feolm6rk", "_TZE200_g5wdnuow", "_TZE200_gaj531w3", "_TZE200_hojryzzd", "_TZE200_n1aauwb4", "_TZE200_nkoabg8w", "_TZE200_nogaemzt", "_TZE200_nueqqe6k", "_TZE200_nv6nxo0c", "_TZE200_ol5jlkkr", "_TZE200_pk0sfzvr", "_TZE200_r0jdjrvi", "_TZE200_rmymn92d", "_TZE200_rsj5pu8y", "_TZE200_tvrvdj6o", "_TZE200_xaabybja", "_TZE200_xu4a5rhj", "_TZE200_xuzcvlku", "_TZE200_yia0p3tr", "_TZE200_zpzndjez", "_TZE204_1fuxihti", "_TZE204_57hjqelq", "_TZE204_a2jcoyuk", "_TZE204_bjzrowv2", "_TZE204_dpqsvdbi", "_TZE204_guvc7pdy", "_TZE204_m1wl5fvq", "_TZE204_nladmfvf", "_TZE204_txrzy8hs", "_TZE204_xu4a5rhj", "_TZE284_udank5zs"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
       "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
       "exposes":        ["cover", "reverse", "speed"],
@@ -1613,7 +1613,7 @@
     },
     {
       "description":    "TUYA TS0601 Curtain Motor (Type B)",
-      "modelNames":     ["_TYST11_cowvfni3", "_TZE200_cowvfni3", "_TZE200_wmcdj3aq", "_TZE204_r0jdjrvi"],
+      "modelNames":     ["_TYST11_cowvfni3", "_TZE200_cowvfni3", "_TZE200_rddyvrci", "_TZE200_wmcdj3aq", "_TZE204_r0jdjrvi"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
       "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
       "exposes":        ["cover", "reverse", "speed"],
