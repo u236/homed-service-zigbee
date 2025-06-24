@@ -33,6 +33,7 @@
       "options":        {
                           "readInterval": {"min": 5, "max": 300},
                           "altitude": {"min": 0, "max": 3000, "step": 10},
+                          "indicatorLevel": {"min": 0, "max": 100},
                           "temperatureOffset": {"min": -50, "max": 50, "step": 0.5},
                           "temperatureLow": {"min": -40, "max": 60},
                           "temperatureHigh": {"min": -40, "max": 60},
@@ -56,6 +57,7 @@
       "exposes":        ["temperature", "humidity", "co2", "voc", "altitude", "indicator", "indicatorLevel", "temperatureOffset", "humidityOffset", "co2Low", "co2High", "co2Relay", "co2RelayInvert", "co2ManualCalibration", "co2ForceCalibration", "co2FactoryReset", "vocLow", "vocHigh", "vocRelay", "vocRelayInvert"],
       "options":        {
                           "altitude": {"min": 0, "max": 3000, "step": 10},
+                          "indicatorLevel": {"min": 0, "max": 100},
                           "temperatureOffset": {"min": -50, "max": 50, "step": 0.5},
                           "humidityOffset": {"min": -50, "max": 50},
                           "co2Low": {"min": 400, "max": 2000, "step": 10},
@@ -142,16 +144,21 @@
       "options":        {
                           "customAttributes_2":
                           {
-                            "reportingDelay": {"type": "value", "clusterId": 1037, "attributeId": 513,  "dataType": 33, "action": true}
+                            "reportingDelay":     {"type": "value", "clusterId": 1037, "attributeId": 513,  "dataType": 33, "action": true}
                           },
                           "customAttributes_3":
                           {
-                            "pm1":            {"type": "value", "clusterId": 1066, "attributeId": 1537, "dataType": 57, "reporting": {"minInterval": 10}},
-                            "pm10":           {"type": "value", "clusterId": 1066, "attributeId": 1538, "dataType": 57, "reporting": {"minInterval": 10}},
-                            "pmSize":         {"type": "value", "clusterId": 1066, "attributeId": 1539, "dataType": 57, "reporting": {"minInterval": 10}},
-                            "pm4":            {"type": "value", "clusterId": 1066, "attributeId": 1541, "dataType": 57, "reporting": {"minInterval": 10}}
+                            "pm1":                {"type": "value", "clusterId": 1066, "attributeId": 1537, "dataType": 57, "reporting": {"minInterval": 10}},
+                            "pm10":               {"type": "value", "clusterId": 1066, "attributeId": 1538, "dataType": 57, "reporting": {"minInterval": 10}},
+                            "pmSize":             {"type": "value", "clusterId": 1066, "attributeId": 1539, "dataType": 57, "reporting": {"minInterval": 10}},
+                            "pm4":                {"type": "value", "clusterId": 1066, "attributeId": 1541, "dataType": 57, "reporting": {"minInterval": 10}}
+                          },
+                          "customAttributes_4":
+                          {
+                            "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 1040, "dataType": 41, "divider": 10, "action": true}
                           },
                           "reportingDelay": {"min": 6, "max": 600},
+                          "indicatorLevel": {"min": 0, "max": 100},
                           "temperatureOffset": {"min": -50, "max": 50, "step": 0.5},
                           "humidityOffset": {"min": -50, "max": 50},                           
                           "co2Low": {"min": 400, "max": 5000, "step": 10},
@@ -181,10 +188,9 @@
     },
     {
       "modelNames":     ["EFEKTA_Smart_AQ_Box_R3"],
-      "properties":     ["temperature", "humidity", "pressure", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaVOCSensor"],
-      "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaVOCSensor"],
+      "properties":     ["temperature", "humidity", "pressure", "efektaHumiditySettings", "efektaVOCSensor"],
+      "actions":        ["efektaHumiditySettings", "efektaVOCSensor"],
       "bindings":       ["analogInput", "temperature", "humidity", "pressure"],
-
       "reportings":     ["analogInput", "temperature", "humidity", "pressure"],
       "endpointId":     4
     },
