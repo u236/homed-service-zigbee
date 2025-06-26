@@ -2,12 +2,9 @@
 #include "controller.h"
 #include "logger.h"
 
-Controller::Controller(const QString &configFile) : HOMEd(configFile, true), m_deviceDataTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(nullptr), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
+Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, configFile, true), m_deviceDataTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(nullptr), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
 {
     bool panId = getConfig()->value("zigbee/panid").toString().isEmpty(), key = getConfig()->value("security/key").toString().isEmpty();
-
-    logInfo << "Starting version" << SERVICE_VERSION;
-    logInfo << "Configuration file is" << getConfig()->fileName();
 
     if (panId || key)
     {
