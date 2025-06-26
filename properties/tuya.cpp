@@ -80,7 +80,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
     {
         case 0: // raw
         {
-            QList <QString> modelList = {"_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo", "_TZE204_wbhaespm"}, nameList = name.split('_');
+            QList <QString> modelList = {"_TZE200_bkkmqmyo", "_TZE200_eaac7dkw", "_TZE204_bkkmqmyo"}, nameList = name.split('_');
             QByteArray payload = data.toByteArray();
             quint16 value = 0;
 
