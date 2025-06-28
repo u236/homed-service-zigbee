@@ -128,28 +128,6 @@
     },
     {
       "description":    "TUYA TS0601 Electricity Meter (Type H)",
-      "modelNames":     ["_TZE204_81yrt3lo", "_TZE284_81yrt3lo"],
-      "properties":     ["tuyaDataPoints"],
-      "actions":        ["tuyaDataPoints"],
-      "exposes":        ["voltage", "frequency", "energy_1", "energy_2", "producedEnergy_1", "producedEnergy_2", "current_1", "current_2", "power_1", "power_2"],
-      "options":        {
-                          "tuyaDataPoints":
-                          {
-                            "101":  {"name": "power_1", "type": "value", "divider": 10},
-                            "105":  {"name": "power_2", "type": "value", "divider": 10},
-                            "106":  {"name": "energy_1", "type": "value", "divider": 100},
-                            "107":  {"name": "producedEnergy_1", "type": "value", "divider": 100},
-                            "108":  {"name": "energy_2", "type": "value", "divider": 100},
-                            "109":  {"name": "producedEnergy_2", "type": "value", "divider": 100},
-                            "111":  {"name": "frequency", "type": "value", "divider": 100},
-                            "112":  {"name": "voltage", "type": "value", "divider": 10},
-                            "113":  {"name": "current_1", "type": "value", "divider": 1000},
-                            "114":  {"name": "current_2", "type": "value", "divider": 1000}
-                          }
-                        }
-    },
-    {
-      "description":    "TUYA TS0601 Electricity Meter (Type I)",
       "modelNames":     ["_TZE200_iwn0gpzz", "_TZE204_iwn0gpzz", "_TZE284_iwn0gpzz"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -168,18 +146,41 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Electricity Meter (Type J)",
+      "description":    "TUYA TS0601 Electricity Meter (Type I)",
       "modelNames":     ["_TZE284_pglpvdar"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["voltage", "current", "power", "powerFactor", "frequency", "temperature"],
+      "exposes":        ["energy", "voltage", "current", "power", "powerFactor", "frequency", "temperature"],
       "options":        {
                           "tuyaDataPoints":
                           {
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
                             "6":    {"name": "electricity", "type": "raw"},
                             "32":   {"name": "frequency", "type": "value", "divider": 100},
                             "50":   {"name": "powerFactor", "type": "value", "divider": 100},
                             "131":  {"name": "temperature", "type": "value", "divider": 10}
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 2-Channel Electricity Meter",
+      "modelNames":     ["_TZE204_81yrt3lo", "_TZE284_81yrt3lo"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["voltage", "frequency", "energy_1", "energy_2", "producedEnergy_1", "producedEnergy_2", "current_1", "current_2", "power_1", "power_2"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "101":  {"name": "power_1", "type": "value", "divider": 10},
+                            "105":  {"name": "power_2", "type": "value", "divider": 10},
+                            "106":  {"name": "energy_1", "type": "value", "divider": 100},
+                            "107":  {"name": "producedEnergy_1", "type": "value", "divider": 100},
+                            "108":  {"name": "energy_2", "type": "value", "divider": 100},
+                            "109":  {"name": "producedEnergy_2", "type": "value", "divider": 100},
+                            "111":  {"name": "frequency", "type": "value", "divider": 100},
+                            "112":  {"name": "voltage", "type": "value", "divider": 10},
+                            "113":  {"name": "current_1", "type": "value", "divider": 1000},
+                            "114":  {"name": "current_2", "type": "value", "divider": 1000}
                           }
                         }
     },
@@ -865,7 +866,7 @@
       "modelNames":     ["_TZE204_lpedvtvr"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["thermostat", "childLock", "ecoTemperature", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "standbyBrightness", "ecoTemperature", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -877,6 +878,7 @@
                             "34":   {"name": "temperatureHigh", "type": "value", "divider": 10, "action": true},
                             "39":   {"name": "childLock", "type": "bool", "action": true},
                             "47":   {"name": "running", "type": "bool", "invert": true},
+                            "48":   {"name": "standbyBrightness", "type": "value", "action": true},
                             "50":   {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
                             "101":  {"name": "temperatureOffset", "type": "value", "action": true},
                             "110":  {"name": "hysteresis", "type": "value", "divider": 10, "action": true},
@@ -886,6 +888,7 @@
                           "operationMode": {"enum": ["manual", "temporary", "program", "eco"]},
                           "temperatureLow": {"min": 1, "max": 15},
                           "temperatureHigh": {"min": 5, "max": 45},
+                          "standbyBrightness": {"type": "number", "min": 0, "max": 100, "unit": "%", "icon": "mdi:brightness-4"},
                           "targetTemperature": {"min": 5, "max": 45, "step": 0.5},
                           "temperatureOffset": {"min": -10, "max": 10},
                           "hysteresis": {"min": 0.5, "max": 5, "step": 0.5},
