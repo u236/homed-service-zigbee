@@ -40,13 +40,13 @@
                           "customAttributes":
                           {
                             "voltage_1":  {"type": "value", "clusterId": 2820, "attributeId": 1285, "dataType": 33, "reporting": true, "divider": 100},
-                            "current_1":  {"type": "value", "clusterId": 2820, "attributeId": 1288, "dataType": 33, "reporting": true, "divider": 100},
+                            "current_1":  {"type": "value", "clusterId": 2820, "attributeId": 1288, "dataType": 33, "reporting": true, "divider": 1000},
                             "power_1":    {"type": "value", "clusterId": 2820, "attributeId": 1291, "dataType": 33, "reporting": true},
                             "voltage_2":  {"type": "value", "clusterId": 2820, "attributeId": 2309, "dataType": 33, "reporting": true, "divider": 100},
-                            "current_2":  {"type": "value", "clusterId": 2820, "attributeId": 2312, "dataType": 33, "reporting": true, "divider": 100},
+                            "current_2":  {"type": "value", "clusterId": 2820, "attributeId": 2312, "dataType": 33, "reporting": true, "divider": 1000},
                             "power_2":    {"type": "value", "clusterId": 2820, "attributeId": 2315, "dataType": 33, "reporting": true},
                             "voltage_3":  {"type": "value", "clusterId": 2820, "attributeId": 2565, "dataType": 33, "reporting": true, "divider": 100},
-                            "current_3":  {"type": "value", "clusterId": 2820, "attributeId": 2568, "dataType": 33, "reporting": true, "divider": 100},
+                            "current_3":  {"type": "value", "clusterId": 2820, "attributeId": 2568, "dataType": 33, "reporting": true, "divider": 1000},
                             "power_3":    {"type": "value", "clusterId": 2820, "attributeId": 2571, "dataType": 33, "reporting": true}
                           },
                           "reporting": {"minInterval": 0, "maxInterval": 30, "valueChange": 1}
