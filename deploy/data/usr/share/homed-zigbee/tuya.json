@@ -2401,7 +2401,7 @@
                             "102":  {"name": "illuminance", "type": "bool"}
                           },
                           "action": {"enum": ["singleClick", "doubleClick", "hold"]},
-                          "illuminance": {"enum": ["dark", "bright"]}
+                          "illuminance": {"enum": ["dark", "bright"], "unit": null}
                         }
     },
     {
