@@ -154,7 +154,7 @@
       "actions":        ["status"],
       "bindings":       ["battery", "status", "flow"],
       "reportings":     ["status"],
-      "exposes":        ["battery", "switch", "flow"],
+      "exposes":        ["battery", "lock", "flow"],
       "options":        {
                           "customAttributes":
                           {
@@ -163,7 +163,8 @@
 
                           },
                           "waterStatus":  {"type": "sensor", "enum": ["normal", "shortage", "leakage", "shortageWithLeakage"], "icon": "mdi:water-alert"},
-                          "autoClose":  {"type": "toggle", "enum": {"0": false, "30": true}, "icon": "mdi:valve"}
+                          "autoClose":  {"type": "toggle", "enum": {"0": false, "30": true}, "icon": "mdi:valve"},
+                          "lock": "valve"
                         }
     },
     {
