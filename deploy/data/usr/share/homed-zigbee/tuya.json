@@ -2424,8 +2424,8 @@
       "properties":     ["batteryPercentage", "iasVibration"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "vibration", "batteryLow", "tamper"],
-      "options":        {"vibrationResetTimeout": 60}
+      "exposes":        ["battery", "vibration", "batteryLow", "tamper", "sensitivity"],
+      "options":        {"customAttributes": {"sensitivity": {"type": "value", "clusterId": 1280, "attributeId": 19, "dataType": 32, "action": true}}, "sensitivity": {"min": 0, "max": 50}, "vibrationResetTimeout": 60}
     },
     {
       "description":    "TUYA TS0222 Illuminance Sensor",
