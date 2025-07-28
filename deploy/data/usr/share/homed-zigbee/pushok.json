@@ -2,8 +2,8 @@
   "PushOk Hardware":
   [
     {
-      "description":    "PushOk Hardware Garden Valve POK006",
-      "modelNames":     ["POK006"],
+      "description":    "PushOk Hardware Garden Valve POK001 or POK006",
+      "modelNames":     ["POK001", "POK006"],
       "properties":     ["batteryPercentage", "status"],
       "actions":        ["status"],
       "exposes":        ["battery", "lock", "stallTime", "valveStatus"],
