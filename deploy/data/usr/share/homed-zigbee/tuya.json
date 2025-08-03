@@ -1374,6 +1374,32 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type H)",
+      "modelNames":     ["_TZE200_grgol3xp", "_TZE200_rhgsbacq", "_TZE200_uli8wasj", "_TZE200_y8jijhba"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "occupancy", "temperature", "humidity", "illuminance", "sensitivity", "fadingTime", "temperatureOffset", "humidityOffset", "indicator"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "sensitivity", "type": "value", "propertyDivider": 10, "action": true},
+                            "101":  {"name": "humidity", "type": "value"},
+                            "102":  {"name": "fadingTime", "type": "value", "action": true},
+                            "104":  {"name": "humidityOffset", "type": "value", "action": true},
+                            "105":  {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "106":  {"name": "illuminance", "type": "value", "action": true},
+                            "108":  {"name": "indicator", "type": "bool", "action": true},
+                            "110":  {"name": "battery", "type": "value"},
+                            "111":  {"name": "temperature", "type": "value", "divider": 10}
+                          },
+                          "sensitivity": {"min": 1, "max": 19},
+                          "fadingTime": {"min": 0, "max": 28800, "step": 10},
+                          "humidityOffset": {"min": -30, "max": 30},
+                          "temperatureOffset": {"min": -2, "max": 2, "step": 0.1}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Human Presence Sensor with PIR",
       "modelNames":     ["_TZE200_kb5noeto"],
       "properties":     ["tuyaDataPoints"],
@@ -1606,7 +1632,7 @@
     },
     {
       "description":    "TUYA TS0601 NDIR CO2 Sensor (Type B)",
-      "modelNames":     ["_TZE200_ogkdpgy2"],
+      "modelNames":     ["_TZE200_ogkdpgy2", "_TZE204_ogkdpgy2"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["co2"],
       "options":        {"tuyaDataPoints": {"2": {"name": "co2", "type": "value"}}}
