@@ -1457,6 +1457,22 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Vibration Sensor",
+      "modelNames":     ["_TZE200_afycb3cg", "_TZE200_hggxgsjj", "_TZE200_iba1ckek", "_TZE200_yjryxpot"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "vibration", "tilt", "sensitivityMode"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "vibration", "type": "bool"},
+                            "7":    {"name": "tilt", "type": "bool"},
+                            "104":  {"name": "sensitivityMode", "type": "enum", "action": true},
+                            "105":  {"name": "battery", "type": "value"}
+                          }
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type A)",
       "modelNames":     ["_TZE200_44af8vyi", "_TZE200_bq5c8xfe"],
       "properties":     ["tuyaDataPoints"],
