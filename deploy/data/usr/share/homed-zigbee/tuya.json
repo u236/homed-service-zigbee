@@ -16,7 +16,8 @@
                             "19":   {"name": "power", "type": "value", "divider": 10},
                             "20":   {"name": "voltage", "type": "value", "divider": 10}
                           },
-                          "status": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]},
+                          "yandexType": "devices.types.smart_meter.electricity"
                         }
     },
     {
@@ -36,7 +37,8 @@
                             "105":  {"name": "frequency", "type": "value", "divider": 100},
                             "111":  {"name": "powerFactor", "type": "value", "divider": 10}
                           },
-                          "status": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]},
+                          "yandexType": "devices.types.smart_meter.electricity"
                         }
     },
     {
@@ -68,7 +70,8 @@
                             "6":    {"name": "electricity", "type": "raw"},
                             "16":   {"name": "status", "type": "bool", "action": true}
                           },
-                          "status": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]},
+                          "yandexType": "devices.types.smart_meter.electricity"
                         }
     },
     {
@@ -102,7 +105,8 @@
                             "103":  {"name": "temperature", "type": "value"}
                           },
                           "leakageCurrent": {"type": "sensor", "unit": "mA", "icon": "mdi:current-ac"},
-                          "status": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]},
+                          "yandexType": "devices.types.smart_meter.electricity"
                         }
     },
     {
@@ -123,7 +127,8 @@
                             "131":  {"name": "temperature", "type": "value", "divider": 10}
                           },
                           "leakageCurrent": {"type": "sensor", "unit": "mA", "icon": "mdi:current-ac"},
-                          "status": {"enum": ["off", "on"]}
+                          "status": {"enum": ["off", "on"]},
+                          "yandexType": "devices.types.smart_meter.electricity"
                         }
     },
     {
