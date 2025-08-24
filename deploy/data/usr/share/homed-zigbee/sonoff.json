@@ -217,6 +217,15 @@
       "exposes":        ["switch"]
     },
     {
+      "description":    "Sonoff USB Plug ZBMicro",
+      "modelNames":     ["ZBMicro"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus"]
+    },
+    {
       "description":    "Sonoff Human Presense Sensor SNZB-06P",
       "modelNames":     ["SNZB-06P"],
       "properties":     ["occupancy"],
