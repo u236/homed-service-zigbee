@@ -27,5 +27,4 @@ void BindingObject::registerMetaTypes(void)
     qRegisterMetaType <Bindings::PM25>                  ("pm25Binding");
     qRegisterMetaType <Bindings::Energy>                ("energyBinding");
     qRegisterMetaType <Bindings::Power>                 ("powerBinding");
-    qRegisterMetaType <Bindings::Perenio>               ("perenioBinding");
 }

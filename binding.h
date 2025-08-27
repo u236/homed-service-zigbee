@@ -260,15 +260,6 @@ namespace Bindings
         Power(void) : BindingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT) {}
 
     };
-
-    class Perenio : public BindingObject
-    {
-
-    public:
-
-        Perenio(void) : BindingObject("perenio", CLUSTER_PERENIO) {}
-
-    };
 }
 
 #endif

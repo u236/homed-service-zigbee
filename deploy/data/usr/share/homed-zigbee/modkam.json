@@ -49,8 +49,8 @@
                           },
                           "customAttributes":
                           {
-                            "eventsPerMinute":  {"type": "value", "clusterId": 1024, "attributeId": 61441, "dataType": 33},
-                            "dosePerHour":      {"type": "value", "clusterId": 1024, "attributeId": 61442, "dataType": 35},
+                            "eventsPerMinute":  {"type": "value", "clusterId": 1024, "attributeId": 61441, "dataType": 33, "reporting": true},
+                            "dosePerHour":      {"type": "value", "clusterId": 1024, "attributeId": 61442, "dataType": 35, "reporting": true},
                             "sensitivity":      {"type": "value", "clusterId": 1025, "attributeId": 61440, "dataType": 33, "action": true},
                             "ledFeedback":      {"type": "bool",  "clusterId": 1025, "attributeId": 61441, "dataType": 16, "action": true},
                             "buzzerFeedback":   {"type": "bool",  "clusterId": 1025, "attributeId": 61442, "dataType": 16, "action": true},
@@ -58,6 +58,7 @@
                             "sensorType":       {"type": "enum",  "clusterId": 1025, "attributeId": 61444, "dataType": 48, "action": true},
                             "threshold":        {"type": "value", "clusterId": 1025, "attributeId": 61445, "dataType": 35, "action": true}
                           },
+                          "reporting": {"maxInterval": 60},
                           "alarm": {"enum": [false, true]},
                           "sensitivity": {"min": 0, "max": 100},
                           "sensorCount": {"min": 0, "max": 10},
