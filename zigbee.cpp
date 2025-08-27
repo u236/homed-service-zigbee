@@ -701,14 +701,38 @@ void ZigBee::interviewFinished(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
+        QMap <quint16, QList <quint16>> map;
+
         for (int i = 0; i < it.value()->actions().count(); i++)
         {
-            const Action action = it.value()->actions().at(i);
+            const Action &action = it.value()->actions().at(i);
 
             if (action->attributes().isEmpty())
                 continue;
 
             enqueueRequest(device, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes()));
+            map.insert(action->clusterId(), action->attributes());
+        }
+
+        for (int i = 0; i < it.value()->reportings().count(); i++)
+        {
+            const Reporting &reporting = it.value()->reportings().at(i);
+            QList <quint16> attributes;
+
+            for (int j = 0; j < reporting->attributes().count(); j++)
+            {
+                quint16 attributeId = reporting->attributes().at(j);
+
+                if (map.value(reporting->clusterId()).contains(attributeId))
+                    continue;
+
+                attributes.append(attributeId);
+            }
+
+            if (attributes.isEmpty())
+                continue;
+
+            enqueueRequest(device, it.key(), reporting->clusterId(), readAttributesRequest(m_requestId, 0x0000, attributes));
         }
     }
 
@@ -917,10 +941,6 @@ bool ZigBee::reportingRequest(const Endpoint &endpoint, const Reporting &reporti
 
     logInfo << device << endpoint << reporting->name().toUtf8().constData() << "reporting configuration request finished successfully";
     m_requestId++;
-
-    if (reporting->name() == "battery")
-        enqueueRequest(device, endpoint->id(), CLUSTER_POWER_CONFIGURATION, readAttributesRequest(m_requestId, 0x0000, reporting->attributes()), "battery status request");
-
     return true;
 }
 
