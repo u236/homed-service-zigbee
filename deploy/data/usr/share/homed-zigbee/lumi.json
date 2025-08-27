@@ -700,6 +700,13 @@
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
     },
     {
+      "description":    "Aqara D1 1-Key Wireless Switch WXKG03LM (2016)",
+      "modelNames":     ["lumi.sensor_86sw1"],
+      "properties":     ["lumiBasic", "lumiButtonAction"],
+      "exposes":        ["battery", "action"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
+    },
+    {
       "description":    "Aqara D1 2-Key Wireless Switch WXKG02LM (2016)",
       "modelNames":     ["lumi.sensor_86sw2", "lumi.sensor_86sw2.es1"],
       "options":        {"endpointName": {"1": "Left", "2": "Right", "3": "Both"}}
