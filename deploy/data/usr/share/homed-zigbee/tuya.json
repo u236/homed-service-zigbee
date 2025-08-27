@@ -1085,7 +1085,7 @@
     },
     {
       "description":    "TUYA TS0601 Gas Sensor (Type B)",
-      "modelNames":     ["_TZE200_yojqa8xn", "_TZE204_chbyv06x", "_TZE204_yojqa8xn", "_TZE204_zougpkpy"],
+      "modelNames":     ["_TZE200_yojqa8xn", "_TZE204_chbyv06x", "_TZE204_yojqa8xn", "_TZE204_zougpkpy", "_TZE284_chbyv06x"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["gas", "concentration", "test", "melody"],
       "options":        {

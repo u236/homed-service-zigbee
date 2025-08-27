@@ -707,7 +707,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->reportings().append(Reporting(new Reportings::Thermostat));
                     it.value()->exposes().append(Expose(new ThermostatObject));
                     device->options().insert(QString("targetTemperature_%1").arg(it.key()), QMap <QString, QVariant> {{"min", 7}, {"max", 30}, {"step", 0.1}, {"unit", "°C"}});
-                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "auto", "heat"})}});
+                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QList <QVariant> {"off", "auto", "heat"}}});
                     break;
 
                 case CLUSTER_FAN_CONTROL:
@@ -715,7 +715,7 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->actions().append(Action(new Actions::FanMode));
                     it.value()->bindings().append(Binding(new Bindings::Fan));
                     it.value()->exposes().append(Expose(new SelectObject("fanMode")));
-                    device->options().insert(QString("fanMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QVariant(QList <QString> {"off", "low", "medium", "high"})}});
+                    device->options().insert(QString("fanMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QList <QVariant> {"off", "low", "medium", "high"}}});
                     break;
 
                 case CLUSTER_COLOR_CONTROL:
