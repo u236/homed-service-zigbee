@@ -393,7 +393,7 @@
   "Xiaomi":
   [
     {
-      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC (Type A)",
+      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC",
       "modelNames":     ["LYWSD03MMC"],
       "properties":     ["batteryPercentage", "temperature", "humidity", "displayMode"],
       "actions":        ["displayMode"],
@@ -414,8 +414,8 @@
                         }
     },
     {
-      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC (Type B)",
-      "modelNames":     ["LYWSD03MMC-z", "LYWSD03MMC-bz"],
+      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC or MJWSD06MMC",
+      "modelNames":     ["LYWSD03MMC-bz", "LYWSD03MMC-z", "MJWSD06MMC-bz", "MJWSD06MMC-z"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
