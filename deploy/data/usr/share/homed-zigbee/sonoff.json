@@ -160,7 +160,6 @@
                           {
                             "waterStatus":  {"type": "enum", "clusterId": 64529, "attributeId": 20492, "dataType": 32},
                             "autoClose":    {"type": "enum", "clusterId": 64529, "attributeId": 20497, "dataType": 33, "action": true}
-
                           },
                           "waterStatus":  {"type": "sensor", "enum": ["normal", "shortage", "leakage", "shortageWithLeakage"], "icon": "mdi:water-alert"},
                           "autoClose":  {"type": "toggle", "enum": {"0": false, "30": true}, "icon": "mdi:valve"},

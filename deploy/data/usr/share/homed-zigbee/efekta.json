@@ -84,7 +84,7 @@
       "modelNames":     ["EFEKTA_iAQ"],
       "properties":     ["temperature", "humidity", "co2", "efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
       "actions":        ["efektaTemperatureSettings", "efektaHumiditySettings", "efektaCO2Settings"],
-      "bindings":       ["time", "temperature", "humidity", "co2"],
+      "bindings":       ["temperature", "humidity", "co2"],
       "endpointId":     1
     },
     {

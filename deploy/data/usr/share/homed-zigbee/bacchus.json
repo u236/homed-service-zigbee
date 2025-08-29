@@ -76,14 +76,14 @@
       "modelNames":     ["Presence_Sensor_v2.6"],
       "properties":     ["status", "occupancy", "illuminance"],
       "actions":        ["status"],
-      "bindings":       ["occupancy", "illuminance", "time"],
+      "bindings":       ["occupancy", "illuminance"],
       "reportings":     ["occupancy", "illuminance"],
       "exposes":        ["switch", "occupancy", "illuminance", "targetDistance", "motionStatus", "readInterval", "startTime", "endTime", "illuminanceHigh"],
       "options":        {
                           "customAttributes":
                           {
-                            "startTime":        {"type": "time",  "clusterId": 10,   "attributeId": 3,     "dataType": 35, "action": true},
-                            "endTime":          {"type": "time",  "clusterId": 10,   "attributeId": 4,     "dataType": 35, "action": true},
+                            "startTime":        {"type": "time",  "clusterId": 10,   "attributeId": 3,     "dataType": 35, "action": true, "binding": true},
+                            "endTime":          {"type": "time",  "clusterId": 10,   "attributeId": 4,     "dataType": 35, "action": true, "binding": true},
                             "illuminanceHigh":  {"type": "value", "clusterId": 1024, "attributeId": 61441, "dataType": 33, "action": true},
                             "targetDistance":   {"type": "value", "clusterId": 1030, "attributeId": 61445, "dataType": 33, "divider": 100},
                             "motionStatus":     {"type": "enum",  "clusterId": 1030, "attributeId": 61446, "dataType": 48},

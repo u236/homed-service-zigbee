@@ -274,10 +274,8 @@
     },
     {
       "modelNames":     ["Watermeter_TLSR8258"],
-      "bindings":       ["energy"],
-      "reportings":     ["energy"],
       "exposes":        ["volume"],
-      "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37}}},
+      "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37, "binding": true, "reporting": {"minInterval": 10, "maxInterval": 600}}}},
       "endpointId":     [1, 2]
     },
     {
