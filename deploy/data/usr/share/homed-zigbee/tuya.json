@@ -287,7 +287,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 2-Channel Dimmer",
+      "description":    "TUYA TS0601 2-Channel Dimmer (Type A)",
       "modelNames":     ["_TZE204_bxoo2swd", "_TZE200_tsxpl0d0"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -304,7 +304,29 @@
                             "14":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
                           "status": {"enum": ["off", "on"]},
-                          "lightType": {"type": "select", "enum": ["led", "incandescent", "halogen"], "icon": "mdi:lightbulb-on"},
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "light": ["level"]
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 2-Channel Dimmer (Type B)",
+      "modelNames":     ["_TZE204_jtbgusdc", "_TZE204_o9gyszw2", "_TZE284_jtbgusdc"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["light_1", "switchType_1", "light_2", "switchType_2", "powerOnStatus"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "level_1", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true},
+                            "4":    {"name": "switchType_1", "type": "enum", "action": true},
+                            "7":    {"name": "status_2", "type": "bool", "action": true},
+                            "8":    {"name": "level_2", "type": "value", "divider": 3.9215686274509802, "round": true, "action": true},
+                            "10":   {"name": "switchType_2", "type": "enum", "action": true},
+                            "14":   {"name": "powerOnStatus", "type": "enum", "action": true}
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "switchType": {"enum": ["toggle", "static", "momentary"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "light": ["level"]
                         }
