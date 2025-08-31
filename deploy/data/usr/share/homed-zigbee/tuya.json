@@ -2014,7 +2014,7 @@
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true}
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "powerSource": 1, "skipAttributeRead": true}
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay",
@@ -2040,7 +2040,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "powerSource": 1, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
@@ -2076,7 +2076,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "powerSource": 1, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
@@ -2129,7 +2129,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "skipAttributeRead": true},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "powerSource": 1, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
@@ -2147,7 +2147,7 @@
       "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "powerSource": 1, "skipAttributeRead": true},
       "endpointId":     1
     },
     {
