@@ -98,15 +98,13 @@ QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
         case 1: // hysteresis
         {
             qint8 value = static_cast <qint8> (data.toDouble() * option(QString(name).append("Divider"), 10).toDouble());
-            m_attributes = {static_cast <quint16> (index == 0 ? 0x0010 : 0x0019)};
-            return writeAttribute(DATA_TYPE_8BIT_SIGNED, &value, sizeof(value));
+            return writeAttribute(index == 0 ? 0x0010 : 0x0019, DATA_TYPE_8BIT_SIGNED, &value, sizeof(value));
         }
 
         case 2: // targetTemperature
         {
             qint16 value = qToLittleEndian <qint16> (data.toDouble() * 100);
-            m_attributes = {0x0012};
-            return writeAttribute(DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
+            return writeAttribute(0x0012, DATA_TYPE_16BIT_SIGNED, &value, sizeof(value));
         }
 
         case 3: // systemMode
@@ -116,8 +114,7 @@ QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
             if (value > 1)
                 value += value > 3 ? 3 : 1;
 
-            m_attributes = {0x001C};
-            return value < 0 ? QByteArray() : writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
+            return value < 0 ? QByteArray() : writeAttribute(0x001C, DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
         }
     }
 

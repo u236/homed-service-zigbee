@@ -277,15 +277,13 @@ QVariant ActionsTUYA::CoverMotor::request(const QString &name, const QVariant &d
 
 QVariant ActionsTUYA::CoverSwitch::request(const QString &name, const QVariant &data)
 {
-    qint8 value;
-
     switch (m_actions.indexOf(name))
     {
-        case 0: m_attributes = {0xF001}; value = data.toBool() ? 0x00 : 0x01; break; // calibration
-        case 1: m_attributes = {0xF002}; value = data.toBool() ? 0x01 : 0x00; break; // reverse
+        case 0: return writeAttribute(0xF001, DATA_TYPE_8BIT_ENUM, QByteArray(1, data.toBool() ? 0x00 : 0x01)); // calibration
+        case 1: return writeAttribute(0xF002, DATA_TYPE_8BIT_ENUM, QByteArray(1, data.toBool() ? 0x01 : 0x00)); // reverse
     }
 
-    return writeAttribute(DATA_TYPE_8BIT_ENUM, &value, sizeof(value));
+    return QByteArray();
 }
 
 QVariant ActionsTUYA::ChildLock::request(const QString &, const QVariant &data)

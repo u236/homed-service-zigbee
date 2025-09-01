@@ -75,7 +75,7 @@ namespace ActionsTUYA
 
     public:
 
-        LedController(void) : ActionObject("ledController", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"color", "colorTemperature"}) {}
+        LedController(void) : ActionObject("ledController", CLUSTER_TUYA_DATA, {}, {"color", "colorTemperature"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -85,7 +85,7 @@ namespace ActionsTUYA
 
     public:
 
-        CoverMotor(void) : ActionObject("coverMotor", CLUSTER_TUYA_DATA, 0x0000, QList <QString> {"cover", "position"}) {}
+        CoverMotor(void) : ActionObject("coverMotor", CLUSTER_TUYA_DATA, 0x0000, {}, {"cover", "position"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -95,7 +95,7 @@ namespace ActionsTUYA
 
     public:
 
-        CoverSwitch(void) : ActionObject("coverSwitch", CLUSTER_WINDOW_COVERING, 0x0000, QList <QString> {"calibration", "reverse"}) {}
+        CoverSwitch(void) : ActionObject("coverSwitch", CLUSTER_WINDOW_COVERING, 0x0000, {0xF001, 0xF002}, {"calibration", "reverse"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };

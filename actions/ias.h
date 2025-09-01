@@ -11,7 +11,7 @@ namespace ActionsIAS
 
     public:
 
-        Warning(void) : ActionObject("warning", CLUSTER_IAS_WD, 0x0000, QList <QString> {"sirenMode", "sirenLevel", "strobe", "strobeLevel", "dutyCycle", "duration"}) {}
+        Warning(void) : ActionObject("warning", CLUSTER_IAS_WD, 0x0000, {}, {"sirenMode", "sirenLevel", "strobe", "strobeLevel", "dutyCycle", "duration"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };

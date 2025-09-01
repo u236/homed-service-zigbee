@@ -98,14 +98,24 @@ Property ActionObject::endpointProperty(const QString &name)
     return Property(new PropertyObject(propertyName));
 }
 
+QByteArray ActionObject::writeAttribute(quint16 attributeId, quint8 dataType, void *value, size_t length)
+{
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, attributeId, dataType, QByteArray(reinterpret_cast <char*> (value), length));
+}
+
+QByteArray ActionObject::writeAttribute(quint16 attributeId, quint8 dataType, const QByteArray &data)
+{
+    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, attributeId, dataType, data);
+}
+
 QByteArray ActionObject::writeAttribute(quint8 dataType, void *value, size_t length)
 {
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), dataType, QByteArray(reinterpret_cast <char*> (value), length));
+    return writeAttribute(m_attributes.at(0), dataType, value, length);
 }
 
 QByteArray ActionObject::writeAttribute(quint8 dataType, const QByteArray &data)
 {
-    return writeAttributeRequest(m_transactionId++, m_manufacturerCode, m_attributes.at(0), dataType, data);
+    return writeAttribute(m_attributes.at(0), dataType, data);
 }
 
 qint8 ActionObject::listIndex(const QList <QString> &list, const QVariant &value)

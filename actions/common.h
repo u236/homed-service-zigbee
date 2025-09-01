@@ -61,7 +61,7 @@ namespace Actions
 
     public:
 
-        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, QList <QString> {"temperatureOffset", "hysteresis", "targetTemperature", "systemMode"}) {}
+        Thermostat(void) : ActionObject("thermostat", CLUSTER_THERMOSTAT, 0x0000, {0x0010, 0x0012, 0x0019, 0x001C}, {"temperatureOffset", "hysteresis", "targetTemperature", "systemMode"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };

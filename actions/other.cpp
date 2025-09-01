@@ -12,15 +12,13 @@ QVariant ActionsYandex::CommonSettings::request(const QString &name, const QVari
         case 1: // interlock
         {
             qint8 value = index ? data.toBool() ? 0x01 : 0x00 : static_cast <qint8> (enumIndex(name, data));
-            m_attributes = {static_cast <quint16> (index ? 0x0007 : 0x0003)};
-            return value < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (m_attributes.at(0)), m_manufacturerCode).append(value);
+            return value < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, index ? 0x07 : 0x03, m_manufacturerCode).append(value);
         }
 
         case 2: // indicator
         {
             quint8 value = data.toBool() ? 0x00 : 0x01;
-            m_attributes = {0x0005};
-            return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
+            return writeAttribute(0x0005, DATA_TYPE_BOOLEAN, &value, sizeof(value));
         }
     }
 
@@ -37,8 +35,7 @@ QVariant ActionsYandex::SwitchSettings::request(const QString &name, const QVari
         case 1: // switchType
         {
             qint8 value = static_cast <qint8> (enumIndex(name, data));
-            m_attributes = {static_cast <quint16> (index ? 0x0002 : 0x0001)};
-            return value < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (m_attributes.at(0)), m_manufacturerCode).append(value);
+            return value < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, index ? 0x02 : 0x01, m_manufacturerCode).append(value);
         }
     }
 

@@ -13,14 +13,11 @@ class ActionObject : public AbstractMetaObject
 
 public:
 
-    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode = 0, QList <quint16> attributes = {}) :
-        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_properyUpdated(false), m_attributes(attributes) {}
+    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode = 0, QList <quint16> attributes = {}, QList <QString> actions = {}) :
+        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_properyUpdated(false), m_attributes(attributes), m_actions(actions) {}
 
-    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId) :
-        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_properyUpdated(false), m_attributes({attributeId}) {}
-
-    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, QList <QString> actions) :
-        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_properyUpdated(false), m_actions(actions) {}
+    ActionObject(const QString &name, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId, QList <QString> actions = {}) :
+        AbstractMetaObject(name), m_clusterId(clusterId), m_manufacturerCode(manufacturerCode), m_transactionId(0), m_properyUpdated(false), m_attributes({attributeId}), m_actions(actions) {}
 
     virtual ~ActionObject(void) {}
     virtual QVariant request(const QString &name, const QVariant &data) = 0;
@@ -46,6 +43,8 @@ protected:
     QByteArray ieeeAddress(void);
     Property endpointProperty(const QString &name = QString());
 
+    QByteArray writeAttribute(quint16 attributeId, quint8 dataType, void *value, size_t length);
+    QByteArray writeAttribute(quint16 attributeId, quint8 dataType, const QByteArray &data);
     QByteArray writeAttribute(quint8 dataType, void *value, size_t length);
     QByteArray writeAttribute(quint8 dataType, const QByteArray &data);
 

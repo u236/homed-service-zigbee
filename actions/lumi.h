@@ -11,7 +11,7 @@ namespace ActionsLUMI
 
     public:
 
-        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"sensitivityMode", "detectionMode", "distanceMode", "resetPresence"}) {}
+        PresenceSensor(void) : ActionObject("presenceSensor", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, {0x010C, 0x0144, 0x0146}, {"sensitivityMode", "detectionMode", "distanceMode", "resetPresence"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -21,7 +21,7 @@ namespace ActionsLUMI
 
     public:
 
-        RadiatorThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"sensorType", "externalTemperature"}) {}
+        RadiatorThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x027E, {"sensorType", "externalTemperature"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
@@ -35,7 +35,7 @@ namespace ActionsLUMI
 
     public:
 
-        ElectricThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, QList <QString> {"targetTemperature", "systemMode", "fanMode"}) {}
+        ElectricThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x024F, {"targetTemperature", "systemMode", "fanMode"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -45,7 +45,7 @@ namespace ActionsLUMI
 
     public:
 
-        ThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, {"scheduleMonday", "scheduleTuesday", "scheduleWednesday", "scheduleThursday", "scheduleFriday", "scheduleSaturday", "scheduleSunday"}) {}
+        ThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0276, {"scheduleMonday", "scheduleTuesday", "scheduleWednesday", "scheduleThursday", "scheduleFriday", "scheduleSaturday", "scheduleSunday"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
@@ -59,7 +59,7 @@ namespace ActionsLUMI
 
     public:
 
-        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, QList <QString> {"buttonMode", "leftMode", "rightMode"}) {}
+        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, {0xFF22, 0xFF23}, {"buttonMode", "leftMode", "rightMode"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
