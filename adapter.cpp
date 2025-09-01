@@ -45,7 +45,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
     m_timeout = static_cast <quint16> (config->value("zigbee/timeout", 10).toInt());
     m_panId = static_cast <quint16> (config->value("zigbee/panid").toString().toInt(nullptr, 16));
     m_channel = static_cast <quint8> (config->value("zigbee/channel").toInt());
-    m_power = static_cast <quint8> (config->value("zigbee/power", 20).toInt());
+    m_power = static_cast <quint8> (config->value("zigbee/power", 5).toInt());
 
     m_write = config->value("zigbee/write", false).toBool();
     m_watchdog = config->value("zigbee/watchdog", true).toBool();
