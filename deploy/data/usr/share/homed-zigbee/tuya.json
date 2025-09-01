@@ -893,7 +893,7 @@
       "modelNames":     ["_TZE204_lpedvtvr"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["thermostat", "childLock", "standbyBrightness", "ecoTemperature", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
+      "exposes":        ["thermostat", "childLock", "standbyBrightness", "ecoTemperature", "floorTemperature", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -908,6 +908,7 @@
                             "48":   {"name": "standbyBrightness", "type": "value", "action": true},
                             "50":   {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
                             "101":  {"name": "temperatureOffset", "type": "value", "action": true},
+                            "109":  {"name": "floorTemperature", "type": "value", "divider": 10},
                             "110":  {"name": "hysteresis", "type": "value", "divider": 10, "action": true},
                             "113":  {"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}
                           },
@@ -918,6 +919,7 @@
                           "standbyBrightness": {"type": "number", "min": 0, "max": 100, "unit": "%", "icon": "mdi:brightness-4"},
                           "targetTemperature": {"min": 5, "max": 45, "step": 0.5},
                           "temperatureOffset": {"min": -10, "max": 10},
+                          "floorTemperature": {"type": "sensor", "unit": "°C"},
                           "hysteresis": {"min": 0.5, "max": 5, "step": 0.5},
                           "ecoTemperature": {"min": 10, "max": 30},
                           "thermostatProgram": "daily",
