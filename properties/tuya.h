@@ -103,7 +103,7 @@ namespace PropertiesTUYA
 
     public:
 
-        CoverSwitch(void) : PropertyObject("coverSwitch", CLUSTER_WINDOW_COVERING) {}
+        CoverSwitch(void) : PropertyObject("coverSwitch", CLUSTER_WINDOW_COVERING, {0xF000, 0xF001, 0xF002}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -113,7 +113,7 @@ namespace PropertiesTUYA
 
     public:
 
-        ChildLock(void) : PropertyObject("childLock", CLUSTER_ON_OFF) {}
+        ChildLock(void) : PropertyObject("childLock", CLUSTER_ON_OFF, 0x8000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

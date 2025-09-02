@@ -117,7 +117,7 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
     QByteArray buffer = data;
     QVariant value;
 
-    if (attributeId != m_attributeId)
+    if (attributeId != m_attributes.at(0))
         return;
 
     if (buffer.length() < 8)

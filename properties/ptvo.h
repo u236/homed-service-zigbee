@@ -11,7 +11,7 @@ namespace PropertiesPTVO
 
     public:
 
-        Status(const QString &name) : PropertyObject(name, CLUSTER_ON_OFF) {}
+        Status(const QString &name) : PropertyObject(name, CLUSTER_ON_OFF, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -21,7 +21,7 @@ namespace PropertiesPTVO
 
     public:
 
-        AnalogInput(const QString &name, const QString &unit = QString()) : PropertyObject(name, CLUSTER_ANALOG_INPUT), m_unit(unit) {}
+        AnalogInput(const QString &name, const QString &unit = QString()) : PropertyObject(name, CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}), m_unit(unit) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:

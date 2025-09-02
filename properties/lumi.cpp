@@ -407,7 +407,7 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16, quint16 attributeId, con
 
 void PropertiesLUMI::Contact::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = data.at(0) ? true : false;
@@ -417,7 +417,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16, quint16 attributeId, const QB
 {
     float value = 0;
 
-    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -429,7 +429,7 @@ void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QB
     QMap <QString, QVariant> map;
     float value = 0;
 
-    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());

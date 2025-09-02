@@ -716,22 +716,26 @@ void ZigBee::interviewFinished(const Device &device)
             break;
         }
 
-        for (int i = 0; i < it.value()->reportings().count(); i++)
+        for (int i = 0; i < it.value()->properties().count(); i++)
         {
-            const Reporting &reporting = it.value()->reportings().at(i);
+            const Property &property = it.value()->properties().at(i);
+            quint16 clusterId = property->clusters().at(0);
             QList <quint16> attributes;
 
-            for (int j = 0; j < reporting->attributes().count(); j++)
-            {
-                quint16 attributeId = reporting->attributes().at(j);
+            if (property->name() == "action" || property->name() == "scene")
+                continue;
 
-                if (map.value(reporting->clusterId()).contains(attributeId))
+            for (int j = 0; j < property->attributes().count(); j++)
+            {
+                quint16 attributeId = property->attributes().at(j);
+
+                if (map.value(clusterId).contains(attributeId))
                     continue;
 
                 attributes.append(attributeId);
             }
 
-            if (attributes.isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), reporting->clusterId(), readAttributesRequest(m_requestId, 0x0000, attributes)))
+            if (attributes.isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), clusterId, readAttributesRequest(m_requestId, 0x0000, attributes)))
                 continue;
 
             break;

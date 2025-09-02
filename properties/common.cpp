@@ -7,7 +7,7 @@ using namespace Properties;
 
 void Properties::BatteryVoltage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0020 || data.at(0) == 0xFF)
+    if (attributeId != m_attributes.at(0) || data.at(0) == 0xFF)
         return;
 
     m_value = percentage(2850, 3000, static_cast <quint8> (data.at(0)) * 100);
@@ -15,7 +15,7 @@ void Properties::BatteryVoltage::parseAttribte(quint16, quint16 attributeId, con
 
 void Properties::BatteryPercentage::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0021 || data.at(0) == 0xFF)
+    if (attributeId != m_attributes.at(0) || data.at(0) == 0xFF)
         return;
 
     m_value = static_cast <quint8> (data.at(0)) / (option().toMap().value("undivided").toBool() ? 1.0 : 2.0);
@@ -25,7 +25,7 @@ void Properties::DeviceTemperature::parseAttribte(quint16, quint16 attributeId, 
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -34,7 +34,7 @@ void Properties::DeviceTemperature::parseAttribte(quint16, quint16 attributeId, 
 
 void Properties::Status::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = data.at(0) ? "on" : "off";
@@ -42,7 +42,7 @@ void Properties::Status::parseAttribte(quint16, quint16 attributeId, const QByte
 
 void Properties::Level::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = static_cast <quint8> (data.at(0));
@@ -52,7 +52,7 @@ void Properties::AnalogInput::parseAttribte(quint16, quint16 attributeId, const 
 {
     float value = 0;
 
-    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -63,7 +63,7 @@ void Properties::AnalogOutput::parseAttribte(quint16, quint16 attributeId, const
 {
     float value = 0;
 
-    if (attributeId != 0x0055 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -75,7 +75,7 @@ void Properties::CoverPosition::parseAttribte(quint16, quint16 attributeId, cons
     QMap <QString, QVariant> map;
     qint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.at(0) : 100 - data.at(0));
 
-    if (attributeId != 0x0008 || value == meta("position", 0xFF).toInt())
+    if (attributeId != m_attributes.at(0) || value == meta("position", 0xFF).toInt())
         return;
 
     map.insert("cover", value ? "open" : "closed");
@@ -218,7 +218,7 @@ void Properties::ColorTemperature::parseAttribte(quint16, quint16 attributeId, c
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0007 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -227,7 +227,7 @@ void Properties::ColorTemperature::parseAttribte(quint16, quint16 attributeId, c
 
 void ColorMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0008)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = data.at(0) != 0x02 ? true : false;
@@ -237,7 +237,7 @@ void Properties::Illuminance::parseAttribte(quint16, quint16 attributeId, const 
 {
     quint16 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -248,7 +248,7 @@ void Properties::Temperature::parseAttribte(quint16, quint16 attributeId, const 
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -259,7 +259,7 @@ void Properties::Pressure::parseAttribte(quint16, quint16 attributeId, const QBy
 {
     qint16 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -270,7 +270,7 @@ void Properties::Flow::parseAttribte(quint16, quint16 attributeId, const QByteAr
 {
     quint16 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -281,7 +281,7 @@ void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QBy
 {
     quint16 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -295,7 +295,7 @@ void Properties::Humidity::parseAttribte(quint16, quint16 attributeId, const QBy
 
 void Properties::Occupancy::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0000)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = data.at(0) ? true : false;
@@ -310,7 +310,7 @@ void Properties::OccupancyTimeout::parseAttribte(quint16, quint16 attributeId, c
 {
     quint16 value;
 
-    if (attributeId != 0x0010 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -321,7 +321,7 @@ void Properties::Moisture::parseAttribte(quint16, quint16 attributeId, const QBy
 {
     quint16 value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -332,7 +332,7 @@ void Properties::CO2::parseAttribte(quint16, quint16 attributeId, const QByteArr
 {
     float value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -344,7 +344,7 @@ void Properties::PM25::parseAttribte(quint16, quint16 attributeId, const QByteAr
 {
     float value = 0;
 
-    if (attributeId != 0x0000 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -376,7 +376,7 @@ void Properties::Voltage::parseAttribte(quint16, quint16 attributeId, const QByt
 {
     qint16 value = 0;
 
-    if ((attributeId != 0x0100 && attributeId != 0x0505) || static_cast <size_t> (data.length()) > sizeof(value))
+    if (!m_attributes.contains(attributeId) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -387,7 +387,7 @@ void Properties::Current::parseAttribte(quint16, quint16 attributeId, const QByt
 {
     qint16 value = 0;
 
-    if ((attributeId != 0x0103 && attributeId != 0x0508) || static_cast <size_t> (data.length()) > sizeof(value))
+    if (!m_attributes.contains(attributeId) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -398,7 +398,7 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
 {
     qint16 value = 0;
 
-    if ((attributeId != 0x0106 && attributeId != 0x050B) || static_cast <size_t> (data.length()) > sizeof(value))
+    if (!m_attributes.contains(attributeId) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
@@ -407,7 +407,7 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
 
 void ChildLock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x0001)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = data.at(0) ? true : false;

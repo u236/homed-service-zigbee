@@ -142,7 +142,7 @@ QVariant PropertyObject::enumValue(const QString &name, int index, const QVarian
 
 void EnumProperty::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != m_attributeId)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = enumValue(m_name, static_cast <quint8> (data.at(0)));

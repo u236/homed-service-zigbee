@@ -313,7 +313,7 @@ void PropertiesTUYA::CoverSwitch::parseAttribte(quint16, quint16 attributeId, co
 
 void PropertiesTUYA::ChildLock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
-    if (attributeId != 0x8000)
+    if (attributeId != m_attributes.at(0))
         return;
 
     m_value = data.at(0) ? true : false;

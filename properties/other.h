@@ -76,7 +76,7 @@ namespace PropertiesYandex
 
     public:
 
-        Settings(void) : PropertyObject("settings", CLUSTER_YANDEX) {}
+        Settings(void) : PropertyObject("settings", CLUSTER_YANDEX, {0x0001, 0x0002, 0x0003, 0x0005, 0x0007}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -100,14 +100,13 @@ namespace PropertiesCustom
     public:
 
         Attribute(const QString &name, const QString &type, quint16 clusterId, quint16 attributeId, quint8 dataType, double divider) :
-            PropertyObject(name, clusterId), m_type(type), m_attributeId(attributeId), m_dataType(dataType), m_divider(divider > 0 ? divider : 1) {}
+            PropertyObject(name, clusterId, attributeId), m_type(type), m_dataType(dataType), m_divider(divider > 0 ? divider : 1) {}
 
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
 
         QString m_type;
-        quint16 m_attributeId;
         quint8 m_dataType;
         double m_divider;
 

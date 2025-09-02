@@ -11,7 +11,7 @@ namespace Properties
 
     public:
 
-        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+        BatteryVoltage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0020) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -21,7 +21,7 @@ namespace Properties
 
     public:
 
-        BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION) {}
+        BatteryPercentage(void) : PropertyObject("battery", CLUSTER_POWER_CONFIGURATION, 0x0021) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -31,7 +31,7 @@ namespace Properties
 
     public:
 
-        DeviceTemperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_CONFIGURATION) {}
+        DeviceTemperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_CONFIGURATION, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -41,7 +41,7 @@ namespace Properties
 
     public:
 
-        Status(void) : PropertyObject("status", CLUSTER_ON_OFF) {}
+        Status(void) : PropertyObject("status", CLUSTER_ON_OFF, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -51,7 +51,7 @@ namespace Properties
 
     public:
 
-        Level(void) : PropertyObject("level", CLUSTER_LEVEL_CONTROL) {}
+        Level(void) : PropertyObject("level", CLUSTER_LEVEL_CONTROL, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -61,7 +61,7 @@ namespace Properties
 
     public:
 
-        AnalogInput(void) : PropertyObject("analogInput", CLUSTER_ANALOG_INPUT) {}
+        AnalogInput(void) : PropertyObject("analogInput", CLUSTER_ANALOG_INPUT, 0x0055) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -71,7 +71,7 @@ namespace Properties
 
     public:
 
-        AnalogOutput(void) : PropertyObject("analogOutput", CLUSTER_ANALOG_OUTPUT) {}
+        AnalogOutput(void) : PropertyObject("analogOutput", CLUSTER_ANALOG_OUTPUT, 0x0055) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -81,7 +81,7 @@ namespace Properties
 
     public:
 
-        CoverPosition(void) : PropertyObject("position", CLUSTER_WINDOW_COVERING) {}
+        CoverPosition(void) : PropertyObject("position", CLUSTER_WINDOW_COVERING, 0x0008) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -91,7 +91,7 @@ namespace Properties
 
     public:
 
-        Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT) {}
+        Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT, {0x0000, 0x0010, 0x0012, 0x0019, 0x001C, 0x001E}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
@@ -102,7 +102,7 @@ namespace Properties
 
     public:
 
-        ColorHS(void) : PropertyObject("color", CLUSTER_COLOR_CONTROL) {}
+        ColorHS(void) : PropertyObject("color", CLUSTER_COLOR_CONTROL, {0x0000, 0x0001}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
@@ -116,7 +116,7 @@ namespace Properties
 
     public:
 
-        ColorXY(void) : PropertyObject("color", CLUSTER_COLOR_CONTROL) {}
+        ColorXY(void) : PropertyObject("color", CLUSTER_COLOR_CONTROL, {0x0003, 0x0004}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
@@ -130,7 +130,7 @@ namespace Properties
 
     public:
 
-        ColorTemperature(void) : PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL) {}
+        ColorTemperature(void) : PropertyObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0007) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -140,7 +140,7 @@ namespace Properties
 
     public:
 
-        ColorMode(void) : PropertyObject("colorMode", CLUSTER_COLOR_CONTROL) {}
+        ColorMode(void) : PropertyObject("colorMode", CLUSTER_COLOR_CONTROL, 0x0008) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -150,7 +150,7 @@ namespace Properties
 
     public:
 
-        Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT) {}
+        Illuminance(void) : PropertyObject("illuminance", CLUSTER_ILLUMINANCE_MEASUREMENT, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -160,7 +160,7 @@ namespace Properties
 
     public:
 
-        Temperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT) {}
+        Temperature(void) : PropertyObject("temperature", CLUSTER_TEMPERATURE_MEASUREMENT, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -170,7 +170,7 @@ namespace Properties
 
     public:
 
-        Pressure(void) : PropertyObject("pressure", CLUSTER_PRESSURE_MEASUREMENT) {}
+        Pressure(void) : PropertyObject("pressure", CLUSTER_PRESSURE_MEASUREMENT, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -180,7 +180,7 @@ namespace Properties
 
     public:
 
-        Flow(void) : PropertyObject("flow", CLUSTER_FLOW_MEASUREMENT) {}
+        Flow(void) : PropertyObject("flow", CLUSTER_FLOW_MEASUREMENT, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -190,7 +190,7 @@ namespace Properties
 
     public:
 
-        Humidity(void) : PropertyObject("humidity", CLUSTER_HUMIDITY_MEASUREMENT) {}
+        Humidity(void) : PropertyObject("humidity", CLUSTER_HUMIDITY_MEASUREMENT, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -200,7 +200,7 @@ namespace Properties
 
     public:
 
-        Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING) {}
+        Occupancy(void) : PropertyObject("occupancy", CLUSTER_OCCUPANCY_SENSING, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void resetValue(void) override;
 
@@ -211,7 +211,7 @@ namespace Properties
 
     public:
 
-        OccupancyTimeout(void) : PropertyObject("occupancyTimeout", CLUSTER_OCCUPANCY_SENSING) {}
+        OccupancyTimeout(void) : PropertyObject("occupancyTimeout", CLUSTER_OCCUPANCY_SENSING, 0x0010) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -221,7 +221,7 @@ namespace Properties
 
     public:
 
-        Moisture(void) : PropertyObject("moisture", CLUSTER_MOISTURE_MEASUREMENT) {}
+        Moisture(void) : PropertyObject("moisture", CLUSTER_MOISTURE_MEASUREMENT, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -231,7 +231,7 @@ namespace Properties
 
     public:
 
-        CO2(void) : PropertyObject("co2", CLUSTER_CO2_CONCENTRATION) {}
+        CO2(void) : PropertyObject("co2", CLUSTER_CO2_CONCENTRATION, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -241,7 +241,7 @@ namespace Properties
 
     public:
 
-        PM25(void) : PropertyObject("pm25", CLUSTER_PM25_CONCENTRATION) {}
+        PM25(void) : PropertyObject("pm25", CLUSTER_PM25_CONCENTRATION, 0x0000) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -251,7 +251,7 @@ namespace Properties
 
     public:
 
-        Energy(void) : PropertyObject("energy", CLUSTER_SMART_ENERGY_METERING) {}
+        Energy(void) : PropertyObject("energy", CLUSTER_SMART_ENERGY_METERING, {0x0000, 0x0100, 0x0102, 0x0104, 0x0106}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -261,7 +261,7 @@ namespace Properties
 
     public:
 
-        Voltage(void) : PropertyObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT) {}
+        Voltage(void) : PropertyObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, {0x0100, 0x0505}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -271,7 +271,7 @@ namespace Properties
 
     public:
 
-        Current(void) : PropertyObject("current", CLUSTER_ELECTRICAL_MEASUREMENT) {}
+        Current(void) : PropertyObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, {0x0103, 0x0508}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -281,7 +281,7 @@ namespace Properties
 
     public:
 
-        Power(void) : PropertyObject("power", CLUSTER_ELECTRICAL_MEASUREMENT) {}
+        Power(void) : PropertyObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, {0x0106, 0x050B}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
@@ -291,7 +291,7 @@ namespace Properties
 
     public:
 
-        ChildLock(void) : PropertyObject("childLock", CLUSTER_UI_CONFIGURATION) {}
+        ChildLock(void) : PropertyObject("childLock", CLUSTER_UI_CONFIGURATION, 0x0001) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };

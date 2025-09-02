@@ -6,7 +6,7 @@ void PropertiesEfekta::ReadInterval::parseAttribte(quint16, quint16 attributeId,
 {
     quint16 value = 0;
 
-    if (attributeId != 0x0201 || static_cast <size_t> (data.length()) > sizeof(value))
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
         return;
 
     memcpy(&value, data.constData(), data.length());
