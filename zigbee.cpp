@@ -707,11 +707,13 @@ void ZigBee::interviewFinished(const Device &device)
         {
             const Action &action = it.value()->actions().at(i);
 
-            if (action->attributes().isEmpty())
+            if (action->attributes().isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes())))
+            {
+                map.insert(action->clusterId(), action->attributes());
                 continue;
+            }
 
-            enqueueRequest(device, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes()));
-            map.insert(action->clusterId(), action->attributes());
+            break;
         }
 
         for (int i = 0; i < it.value()->reportings().count(); i++)
@@ -729,10 +731,10 @@ void ZigBee::interviewFinished(const Device &device)
                 attributes.append(attributeId);
             }
 
-            if (attributes.isEmpty())
+            if (attributes.isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), reporting->clusterId(), readAttributesRequest(m_requestId, 0x0000, attributes)))
                 continue;
 
-            enqueueRequest(device, it.key(), reporting->clusterId(), readAttributesRequest(m_requestId, 0x0000, attributes));
+            break;
         }
     }
 
