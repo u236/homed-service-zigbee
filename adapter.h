@@ -5,7 +5,8 @@
 #define ADAPTER_REQUEST_TIMEOUT         2000
 #define WATCHDOG_ERROR_COUNT            10
 
-#define PERMIT_JOIN_TIMEOUT             60000
+#define PERMIT_JOIN_INTERVAL            60000
+#define PERMIT_JOIN_TIMEOUT             600000
 #define PERMIT_JOIN_BROARCAST_ADDRESS   0xFFFC
 
 #define RESET_TIMEOUT                   15000
@@ -215,6 +216,7 @@ protected:
     QByteArray m_networkKey, m_defaultKey, m_ieeeAddress;
 
     quint16 m_permitJoinAddress;
+    qint64 m_permitJoinTime;
     bool m_permitJoin;
 
     QByteArray m_requestAddress;

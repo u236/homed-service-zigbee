@@ -1,5 +1,6 @@
 #include <netinet/tcp.h>
 #include <QtEndian>
+#include <QDateTime>
 #include <QEventLoop>
 #include <QThread>
 #include "adapter.h"
@@ -185,7 +186,10 @@ void Adapter::setPermitJoin(bool enabled)
         logInfo << "Permit join" << (enabled ? "enabled" : "disabled") << "successfully";
 
         if (enabled)
-            m_permitJoinTimer->start(PERMIT_JOIN_TIMEOUT);
+        {
+            m_permitJoinTime = QDateTime::currentMSecsSinceEpoch();
+            m_permitJoinTimer->start(PERMIT_JOIN_INTERVAL);
+        }
         else
             m_permitJoinTimer->stop();
 
@@ -351,9 +355,16 @@ void Adapter::resetTimeout(void)
 
 void Adapter::permitJoinTimeout(void)
 {
-    if (permitJoin(true))
+    bool timeout = m_permitJoinTime + PERMIT_JOIN_TIMEOUT <= QDateTime::currentMSecsSinceEpoch(), check = permitJoin(timeout ? false : true);
+
+    if (!timeout && check)
         return;
 
+    if (timeout && check)
+        logInfo << "Permit join disabled by timeout";
+
     m_permitJoinTimer->stop();
+    m_permitJoin = false;
+
     emit permitJoinUpdated(false);
 }
