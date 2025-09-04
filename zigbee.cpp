@@ -1125,11 +1125,11 @@ bool ZigBee::parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 t
     return check;
 }
 
-void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data)
+void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 transactionId, quint16 attributeId, quint8 dataType, const QByteArray &data, bool response)
 {
     const Device &device = endpoint->device();
 
-    logDebug(m_debug) << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report received with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
+    logDebug(m_debug) << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << (response ? "response" : "report") << "received with data type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "and transaction id" << transactionId;
 
     if (device->interviewStatus() == InterviewStatus::Finished)
     {
@@ -1145,7 +1145,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
             return;
         }
 
-        logDebug(m_debug) << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "report with type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
+        logDebug(m_debug) << "No property found for" << device << endpoint << "cluster" << QString::asprintf("0x%04x", clusterId) << "attribute" << QString::asprintf("0x%04x", attributeId) << "with data type" << QString::asprintf("0x%02x", dataType) << "and data" << (data.isEmpty() ? "(empty)" : data.toHex(':'));
         return;
     }
 
@@ -1603,7 +1603,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     break;
                 }
 
-                parseAttribute(endpoint, clusterId, transactionId, attributeId, dataType, payload.mid(offset, size));
+                parseAttribute(endpoint, clusterId, transactionId, attributeId, dataType, payload.mid(offset, size), commandId == CMD_READ_ATTRIBUTES_RESPONSE ? true : false);
                 payload.remove(0, offset + size);
             }
 
