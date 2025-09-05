@@ -1665,6 +1665,20 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Soil Moisture Sensor",
+      "modelNames":     ["_TZE200_2se8efxh", "_TZE200_ga1maeof", "_TZE200_myd45weu", "_TZE204_myd45weu", "_TZE284_myd45weu", "_TZE284_oitavov2"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["battery", "temperature", "moisture"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "3":    {"name": "moisture", "type": "value"},
+                            "5":    {"name": "temperature", "type": "value"},
+                            "15":   {"name": "battery", "type": "value"}
+                          }
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Air Quality Sensor",
       "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k", "_TZE204_c2fmom5z", "_TZE204_yvx5lh6k"],
       "properties":     ["tuyaDataPoints"],
