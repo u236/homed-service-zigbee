@@ -250,13 +250,20 @@
       "exposes":        ["battery", "waterLeak", "batteryLow"]
     },
     {
-      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02D or SNZB-02LD",
-      "modelNames":     ["SNZB-02D", "SNZB-02LD"],
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02D",
+      "modelNames":     ["SNZB-02D"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity"],
-      "options":        {"powerSource": 3}
+      "exposes":        ["battery", "temperature", "humidity"]
+    },
+    {
+      "description":    "Sonoff Temperature and Humidity Sensor SNZB-02LD",
+      "modelNames":     ["SNZB-02LD"],
+      "properties":     ["batteryPercentage", "temperature"],
+      "bindings":       ["battery", "temperature"],
+      "reportings":     ["batteryPercentage", "temperature"],
+      "exposes":        ["battery", "temperature"]
     }
   ]
 }
