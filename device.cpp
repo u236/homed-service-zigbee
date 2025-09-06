@@ -352,6 +352,7 @@ void DeviceList::removeDevice(const Device &device)
 
     if (device->name() != device->ieeeAddress().toHex(':'))
     {
+        device->setActive(true);
         device->setRemoved(true);
         device->setInterviewStatus(InterviewStatus::NodeDescriptor);
         return;
