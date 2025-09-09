@@ -1890,6 +1890,8 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         logInfo << it.value() << "joined network with address" << QString::asprintf("0x%04x", networkAddress);
         it.value()->setDiscovery(m_discovery);
         it.value()->setCloud(m_cloud);
+
+        emit deviceEvent(it.value().data(), Event::deviceJoined);
     }
     else
     {
@@ -1916,8 +1918,6 @@ void ZigBee::deviceJoined(const QByteArray &ieeeAddress, quint16 networkAddress)
         logInfo << it.value() << "interview started...";
         interviewDevice(it.value());
     }
-
-    emit deviceEvent(it.value().data(), Event::deviceJoined);
 }
 
 void ZigBee::deviceLeft(const QByteArray &ieeeAddress)
