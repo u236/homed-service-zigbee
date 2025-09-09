@@ -189,31 +189,65 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
 
     if (list.contains(dataPoint))
     {
-        QList <QString> modelList = {"_TZE204_ltwbm23f", "_TZE204_qyr2m29i"}, typeList = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+        QList <QString> typeList = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
         QString type = typeList.value(list.indexOf(dataPoint));
-        QByteArray program = data.toByteArray().mid(1);
 
         setMeta(QString("%1Program").arg(type), true);
 
-        if (!modelList.contains(manufacturerName()))
+        switch (option("programType").toInt())
         {
-            for (int i = 0; i < option("programTransitions", 4).toInt(); i++)
+            case 1:
             {
-                QString key = QString("%1P%2").arg(type).arg(i + 1);
-                map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
-                map.insert(QString("%1Minute").arg(key), static_cast <quint8> (program.at(i * 4 + 1)));
-                map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) / 10.0);
+                QByteArray program = data.toByteArray().mid(1);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    QString key = QString("%1P%2").arg(type).arg(i + 1);
+                    quint16 time = qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4))) & 0x0FFF;
+                    map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
+                    map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
+                    map.insert(QString("%1Temperature").arg(key), (qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) & 0x0FFF) / 10.0);
+                }
+
+                break;
             }
-        }
-        else
-        {
-            for (int i = 0; i < 6; i++)
+
+            case 2:
             {
-                QString key = QString("%1P%2").arg(type).arg(i + 1);
-                quint16 time = qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4))) & 0x0FFF;
-                map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
-                map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
-                map.insert(QString("%1Temperature").arg(key), (qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) & 0x0FFF) / 10.0);
+                QByteArray program = data.toByteArray();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    QString key = QString("%1P%2").arg(type).arg(i + 1);
+                    quint8 time = static_cast <quint8> (program.at(i * 3)), hour = time / 6, minute = time % 6 * 10;
+
+                    if (hour == 24)
+                    {
+                        hour = 0;
+                        minute = 0;
+                    }
+
+                    map.insert(QString("%1Hour").arg(key), hour);
+                    map.insert(QString("%1Minute").arg(key), minute);
+                    map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 3 + 1))) / 10.0);
+                }
+
+                break;
+            }
+
+            default:
+            {
+                QByteArray program = data.toByteArray().mid(1);
+
+                for (int i = 0; i < option("programTransitions", 4).toInt(); i++)
+                {
+                    QString key = QString("%1P%2").arg(type).arg(i + 1);
+                    map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
+                    map.insert(QString("%1Minute").arg(key), static_cast <quint8> (program.at(i * 4 + 1)));
+                    map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) / 10.0);
+                }
+
+                break;
             }
         }
     }

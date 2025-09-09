@@ -617,6 +617,7 @@
                           "controlMode": {"type": "select", "enum": ["pid", "toggle"]},
                           "thermostatProgram": "daily",
                           "programTransitions": 6,
+                          "programType": 1,
                           "programDataPoints": [102, 103, 104, 105, 106, 107, 108],
                           "runningStatus": true
                         }
@@ -687,6 +688,39 @@
                           "programTransitions": 6,
                           "programDataPoints": [28, 29, 30, 31, 32, 33, 34],
                           "runningStatus": true
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Radiator Thermostat (Type G)",
+      "modelNames":     ["_TZE200_7yoranx2", "_TZE200_e9ba97vf", "_TZE200_fsow0qsk", "_TZE200_hue3yfsn", "_TZE200_husqqvux", "_TZE200_kds0pmmv", "_TZE200_lllliz3p", "_TZE200_lnbfnyxd", "_TZE200_py4cm3he", "_TZE200_sur6q7ko", "_TZE200_wsbfwodu"],
+      "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
+      "exposes":        ["thermostat", "batteryLow", "childLock", "comfortTemperature", "ecoTemperature", "boostTimeout", "temperatureOffset", "programMode", "thermostatProgram"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    {"name": "operationMode", "type": "enum", "action": true},
+                            "16":   {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "24":   {"name": "temperature", "type": "value", "divider": 10},
+                            "27":   {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "31":   {"name": "programMode", "type": "enum", "action": true},
+                            "35":   {"name": "batteryLow", "type": "bool"},
+                            "40":   {"name": "childLock", "type": "bool", "action": true},
+                            "101":  {"name": "boostTimeout", "type": "value", "action": true},
+                            "104":  {"name": "comfortTemperature", "type": "value", "divider": 10, "action": true},
+                            "105":  {"name": "ecoTemperature", "type": "value", "divider": 10, "action": true}
+                          },
+                          "operationMode": {"enum": ["program", "manual", "away"]},
+                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "temperatureOffset": {"min": -5, "max": 5, "step": 0.1},
+                          "programMode": {"type": "select", "enum": ["7+0", "5+2", "daily"], "icon": "mdi:cog"},
+                          "boostTimeout": {"min": 0, "max": 465, "step": 5},
+                          "comfortTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "ecoTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "thermostatProgram": "daily",
+                          "programTransitions": 10,
+                          "programType": 2,
+                          "programDataPoints": [108, 112, 109, 113, 110, 114, 111]
                         }
     },
     {
