@@ -326,6 +326,7 @@ void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJ
 void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)
 {
     QMap <QString, QVariant> endpointMap, deviceMap = {{"linkQuality", device->linkQuality()}};
+    QList <QString> list = {"action", "event", "scene"};
     bool retain = device->options().value("retain").toBool();
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
@@ -343,8 +344,10 @@ void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)
             else
                 map.insert(property->value().toMap());
 
-            if (property->name() == "action" || property->name() == "scene")
-                property->clearValue();
+            if (!list.contains(property->name()))
+                continue;
+
+            property->clearValue();
         }
 
         it.value()->setUpdated(false);
