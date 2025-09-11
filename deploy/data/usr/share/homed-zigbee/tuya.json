@@ -1937,7 +1937,7 @@
       "modelNames":     ["_TZ3000_5k5vh43t", "_TZ3000_gszjt2xx", "_TZ3000_m0vaazab", "_TZ3000_misw04hq", "_TZ3000_nkkl7uzv", "_TZ3000_nlsszmzl", "_TZ3000_ufttklsz", "_TZ3000_wlquqiiz"]
     },
     {
-      "description":    "TUYA TS0225 Dual Band Human Presence Sensor",
+      "description":    "TUYA TS0225 Dual Band Human Presence Sensor (Type A)",
       "modelNames":     ["_TZE200_2aaelwxk"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1965,6 +1965,37 @@
                           "mediumMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"},
                           "smallMotionDistance": {"type": "number", "min": 0, "max": 6, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
                           "smallMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"}
+                        }
+    },
+    {
+      "description":    "TUYA TS0225 Dual Band Human Presence Sensor (Type B)",
+      "modelNames":     ["_TZE200_crq3r3la", "_TZE200_hl0ss9oa", "_TZE200_y4mdop0b"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "illuminance", "motionStatus", "smallMotionSensitivity", "smallMotionDistance", "largeMotionSensitivity", "largeMotionDistance", "staticSensitivity", "staticDistance", "fadingTime", "indicator"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "11":   {"name": "motionStatus", "type": "enum"},
+                            "12":   {"name": "fadingTime", "type": "value", "action": true},
+                            "13":   {"name": "largeMotionDistance", "type": "value", "divider": 100, "action": true},
+                            "14":   {"name": "smallMotionDistance", "type": "value", "divider": 100, "action": true},
+                            "15":   {"name": "largeMotionSensitivity", "type": "value", "action": true},
+                            "16":   {"name": "smallMotionSensitivity", "type": "value", "action": true},
+                            "20":   {"name": "illuminance", "type": "value"},
+                            "24":   {"name": "indicator", "type": "bool", "action": true},
+                            "103":  {"name": "staticDistance", "type": "value", "divider": 100, "action": true},
+                            "104":  {"name": "staticSensitivity", "type": "value", "action": true}
+                          },
+                          "motionStatus": {"enum": ["none", "large", "small", "static", "far", "near"]},
+                          "fadingTime": {"min": 0, "max": 3600, "step": 10},
+                          "largeMotionDistance": {"type": "number", "min": 0, "max": 10, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "smallMotionDistance": {"type": "number", "min": 0, "max": 6, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "largeMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"},
+                          "smallMotionSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"},
+                          "staticDistance": {"type": "number", "min": 0, "max": 6, "step": 0.01, "unit": "m", "icon": "mdi:arrow-left-right"},
+                          "staticSensitivity": {"type": "number", "min": 0, "max": 10, "icon": "mdi:dumbbell"}
                         }
     },
     {
