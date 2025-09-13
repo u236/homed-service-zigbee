@@ -1,5 +1,6 @@
 #include <QtEndian>
 #include <QtMath>
+#include "device.h"
 #include "lumi.h"
 
 void PropertiesLUMI::Data::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
@@ -46,7 +47,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         {
             quint16 value = 0;
 
-            if (static_cast <size_t> (data.length()) > sizeof(value))
+            if (!static_cast <EndpointObject*> (m_parent)->device()->batteryPowered() || static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(), data.length());
