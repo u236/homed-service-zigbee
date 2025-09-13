@@ -1,0 +1,129 @@
+{
+  "Slacky-DIY":
+  [
+    {
+      "description":    "Air Quality Monitor",
+      "modelNames":     ["AirQ_Monitor_S01"],
+      "properties":     ["illuminance", "temperature", "humidity", "pressure", "co2", "switchMode", "displayMode"],
+      "actionc":        ["switchMode", "displayMode"],
+      "bindings":       ["illuminance", "temperature", "humidity", "pressure", "co2"],
+      "reportings":     ["illuminance", "temperature", "humidity", "pressure", "co2"],
+      "exposes":        ["illuminance", "temperature", "humidity", "pressure", "co2", "voc", "invertDisplay", "rotateDisplay", "displayMode", "brightness", "sound", "readInterval", "temperatureOffset", "co2Relay", "co2Low", "co2High", "vocRelay", "vocLow", "vocHigh", "switchMode", "sensorFetures", "co2Correction"],
+      "options":        {
+
+                          "customAttributes":
+                          {
+                            "brightness":         {"type": "value", "clusterId": 8,    "attributeId": 0,     "dataType": 32, "action": true},
+                            "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57, "binding": true, "reporting": {"minInterval": 10, "maxInterval": 3600, "valueChange": 30}},
+                            "vocRelay":           {"type": "bool",  "clusterId": 12,   "attributeId": 61445, "dataType": 16, "action": true},
+                            "vocLow":             {"type": "value", "clusterId": 12,   "attributeId": 61446, "dataType": 33, "action": true},
+                            "vocHigh":            {"type": "value", "clusterId": 12,   "attributeId": 61447, "dataType": 33, "action": true},
+                            "sensorFetures":      {"type": "enum",  "clusterId": 516,  "attributeId": 61449, "dataType": 48, "action": true},
+                            "rotateDisplay":      {"type": "enum",  "clusterId": 516,  "attributeId": 61450, "dataType": 48, "action": true},
+                            "invertDisplay":      {"type": "enum",  "clusterId": 516,  "attributeId": 61451, "dataType": 48, "action": true},
+                            "sound":              {"type": "bool",  "clusterId": 516,  "attributeId": 61452, "dataType": 16, "action": true},
+                            "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 61440, "dataType": 41, "divider": 100,  "action": true},
+                            "readInterval":       {"type": "value", "clusterId": 1026, "attributeId": 61441, "dataType": 33, "action": true},
+                            "co2Relay":           {"type": "bool",  "clusterId": 1037, "attributeId": 61442, "dataType": 16, "action": true},
+                            "co2Low":             {"type": "value", "clusterId": 1037, "attributeId": 61443, "dataType": 33, "action": true},
+                            "co2High":            {"type": "value", "clusterId": 1037, "attributeId": 61444, "dataType": 33, "action": true},
+                            "co2Correction":      {"type": "value", "clusterId": 1037, "attributeId": 61448, "dataType": 41, "binding": true, "reporting": {"maxInterval": 64800}}
+                          },
+                          "brightness": {"type": "number", "min": 0, "max": 255},
+                          "vocLow": {"min": 1, "max": 500},
+                          "vocHigh": {"min": 1, "max": 500},
+                          "sensorFetures": {"type": "select", "enum": ["nothing", "co2ForceCalibration", "co2FactoryReset", "bindReset"]},
+                          "rotateDisplay": {"type": "select", "enum": ["horizontal", "vertical"]},
+                          "invertDisplay": {"type": "select", "enum": ["blackOnWhite", "whiteOnBlack"]},
+                          "sound": {"type": "toggle"},
+                          "temperatureOffset": {"min": -5, "max": 5, "step": 0.1},
+                          "readInterval": {"min": 5, "max": 600},
+                          "co2Low": {"min": 400, "max": 2000, "step": 10},
+                          "co2High": {"min": 400, "max": 2000, "step": 10},
+                          "co2Correction": {"type": "sensor", "unit": "ppm"},
+                          "switchMode": {"enum": ["off", "on"]}
+                        }
+    },
+    {
+      "description":    "Temperature and Humidity Sensor",
+      "modelNames":     ["TS0201-z-SlD"],
+      "properties":     ["batteryPercentage", "temperature", "humidity", "switchMode"],
+      "actions":        ["switchMode"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity", "readInterval", "temperatureOffset", "humidityOffset", "temperatureRelay", "temperatureLow", "temperatureHigh", "humidityRelay", "humidityLow", "humidityHigh", "switchMode"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "readInterval":       {"type": "value", "clusterId": 1026, "attributeId": 61440, "dataType": 33, "action": true},
+                            "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 61441, "dataType": 41, "divider": 100, "action": true},
+                            "temperatureRelay":   {"type": "bool",  "clusterId": 1026, "attributeId": 61442, "dataType": 16, "action": true},
+                            "temperatureLow":     {"type": "value", "clusterId": 1026, "attributeId": 61443, "dataType": 41, "divider": 100, "action": true},
+                            "temperatureHigh":    {"type": "value", "clusterId": 1026, "attributeId": 61444, "dataType": 41, "divider": 100, "action": true},
+                            "humidityRelay":      {"type": "bool",  "clusterId": 1029, "attributeId": 61446, "dataType": 16, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 1029, "attributeId": 61445, "dataType": 41, "divider": 100, "action": true},
+                            "humidityLow":        {"type": "value", "clusterId": 1029, "attributeId": 61447, "dataType": 41, "divider": 100, "action": true},
+                            "humidityHigh":       {"type": "value", "clusterId": 1029, "attributeId": 61448, "dataType": 41, "divider": 100, "action": true}
+                          },
+                          "readInterval": {"min": 5, "max": 600, "step": 1},
+                          "temperatureOffset": {"min": -5, "max": 5, "step": 0.1},
+                          "temperatureLow": {"min": -40, "max": 125, "step": 0.1},
+                          "temperatureHigh": {"min": -40, "max": 124, "step": 0.1},
+                          "humidityOffset": {"min": -10, "max": 10, "step": 1},
+                          "humidityLow": {"min": 0, "max": 100},
+                          "humidityHigh": {"min": 0, "max": 100},
+                          "switchMode": {"enum": ["off", "on"]}
+                        }
+    },
+    {
+      "description":    "DIY Water Meter",
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "options":        {"endpointName": {"1": "Hot", "2": "Cold"}}
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "exposes":        ["hotPreset", "coldPreset", "pulseVolume"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "hotPreset":    {"type": "value", "clusterId": 1794, "attributeId": 61440, "dataType": 35, "action": true},
+                            "coldPreset":   {"type": "value", "clusterId": 1794, "attributeId": 61441, "dataType": 35, "action": true},
+                            "pulseVolume":  {"type": "value", "clusterId": 1794, "attributeId": 61442, "dataType": 33, "action": true}
+                          },
+                          "hotPreset": {"min": 0, "max": 1000000000},
+                          "coldPreset": {"min": 0, "max": 1000000000},
+                          "pulseVolume": {"min": 1, "max": 100}
+                        },
+      "endpointId":     3
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["iasWaterLeak"],
+      "exposes":        ["waterLeak"],
+      "endpointId":     4
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "exposes":        ["volume"],
+      "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37, "binding": true, "reporting": {"minInterval": 10, "maxInterval": 600}}}},
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TS0601 NDIR CO2 Sensor With Slacky Firmware",
+      "modelNames":     ["Tuya_CO2Sensor_r01"],
+      "properties":     ["co2"],
+      "bindings":       ["co2"],
+      "reportings":     ["co2"],
+      "exposes":        ["co2"],
+      "options":        {"reporting": {"maxInterval": 300}}
+    }
+  ]
+}

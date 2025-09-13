@@ -79,6 +79,7 @@ DISTFILES += \
     deploy/data/usr/share/homed-zigbee/other.json \
     deploy/data/usr/share/homed-zigbee/perenio.json \
     deploy/data/usr/share/homed-zigbee/pushok.json \
+    deploy/data/usr/share/homed-zigbee/slacky.json \
     deploy/data/usr/share/homed-zigbee/sonoff.json \
     deploy/data/usr/share/homed-zigbee/tuya.json \
     deploy/data/usr/share/homed-zigbee/yandex.json

@@ -235,60 +235,6 @@
     }
   ],
 
-  "Slacky-DIY":
-  [
-    {
-      "description":    "TLSR8258 DIY Water Meter",
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "options":        {"endpointName": {"1": "Hot", "2": "Cold"}}
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "properties":     ["batteryPercentage"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery"],
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "exposes":        ["hotPreset", "coldPreset", "pulseVolume"],
-      "options":        {
-                          "customAttributes":
-                          {
-                            "hotPreset":    {"type": "value", "clusterId": 1794, "attributeId": 61440, "dataType": 35, "action": true},
-                            "coldPreset":   {"type": "value", "clusterId": 1794, "attributeId": 61441, "dataType": 35, "action": true},
-                            "pulseVolume":  {"type": "value", "clusterId": 1794, "attributeId": 61442, "dataType": 33, "action": true}
-                          },
-                          "hotPreset": {"min": 0, "max": 1000000000},
-                          "coldPreset": {"min": 0, "max": 1000000000},
-                          "pulseVolume": {"min": 1, "max": 100}
-                        },
-      "endpointId":     3
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "properties":     ["iasWaterLeak"],
-      "exposes":        ["waterLeak"],
-      "endpointId":     4
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "exposes":        ["volume"],
-      "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37, "binding": true, "reporting": {"minInterval": 10, "maxInterval": 600}}}},
-      "endpointId":     [1, 2]
-    },
-    {
-      "description":    "TS0601 NDIR CO2 Sensor With Slacky Firmware",
-      "modelNames":     ["Tuya_CO2Sensor_r01"],
-      "properties":     ["co2"],
-      "bindings":       ["co2"],
-      "reportings":     ["co2"],
-      "exposes":        ["co2"],
-      "options":        {"reporting": {"maxInterval": 300}}
-    }
-  ],
-
   "Sprut.device":
   [
       {
