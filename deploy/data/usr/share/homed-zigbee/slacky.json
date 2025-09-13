@@ -30,8 +30,9 @@
                             "co2Correction":      {"type": "value", "clusterId": 1037, "attributeId": 61448, "dataType": 41, "binding": true, "reporting": {"maxInterval": 64800}}
                           },
                           "brightness": {"type": "number", "min": 0, "max": 255},
-                          "vocLow": {"min": 1, "max": 500},
-                          "vocHigh": {"min": 1, "max": 500},
+                          "voc": {"unit": "pt"},
+                          "vocLow": {"min": 1, "max": 500, "unit": "pt"},
+                          "vocHigh": {"min": 1, "max": 500, "unit": "pt"},
                           "sensorFetures": {"type": "select", "enum": ["nothing", "co2ForceCalibration", "co2FactoryReset", "bindReset"]},
                           "rotateDisplay": {"type": "select", "enum": ["horizontal", "vertical"]},
                           "invertDisplay": {"type": "select", "enum": ["blackOnWhite", "whiteOnBlack"]},
