@@ -2710,7 +2710,7 @@
     },
     {
       "description":    "TUYA TS004F Wireless Dimmer (Type A)",
-      "modelNames":     ["_TZ3000_egvb1p2g", "_TZ3000_ja5osu5g", "_TZ3000_kjfzuycl"],
+      "modelNames":     ["_TZ3000_egvb1p2g", "_TZ3000_ja5osu5g", "_TZ3000_kaflzta4", "_TZ3000_kjfzuycl", "_TZ3000_lrfvzq1e"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaOperationMode", "tuyaButtonAction"],
       "actions":        ["tuyaOperationMode"],
       "bindings":       ["battery", "status"],
