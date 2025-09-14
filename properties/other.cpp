@@ -150,6 +150,7 @@ void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, co
         case DATA_TYPE_32BIT_BITMAP:
         case DATA_TYPE_24BIT_UNSIGNED:
         case DATA_TYPE_32BIT_UNSIGNED:
+        case DATA_TYPE_UTC_TIME:
             value = qFromLittleEndian <quint32> (*(reinterpret_cast <quint32*> (buffer.data())));
             break;
 

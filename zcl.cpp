@@ -63,6 +63,7 @@ quint8 zclDataSize(quint8 dataType)
         case DATA_TYPE_32BIT_UNSIGNED:
         case DATA_TYPE_32BIT_SIGNED:
         case DATA_TYPE_SINGLE_PRECISION:
+        case DATA_TYPE_UTC_TIME:
             return 4;
 
         case DATA_TYPE_40BIT_BITMAP:
