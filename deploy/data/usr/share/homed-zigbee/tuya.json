@@ -476,18 +476,18 @@
       "modelNames":     ["_TZE200_lawxy9e2", "_TZE204_lawxy9e2"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["switch", "fanMode", "status_indication", "powerOnStatus"],
+      "exposes":        ["status_1", "fanMode", "status_2", "powerOnStatus"],
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
                             "3":    {"name": "fanMode", "type": "enum", "action": true},
-                            "5":    {"name": "status_indication", "type": "bool", "action": true},
+                            "5":    {"name": "status_2", "type": "bool", "action": true},
                             "11":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
-                          "status": {"enum": ["off", "on"]},                          
+                          "status_1": {"enum": ["off", "on"]},                          
                           "fanMode": {"enum": ["min", "low", "medium", "high", "max"]},
-                          "status_indication": {"enum": ["off", "on"]},
+                          "status_2": {"enum": ["off", "on"]},
                           "powerOnStatus": {"enum": ["off", "on"]}
                         }
     },
