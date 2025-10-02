@@ -2421,6 +2421,40 @@
       "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
     },
     {
+      "description":    "TUYA TS011F Jinvoo/UseeLink SM-AZ713 Smart Water/Gas Valve Motor",
+      "modelNames":     ["_TZ3000_tvuarksa"],
+      "properties":     ["status", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "exposes":        ["lock", "powerOnStatus"],
+      "options":        {
+                        "lock": "valve",
+                        "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                        "skipAttributeRead": true
+                      }
+    },
+    {
+      "description":    "TUYA TS011F KTNNKG ZB1248-10A Relay Switch",
+      "modelNames":     ["_TZ3000_8fdayfch"],
+      "properties":     ["status", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {
+                        "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                        "skipAttributeRead": true
+                      }
+    },
+    {
+      "description":    "TUYA TS011F Mumubiz ZJSB9-80Z Switch",
+      "modelNames":     ["_TZ3000_1hwjutgo", "_TZ3000_lnggrqqi"],
+      "properties":     ["status", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {
+                        "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                        "skipAttributeRead": true
+                      }
+    },
+    {
       "description":    "TUYA TS0121 Smart Plug with Power Monitoring Polling",
       "modelNames":     ["TS0121"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
