@@ -2349,6 +2349,14 @@
       "exposes":        ["switch"]
     },
     {
+      "description":    "TUYA TS011F Switch",
+      "modelNames":     ["_TZ3000_8fdayfch", "_TZ3000_1hwjutgo", "_TZ3000_lnggrqqi"],
+      "properties":     ["status", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}}
+    },
+    {
       "description":    "TUYA TS011F 2-Channel Relay MOES MS-104BZ",
       "modelNames":     ["_TZ3000_iv6ph5tr", "_TZ3000_pmz6mjyu"],
       "properties":     ["tuyaPowerOnStatus"],
@@ -2510,6 +2518,18 @@
       "actions":        ["status", "tuyaPowerOnStatus"],
       "exposes":        ["lock", "powerOnStatus"],
       "options":        {"lock": "valve", "powerOnStatus": {"enum": ["off", "on", "previous"]}}
+    },
+    {
+      "description":    "TUYA TS011F Jinvoo/UseeLink SM-AZ713 Smart Water/Gas Valve Motor",
+      "modelNames":     ["_TZ3000_tvuarksa"],
+      "properties":     ["status", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaPowerOnStatus"],
+      "exposes":        ["lock", "powerOnStatus"],
+      "options":        {
+                        "lock": "valve",
+                        "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                        "skipAttributeRead": true
+                      }
     },
     {
       "description":    "TUYA MOES TS0049 Garden Valve",
