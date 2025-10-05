@@ -169,7 +169,7 @@ private:
     bool m_replyReceived, m_groupRequestFinished, m_groupsUpdated, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin;
-    bool m_debounce, m_discovery, m_cloud, m_debug;
+    bool m_discovery, m_cloud, m_debug;
 
     QMap <quint8, Request> m_requests;
 

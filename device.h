@@ -163,7 +163,7 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_interviewRetry(0), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_linkQuality(0), m_lqiRequestPending(false) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_interviewRetry(0), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_messageCount(0), m_linkQuality(0), m_lqiRequestPending(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -206,6 +206,9 @@ public:
     inline void setLastSeen(qint64 value) { m_lastSeen = value; }
     inline void updateLastSeen(void) { m_lastSeen = QDateTime::currentSecsSinceEpoch(); }
 
+    inline qint64 messageCount(void) { return m_messageCount; }
+    inline void updateMessageCount(void) { m_messageCount++; }
+
     inline quint8 linkQuality(void) { return m_linkQuality; }
     inline void setLinkQuality(quint8 value) { m_linkQuality = value; }
 
@@ -236,7 +239,7 @@ private:
     quint8 m_powerSource;
     QString m_firmware;
 
-    qint64 m_joinTime, m_lastSeen;
+    qint64 m_joinTime, m_lastSeen, m_messageCount;
     quint8 m_linkQuality;
 
     quint8 m_lqiRequestIndex;
@@ -261,6 +264,9 @@ public:
     inline bool names(void) { return m_names; }
     inline void setNames(bool value) { m_names = value; }
 
+    inline bool debounce(void) { return m_debounce; }
+    inline void setDebounce(bool value) { m_debounce = value; }
+
     inline bool permitJoin(void) { return m_permitJoin; }
     inline void setPermitJoin(bool value) { m_permitJoin = value; }
 
@@ -281,7 +287,7 @@ private:
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_otaDir, m_externalDir, m_libraryDir;
-    bool m_names, m_sync, m_permitJoin;
+    bool m_names, m_debounce, m_sync, m_permitJoin;
 
     QMap <QString, QVariant> m_exposeOptions;
     QList <QString> m_specialExposes, m_brokenFiles;

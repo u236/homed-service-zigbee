@@ -68,6 +68,7 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
     m_propertiesTimer->setSingleShot(true);
 
     m_zigbee->devices()->setNames(getConfig()->value("mqtt/names", false).toBool());
+    m_zigbee->devices()->setDebounce(getConfig()->value("mqtt/debounce", true).toBool());
     m_zigbee->init();
 }
 
@@ -328,6 +329,9 @@ void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)
     QMap <QString, QVariant> endpointMap, deviceMap = {{"linkQuality", device->linkQuality()}};
     QList <QString> list = {"action", "event", "scene"};
     bool retain = device->options().value("retain").toBool();
+
+    if (!m_zigbee->devices()->debounce())
+        deviceMap.insert("messageCount", device->messageCount());
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {

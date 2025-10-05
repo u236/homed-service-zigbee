@@ -14,7 +14,6 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
-    m_debounce = m_config->value("mqtt/debounce", true).toBool();
     m_discovery = m_config->value("default/discovery", true).toBool();
     m_cloud = m_config->value("default/cloud", true).toBool();
     m_debug = m_config->value("debug/zigbee", false).toBool();
@@ -1114,7 +1113,7 @@ bool ZigBee::parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 t
             if (property->timeout())
                 property->setTime(QDateTime::currentMSecsSinceEpoch());
 
-            if (m_debounce && property->value() == value)
+            if (property->value() == value)
                 continue;
 
             m_devices->storeProperties();
@@ -2146,10 +2145,13 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
         enqueueRequest(device, endpoint->id(), clusterId, zclHeader(FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, CMD_DEFAULT_RESPONSE, manufacturerCode).append(QByteArray(reinterpret_cast <char*> (&response), sizeof(response))));
     }
 
-    if (endpoint->updated() || (endpoint->properties().isEmpty() && endpoint->inClusters().contains(CLUSTER_BASIC)))
-        emit endpointUpdated(device.data(), endpoint->id());
-
     device->updateLastSeen();
+    device->updateMessageCount();
+
+    if (m_devices->debounce() && !endpoint->updated() && (!endpoint->properties().isEmpty() || !endpoint->inClusters().contains(CLUSTER_BASIC)))
+        return;
+
+    emit endpointUpdated(device.data(), endpoint->id());
 }
 
 void ZigBee::rawMessageReveived(const QByteArray &ieeeAddress, quint16 clusterId, quint8 linkQuality, const QByteArray &data)

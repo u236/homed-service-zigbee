@@ -74,7 +74,7 @@ int DeviceObject::checkVersion(const QString &version)
     return 0;
 }
 
-DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_names(false), m_sync(false), m_permitJoin(false)
+DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
 {
     QFile file(config->value("device/expose", "/usr/share/homed-common/expose.json").toString());
 
@@ -110,6 +110,8 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
 
 DeviceList::~DeviceList(void)
 {
+    m_sync = true;
+
     writeDatabase();
     writeProperties();
 }
@@ -173,7 +175,7 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
 
 void DeviceList::setupDevice(const Device &device)
 {
-    Expose expose(new SensorObject("linkQuality"));
+    Expose messageCount(new SensorObject("messageCount")), linkQuality(new SensorObject("linkQuality"));
     QMap <QString, QVariant> userOptions;
     QList <QDir> list = {m_externalDir, m_libraryDir};
     QString manufacturerName, modelName;
@@ -326,8 +328,14 @@ void DeviceList::setupDevice(const Device &device)
     if (!device->endpoints().count())
         device->endpoints().insert(1, Endpoint(new EndpointObject(1, device)));
 
-    expose->setParent(device->endpoints().last().data());
-    device->endpoints().last()->exposes().append(expose);
+    if (!m_debounce)
+    {
+        messageCount->setParent(device->endpoints().last().data());
+        device->endpoints().last()->exposes().append(messageCount);
+    }
+
+    linkQuality->setParent(device->endpoints().last().data());
+    device->endpoints().last()->exposes().append(linkQuality);
 }
 
 void DeviceList::removeDevice(const Device &device)
