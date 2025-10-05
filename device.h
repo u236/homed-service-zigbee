@@ -192,7 +192,7 @@ public:
     inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
     inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
 
-    inline bool batteryPowered(void) { return m_powerSource != POWER_SOURCE_MAINS && m_powerSource != POWER_SOURCE_DC; }
+    inline bool batteryPowered(void) { quint8 powerSource = m_powerSource & 0x7F; return powerSource != POWER_SOURCE_MAINS && powerSource != POWER_SOURCE_DC; }
     inline quint8 powerSource(void) { return m_powerSource; }
     inline void setPowerSource(quint8 value) { m_powerSource = value; }
 
