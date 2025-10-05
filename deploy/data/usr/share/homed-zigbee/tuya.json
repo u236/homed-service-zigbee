@@ -452,7 +452,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Fan Controller",
+      "description":    "TUYA TS0601 Fan Controller (Type A)",
       "modelNames":     ["_TZE200_r32ctezx", "_TZE204_r32ctezx"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -472,11 +472,11 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Fan with 5 levels & light switch",
+      "description":    "TUYA TS0601 Fan Controller (Type B)",
       "modelNames":     ["_TZE200_lawxy9e2", "_TZE204_lawxy9e2"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["status_1", "fanMode", "status_2", "powerOnStatus"],
+      "exposes":        ["status_1", "status_2", "fanMode", "powerOnStatus"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -485,9 +485,8 @@
                             "5":    {"name": "status_2", "type": "bool", "action": true},
                             "11":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
-                          "status_1": {"enum": ["off", "on"]},                          
+                          "status": {"enum": ["off", "on"]},                          
                           "fanMode": {"enum": ["min", "low", "medium", "high", "max"]},
-                          "status_2": {"enum": ["off", "on"]},
                           "powerOnStatus": {"enum": ["off", "on"]}
                         }
     },
