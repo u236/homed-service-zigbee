@@ -643,7 +643,7 @@
     },
     {
       "description":    "TUYA TS0601 Radiator Thermostat (Type E)",
-      "modelNames":     ["_TZE200_9mjy74mp", "_TZE200_rtrmfadk", "_TZE204_9mjy74mp"],
+      "modelNames":     ["_TZE200_9mjy74mp", "_TZE200_rtrmfadk", "_TZE204_9mjy74mp", "_TZE204_cvcu2p6e", "_TZE204_rtrmfadk"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "exposes":        ["battery", "thermostat", "position", "displayBrightness", "displayOrientation", "childLock", "ecoMode", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
@@ -664,7 +664,7 @@
                             "113":  {"name": "displayOrientation", "type": "enum", "action": true},
                             "114":  {"name": "ecoMode", "type": "bool", "action": true}
                           },
-                          "operationMode": {"enum": ["progran", "manual", "standby", "force"]},
+                          "operationMode": {"enum": ["program", "manual", "standby", "force"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
                           "temperatureLow": {"min": 1, "max": 15},
                           "temperatureHigh": {"min": 15, "max": 35},
