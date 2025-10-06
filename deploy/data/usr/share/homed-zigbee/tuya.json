@@ -1592,6 +1592,21 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Illuminance Sensor",
+      "modelNames":     ["_TZE200_khx7nnka", "_TZE200_yi4jtqq1", "_TZE204_khx7nnka"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["illuminance", "illuminanceStatus"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "illuminanceStatus", "type": "enum"},
+                            "2":    {"name": "illuminance", "type": "value"}
+                          },
+                          "illuminanceStatus": {"type": "sensor", "enum": ["low", "meduim", "high", "max"], "icon": "mdi:brightness-5"}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type A)",
       "modelNames":     ["_TZE200_44af8vyi", "_TZE200_bq5c8xfe", "_TZE200_ysm4dsb1"],
       "properties":     ["tuyaDataPoints"],
@@ -2615,7 +2630,7 @@
       "properties":     ["batteryPercentage", "iasOccupancy", "tuyaDataPoints"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy", "illuminance", "action"],
+      "exposes":        ["battery", "occupancy", "illuminanceStatus", "action"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -2623,7 +2638,7 @@
                             "102":  {"name": "illuminance", "type": "bool"}
                           },
                           "action": {"enum": ["singleClick", "doubleClick", "hold"]},
-                          "illuminance": {"enum": ["dark", "bright"], "unit": null}
+                          "illuminanceStatus": {"type": "sensor", "enum": ["dark", "bright"], "icon": "mdi:brightness-5"}
                         }
     },
     {
