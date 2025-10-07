@@ -2098,7 +2098,6 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
     if (device.isNull() || device->removed() || !device->active())
         return;
 
-    device->setLinkQuality(linkQuality);
     endpoint = m_devices->endpoint(device, endpointId);
     blink(50);
 
@@ -2147,6 +2146,7 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
 
     device->updateLastSeen();
     device->updateMessageCount();
+    device->setLinkQuality(linkQuality);
 
     if (m_devices->debounce() && !endpoint->updated() && (!endpoint->properties().isEmpty() || !endpoint->inClusters().contains(CLUSTER_BASIC)))
         return;
