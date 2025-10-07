@@ -485,7 +485,7 @@
                             "5":    {"name": "status_2", "type": "bool", "action": true},
                             "11":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
-                          "status": {"enum": ["off", "on"]},                          
+                          "status": {"enum": ["off", "on"]},
                           "fanMode": {"enum": ["min", "low", "medium", "high", "max"]},
                           "powerOnStatus": {"enum": ["off", "on"]}
                         }
@@ -646,7 +646,7 @@
       "modelNames":     ["_TZE200_9mjy74mp", "_TZE200_rtrmfadk", "_TZE204_9mjy74mp", "_TZE204_cvcu2p6e", "_TZE204_rtrmfadk"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
-      "exposes":        ["battery", "thermostat", "position", "displayBrightness", "displayOrientation", "childLock", "ecoMode", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
+      "exposes":        ["battery", "thermostat", "controlMode", "position", "displayBrightness", "displayOrientation", "childLock", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -662,7 +662,7 @@
                             "108":  {"name": "position", "type": "value", "divider": 10},
                             "111":  {"name": "displayBrightness", "type": "enum", "action": true},
                             "113":  {"name": "displayOrientation", "type": "enum", "action": true},
-                            "114":  {"name": "ecoMode", "type": "bool", "action": true}
+                            "114":  {"name": "controlMode", "type": "enum", "action": true}
                           },
                           "operationMode": {"enum": ["program", "manual", "standby", "force"]},
                           "targetTemperature": {"min": 5, "max": 35, "step": 0.5},
@@ -672,6 +672,7 @@
                           "position": {"type": "sensor", "icon": "mdi:valve"},
                           "displayBrightness": {"type": "select", "enum": ["high", "medium", "low"]},
                           "displayOrientation": {"type": "select", "enum": ["up", "right", "down", "left"]},
+                          "controlMode": {"type": "select", "enum": ["pid", "toggle"]},
                           "thermostatProgram": "daily",
                           "programDataPoints": [17, 18, 19, 20, 21, 22, 23],
                           "runningStatus": true
