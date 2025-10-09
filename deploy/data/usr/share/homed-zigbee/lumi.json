@@ -385,8 +385,8 @@
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power", "temperature"],
       "options":        {
                           "customAttributes_1": {"powerOnStatus": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1303, "dataType": 32, "action": true}},
-                          "powerOnStatus": {"enum": ["on", "previous", "off", "toggle"]},
                           "switch": "outlet",
+                          "powerOnStatus": {"enum": ["on", "previous", "off", "toggle"]},
                           "temperature": {"diagnostic": true}
                         }
     },
@@ -428,7 +428,19 @@
       "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}}
     },
     {
-      "description":    "Aqara RGBW Led Controller ZNTGMK11LM",
+      "description":    "Aqara T3 Spotlight TDL01LM",
+      "modelNames":     ["lumi.light.acn128"],
+      "properties":     ["status", "level", "colorTemperature"],
+      "actions":        ["status", "level", "colorTemperature"],
+      "exposes":        ["light", "powerOnStatus"],
+      "options":        {
+                          "customAttributes": {"powerOnStatus": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1303, "dataType": 32, "action": true}},
+                          "light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370},
+                          "powerOnStatus": {"enum": ["on", "previous", "off"]}
+                        }
+    },
+    {
+      "description":    "Aqara RGBW Led Controller MZSD11LM",
       "modelNames":     ["lumi.light.rgbac1"],
       "properties":     ["status", "powerOnStatus", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "powerOnStatus", "level", "colorXY", "colorTemperature"],
