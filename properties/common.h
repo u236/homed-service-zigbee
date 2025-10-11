@@ -91,7 +91,7 @@ namespace Properties
 
     public:
 
-        Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT, {0x0000, 0x0010, 0x0012, 0x0019, 0x001C, 0x001E}) {}
+        Thermostat(void) : PropertyObject("thermostat", CLUSTER_THERMOSTAT, {0x0000, 0x0010, 0x0012, 0x0019, 0x001C, 0x0029}) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
