@@ -2,6 +2,28 @@
   "Slacky-DIY":
   [
     {
+      "description":    "TUYA TS0601 Electric Thermostat With Slacky Firmware",
+      "modelNames":     ["Tuya_Thermostat_r01"],
+      "properties":     ["thermostat", "childLock"],
+      "actions":        ["thermostat", "childLock"],
+      "bindings":       ["thermostat"],
+      "exposes":        ["thermostat", "childLock", "temperatureOffset", "hysteresis", "sensorType"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "operationMode":  {"type": "enum", "clusterId": 513, "attributeId": 37,    "dataType": 24, "action": true},
+                            "sensorType":     {"type": "enum", "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true}
+                          },
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "targetTemperature": {"min": 5, "max": 45},
+                          "operationMode": {"enum": ["manual", "program"]},
+                          "sensorType": {"enum": ["internal", "both", "external"]},
+                          "temperatureOffset": {"min": -9, "max": 9},
+                          "hysteresis": {"min": 1, "max": 5},
+                          "runningStatus": true
+                        }
+    },
+    {
       "description":    "Air Quality Monitor",
       "modelNames":     ["AirQ_Monitor_S01"],
       "properties":     ["illuminance", "temperature", "humidity", "pressure", "co2", "switchMode", "displayMode"],
@@ -126,28 +148,6 @@
       "reportings":     ["co2"],
       "exposes":        ["co2"],
       "options":        {"reporting": {"maxInterval": 300}}
-    },
-    {
-      "description":    "Slacky-DIY Tuya Thermostat type r01",
-      "modelNames":     ["Tuya_Thermostat_r01"],
-      "properties":     ["thermostat", "childLock"],
-      "actions":        ["thermostat", "childLock"],
-      "bindings":       ["thermostat"],
-      "exposes":        ["thermostat", "childLock", "temperatureOffset", "hysteresis", "sensorType"],
-      "options":        {
-                          "customAttributes":
-                          { 
-                            "operationMode":      {"type": "enum", "clusterId": 513, "attributeId": 37,    "dataType": 24, "action": true},
-                            "sensorType":         {"type": "enum", "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true}
-                          },
-                          "systemMode": {"enum": ["off", "heat"]},
-                          "targetTemperature": {"min": 5, "max": 45},
-                          "operationMode": {"enum": ["manual", "schedule"]},
-                          "sensorType": {"enum": ["internal", "both", "external"]},
-                          "temperatureOffset": {"min": -9, "max": 9},
-                          "hysteresis": {"min": 1, "max": 5},
-                          "runningStatus": true
-                        }
     }
   ]
 }
