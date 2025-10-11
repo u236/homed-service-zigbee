@@ -126,6 +126,33 @@
       "reportings":     ["co2"],
       "exposes":        ["co2"],
       "options":        {"reporting": {"maxInterval": 300}}
+    },
+    {
+      "description":    "Slacky-DIY Tuya Thermostat type r01",
+      "modelNames":     ["Tuya_Thermostat_r01"],
+      "properties":     ["thermostat"],
+      "actions":        ["thermostat"],
+      "bindings":       ["thermostat"],
+      "exposes":        ["thermostat", "hysteresis", "keypadLock", "sensorType", "temperatureOffset"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "operationMode":     {"type": "enum", "clusterId": 513, "attributeId": 37, "dataType": 24, "action": true, "reporting":{}},
+                            "keypadLock":        {"type": "bool", "clusterId": 516, "attributeId": 1, "dataType": 48, "action": true, "binding": true, "reporting":{}},
+                            "sensorType":        {"type": "enum", "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true, "reporting":{}},
+                            "temperatureOffset": {"type": "value", "clusterId": 513, "attributeId": 16, "dataType": 40, "divider": 10, "action": true, "reporting":{}},
+                            "running":           {"type": "bool", "clusterId": 513, "attributeId": 41, "dataType": 25}
+                          },
+                          "systemMode": {"enum": ["off", "heat"]},
+                          "targetTemperature": {"min": 5, "max": 45, "step": 1},
+                          "hysteresis": {"min": 1, "max": 5, "step": 1},
+                          "hysteresisDivider": 1,
+                          "operationMode": {"enum": ["manual", "schedule"]},
+                          "keypadLock": {"type": "toggle"},
+                          "sensorType": {"enum": ["internal", "both", "external"]},
+                          "temperatureOffset": {"min": -9, "max": 9, "step": 1},
+                          "runningStatus": true
+                        }
     }
   ]
 }
