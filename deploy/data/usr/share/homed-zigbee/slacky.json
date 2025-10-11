@@ -71,7 +71,7 @@
                           "temperatureOffset": {"min": -5, "max": 5, "step": 0.1},
                           "temperatureLow": {"min": -40, "max": 125, "step": 0.1},
                           "temperatureHigh": {"min": -40, "max": 124, "step": 0.1},
-                          "humidityOffset": {"min": -10, "max": 10, "step": 1},
+                          "humidityOffset": {"min": -10, "max": 10},
                           "humidityLow": {"min": 0, "max": 100},
                           "humidityHigh": {"min": 0, "max": 100},
                           "switchMode": {"enum": ["off", "on"]}
@@ -130,27 +130,22 @@
     {
       "description":    "Slacky-DIY Tuya Thermostat type r01",
       "modelNames":     ["Tuya_Thermostat_r01"],
-      "properties":     ["thermostat"],
-      "actions":        ["thermostat"],
+      "properties":     ["thermostat", "childLock"],
+      "actions":        ["thermostat", "childLock"],
       "bindings":       ["thermostat"],
-      "exposes":        ["thermostat", "hysteresis", "keypadLock", "sensorType", "temperatureOffset"],
+      "exposes":        ["thermostat", "childLock", "temperatureOffset", "hysteresis", "sensorType"],
       "options":        {
                           "customAttributes":
-                          {
-                            "operationMode":     {"type": "enum", "clusterId": 513, "attributeId": 37, "dataType": 24, "action": true, "reporting":{}},
-                            "keypadLock":        {"type": "bool", "clusterId": 516, "attributeId": 1, "dataType": 48, "action": true, "binding": true, "reporting":{}},
-                            "sensorType":        {"type": "enum", "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true, "reporting":{}},
-                            "temperatureOffset": {"type": "value", "clusterId": 513, "attributeId": 16, "dataType": 40, "divider": 10, "action": true, "reporting":{}},
-                            "running":           {"type": "bool", "clusterId": 513, "attributeId": 41, "dataType": 25}
+                          { 
+                            "operationMode":      {"type": "enum", "clusterId": 513, "attributeId": 37,    "dataType": 24, "action": true},
+                            "sensorType":         {"type": "enum", "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
-                          "targetTemperature": {"min": 5, "max": 45, "step": 1},
-                          "hysteresis": {"min": 1, "max": 5, "step": 1},
-                          "hysteresisDivider": 1,
+                          "targetTemperature": {"min": 5, "max": 45},
                           "operationMode": {"enum": ["manual", "schedule"]},
-                          "keypadLock": {"type": "toggle"},
                           "sensorType": {"enum": ["internal", "both", "external"]},
-                          "temperatureOffset": {"min": -9, "max": 9, "step": 1},
+                          "temperatureOffset": {"min": -9, "max": 9},
+                          "hysteresis": {"min": 1, "max": 5},
                           "runningStatus": true
                         }
     }
