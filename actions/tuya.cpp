@@ -51,12 +51,12 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
         {
             case 0: // bool
             {
-                QList <QString> actionList = option(name).toMap().value("enum").toStringList(), nameList = name.split('_');
+                QList <QString> actionList = option(name).toMap().value("enum").toStringList();
                 qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
                 bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
                 if (value < 0)
-                    value = nameList.value(0) == "status" ? (endpointProperty()->value().toMap().value(name).toString() != "on" ? 0x01 : 0x00) : (check ? 0x01 : 0x00);
+                    value = name.split('_').value(0) == "status" ? (endpointProperty()->value().toMap().value(name).toString() != "on" ? 0x01 : 0x00) : (check ? 0x01 : 0x00);
 
                 return makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_BOOL, &value);
             }
