@@ -4,6 +4,8 @@
 #include "logger.h"
 #include "zcl.h"
 
+#include <QThread>
+
 static const uint16_t crcTable[256] =
 {
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7, 0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
@@ -26,14 +28,35 @@ static const uint16_t crcTable[256] =
 
 EZSP::EZSP(QSettings *config, QObject *parent) : Adapter(config, parent), m_timer(new QTimer(this)), m_version(0), m_reset(true)
 {
+
+
+
+
+    // m_config.append({EZSP_CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE,      qToLittleEndian <quint16> (0x0002)});
+    // m_config.append({EZSP_CONFIG_INDIRECT_TRANSMISSION_TIMEOUT,        qToLittleEndian <quint16> (0x1E00)});
+    // m_config.append({16,        qToLittleEndian <quint16> (30)});
+    // m_config.append({45,        qToLittleEndian <quint16> (1)});
+    // m_config.append({EZSP_CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
+    // m_config.append({EZSP_CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
+    // m_config.append({17,                       qToLittleEndian <quint16> (0x0006)});
+    // m_config.append({EZSP_CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x000E)});
+    // m_config.append({54,              qToLittleEndian <quint16> (300)});
+
+    // m_policy.append({EZSP_POLICY_BINDING_MODIFICATION_POLICY,          qToLittleEndian <quint16> (0x0012)});
+    // // await this.emberSetEzspPolicy(EzspPolicyId.MESSAGE_CONTENTS_IN_CALLBACK_POLICY, EzspDecisionId.MESSAGE_TAG_ONLY_IN_CALLBACK);
+    // m_policy.append({EZSP_POLICY_TC_KEY_REQUEST,                       qToLittleEndian <quint16> (0x0051)});
+    // m_policy.append({EZSP_POLICY_APP_KEY_REQUEST,                      qToLittleEndian <quint16> (0x0060)});
+    // m_policy.append({EZSP_POLICY_TRUST_CENTER,                         qToLittleEndian <quint16> (0x0003)});
+
+    // m_values.append({EZSP_VALUE_TRANSIENT_DEVICE_TIMEOUT,           2, qToLittleEndian <quint16> (0x2710)});
+
+
+
     m_config.append({EZSP_CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S,  qToLittleEndian <quint16> (0x005A)});
     m_config.append({EZSP_CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE,      qToLittleEndian <quint16> (0x0002)});
     m_config.append({EZSP_CONFIG_FRAGMENT_DELAY_MS,                    qToLittleEndian <quint16> (0x0032)});
     m_config.append({EZSP_CONFIG_PAN_ID_CONFLICT_REPORT_THRESHOLD,     qToLittleEndian <quint16> (0x0002)});
-    m_config.append({EZSP_CONFIG_INDIRECT_TRANSMISSION_TIMEOUT,        qToLittleEndian <quint16> (0x1E00)});
-    m_config.append({EZSP_CONFIG_END_DEVICE_POLL_TIMEOUT,              qToLittleEndian <quint16> (0x000E)});
     m_config.append({EZSP_CONFIG_SECURITY_LEVEL,                       qToLittleEndian <quint16> (0x0005)});
-    m_config.append({EZSP_CONFIG_STACK_PROFILE,                        qToLittleEndian <quint16> (0x0002)});
     m_config.append({EZSP_CONFIG_FRAGMENT_WINDOW_SIZE,                 qToLittleEndian <quint16> (0x0001)});
     m_config.append({EZSP_CONFIG_RETRY_QUEUE_SIZE,                     qToLittleEndian <quint16> (0x0010)});
 
@@ -286,6 +309,8 @@ void EZSP::parsePacket(const QByteArray &payload)
         return;
     }
 
+    logInfo << "here" << qFromLittleEndian(header->frameId) << data.toHex(':');
+
     switch (qFromLittleEndian(header->frameId))
     {
         case EZSP_FRAME_STACK_STATUS_HANDLER:
@@ -394,23 +419,23 @@ bool EZSP::startNetwork(quint64 extendedPanId)
     {
         m_stackStatus = 0x00;
 
-        if (!sendFrame(EZSP_FRAME_LEAVE_NETWORK) || m_replyStatus)
+        if (!sendFrame(EZSP_FRAME_LEAVE_NETWORK, QByteArray(1, 0x00)) || m_replyStatus)
         {
             logWarning << "Leave existing network request failed";
             return false;
         }
 
-        if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
-        {
-            logWarning << "Stack status handler timed out";
-            return false;
-        }
+        // if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+        // {
+        //     logWarning << "Stack status handler timed out";
+        //     return false;
+        // }
 
-        if (m_stackStatus != EZSP_STACK_STATUS_NETWORK_DOWN)
-        {
-            logWarning << "Unexpected stack status:" << QString::asprintf("0x%02x", m_stackStatus);
-            return false;
-        }
+        // if (m_stackStatus != EZSP_STACK_STATUS_NETWORK_DOWN)// && m_stackStatus != 0x16)
+        // {
+        //     logWarning << "Unexpected stack status:" << QString::asprintf("0x%02x", m_stackStatus);
+        //     return false;
+        // }
     }
 
     if (!sendFrame(EZSP_FRAME_CLEAR_KEY_TABLE) || m_replyStatus)
@@ -425,8 +450,9 @@ bool EZSP::startNetwork(quint64 extendedPanId)
         return false;
     }
 
-    memset(&security, 0, sizeof(security));
+    memset(&security, 0xFF, sizeof(security));
     security.bitmask = qToLittleEndian <quint16> (EZSP_SECURITY_TRUST_CENTER_USES_HASHED_LINK_KEY | EZSP_SECURITY_REQUIRE_ENCRYPTED_KEY | EZSP_SECURITY_HAVE_PRECONFIGURED_KEY | EZSP_SECURITY_HAVE_NETWORK_KEY);
+    security.networkKeySequenceNumber = 0;
 
     for (quint8 i = 0; i < sizeof(security.preconfiguredKey); i += 4)
     {
@@ -468,6 +494,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
         return false;
     }
 
+    logInfo << m_replyStatus << m_replyData.toHex();
     if (m_replyStatus != static_cast <char> (EZSP_NETWORK_STATUS_JOINED))
     {
         logWarning << "Unexpected network status:" << QString::asprintf("0x%02x", m_replyStatus);
@@ -559,25 +586,25 @@ bool EZSP::startCoordinator(void)
         logWarning << "Set value" << QString::asprintf("0x%02x", request.id) << "request failed";
     }
 
-    concentrator.enabled = 0x01;
-    concentrator.type = qToLittleEndian <quint16> (EZSP_CONCENTRATOR_HIGH_RAM);
-    concentrator.minTime = qToLittleEndian <quint16> (EZSP_CONCENTRATOR_MIN_TIME);
-    concentrator.maxTime = qToLittleEndian <quint16> (EZSP_CONCENTRATOR_MAX_TIME);
-    concentrator.routeErrorThreshold = EZSP_CONCENTRATOR_ROUTE_ERROR_THRESHOLD;
-    concentrator.deliveryFailureThreshold = EZSP_CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD;
-    concentrator.maxHops = 0x00;
+    // concentrator.enabled = 0x01;
+    // concentrator.type = qToLittleEndian <quint16> (EZSP_CONCENTRATOR_HIGH_RAM);
+    // concentrator.minTime = qToLittleEndian <quint16> (EZSP_CONCENTRATOR_MIN_TIME);
+    // concentrator.maxTime = qToLittleEndian <quint16> (EZSP_CONCENTRATOR_MAX_TIME);
+    // concentrator.routeErrorThreshold = EZSP_CONCENTRATOR_ROUTE_ERROR_THRESHOLD;
+    // concentrator.deliveryFailureThreshold = EZSP_CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD;
+    // concentrator.maxHops = 0x00;
 
-    if (!sendFrame(EZSP_FRAME_SET_CONCENTRATOR, QByteArray(reinterpret_cast <char*> (&concentrator), sizeof(concentrator))) || m_replyStatus)
-    {
-        logWarning << "Set concentrator request failed";
-        return false;
-    }
+    // if (!sendFrame(EZSP_FRAME_SET_CONCENTRATOR, QByteArray(reinterpret_cast <char*> (&concentrator), sizeof(concentrator))) || m_replyStatus)
+    // {
+    //     logWarning << "Set concentrator request failed";
+    //     return false;
+    // }
 
-    if (!sendFrame(EZSP_FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE, QByteArray(1, 0x01)))
-    {
-        logWarning << "Set source route discovery mode request failed";
-        return false;
-    }
+    // if (!sendFrame(EZSP_FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE, QByteArray(1, 0x01)))
+    // {
+    //     logWarning << "Set source route discovery mode request failed";
+    //     return false;
+    // }
 
     for (auto it = m_endpoints.begin(); it != m_endpoints.end(); it++)
     {
@@ -632,12 +659,22 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
+
+    if (m_version > 13)
+        m_replyData.remove(0, 3);
+
     memcpy(&network, m_replyData.constData() + 2, sizeof(network));
 
-    if (m_replyData.at(1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != EZSP_STACK_STATUS_NETWORK_UP)
+    if (m_replyData.at(1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel)//|| m_stackStatus != EZSP_STACK_STATUS_NETWORK_UP)
     {
         logWarning << "Adapter network parameters doesn't match configuration";
         check = true;
+
+        logWarning << (m_replyData.at(1) != 0x01);
+        logWarning << (network.extendedPanId != ieeeAddress);
+        logWarning << (network.panId != qToLittleEndian(m_panId));
+        logWarning << (network.channel != m_channel);
+        logWarning << (m_stackStatus != EZSP_STACK_STATUS_NETWORK_UP);
     }
 
     if (m_version < 13 ? !sendFrame(EZSP_FRAME_GET_KEY, QByteArray(1, 0x03)) : !sendFrame(EZSP_FRAME_EXPORT_KEY, QByteArray(1, 0x01).append(17, 0x00)))
@@ -646,7 +683,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    if (m_replyData.mid(m_version < 13 ? 4 : 0, m_networkKey.length()) != m_networkKey)
+    if (m_replyData.mid(m_version != 13 ? 4 : 0, m_networkKey.length()) != m_networkKey)
     {
         logWarning << "Adapter network key doesn't match configuration";
         check = true;
@@ -789,7 +826,7 @@ bool EZSP::permitJoin(bool enabled)
         QByteArray request = QByteArray(8, 0xFF).append(m_defaultKey);
         ezspSetConfigStruct policy;
 
-        if (m_version < 13 ? !sendFrame(EZSP_FRAME_ADD_TRANSIENT_LINK_KEY, request) : !sendFrame(EZSP_FRAME_IMPORT_TRANSIENT_KEY, request.append(1, 0x00)) || m_replyStatus)
+        if (m_version < 13 ? !sendFrame(EZSP_FRAME_ADD_TRANSIENT_LINK_KEY, request) : !sendFrame(EZSP_FRAME_IMPORT_TRANSIENT_KEY, m_version < 14 ? request.append(1, 0x00) : request) || m_replyStatus) // dont't append 0x00 for v14?
         {
             logWarning << "Add transient key request failed";
             return false;

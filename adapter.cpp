@@ -62,14 +62,14 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
     m_defaultKey = QByteArray::fromHex("5a6967426565416c6c69616e63653039");
 
     m_endpoints.insert(0x01, EndpointData(new EndpointDataObject(PROFILE_HA,   0x0005)));
-    m_endpoints.insert(0x02, EndpointData(new EndpointDataObject(PROFILE_IPM,  0x0005)));
-    m_endpoints.insert(0x03, EndpointData(new EndpointDataObject(PROFILE_HA,   0x0005)));
-    m_endpoints.insert(0x04, EndpointData(new EndpointDataObject(PROFILE_TA,   0x0005)));
-    m_endpoints.insert(0x05, EndpointData(new EndpointDataObject(PROFILE_PHHC, 0x0005)));
-    m_endpoints.insert(0x06, EndpointData(new EndpointDataObject(PROFILE_AMI,  0x0005)));
-    m_endpoints.insert(0x07, EndpointData(new EndpointDataObject(PROFILE_HA,   0x0005)));
-    m_endpoints.insert(0x08, EndpointData(new EndpointDataObject(PROFILE_HA,   0x0005)));
-    m_endpoints.insert(0x0C, EndpointData(new EndpointDataObject(PROFILE_ZLL,  0x0005)));
+    // m_endpoints.insert(0x02, EndpointData(new EndpointDataObject(PROFILE_IPM,  0x0005)));
+    // m_endpoints.insert(0x03, EndpointData(new EndpointDataObject(PROFILE_HA,   0x0005)));
+    // m_endpoints.insert(0x04, EndpointData(new EndpointDataObject(PROFILE_TA,   0x0005)));
+    // m_endpoints.insert(0x05, EndpointData(new EndpointDataObject(PROFILE_PHHC, 0x0005)));
+    // m_endpoints.insert(0x06, EndpointData(new EndpointDataObject(PROFILE_AMI,  0x0005)));
+    // m_endpoints.insert(0x07, EndpointData(new EndpointDataObject(PROFILE_HA,   0x0005)));
+    // m_endpoints.insert(0x08, EndpointData(new EndpointDataObject(PROFILE_HA,   0x0005)));
+    // m_endpoints.insert(0x0C, EndpointData(new EndpointDataObject(PROFILE_ZLL,  0x0005)));
     m_endpoints.insert(0xF2, EndpointData(new EndpointDataObject(PROFILE_GP,   0x0061)));
 
     m_endpoints.value(0x01)->inClusters() =
@@ -79,7 +79,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
         CLUSTER_LEVEL_CONTROL,
         CLUSTER_TIME,
         CLUSTER_OTA_UPGRADE,
-        CLUSTER_POWER_PROFILE,
+        // CLUSTER_POWER_PROFILE,
         CLUSTER_COLOR_CONTROL
     };
 
