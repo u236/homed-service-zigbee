@@ -876,11 +876,8 @@ void DeviceList::recognizeDevice(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (device->manufacturerName() == "ptvo.info" && device->modelName() == "ptvo.switch")
-        {
+        if (device->manufacturerName() == "ptvo.info" && device->modelName() == "ptvo.switch") // TODO: remove it
             it.value()->bindings().clear();
-            it.value()->reportings().clear();
-        }
 
         if (!it.value()->properties().isEmpty())
         {

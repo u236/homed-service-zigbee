@@ -532,12 +532,35 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
             interviewError(device, "no endpoint contains basic cluster");
             return false;
 
+        case InterviewStatus::PtvoDescription:
+
+            for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+            {
+                if (!it.value()->inClusters().contains(CLUSTER_BASIC) || device->manufacturerName() != "ptvo.info" || device->modelName() != "ptvo.switch" || it.value()->meta().value("ptvoDescription").isValid())
+                    continue;
+
+                it.value()->meta().insert("ptvoDescription", "unknown");
+
+                if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, 0x01, CLUSTER_BASIC, readAttributesRequest(id, 0x0000, {0x8000})))
+                {
+                    interviewError(device, "read PTVO firmware device description failed");
+                    return false;
+                }
+
+                return true;
+            }
+
+            device->setInterviewStatus(InterviewStatus::ColorCapabilities);
+            return interviewRequest(id, device);
+
         case InterviewStatus::ColorCapabilities:
 
             for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
                 if (device->batteryPowered() || !it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) || it.value()->meta().value("colorCapabilities").isValid())
                     continue;
+
+                it.value()->meta().insert("colorCapabilities", 0x0000);
 
                 if (!m_adapter->unicastRequest(id, device->networkAddress(), 0x01, it.key(), CLUSTER_COLOR_CONTROL, readAttributesRequest(id, 0x0000, {0x400A})))
                 {
@@ -1188,6 +1211,16 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                         device->setFirmware(QString(data).trimmed());
 
                     break;
+
+                case 0x8000:
+
+                    if (dataType == DATA_TYPE_CHARACTER_STRING)
+                    {
+                        logInfo << device << "PTVO description:" << QString(data).trimmed(); // TODO: remove it
+                        endpoint->meta().insert("ptvoDescription", QString(data).trimmed());
+                    }
+
+                    break;
             }
 
             break;
@@ -1204,8 +1237,6 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
                 logInfo << device << endpoint << "color capabilities:" << QString::asprintf("0x%04x", value);
                 endpoint->meta().insert("colorCapabilities", value);
             }
-            else
-                endpoint->meta().insert("colorCapabilities", 0x0000);
 
             interviewDevice(device);
             break;
@@ -1611,7 +1642,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                 if (device->interviewStatus() == InterviewStatus::BasicAttributes && device->manufacturerName().isEmpty())
                     break;
 
-                device->setInterviewStatus(device->interviewStatus() == InterviewStatus::BasicAttributes ? InterviewStatus::ColorCapabilities : static_cast <InterviewStatus> (static_cast <int> (device->interviewStatus()) + 1));
+                device->setInterviewStatus(device->interviewStatus() == InterviewStatus::BasicAttributes ? InterviewStatus::PtvoDescription : static_cast <InterviewStatus> (static_cast <int> (device->interviewStatus()) + 1));
                 interviewDevice(device);
             }
 

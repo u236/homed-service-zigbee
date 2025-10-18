@@ -31,6 +31,7 @@ enum class InterviewStatus
     ModelName,
     PowerSource,
     FirmwareVersion,
+    PtvoDescription,
     ColorCapabilities,
     ZoneEnroll,
     Finished
