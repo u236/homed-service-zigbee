@@ -12,10 +12,10 @@ class ReportingObject
 
 public:
 
-    ReportingObject(const QString &name, quint16 clusterId, QList <quint16> attributes, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint16 valueChange = 0) :
+    ReportingObject(const QString &name, quint16 clusterId, QList <quint16> attributes, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint16 valueChange = 1) :
         m_name(name), m_clusterId(clusterId), m_attributes(attributes), m_dataType(dataType), m_minInterval(minInterval), m_maxInterval(maxInterval), m_valueChange(valueChange) {}
 
-    ReportingObject(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint64 valueChange = 0) :
+    ReportingObject(const QString &name, quint16 clusterId, quint16 attributeId, quint8 dataType, quint16 minInterval, quint16 maxInterval, quint64 valueChange = 1) :
         m_name(name), m_clusterId(clusterId), m_attributes({attributeId}), m_dataType(dataType), m_minInterval(minInterval), m_maxInterval(maxInterval), m_valueChange(valueChange) {}
 
     virtual ~ReportingObject(void) {}
@@ -74,7 +74,7 @@ namespace Reportings
 
     public:
 
-        DeviceTemperature(void) : ReportingObject("deviceTemperature", CLUSTER_TEMPERATURE_CONFIGURATION, 0x0000, DATA_TYPE_16BIT_SIGNED, 10, 3600, 1) {}
+        DeviceTemperature(void) : ReportingObject("deviceTemperature", CLUSTER_TEMPERATURE_CONFIGURATION, 0x0000, DATA_TYPE_16BIT_SIGNED, 10, 3600) {}
 
     };
 
@@ -119,7 +119,7 @@ namespace Reportings
 
     public:
 
-        CoverPosition(void) : ReportingObject("coverPosition", CLUSTER_WINDOW_COVERING, 0x0008, DATA_TYPE_8BIT_UNSIGNED, 1, 3600, 1) {}
+        CoverPosition(void) : ReportingObject("coverPosition", CLUSTER_WINDOW_COVERING, 0x0008, DATA_TYPE_8BIT_UNSIGNED, 1, 3600) {}
 
     };
 
@@ -128,7 +128,7 @@ namespace Reportings
 
     public:
 
-        Thermostat(void) : ReportingObject("thermostat", CLUSTER_THERMOSTAT, {0x0000, 0x0012}, DATA_TYPE_16BIT_SIGNED, 1, 3600, 1) {}
+        Thermostat(void) : ReportingObject("thermostat", CLUSTER_THERMOSTAT, {0x0000, 0x0012}, DATA_TYPE_16BIT_SIGNED, 1, 3600) {}
 
     };
 
@@ -245,7 +245,7 @@ namespace Reportings
 
     public:
 
-        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+        Energy(void) : ReportingObject("energy", CLUSTER_SMART_ENERGY_METERING, 0x0000, DATA_TYPE_48BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -254,7 +254,7 @@ namespace Reportings
 
     public:
 
-        EnergyT1(void) : ReportingObject("energyT1", CLUSTER_SMART_ENERGY_METERING, 0x0100, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+        EnergyT1(void) : ReportingObject("energyT1", CLUSTER_SMART_ENERGY_METERING, 0x0100, DATA_TYPE_48BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -263,7 +263,7 @@ namespace Reportings
 
     public:
 
-        EnergyT2(void) : ReportingObject("energyT2", CLUSTER_SMART_ENERGY_METERING, 0x0102, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+        EnergyT2(void) : ReportingObject("energyT2", CLUSTER_SMART_ENERGY_METERING, 0x0102, DATA_TYPE_48BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -272,7 +272,7 @@ namespace Reportings
 
     public:
 
-        EnergyT3(void) : ReportingObject("energyT3", CLUSTER_SMART_ENERGY_METERING, 0x0104, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+        EnergyT3(void) : ReportingObject("energyT3", CLUSTER_SMART_ENERGY_METERING, 0x0104, DATA_TYPE_48BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -281,7 +281,7 @@ namespace Reportings
 
     public:
 
-        EnergyT4(void) : ReportingObject("energyT4", CLUSTER_SMART_ENERGY_METERING, 0x0106, DATA_TYPE_48BIT_UNSIGNED, 10, 600, 1) {}
+        EnergyT4(void) : ReportingObject("energyT4", CLUSTER_SMART_ENERGY_METERING, 0x0106, DATA_TYPE_48BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -290,7 +290,7 @@ namespace Reportings
 
     public:
 
-        Voltage(void) : ReportingObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0505, DATA_TYPE_16BIT_UNSIGNED, 10, 600, 1) {}
+        Voltage(void) : ReportingObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0505, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -299,7 +299,7 @@ namespace Reportings
 
     public:
 
-        Current(void) : ReportingObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0508, DATA_TYPE_16BIT_UNSIGNED, 10, 600, 1) {}
+        Current(void) : ReportingObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0508, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -308,7 +308,7 @@ namespace Reportings
 
     public:
 
-        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600, 1) {}
+        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600) {}
 
     };
 }
