@@ -1214,7 +1214,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
                 case 0x8000:
 
-                    if (dataType == DATA_TYPE_CHARACTER_STRING)
+                    if (dataType == DATA_TYPE_CHARACTER_STRING && !data.isEmpty())
                     {
                         logInfo << device << "PTVO description:" << QString(data).trimmed(); // TODO: remove it
                         endpoint->meta().insert("ptvoDescription", QString(data).trimmed());

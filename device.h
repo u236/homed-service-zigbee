@@ -296,7 +296,9 @@ private:
     void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
 
-    void recognizeDevice(const Device &device);
+    void recognizeDevice(const Device &device, bool ptvo = false);
+    void recognizePtvoDevice(const Device &device);
+
     void recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property);
     void recognizeMultipleExpose(const Device &device, const Endpoint &endpoint, const Expose &expose);
 
