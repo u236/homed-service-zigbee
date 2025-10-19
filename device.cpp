@@ -987,7 +987,7 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
 
 void DeviceList::recognizePtvoDevice(const Device &device)
 {
-    QList <QString> itemList = device->endpoints().value(0x01)->meta().value("ptvoDescription").toString().split(0x0d), typeList = {"*", "#", "V", "A", "W", "Hz", "Wh", "pf"}, binaryList = {"c", "g", "n", "o", "p", "m", "s", "t", "v", "w"};
+    QList <QString> itemList = device->endpoints().value(0x01)->meta().value("ptvoDescription").toString().split(0x0d), typeList = {"*", "#", "Wh", "V", "A", "W"}, binaryList = {"c", "g", "n", "o", "p", "m", "s", "t", "v", "w"};
 
     for (int i = 0; i < itemList.count(); i++)
     {
@@ -1013,7 +1013,7 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
             case 1: // #
             {
-                QString name;
+                QString name = "alarm";
 
                 switch (binaryList.indexOf(valueList.value(1)))
                 {
@@ -1027,7 +1027,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                     case 7:  name = "tamper"; break;    // t
                     case 8:  name = "vibration"; break; // v
                     case 9:  name = "waterLeak"; break; // w
-                    default: name = "alarm"; break;
                 }
 
                 endpoint->properties().append(Property(new PropertiesPTVO::Status(name)));
@@ -1035,63 +1034,7 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 break;
             }
 
-            case 2: // V
-
-                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
-                {
-                    check = true;
-                    break;
-                }
-
-                endpoint->properties().append(Property(new Properties::Voltage));
-                endpoint->exposes().append(Expose(new SensorObject("voltage")));
-                device->options().insert(QString("voltageDivider_%1").arg(endpoint->id()), 100);
-                reporting = Reporting(new Reportings::Voltage);
-                break;
-
-            case 3: // A
-
-                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
-                {
-                    check = true;
-                    break;
-                }
-
-                endpoint->properties().append(Property(new Properties::Current));
-                endpoint->exposes().append(Expose(new SensorObject("current")));
-                device->options().insert(QString("currentDivider_%1").arg(endpoint->id()), 1000);
-                reporting = Reporting(new Reportings::Current);
-                break;
-
-            case 4: // W
-
-                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
-                {
-                    check = true;
-                    break;
-                }
-
-                endpoint->properties().append(Property(new Properties::Power));
-                endpoint->exposes().append(Expose(new SensorObject("power")));
-                device->options().insert(QString("powerDivider_%1").arg(endpoint->id()), 10);
-                reporting = Reporting(new Reportings::Power);
-                break;
-
-            case 5: // Hz
-
-                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
-                {
-                    check = true;
-                    break;
-                }
-
-                // endpoint->properties().append(Property(new Properties::Frequency));
-                endpoint->exposes().append(Expose(new SensorObject("frequency")));
-                device->options().insert(QString("frequencyDivider_%1").arg(endpoint->id()), 10); // TODO: check it
-                // reporting = Reporting(new Reportings::Frequency);
-                break;
-
-            case 6: // Wh
+            case 2: // Wh
 
                 if (!endpoint->inClusters().contains(CLUSTER_SMART_ENERGY_METERING))
                 {
@@ -1105,18 +1048,46 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 reporting = Reporting(new Reportings::Energy);
                 break;
 
-            case 7: // pf
+            case 3: // V
 
-                if (!endpoint->inClusters().contains(CLUSTER_SMART_ENERGY_METERING))
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
                 {
                     check = true;
                     break;
                 }
 
-                // endpoint->properties().append(Property(new Properties::PowerFactor));
-                endpoint->exposes().append(Expose(new SensorObject("powerFactor")));
-                device->options().insert(QString("powerFactorDivider_%1").arg(endpoint->id()), 100); // TODO: check it
-                // reporting = Reporting(new Reportings::PowerFactor);
+                endpoint->properties().append(Property(new Properties::Voltage));
+                endpoint->exposes().append(Expose(new SensorObject("voltage")));
+                device->options().insert(QString("voltageDivider_%1").arg(endpoint->id()), 100);
+                reporting = Reporting(new Reportings::Voltage);
+                break;
+
+            case 4: // A
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Current));
+                endpoint->exposes().append(Expose(new SensorObject("current")));
+                device->options().insert(QString("currentDivider_%1").arg(endpoint->id()), 1000);
+                reporting = Reporting(new Reportings::Current);
+                break;
+
+            case 5: // W
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Power));
+                endpoint->exposes().append(Expose(new SensorObject("power")));
+                device->options().insert(QString("powerDivider_%1").arg(endpoint->id()), 10);
+                reporting = Reporting(new Reportings::Power);
                 break;
 
             default:
@@ -1126,7 +1097,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
         if (check)
         {
-
             QMap <QString, QVariant> option;
             QList <QString> nameList = valueList.value(1).toLower().split(0x20);
             QString unit = valueList.value(2), name;
