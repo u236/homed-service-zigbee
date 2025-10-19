@@ -2407,7 +2407,7 @@
       "properties":     ["tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "actions":        ["tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode", "childLock"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     1
     },
     {
@@ -2425,7 +2425,7 @@
       "properties":     ["tuyaChildLock", "tuyaPowerOnStatus"],
       "actions":        ["tuyaChildLock", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "childLock"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}},
       "endpointId":     1
     },
     {

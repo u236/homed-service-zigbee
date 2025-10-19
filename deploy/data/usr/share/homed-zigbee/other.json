@@ -99,6 +99,7 @@
       "actions":        ["status"],
       "bindings":       ["status"],
       "exposes":        ["switch"],
+      "options":        {"switch": "outlet"},
       "endpointId":     1
     },
     {
@@ -441,8 +442,8 @@
                             "voltage":  {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
                             "power":    {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 35, "divider": 1000}
                           },
-                          "powerSource": 1,
-                          "switch": "outlet"
+                          "switch": "outlet",
+                          "powerSource": 1
                         }
     },
     {
@@ -467,7 +468,8 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
-      "exposes":        ["switch"]
+      "exposes":        ["switch"],
+      "options":        {"switch": "outlet"}
     }
   ],
 

@@ -58,7 +58,8 @@
       "modelNames":     ["CK-BL702-MSW-01(7010)"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "exposes":        ["switch"]
+      "exposes":        ["switch"],
+      "options":        {"switch": "outlet"}
     },
     {
       "description":    "Sonoff Temperature and Humidity Sensor SNZB-02 or SNZB-02P",
@@ -217,7 +218,8 @@
       "modelNames":     ["S26R2ZB"],
       "properties":     ["status"],
       "actions":        ["status"],
-      "exposes":        ["switch"]
+      "exposes":        ["switch"],
+      "options":        {"switch": "outlet"}
     },
     {
       "description":    "Sonoff USB Plug ZBMicro",
@@ -226,7 +228,8 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "powerOnStatus"]
+      "exposes":        ["switch", "powerOnStatus"],
+      "options":        {"switch": "outlet"}
     },
     {
       "description":    "Sonoff Human Presense Sensor SNZB-06P",

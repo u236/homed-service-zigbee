@@ -9,7 +9,7 @@
       "bindings":       ["status", "power"],
       "reportings":     ["status", "voltage", "current", "power"],
       "exposes":        ["switch", "voltage", "current", "power"],
-      "options":        {"voltageDivider": 100, "currentDivider": 100, "powerDivider": 10}
+      "options":        {"switch": "outlet", "voltageDivider": 100, "currentDivider": 100, "powerDivider": 10}
     },
     {
       "description":    "GS Dimmable Bulb with Changable Color Temperature BDHM8E27W70-I1",
