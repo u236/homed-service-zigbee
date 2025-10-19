@@ -5,6 +5,7 @@
 #include "properties/common.h"
 #include "properties/ias.h"
 #include "properties/other.h"
+#include "properties/ptvo.h"
 #include "controller.h"
 #include "logger.h"
 
@@ -986,17 +987,192 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
 
 void DeviceList::recognizePtvoDevice(const Device &device)
 {
-    QList <QString> list = device->endpoints().value(0x01)->meta().value("ptvoDescription").toString().split(0x0d);
+    QList <QString> itemList = device->endpoints().value(0x01)->meta().value("ptvoDescription").toString().split(0x0d), typeList = {"*", "#", "V", "A", "W", "Hz", "Wh", "pf"}, binaryList = {"c", "g", "n", "o", "p", "m", "s", "t", "v", "w"};
 
-    for (int i = 0; i < list.count(); i++)
+    for (int i = 0; i < itemList.count(); i++)
     {
-        const QString &item = list.at(i);
+        QString item = itemList.at(i), id;
+        QList <QString> valueList = item.split(',');
+        Reporting reporting;
+        bool check = false;
         const Endpoint &endpoint = device->endpoints().value(item.startsWith("10") ? 0x10 : item.mid(0, 1).toInt(nullptr, 16));
 
         if (endpoint.isNull())
             continue;
 
-        // parse item here
+        id = valueList.value(0).mid(item.startsWith("10") ? 3 : 2);
+
+        switch (typeList.indexOf(id))
+        {
+            case 0: // *
+                endpoint->properties().append(Property(new Properties::Status));
+                endpoint->actions().append(Action(new Actions::Status));
+                endpoint->exposes().append(endpoint->inClusters().contains(CLUSTER_LEVEL_CONTROL) || endpoint->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
+                reporting = Reporting(new Reportings::Status);
+                break;
+
+            case 1: // #
+            {
+                QString name;
+
+                switch (binaryList.indexOf(valueList.value(1)))
+                {
+                    case 0:  name = "contact"; break;   // c
+                    case 1:  name = "gas"; break;       // g
+                    case 2:  name = "noise"; break;     // n
+                    case 3:  name = "occupancy"; break; // o
+                    case 4:  name = "occupancy"; break; // p
+                    case 5:  name = "smoke"; break;     // m
+                    case 6:  name = "sos"; break;       // s
+                    case 7:  name = "tamper"; break;    // t
+                    case 8:  name = "vibration"; break; // v
+                    case 9:  name = "waterLeak"; break; // w
+                    default: name = "alarm"; break;
+                }
+
+                endpoint->properties().append(Property(new PropertiesPTVO::Status(name)));
+                endpoint->exposes().append(Expose(new BinaryObject(name)));
+                break;
+            }
+
+            case 2: // V
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Voltage));
+                endpoint->exposes().append(Expose(new SensorObject("voltage")));
+                device->options().insert(QString("voltageDivider_%1").arg(endpoint->id()), 100);
+                reporting = Reporting(new Reportings::Voltage);
+                break;
+
+            case 3: // A
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Current));
+                endpoint->exposes().append(Expose(new SensorObject("current")));
+                device->options().insert(QString("currentDivider_%1").arg(endpoint->id()), 1000);
+                reporting = Reporting(new Reportings::Current);
+                break;
+
+            case 4: // W
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Power));
+                endpoint->exposes().append(Expose(new SensorObject("power")));
+                device->options().insert(QString("powerDivider_%1").arg(endpoint->id()), 10);
+                reporting = Reporting(new Reportings::Power);
+                break;
+
+            case 5: // Hz
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                // endpoint->properties().append(Property(new Properties::Frequency));
+                endpoint->exposes().append(Expose(new SensorObject("frequency")));
+                device->options().insert(QString("frequencyDivider_%1").arg(endpoint->id()), 10); // TODO: check it
+                // reporting = Reporting(new Reportings::Frequency);
+                break;
+
+            case 6: // Wh
+
+                if (!endpoint->inClusters().contains(CLUSTER_SMART_ENERGY_METERING))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Energy));
+                endpoint->exposes().append(Expose(new SensorObject("energy")));
+                device->options().insert(QString("energyDivider_%1").arg(endpoint->id()), 1000);
+                reporting = Reporting(new Reportings::Energy);
+                break;
+
+            case 7: // pf
+
+                if (!endpoint->inClusters().contains(CLUSTER_SMART_ENERGY_METERING))
+                {
+                    check = true;
+                    break;
+                }
+
+                // endpoint->properties().append(Property(new Properties::PowerFactor));
+                endpoint->exposes().append(Expose(new SensorObject("powerFactor")));
+                device->options().insert(QString("powerFactorDivider_%1").arg(endpoint->id()), 100); // TODO: check it
+                // reporting = Reporting(new Reportings::PowerFactor);
+                break;
+
+            default:
+                check = true;
+                break;
+        }
+
+        if (check)
+        {
+
+            QMap <QString, QVariant> option;
+            QList <QString> nameList = valueList.value(1).toLower().split(0x20);
+            QString unit = valueList.value(2), name;
+
+            logInfo << valueList;
+
+            for (int i = 0; i < nameList.count(); i++)
+            {
+                QString part = nameList.at(i);
+
+                if (i)
+                    part.replace(0, 1, part.at(0).toUpper());
+
+                name.append(part);
+            }
+
+            option = m_exposeOptions.value(name).toMap();
+            option.insert("type", "sensor");
+
+            if (!unit.isEmpty())
+                option.insert("unit", unit);
+
+            endpoint->properties().append(Property(new PropertiesPTVO::AnalogInput(name, id)));
+            endpoint->exposes().append(Expose(new SensorObject(name)));
+            device->options().insert(QString("%1_%2").arg(name).arg(endpoint->id()), option);
+            reporting = Reporting(new Reportings::AnalogInput);
+        }
+
+        if (reporting.isNull())
+            continue;
+
+        check = false;
+
+        for (int j = 0; j < endpoint->reportings().count(); j++)
+        {
+            if (endpoint->reportings().at(j)->name() != reporting->name())
+                continue;
+
+            check = true;
+            break;
+        }
+
+        if (check)
+            continue;
+
+        endpoint->reportings().append(reporting);
     }
 
     recognizeDevice(device, true);
