@@ -5,6 +5,7 @@
 #include "properties/common.h"
 #include "properties/ias.h"
 #include "properties/other.h"
+#include "properties/ptvo.h"
 #include "controller.h"
 #include "logger.h"
 
@@ -226,6 +227,13 @@ void DeviceList::setupDevice(const Device &device)
     }
 
     identityHandler(device, manufacturerName, modelName);
+
+    if (manufacturerName == "ptvo.info" && modelName == "ptvo.switch")
+    {
+        recognizePtvoDevice(device);
+        device->setSupported(true);
+        return;
+    }
 
     for (auto it = list.begin(); it != list.end() && !device->supported(); it++)
     {
@@ -618,7 +626,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
     endpoint->timer()->start(UPDATE_ENDPOINT_INTERVAL);
 }
 
-void DeviceList::recognizeDevice(const Device &device)
+void DeviceList::recognizeDevice(const Device &device, bool ptvo)
 {
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
@@ -628,14 +636,13 @@ void DeviceList::recognizeDevice(const Device &device)
             {
                 case CLUSTER_POWER_CONFIGURATION:
 
-                    if (device->batteryPowered())
-                    {
-                        it.value()->properties().append(Property(new Properties::BatteryPercentage));
-                        it.value()->bindings().append(Binding(new Bindings::Battery));
-                        it.value()->reportings().append(Reporting(new Reportings::BatteryPercentage));
-                        it.value()->exposes().append(Expose(new SensorObject("battery")));
-                    }
+                    if (!device->batteryPowered() || ptvo)
+                        break;
 
+                    it.value()->properties().append(Property(new Properties::BatteryPercentage));
+                    it.value()->bindings().append(Binding(new Bindings::Battery));
+                    it.value()->reportings().append(Reporting(new Reportings::BatteryPercentage));
+                    it.value()->exposes().append(Expose(new SensorObject("battery")));
                     break;
 
                 case CLUSTER_TEMPERATURE_CONFIGURATION:
@@ -648,15 +655,14 @@ void DeviceList::recognizeDevice(const Device &device)
 
                 case CLUSTER_ON_OFF:
 
-                    if (!device->batteryPowered())
-                    {
-                        it.value()->properties().append(Property(new Properties::Status));
-                        it.value()->actions().append(Action(new Actions::Status));
-                        it.value()->bindings().append(Binding(new Bindings::Status));
-                        it.value()->reportings().append(Reporting(new Reportings::Status));
-                        it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
-                    }
+                    if (device->batteryPowered() || ptvo)
+                        break;
 
+                    it.value()->properties().append(Property(new Properties::Status));
+                    it.value()->actions().append(Action(new Actions::Status));
+                    it.value()->bindings().append(Binding(new Bindings::Status));
+                    it.value()->reportings().append(Reporting(new Reportings::Status));
+                    it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
                     break;
 
                 case CLUSTER_LEVEL_CONTROL:
@@ -677,6 +683,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_ANALOG_INPUT:
+
+                    if (ptvo)
+                        break;
+
                     it.value()->properties().append(Property(new Properties::AnalogInput));
                     it.value()->bindings().append(Binding(new Bindings::AnalogInput));
                     it.value()->reportings().append(Reporting(new Reportings::AnalogInput));
@@ -684,6 +694,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_ANALOG_OUTPUT:
+
+                    if (ptvo)
+                        break;
+
                     it.value()->properties().append(Property(new Properties::AnalogOutput));
                     it.value()->actions().append(Action(new Actions::AnalogOutput));
                     it.value()->bindings().append(Binding(new Bindings::AnalogOutput));
@@ -692,6 +706,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_WINDOW_COVERING:
+
+                    if (ptvo)
+                        break;
+
                     it.value()->properties().append(Property(new Properties::CoverPosition));
                     it.value()->actions().append(Action(new Actions::CoverStatus));
                     it.value()->actions().append(Action(new Actions::CoverPosition));
@@ -701,6 +719,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_THERMOSTAT:
+
+                    if (ptvo)
+                        break;
+
                     it.value()->properties().append(Property(new Properties::Thermostat));
                     it.value()->actions().append(Action(new Actions::Thermostat));
                     it.value()->bindings().append(Binding(new Bindings::Thermostat));
@@ -711,6 +733,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_FAN_CONTROL:
+
+                    if (ptvo)
+                        break;
+
                     it.value()->properties().append(Property(new Properties::FanMode));
                     it.value()->actions().append(Action(new Actions::FanMode));
                     it.value()->bindings().append(Binding(new Bindings::Fan));
@@ -814,6 +840,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_SMART_ENERGY_METERING:
+
+                    if (ptvo)
+                        break;
+
                     it.value()->properties().append(Property(new Properties::Energy));
                     it.value()->bindings().append(Binding(new Bindings::Energy));
                     it.value()->reportings().append(Reporting(new Reportings::Energy));
@@ -822,6 +852,10 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_ELECTRICAL_MEASUREMENT:
+
+                    if (ptvo)
+                        break;
+
                     it.value()->properties().append(Property(new Properties::Voltage));
                     it.value()->properties().append(Property(new Properties::Current));
                     it.value()->properties().append(Property(new Properties::Power));
@@ -838,6 +872,9 @@ void DeviceList::recognizeDevice(const Device &device)
                     break;
 
                 case CLUSTER_IAS_ZONE:
+
+                    if (ptvo)
+                        break;
 
                     switch (static_cast <quint16> (it.value()->meta().value("zoneType").toInt()))
                     {
@@ -876,7 +913,7 @@ void DeviceList::recognizeDevice(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (device->manufacturerName() == "ptvo.info" && device->modelName() == "ptvo.switch") // TODO: remove it
+        if (ptvo)
             it.value()->bindings().clear();
 
         if (!it.value()->properties().isEmpty())
@@ -946,6 +983,169 @@ void DeviceList::recognizeDevice(const Device &device)
             logInfo << device << it.value() << "exposes recognized:" << list.join(", ").toUtf8().constData();
         }
     }
+}
+
+void DeviceList::recognizePtvoDevice(const Device &device)
+{
+    QList <QString> itemList = device->endpoints().value(0x01)->meta().value("ptvoDescription").toString().split(0x0d), typeList = {"*", "#", "Wh", "V", "A", "W"}, binaryList = {"c", "g", "n", "o", "p", "m", "s", "t", "v", "w"};
+
+    for (int i = 0; i < itemList.count(); i++)
+    {
+        QString item = itemList.at(i), id;
+        QList <QString> valueList = item.split(',');
+        Reporting reporting;
+        bool check = false;
+        const Endpoint &endpoint = device->endpoints().value(item.startsWith("10") ? 0x10 : item.mid(0, 1).toInt(nullptr, 16));
+
+        if (endpoint.isNull())
+            continue;
+
+        id = valueList.value(0).mid(item.startsWith("10") ? 3 : 2);
+
+        switch (typeList.indexOf(id))
+        {
+            case 0: // *
+                endpoint->properties().append(Property(new Properties::Status));
+                endpoint->actions().append(Action(new Actions::Status));
+                endpoint->exposes().append(endpoint->inClusters().contains(CLUSTER_LEVEL_CONTROL) || endpoint->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
+                reporting = Reporting(new Reportings::Status);
+                break;
+
+            case 1: // #
+            {
+                QString name = "alarm";
+
+                switch (binaryList.indexOf(valueList.value(1)))
+                {
+                    case 0:  name = "contact"; break;   // c
+                    case 1:  name = "gas"; break;       // g
+                    case 2:  name = "noise"; break;     // n
+                    case 3:  name = "occupancy"; break; // o
+                    case 4:  name = "occupancy"; break; // p
+                    case 5:  name = "smoke"; break;     // m
+                    case 6:  name = "sos"; break;       // s
+                    case 7:  name = "tamper"; break;    // t
+                    case 8:  name = "vibration"; break; // v
+                    case 9:  name = "waterLeak"; break; // w
+                }
+
+                endpoint->properties().append(Property(new PropertiesPTVO::Status(name)));
+                endpoint->exposes().append(Expose(new BinaryObject(name)));
+                break;
+            }
+
+            case 2: // Wh
+
+                if (!endpoint->inClusters().contains(CLUSTER_SMART_ENERGY_METERING))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Energy));
+                endpoint->exposes().append(Expose(new SensorObject("energy")));
+                device->options().insert(QString("energyDivider_%1").arg(endpoint->id()), 1000);
+                reporting = Reporting(new Reportings::Energy);
+                break;
+
+            case 3: // V
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Voltage));
+                endpoint->exposes().append(Expose(new SensorObject("voltage")));
+                device->options().insert(QString("voltageDivider_%1").arg(endpoint->id()), 100);
+                reporting = Reporting(new Reportings::Voltage);
+                break;
+
+            case 4: // A
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Current));
+                endpoint->exposes().append(Expose(new SensorObject("current")));
+                device->options().insert(QString("currentDivider_%1").arg(endpoint->id()), 1000);
+                reporting = Reporting(new Reportings::Current);
+                break;
+
+            case 5: // W
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Power));
+                endpoint->exposes().append(Expose(new SensorObject("power")));
+                device->options().insert(QString("powerDivider_%1").arg(endpoint->id()), 10);
+                reporting = Reporting(new Reportings::Power);
+                break;
+
+            default:
+                check = true;
+                break;
+        }
+
+        if (check)
+        {
+            QMap <QString, QVariant> option;
+            QList <QString> nameList = valueList.value(1).toLower().split(0x20);
+            QString unit = valueList.value(2), name;
+
+            logInfo << valueList;
+
+            for (int i = 0; i < nameList.count(); i++)
+            {
+                QString part = nameList.at(i);
+
+                if (i)
+                    part.replace(0, 1, part.at(0).toUpper());
+
+                name.append(part);
+            }
+
+            option = m_exposeOptions.value(name).toMap();
+            option.insert("type", "sensor");
+
+            if (!unit.isEmpty())
+                option.insert("unit", unit);
+
+            endpoint->properties().append(Property(new PropertiesPTVO::AnalogInput(name, id)));
+            endpoint->exposes().append(Expose(new SensorObject(name)));
+            device->options().insert(QString("%1_%2").arg(name).arg(endpoint->id()), option);
+            reporting = Reporting(new Reportings::AnalogInput);
+        }
+
+        if (reporting.isNull())
+            continue;
+
+        check = false;
+
+        for (int j = 0; j < endpoint->reportings().count(); j++)
+        {
+            if (endpoint->reportings().at(j)->name() != reporting->name())
+                continue;
+
+            check = true;
+            break;
+        }
+
+        if (check)
+            continue;
+
+        endpoint->reportings().append(reporting);
+    }
+
+    recognizeDevice(device, true);
 }
 
 void DeviceList::recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property)

@@ -21,13 +21,15 @@ namespace PropertiesPTVO
 
     public:
 
-        AnalogInput(const QString &name, const QString &unit = QString()) : PropertyObject(name, CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}), m_unit(unit) {}
+        AnalogInput(const QString &name, const QString &id = QString()) : PropertyObject(name, CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}), m_id(id) {}
         void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
 
-        QString m_unit;
+        QString m_id;
         QVariant m_buffer;
+
+        bool multiple(void);
 
     };
 
@@ -37,24 +39,6 @@ namespace PropertiesPTVO
     public:
 
         ChangePattern(void) : Status("changePattern") {}
-
-    };
-
-    class Contact : public Status
-    {
-
-    public:
-
-        Contact(void) : Status("contact") {}
-
-    };
-
-    class Occupancy : public Status
-    {
-
-    public:
-
-        Occupancy(void) : Status("occupancy") {}
 
     };
 
@@ -82,15 +66,6 @@ namespace PropertiesPTVO
     public:
 
         Temperature(void) : AnalogInput("temperature", "C") {}
-
-    };
-
-    class Humidity : public AnalogInput
-    {
-
-    public:
-
-        Humidity(void) : AnalogInput("humidity", "%") {}
 
     };
 

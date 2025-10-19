@@ -93,12 +93,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesEfekta::VOCSensor>                 ("efektaVOCSensorProperty");
 
     qRegisterMetaType <PropertiesPTVO::ChangePattern>               ("ptvoChangePatternProperty");
-    qRegisterMetaType <PropertiesPTVO::Contact>                     ("ptvoContactProperty");
-    qRegisterMetaType <PropertiesPTVO::Occupancy>                   ("ptvoOccupancyProperty");
     qRegisterMetaType <PropertiesPTVO::WaterLeak>                   ("ptvoWaterLeakProperty");
     qRegisterMetaType <PropertiesPTVO::CO2>                         ("ptvoCO2Property");
     qRegisterMetaType <PropertiesPTVO::Temperature>                 ("ptvoTemperatureProperty");
-    qRegisterMetaType <PropertiesPTVO::Humidity>                    ("ptvoHumidityProperty");
     qRegisterMetaType <PropertiesPTVO::Count>                       ("ptvoCountProperty");
     qRegisterMetaType <PropertiesPTVO::Pattern>                     ("ptvoPatternProperty");
     qRegisterMetaType <PropertiesPTVO::SwitchAction>                ("ptvoSwitchActionProperty");
