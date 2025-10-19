@@ -42,24 +42,6 @@ namespace PropertiesPTVO
 
     };
 
-    class Contact : public Status
-    {
-
-    public:
-
-        Contact(void) : Status("contact") {}
-
-    };
-
-    class Occupancy : public Status
-    {
-
-    public:
-
-        Occupancy(void) : Status("occupancy") {}
-
-    };
-
     class WaterLeak : public Status
     {
 
@@ -84,15 +66,6 @@ namespace PropertiesPTVO
     public:
 
         Temperature(void) : AnalogInput("temperature", "C") {}
-
-    };
-
-    class Humidity : public AnalogInput
-    {
-
-    public:
-
-        Humidity(void) : AnalogInput("humidity", "%") {}
 
     };
 
