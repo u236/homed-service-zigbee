@@ -294,6 +294,8 @@ private:
     QList <QString> m_specialExposes, m_brokenFiles;
 
     void identityHandler(const Device &device, QString &manufacturerName, QString &modelName);
+    void addCommonExposes(const Device &device);
+
     void setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple = false);
 
     void recognizeDevice(const Device &device, bool ptvo = false);

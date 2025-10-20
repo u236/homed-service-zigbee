@@ -176,7 +176,6 @@ Endpoint DeviceList::endpoint(const Device &device, quint8 endpointId)
 
 void DeviceList::setupDevice(const Device &device)
 {
-    Expose messageCount(new SensorObject("messageCount")), linkQuality(new SensorObject("linkQuality"));
     QMap <QString, QVariant> userOptions;
     QList <QDir> list = {m_externalDir, m_libraryDir};
     QString manufacturerName, modelName;
@@ -230,8 +229,9 @@ void DeviceList::setupDevice(const Device &device)
 
     if (manufacturerName == "ptvo.info" && modelName == "ptvo.switch")
     {
-        recognizePtvoDevice(device);
         device->setSupported(true);
+        recognizePtvoDevice(device);
+        addCommonExposes(device);
         return;
     }
 
@@ -333,17 +333,7 @@ void DeviceList::setupDevice(const Device &device)
         recognizeDevice(device);
     }
 
-    if (!device->endpoints().count())
-        device->endpoints().insert(1, Endpoint(new EndpointObject(1, device)));
-
-    if (!m_debounce)
-    {
-        messageCount->setParent(device->endpoints().last().data());
-        device->endpoints().last()->exposes().append(messageCount);
-    }
-
-    linkQuality->setParent(device->endpoints().last().data());
-    device->endpoints().last()->exposes().append(linkQuality);
+    addCommonExposes(device);
 }
 
 void DeviceList::removeDevice(const Device &device)
@@ -441,6 +431,23 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
         modelName = manufacturerName;
         manufacturerName = "TUYA";
     }
+}
+
+void DeviceList::addCommonExposes(const Device &device)
+{
+    Expose messageCount(new SensorObject("messageCount")), linkQuality(new SensorObject("linkQuality"));
+
+    if (!device->endpoints().count())
+        device->endpoints().insert(1, Endpoint(new EndpointObject(1, device)));
+
+    if (!m_debounce)
+    {
+        messageCount->setParent(device->endpoints().last().data());
+        device->endpoints().last()->exposes().append(messageCount);
+    }
+
+    linkQuality->setParent(device->endpoints().last().data());
+    device->endpoints().last()->exposes().append(linkQuality);
 }
 
 void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json, bool multiple)
