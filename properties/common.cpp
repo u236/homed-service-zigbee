@@ -405,6 +405,25 @@ void Properties::Power::parseAttribte(quint16, quint16 attributeId, const QByteA
     m_value = qFromLittleEndian(value) / option("powerDivider", 1).toDouble();
 }
 
+void Properties::Frequency::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    quint16 value = 0;
+
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value) / option("frequencyDivider", 1).toDouble();
+}
+
+void Properties::PowerFactor::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+{
+    if (attributeId != m_attributes.at(0))
+        return;
+
+    m_value = static_cast <qint8> (data.at(0)) / 100.0;
+}
+
 void ChildLock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != m_attributes.at(0))

@@ -31,6 +31,8 @@ void ReportingObject::registerMetaTypes(void)
     qRegisterMetaType <Reportings::Voltage>             ("voltageReporting");
     qRegisterMetaType <Reportings::Current>             ("currentReporting");
     qRegisterMetaType <Reportings::Power>               ("powerReporting");
+    qRegisterMetaType <Reportings::Frequency>           ("frequencyReporting");
+    qRegisterMetaType <Reportings::PowerFactor>         ("powerFactorReporting");
 
     qRegisterMetaType <ReportingsEfekta::PMSensor>      ("efektaPMSensorReporting");
     qRegisterMetaType <ReportingsEfekta::VOCSensor>     ("efektaVOCSensorReporting");

@@ -987,7 +987,7 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
 
 void DeviceList::recognizePtvoDevice(const Device &device)
 {
-    QList <QString> itemList = device->endpoints().value(0x01)->meta().value("ptvoDescription").toString().split(0x0d), typeList = {"*", "#", "Wh", "V", "A", "W"}, binaryList = {"c", "g", "n", "o", "p", "m", "s", "t", "v", "w"};
+    QList <QString> itemList = device->endpoints().value(0x01)->meta().value("ptvoDescription").toString().split(0x0d), typeList = {"*", "#", "Wh", "V", "A", "W", "Hz", "pf"}, binaryList = {"c", "g", "n", "o", "p", "m", "s", "t", "v", "w"};
 
     for (int i = 0; i < itemList.count(); i++)
     {
@@ -1088,6 +1088,33 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 endpoint->exposes().append(Expose(new SensorObject("power")));
                 device->options().insert(QString("powerDivider_%1").arg(endpoint->id()), 10);
                 reporting = Reporting(new Reportings::Power);
+                break;
+
+            case 6: // Hz
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::Frequency));
+                endpoint->exposes().append(Expose(new SensorObject("frequency")));
+                device->options().insert(QString("frequencyDivider_%1").arg(endpoint->id()), 10);
+                reporting = Reporting(new Reportings::Frequency);
+                break;
+
+            case 7: // pf
+
+                if (!endpoint->inClusters().contains(CLUSTER_ELECTRICAL_MEASUREMENT))
+                {
+                    check = true;
+                    break;
+                }
+
+                endpoint->properties().append(Property(new Properties::PowerFactor));
+                endpoint->exposes().append(Expose(new SensorObject("powerFactor")));
+                reporting = Reporting(new Reportings::PowerFactor);
                 break;
 
             default:

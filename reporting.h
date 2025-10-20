@@ -290,7 +290,7 @@ namespace Reportings
 
     public:
 
-        Voltage(void) : ReportingObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0505, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
+        Voltage(void) : ReportingObject("voltage", CLUSTER_ELECTRICAL_MEASUREMENT, {0x0100, 0x0505}, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -299,7 +299,7 @@ namespace Reportings
 
     public:
 
-        Current(void) : ReportingObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0508, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
+        Current(void) : ReportingObject("current", CLUSTER_ELECTRICAL_MEASUREMENT, {0x0103, 0x0508}, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
 
     };
 
@@ -308,7 +308,25 @@ namespace Reportings
 
     public:
 
-        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, 0x050B, DATA_TYPE_16BIT_SIGNED, 10, 600) {}
+        Power(void) : ReportingObject("power", CLUSTER_ELECTRICAL_MEASUREMENT, {0x0106, 0x050B}, DATA_TYPE_16BIT_SIGNED, 10, 600) {}
+
+    };
+
+    class Frequency : public ReportingObject
+    {
+
+    public:
+
+        Frequency(void) : ReportingObject("frequency", CLUSTER_ELECTRICAL_MEASUREMENT,  0x0300, DATA_TYPE_16BIT_UNSIGNED, 10, 600) {}
+
+    };
+
+    class PowerFactor : public ReportingObject
+    {
+
+    public:
+
+        PowerFactor(void) : ReportingObject("powerFactor", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0510, DATA_TYPE_8BIT_SIGNED, 10, 600) {}
 
     };
 }

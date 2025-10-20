@@ -286,6 +286,26 @@ namespace Properties
 
     };
 
+    class Frequency : public PropertyObject
+    {
+
+    public:
+
+        Frequency(void) : PropertyObject("frequency", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0300) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
+    class PowerFactor : public PropertyObject
+    {
+
+    public:
+
+        PowerFactor(void) : PropertyObject("powerFactor", CLUSTER_ELECTRICAL_MEASUREMENT, 0x0510) {}
+        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class ChildLock : public PropertyObject
     {
 

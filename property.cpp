@@ -35,6 +35,8 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::Voltage>                         ("voltageProperty");
     qRegisterMetaType <Properties::Current>                         ("currentProperty");
     qRegisterMetaType <Properties::Power>                           ("powerProperty");
+    qRegisterMetaType <Properties::Frequency>                       ("frequencyProperty");
+    qRegisterMetaType <Properties::PowerFactor>                     ("powerFactorProperty");
     qRegisterMetaType <Properties::ChildLock>                       ("childLockProperty");
     qRegisterMetaType <Properties::Scene>                           ("sceneProperty");
     qRegisterMetaType <Properties::StatusAction>                    ("statusActionProperty");
