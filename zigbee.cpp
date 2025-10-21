@@ -1122,7 +1122,7 @@ bool ZigBee::parseProperty(const Endpoint &endpoint, quint16 clusterId, quint8 t
             if (command)
                 property->parseCommand(clusterId, static_cast <quint8> (itemId), data);
             else
-                property->parseAttribte(clusterId, itemId, data);
+                property->parseAttribute(clusterId, itemId, data);
 
             property->setTransactionId(transactionId);
             check = true;

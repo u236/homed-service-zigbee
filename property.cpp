@@ -139,7 +139,7 @@ QVariant PropertyObject::enumValue(const QString &name, int index, const QVarian
     return value.isValid() ? value : defaultValue;
 }
 
-void EnumProperty::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void EnumProperty::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != m_attributes.at(0))
         return;

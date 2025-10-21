@@ -2,7 +2,7 @@
 #include "device.h"
 #include "ptvo.h"
 
-void PropertiesPTVO::Status::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::Status::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != m_attributes.at(0))
         return;
@@ -10,7 +10,7 @@ void PropertiesPTVO::Status::parseAttribte(quint16, quint16 attributeId, const Q
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesPTVO::AnalogInput::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::AnalogInput::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -53,7 +53,7 @@ bool PropertiesPTVO::AnalogInput::multiple(void)
     return false;
 }
 
-void PropertiesPTVO::SwitchAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::SwitchAction::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0055)
         return;
@@ -61,7 +61,7 @@ void PropertiesPTVO::SwitchAction::parseAttribte(quint16, quint16 attributeId, c
     m_value = data.at(0) ? "on" : "off";
 }
 
-void PropertiesPTVO::SerialData::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesPTVO::SerialData::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x000E)
         return;

@@ -321,7 +321,7 @@ void PropertiesTUYA::CoverMotor::update(quint8 dataPoint, const QVariant &data)
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::CoverSwitch::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::CoverSwitch::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -345,7 +345,7 @@ void PropertiesTUYA::CoverSwitch::parseAttribte(quint16, quint16 attributeId, co
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::ChildLock::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesTUYA::ChildLock::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != m_attributes.at(0))
         return;

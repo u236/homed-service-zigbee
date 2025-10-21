@@ -12,7 +12,7 @@ namespace PropertiesPTVO
     public:
 
         Status(const QString &name) : PropertyObject(name, CLUSTER_ON_OFF, 0x0000) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -22,7 +22,7 @@ namespace PropertiesPTVO
     public:
 
         AnalogInput(const QString &name, const QString &id = QString()) : PropertyObject(name, CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}), m_id(id) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
 
@@ -93,7 +93,7 @@ namespace PropertiesPTVO
     public:
 
         SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -103,7 +103,7 @@ namespace PropertiesPTVO
     public:
 
         SerialData(void) : PropertyObject("data", CLUSTER_MULTISTATE_VALUE) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 

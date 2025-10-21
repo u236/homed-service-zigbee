@@ -3,7 +3,7 @@
 #include "device.h"
 #include "lumi.h"
 
-void PropertiesLUMI::Data::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Data::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -384,7 +384,7 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
     }
 }
 
-void PropertiesLUMI::ButtonMode::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::ButtonMode::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
     bool check = modelName() == "lumi.ctrl_neutral1";
@@ -406,7 +406,7 @@ void PropertiesLUMI::ButtonMode::parseAttribte(quint16, quint16 attributeId, con
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesLUMI::Contact::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Contact::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != m_attributes.at(0))
         return;
@@ -414,7 +414,7 @@ void PropertiesLUMI::Contact::parseAttribte(quint16, quint16 attributeId, const 
     m_value = data.at(0) ? true : false;
 }
 
-void PropertiesLUMI::Power::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Power::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
@@ -425,7 +425,7 @@ void PropertiesLUMI::Power::parseAttribte(quint16, quint16 attributeId, const QB
     m_value = qFromLittleEndian(value);
 }
 
-void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Cover::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map;
     float value = 0;
@@ -447,7 +447,7 @@ void PropertiesLUMI::Cover::parseAttribte(quint16, quint16 attributeId, const QB
     m_value = map;
 }
 
-void PropertiesLUMI::ButtonAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::ButtonAction::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0000 && attributeId != 0x8000)
         return;
@@ -481,7 +481,7 @@ void PropertiesLUMI::ButtonAction::resetValue(void)
     m_value = "hold";
 }
 
-void PropertiesLUMI::SwitchAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::SwitchAction::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     if (attributeId != 0x0055)
         return;
@@ -506,7 +506,7 @@ void PropertiesLUMI::SwitchAction::parseAttribte(quint16, quint16 attributeId, c
     }
 }
 
-void PropertiesLUMI::DimmerAction::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::DimmerAction::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     switch (attributeId)
     {
@@ -532,7 +532,7 @@ void PropertiesLUMI::DimmerAction::parseAttribte(quint16, quint16 attributeId, c
     }
 }
 
-void PropertiesLUMI::CubeRotation::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::CubeRotation::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
@@ -543,7 +543,7 @@ void PropertiesLUMI::CubeRotation::parseAttribte(quint16, quint16 attributeId, c
     m_value = qFromLittleEndian(value) < 0 ? "rotateLeft" : "rotateRight";
 }
 
-void PropertiesLUMI::CubeMovement::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::CubeMovement::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -569,7 +569,7 @@ void PropertiesLUMI::CubeMovement::parseAttribte(quint16, quint16 attributeId, c
         m_value = "drop";
 }
 
-void PropertiesLUMI::Vibration::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesLUMI::Vibration::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 

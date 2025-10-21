@@ -13,7 +13,7 @@ namespace PropertiesByun
 
         Sensor(const QString &name, QList <quint16> clusters) : PropertyObject(name, clusters) {}
         void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -77,7 +77,7 @@ namespace PropertiesYandex
     public:
 
         Settings(void) : PropertyObject("settings", CLUSTER_YANDEX, {0x0001, 0x0002, 0x0003, 0x0005, 0x0007}) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 }
@@ -102,7 +102,7 @@ namespace PropertiesCustom
         Attribute(const QString &name, const QString &type, quint16 clusterId, quint16 attributeId, quint8 dataType, double divider) :
             PropertyObject(name, clusterId, attributeId), m_type(type), m_dataType(dataType), m_divider(divider > 0 ? divider : 1) {}
 
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     private:
 

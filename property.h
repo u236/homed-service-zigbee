@@ -30,7 +30,7 @@ public:
         AbstractMetaObject(name), m_multiple(false), m_timeout(0), m_time(0), m_transactionId(0), m_clusters({clusterId}), m_attributes({attributeId}) {}
 
     virtual ~PropertyObject(void) {}
-    virtual void parseAttribte(quint16, quint16, const QByteArray &) {}
+    virtual void parseAttribute(quint16, quint16, const QByteArray &) {}
     virtual void parseCommand(quint16, quint8, const QByteArray &) {}
     virtual void resetValue(void) {}
 
@@ -83,7 +83,7 @@ public:
     EnumProperty(const QString &name, quint16 clusterId, quint16 attributeId) :
         PropertyObject(name, clusterId, attributeId) {}
 
-    void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+    void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
 };
 

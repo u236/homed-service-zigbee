@@ -16,7 +16,7 @@ void PropertiesByun::Sensor::parseCommand(quint16 clusterId, quint8 commandId, c
     m_value = true;
 }
 
-void PropertiesByun::Sensor::parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data)
+void PropertiesByun::Sensor::parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
 
@@ -90,7 +90,7 @@ void PropertiesIKEA::ArrowAction::parseCommand(quint16, quint8 commandId, const 
     }
 }
 
-void PropertiesYandex::Settings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesYandex::Settings::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -111,7 +111,7 @@ void PropertiesCustom::Command::parseCommand(quint16, quint8 commandId, const QB
     m_value = enumValue(m_name, commandId);
 }
 
-void PropertiesCustom::Attribute::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesCustom::Attribute::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QList <QString> types = {"bool", "value", "enum", "time"};
     QByteArray buffer = data;

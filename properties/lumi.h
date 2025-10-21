@@ -12,7 +12,7 @@ namespace PropertiesLUMI
     public:
 
         Data(const quint16 cluster = CLUSTER_LUMI) : PropertyObject("lumiData", cluster) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void resetValue(void) override;
 
     private:
@@ -36,7 +36,7 @@ namespace PropertiesLUMI
     public:
 
         ButtonMode(void) : PropertyObject("buttonMode", CLUSTER_BASIC, {0xFF22, 0xFF23}) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -46,7 +46,7 @@ namespace PropertiesLUMI
     public:
 
         Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF, 0x0000) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -56,7 +56,7 @@ namespace PropertiesLUMI
     public:
 
         Power(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT, 0x0055) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -66,7 +66,7 @@ namespace PropertiesLUMI
     public:
 
         Cover(void) : PropertyObject("cover", CLUSTER_ANALOG_OUTPUT, 0x0055) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -76,7 +76,7 @@ namespace PropertiesLUMI
     public:
 
         ButtonAction(void) : PropertyObject("action", CLUSTER_ON_OFF), m_check(false), m_hold(false) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void resetValue(void) override;
 
     private:
@@ -91,7 +91,7 @@ namespace PropertiesLUMI
     public:
 
         SwitchAction(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -101,7 +101,7 @@ namespace PropertiesLUMI
     public:
 
         DimmerAction(void) : PropertyObject("action", CLUSTER_LUMI) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -111,7 +111,7 @@ namespace PropertiesLUMI
     public:
 
         CubeRotation(void) : PropertyObject("action", CLUSTER_ANALOG_INPUT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -121,7 +121,7 @@ namespace PropertiesLUMI
     public:
 
         CubeMovement(void) : PropertyObject("action", CLUSTER_MULTISTATE_INPUT) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
 
     };
 
@@ -131,7 +131,7 @@ namespace PropertiesLUMI
     public:
 
         Vibration(void) : PropertyObject("vibration", CLUSTER_DOOR_LOCK, {0x0055, 0x0503, 0x0505, 0x0508}) {}
-        void parseAttribte(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void resetValue(void) override;
 
     };

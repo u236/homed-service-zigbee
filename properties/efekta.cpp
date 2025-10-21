@@ -2,7 +2,7 @@
 #include <QtMath>
 #include "efekta.h"
 
-void PropertiesEfekta::ReadInterval::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::ReadInterval::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     quint16 value = 0;
 
@@ -13,7 +13,7 @@ void PropertiesEfekta::ReadInterval::parseAttribte(quint16, quint16 attributeId,
     m_value = qFromLittleEndian(value);
 }
 
-void PropertiesEfekta::TemperatureSettings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::TemperatureSettings::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -52,7 +52,7 @@ void PropertiesEfekta::TemperatureSettings::parseAttribte(quint16, quint16 attri
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::HumiditySettings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::HumiditySettings::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -88,7 +88,7 @@ void PropertiesEfekta::HumiditySettings::parseAttribte(quint16, quint16 attribut
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::CO2Settings::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::CO2Settings::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -145,7 +145,7 @@ void PropertiesEfekta::CO2Settings::parseAttribte(quint16, quint16 attributeId, 
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::PMSensor::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::PMSensor::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
@@ -197,7 +197,7 @@ void PropertiesEfekta::PMSensor::parseAttribte(quint16, quint16 attributeId, con
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesEfekta::VOCSensor::parseAttribte(quint16, quint16 attributeId, const QByteArray &data)
+void PropertiesEfekta::VOCSensor::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();
 
