@@ -1155,7 +1155,7 @@ void ZigBee::parseAttribute(const Endpoint &endpoint, quint16 clusterId, quint8 
 
     if (device->interviewStatus() == InterviewStatus::Finished)
     {
-        if ((clusterId == CLUSTER_BASIC && !attributeId) || parseProperty(endpoint, clusterId, transactionId, attributeId, data))
+        if ((clusterId == CLUSTER_BASIC && !attributeId) || dataType == DATA_TYPE_NO_DATA || parseProperty(endpoint, clusterId, transactionId, attributeId, data))
             return;
 
         if (clusterId == CLUSTER_TIME && device->manufacturerName().contains("efekta", Qt::CaseInsensitive))
