@@ -732,6 +732,7 @@ void ZigBee::interviewFinished(const Device &device)
             if (action->attributes().isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes())))
             {
                 map.insert(action->clusterId(), action->attributes());
+                m_requestId++;
                 continue;
             }
 
@@ -758,7 +759,10 @@ void ZigBee::interviewFinished(const Device &device)
             }
 
             if (attributes.isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), clusterId, readAttributesRequest(m_requestId, 0x0000, attributes)))
+            {
+                m_requestId++;
                 continue;
+            }
 
             break;
         }
