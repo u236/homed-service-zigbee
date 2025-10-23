@@ -101,7 +101,7 @@ namespace Reportings
 
     public:
 
-        AnalogInput(void) : ReportingObject("analogInput", CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}, DATA_TYPE_SINGLE_PRECISION, 0, 600) {}
+        AnalogInput(void) : ReportingObject("analogInput", CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
 
     };
 
@@ -110,7 +110,7 @@ namespace Reportings
 
     public:
 
-        AnalogOutput(void) : ReportingObject("analogOutput", CLUSTER_ANALOG_OUTPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600) {}
+        AnalogOutput(void) : ReportingObject("analogOutput", CLUSTER_ANALOG_OUTPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
 
     };
 
@@ -227,7 +227,7 @@ namespace Reportings
 
     public:
 
-        CO2(void) : ReportingObject("co2", CLUSTER_CO2_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
+        CO2(void) : ReportingObject("co2", CLUSTER_CO2_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600, 0) {}
 
     };
 
@@ -236,7 +236,7 @@ namespace Reportings
 
     public:
 
-        PM25(void) : ReportingObject("pm25", CLUSTER_PM25_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
+        PM25(void) : ReportingObject("pm25", CLUSTER_PM25_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600, 0) {}
 
     };
 
@@ -338,7 +338,7 @@ namespace ReportingsEfekta
 
     public:
 
-        PMSensor(void) : ReportingObject("pmSensor", CLUSTER_PM25_CONCENTRATION, {0x0000, 0x00C8, 0x00C9}, DATA_TYPE_SINGLE_PRECISION, 0, 600) {}
+        PMSensor(void) : ReportingObject("pmSensor", CLUSTER_PM25_CONCENTRATION, {0x0000, 0x00C8, 0x00C9}, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
 
     };
 
@@ -347,7 +347,7 @@ namespace ReportingsEfekta
 
     public:
 
-        VOCSensor(void) : ReportingObject("vocSensor", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600) {}
+        VOCSensor(void) : ReportingObject("vocSensor", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
 
     };
 }
