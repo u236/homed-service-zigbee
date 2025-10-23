@@ -218,7 +218,7 @@ QVariant ActionsLUMI::BasicStatusMemory::request(const QString &, const QVariant
 
 QVariant ActionsLUMI::CoverStatus::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open"} : QList <QString> {"open", "close"};
+    QList <QString> list = option("invertCover").toBool() ? QList <QString> {"open", "close"} : QList <QString> {"close", "open"};
     float value;
 
     switch (list.indexOf(data.toString()))
