@@ -469,8 +469,8 @@
     {
       "description":    "Aqara Roller Blind Motor ZNJLBL01LM",
       "modelNames":     ["lumi.curtain.acn002"],
-      "properties":     ["batteryPercentage", "lumiData", "lumiCover"],
-      "actions":        ["coverStatus", "lumiCoverPosition"],
+      "properties":     ["lumiData", "lumiCover"],
+      "actions":        ["lumiCoverStatus", "lumiCoverStop", "lumiCoverPosition"],
       "exposes":        ["battery", "cover", "temperature"],
       "options":        {"temperature": {"diagnostic": true}, "powerSource": 3}
     },

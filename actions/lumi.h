@@ -94,6 +94,26 @@ namespace ActionsLUMI
 
     };
 
+    class CoverStatus : public ActionObject
+    {
+
+    public:
+
+        CoverStatus(void) : ActionObject("cover", CLUSTER_ANALOG_OUTPUT, 0x0000, 0x0055) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class CoverStop : public ActionObject
+    {
+
+    public:
+
+        CoverStop(void) : ActionObject("cover", CLUSTER_MULTISTATE_OUTPUT, 0x0000, 0x0055) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
     class CoverPosition : public ActionObject
     {
 

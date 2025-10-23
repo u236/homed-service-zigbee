@@ -341,6 +341,12 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             break;
         }
 
+        case 0x040a:
+        {
+            map.insert("battery", static_cast <quint8> (data.at(0)));
+            break;
+        }
+
         case 0xFF02:
         {
             quint16 value = 0;

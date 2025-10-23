@@ -216,6 +216,28 @@ QVariant ActionsLUMI::BasicStatusMemory::request(const QString &, const QVariant
     return list;
 }
 
+QVariant ActionsLUMI::CoverStatus::request(const QString &, const QVariant &data)
+{
+    QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open"} : QList <QString> {"open", "close"};
+    float value;
+
+    switch (list.indexOf(data.toString()))
+    {
+        case 0:  value = 100; break;
+        case 1:  value = 0; break;
+        default: return QByteArray();
+    }
+
+    value = qToLittleEndian(value);
+    return writeAttribute(DATA_TYPE_SINGLE_PRECISION, &value, sizeof(value));
+}
+
+QVariant ActionsLUMI::CoverStop::request(const QString &, const QVariant &data)
+{
+    quint16 value = qToLittleEndian <quint16> (0x0002);
+    return data.toString() != "stop" ? QByteArray(): writeAttribute(DATA_TYPE_16BIT_UNSIGNED, &value, sizeof(value));
+}
+
 QVariant ActionsLUMI::CoverPosition::request(const QString &, const QVariant &data)
 {
     float value = data.toFloat();
