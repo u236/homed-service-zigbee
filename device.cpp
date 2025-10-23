@@ -227,14 +227,6 @@ void DeviceList::setupDevice(const Device &device)
 
     identityHandler(device, manufacturerName, modelName);
 
-    if (manufacturerName == "ptvo.info" && modelName == "ptvo.switch")
-    {
-        device->setSupported(true);
-        recognizePtvoDevice(device);
-        addCommonExposes(device);
-        return;
-    }
-
     for (auto it = list.begin(); it != list.end() && !device->supported(); it++)
     {
         QList <QString> list = it->entryList(QDir::Files);
@@ -317,6 +309,21 @@ void DeviceList::setupDevice(const Device &device)
         }
     }
 
+    if (!device->supported())
+    {
+        if (device->manufacturerName() != "ptvo.info")
+        {
+            logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
+            device->setDescription(QString("%1/%2").arg(device->manufacturerName(), device->modelName()));
+            recognizeDevice(device);
+        }
+        else
+        {
+            device->setSupported(true);
+            recognizePtvoDevice(device);
+        }
+    }
+
     if (device->options().contains("logicalType"))
         device->setLogicalType(static_cast <LogicalType> (device->options().value("logicalType").toInt()));
 
@@ -325,13 +332,6 @@ void DeviceList::setupDevice(const Device &device)
 
     if (device->options().value("ikeaBatterty").toBool() && device->checkVersion("2.4.0") < 0)
         device->options().insert("battery", QMap <QString, QVariant> {{"undivided", true}});
-
-    if (!device->supported())
-    {
-        logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
-        device->setDescription(QString("%1/%2").arg(device->manufacturerName(), device->modelName()));
-        recognizeDevice(device);
-    }
 
     addCommonExposes(device);
 }
