@@ -880,7 +880,7 @@
     },
     {
       "description":    "TUYA TS0601 MOES Electric Thermostat (Type B)",
-      "modelNames":     ["_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk"],
+      "modelNames":     ["_TZE200_ye5jkfsb", "_TZE200_ztvwu4nk", "_TZE284_ye5jkfsb"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
