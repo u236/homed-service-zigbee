@@ -1973,7 +1973,7 @@
     },
     {
       "description":    "TUYA TS0225 Dual Band Human Presence Sensor (Type A)",
-      "modelNames":     ["_TZE200_2aaelwxk"],
+      "modelNames":     ["_TZE200_2aaelwxk", "_TZE200_crq3r3la"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "illuminance", "motionStatus", "smallMotionSensitivity", "smallMotionDistance", "mediumMotionSensitivity", "mediumMotionDistance", "largeMotionSensitivity", "largeMotionDistance", "fadingTime", "indicator"],
@@ -2004,7 +2004,7 @@
     },
     {
       "description":    "TUYA TS0225 Dual Band Human Presence Sensor (Type B)",
-      "modelNames":     ["_TZE200_crq3r3la", "_TZE200_hl0ss9oa", "_TZE200_y4mdop0b"],
+      "modelNames":     ["_TZE200_hl0ss9oa", "_TZE200_y4mdop0b"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "illuminance", "motionStatus", "smallMotionSensitivity", "smallMotionDistance", "largeMotionSensitivity", "largeMotionDistance", "staticSensitivity", "staticDistance", "fadingTime", "indicator"],
