@@ -604,18 +604,6 @@ void PropertiesLUMI::Vibration::parseAttribute(quint16, quint16 attributeId, con
             break;
         }
 
-        case 0x0503:
-        {
-            quint16 value = 0;
-
-            if (static_cast <size_t> (data.length()) > sizeof(value))
-                return;
-
-            memcpy(&value, data.constData(), data.length());
-            map.insert("angle", qFromLittleEndian(value));
-            break;
-        }
-
         case 0x0505:
         {
             quint16 value = 0;
@@ -639,9 +627,13 @@ void PropertiesLUMI::Vibration::parseAttribute(quint16, quint16 attributeId, con
             y = static_cast <qint16> (value >> 16 & 0xFFFF);
             z = static_cast <qint16> (value >> 32 & 0xFFFF);
 
-            map.insert("x", round(atan(x / sqrt(pow(y, 2) + pow(z, 2))) * 180 / M_PI));
-            map.insert("y", round(atan(y / sqrt(pow(x, 2) + pow(z, 2))) * 180 / M_PI));
-            map.insert("z", round(atan(z / sqrt(pow(x, 2) + pow(y, 2))) * 180 / M_PI));
+            map.insert("xValue", x);
+            map.insert("yValue", y);
+            map.insert("zValue", z);
+
+            map.insert("xAngle", round(atan(x / sqrt(pow(y, 2) + pow(z, 2))) * 180 / M_PI));
+            map.insert("yAngle", round(atan(y / sqrt(pow(x, 2) + pow(z, 2))) * 180 / M_PI));
+            map.insert("zAngle", round(atan(z / sqrt(pow(x, 2) + pow(y, 2))) * 180 / M_PI));
             break;
         }
     }
