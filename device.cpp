@@ -311,7 +311,7 @@ void DeviceList::setupDevice(const Device &device)
 
     if (!device->supported())
     {
-        if (device->manufacturerName() != "ptvo.info")
+        if (device->manufacturerName() != "ptvo.info" || !endpoint(device, 0x01)->meta().contains("ptvoDescription") || endpoint(device, 0x01)->meta().value("ptvoDescription").toString() == "unknown")
         {
             logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
             device->setDescription(QString("%1/%2").arg(device->manufacturerName(), device->modelName()));

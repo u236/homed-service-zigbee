@@ -536,7 +536,7 @@ bool ZigBee::interviewRequest(quint8 id, const Device &device)
 
             for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
             {
-                if (!it.value()->inClusters().contains(CLUSTER_BASIC) || device->manufacturerName() != "ptvo.info" || device->modelName() != "ptvo.switch" || it.value()->meta().value("ptvoDescription").isValid())
+                if (!it.value()->inClusters().contains(CLUSTER_BASIC) || device->manufacturerName() != "ptvo.info" || it.value()->meta().value("ptvoDescription").isValid())
                     continue;
 
                 it.value()->meta().insert("ptvoDescription", "unknown");
