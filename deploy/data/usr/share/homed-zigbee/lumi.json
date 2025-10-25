@@ -565,16 +565,12 @@
       "modelNames":     ["lumi.vibration.aq1"],
       "properties":     ["lumiBasic", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
-      "exposes":        ["battery", "vibration", "event", "strength", "xValue", "xAngle", "yValue", "yAngle", "zValue", "zAngle" "temperature", "sensitivityMode"],
+      "exposes":        ["battery", "vibration", "event", "xAngle", "yAngle", "zAngle", "temperature", "sensitivityMode"],
       "options":        {
                           "vibrationResetTimeout": 60,
                           "event": {"enum": ["vibration", "tilt", "drop"]},
-                          "strength": {"type": "sensor", "icon": "mdi:dumbbell"},
-                          "xValue": {"type": "sensor", "icon": "mdi:axis-arrow"},
                           "xAngle": {"type": "sensor", "unit": "°", "icon": "mdi:angle-acute"},
-                          "yValue": {"type": "sensor", "icon": "mdi:axis-arrow"},
                           "yAngle": {"type": "sensor", "unit": "°", "icon": "mdi:angle-acute"},
-                          "zValue": {"type": "sensor", "icon": "mdi:axis-arrow"},
                           "zAngle": {"type": "sensor", "unit": "°", "icon": "mdi:angle-acute"},
                           "temperature": {"diagnostic": true}
                         }

@@ -604,14 +604,6 @@ void PropertiesLUMI::Vibration::parseAttribute(quint16, quint16 attributeId, con
             break;
         }
 
-        case 0x0505:
-        {
-            quint16 value = 0;
-            memcpy(&value, data.constData(), sizeof(value));
-            map.insert("strength", qFromBigEndian(value));
-            break;
-        }
-
         case 0x0508:
         {
             quint64 value = 0;
@@ -626,10 +618,6 @@ void PropertiesLUMI::Vibration::parseAttribute(quint16, quint16 attributeId, con
             x = static_cast <qint16> (value & 0xFFFF);
             y = static_cast <qint16> (value >> 16 & 0xFFFF);
             z = static_cast <qint16> (value >> 32 & 0xFFFF);
-
-            map.insert("xValue", x);
-            map.insert("yValue", y);
-            map.insert("zValue", z);
 
             map.insert("xAngle", round(atan(x / sqrt(pow(y, 2) + pow(z, 2))) * 180 / M_PI));
             map.insert("yAngle", round(atan(y / sqrt(pow(x, 2) + pow(z, 2))) * 180 / M_PI));
