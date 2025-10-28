@@ -2780,6 +2780,24 @@
       "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"enum": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}}
     },
     {
+      "description":    "TUYA TS004F Wireless Dimmer (Type C)",
+      "modelNames":     ["_TZ3000_g9g2xnch", "_TZ3000_pcqjmcud"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaOperationMode"],
+      "actions":        ["tuyaOperationMode"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "operationMode", "action"],
+      "options":        {"operationMode": {"enum": ["command", "event"]}}
+    },
+    {
+      "modelNames":     ["_TZ3000_g9g2xnch", "_TZ3000_pcqjmcud"],
+      "properties":     ["tuyaButtonAction"],
+      "bindings":       ["status"],
+      "exposes":        ["action"],
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}},
+      "endpointId":     [1, 2, 3, 4]
+    },
+    {
       "description":    "TUYA TS004F 4-Button Wireless Switch",
       "modelNames":     ["_TZ3000_0ht8dnxj", "_TZ3000_11pg3ima", "_TZ3000_b3mgfu0d", "_TZ3000_czuyt8lz", "_TZ3000_et7afzxz", "_TZ3000_nuombroo", "_TZ3000_xabckq1v"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction", "tuyaOperationMode"],
