@@ -2155,13 +2155,13 @@ void ZigBee::zclMessageReveived(quint16 networkAddress, quint8 endpointId, quint
 
     if (!request.isNull() && request->type() == RequestType::Data && qvariant_cast <DataRequest> (request->data())->debug())
     {
-        QJsonObject json = {{"endpointId", endpointId}, {"clusterId", clusterId}, {"commandId", commandId}, {"payload", data.toHex(':').constData()}};
+        QJsonObject json = {{"endpointId", endpointId}, {"clusterId", clusterId}, {"transactionId", transactionId}, {"commandId", commandId}, {"payload", data.toHex(':').constData()}};
 
         if (manufacturerCode)
             json.insert("manufacturerCode", manufacturerCode);
 
+        request->setStatus(RequestStatus::Finished);
         emit deviceEvent(device.data(), frameControl & FC_CLUSTER_SPECIFIC ? Event::clusterRequest : Event::globalRequest, json);
-        m_requests.remove(transactionId);
     }
 
     if (frameControl & FC_CLUSTER_SPECIFIC)
