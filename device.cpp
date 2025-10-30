@@ -1,6 +1,7 @@
 #include <QtEndian>
 #include "actions/common.h"
 #include "actions/other.h"
+#include "actions/ptvo.h"
 #include "properties/common.h"
 #include "properties/ias.h"
 #include "properties/other.h"
@@ -1008,6 +1009,9 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
         id = valueList.value(0).mid(item.startsWith("10") ? 3 : 2);
 
+        if (id == "UART")
+            continue;
+
         switch (typeList.indexOf(id))
         {
             case 0: // *
@@ -1176,6 +1180,15 @@ void DeviceList::recognizePtvoDevice(const Device &device)
             continue;
 
         endpoint->reportings().append(reporting);
+    }
+
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+    {
+        if (it.value()->inClusters().contains(CLUSTER_MULTISTATE_VALUE))
+        {
+            it.value()->properties().append(Property(new PropertiesPTVO::SerialData));
+            it.value()->actions().append(Action(new ActionsPTVO::SerialData));
+        }
     }
 
     recognizeDevice(device, true);
