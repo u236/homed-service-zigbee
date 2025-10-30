@@ -1,5 +1,4 @@
 #include <QtEndian>
-#include <QFile>
 #include "actions/common.h"
 #include "actions/other.h"
 #include "properties/common.h"
@@ -1553,30 +1552,6 @@ QJsonObject DeviceList::serializeProperties(void)
     return json;
 }
 
-bool DeviceList::writeFile(QFile &file, const QByteArray &data)
-{
-    bool check = true;
-
-    if (!file.open(QFile::WriteOnly))
-    {
-        logWarning << "File" << file.fileName() << "open error:" << file.errorString();
-        return false;
-    }
-
-    if (file.write(data) != data.length())
-    {
-        logWarning << "File" << file.fileName() << "write error";
-        check = false;
-    }
-
-    file.close();
-
-    if (check)
-        system("sync");
-
-    return check;
-}
-
 void DeviceList::writeDatabase(void)
 {
     QJsonObject json = {{"devices", serializeDevices()}, {"names", m_names}, {"permitJoin", m_permitJoin}, {"timestamp", QDateTime::currentSecsSinceEpoch()}, {"version", SERVICE_VERSION}};
@@ -1590,20 +1565,20 @@ void DeviceList::writeDatabase(void)
     json.remove("permitJoin");
     m_sync = false;
 
-    if (writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
+    if (reinterpret_cast <Controller*> (parent())->writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
 
-    logWarning << "Database not stored, file" << m_databaseFile.fileName() << "error:" << m_databaseFile.errorString();
+    logWarning << "Database not stored";
 }
 
 void DeviceList::writeProperties(void)
 {
     QJsonObject json = serializeProperties();
 
-    if (writeFile(m_propertiesFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
+    if (reinterpret_cast <Controller*> (parent())->writeFile(m_propertiesFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
 
-    logWarning << "Properties not stored, file" << m_propertiesFile.fileName() << "error:" << m_propertiesFile.errorString();
+    logWarning << "Properties not stored";
 }
 
 void DeviceList::updateEndpoint(void)
