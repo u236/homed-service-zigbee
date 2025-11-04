@@ -1136,9 +1136,7 @@ void DeviceList::recognizePtvoDevice(const Device &device)
         {
             QMap <QString, QVariant> option;
             QList <QString> nameList = valueList.value(1).toLower().split(0x20);
-            QString unit = valueList.value(2), name;
-
-            logInfo << valueList;
+            QString type = valueList.value(0).mid(item.startsWith("10") ? 2 : 1, 1).toLower(), unit = valueList.value(2), name;
 
             for (int i = 0; i < nameList.count(); i++)
             {
@@ -1150,14 +1148,26 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 name.append(part);
             }
 
+            endpoint->properties().append(Property(new PropertiesPTVO::AnalogInput(name, id)));
             option = m_exposeOptions.value(name).toMap();
-            option.insert("type", "sensor");
+
+            if (type == "*" || type == "w")
+            {
+                endpoint->actions().append(Action(new ActionsPTVO::AnalogInput(name)));
+                endpoint->exposes().append(Expose(new NumberObject(name)));
+                option.insert("type", "number");
+                option.insert("min", -1e9);
+                option.insert("max", 1e9);
+            }
+            else
+            {
+                endpoint->exposes().append(Expose(new SensorObject(name)));
+                option.insert("type", "sensor");
+            }
 
             if (!unit.isEmpty())
                 option.insert("unit", unit);
 
-            endpoint->properties().append(Property(new PropertiesPTVO::AnalogInput(name, id)));
-            endpoint->exposes().append(Expose(new SensorObject(name)));
             device->options().insert(QString("%1_%2").arg(name).arg(endpoint->id()), option);
             reporting = Reporting(new Reportings::AnalogInput);
         }
