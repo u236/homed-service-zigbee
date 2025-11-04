@@ -4,8 +4,28 @@
 
 QVariant Actions::Status::request(const QString &, const QVariant &data)
 {
-    qint8 command = listIndex({"off", "on", "toggle"}, data);
-    return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
+    switch (data.type())
+    {
+        case QVariant::LongLong:
+        {
+            onWithTimedOffStruct payload;
+
+            payload.control = 0;
+            payload.onTime = qToLittleEndian <quint16> (data.toInt() * 10);
+            payload.offWaitTime = 0;
+
+            return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x42).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+        }
+
+        case QVariant::String:
+        {
+            qint8 command = listIndex({"off", "on", "toggle"}, data);
+            return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
+        }
+
+        default:
+            return QByteArray();
+    }
 }
 
 QVariant Actions::Level::request(const QString &, const QVariant &data)

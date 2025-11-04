@@ -163,6 +163,13 @@ struct recallSceneStruct
     quint8  sceneId;
 };
 
+struct onWithTimedOffStruct
+{
+    quint8  control;
+    quint16 onTime;
+    quint16 offWaitTime;
+};
+
 struct moveToLevelStruct
 {
     quint8  level;
