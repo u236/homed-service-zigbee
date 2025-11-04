@@ -69,7 +69,7 @@
     {
       "description":    "Aqara D1 2-Channel Wall Switch QBKG03LM or QBKG22LM",
       "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
-      "options":        {"logicalType": 2, "endpointName": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}}
+      "options":        {"endpointName": {"2": "Left", "3": "Right", "4": "Left", "5": "Right"}, "logicalType": 2}
     },
     {
       "modelNames":     ["lumi.ctrl_neutral2", "lumi.switch.b2lacn02"],
