@@ -50,6 +50,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::DisplayMode>                     ("displayModeProperty");
 
     qRegisterMetaType <PropertiesIAS::Warning>                      ("iasWarningProperty");
+    qRegisterMetaType <PropertiesIAS::Alarm>                        ("iasAlarmProperty");
     qRegisterMetaType <PropertiesIAS::Contact>                      ("iasContactProperty");
     qRegisterMetaType <PropertiesIAS::Gas>                          ("iasGasProperty");
     qRegisterMetaType <PropertiesIAS::Occupancy>                    ("iasOccupancyProperty");

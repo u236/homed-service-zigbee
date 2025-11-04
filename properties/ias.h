@@ -11,7 +11,7 @@ namespace PropertiesIAS
 
     public:
 
-        ZoneStatus(const QString &name = "alarm") : PropertyObject(name, CLUSTER_IAS_ZONE) {}
+        ZoneStatus(const QString &name) : PropertyObject(name, CLUSTER_IAS_ZONE) {}
         void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
         void resetValue(void) override;
 
@@ -24,6 +24,15 @@ namespace PropertiesIAS
 
         Warning(void) : PropertyObject("warning", CLUSTER_IAS_WD) {}
         void resetValue(void) override;
+
+    };
+
+    class Alarm : public ZoneStatus
+    {
+
+    public:
+
+        Alarm(void) : ZoneStatus("alarm") {}
 
     };
 

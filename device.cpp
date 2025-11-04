@@ -906,7 +906,7 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
                             break;
 
                         default:
-                            it.value()->properties().append(Property(new PropertiesIAS::ZoneStatus));
+                            it.value()->properties().append(Property(new PropertiesIAS::Alarm));
                             it.value()->exposes().append(Expose(new BinaryObject("alarm")));
                             break;
                     }
