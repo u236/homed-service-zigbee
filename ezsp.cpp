@@ -492,7 +492,7 @@ bool EZSP::startCoordinator(void)
         return false;
     }
 
-    if (m_version < 8)
+    if (m_version < 8 || m_version > 13)
     {
         logWarning << "Unsupported EZSP version" << m_version << "adapter detected";
         return false;
