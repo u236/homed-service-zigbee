@@ -63,7 +63,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "energyDivider": 1000, "voltageDivider": 10, "currentDivider": 1000, "powerDivider": 10}
+      "options":        {"switch": "outlet", "energyDivider": 1000, "acVoltageDivider": 10, "acCurrentDivider": 1000, "acPowerDivider": 10}
     }
   ]
 }

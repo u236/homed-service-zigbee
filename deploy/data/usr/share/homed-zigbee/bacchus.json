@@ -8,7 +8,7 @@
       "bindings":       ["temperature", "power"],
       "reportings":     ["temperature", "voltage", "current", "power"],
       "exposes":        ["temperature", "voltage", "current", "power"],
-      "options":        {"reporting": {"minInterval": 0, "maxInterval": 30, "valueChange": 1}, "voltageDivider": 10, "currentDivider": 100},
+      "options":        {"reporting": {"minInterval": 0, "maxInterval": 30, "valueChange": 1}, "acVoltageDivider": 10, "acCurrentDivider": 100},
       "endpointId":     1
     },
     {

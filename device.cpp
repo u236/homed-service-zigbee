@@ -738,8 +738,7 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
                     it.value()->bindings().append(Binding(new Bindings::Thermostat));
                     it.value()->reportings().append(Reporting(new Reportings::Thermostat));
                     it.value()->exposes().append(Expose(new ThermostatObject));
-                    device->options().insert(QString("targetTemperature_%1").arg(it.key()), QMap <QString, QVariant> {{"min", 7}, {"max", 30}, {"step", 0.1}, {"unit", "°C"}});
-                    device->options().insert(QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QList <QVariant> {"off", "auto", "heat"}}});
+                    device->options().insert({{QString("targetTemperature_%1").arg(it.key()), QMap <QString, QVariant> {{"min", 5}, {"max", 35}, {"step", 0.1}, {"unit", "°C"}}}, {QString("systemMode_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QList <QVariant> {"off", "auto", "heat"}}}}});
                     break;
 
                 case CLUSTER_FAN_CONTROL:
@@ -867,18 +866,21 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
                         break;
 
                     it.value()->properties().append(Property(new Properties::Voltage));
-                    it.value()->properties().append(Property(new Properties::Current));
-                    it.value()->properties().append(Property(new Properties::Power));
-                    it.value()->bindings().append(Binding(new Bindings::Power));
                     it.value()->reportings().append(Reporting(new Reportings::Voltage));
-                    it.value()->reportings().append(Reporting(new Reportings::Current));
-                    it.value()->reportings().append(Reporting(new Reportings::Power));
                     it.value()->exposes().append(Expose(new SensorObject("voltage")));
+                    device->options().insert({{QString("acVoltageDivider_%1").arg(it.key()), 100}, {QString("dcVoltageDivider_%1").arg(it.key()), 100}});
+
+                    it.value()->properties().append(Property(new Properties::Current));
+                    it.value()->reportings().append(Reporting(new Reportings::Current));
                     it.value()->exposes().append(Expose(new SensorObject("current")));
+                    device->options().insert({{QString("acCurrentDivider_%1").arg(it.key()), 1000}, {QString("dcCurrentDivider_%1").arg(it.key()), 1000}});
+
+                    it.value()->properties().append(Property(new Properties::Power));
+                    it.value()->reportings().append(Reporting(new Reportings::Power));
                     it.value()->exposes().append(Expose(new SensorObject("power")));
-                    device->options().insert(QString("voltageDivider_%1").arg(it.key()), 100);
-                    device->options().insert(QString("currentDivider_%1").arg(it.key()), 1000);
-                    device->options().insert(QString("powerDivider_%1").arg(it.key()), 10);
+                    device->options().insert({{QString("acPowerDivider_%1").arg(it.key()), 10}, {QString("dcPowerDivider_%1").arg(it.key()), 10}});
+
+                    it.value()->bindings().append(Binding(new Bindings::Power));
                     break;
 
                 case CLUSTER_IAS_ZONE:
@@ -1074,7 +1076,7 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
                 endpoint->properties().append(Property(new Properties::Voltage));
                 endpoint->exposes().append(Expose(new SensorObject("voltage")));
-                device->options().insert(QString("voltageDivider_%1").arg(endpoint->id()), 100);
+                device->options().insert({{QString("acVoltageDivider_%1").arg(endpoint->id()), 100}, {QString("dcVoltageDivider_%1").arg(endpoint->id()), 100}});
                 reporting = Reporting(new Reportings::Voltage);
                 break;
 
@@ -1088,7 +1090,7 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
                 endpoint->properties().append(Property(new Properties::Current));
                 endpoint->exposes().append(Expose(new SensorObject("current")));
-                device->options().insert(QString("currentDivider_%1").arg(endpoint->id()), 1000);
+                device->options().insert({{QString("acCurrentDivider_%1").arg(endpoint->id()), 1000}, {QString("dcCurrentDivider_%1").arg(endpoint->id()), 1000}});
                 reporting = Reporting(new Reportings::Current);
                 break;
 
@@ -1102,7 +1104,7 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
                 endpoint->properties().append(Property(new Properties::Power));
                 endpoint->exposes().append(Expose(new SensorObject("power")));
-                device->options().insert(QString("powerDivider_%1").arg(endpoint->id()), 10);
+                device->options().insert(QString("dcPowerDivider_%1").arg(endpoint->id()), 10);
                 reporting = Reporting(new Reportings::Power);
                 break;
 

@@ -107,7 +107,7 @@
       "properties":     ["energy", "voltage", "current", "power"],
       "bindings":       ["energy", "power"],
       "exposes":        ["energy", "voltage", "current", "power"],
-      "options":        {"energyDivider": 1000, "voltageDivider": 100, "currentDivider": 1000, "powerDivider": 10},
+      "options":        {"energyDivider": 1000, "acVoltageDivider": 100, "acCurrentDivider": 1000, "acPowerDivider": 10},
       "endpointId":     2
     }
   ],

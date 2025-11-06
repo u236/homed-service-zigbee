@@ -380,7 +380,7 @@ void Properties::Voltage::parseAttribute(quint16, quint16 attributeId, const QBy
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / option("voltageDivider", 1).toDouble();
+    m_value = qFromLittleEndian(value) / option(attributeId != 0x0100 ? "acVoltageDivider" : "dcVoltageDivider", 1).toDouble();
 }
 
 void Properties::Current::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
@@ -391,7 +391,7 @@ void Properties::Current::parseAttribute(quint16, quint16 attributeId, const QBy
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / option("currentDivider", 1).toDouble();
+    m_value = qFromLittleEndian(value) / option(attributeId != 0x0103 ? "acCurrentDivider" : "dcCurrentDivider", 1).toDouble();
 }
 
 void Properties::Power::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
@@ -402,7 +402,7 @@ void Properties::Power::parseAttribute(quint16, quint16 attributeId, const QByte
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / option("powerDivider", 1).toDouble();
+    m_value = qFromLittleEndian(value) / option(attributeId != 0x0106 ? "acPowerDivider" : "dcPowerDivider", 1).toDouble();
 }
 
 void Properties::Frequency::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)

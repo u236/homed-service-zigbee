@@ -2352,7 +2352,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "switchType", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "skipAttributeRead": true}
+      "options":        {"switchType": {"enum": ["toggle", "static", "momentary"]}, "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000, "skipAttributeRead": true}
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring (Type A)",
@@ -2362,7 +2362,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000}
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring (Type B)",
@@ -2372,7 +2372,7 @@
       "bindings":       ["status", "energy", "power", "temperature"],
       "reportings":     ["status", "energy", "voltage", "current", "power", "temperature"],
       "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power", "temperature"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000}
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay LoraTap RR400ZB",
@@ -2443,7 +2443,7 @@
       "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "indicatorMode", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 30}
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000, "pollInterval": 30}
     },
     {
       "description":    "TUYA TS011F Smart Plug with Power Monitoring",
@@ -2453,7 +2453,7 @@
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "indicatorMode", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000}
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000}
     },
     {
       "description":    "TUYA TS011F 1-Channel Switch",
@@ -2470,7 +2470,7 @@
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "indicatorMode", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "currentDivider": 1000, "pollInterval": 15}
+      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000, "pollInterval": 15}
     },
     {
       "description":    "TUYA TS0501/TS1101 Dimmable Bulb or Led Dimmer",
