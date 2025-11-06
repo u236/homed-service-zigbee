@@ -518,7 +518,7 @@ void ZStack::parseData(void)
         if (!m_buffer.at(0))
             m_buffer.remove(0, 1);
 
-        if (m_buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG) || m_buffer.length() < 5) // TODO: use offset
+        if (!m_buffer.length() || m_buffer.at(0) != static_cast <char> (ZSTACK_PACKET_FLAG) || m_buffer.length() < 5) // TODO: use offset
         {
             m_buffer.clear();
             return;
