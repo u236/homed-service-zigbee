@@ -311,17 +311,20 @@ void DeviceList::setupDevice(const Device &device)
 
     if (!device->supported())
     {
-        if (device->manufacturerName() != "ptvo.info" || !endpoint(device, 0x01)->meta().contains("ptvoDescription") || endpoint(device, 0x01)->meta().value("ptvoDescription").toString() == "unknown")
+        bool ptvo = device->manufacturerName() == "ptvo.info" ? true : false;
+
+        if (!ptvo)
         {
             logWarning << device << "manufacturer name" << device->manufacturerName() << "and model name" << device->modelName() << "not found in library";
             device->setDescription(QString("%1/%2").arg(device->manufacturerName(), device->modelName()));
-            recognizeDevice(device);
         }
         else
-        {
             device->setSupported(true);
+
+        if (!ptvo || !endpoint(device, 0x01)->meta().contains("ptvoDescription") || endpoint(device, 0x01)->meta().value("ptvoDescription").toString() == "unknown")
+            recognizeDevice(device, false);
+        else
             recognizePtvoDevice(device);
-        }
     }
 
     if (device->options().contains("logicalType"))
@@ -940,7 +943,8 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
                 list.append(property->name());
             }
 
-            logInfo << device << it.value() << "properties recognized:" << list.join(", ").toUtf8().constData();
+            if (!device->supported())
+                logInfo << device << it.value() << "properties recognized:" << list.join(", ").toUtf8().constData();
         }
 
         if (!it.value()->actions().isEmpty())
@@ -959,7 +963,8 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
                 list.append(action->name());
             }
 
-            logInfo << device << it.value() << "actions recognized:" << list.join(", ").toUtf8().constData();
+            if (!device->supported())
+                logInfo << device << it.value() << "actions recognized:" << list.join(", ").toUtf8().constData();
         }
 
         if (!it.value()->exposes().isEmpty())
@@ -987,7 +992,8 @@ void DeviceList::recognizeDevice(const Device &device, bool ptvo)
                 list.append(expose->name());
             }
 
-            logInfo << device << it.value() << "exposes recognized:" << list.join(", ").toUtf8().constData();
+            if (!device->supported())
+                logInfo << device << it.value() << "exposes recognized:" << list.join(", ").toUtf8().constData();
         }
     }
 }
