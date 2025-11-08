@@ -148,7 +148,7 @@ void Adapter::init(void)
     }
     else
     {
-        if (m_adddress.isNull() && !m_port)
+        if (m_adddress.isNull() || !m_port)
         {
             logWarning << "Invalid connection address or port number";
             return;
