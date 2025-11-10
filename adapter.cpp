@@ -43,7 +43,9 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
         connect(m_socket, &QTcpSocket::connected, this, &Adapter::socketConnected);
     }
 
-    m_timeout = static_cast <quint16> (config->value("zigbee/timeout", 10).toInt());
+    m_receiveTimeout = static_cast <quint16> (config->value("zigbee/timeout", 10).toInt());
+    m_permitJoinTimeout = static_cast <quint16> (config->value("zigbee/join", 10).toInt());
+
     m_panId = static_cast <quint16> (config->value("zigbee/panid").toString().toInt(nullptr, 16));
     m_channel = static_cast <quint8> (config->value("zigbee/channel").toInt());
     m_power = static_cast <quint8> (config->value("zigbee/power", 5).toInt());
@@ -187,7 +189,7 @@ void Adapter::setPermitJoin(bool enabled)
 
         if (enabled)
         {
-            m_permitJoinTime = QDateTime::currentMSecsSinceEpoch();
+            m_permitJoinTime = QDateTime::currentSecsSinceEpoch();
             m_permitJoinTimer->start(PERMIT_JOIN_INTERVAL);
         }
         else
@@ -321,7 +323,7 @@ void Adapter::socketConnected(void)
 
 void Adapter::startTimer(void)
 {
-    m_receiveTimer->start(m_timeout);
+    m_receiveTimer->start(m_receiveTimeout);
 }
 
 void Adapter::readyRead(void)
@@ -355,7 +357,7 @@ void Adapter::resetTimeout(void)
 
 void Adapter::permitJoinTimeout(void)
 {
-    bool timeout = m_permitJoinTime + PERMIT_JOIN_TIMEOUT <= QDateTime::currentMSecsSinceEpoch(), check = permitJoin(timeout ? false : true);
+    bool timeout = m_permitJoinTimeout && m_permitJoinTime + m_permitJoinTimeout * 60 <= QDateTime::currentSecsSinceEpoch(), check = permitJoin(timeout ? false : true);
 
     if (!timeout && check)
         return;
