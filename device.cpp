@@ -1118,41 +1118,42 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
         if (check)
         {
+            QString type = valueList.value(0).mid(offset ? 2 : 1, 1).toLower(), title = valueList.value(1), unit = valueList.value(2), optionName;
+            QList <QString> list = title.toLower().split(0x20);
             QMap <QString, QVariant> option;
-            QList <QString> nameList = valueList.value(1).toLower().split(0x20);
-            QString type = valueList.value(0).mid(offset ? 2 : 1, 1).toLower(), unit = valueList.value(2), name;
 
-            for (int i = 0; i < nameList.count(); i++)
+            for (int i = 0; i < list.count(); i++)
             {
-                QString part = nameList.at(i);
+                QString part = list.at(i);
 
                 if (i)
                     part.replace(0, 1, part.at(0).toUpper());
 
-                name.append(part);
+                optionName.append(part);
             }
 
-            endpoint->properties().append(Property(new PropertiesPTVO::AnalogInput(name, id)));
-            option = m_exposeOptions.value(name).toMap();
+            endpoint->properties().append(Property(new PropertiesPTVO::AnalogInput("analogInput", id)));
+            option = m_exposeOptions.value(optionName).toMap();
+            option.insert("title", title);
 
             if (type == "*" || type == "w")
             {
-                endpoint->actions().append(Action(new ActionsPTVO::AnalogInput(name)));
-                endpoint->exposes().append(Expose(new NumberObject(name)));
+                endpoint->actions().append(Action(new ActionsPTVO::AnalogInput("analogInput")));
+                endpoint->exposes().append(Expose(new NumberObject("analogInput")));
                 option.insert("type", "number");
                 option.insert("min", -1e9);
                 option.insert("max", 1e9);
             }
             else
             {
-                endpoint->exposes().append(Expose(new SensorObject(name)));
+                endpoint->exposes().append(Expose(new SensorObject("analogInput")));
                 option.insert("type", "sensor");
             }
 
             if (!unit.isEmpty())
                 option.insert("unit", unit);
 
-            device->options().insert(QString("%1_%2").arg(name).arg(endpoint->id()), option);
+            device->options().insert(QString("analogInput_%2").arg(endpoint->id()), option);
             reporting = Reporting(new Reportings::AnalogInput);
         }
 
