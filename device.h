@@ -300,6 +300,7 @@ private:
 
     void recognizeDevice(const Device &device);
     void recognizePtvoDevice(const Device &device);
+    bool recognizeLight(const Device &device);
 
     void recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property);
     void recognizeMultipleExpose(const Device &device, const Endpoint &endpoint, const Expose &expose);

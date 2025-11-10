@@ -681,7 +681,7 @@ void DeviceList::recognizeDevice(const Device &device)
                         it.value()->actions().append(Action(new Actions::Status));
                         it.value()->bindings().append(Binding(new Bindings::Status));
                         it.value()->reportings().append(Reporting(new Reportings::Status));
-                        it.value()->exposes().append(it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
+                        it.value()->exposes().append(recognizeLight(device) ? Expose(new LightObject) : Expose(new SwitchObject));
                     }
 
                     break;
@@ -1016,7 +1016,7 @@ void DeviceList::recognizePtvoDevice(const Device &device)
             case 0: // *
                 endpoint->properties().append(Property(new Properties::Status));
                 endpoint->actions().append(Action(new Actions::Status));
-                endpoint->exposes().append(endpoint->inClusters().contains(CLUSTER_LEVEL_CONTROL) || endpoint->inClusters().contains(CLUSTER_COLOR_CONTROL) ? Expose(new LightObject) : Expose(new SwitchObject));
+                endpoint->exposes().append(recognizeLight(device) ? Expose(new LightObject) : Expose(new SwitchObject));
                 reporting = Reporting(new Reportings::Status);
                 break;
 
@@ -1198,6 +1198,15 @@ void DeviceList::recognizePtvoDevice(const Device &device)
             it.value()->actions().append(Action(new ActionsPTVO::SerialData));
         }
     }
+}
+
+bool DeviceList::recognizeLight(const Device &device)
+{
+    for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
+        if (it.value()->inClusters().contains(CLUSTER_LEVEL_CONTROL) || it.value()->inClusters().contains(CLUSTER_COLOR_CONTROL))
+            return true;
+
+    return false;
 }
 
 void DeviceList::recognizeMultipleProperty(const Device &device, const Endpoint &endpoint, const Property &property)
