@@ -1403,7 +1403,7 @@ QJsonArray DeviceList::serializeDevices(void)
         if (device->logicalType() != LogicalType::Coordinator)
         {
             json.insert("supported", device->supported());
-            json.insert("interviewFinished", device->interviewStatus() == InterviewStatus::Finished ? true : false);
+            json.insert("interviewFinished", device->interviewStatus() == InterviewStatus::Finished);
             json.insert("manufacturerCode", device->manufacturerCode());
             json.insert("powerSource", device->powerSource());
             json.insert("active", device->active());

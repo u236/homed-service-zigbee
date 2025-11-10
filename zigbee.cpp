@@ -1334,7 +1334,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                         }
 
                         m_groupRequestFinished = true;
-                        m_groupsUpdated = response->status != STATUS_INSUFFICIENT_SPACE ? true : false;
+                        m_groupsUpdated = response->status != STATUS_INSUFFICIENT_SPACE;
                         emit groupRequestFinished();
                         break;
                 }
@@ -1637,7 +1637,7 @@ void ZigBee::globalCommandReceived(const Endpoint &endpoint, quint16 clusterId, 
                     break;
                 }
 
-                parseAttribute(endpoint, clusterId, transactionId, attributeId, dataType, payload.mid(offset, size), commandId == CMD_READ_ATTRIBUTES_RESPONSE ? true : false);
+                parseAttribute(endpoint, clusterId, transactionId, attributeId, dataType, payload.mid(offset, size), commandId == CMD_READ_ATTRIBUTES_RESPONSE);
                 payload.remove(0, offset + size);
             }
 
