@@ -703,22 +703,6 @@ void DeviceList::recognizeDevice(const Device &device)
 
                     break;
 
-                case CLUSTER_ANALOG_INPUT:
-                    it.value()->properties().append(Property(new Properties::AnalogInput));
-                    it.value()->bindings().append(Binding(new Bindings::AnalogInput));
-                    it.value()->reportings().append(Reporting(new Reportings::AnalogInput));
-                    it.value()->exposes().append(Expose(new SensorObject("analogInput")));
-                    break;
-
-                case CLUSTER_ANALOG_OUTPUT:
-                    it.value()->properties().append(Property(new Properties::AnalogOutput));
-                    it.value()->actions().append(Action(new Actions::AnalogOutput));
-                    it.value()->bindings().append(Binding(new Bindings::AnalogOutput));
-                    it.value()->reportings().append(Reporting(new Reportings::AnalogOutput));
-                    it.value()->exposes().append(Expose(new NumberObject("analogOutput")));
-                    device->options().insert(QString("analogOutput_%1").arg(it.key()), QMap <QString, QVariant> {{"min", -1e9}, {"max", 1e9}});
-                    break;
-
                 case CLUSTER_WINDOW_COVERING:
                     it.value()->properties().append(Property(new Properties::CoverPosition));
                     it.value()->actions().append(Action(new Actions::CoverStatus));

@@ -105,15 +105,6 @@ namespace Reportings
 
     };
 
-    class AnalogOutput : public ReportingObject
-    {
-
-    public:
-
-        AnalogOutput(void) : ReportingObject("analogOutput", CLUSTER_ANALOG_OUTPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
-
-    };
-
     class CoverPosition : public ReportingObject
     {
 

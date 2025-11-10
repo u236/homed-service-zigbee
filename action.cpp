@@ -11,7 +11,6 @@ void ActionObject::registerMetaTypes(void)
 {
     qRegisterMetaType <Actions::Status>                         ("statusAction");
     qRegisterMetaType <Actions::Level>                          ("levelAction");
-    qRegisterMetaType <Actions::AnalogOutput>                   ("analogOutputAction");
     qRegisterMetaType <Actions::CoverStatus>                    ("coverStatusAction");
     qRegisterMetaType <Actions::CoverPosition>                  ("coverPositionAction");
     qRegisterMetaType <Actions::Thermostat>                     ("thermostatAction");

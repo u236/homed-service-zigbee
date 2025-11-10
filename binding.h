@@ -90,15 +90,6 @@ namespace Bindings
 
     };
 
-    class AnalogOutput : public BindingObject
-    {
-
-    public:
-
-        AnalogOutput(void) : BindingObject("analogOutput", CLUSTER_ANALOG_OUTPUT) {}
-
-    };
-
     class PollControl : public BindingObject
     {
 

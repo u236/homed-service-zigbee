@@ -56,26 +56,6 @@ namespace Properties
 
     };
 
-    class AnalogInput : public PropertyObject
-    {
-
-    public:
-
-        AnalogInput(void) : PropertyObject("analogInput", CLUSTER_ANALOG_INPUT, 0x0055) {}
-        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class AnalogOutput : public PropertyObject
-    {
-
-    public:
-
-        AnalogOutput(void) : PropertyObject("analogOutput", CLUSTER_ANALOG_OUTPUT, 0x0055) {}
-        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class CoverPosition : public PropertyObject
     {
 
