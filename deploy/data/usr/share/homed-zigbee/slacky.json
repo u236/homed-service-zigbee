@@ -148,6 +148,75 @@
       "reportings":     ["co2"],
       "exposes":        ["co2"],
       "options":        {"reporting": {"maxInterval": 300}}
+    },
+    {
+      "description":    "Tuya Mini Zigbee Switch with custom firmware",
+      "modelNames":     ["TS0001_power-SlD"],
+      "properties":     ["statusAction", "powerOnStatus", "switchMode", "energy", "voltage", "current", "power", "frequency"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power", "switchMode"],
+      "reportings":     ["energy", "voltage", "current", "power", "frequency"],
+      "exposes":        ["action", "switch", "powerOnStatus", "operationMode", "switchMode", "switchType", "energy", "voltage", "current", "power", "frequency", "protectControl", "automaticRestart", "voltageMin", "voltageMax", "currentMax", "powerMax", "timeReload"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "action":           {"type": "enum",  "clusterId": 18,    "attributeId": 85,    "dataType": 33, "binding": true, "reporting": {"minInterval": 10, "maxInterval": 0, "valueChange": 1}},
+                            "operationMode":    {"type": "enum",  "clusterId": 7,     "attributeId": 61441, "dataType": 48, "action": true, "binding": true, "reporting": {"minInterval": 0, "maxInterval": 65000}},
+                            "switchType":       {"type": "enum",  "clusterId": 7,     "attributeId": 61440, "dataType": 48, "action": true},
+                            "protectControl":   {"type": "bool",  "clusterId": 2820,  "attributeId": 61445, "dataType": 16, "action": true},
+                            "automaticRestart": {"type": "bool",  "clusterId": 2820,  "attributeId": 61446, "dataType": 16, "action": true},
+                            "voltageMin":       {"type": "value", "clusterId": 2820,  "attributeId": 2056,  "dataType": 41, "divider": 100, "action": true},
+                            "voltageMax":       {"type": "value", "clusterId": 2820,  "attributeId": 2055,  "dataType": 41, "divider": 100, "action": true},
+                            "currentMax":       {"type": "value", "clusterId": 2820,  "attributeId": 61442, "dataType": 33, "divider": 100, "action": true},
+                            "powerMax":         {"type": "value", "clusterId": 2820,  "attributeId": 61443, "dataType": 41, "divider": 1,   "action": true},
+                            "timeReload":       {"type": "value", "clusterId": 2820,  "attributeId": 61444, "dataType": 33, "action": true}
+                          },
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "5": "quintupleClick", "255": "release"}},
+                          "protectControl": {"type": "toggle"},
+                          "automaticRestart": {"type": "toggle"},
+                          "voltageMin": {"type": "number", "min": 0, "max": 300, "step": 1, "unit": "V"},
+                          "voltageMax": {"type": "number", "min": 0, "max": 300, "step": 1, "unit": "V"},
+                          "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
+                          "powerMax":   {"type": "number", "min": 0, "max": 3600, "step": 1, "unit": "W"},
+                          "timeReload": {"type": "number", "min": 5, "max": 60, "step": 1, "unit": "Sec"},
+                          "switchMode": {"enum": ["off", "on"]},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "multifunction"}},
+                          "energyDivider": 100, "acVoltageDivider": 100, "acCurrentDivider": 100, "acPowerDivider": 1, "frequencyDivider": 100
+                        }
+    },
+    {
+      "description":    "Tuya Plug Zigbee with custom firmware",
+      "modelNames":     ["TS011F-SlD"],
+      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power", "frequency"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["energy", "voltage", "current", "power", "frequency"],
+      "exposes":        ["switch", "powerOnStatus", "childLock", "ledControl", "energy", "voltage", "current", "power", "frequency", "protectControl", "automaticRestart", "voltageMin", "voltageMax", "currentMax", "powerMax", "timeReload"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "childLock":        {"type": "bool",  "clusterId": 6,     "attributeId": 61440, "dataType": 16, "action": true},
+                            "ledControl":       {"type": "enum",  "clusterId": 6,     "attributeId": 61441, "dataType": 48, "action": true},
+                            "protectControl":   {"type": "bool",  "clusterId": 2820,  "attributeId": 61445, "dataType": 16, "action": true},
+                            "automaticRestart": {"type": "bool",  "clusterId": 2820,  "attributeId": 61446, "dataType": 16, "action": true},
+                            "voltageMin":       {"type": "value", "clusterId": 2820,  "attributeId": 2056,  "dataType": 41, "divider": 100, "action": true},
+                            "voltageMax":       {"type": "value", "clusterId": 2820,  "attributeId": 2055,  "dataType": 41, "divider": 100, "action": true},
+                            "currentMax":       {"type": "value", "clusterId": 2820,  "attributeId": 61442, "dataType": 33, "divider": 100, "action": true},
+                            "powerMax":         {"type": "value", "clusterId": 2820,  "attributeId": 61443, "dataType": 41, "divider": 1,   "action": true},
+                            "timeReload":       {"type": "value", "clusterId": 2820,  "attributeId": 61444, "dataType": 33, "action": true}
+                          },
+                          "ledControl": {"type": "select", "enum": ["off", "on", "on-off"]},
+                          "protectControl": {"type": "toggle"},
+                          "automaticRestart": {"type": "toggle"},
+                          "voltageMin": {"type": "number", "min": 0, "max": 300, "step": 1, "unit": "V"},
+                          "voltageMax": {"type": "number", "min": 0, "max": 300, "step": 1, "unit": "V"},
+                          "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
+                          "powerMax":   {"type": "number", "min": 0, "max": 3600, "step": 1, "unit": "W"},
+                          "timeReload": {"type": "number", "min": 5, "max": 60, "step": 1, "unit": "Sec"},
+                          "switchMode": {"enum": ["off", "on"]},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "multifunction"}},
+                          "energyDivider": 100, "acVoltageDivider": 100, "acCurrentDivider": 100, "acPowerDivider": 1, "frequencyDivider": 100
+                        }
     }
   ]
 }
