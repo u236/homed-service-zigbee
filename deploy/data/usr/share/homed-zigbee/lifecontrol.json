@@ -2,7 +2,7 @@
   "HaiPaiTech":
   [
     {
-      "description":    "Life Control Smart Bulb MCLH-02",
+      "description":    "Life Control RGBW Bulb MCLH-02",
       "modelNames":     ["vivi ZLight"],
       "properties":     ["status", "level", "colorXY", "colorTemperature", "colorMode"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],

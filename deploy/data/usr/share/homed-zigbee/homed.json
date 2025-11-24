@@ -47,7 +47,7 @@
       "options":        {"switch": "outlet"}
     },
     {
-      "description":    "PTVO Firmware Based RGB Led Controller",
+      "description":    "PTVO Firmware Based RGBW Led Controller",
       "modelNames":     ["RGB Strip"],
       "properties":     ["status", "level", "colorXY", "colorTemperature"],
       "actions":        ["status", "level", "colorXY", "colorTemperature"],

@@ -420,6 +420,14 @@
       "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}}
     },
     {
+      "description":    "Aqara T2 RGBW Bulb",
+      "modelNames":     ["lumi.light.agl001", "lumi.light.agl002", "lumi.light.agl003", "lumi.light.agl005", "lumi.light.agl006"],
+      "properties":     ["status", "level", "colorXY", "colorTemperature"],
+      "actions":        ["status", "level", "colorXY", "colorTemperature"],
+      "exposes":        ["light"],
+      "options":        {"light": ["level", "color", "colorTemperature"], "colorTemperature": {"min": 111, "max": 500}}
+    },
+    {
       "description":    "Aqara Smart Celling Light ZNXDD01LM",
       "modelNames":     ["lumi.light.acn003"],
       "properties":     ["status", "level", "colorTemperature", "lumiData"],
