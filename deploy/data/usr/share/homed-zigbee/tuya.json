@@ -239,8 +239,8 @@
                             "101":  {"name": "stripType", "type": "enum", "action": true},
                             "102":  {"name": "colorOrder", "type": "enum", "action": true}
                           },
-                          "level": {"min": 0, "max": 255},
                           "status": {"enum": ["off", "on"]},
+                          "level": {"min": 0, "max": 255},
                           "ledCount": {"type": "number", "min": 100, "max": 7870, "icon": "mdi:ruler"},
                           "stripType": {"type": "select", "enum": ["TM1803", "TM1809", "TM1829", "TLS3001", "GW6205", "MBI6120", "TM1814B", "SK6812", "UCS8904B", "LPD6803", "LPD8806", "WS2801", "P9813", "SK9822", "MBI6020", "TM1914A", "GS8206", "UCS2904", "SM16904", "SM16825", "SM16714", "UCS5603", "UCS2603", "SM16714D", "UCS7604", "UCS7804"], "icon": "mdi:led-strip-variant"},
                           "colorOrder": {"type": "select", "enum": ["RGB", "RBG", "GRB", "GBR", "BRG", "BGR", "RGBW", "RBGW", "GRBW", "GBRW", "BRGW", "BGRW", "WRGB", "WRBG", "WGRB", "WGBR", "WBRG", "WBGR"], "icon": "mdi:cog"},
@@ -261,8 +261,8 @@
                             "4":    {"name": "lightType", "type": "enum", "action": true},
                             "14":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
-                          "level": {"min": 0, "max": 255},
                           "status": {"enum": ["off", "on"]},
+                          "level": {"min": 0, "max": 255},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "light": ["level"]
                         }
@@ -282,8 +282,8 @@
                             "14":   {"name": "powerOnStatus", "type": "enum", "action": true},
                             "57":   {"name": "switchType", "type": "enum", "action": true}
                           },
-                          "level": {"min": 0, "max": 255},
                           "status": {"enum": ["off", "on"]},
+                          "level": {"min": 0, "max": 255},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "switchType": {"enum": ["toggle", "static", "momentary"]},
                           "light": ["level"]
@@ -306,8 +306,8 @@
                             "10":   {"name": "lightType_2", "type": "enum", "action": true},
                             "14":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
-                          "level": {"min": 0, "max": 255},
                           "status": {"enum": ["off", "on"]},
+                          "level": {"min": 0, "max": 255},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "light": ["level"]
                         }
@@ -329,8 +329,8 @@
                             "10":   {"name": "switchType_2", "type": "enum", "action": true},
                             "14":   {"name": "powerOnStatus", "type": "enum", "action": true}
                           },
-                          "level": {"min": 0, "max": 255},
                           "status": {"enum": ["off", "on"]},
+                          "level": {"min": 0, "max": 255},
                           "switchType": {"enum": ["toggle", "static", "momentary"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "light": ["level"]
