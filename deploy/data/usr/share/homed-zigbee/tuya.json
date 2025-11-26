@@ -1526,7 +1526,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor with PIR",
-      "modelNames":     ["_TZE200_kb5noeto"],
+      "modelNames":     ["_TZE200_2aaelwxk", "_TZE200_kb5noeto", "_TZE200_tyffvoij"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["battery", "occupancy", "illuminance", "motionStatus", "sensitivity", "motionSensitivity", "distanceMax", "fadingTime", "detectionMode"],

@@ -69,6 +69,37 @@
     }
   ],
 
+  "HOBEIAN":
+  [
+    {
+      "description":    "HOBEIAN Human Presence Sensor ZG-204ZM",
+      "modelNames":     ["ZG-204ZM"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "occupancy", "illuminance", "motionStatus", "sensitivity", "motionSensitivity", "distanceMax", "fadingTime", "detectionMode"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "sensitivity", "type": "value", "action": true},
+                            "4":    {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "101":  {"name": "motionStatus", "type": "enum"},
+                            "102":  {"name": "fadingTime", "type": "value", "action": true},
+                            "106":  {"name": "illuminance", "type": "value"},
+                            "121":  {"name": "battery", "type": "value"},
+                            "122":  {"name": "detectionMode", "type": "enum", "action": true},
+                            "109":  {"name": "motionSensitivity", "type": "value", "action": true}
+                          },
+                          "sensitivity": {"min": 0, "max": 10},
+                          "distanceMax": {"min": 0, "max": 10, "step": 0.1},
+                          "motionStatus": {"enum": ["none", "large", "medium", "small"]},
+                          "fadingTime": {"min": 0, "max": 28800, "step": 10},
+                          "detectionMode": {"enum": ["pir", "both", "radar"]},
+                          "motionSensitivity": {"min": 0, "max": 10}
+                        }
+    }
+  ],
+
   "Legrand":
   [
     {
