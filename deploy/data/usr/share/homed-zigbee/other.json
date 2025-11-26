@@ -88,7 +88,7 @@
                             "106":  {"name": "illuminance", "type": "value"},
                             "121":  {"name": "battery", "type": "value"},
                             "122":  {"name": "detectionMode", "type": "enum", "action": true},
-                            "109":  {"name": "motionSensitivity", "type": "value", "action": true}
+                            "123":  {"name": "motionSensitivity", "type": "value", "action": true}
                           },
                           "sensitivity": {"min": 0, "max": 10},
                           "distanceMax": {"min": 0, "max": 10, "step": 0.1},
