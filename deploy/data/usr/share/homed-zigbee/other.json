@@ -97,6 +97,14 @@
                           "detectionMode": {"enum": ["pir", "both", "radar"]},
                           "motionSensitivity": {"min": 0, "max": 10}
                         }
+    },
+    {
+      "description":    "HOBEIAN Water Leak Sensor ZG-222Z",
+      "modelNames":     ["ZG-222Z"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
     }
   ],
 
