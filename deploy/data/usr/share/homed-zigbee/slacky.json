@@ -36,7 +36,7 @@
                           {
                             "brightness":         {"type": "value", "clusterId": 8,    "attributeId": 0,     "dataType": 32,  "action": true},
                             "lifeTime":           {"type": "value", "clusterId": 10,   "attributeId": 0,     "dataType": 226, "binding": true, "reporting": {"minInterval": 60, "maxInterval": 3600}},
-                            "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57,  "binding": true, "reporting": {"minInterval": 10, "maxInterval": 3600, "valueChange": 30}},
+                            "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57,  "binding": true, "reporting": {"minInterval": 10, "maxInterval": 3600, "valueChange": 10}},
                             "vocRelay":           {"type": "bool",  "clusterId": 12,   "attributeId": 61445, "dataType": 16,  "action": true},
                             "vocLow":             {"type": "value", "clusterId": 12,   "attributeId": 61446, "dataType": 33,  "action": true},
                             "vocHigh":            {"type": "value", "clusterId": 12,   "attributeId": 61447, "dataType": 33,  "action": true},

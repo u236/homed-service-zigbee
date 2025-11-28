@@ -8,7 +8,7 @@
       "bindings":       ["temperature", "power"],
       "reportings":     ["temperature", "voltage", "current", "power"],
       "exposes":        ["temperature", "voltage", "current", "power"],
-      "options":        {"reporting": {"minInterval": 0, "maxInterval": 30, "valueChange": 1}, "acVoltageDivider": 10, "acCurrentDivider": 100},
+      "options":        {"reporting": {"minInterval": 0, "maxInterval": 30}, "acVoltageDivider": 10, "acCurrentDivider": 100},
       "endpointId":     1
     },
     {
@@ -49,7 +49,7 @@
                             "current_3":  {"type": "value", "clusterId": 2820, "attributeId": 2568, "dataType": 33, "reporting": true, "divider": 1000},
                             "power_3":    {"type": "value", "clusterId": 2820, "attributeId": 2571, "dataType": 33, "reporting": true}
                           },
-                          "reporting": {"minInterval": 0, "maxInterval": 30, "valueChange": 1}
+                          "reporting": {"minInterval": 0, "maxInterval": 30}
                         },
       "endpointId":     1
     },

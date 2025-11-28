@@ -582,7 +582,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         if (option.contains("reporting"))
         {
             QMap <QString, QVariant> reporting = option.value("reporting").toMap();
-            endpoint->reportings().append(Reporting(new ReportingObject(it.key(), clusterId, attributeId, option.value("dataType").toInt(), reporting.value("minInterval", 0).toInt(), reporting.value("maxInterval", 3600).toInt(), reporting.value("valueChange", 0).toInt())));
+            endpoint->reportings().append(Reporting(new ReportingObject(it.key(), clusterId, attributeId, option.value("dataType").toInt(), reporting.value("minInterval", 0).toInt(), reporting.value("maxInterval", 3600).toInt(), reporting.value("valueChange", 1).toInt())));
         }
     }
 
