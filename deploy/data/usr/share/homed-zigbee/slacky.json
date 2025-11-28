@@ -148,6 +148,79 @@
       "reportings":     ["co2"],
       "exposes":        ["co2"],
       "options":        {"reporting": {"maxInterval": 300}}
+    },
+    {
+      "description":    "Tuya TS0001 1-Channel Switch With Slacky Firmware",
+      "modelNames":     ["TS0001_power-SlD"],
+      "properties":     ["status", "statusAction", "powerOnStatus", "switchMode", "energy", "voltage", "current", "power", "frequency"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["energy", "voltage", "current", "power", "frequency"],
+      "exposes":        ["switch", "action", "powerOnStatus", "operationMode", "switchType", "switchMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "switchType":       {"type": "enum",  "clusterId": 7,    "attributeId": 61440, "dataType": 48, "action": true},
+                            "operationMode":    {"type": "enum",  "clusterId": 7,    "attributeId": 61441, "dataType": 48, "action": true},
+                            "action":           {"type": "enum",  "clusterId": 18,   "attributeId": 85,    "dataType": 33, "binding": true},
+                            "voltageMax":       {"type": "value", "clusterId": 2820, "attributeId": 2055,  "dataType": 41, "divider": 100, "action": true},
+                            "voltageMin":       {"type": "value", "clusterId": 2820, "attributeId": 2056,  "dataType": 41, "divider": 100, "action": true},
+                            "currentMax":       {"type": "value", "clusterId": 2820, "attributeId": 61442, "dataType": 33, "divider": 100, "action": true},
+                            "powerMax":         {"type": "value", "clusterId": 2820, "attributeId": 61443, "dataType": 41, "action": true},
+                            "reloadTime":       {"type": "value", "clusterId": 2820, "attributeId": 61444, "dataType": 33, "action": true},
+                            "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
+                            "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
+                          },
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "multifunction"}},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "5": "quintupleClick", "255": "release"}},
+                          "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
+                          "voltageMin": {"type": "number", "min": 0, "max": 300, "unit": "V"},
+                          "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
+                          "powerMax":   {"type": "number", "min": 0, "max": 3600, "unit": "W"},
+                          "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
+                          "protection": {"type": "toggle"},
+                          "automaticRestart": {"type": "toggle"},
+                          "switchMode": {"enum": ["off", "on"]},
+                          "energyDivider": 100,
+                          "acVoltageDivider": 100,
+                          "acCurrentDivider": 100,
+                          "frequencyDivider": 100
+                        }
+    },
+    {
+      "description":    "Tuya TS011F Plug With Slacky Firmware",
+      "modelNames":     ["TS011F-SlD"],
+      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power", "frequency"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["energy", "voltage", "current", "power", "frequency"],
+      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "childLock":        {"type": "bool",  "clusterId": 6,    "attributeId": 61440, "dataType": 16, "action": true},
+                            "indicatorMode":    {"type": "enum",  "clusterId": 6,    "attributeId": 61441, "dataType": 48, "action": true},
+                            "voltageMax":       {"type": "value", "clusterId": 2820, "attributeId": 2055,  "dataType": 41, "divider": 100, "action": true},
+                            "voltageMin":       {"type": "value", "clusterId": 2820, "attributeId": 2056,  "dataType": 41, "divider": 100, "action": true},
+                            "currentMax":       {"type": "value", "clusterId": 2820, "attributeId": 61442, "dataType": 33, "divider": 100, "action": true},
+                            "powerMax":         {"type": "value", "clusterId": 2820, "attributeId": 61443, "dataType": 41, "action": true},
+                            "reloadTime":       {"type": "value", "clusterId": 2820, "attributeId": 61444, "dataType": 33, "action": true},
+                            "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
+                            "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
+                          },
+                          "indicatorMode": {"type": "select", "enum": ["off", "on", "default"]},
+                          "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
+                          "voltageMin": {"type": "number", "min": 0, "max": 300, "unit": "V"},
+                          "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
+                          "powerMax":   {"type": "number", "min": 0, "max": 3600, "unit": "W"},
+                          "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
+                          "protection": {"type": "toggle"},
+                          "automaticRestart": {"type": "toggle"},
+                          "energyDivider": 100,
+                          "acVoltageDivider": 100,
+                          "acCurrentDivider": 100,
+                          "frequencyDivider": 100
+                        }
     }
   ]
 }

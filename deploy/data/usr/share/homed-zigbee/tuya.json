@@ -1525,6 +1525,31 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type J)",
+      "modelNames":     ["_TZE200_gkfbdvyx", "_TZE200_ya4ft0w4", "_TZE204_gkfbdvyx", "_TZE204_ya4ft0w4"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "motionSensitivity", "distanceMin", "distanceMax", "fadingTime"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "2":    {"name": "motionSensitivity", "type": "value", "action": true},
+                            "3":    {"name": "distanceMin", "type": "value", "divider": 100, "action": true},
+                            "4":    {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "9":    {"name": "targetDistance", "type": "value", "divider": 10},
+                            "102":  {"name": "sensitivity", "type": "value", "action": true},
+                            "103":  {"name": "illuminance", "type": "value"},
+                            "105":  {"name": "fadingTime", "type": "value", "action": true}
+                          },
+                          "motionSensitivity": {"min": 1, "max": 10},
+                          "distanceMin": {"min": 0, "max": 6, "step": 0.5},
+                          "distanceMax": {"min": 0.5, "max": 9, "step": 0.5},
+                          "sensitivity": {"min": 1, "max": 10},
+                          "fadingTime": {"min": 1, "max": 15000}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Human Presence Sensor with PIR",
       "modelNames":     ["_TZE200_2aaelwxk", "_TZE200_kb5noeto", "_TZE200_tyffvoij"],
       "properties":     ["tuyaDataPoints"],
