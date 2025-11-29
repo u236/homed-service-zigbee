@@ -2134,6 +2134,35 @@
                         }
     },
     {
+      "description":    "TUYA TS0001 Relay with Temperature Sensor",
+      "modelNames":     ["_TZE21C_dohbhb5k"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch", "temperature", "automaticMode", "operationMode", "targetTemperature", "hysteresis", "temperatureOffset", "delayMode", "delay"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    {"name": "status", "type": "bool", "action": true},
+                            "8":    {"name": "operationMode", "type": "enum", "action": true},
+                            "9":    {"name": "automaticMode", "type": "bool", "action": true},
+                            "22":   {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "27":   {"name": "temperature", "type": "value", "divider": 10},
+                            "29":   {"name": "hysteresis", "type": "value", "divider": 10, "action": true},
+                            "30":   {"name": "temperatureOffset", "type": "value", "divider": 2, "action": true},
+                            "37":   {"name": "delayTime", "type": "value", "action": true},
+                            "38":   {"name": "delayMode", "type": "bool", "action": true}
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "operationMode": {"enum": ["heat", "cool"]},
+                          "automaticMode": {"type": "toggle"},
+                          "targetTemperature": {"min": -100, "max": 100, "step": 0.5},
+                          "hysteresis": {"min": 1, "max": 10, "step": 0.1},
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.5},
+                          "delay": {"min": 0, "max": 10, "unit": "min"},
+                          "delayMode": {"type": "toggle"}
+                        }
+    },
+    {
       "description":    "TUYA TS0001 1-Channel USB Switch",
       "modelNames":     ["_TZ3000_8n7lqbm0"],
       "properties":     ["status", "tuyaPowerOnStatus"],
