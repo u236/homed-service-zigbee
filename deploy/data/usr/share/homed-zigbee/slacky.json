@@ -2,7 +2,7 @@
   "Slacky-DIY":
   [
     {
-      "description":    "TUYA TS0601 Electric Thermostat With Slacky Firmware",
+      "description":    "TUYA TS0601 Electric Thermostat with Slacky Firmware",
       "modelNames":     ["Tuya_Thermostat_r01"],
       "properties":     ["thermostat", "childLock"],
       "actions":        ["thermostat", "childLock"],
@@ -141,7 +141,7 @@
       "endpointId":     [1, 2]
     },
     {
-      "description":    "TS0601 NDIR CO2 Sensor With Slacky Firmware",
+      "description":    "TS0601 NDIR CO2 Sensor with Slacky Firmware",
       "modelNames":     ["Tuya_CO2Sensor_r01"],
       "properties":     ["co2"],
       "bindings":       ["co2"],
@@ -150,7 +150,7 @@
       "options":        {"reporting": {"maxInterval": 300}}
     },
     {
-      "description":    "Tuya TS0001 1-Channel Switch With Slacky Firmware",
+      "description":    "Tuya TS0001 1-Channel Switch with Slacky Firmware",
       "modelNames":     ["TS0001_power-SlD"],
       "properties":     ["status", "statusAction", "powerOnStatus", "switchMode", "energy", "voltage", "current", "power", "frequency"],
       "actions":        ["status", "powerOnStatus"],
@@ -188,7 +188,7 @@
                         }
     },
     {
-      "description":    "Tuya TS011F Plug With Slacky Firmware",
+      "description":    "Tuya TS011F Plug with Slacky Firmware",
       "modelNames":     ["TS011F-SlD"],
       "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power", "frequency"],
       "actions":        ["status", "powerOnStatus"],

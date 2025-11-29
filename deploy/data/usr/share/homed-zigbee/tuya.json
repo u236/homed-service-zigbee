@@ -2112,7 +2112,7 @@
       "modelNames":     ["_TZ3210_dse8ogfy", "_TZ3210_j4pdtz9v"],
       "properties":     ["status", "tuyaDataPoints"],
       "actions":        ["status", "tuyaDataPoints"],
-      "exposes":        ["battery", "status", "operationMode", "reverse", "touchControl", "lowerLimit", "upperLimit", "delay"],
+      "exposes":        ["battery", "switch", "operationMode", "reverse", "touchControl", "lowerLimit", "upperLimit", "delay"],
       "options":        {
                           "tuyaDataPoints":
                           {
