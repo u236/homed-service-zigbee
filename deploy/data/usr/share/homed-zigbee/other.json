@@ -424,6 +424,16 @@
     }
   ],
 
+  "Zbeacon":
+  [
+    {
+      "description":    "TUYA TS0201 Temperature and Humidity Sensor (Type C)",
+      "modelNames":     ["TS0201"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity"]
+    }
+  ],
+
   "easyiot":
   [
     {
