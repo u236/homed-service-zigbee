@@ -11,22 +11,13 @@ namespace PropertiesLUMI
 
     public:
 
-        Data(const quint16 cluster = CLUSTER_LUMI) : PropertyObject("lumiData", cluster) {}
+        Data(void) : PropertyObject("lumiData", {CLUSTER_BASIC, CLUSTER_LUMI}) {}
         void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void resetValue(void) override;
 
     private:
 
         void parseData(quint16 dataPoint, const QByteArray &data, QMap <QString, QVariant> &map);
-
-    };
-
-    class Basic : public Data
-    {
-
-    public:
-
-        Basic(void) : Data(CLUSTER_BASIC) {}
 
     };
 

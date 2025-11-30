@@ -100,8 +100,8 @@
     },
     {
       "modelNames":     ["lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1"],
-      "properties":     ["status", "lumiBasic", "lumiButtonMode", "lumiPower"],
-      "actions":        ["status", "lumiBasic", "lumiButtonMode"],
+      "properties":     ["status", "lumiData", "lumiButtonMode", "lumiPower"],
+      "actions":        ["status", "lumiButtonMode"],
       "endpointId":     1
     },
     {
@@ -334,7 +334,7 @@
     {
       "description":    "Aqara 2-Channel Relay LLKZMK11LM",
       "modelNames":     ["lumi.relay.c2acn01"],
-      "properties":     ["lumiBasic", "lumiPower"],
+      "properties":     ["lumiData", "lumiPower"],
       "actions":        ["lumiBasicStatusMemory"],
       "exposes":        ["energy", "voltage", "current", "power", "temperature", "interlock", "statusMemory"],
       "options":        {
@@ -353,7 +353,7 @@
     {
       "description":    "Xiaomi 10A Smart Plug ZNCZ02LM or ZNCZ03LM",
       "modelNames":     ["lumi.plug", "lumi.plug.mitw01"],
-      "properties":     ["status", "lumiBasic", "lumiPower"],
+      "properties":     ["status", "lumiData", "lumiPower"],
       "actions":        ["status", "lumiBasicStatusMemory"],
       "bindings":       ["status"],
       "reportings":     ["status"],
@@ -406,7 +406,7 @@
     {
       "description":    "Aqara Dimmable Bulb with Changable Color Temperature ZNLDP12LM",
       "modelNames":     ["lumi.light.aqcn02"],
-      "properties":     ["status", "level", "colorTemperature", "lumiBasic"],
+      "properties":     ["status", "level", "colorTemperature", "lumiData"],
       "actions":        ["status", "level", "colorTemperature", "lumiLightStatusMemory"],
       "exposes":        ["light", "statusMemory"],
       "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}}
@@ -509,7 +509,7 @@
     {
       "description":    "Xiaomi Smoke Detector JTYJ-GD-01LM/BW",
       "modelNames":     ["lumi.sensor_smoke"],
-      "properties":     ["lumiBasic", "iasSmoke"],
+      "properties":     ["iasSmoke", "lumiData"],
       "exposes":        ["battery", "smoke", "temperature"],
       "options":        {"temperature": {"diagnostic": true}}
     },
@@ -523,33 +523,33 @@
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ01LM",
       "modelNames":     ["lumi.sensor_magnet"],
-      "properties":     ["lumiBasic", "lumiContact"],
+      "properties":     ["lumiContact", "lumiData"],
       "exposes":        ["battery", "contact"]
     },
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ11LM",
       "modelNames":     ["lumi.sensor_magnet.aq2"],
-      "properties":     ["lumiBasic", "lumiContact"],
+      "properties":     ["lumiContact", "lumiData"],
       "exposes":        ["battery", "contact", "temperature"],
       "options":        {"temperature": {"diagnostic": true}}
     },
     {
       "description":    "Xiaomi Door and Window Sensor MCCGQ12LM",
       "modelNames":     ["lumi.magnet.agl02"],
-      "properties":     ["lumiBasic", "iasContact"],
+      "properties":     ["iasContact", "lumiData"],
       "exposes":        ["battery", "contact"]
     },
     {
       "description":    "Xiaomi Motion Sensor RTCGQ01LM",
       "modelNames":     ["lumi.sensor_motion"],
-      "properties":     ["occupancy", "lumiBasic"],
+      "properties":     ["occupancy", "lumiData"],
       "exposes":        ["battery", "occupancy"],
       "options":        {"occupancyResetTimeout": 60}
     },
     {
       "description":    "Xiaomi Motion and Illuminance Sensor RTCGQ11LM",
       "modelNames":     ["lumi.sensor_motion.aq2"],
-      "properties":     ["occupancy", "illuminance", "lumiBasic"],
+      "properties":     ["occupancy", "illuminance", "lumiData"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
       "options":        {"occupancyResetTimeout": 60, "illuminance": {"raw": true}, "temperature": {"diagnostic": true}}
     },
@@ -571,7 +571,7 @@
     {
       "description":    "Aqara Vibration Sensor DJT11LM",
       "modelNames":     ["lumi.vibration.aq1"],
-      "properties":     ["lumiBasic", "lumiVibration"],
+      "properties":     ["lumiData", "lumiVibration"],
       "actions":        ["lumiVibrationSensitivity"],
       "exposes":        ["battery", "vibration", "event", "xAngle", "yAngle", "zAngle", "temperature", "sensitivityMode"],
       "options":        {
@@ -586,20 +586,20 @@
     {
       "description":    "Aqara Water Leak Sensor SJCGQ11LM or SJCGQ12LM",
       "modelNames":     ["lumi.flood.agl02", "lumi.sensor_wleak.aq1"],
-      "properties":     ["iasWaterLeak", "lumiBasic"],
+      "properties":     ["iasWaterLeak", "lumiData"],
       "exposes":        ["battery", "waterLeak", "batteryLow", "temperature"],
       "options":        {"temperature": {"diagnostic": true}}
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
       "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
-      "properties":     ["temperature", "humidity", "lumiBasic"],
+      "properties":     ["temperature", "humidity", "lumiData"],
       "exposes":        ["battery", "temperature", "humidity"]
     },
     {
       "description":    "Aqara Temperature, Humidity and Pressure Sensor WSDCGQ11LM",
       "modelNames":     ["lumi.weather"],
-      "properties":     ["temperature", "humidity", "pressure", "lumiBasic"],
+      "properties":     ["temperature", "humidity", "pressure", "lumiData"],
       "exposes":        ["battery", "temperature", "humidity", "pressure"]
     },
     {
@@ -646,28 +646,28 @@
     {
       "description":    "Xiaomi Wireless Button WXKG01LM",
       "modelNames":     ["lumi.sensor_switch"],
-      "properties":     ["lumiBasic", "lumiButtonAction"],
+      "properties":     ["lumiData", "lumiButtonAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "quadrupleClick", "multipleClick", "hold", "release"]}, "actionResetTimeout": 1.5}
     },
     {
       "description":    "Aqara Wireless Button WXKG11LM",
       "modelNames":     ["lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
-      "properties":     ["lumiBasic", "lumiSwitchAction"],
+      "properties":     ["lumiData", "lumiSwitchAction"],
       "exposes":        ["battery", "action", "temperature"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "release"]}, "temperature": {"diagnostic": true}}
     },
     {
       "description":    "Aqara Wireless Button WXKG12LM",
       "modelNames":     ["lumi.sensor_swit", "lumi.sensor_switch.aq3"],
-      "properties":     ["lumiBasic", "lumiSwitchAction"],
+      "properties":     ["lumiData", "lumiSwitchAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "release", "shake"]}}
     },
     {
       "description":    "Aqara Wireless Button WXKG13LM",
       "modelNames":     ["lumi.remote.b1acn02"],
-      "properties":     ["lumiBasic", "lumiSwitchAction"],
+      "properties":     ["lumiData", "lumiSwitchAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "tripleClick", "hold", "release"]}}
     },
@@ -722,14 +722,14 @@
     {
       "description":    "Aqara D1 1-Key Wireless Switch WXKG03LM or WXKG06LM",
       "modelNames":     ["lumi.remote.b186acn01", "lumi.remote.b186acn02"],
-      "properties":     ["lumiBasic", "lumiSwitchAction"],
+      "properties":     ["lumiData", "lumiSwitchAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
     },
     {
       "description":    "Aqara D1 1-Key Wireless Switch WXKG03LM (2016)",
       "modelNames":     ["lumi.sensor_86sw1"],
-      "properties":     ["lumiBasic", "lumiButtonAction"],
+      "properties":     ["lumiData", "lumiButtonAction"],
       "exposes":        ["battery", "action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
     },
@@ -740,7 +740,7 @@
     },
     {
       "modelNames":     ["lumi.sensor_86sw2", "lumi.sensor_86sw2.es1"],
-      "properties":     ["lumiBasic"],
+      "properties":     ["lumiData"],
       "exposes":        ["battery"],
       "endpointId":     1
     },
@@ -758,7 +758,7 @@
     },
     {
       "modelNames":     ["lumi.remote.b286acn01", "lumi.remote.b286acn02"],
-      "properties":     ["lumiBasic"],
+      "properties":     ["lumiData"],
       "exposes":        ["battery"],
       "endpointId":     1
     },
@@ -805,7 +805,7 @@
     {
       "description":    "Aqara Cube Smart Home Controller MFKZQ01LM",
       "modelNames":     ["lumi.sensor_cube", "lumi.sensor_cube.aqgl01"],
-      "properties":     ["lumiBasic"],
+      "properties":     ["lumiData"],
       "exposes":        ["battery", "action", "temperature"],
       "options":        {"action": {"enum": ["shake", "wake", "fall", "tap", "slide", "flip", "drop", "rotateLeft", "rotateRight"]}, "temperature": {"diagnostic": true}},
       "endpointId":     1
