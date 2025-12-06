@@ -71,11 +71,10 @@
     {
       "description":    "Temperature and Humidity Sensor",
       "modelNames":     ["TS0201-z-SlD"],
-      "properties":     ["batteryPercentage", "temperature", "humidity", "switchMode"],
-      "actions":        ["switchMode"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity", "readInterval", "temperatureOffset", "humidityOffset", "temperatureRelay", "temperatureLow", "temperatureHigh", "humidityRelay", "humidityLow", "humidityHigh", "switchMode"],
+      "exposes":        ["battery", "temperature", "humidity", "readInterval", "temperatureOffset", "humidityOffset", "temperatureRelay", "temperatureLow", "temperatureHigh", "humidityRelay", "humidityLow", "humidityHigh"],
       "options":        {
                           "customAttributes":
                           {
@@ -95,9 +94,25 @@
                           "temperatureHigh": {"min": -40, "max": 124, "step": 0.1},
                           "humidityOffset": {"min": -10, "max": 10},
                           "humidityLow": {"min": 0, "max": 100},
-                          "humidityHigh": {"min": 0, "max": 100},
-                          "switchMode": {"enum": ["off", "on"]}
-                        }
+                          "humidityHigh": {"min": 0, "max": 100}
+                        },
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0201-z-SlD"],
+      "properties":     ["switchMode"],
+      "actions":        ["switchMode"],
+      "exposes":        ["switchMode"],
+      "options":        {"switchMode": {"enum": ["heat", "cool"]}},
+      "endpointId":     [1]
+    },
+    {
+      "modelNames":     ["TS0201-z-SlD"],
+      "properties":     ["switchMode"],
+      "actions":        ["switchMode"],
+      "exposes":        ["switchMode"],
+      "options":        {"switchMode": {"enum": ["wet", "dry"]}},
+      "endpointId":     [2]
     },
     {
       "description":    "DIY Water Meter",
