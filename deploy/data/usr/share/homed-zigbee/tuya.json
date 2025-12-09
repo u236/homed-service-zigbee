@@ -2494,7 +2494,6 @@
       "exposes":        ["switch"],
       "endpointId":     [1, 2]
     },
-
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
       "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
