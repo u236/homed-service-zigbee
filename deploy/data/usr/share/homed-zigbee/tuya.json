@@ -1748,6 +1748,23 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type G)",
+      "modelNames":     ["_TZE284_hodyryli"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["batteryStatus", "temperature_1", "temperature_2", "humidity"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "temperature_1", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value"},
+                            "3":    {"name": "batteryStatus", "type": "enum"},
+                            "38":   {"name": "temperature_2", "type": "value", "divider": 10}
+                          },
+                          "batteryStatus": {"enum": ["low", "medium", "high"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Soil Moisture Sensor",
       "modelNames":     ["_TZE284_aao3yzhs", "_TZE284_g2e6cpnw", "_TZE284_nhgdf6qr"],
       "properties":     ["tuyaDataPoints"],
