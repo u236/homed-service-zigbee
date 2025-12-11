@@ -566,7 +566,7 @@
       "properties":     ["lumiData"],
       "actions":        ["lumiPresenceSensor"],
       "exposes":        ["occupancy", "event", "temperature", "sensitivityMode", "distanceMode", "detectionMode", "resetPresence"],
-      "options":        {"event": {"enum": ["enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"]}, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}}}
+      "options":        {"event": {"enum": ["enter", "leave", "enterLeft", "leaveRight", "enterRight", "leaveLeft", "approach", "absent"]}, "temperature": {"diagnostic": true}, "sensitivityMode": {"enum": {"1": "low", "2": "medium", "3": "high"}}, "powerSource": 1}
     },
     {
       "description":    "Aqara Vibration Sensor DJT11LM",

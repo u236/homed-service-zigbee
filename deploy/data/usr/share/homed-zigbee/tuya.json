@@ -2422,7 +2422,7 @@
     },
     {
       "description":    "TUYA TS0001 or TS000F 1-Channel Relay with Power Monitoring",
-      "modelNames":     ["_TZ3000_g92baclx", "_TZ3000_hzlsaltw", "_TZ3000_ikuxinvo", "_TZ3000_kqvb5akv", "_TZ3000_mkhkxx1p", "_TZ3000_qaabwu5c", "_TZ3000_qlai3277", "_TZ3000_qnejhcsu", "_TZ3000_tgddllx4", "_TZ3000_x3ewpzyr", "_TZ3000_xkap8wtb"],
+      "modelNames":     ["_TZ3000_0ghwhypc", "_TZ3000_1adss9de", "_TZ3000_g92baclx", "_TZ3000_hzlsaltw", "_TZ3000_ikuxinvo", "_TZ3000_jsfzkftc", "_TZ3000_kqvb5akv", "_TZ3000_mkhkxx1p", "_TZ3000_q8r0bbvy", "_TZ3000_qaabwu5c", "_TZ3000_qlai3277", "_TZ3000_qnejhcsu", "_TZ3000_qorepo2x", "_TZ3000_tgddllx4", "_TZ3000_x3ewpzyr", "_TZ3000_x8mbwtsz", "_TZ3000_xkap8wtb"],
       "properties":     ["status", "energy", "voltage", "current", "power", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["status", "tuyaSwitchType", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
