@@ -70,12 +70,21 @@
       "exposes":        ["battery", "temperature", "humidity"]
     },
     {
-      "description":    "Sonoff Door and Window Sensor SNZB-04 or SNZB-04P",
-      "modelNames":     ["DS01", "SNZB-04", "SNZB-04P"],
+      "description":    "Sonoff Door and Window Sensor SNZB-04",
+      "modelNames":     ["DS01", "SNZB-04"],
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "contact", "batteryLow", "tamper"]
+    },
+    {
+      "description":    "Sonoff Door and Window Sensor SNZB-04P",
+      "modelNames":     ["SNZB-04P"],
+      "properties":     ["batteryPercentage", "iasContact"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "contact", "batteryLow", "tamper"],
+      "options":        {"customAttributes": {"tamper": {"type": "bool", "clusterId": 64529, "attributeId": 8192, "dataType": 32}}}
     },
     {
       "description":    "Sonoff Motion Sensor SNZB-03",
