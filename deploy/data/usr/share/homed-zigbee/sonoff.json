@@ -223,6 +223,16 @@
                         }
     },
     {
+      "description":    "Sonoff Cover Relay/Switch MINI-ZBRBS",
+      "modelNames":     ["MINI-ZBRBS"],
+      "properties":     ["coverPosition"],
+      "actions":        ["coverStatus", "coverPosition"],
+      "bindings":       ["cover"],
+      "reportings":     ["coverPosition"],
+      "exposes":        ["cover", "switchType"],
+      "options":        {"customAttributes": {"switchType": {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true}}, "switchType": {"enum": ["toggle", "momentary"]}}
+    },
+    {
       "description":    "Sonoff 16A Smart Plug S26R2ZB",
       "modelNames":     ["S26R2ZB"],
       "properties":     ["status"],
