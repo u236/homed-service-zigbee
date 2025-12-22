@@ -231,6 +231,16 @@
       "options":        {"switch": "outlet"}
     },
     {
+      "description":    "Sonoff 16A Smart Plug S60ZBTPF",
+      "modelNames":     ["S60ZBTPF"],
+      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "options":        {"switch": "outlet", "energyDivider": 1000, "acVoltageDivider": 100, "acCurrentDivider": 100}
+    },
+    {
       "description":    "Sonoff USB Plug ZBMicro",
       "modelNames":     ["ZBMicro"],
       "properties":     ["status", "powerOnStatus"],
