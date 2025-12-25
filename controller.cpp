@@ -344,14 +344,33 @@ void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)
                 continue;
 
             if (property->value().type() != QVariant::Map)
+            {
                 map.insert(property->name(), property->value());
+
+                if (!list.contains(property->name().split('_').value(0)))
+                    continue;
+
+                property->clearValue();
+            }
             else
-                map.insert(property->value().toMap());
+            {
+                QMap <QString, QVariant> data = property->value().toMap();
 
-            if (!list.contains(property->name()))
-                continue;
+                map.insert(data);
 
-            property->clearValue();
+                for (auto it = data.begin(); it != data.end(); NULL)
+                {
+                    if (list.contains(it.key().split('_').value(0)))
+                    {
+                        it = data.erase(it);
+                        continue;
+                    }
+
+                    it++;
+                }
+
+                property->setValue(data);
+            }
         }
 
         it.value()->setUpdated(false);
