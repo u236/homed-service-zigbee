@@ -369,11 +369,24 @@ void PropertiesTUYA::ButtonAction::parseCommand(quint16, quint8 commandId, const
 
         case 0xFD:
 
-            switch (static_cast <quint8> (payload.at(0)))
+            if (manufacturerName() == "_TZ3000_etufnltx")
             {
-                case 0x00: m_value = "singleClick"; break;
-                case 0x01: m_value = "doubleClick"; break;
-                case 0x02: m_value = "hold"; break;
+                switch (static_cast <quint8> (payload.at(2)))
+                {
+                    case 0x01: m_value = "rightClick"; break;
+                    case 0x02: m_value = "downClick"; break;
+                    case 0x03: m_value = "leftClick"; break;
+                    case 0x04: m_value = "upClick"; break;
+                }
+            }
+            else
+            {
+                switch (static_cast <quint8> (payload.at(0)))
+                {
+                    case 0x00: m_value = "singleClick"; break;
+                    case 0x01: m_value = "doubleClick"; break;
+                    case 0x02: m_value = "hold"; break;
+                }
             }
 
             break;

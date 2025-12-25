@@ -2865,6 +2865,14 @@
       "options":        {"operationMode": {"enum": ["command", "event"]}}
     },
     {
+      "description":    "TUYA TS1002 Wireless Dimmer",
+      "modelNames":     ["_TZ3000_etufnltx"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaButtonAction"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"]
+    },
+    {
       "modelNames":     ["_TZ3000_g9g2xnch", "_TZ3000_pcqjmcud"],
       "properties":     ["tuyaButtonAction"],
       "bindings":       ["status"],
@@ -2904,7 +2912,7 @@
       "actions":        ["tuyaIRCode", "tuyaIRLearn"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["irCode", "battery"]
+      "exposes":        ["battery", "irCode"]
     },
     {
       "description":    "MIBOXER FUT089Z 8-Group Remote Control",
