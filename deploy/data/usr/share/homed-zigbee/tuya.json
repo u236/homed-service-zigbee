@@ -331,7 +331,8 @@
                           },
                           "status": {"enum": ["off", "on"]},
                           "level": {"min": 0, "max": 255},
-                          "switchType": {"enum": ["toggle", "static", "momentary"]},
+                          "switchType_1": {"enum": ["toggle", "static", "momentary"]},
+                          "switchType_2": {"enum": ["toggle", "static", "momentary"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "light": ["level"]
                         }
@@ -2145,7 +2146,6 @@
                           "operationMode": {"enum": ["click", "switch"]},
                           "lowerLimit": {"min": 50, "max": 100},
                           "delay": {"min": 0, "max": 10},
-                          "reverse": {"enum": [false, true]},
                           "upperLimit": {"min": 0, "max": 50},
                           "tuyaCustomCommand": true
                         }
@@ -2865,14 +2865,6 @@
       "options":        {"operationMode": {"enum": ["command", "event"]}}
     },
     {
-      "description":    "TUYA TS1002 Wireless Dimmer",
-      "modelNames":     ["_TZ3000_etufnltx"],
-      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaButtonAction"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "action"]
-    },
-    {
       "modelNames":     ["_TZ3000_g9g2xnch", "_TZ3000_pcqjmcud"],
       "properties":     ["tuyaButtonAction"],
       "bindings":       ["status"],
@@ -2946,6 +2938,40 @@
       "bindings":       ["status"],
       "exposes":        ["switch"],
       "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "FORIA Scene switch F00MB00-04-1",
+      "modelNames":     ["_TZE200_mfamvsdb"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["action_1", "action_2", "action_3", "action_4", "backlight", "approach", "vibration"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "action_1", "type": "enum"},
+                            "2":    {"name": "action_2", "type": "enum"},
+                            "3":    {"name": "action_3", "type": "enum"},
+                            "4":    {"name": "action_4", "type": "enum"},
+                            "105":  {"name": "backlight", "type": "enum", "action": true},
+                            "107":  {"name": "approach", "type": "enum", "action": true},
+                            "108":  {"name": "vibration", "type": "enum", "action": true}
+                          },
+                          "action_1": {"enum": ["singleClick"]},
+                          "action_2": {"enum": ["singleClick"]},
+                          "action_3": {"enum": ["singleClick"]},
+                          "action_4": {"enum": ["singleClick"]},
+                          "approach": {"type": "toggle"},
+                          "vibration": {"type": "toggle"},
+                          "checkTransactionId": true
+                        }
+    },
+    {
+      "description":    "FORIA Wireless Dimmer F00XN00-04-1",
+      "modelNames":     ["_TZ3000_etufnltx"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaButtonAction"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action"]
     }
   ]
 }

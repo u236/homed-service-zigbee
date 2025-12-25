@@ -115,7 +115,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         case 1: // bool
         {
             bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
-            QString value = option(name).toMap().value("enum").toStringList().value(check ? 1 : 0);
+            QString value = options.value("enum").toStringList().value(check ? 1 : 0);
 
             if (value.isEmpty())
                 map.insert(name, check);
@@ -149,6 +149,12 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
                 if (!value.isEmpty())
                     map.insert(name, value);
 
+                break;
+            }
+
+            if (options.value("type").toString() == "toggle")
+            {
+                map.insert(name, data.toInt() ? true : false);
                 break;
             }
 
