@@ -128,6 +128,17 @@ namespace PropertiesTUYA
 
     };
 
+    class ButtonScene : public PropertyObject
+    {
+
+    public:
+
+        ButtonScene(void) : PropertyObject("scene", CLUSTER_ON_OFF) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
+
+
     class IRCode : public PropertyObject
     {
 

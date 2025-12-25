@@ -365,28 +365,23 @@ void PropertiesTUYA::ButtonAction::parseCommand(quint16, quint8 commandId, const
 
         case 0xFD:
 
-            if (manufacturerName() == "_TZ3000_etufnltx")
+            switch (static_cast <quint8> (payload.at(0)))
             {
-                switch (static_cast <quint8> (payload.at(2)))
-                {
-                    case 0x01: m_value = "rightClick"; break;
-                    case 0x02: m_value = "downClick"; break;
-                    case 0x03: m_value = "leftClick"; break;
-                    case 0x04: m_value = "upClick"; break;
-                }
-            }
-            else
-            {
-                switch (static_cast <quint8> (payload.at(0)))
-                {
-                    case 0x00: m_value = "singleClick"; break;
-                    case 0x01: m_value = "doubleClick"; break;
-                    case 0x02: m_value = "hold"; break;
-                }
+                case 0x00: m_value = "singleClick"; break;
+                case 0x01: m_value = "doubleClick"; break;
+                case 0x02: m_value = "hold"; break;
             }
 
             break;
     }
+}
+
+void PropertiesTUYA::ButtonScene::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
+{
+    if (commandId != 0xFD)
+        return;
+
+    m_value = static_cast <quint8> (payload.at(2));
 }
 
 void PropertiesTUYA::IRCode::parseCommand(quint16, quint8 commandId, const QByteArray &payload)

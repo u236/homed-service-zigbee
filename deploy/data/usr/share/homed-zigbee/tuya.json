@@ -2872,6 +2872,14 @@
       "endpointId":     [1, 2, 3, 4]
     },
     {
+      "description":    "TUYA TS1002 Wireless Dimmer",
+      "modelNames":     ["_TZ3000_etufnltx", "_TZ3000_zwszqdpy"],
+      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaButtonScene"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action", "scene"]
+    },
+    {
       "description":    "TUYA TS004F 4-Button Wireless Switch",
       "modelNames":     ["_TZ3000_0ht8dnxj", "_TZ3000_11pg3ima", "_TZ3000_b3mgfu0d", "_TZ3000_czuyt8lz", "_TZ3000_et7afzxz", "_TZ3000_nuombroo", "_TZ3000_xabckq1v"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction", "tuyaOperationMode"],
@@ -2906,7 +2914,7 @@
       "exposes":        ["battery", "irCode"]
     },
     {
-      "description":    "MIBOXER FUT089Z 8-Group Remote Control",
+      "description":    "MIBOXER 8-Group Remote Control FUT089Z",
       "modelNames":     ["_TZ3000_xwh1e22x"],
       "properties":     ["batteryPercentage"],
       "exposes":        ["battery"]
@@ -2991,14 +2999,6 @@
                           },
                           "action": {"enum": ["singleClick"]}
                         }
-    },
-    {
-      "description":    "FORIA Wireless Dimmer F00XN00-04-1",
-      "modelNames":     ["_TZ3000_etufnltx"],
-      "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaButtonAction"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "action"]
     }
   ]
 }
