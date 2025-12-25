@@ -2,6 +2,7 @@
 #include <QtMath>
 #include "color.h"
 #include "common.h"
+#include "device.h"
 
 using namespace Properties;
 
@@ -38,6 +39,25 @@ void Properties::Status::parseAttribute(quint16, quint16 attributeId, const QByt
         return;
 
     m_value = data.at(0) ? "on" : "off";
+
+    if (!data.at(0))
+    {
+        EndpointObject *endpoint = static_cast <EndpointObject*> (m_parent);
+        QList <QVariant> list = option("resetOnPowerOff").toList();
+
+        if (list.isEmpty())
+            return;
+
+        for (int i = 0; i < endpoint->properties().count(); i++)
+        {
+            const Property &property = endpoint->properties().at(i);
+
+            if (!list.contains(property->name()))
+                continue;
+
+            property->setValue(0);
+        }
+    }
 }
 
 void Properties::Level::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
