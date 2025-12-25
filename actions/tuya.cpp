@@ -36,7 +36,7 @@ QByteArray ActionsTUYA::Request::makeRequest(quint8 transactionId, quint8 comman
 
 QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &data)
 {
-    QMap <QString, QVariant> map = option().toMap(), options = option(name).toMap();
+    QMap <QString, QVariant> map = option().toMap();
     QList <QString> typeList = {"bool", "value", "enum"};
     quint8 commandId = option("tuyaCustomCommand").toBool() ? 0x04 : 0x00;
 
@@ -51,7 +51,7 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
         {
             case 0: // bool
             {
-                QList <QString> actionList = option(name).toMap().value("enum").toStringList();
+                QList <QString> actionList = subOption("enum", name).toStringList();
                 qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
                 bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
@@ -64,7 +64,7 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
             case 1: // value
             {
                 bool hasMin, hasMax;
-                double number = data.toDouble(), min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax);
+                double number = data.toDouble(), min = subOption("min", name).toDouble(&hasMin), max = subOption("max", name).toDouble(&hasMax);
                 qint32 value;
 
                 if (hasMin && number < min)
@@ -79,12 +79,12 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
 
             case 2: // enum
             {
+                bool hasMin, hasMax;
+                double min = subOption("min", name).toDouble(&hasMin), max = subOption("max", name).toDouble(&hasMax);
                 qint8 value = -1;
 
-                if (options.contains("min") && options.contains("max"))
+                if (hasMin && hasMax)
                 {
-                    qint8 min = static_cast <qint8> (options.value("min").toInt()), max = static_cast <qint8> (options.value("max").toInt());
-
                     value = static_cast <qint8> (data.toInt());
 
                     if (value < min)
@@ -93,10 +93,10 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
                     if (value > max)
                         value = max;
                 }
-                else if (options.contains("enum"))
-                    value = static_cast <qint8> (options.value("enum").toStringList().indexOf(data.toString()));
-                else if (options.value("type").toString() == "toggle")
+                else if (subOption("type", name).toString() == "toggle")
                     value = data.toBool() ? 0x01 : 0x00;
+                else
+                    value = static_cast <qint8> (subOption("enum", name).toStringList().indexOf(data.toString()));
 
                 return value < 0 ? QByteArray() : makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_ENUM, &value);
             }

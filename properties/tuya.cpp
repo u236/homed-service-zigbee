@@ -67,14 +67,12 @@ void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteAr
 
 void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 {
-    QMap <QString, QVariant> map = m_value.toMap(), item = option().toMap().value(QString::number(dataPoint)).toMap(), options;
+    QMap <QString, QVariant> map = m_value.toMap(), item = subOption(QString::number(dataPoint)).toMap();
     QList <QString> typeList = {"raw", "bool", "value", "enum"};
     QString name = item.value("name").toString();
 
     if (name.isEmpty())
         return;
-
-    options = option(name).toMap();
 
     switch (typeList.indexOf(item.value("type").toString()))
     {
@@ -115,7 +113,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         case 1: // bool
         {
             bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
-            QString value = options.value("enum").toStringList().value(check ? 1 : 0);
+            QString value = subOption("enum", name).toStringList().value(check ? 1 : 0);
 
             if (value.isEmpty())
                 map.insert(name, check);
@@ -128,7 +126,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         case 2: // value
         {
             bool hasMin, hasMax;
-            double min = options.value("min").toDouble(&hasMin), max = options.value("max").toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
+            double min = subOption("min", name).toDouble(&hasMin), max = subOption("max", name).toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
 
             if (item.value("round").toBool())
                 value = round(value);
@@ -142,23 +140,15 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
         case 3: // enum
         {
-            if (options.contains("enum"))
-            {
-                QString value = options.value("enum").toStringList().value(data.toInt());
+            QString value = subOption("enum", name).toStringList().value(data.toInt());
 
-                if (!value.isEmpty())
-                    map.insert(name, value);
-
-                break;
-            }
-
-            if (options.value("type").toString() == "toggle")
-            {
+            if (!value.isEmpty())
+                map.insert(name, value);
+            else if (subOption("type", name).toString() == "toggle")
                 map.insert(name, data.toInt() ? true : false);
-                break;
-            }
+            else
+                map.insert(name, data.toInt());
 
-            map.insert(name, data.toInt());
             break;
         }
     }

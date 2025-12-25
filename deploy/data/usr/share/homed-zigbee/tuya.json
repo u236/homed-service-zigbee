@@ -331,8 +331,7 @@
                           },
                           "status": {"enum": ["off", "on"]},
                           "level": {"min": 0, "max": 255},
-                          "switchType_1": {"enum": ["toggle", "static", "momentary"]},
-                          "switchType_2": {"enum": ["toggle", "static", "momentary"]},
+                          "switchType": {"enum": ["toggle", "static", "momentary"]},
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "light": ["level"]
                         }
@@ -2940,7 +2939,7 @@
       "endpointId":     [1, 2, 3, 4]
     },
     {
-      "description":    "FORIA Scene switch F00MB00-04-1",
+      "description":    "FORIA Scene Switch F00MB00-04-1",
       "modelNames":     ["_TZE200_mfamvsdb"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -2956,13 +2955,41 @@
                             "107":  {"name": "approach", "type": "enum", "action": true},
                             "108":  {"name": "vibration", "type": "enum", "action": true}
                           },
-                          "action_1": {"enum": ["singleClick"]},
-                          "action_2": {"enum": ["singleClick"]},
-                          "action_3": {"enum": ["singleClick"]},
-                          "action_4": {"enum": ["singleClick"]},
+                          "action": {"enum": ["singleClick"]},
                           "approach": {"type": "toggle"},
                           "vibration": {"type": "toggle"},
                           "checkTransactionId": true
+                        }
+    },
+    {
+      "description":    "FORIA Scene Switch F00YK04-18-1",
+      "modelNames":     ["_TZE200_dhke3p9w", "_TZE284_dhke3p9w"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["action_1", "action_2", "action_3", "action_4", "action_5", "action_6", "action_7", "action_8", "action_9", "action_10", "action_11", "action_12", "action_13", "action_14", "action_15", "action_16", "action_17", "action_18"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "action_1", "type": "enum"},
+                            "2":    {"name": "action_2", "type": "enum"},
+                            "3":    {"name": "action_3", "type": "enum"},
+                            "4":    {"name": "action_4", "type": "enum"},
+                            "5":    {"name": "action_5", "type": "enum"},
+                            "6":    {"name": "action_6", "type": "enum"},
+                            "7":    {"name": "action_7", "type": "enum"},
+                            "8":    {"name": "action_8", "type": "enum"},
+                            "9":    {"name": "action_9", "type": "enum"},
+                            "10":   {"name": "action_10", "type": "enum"},
+                            "11":   {"name": "action_11", "type": "enum"},
+                            "12":   {"name": "action_12", "type": "enum"},
+                            "13":   {"name": "action_13", "type": "enum"},
+                            "14":   {"name": "action_14", "type": "enum"},
+                            "15":   {"name": "action_15", "type": "enum"},
+                            "16":   {"name": "action_16", "type": "enum"},
+                            "101":  {"name": "action_17", "type": "enum"},
+                            "102":  {"name": "action_18", "type": "enum"}
+                          },
+                          "action": {"enum": ["singleClick"]}
                         }
     },
     {

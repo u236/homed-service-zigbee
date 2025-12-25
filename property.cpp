@@ -125,7 +125,7 @@ quint8 PropertyObject::percentage(double min, double max, double value)
 
 QVariant PropertyObject::enumValue(const QString &name, int index, const QVariant &defaultValue)
 {
-    QVariant data = option(name).toMap().value("enum"), value;
+    QVariant data = subOption("enum", name), value;
 
     switch (data.type())
     {

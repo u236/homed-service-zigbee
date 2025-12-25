@@ -19,7 +19,7 @@ void Properties::BatteryPercentage::parseAttribute(quint16, quint16 attributeId,
     if (attributeId != m_attributes.at(0) || data.at(0) == 0xFF)
         return;
 
-    m_value = static_cast <quint8> (data.at(0)) / (option().toMap().value("undivided").toBool() ? 1.0 : 2.0);
+    m_value = static_cast <quint8> (data.at(0)) / (subOption("undivided").toBool() ? 1.0 : 2.0);
 }
 
 void Properties::DeviceTemperature::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
@@ -239,7 +239,7 @@ void Properties::Illuminance::parseAttribute(quint16, quint16 attributeId, const
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = option().toMap().value("raw").toBool() ? qFromLittleEndian(value) : static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
+    m_value = subOption("raw").toBool() ? qFromLittleEndian(value) : static_cast <quint32> (value ? pow(10, (qFromLittleEndian(value) - 1) / 10000.0) : 0);
 }
 
 void Properties::Temperature::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
@@ -433,7 +433,7 @@ void ChildLock::parseAttribute(quint16, quint16 attributeId, const QByteArray &d
 void Properties::Scene::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     const recallSceneStruct *command = reinterpret_cast <const recallSceneStruct*> (payload.constData());
-    QVariant name = option().toMap().value("enum").toMap().value(QString::number(command->sceneId));
+    QVariant name = subOption("enum").toMap().value(QString::number(command->sceneId));
 
     if (commandId != 0x05)
         return;
