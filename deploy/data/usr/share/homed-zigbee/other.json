@@ -99,6 +99,25 @@
                         }
     },
     {
+      "description":    "HOBEIAN Temperature and Humidity Sensor ZG-227Z",
+      "modelNames":     ["ZG-227Z"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "temperature", "humidity", "temperatureOffset", "humidityOffset"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "temperature", "type": "value", "divider": 10},
+                            "2":    {"name": "humidity", "type": "value"},
+                            "4":    {"name": "battery", "type": "value"},
+                            "23":   {"name": "temperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "24":   {"name": "humidityOffset", "type": "value", "action": true}
+                          },
+                          "temperatureOffset": {"min": -2, "max": 2, "step": 0.1},
+                          "humidityOffset": {"min": -30, "max": 30}
+                        }
+    },
+    {
       "description":    "HOBEIAN Water Leak Sensor ZG-222Z",
       "modelNames":     ["ZG-222Z"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
