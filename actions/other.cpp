@@ -63,7 +63,7 @@ QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data
             break;
         }
 
-        case 3:
+        case 3: // time
         {
             QList <QString> list = data.toString().split(':');
             value = list.value(0).toInt() * 3600 + list.value(1).toInt() * 60;
