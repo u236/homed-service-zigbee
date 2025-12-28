@@ -110,7 +110,7 @@
                         }
     },
     {
-      "description":    "Temperature and Humidity Sensor",
+      "description":    "TUYA TS0201 Temperature and Humidity Sensor with Slacky Firmware",
       "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
@@ -119,22 +119,22 @@
       "options":        {
                           "customAttributes":
                           {
-                            "repeatCommand":      {"type": "enum",  "clusterId": 1026, "attributeId": 61449, "dataType": 16, "action": true},
                             "readInterval":       {"type": "value", "clusterId": 1026, "attributeId": 61440, "dataType": 33, "action": true},
                             "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 61441, "dataType": 41, "divider": 100, "action": true},
                             "temperatureRelay":   {"type": "bool",  "clusterId": 1026, "attributeId": 61442, "dataType": 16, "action": true},
                             "temperatureLow":     {"type": "value", "clusterId": 1026, "attributeId": 61443, "dataType": 41, "divider": 100, "action": true},
                             "temperatureHigh":    {"type": "value", "clusterId": 1026, "attributeId": 61444, "dataType": 41, "divider": 100, "action": true},
-                            "humidityRelay":      {"type": "bool",  "clusterId": 1029, "attributeId": 61446, "dataType": 16, "action": true},
+                            "repeatCommand":      {"type": "enum",  "clusterId": 1026, "attributeId": 61449, "dataType": 16, "action": true},
                             "humidityOffset":     {"type": "value", "clusterId": 1029, "attributeId": 61445, "dataType": 41, "divider": 100, "action": true},
+                            "humidityRelay":      {"type": "bool",  "clusterId": 1029, "attributeId": 61446, "dataType": 16, "action": true},
                             "humidityLow":        {"type": "value", "clusterId": 1029, "attributeId": 61447, "dataType": 41, "divider": 100, "action": true},
                             "humidityHigh":       {"type": "value", "clusterId": 1029, "attributeId": 61448, "dataType": 41, "divider": 100, "action": true}
                           },
-                          "repeatCommand": {"type": "select", "enum": ["off", "on"]},
                           "readInterval": {"min": 5, "max": 600, "step": 1},
                           "temperatureOffset": {"min": -5, "max": 5, "step": 0.1},
                           "temperatureLow": {"min": -40, "max": 125, "step": 0.1},
                           "temperatureHigh": {"min": -40, "max": 124, "step": 0.1},
+                          "repeatCommand": {"type": "select", "enum": ["off", "on"]},
                           "humidityOffset": {"min": -10, "max": 10},
                           "humidityLow": {"min": 0, "max": 100},
                           "humidityHigh": {"min": 0, "max": 100}
