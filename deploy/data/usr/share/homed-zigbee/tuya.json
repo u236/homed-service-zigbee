@@ -2388,6 +2388,58 @@
       "endpointId":     [1, 2, 3, 4, 5, 6]
     },
     {
+      "description":    "TUYA TS0726 2-Channel Switch",
+      "modelNames":     ["_TZ3000_ezqbvrqz", "_TZ3002_6ahhkwyh", "_TZ3002_ymv5vytn", "_TZ3002_zjuvw9zf"],
+      "properties":     ["tuyaIndicatorMode"],
+      "actions":        ["tuyaIndicatorMode"],
+      "exposes":        ["indicatorMode"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TZ3000_ezqbvrqz", "_TZ3002_6ahhkwyh", "_TZ3002_ymv5vytn", "_TZ3002_zjuvw9zf"],
+      "properties":     ["status", "tuyaButtonAction"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch", "powerOnStatus", "switchMode", "action"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "powerOnStatus":  {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true},
+                            "switchMode":     {"type": "enum", "clusterId": 57345, "attributeId": 53280, "dataType": 48, "action": true}
+                          },
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "switchMode": {"enum": ["relay", "decoupled"]},
+                          "action": {"enum": ["singleClick"]}
+                        },
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TUYA TS0726 3-Channel Switch",
+      "modelNames":     ["_TZ3002_iedhxgyi"],
+      "properties":     ["tuyaIndicatorMode"],
+      "actions":        ["tuyaIndicatorMode"],
+      "exposes":        ["indicatorMode"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["_TZ3002_iedhxgyi"],
+      "properties":     ["status", "tuyaButtonAction"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "exposes":        ["switch", "powerOnStatus", "switchMode", "action"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "powerOnStatus":  {"type": "enum", "clusterId": 57345, "attributeId": 53264, "dataType": 48, "action": true},
+                            "switchMode":     {"type": "enum", "clusterId": 57345, "attributeId": 53280, "dataType": 48, "action": true}
+                          },
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "switchMode": {"enum": ["relay", "decoupled"]},
+                          "action": {"enum": ["singleClick"]}
+                        },
+      "endpointId":     [1, 2, 3]
+    },
+    {
       "description":    "TUYA TS0726 MOES 3-Channel Switch SR-ZS",
       "modelNames":     ["_TZ3002_vaq2bfcu"],
       "properties":     ["tuyaIndicatorMode"],
