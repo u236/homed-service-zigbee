@@ -70,14 +70,15 @@
     },
     {
       "description":    "Temperature and Humidity Sensor",
-      "modelNames":     ["TS0201-z-SlD"],
+      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
-      "exposes":        ["battery", "temperature", "humidity", "readInterval", "temperatureOffset", "humidityOffset", "temperatureRelay", "temperatureLow", "temperatureHigh", "humidityRelay", "humidityLow", "humidityHigh"],
+      "exposes":        ["battery", "temperature", "humidity", "readInterval", "temperatureOffset", "humidityOffset", "temperatureRelay", "temperatureLow", "temperatureHigh", "humidityRelay", "humidityLow", "humidityHigh", "commandRepeat"],
       "options":        {
                           "customAttributes":
                           {
+                            "commandRepeat":      {"type": "bool",  "clusterId": 1026, "attributeId": 61449, "dataType": 16, "action": true},
                             "readInterval":       {"type": "value", "clusterId": 1026, "attributeId": 61440, "dataType": 33, "action": true},
                             "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 61441, "dataType": 41, "divider": 100, "action": true},
                             "temperatureRelay":   {"type": "bool",  "clusterId": 1026, "attributeId": 61442, "dataType": 16, "action": true},
@@ -88,6 +89,7 @@
                             "humidityLow":        {"type": "value", "clusterId": 1029, "attributeId": 61447, "dataType": 41, "divider": 100, "action": true},
                             "humidityHigh":       {"type": "value", "clusterId": 1029, "attributeId": 61448, "dataType": 41, "divider": 100, "action": true}
                           },
+                          "commandRepeat": {"enum": ["off", "on"]},
                           "readInterval": {"min": 5, "max": 600, "step": 1},
                           "temperatureOffset": {"min": -5, "max": 5, "step": 0.1},
                           "temperatureLow": {"min": -40, "max": 125, "step": 0.1},
@@ -99,7 +101,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["TS0201-z-SlD"],
+      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD"],
       "properties":     ["switchMode"],
       "actions":        ["switchMode"],
       "exposes":        ["switchMode"],
@@ -107,7 +109,7 @@
       "endpointId":     [1]
     },
     {
-      "modelNames":     ["TS0201-z-SlD"],
+      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD"],
       "properties":     ["switchMode"],
       "actions":        ["switchMode"],
       "exposes":        ["switchMode"],
