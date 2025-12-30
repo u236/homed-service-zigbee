@@ -209,16 +209,18 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "powerOnStatus", "switchType", "switchMode", "action"],
+      "exposes":        ["switch", "powerOnStatus", "switchType", "switchMode", "turboMode", "action"],
       "options":        {
                           "customAttributes":
                           {
                             "switchType": {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
-                            "switchMode": {"type": "enum", "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true}
+                            "switchMode": {"type": "enum", "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true},
+                            "turboMode": {"type": "enum", "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true}
                           },
                           "customCommands": {"action": {"clusterId": 6}},
                           "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
                           "switchMode": {"enum": ["relay", "decoupled"]},
+                          "turboMode": {"enum": {"20": "on", "9": "off"}},
                           "action": {"enum": {"2": "toggle"}}
                         }
     },
