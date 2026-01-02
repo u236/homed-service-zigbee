@@ -51,7 +51,7 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
         {
             case 0: // bool
             {
-                QList <QString> actionList = subOption("enum", name).toStringList();
+                QList <QString> actionList = option(name, "enum").toStringList();
                 qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
                 bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
@@ -64,7 +64,7 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
             case 1: // value
             {
                 bool hasMin, hasMax;
-                double number = data.toDouble(), min = subOption("min", name).toDouble(&hasMin), max = subOption("max", name).toDouble(&hasMax);
+                double number = data.toDouble(), min = option(name, "min").toDouble(&hasMin), max = option(name, "max").toDouble(&hasMax);
                 qint32 value;
 
                 if (hasMin && number < min)
@@ -80,7 +80,7 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
             case 2: // enum
             {
                 bool hasMin, hasMax;
-                double min = subOption("min", name).toDouble(&hasMin), max = subOption("max", name).toDouble(&hasMax);
+                double min = option(name, "min").toDouble(&hasMin), max = option(name, "max").toDouble(&hasMax);
                 qint8 value = -1;
 
                 if (hasMin && hasMax)
@@ -93,10 +93,10 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
                     if (value > max)
                         value = max;
                 }
-                else if (subOption("type", name).toString() == "toggle")
+                else if (option(name, "type").toString() == "toggle")
                     value = data.toBool() ? 0x01 : 0x00;
                 else
-                    value = static_cast <qint8> (subOption("enum", name).toStringList().indexOf(data.toString()));
+                    value = static_cast <qint8> (option(name, "enum").toStringList().indexOf(data.toString()));
 
                 return value < 0 ? QByteArray() : makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_ENUM, &value);
             }

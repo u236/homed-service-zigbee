@@ -67,7 +67,7 @@ void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteAr
 
 void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 {
-    QMap <QString, QVariant> map = m_value.toMap(), item = subOption(QString::number(dataPoint)).toMap();
+    QMap <QString, QVariant> map = m_value.toMap(), item = option(m_name, QString::number(dataPoint)).toMap();
     QList <QString> typeList = {"raw", "bool", "value", "enum"};
     QString name = item.value("name").toString();
 
@@ -113,7 +113,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         case 1: // bool
         {
             bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
-            QString value = subOption("enum", name).toStringList().value(check ? 1 : 0);
+            QString value = option(name, "enum").toStringList().value(check ? 1 : 0);
 
             if (value.isEmpty())
                 map.insert(name, check);
@@ -126,7 +126,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         case 2: // value
         {
             bool hasMin, hasMax;
-            double min = subOption("min", name).toDouble(&hasMin), max = subOption("max", name).toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
+            double min = option(name, "min").toDouble(&hasMin), max = option(name, "max").toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
 
             if (item.value("round").toBool())
                 value = round(value);
@@ -140,11 +140,11 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
         case 3: // enum
         {
-            QString value = subOption("enum", name).toStringList().value(data.toInt());
+            QString value = option(name, "enum").toStringList().value(data.toInt());
 
             if (!value.isEmpty())
                 map.insert(name, value);
-            else if (subOption("type", name).toString() == "toggle")
+            else if (option(name, "type").toString() == "toggle")
                 map.insert(name, data.toInt() ? true : false);
             else
                 map.insert(name, data.toInt());

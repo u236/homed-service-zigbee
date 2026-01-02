@@ -126,7 +126,7 @@ qint8 ActionObject::listIndex(const QList <QString> &list, const QVariant &value
 
 int ActionObject::enumIndex(const QString name, const QVariant &value)
 {
-    QVariant data = subOption("enum", name);
+    QVariant data = option(name, "enum");
 
     switch (data.type())
     {
