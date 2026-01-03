@@ -91,12 +91,14 @@ void ZigBee::interviewDevice(const QString &deviceName, bool force)
 {
     const Device &device = m_devices->byName(deviceName);
 
-    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+    if (device.isNull() || device->removed() || !device->active() || device->timer()->isActive() || device->logicalType() == LogicalType::Coordinator)
         return;
 
     if (force)
         device->setInterviewStatus(InterviewStatus::NodeDescriptor);
 
+
+    logInfo << device << "interview started...";
     interviewDevice(device);
 }
 
