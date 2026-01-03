@@ -19,6 +19,7 @@ public:
         restartService,
         setPermitJoin,
         togglePermitJoin,
+        interviewDevice,
         updateDevice,
         removeDevice,
         setupDevice,

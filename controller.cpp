@@ -146,6 +146,10 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
                 m_zigbee->togglePermitJoin();
                 break;
 
+            case Command::interviewDevice:
+                m_zigbee->interviewDevice(json.value("device").toString(), json.value("force").toBool());
+                break;
+
             case Command::updateDevice:
                 m_zigbee->updateDevice(json.value("device").toString(), mqttSafe(json.value("name").toString()), json.value("note").toString(), json.value("active").toBool(true), json.value("discovery").toBool(true), json.value("cloud").toBool(true));
                 break;

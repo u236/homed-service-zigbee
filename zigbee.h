@@ -136,9 +136,10 @@ public:
     void setPermitJoin(const QString &deviceName, bool enabled);
     void togglePermitJoin(void);
 
+    void interviewDevice(const QString &deviceName, bool force);
     void updateDevice(const QString &deviceName, const QString &name, const QString &note, bool active, bool discovery, bool cloud);
     void removeDevice(const QString &deviceName, bool force);
-    
+
     void setupDevice(const QString &deviceName, bool reportings);
     void setupReporting(const QString &deviceName, quint8 endpointId, const QString &reportingName, quint16 minInterval, quint16 maxInterval, quint16 valueChange);
 

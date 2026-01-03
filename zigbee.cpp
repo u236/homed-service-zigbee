@@ -87,6 +87,19 @@ void ZigBee::togglePermitJoin(void)
     m_adapter->togglePermitJoin();
 }
 
+void ZigBee::interviewDevice(const QString &deviceName, bool force)
+{
+    const Device &device = m_devices->byName(deviceName);
+
+    if (device.isNull() || device->removed() || device->logicalType() == LogicalType::Coordinator)
+        return;
+
+    if (force)
+        device->setInterviewStatus(InterviewStatus::NodeDescriptor);
+
+    interviewDevice(device);
+}
+
 void ZigBee::updateDevice(const QString &deviceName, const QString &name, const QString &note, bool active, bool discovery, bool cloud)
 {
     const Device &device = m_devices->byName(deviceName), &other = m_devices->byName(name);
@@ -1463,7 +1476,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     device->ota().setCurrentVersion(qFromLittleEndian(request->fileVersion));
                     device->ota().reset();
 
-                    device->setInterviewStatus(InterviewStatus::BasicAttributes);
+                    device->setInterviewStatus(InterviewStatus::NodeDescriptor);
                     logInfo << device << "OTA upgrade finished successfully";
 
                     enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x07).append(reinterpret_cast <char*> (&response), sizeof(response)));
