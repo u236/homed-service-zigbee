@@ -136,7 +136,7 @@ void Properties::Thermostat::parseAttribute(quint16, quint16 attributeId, const 
 void Thermostat::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     QMap <QString, QVariant> map = m_value.toMap();
-    QList <QString> typeList = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
+    QList <QString> typeList = {"sunday", option("thermostatProgram").toString() == "moes" ? "weekday" : "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
     QString type;
 
     if (commandId != 0x00)

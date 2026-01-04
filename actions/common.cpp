@@ -138,7 +138,7 @@ QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
 QVariant Actions::ThermostatProgram::request(const QString &name, const QVariant &data)
 {
     const Property &property = endpointProperty("thermostat");
-    QList <QString> typeList = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
+    QList <QString> typeList = {"sunday", option().toString() == "moes" ? "weekday" : "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
     QString type = name.mid(0, name.indexOf('P'));
     QByteArray payload;
 
