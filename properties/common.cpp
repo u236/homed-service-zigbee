@@ -139,7 +139,7 @@ void Thermostat::parseCommand(quint16, quint8 commandId, const QByteArray &paylo
     QList <QString> typeList = {"sunday", option("thermostatProgram").toString() == "moes" ? "weekday" : "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
     QString type;
 
-    if (commandId != 0x00)
+    if (commandId > 0x01)
         return;
 
     for (int i = 0; i < typeList.count(); i++)
