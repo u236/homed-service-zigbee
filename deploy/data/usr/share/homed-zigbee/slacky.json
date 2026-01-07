@@ -91,21 +91,25 @@
       "description":    "TUYA TS0601 Electric Thermostat with Slacky Firmware",
       "modelNames":     ["Tuya_Thermostat_r01"],
       "properties":     ["thermostat", "childLock"],
-      "actions":        ["thermostat", "childLock"],
+      "actions":        ["thermostat", "childLock", "thermostatProgram"],
       "bindings":       ["thermostat"],
-      "exposes":        ["thermostat", "childLock", "temperatureOffset", "hysteresis", "sensorType"],
+      "exposes":        ["thermostat", "childLock", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "customAttributes":
                           {
-                            "operationMode":  {"type": "enum", "clusterId": 513, "attributeId": 37,    "dataType": 24, "action": true},
-                            "sensorType":     {"type": "enum", "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true}
+                            "temperatureLow":   {"type": "value", "clusterId": 513, "attributeId": 21,    "dataType": 41, "divider": 100, "action": true},
+                            "temperatureHigh":  {"type": "value", "clusterId": 513, "attributeId": 22,    "dataType": 41, "divider": 100, "action": true},
+                            "operationMode":    {"type": "enum",  "clusterId": 513, "attributeId": 37,    "dataType": 24, "action": true},
+                            "sensorType":       {"type": "enum",  "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
-                          "targetTemperature": {"min": 5, "max": 45},
                           "operationMode": {"enum": ["manual", "program"]},
-                          "sensorType": {"enum": ["internal", "both", "external"]},
-                          "temperatureOffset": {"min": -9, "max": 9},
-                          "hysteresis": {"min": 1, "max": 5},
+                          "targetTemperature": {"min": 5, "max": 45},
+                          "temperatureLow": {"min": 5, "max": 45},
+                          "temperatureHigh": {"min": 5, "max": 45},
+                          "temperatureOffset": {"min": -9, "max": 9, "step": 0.1},
+                          "hysteresis": {"min": 0, "max": 5, "step": 0.1},
+                          "thermostatProgram": "moes",
                           "runningStatus": true
                         }
     },
