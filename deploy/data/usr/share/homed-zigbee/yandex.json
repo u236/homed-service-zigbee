@@ -51,7 +51,7 @@
       "actions":        ["status", "powerOnStatus", "yandexCommonSettings", "yandexSwitchSettings"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "powerOnStatus", "powerMode", "switchMode"],
+      "exposes":        ["switch", "powerOnStatus", "powerMode", "switchType"],
       "options":        {"switchType": {"enum": ["toggle", "momentary", "decoupled"]}},
       "endpointId":     1
     },
