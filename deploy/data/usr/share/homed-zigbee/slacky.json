@@ -96,20 +96,20 @@
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
                           "customAttributes": {
-                            "temperatureLow": {"type": "value", "clusterId": 513, "attributeId": 21, "dataType": 41, "divider": 100, "action": true},
-                            "temperatureHigh": {"type": "value", "clusterId": 513, "attributeId": 22, "dataType": 41, "divider": 100, "action": true},
-                            "operationMode": {"type": "enum", "clusterId": 513, "attributeId": 37, "dataType": 24, "action": true},
-                            "sensorType": {"type": "enum", "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true}
+                            "temperatureLow":   {"type": "value", "clusterId": 513, "attributeId": 21,    "dataType": 41, "divider": 100, "action": true},
+                            "temperatureHigh":  {"type": "value", "clusterId": 513, "attributeId": 22,    "dataType": 41, "divider": 100, "action": true},
+                            "operationMode":    {"type": "enum",  "clusterId": 513, "attributeId": 37,    "dataType": 24, "action": true},
+                            "sensorType":       {"type": "enum",  "clusterId": 513, "attributeId": 61440, "dataType": 48, "action": true}
                           },
                           "systemMode": {"enum": ["off", "heat"]},
                           "operationMode": {"enum": ["manual", "program"]},
                           "targetTemperature": {"min": 5, "max": 45},
+                          "temperatureLow": {"min": 5, "max": 45},
+                          "temperatureHigh": {"min": 5, "max": 45},
                           "temperatureOffset": {"min": -9, "max": 9, "step": 0.1},
-                          "temperatureLow": {"type": "number", "min": 5, "max": 45},
-                          "temperatureHigh": {"type": "number", "min": 5, "max": 45},
                           "hysteresis": {"min": 0, "max": 5, "step": 0.1},
-                          "runningStatus": true,
-                          "thermostatProgram": "moes"
+                          "thermostatProgram": "moes",
+                          "runningStatus": true
                         }
     },
     {
