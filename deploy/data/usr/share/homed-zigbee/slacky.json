@@ -95,7 +95,8 @@
       "bindings":       ["thermostat"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureLow", "temperatureHigh", "temperatureOffset", "hysteresis", "thermostatProgram"],
       "options":        {
-                          "customAttributes": {
+                          "customAttributes":
+                          {
                             "temperatureLow":   {"type": "value", "clusterId": 513, "attributeId": 21,    "dataType": 41, "divider": 100, "action": true},
                             "temperatureHigh":  {"type": "value", "clusterId": 513, "attributeId": 22,    "dataType": 41, "divider": 100, "action": true},
                             "operationMode":    {"type": "enum",  "clusterId": 513, "attributeId": 37,    "dataType": 24, "action": true},
