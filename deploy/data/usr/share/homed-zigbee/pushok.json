@@ -19,6 +19,22 @@
                         }
     },
     {
+      "description":    "PushOk Hardware Window Driver POK016",
+      "modelNames":     ["POK016"],
+      "properties":     ["batteryPercentage", "status"],
+      "actions":        ["status"],
+      "exposes":        ["battery", "lock", "forceLevel", "windowStatus"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "windowStatus": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33},
+                            "forceLevel":   {"type": "enum", "clusterId": 19, "attributeId": 85, "dataType": 33, "action": true}
+                          },
+                          "windowStatus": {"type": "sensor", "enum": ["closed", "open", "moving", "stuck", "middle"], "icon": "mdi:window-open"},
+                          "forceLevel": {"type": "select", "enum": ["low", "medium", "high"], "icon": "mdi:dumbbell"}
+                        }
+    },
+    {
       "description":    "PushOk Hardware Thermostat Relay POK008",
       "modelNames":     ["POK008"],
       "properties":     ["batteryPercentage", "status", "temperature"],
