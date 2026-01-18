@@ -2925,7 +2925,7 @@
     },
     {
       "description":    "TUYA TS1002 Wireless Dimmer",
-      "modelNames":     ["_TZ3000_etufnltx", "_TZ3000_zwszqdpy"],
+      "modelNames":     ["_TZ3000_etufnltx", "_TZ3000_wbsqjvh3", "_TZ3000_zwszqdpy"],
       "properties":     ["batteryPercentage", "statusAction", "levelAction", "colorAction", "tuyaButtonScene"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
