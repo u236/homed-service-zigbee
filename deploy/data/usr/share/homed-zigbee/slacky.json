@@ -250,7 +250,7 @@
       "actionc":        ["switchMode"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["waterLeak", "switchMode"],
+      "exposes":        ["battery", "waterLeak", "switchMode"],
       "options":        {"switchMode": {"enum": ["off", "on"]}}
     }
   ]
