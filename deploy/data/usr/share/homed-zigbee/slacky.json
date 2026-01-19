@@ -244,10 +244,10 @@
                         }
     },
     {
-      "description":    "Tuya water leak sensor with custom firmware",
-      "modelNames":     ["ZG-222ZA-z-SlD", "ZG-222Z-z-SlD", "SNZB-05-z-SlD"],
+      "description":    "TUYA TS0207 Water Leak Sensor with Slacky Firmware",
+      "modelNames":     ["SNZB-05-z-SlD", "ZG-222Z-z-SlD", "ZG-222ZA-z-SlD"],
       "properties":     ["batteryPercentage", "switchMode", "iasWaterLeak"],
-      "actionc":        ["switchMode"],
+      "actions":        ["switchMode"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "waterLeak", "switchMode"],
