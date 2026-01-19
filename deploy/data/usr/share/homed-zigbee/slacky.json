@@ -242,6 +242,16 @@
                           "acCurrentDivider": 100,
                           "frequencyDivider": 100
                         }
+    },
+    {
+      "description":    "Tuya water leak sensor with custom firmware",
+      "modelNames":     ["ZG-222ZA-z-SlD", "ZG-222Z-z-SlD", "SNZB-05-z-SlD"],
+      "properties":     ["batteryPercentage", "switchMode", "iasWaterLeak"],
+      "actionc":        ["switchMode"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["waterLeak", "switchMode"],
+      "options":        {"switchMode": {"enum": ["off", "on"]}}
     }
   ]
 }
