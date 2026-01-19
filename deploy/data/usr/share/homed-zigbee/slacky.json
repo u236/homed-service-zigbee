@@ -242,6 +242,16 @@
                           "acCurrentDivider": 100,
                           "frequencyDivider": 100
                         }
+    },
+    {
+      "description":    "TUYA TS0207 Water Leak Sensor with Slacky Firmware",
+      "modelNames":     ["SNZB-05-z-SlD", "ZG-222Z-z-SlD", "ZG-222ZA-z-SlD"],
+      "properties":     ["batteryPercentage", "switchMode", "iasWaterLeak"],
+      "actions":        ["switchMode"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak", "switchMode"],
+      "options":        {"switchMode": {"enum": ["off", "on"]}}
     }
   ]
 }
