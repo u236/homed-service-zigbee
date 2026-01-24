@@ -101,7 +101,7 @@ namespace Reportings
 
     public:
 
-        AnalogInput(void) : ReportingObject("analogInput", CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
+        AnalogInput(void) : ReportingObject("analogInput", CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
 
     };
 

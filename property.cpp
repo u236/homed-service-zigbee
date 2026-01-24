@@ -13,6 +13,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <Properties::DeviceTemperature>               ("deviceTemperatureProperty");
     qRegisterMetaType <Properties::Status>                          ("statusProperty");
     qRegisterMetaType <Properties::Level>                           ("levelProperty");
+    qRegisterMetaType <Properties::AnalogInput>                     ("analogInputProperty");
     qRegisterMetaType <Properties::CoverPosition>                   ("coverPositionProperty");
     qRegisterMetaType <Properties::Thermostat>                      ("thermostatProperty");
     qRegisterMetaType <Properties::ColorHS>                         ("colorHSProperty");

@@ -703,6 +703,13 @@ void DeviceList::recognizeDevice(const Device &device)
 
                     break;
 
+                case CLUSTER_ANALOG_INPUT:
+                    it.value()->properties().append(Property(new Properties::AnalogInput));
+                    it.value()->bindings().append(Binding(new Bindings::AnalogInput));
+                    it.value()->reportings().append(Reporting(new Reportings::AnalogInput));
+                    it.value()->exposes().append(Expose(new SensorObject("analogInput")));
+                    break;
+
                 case CLUSTER_WINDOW_COVERING:
                     it.value()->properties().append(Property(new Properties::CoverPosition));
                     it.value()->actions().append(Action(new Actions::CoverStatus));
