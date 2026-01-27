@@ -307,6 +307,8 @@ void DeviceList::setupDevice(const Device &device)
                 }
             }
         }
+
+        device->setExternal(device->supported() && it->path() == m_externalDir.path());
     }
 
     if (!device->supported())
@@ -1419,6 +1421,9 @@ QJsonArray DeviceList::serializeDevices(void)
 
             if (device->removed())
                 json.insert("removed", true);
+
+            if (device->external())
+                json.insert("external", true);
 
             if (device->lastSeen())
                 json.insert("lastSeen", device->lastSeen());

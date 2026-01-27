@@ -164,7 +164,7 @@ class DeviceObject : public AbstractDeviceObject
 public:
 
     DeviceObject(const QByteArray &ieeeAddress, quint16 networkAddress, const QString name = QString(), bool removed = false) :
-        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_interviewRetry(0), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_messageCount(0), m_linkQuality(0), m_lqiRequestPending(false) {}
+        AbstractDeviceObject(name.isEmpty() ? ieeeAddress.toHex(':') : name), m_timer(new QTimer(this)), m_ieeeAddress(ieeeAddress), m_networkAddress(networkAddress), m_removed(removed), m_supported(false), m_external(false), m_interviewStatus(InterviewStatus::NodeDescriptor), m_interviewRetry(0), m_logicalType(LogicalType::EndDevice), m_manufacturerCode(0), m_powerSource(POWER_SOURCE_UNKNOWN), m_joinTime(0), m_lastSeen(0), m_messageCount(0), m_linkQuality(0), m_lqiRequestPending(false) {}
 
     inline QTimer *timer(void) { return m_timer; }
     inline QByteArray ieeeAddress(void) { return m_ieeeAddress; }
@@ -177,6 +177,9 @@ public:
 
     inline bool supported(void) { return m_supported; }
     inline void setSupported(bool value) { m_supported = value; }
+
+    inline bool external(void) { return m_external; }
+    inline void setExternal(bool value) { m_external = value; }
 
     inline InterviewStatus interviewStatus(void) { return m_interviewStatus; }
     inline void setInterviewStatus(InterviewStatus value) { m_interviewStatus = value; }
@@ -230,7 +233,7 @@ private:
 
     QByteArray m_ieeeAddress;
     quint16 m_networkAddress;
-    bool m_removed, m_supported;
+    bool m_removed, m_supported, m_external;
 
     InterviewStatus m_interviewStatus;
     quint8 m_interviewRetry, m_interviewEndpointId;

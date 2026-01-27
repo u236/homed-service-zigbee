@@ -69,7 +69,7 @@ void Properties::Level::parseAttribute(quint16, quint16 attributeId, const QByte
 }
 
 
-void Properties::AnalogInput::parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data)
+void Properties::AnalogInput::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     float value = 0;
 
