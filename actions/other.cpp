@@ -42,6 +42,13 @@ QVariant ActionsYandex::SwitchSettings::request(const QString &name, const QVari
     return QByteArray();
 }
 
+QVariant ActionsCustom::Command::request(const QString &name, const QVariant &data)
+{
+    int index = enumIndex(name, data);
+    quint8 value = static_cast <quint8> (index);
+    return index < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, value, m_manufacturerCode);
+}
+
 QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data)
 {
     QList <QString> types = {"bool", "value", "enum", "time"};

@@ -177,8 +177,12 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["energy", "voltage", "current", "power", "frequency"],
-      "exposes":        ["switch", "action", "powerOnStatus", "operationMode", "switchType", "switchMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime"],
+      "exposes":        ["switch", "action", "powerOnStatus", "operationMode", "switchType", "switchMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime", "resetEnergy"],
       "options":        {
+                          "customCommands":
+                          {
+                            "resetEnergy":      {"clusterId": 1794, "action": true}
+                          },
                           "customAttributes":
                           {
                             "switchType":       {"type": "enum",  "clusterId": 7,    "attributeId": 61440, "dataType": 48, "action": true},
@@ -192,6 +196,7 @@
                             "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
                             "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
                           },
+                          "resetEnergy": {"type": "button", "enum": {"128": true}},
                           "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "multifunction"}},
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "5": "quintupleClick", "255": "release"}},
                           "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
@@ -215,8 +220,12 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["energy", "voltage", "current", "power", "frequency"],
-      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime"],
+      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime", "resetEnergy"],
       "options":        {
+                          "customCommands":
+                          {
+                            "resetEnergy":      {"clusterId": 1794, "action": true}
+                          },
                           "customAttributes":
                           {
                             "childLock":        {"type": "bool",  "clusterId": 6,    "attributeId": 61440, "dataType": 16, "action": true},
@@ -229,6 +238,7 @@
                             "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
                             "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
                           },
+                          "resetEnergy": {"type": "button", "enum": {"128": true}},
                           "indicatorMode": {"type": "select", "enum": ["off", "on", "default"]},
                           "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
                           "voltageMin": {"type": "number", "min": 0, "max": 300, "unit": "V"},

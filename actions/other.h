@@ -29,6 +29,16 @@ namespace ActionsYandex
 
 namespace ActionsCustom
 {
+    class Command : public ActionObject
+    {
+
+    public:
+
+        Command(const QString &name, quint16 clusterId, quint16 manufacturerCode) : ActionObject(name, clusterId, manufacturerCode) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
     class Attribute : public ActionObject
     {
 

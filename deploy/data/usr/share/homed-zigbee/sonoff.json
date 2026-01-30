@@ -211,17 +211,20 @@
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "switchType", "switchMode", "transmitPower", "action"],
       "options":        {
+                          "customCommands":
+                          {
+                            "action":         {"clusterId": 6}
+                          },
                           "customAttributes":
                           {
                             "transmitPower":  {"type": "enum", "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
                             "switchType":     {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
                             "switchMode":     {"type": "enum", "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true}
                           },
-                          "customCommands": {"action": {"clusterId": 6}},
+                          "action": {"enum": {"2": "toggle"}},
                           "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
                           "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
-                          "switchMode": {"enum": ["relay", "decoupled"]},
-                          "action": {"enum": {"2": "toggle"}}
+                          "switchMode": {"enum": ["relay", "decoupled"]}
                         }
     },
     {

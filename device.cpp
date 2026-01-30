@@ -552,6 +552,13 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
         if (option.value("binding").toBool() && !endpoint->bindingExists(clusterId))
             endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
+
+        if (option.value("action").toBool())
+        {
+            Action action(new ActionsCustom::Command(it.key(), clusterId, static_cast <quint16> (option.value("manufacturerCode").toInt())));
+            action->setParent(endpoint.data());
+            endpoint->actions().append(action);
+        }
     }
 
     for (auto it = customAttributes.begin(); it != customAttributes.end(); it++)
