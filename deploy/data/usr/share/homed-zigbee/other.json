@@ -118,12 +118,20 @@
                         }
     },
     {
+      "description":    "HOBEIAN Door and Window Sensor",
+      "modelNames":     ["ZG-102Z"],
+      "properties":     ["batteryPercentage", "iasContact"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "contact", "batteryLow"]
+    },
+    {
       "description":    "HOBEIAN Water Leak Sensor ZG-222Z",
       "modelNames":     ["ZG-222Z"],
       "properties":     ["batteryPercentage", "iasWaterLeak"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"]
+      "exposes":        ["battery", "waterLeak", "batteryLow"]
     }
   ],
 
