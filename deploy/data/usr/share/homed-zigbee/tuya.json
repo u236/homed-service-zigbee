@@ -2246,7 +2246,7 @@
     },
     {
       "description":    "TUYA TS0002/TS0012 2-Channel Relay",
-      "modelNames":     ["_TZ3000_bvrlqyj7", "_TZ3000_01gpyda5", "_TZ3000_4zf0crgo", "_TZ3000_5gey1ohx", "_TZ3000_7ed9cqgi", "_TZ3000_fisb3ajo", "_TZ3000_jl7qyupf", "_TZ3000_mtnpt6ws", "_TZ3000_nPGIPl5D", "_TZ3000_zmy4lslw"],
+      "modelNames":     ["_TZ3000_bvrlqyj7", "_TZ3000_01gpyda5", "_TZ3000_4zf0crgo", "_TZ3000_5gey1ohx", "_TZ3000_7ed9cqgi", "_TZ3000_fisb3ajo", "_TZ3000_jl7qyupf", "_TZ3000_m8f3z8ju", "_TZ3000_mtnpt6ws", "_TZ3000_nPGIPl5D", "_TZ3000_zmy4lslw"],
       "properties":     ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "actions":        ["tuyaSwitchType", "tuyaPowerOnStatus"],
       "exposes":        ["switchType", "powerOnStatus"],
@@ -2254,7 +2254,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TZ3000_bvrlqyj7", "_TZ3000_01gpyda5", "_TZ3000_4zf0crgo", "_TZ3000_5gey1ohx", "_TZ3000_7ed9cqgi", "_TZ3000_fisb3ajo", "_TZ3000_jl7qyupf", "_TZ3000_mtnpt6ws", "_TZ3000_nPGIPl5D", "_TZ3000_zmy4lslw"],
+      "modelNames":     ["_TZ3000_bvrlqyj7", "_TZ3000_01gpyda5", "_TZ3000_4zf0crgo", "_TZ3000_5gey1ohx", "_TZ3000_7ed9cqgi", "_TZ3000_fisb3ajo", "_TZ3000_jl7qyupf", "_TZ3000_m8f3z8ju", "_TZ3000_mtnpt6ws", "_TZ3000_nPGIPl5D", "_TZ3000_zmy4lslw"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
