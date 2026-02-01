@@ -273,7 +273,7 @@ void EZSP::parsePacket(const QByteArray &payload)
     {
         if (header->frameControlHigh & 0x01)
         {
-            m_replyStatus = static_cast <quint8> (data.at(0));
+            m_replyStatus = data.length() ? static_cast <quint8> (data.at(0)) : 0x00;
             m_replyData = data;
         }
         else
