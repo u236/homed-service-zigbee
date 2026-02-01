@@ -1749,7 +1749,7 @@
     },
     {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type G)",
-      "modelNames":     ["_TZE284_hodyryli"],
+      "modelNames":     ["_TZE284_8se38w3c", "_TZE284_hodyryli"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["batteryStatus", "temperature_1", "temperature_2", "humidity"],
