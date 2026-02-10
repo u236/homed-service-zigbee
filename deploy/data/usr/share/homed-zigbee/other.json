@@ -250,6 +250,33 @@
     }
   ],
 
+  "MiaoMiaoCe":
+  [
+    {
+      "description":    "MiaoMiaoCe Temperature and Humidity Sensor with PVVX Firmware",
+      "modelNames":     ["MHO-C122-bz", "MHO-C122-z", "MHO-C401-bz", "MHO-C401-z", "MHO-C401N-bz", "MHO-C401N-z"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity", "enableDisplay", "showSmiley", "readInterval", "temperatureOffset", "humidityOffset"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "showSmiley":         {"type": "enum",  "clusterId": 516, "attributeId": 2,   "dataType": 48, "action": true},
+                            "temperatureOffset":  {"type": "value", "clusterId": 516, "attributeId": 256, "dataType": 41, "divider": 100, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 516, "attributeId": 257, "dataType": 41, "divider": 100, "action": true},
+                            "enableDisplay":      {"type": "enum",  "clusterId": 516, "attributeId": 262, "dataType": 48, "action": true},
+                            "readInterval":       {"type": "value", "clusterId": 516, "attributeId": 263, "dataType": 32, "action": true}
+                          },
+                          "showSmiley": {"enum": [true, false]},
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
+                          "humidityOffset": {"min": -50, "max": 50},
+                          "enableDisplay": {"enum": [true, false]},
+                          "readInterval": {"min": 3, "max": 255}
+                        }
+    }
+  ],
+
   "NXP":
   [
     {
@@ -272,6 +299,31 @@
       "actions":        ["status", "level", "colorHS", "colorTemperature"],
       "exposes":        ["light"],
       "options":        {"light": ["level", "color", "colorTemperature", "colorMode"]}
+    }
+  ],
+
+  "Qingping":
+  [
+    {
+      "description":    "Qingping Temperature and Humidity Sensor with PVVX Firmware",
+      "modelNames":     ["CGDK2-bz", "CGDK2-z", "CGG1-bz", "CGG1-z", "CGG1N-bz", "CGG1N-z"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity", "enableDisplay", "readInterval", "temperatureOffset", "humidityOffset"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "temperatureOffset":  {"type": "value", "clusterId": 516, "attributeId": 256, "dataType": 41, "divider": 100, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 516, "attributeId": 257, "dataType": 41, "divider": 100, "action": true},
+                            "enableDisplay":      {"type": "enum",  "clusterId": 516, "attributeId": 262, "dataType": 48, "action": true},
+                            "readInterval":       {"type": "value", "clusterId": 516, "attributeId": 263, "dataType": 32, "action": true}
+                          },
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
+                          "humidityOffset": {"min": -50, "max": 50},
+                          "enableDisplay": {"enum": [true, false]},
+                          "readInterval": {"min": 3, "max": 255}
+                        }
     }
   ],
 
@@ -384,7 +436,7 @@
   [
     {
       "description":    "TUYA Temperature and Humidity Sensor with PVVX Firmware",
-      "modelNames":     ["TH03Z-bz", "TH03Z-z", "TS0201-bz", "TS0201-z", "ZTH01-bz", "ZTH01-z", "ZTH02-bz", "ZTH02-z"],
+      "modelNames":     ["LKTMZL02-z", "TH03Z-bz", "TH03Z-z", "TS0201-bz", "TS0201-z", "ZG-227Z-z", "ZTH01-bz", "ZTH01-z", "ZTH02-bz", "ZTH02-z", "ZY-ZTH02-z"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
@@ -427,7 +479,7 @@
                         }
     },
     {
-      "description":    "Xiaomi Temperature and Humidity Sensor LYWSD03MMC or MJWSD06MMC",
+      "description":    "Xiaomi Temperature and Humidity Sensor with PVVX Firmware",
       "modelNames":     ["LYWSD03MMC-bz", "LYWSD03MMC-z", "MJWSD06MMC-bz", "MJWSD06MMC-z"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],

@@ -19,7 +19,6 @@
 #include "property.h"
 #include "reporting.h"
 
-
 enum class InterviewStatus
 {
     NodeDescriptor,
