@@ -152,7 +152,7 @@
     },
     {
       "description":    "TUYA TS0601 Electricity Meter (Type I)",
-      "modelNames":     ["_TZE284_pglpvdar"],
+      "modelNames":     ["_TZE284_4hdbt6rn", "_TZE284_pglpvdar"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["energy", "voltage", "current", "power", "powerFactor", "frequency", "temperature"],
