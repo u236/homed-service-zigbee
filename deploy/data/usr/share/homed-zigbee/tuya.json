@@ -1546,7 +1546,31 @@
                           "distanceMin": {"min": 0, "max": 6, "step": 0.5},
                           "distanceMax": {"min": 0.5, "max": 9, "step": 0.5},
                           "sensitivity": {"min": 1, "max": 10},
-                          "fadingTime": {"min": 1, "max": 15000}
+                          "fadingTime": {"min": 1, "max": 15000, "step": 10}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type K)",
+      "modelNames":     ["_TZE204_dapwryy7"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "fadingTime"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "101":  {"name": "targetDistance", "type": "value", "divider": 100},
+                            "102":  {"name": "illuminance", "type": "value"},
+                            "103":  {"name": "fadingTime", "type": "value", "action": true},
+                            "104":  {"name": "indicator", "type": "bool", "action": true},
+                            "107":  {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "108":  {"name": "distanceMin", "type": "value", "divider": 100, "action": true},
+                            "116":  {"name": "sensitivity", "type": "value", "action": true}
+                          },
+                          "fadingTime": {"min": 0, "max": 28800, "step": 10},
+                          "distanceMax": {"min": 0, "max": 10, "step": 0.5},
+                          "distanceMin": {"min": 0, "max": 10, "step": 0.5},
+                          "sensitivity": {"min": 0, "max": 10}
                         }
     },
     {
@@ -2817,6 +2841,22 @@
       "modelNames":     ["RH3052"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity"]
+    },
+    {
+      "description":    "TUYA TS0021 2-Button Wireless Switch",
+      "modelNames":     ["_TZ3210_3ulg9kpo"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["action_1", "action_2", "battery"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "action_1", "type": "enum"},
+                            "2":    {"name": "action_2", "type": "enum"},
+                            "10":   {"name": "battery", "type": "value"}
+                          },
+                          "action": {"enum": ["singleClick", "doubleClick", "hold"]}
+                        }
     },
     {
       "description":    "TUYA TS0041 1-Button Wireless Switch",
