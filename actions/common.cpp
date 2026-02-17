@@ -20,6 +20,10 @@ QVariant Actions::Status::request(const QString &, const QVariant &data)
         case QVariant::String:
         {
             qint8 command = listIndex({"off", "on", "toggle"}, data);
+
+            if (command == 0x02 && option("softwareToggle").toBool())
+                command = endpointProperty("status")->value().toString() == "on" ? 0x00 : 0x01;
+
             return command < 0 ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, static_cast <quint8> (command));
         }
 

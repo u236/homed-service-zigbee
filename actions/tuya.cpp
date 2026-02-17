@@ -321,6 +321,17 @@ QVariant ActionsTUYA::ChildLock::request(const QString &, const QVariant &data)
     return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
 }
 
+QVariant ActionsTUYA::Level::request(const QString &, const QVariant &data)
+{
+    const Property &property = endpointProperty("status");
+    quint16 value = qToLittleEndian <quint16> (data.toInt() / 255.0 * 1000), time = qToLittleEndian <qint16> (100);
+
+    property->setValue("on");
+    m_properyUpdated = true;
+
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0xF0).append(QByteArray(reinterpret_cast <char*> (&value), sizeof(value))).append(QByteArray(reinterpret_cast <char*> (&time), sizeof(time)));
+}
+
 QVariant ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
 {
     QByteArray message = QJsonDocument(QJsonObject {{"delay", 300}, {"key1", QJsonObject {{"freq", 38000}, {"key_code", data.toString()}, {"num", 1}, {"type", 1}}}, {"key_num", 1}}).toJson(QJsonDocument::Compact);

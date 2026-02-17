@@ -110,6 +110,16 @@ namespace ActionsTUYA
 
     };
 
+    class Level : public ActionObject
+    {
+
+    public:
+
+        Level(void) : ActionObject("level", CLUSTER_LEVEL_CONTROL, 0x0000, 0xF000) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
     class IRCode : public ActionObject
     {
 

@@ -53,6 +53,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::CoverMotor>                 ("tuyaCoverMotorAction");
     qRegisterMetaType <ActionsTUYA::CoverSwitch>                ("tuyaCoverSwitchAction");
     qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");
+    qRegisterMetaType <ActionsTUYA::Level>                      ("tuyaLevelAction");
     qRegisterMetaType <ActionsTUYA::IRCode>                     ("tuyaIRCodeAction");
     qRegisterMetaType <ActionsTUYA::IRLearn>                    ("tuyaIRLearnAction");
     qRegisterMetaType <ActionsTUYA::OperationMode>              ("tuyaOperationModeAction");

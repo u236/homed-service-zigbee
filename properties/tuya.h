@@ -138,6 +138,15 @@ namespace PropertiesTUYA
 
     };
 
+    class Level : public PropertyObject
+    {
+
+    public:
+
+        Level(void) : PropertyObject("level", CLUSTER_LEVEL_CONTROL, 0xF000) {}
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
 
     class IRCode : public PropertyObject
     {

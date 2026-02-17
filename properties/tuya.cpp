@@ -384,6 +384,17 @@ void PropertiesTUYA::ButtonScene::parseCommand(quint16, quint8 commandId, const 
     m_value = static_cast <quint8> (payload.at(2));
 }
 
+void PropertiesTUYA::Level::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
+{
+    quint16 value = 0;
+
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = round(qFromLittleEndian(value) / 1000.0 * 255);
+}
+
 void PropertiesTUYA::IRCode::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
