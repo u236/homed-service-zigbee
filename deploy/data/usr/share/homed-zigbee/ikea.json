@@ -30,7 +30,7 @@
       "modelNames":     ["INSPELNING Smart plug"],
       "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
       "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status"],
+      "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
       "options":        {
