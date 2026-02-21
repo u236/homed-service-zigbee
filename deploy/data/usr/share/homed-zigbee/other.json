@@ -72,6 +72,17 @@
   "HOBEIAN":
   [
     {
+      "description":    "HOBEIAN 3-Channel Switch ZG-302Z3",
+      "modelNames":     ["ZG-302Z3"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch"],
+      "options":        {"switch": "outlet"},
+      "endpointId":     [1, 2, 3]
+    },
+    {
       "description":    "HOBEIAN Human Presence Sensor ZG-204ZM",
       "modelNames":     ["ZG-204ZM"],
       "properties":     ["tuyaDataPoints"],
