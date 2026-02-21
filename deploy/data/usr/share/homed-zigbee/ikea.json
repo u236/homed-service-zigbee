@@ -58,8 +58,9 @@
       "actions":        ["status", "powerOnStatus", "level"],
       "bindings":       ["status", "level"],
       "reportings":     ["status", "level"],
+      "polls":          ["status"],
       "exposes":        ["light", "powerOnStatus"],
-      "options":        {"light": ["level"]}
+      "options":        {"light": ["level"], "pollInterval": 30}
     },
     {
       "description":    "TRADFRI Dimmable Led Driver",
