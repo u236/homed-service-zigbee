@@ -26,6 +26,16 @@
       "options":        {"switch": "outlet"}
     },
     {
+      "description":    "INSPELNING Smart plug E2206, E2220, E2223 or E2224",
+      "modelNames":     ["INSPELNING Smart plug"],
+      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "options":        {"switch": "outlet", "energyDivider": 1000, "acVoltageDivider": 10, "acCurrentDivider": 1000, "acPowerDivider": 10}
+    },
+    {
       "description":    "TRADFRI Dimmable Bulb with Changable Color Temperature",
       "modelNames":     ["TRADFRI bulb E14 WS 470lm", "TRADFRI bulb E27 WS opal 1000lm", "TRADFRIbulbE14WScandleopal470lm", "TRADFRIbulbG125E27WSopal470lm", "TRADFRIbulbT120E27WSopal470lm"],
       "properties":     ["status", "powerOnStatus", "level", "colorTemperature"],
