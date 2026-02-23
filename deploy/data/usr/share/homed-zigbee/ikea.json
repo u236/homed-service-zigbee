@@ -52,7 +52,6 @@
       "actions":        ["status", "powerOnStatus", "level"],
       "bindings":       ["status", "level"],
       "reportings":     ["status", "level"],
-      "polls":          ["status"],
       "exposes":        ["light", "powerOnStatus"],
       "options":        {"light": ["level"]}
     },
