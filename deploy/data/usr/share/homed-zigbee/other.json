@@ -79,7 +79,6 @@
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch"],
-      "options":        {"switch": "outlet"},
       "endpointId":     [1, 2, 3]
     },
     {
