@@ -96,8 +96,7 @@
       "properties":     ["batteryPercentage", "ikeaOccupancy"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "occupancy"],
-      "options":        {"occupancyResetTimeout": true}
+      "exposes":        ["battery", "occupancy"]
     },
     {
       "description":    "VALLHORN Motion Sensor E2134",

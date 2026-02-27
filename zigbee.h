@@ -221,7 +221,9 @@ private slots:
     void handleRequests(void);
     void updateNeighbors(void);
     void pingDevices(void);
+
     void interviewTimeout(void);
+    void otaTimeout(void);
 
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 

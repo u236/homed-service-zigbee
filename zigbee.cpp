@@ -1364,6 +1364,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
 
         case CLUSTER_OTA_UPGRADE:
         {
+            bool check = false;
+
             switch (commandId)
             {
                 case 0x01:
@@ -1406,6 +1408,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     response.imageSize = qToLittleEndian(device->ota().imageSize());
 
                     logInfo << device << "OTA upgrade started...";
+                    check = true;
 
                     enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x02).append(reinterpret_cast <char*> (&response), sizeof(response)));
                     emit deviceEvent(device.data(), Event::otaUpgradeStarted);
@@ -1449,7 +1452,9 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     }
 
                     device->ota().setProgress(static_cast <double> (qFromLittleEndian(request->fileOffset) + buffer.length()) / device->ota().imageSize() * 100);
+
                     logInfo << device << "OTA upgrade progress is" << QString::asprintf("%.2f%%", device->ota().progress()).toUtf8().constData();
+                    check = true;
 
                     enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x05).append(reinterpret_cast <char*> (&response), sizeof(response)).append(buffer));
                     break;
@@ -1479,6 +1484,8 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     device->ota().reset();
 
                     device->setInterviewStatus(InterviewStatus::NodeDescriptor);
+                    device->timer()->stop();
+
                     logInfo << device << "OTA upgrade finished successfully";
 
                     enqueueRequest(device, endpoint->id(), CLUSTER_OTA_UPGRADE, zclHeader(FC_CLUSTER_SPECIFIC | FC_SERVER_TO_CLIENT | FC_DISABLE_DEFAULT_RESPONSE, transactionId, 0x07).append(reinterpret_cast <char*> (&response), sizeof(response)));
@@ -1489,6 +1496,13 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 default:
                     logWarning << "Unrecognized OTA upgrade command" << QString::asprintf("0x%02x", commandId) << "received from" << device << "with payload:" << (payload.isEmpty() ? "(empty)" : payload.toHex(':'));
                     break;
+            }
+
+            if (check)
+            {
+                connect(device->timer(), &QTimer::timeout, this, &ZigBee::otaTimeout, Qt::UniqueConnection);
+                device->timer()->setSingleShot(true);
+                device->timer()->start(NETWORK_REQUEST_TIMEOUT);
             }
 
             return;
@@ -2431,6 +2445,20 @@ void ZigBee::interviewTimeout(void)
         return;
 
     interviewTimeoutHandler(device);
+}
+
+void ZigBee::otaTimeout(void)
+{
+    Device device = m_devices->value(reinterpret_cast <DeviceObject*> (sender()->parent())->ieeeAddress());
+
+    if (!device->ota().running())
+        return;
+
+    logWarning << device << "OTA upgrade request timed out";
+    emit deviceEvent(device.data(), Event::otaUpgradeError);
+
+    device->ota().reset();
+    m_devices->storeDatabase(true);
 }
 
 void ZigBee::pollRequest(EndpointObject *endpoint, const Poll &poll)
