@@ -597,7 +597,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
 
     for (auto it = exposes.begin(); it != exposes.end(); it++)
     {
-        QString exposeName = it->toString(), itemName = exposeName.split('_').value(0), optionName = multiple ? QString("%1_%2").arg(itemName, QString::number(endpoint->id())) : exposeName;
+        QString exposeName = it->toString(), itemName = exposeName.split('_').value(0), optionName = multiple ? QString("%1_%2").arg(itemName, QString::number(endpoint->id())) : device->options().contains(exposeName) ? exposeName : exposeName.split('_').value(0);
         QMap <QString, QVariant> option = m_exposeOptions.value(itemName).toMap();
         Expose expose;
         int type;
