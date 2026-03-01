@@ -1137,6 +1137,32 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Dual Water Valve",
+      "modelNames":     ["_TZE284_eaet5qt5", "_TZE284_fhvpaltk"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["lock_1", "lock_2", "timer_1", "timer_2", "duration_1", "duration_2", "valveStatus_1", "valveStatus_2", "battery"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true},
+                            "13":   {"name": "timer_1", "type": "value", "action": true},
+                            "14":   {"name": "timer_2", "type": "value", "action": true},
+                            "25":   {"name": "duration_1", "type": "value"},
+                            "26":   {"name": "duration_2", "type": "value"},
+                            "59":   {"name": "battery", "type": "value"},
+                            "104":  {"name": "valveStatus_1", "type": "enum"},
+                            "105":  {"name": "valveStatus_2", "type": "enum"}
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "timer": {"min": 0, "max": 1440},
+                          "duration": {"type": "sensor", "unit": "sec"},
+                          "valveStatus": {"type": "sensor", "enum": ["manual", "auto", "idle"]},
+                          "lock": "valve"
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Smart Irrigation Valve",
       "modelNames":     ["_TZE200_7ytb3h8u", "_TZE200_a7sghmms", "_TZE204_7ytb3h8u", "_TZE204_a7sghmms", "_TZE284_7ytb3h8u"],
       "properties":     ["tuyaDataPoints"],
