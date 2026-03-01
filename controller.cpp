@@ -55,6 +55,7 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
     m_haPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
     m_haStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
     m_haEnabled = getConfig()->value("homeassistant/enabled", false).toBool();
+    m_haUpdate = getConfig()->value("homeassistant/update", false).toBool();
 
     connect(m_deviceDataTimer, &QTimer::timeout, this, &Controller::updateDeviceData);
     connect(m_propertiesTimer, &QTimer::timeout, this, &Controller::updateProperties);
@@ -74,7 +75,7 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
 
 void Controller::publishExposes(DeviceObject *device, bool remove)
 {
-    device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), m_haPrefix, m_haEnabled, m_zigbee->devices()->names(), remove);
+    device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), m_haPrefix, m_haEnabled, m_haUpdate, m_zigbee->devices()->names(), remove);
 
     if (!m_haEnabled || remove)
         return;

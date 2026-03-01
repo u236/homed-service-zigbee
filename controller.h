@@ -49,7 +49,7 @@ private:
 
     QMetaEnum m_commands;
     QString m_haPrefix, m_haStatus;
-    bool m_haEnabled, m_networkStarted;
+    bool m_haEnabled, m_haUpdate, m_networkStarted;
 
     QMap <QByteArray, qint64> m_lastSeen;
 
