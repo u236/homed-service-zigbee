@@ -172,7 +172,7 @@
       "modelNames":     ["_TZE204_81yrt3lo", "_TZE284_81yrt3lo"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["voltage", "frequency", "energy_1", "energy_2", "producedEnergy_1", "producedEnergy_2", "current_1", "current_2", "power_1", "power_2"],
+      "exposes":        ["voltage", "frequency", "energy_1", "producedEnergy_1", "current_1", "power_1", "energy_2", "producedEnergy_2", "current_2", "power_2"],
       "options":        {
                           "tuyaDataPoints":
                           {
