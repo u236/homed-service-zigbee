@@ -206,9 +206,9 @@ struct ezspV14SendMulticastStruct
     quint16 groupId;
     quint8  sequence;
     quint8  hops;
-    quint16 broadcastAddr;
+    quint16 broadcastAddress;
     quint16 alias;
-    quint8  nwkSequence;
+    quint8  networkSequence;
     quint16 tag;
     quint8  length;
 };
@@ -301,13 +301,13 @@ struct ezspV14IncomingMessageStruct
     quint16 options;
     quint16 groupId;
     quint8  sequence;
-    quint16 senderShortId;
-    quint64 senderLongId;
+    quint16 networkAddress;
+    quint64 ieeeAddress;
     quint8  bindingIndex;
     quint8  addressIndex;
-    quint8  lastHopLqi;
-    quint8  lastHopRssi;
-    quint32 lastHopTimestamp;
+    quint8  linkQuality;
+    quint8  rssi;
+    quint32 timestamp;
     quint8  length;
 };
 
@@ -334,13 +334,13 @@ struct ezspV14MacFilterMessageStruct
 {
     quint8  index;
     quint8  type;
-    quint16 senderShortId;
-    quint64 senderLongId;
+    quint16 networkAddress;
+    quint64 ieeeAddress;
     quint8  bindingIndex;
     quint8  addressIndex;
-    quint8  lastHopLqi;
-    quint8  lastHopRssi;
-    quint32 lastHopTimestamp;
+    quint8  linkQuality;
+    quint8  rssi;
+    quint32 timestamp;
     quint8  length;
     quint16 ieeeFrameControl;
     quint8  sequence;
@@ -390,6 +390,7 @@ struct ezspVersionStruct
     quint8  minor;
     quint8  patch;
 };
+
 #pragma pack(pop)
 
 class EZSP : public Adapter
@@ -421,7 +422,7 @@ private:
     QList <ezspSetConfigStruct> m_config, m_policy;
     QList <ezspSetValueStruct> m_values;
 
-    inline quint8 statusOffset(void) { return m_version >= 14 ? 3 : 0; }
+    inline quint8 statusOffset(void) { return m_version < 14 ? 0 : 3; }
 
     quint16 getCRC(quint8 *data, quint32 length);
     void randomize(QByteArray &data);
