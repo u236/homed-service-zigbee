@@ -318,6 +318,9 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
         {
             QList <QString> list = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
+            if (data.length() != 26)
+                break;
+
             setMeta("program", true);
 
             for (int i = 0; i < list.count(); i++)
