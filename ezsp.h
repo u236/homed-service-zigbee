@@ -166,6 +166,21 @@ struct ezspSendUnicastStruct
     quint8  length;
 };
 
+struct ezspV14SendUnicastStruct
+{
+    quint8  type;
+    quint16 networkAddress;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint16 tag;
+    quint8  length;
+};
+
 struct ezspSendMulticastStruct
 {
     quint16 profileId;
@@ -178,6 +193,23 @@ struct ezspSendMulticastStruct
     quint8  hops;
     quint8  radius;
     quint8  tag;
+    quint8  length;
+};
+
+struct ezspV14SendMulticastStruct
+{
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint8  hops;
+    quint16 broadcastAddr;
+    quint16 alias;
+    quint8  nwkSequence;
+    quint16 tag;
     quint8  length;
 };
 
@@ -225,6 +257,22 @@ struct ezspMessageSentStruct
     quint8  length;
 };
 
+struct ezspV14MessageSentStruct
+{
+    quint32 status;
+    quint8  type;
+    quint16 networkAddress;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint16 tag;
+    quint8  length;
+};
+
 struct ezspIncomingMessageStruct
 {
     quint8  type;
@@ -243,12 +291,56 @@ struct ezspIncomingMessageStruct
     quint8  length;
 };
 
+struct ezspV14IncomingMessageStruct
+{
+    quint8  type;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint16 senderShortId;
+    quint64 senderLongId;
+    quint8  bindingIndex;
+    quint8  addressIndex;
+    quint8  lastHopLqi;
+    quint8  lastHopRssi;
+    quint32 lastHopTimestamp;
+    quint8  length;
+};
+
 struct ezspMacFilterMessageStruct
 {
     quint8  index;
     quint8  type;
     quint8  linkQuality;
     quint8  rssi;
+    quint8  length;
+    quint16 ieeeFrameControl;
+    quint8  sequence;
+    quint16 dstPanId;
+    quint64 dstAddress;
+    quint16 srcPanId;
+    quint64 srcAddress;
+    quint16 networkFrameControl;
+    quint8  appFrameControl;
+    quint16 clusterId;
+    quint16 profileId;
+};
+
+struct ezspV14MacFilterMessageStruct
+{
+    quint8  index;
+    quint8  type;
+    quint16 senderShortId;
+    quint64 senderLongId;
+    quint8  bindingIndex;
+    quint8  addressIndex;
+    quint8  lastHopLqi;
+    quint8  lastHopRssi;
+    quint32 lastHopTimestamp;
     quint8  length;
     quint16 ieeeFrameControl;
     quint8  sequence;
@@ -298,98 +390,6 @@ struct ezspVersionStruct
     quint8  minor;
     quint8  patch;
 };
-
-struct ezspSendUnicastV14Struct
-{
-    quint8  type;
-    quint16 networkAddress;
-    quint16 profileId;
-    quint16 clusterId;
-    quint8  srcEndpointId;
-    quint8  dstEndpointId;
-    quint16 options;
-    quint16 groupId;
-    quint8  sequence;
-    quint16 tag;
-    quint8  length;
-};
-
-struct ezspSendMulticastV14Struct
-{
-    quint16 profileId;
-    quint16 clusterId;
-    quint8  srcEndpointId;
-    quint8  dstEndpointId;
-    quint16 options;
-    quint16 groupId;
-    quint8  sequence;
-    quint8  hops;
-    quint16 broadcastAddr;
-    quint16 alias;
-    quint8  nwkSequence;
-    quint16 tag;
-    quint8  length;
-};
-
-struct ezspMessageSentV14Struct
-{
-    quint32 status;
-    quint8  type;
-    quint16 networkAddress;
-    quint16 profileId;
-    quint16 clusterId;
-    quint8  srcEndpointId;
-    quint8  dstEndpointId;
-    quint16 options;
-    quint16 groupId;
-    quint8  sequence;
-    quint16 tag;
-    quint8  length;
-};
-
-struct ezspRxPacketInfoStruct
-{
-    quint16 senderShortId;
-    quint64 senderLongId;
-    quint8  bindingIndex;
-    quint8  addressIndex;
-    quint8  lastHopLqi;
-    quint8  lastHopRssi;
-    quint32 lastHopTimestamp;
-};
-
-struct ezspIncomingMessageV14Struct
-{
-    quint8  type;
-    quint16 profileId;
-    quint16 clusterId;
-    quint8  srcEndpointId;
-    quint8  dstEndpointId;
-    quint16 options;
-    quint16 groupId;
-    quint8  sequence;
-    ezspRxPacketInfoStruct packetInfo;
-    quint8  length;
-};
-
-struct ezspMacFilterMessageV14Struct
-{
-    quint8  index;
-    quint8  type;
-    ezspRxPacketInfoStruct packetInfo;
-    quint8  length;
-    quint16 ieeeFrameControl;
-    quint8  sequence;
-    quint16 dstPanId;
-    quint64 dstAddress;
-    quint16 srcPanId;
-    quint64 srcAddress;
-    quint16 networkFrameControl;
-    quint8  appFrameControl;
-    quint16 clusterId;
-    quint16 profileId;
-};
-
 #pragma pack(pop)
 
 class EZSP : public Adapter

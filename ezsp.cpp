@@ -64,7 +64,7 @@ bool EZSP::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPointI
 
     if (m_version >= 14)
     {
-        ezspSendUnicastV14Struct request;
+        ezspV14SendUnicastStruct request;
 
         request.type = EZSP_MESSAGE_TYPE_DIRECT;
         request.networkAddress = qToLittleEndian(networkAddress);
@@ -102,7 +102,7 @@ bool EZSP::multicastRequest(quint8 id, quint16 groupId, quint8 srcEndPointId, qu
 {
     if (m_version >= 14)
     {
-        ezspSendMulticastV14Struct request;
+        ezspV14SendMulticastStruct request;
 
         request.profileId = qToLittleEndian <quint16> (m_endpoints.contains(srcEndPointId) ? m_endpoints.value(srcEndPointId)->profileId() : 0x0000);
         request.clusterId = qToLittleEndian(clusterId);
@@ -366,7 +366,7 @@ void EZSP::parsePacket(const QByteArray &payload)
         {
             if (m_version >= 14)
             {
-                const ezspMessageSentV14Struct *message = reinterpret_cast <const ezspMessageSentV14Struct*> (data.constData());
+                const ezspV14MessageSentStruct *message = reinterpret_cast <const ezspV14MessageSentStruct*> (data.constData());
                 emit requestFinished(static_cast <quint8> (qFromLittleEndian(message->tag)), static_cast <quint8> (qFromLittleEndian(message->status)));
             }
             else
@@ -386,13 +386,13 @@ void EZSP::parsePacket(const QByteArray &payload)
 
             if (m_version >= 14)
             {
-                const ezspIncomingMessageV14Struct *message = reinterpret_cast <const ezspIncomingMessageV14Struct*> (data.constData());
-                networkAddress = qFromLittleEndian(message->packetInfo.senderShortId);
+                const ezspV14IncomingMessageStruct *message = reinterpret_cast <const ezspV14IncomingMessageStruct*> (data.constData());
+                networkAddress = qFromLittleEndian(message->senderShortId);
                 profileId = message->profileId;
                 clusterId = qFromLittleEndian(message->clusterId);
                 srcEndpointId = message->srcEndpointId;
-                linkQuality = message->packetInfo.lastHopLqi;
-                payload = data.mid(sizeof(ezspIncomingMessageV14Struct), message->length);
+                linkQuality = message->lastHopLqi;
+                payload = data.mid(sizeof(ezspV14IncomingMessageStruct), message->length);
             }
             else
             {
@@ -435,9 +435,9 @@ void EZSP::parsePacket(const QByteArray &payload)
         {
             if (m_version >= 14)
             {
-                const ezspMacFilterMessageV14Struct *message = reinterpret_cast <const ezspMacFilterMessageV14Struct*> (data.constData());
+                const ezspV14MacFilterMessageStruct *message = reinterpret_cast <const ezspV14MacFilterMessageStruct*> (data.constData());
                 quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->srcAddress));
-                emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->packetInfo.lastHopLqi, data.mid(sizeof(ezspMacFilterMessageV14Struct)));
+                emit rawMessageReveived(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)), qFromLittleEndian(message->clusterId), message->lastHopLqi, data.mid(sizeof(ezspV14MacFilterMessageStruct)));
             }
             else
             {
