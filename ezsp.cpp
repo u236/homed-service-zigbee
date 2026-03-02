@@ -488,11 +488,17 @@ bool EZSP::startNetwork(quint64 extendedPanId)
             }
         }
 
-        while (m_stackStatus != EZSP_STACK_STATUS_NETWORK_DOWN)
+        if (m_version < 14)
         {
-            if (!waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+            if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
             {
                 logWarning << "Stack status handler timed out";
+                return false;
+            }
+
+            if (m_stackStatus != EZSP_STACK_STATUS_NETWORK_DOWN)
+            {
+                logWarning << "Unexpected stack status:" << QString::asprintf("0x%02x", m_stackStatus);
                 return false;
             }
         }
@@ -713,16 +719,10 @@ bool EZSP::startCoordinator(void)
 
     }
 
-    if (!m_replyStatus)
+    if (m_version < 14 && !m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
     {
-        while (m_stackStatus != EZSP_STACK_STATUS_NETWORK_UP)
-        {
-            if (!waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
-            {
-                logWarning << "Stack status handler timed out";
-                return false;
-            }
-        }
+        logWarning << "Stack status handler timed out";
+        return false;
     }
 
     if (!sendFrame(EZSP_FRAME_GET_NETWORK_PARAMETERS))
