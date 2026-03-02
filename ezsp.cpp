@@ -732,6 +732,12 @@ bool EZSP::startCoordinator(void)
     if (m_replyData.at(1 + statusOffset()) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != EZSP_STACK_STATUS_NETWORK_UP)
     {
         logWarning << "Adapter network parameters doesn't match configuration";
+        logWarning << "  nodeType:" << QString::asprintf("0x%02x", static_cast <quint8> (m_replyData.at(1 + statusOffset()))) << "(expected 0x01)";
+        logWarning << "  extendedPanId match:" << (network.extendedPanId == ieeeAddress);
+        logWarning << "  panId match:" << (network.panId == qToLittleEndian(m_panId));
+        logWarning << "  channel:" << network.channel << "(expected" << m_channel << ")";
+        logWarning << "  stackStatus:" << QString::asprintf("0x%02x", m_stackStatus) << "(expected 0x90)";
+        logWarning << "  replyData:" << m_replyData.toHex(':');
         check = true;
     }
 
