@@ -488,16 +488,13 @@ bool EZSP::startNetwork(quint64 extendedPanId)
             }
         }
 
-        if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+        while (m_stackStatus != EZSP_STACK_STATUS_NETWORK_DOWN)
         {
-            logWarning << "Stack status handler timed out";
-            return false;
-        }
-
-        if (m_stackStatus != EZSP_STACK_STATUS_NETWORK_DOWN)
-        {
-            logWarning << "Unexpected stack status:" << QString::asprintf("0x%02x", m_stackStatus);
-            return false;
+            if (!waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+            {
+                logWarning << "Stack status handler timed out";
+                return false;
+            }
         }
     }
 
@@ -713,12 +710,19 @@ bool EZSP::startCoordinator(void)
             logWarning << "Network init request failed";
             return false;
         }
+
     }
 
-    if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+    if (!m_replyStatus)
     {
-        logWarning << "Stack status handler timed out";
-        return false;
+        while (m_stackStatus != EZSP_STACK_STATUS_NETWORK_UP)
+        {
+            if (!waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+            {
+                logWarning << "Stack status handler timed out";
+                return false;
+            }
+        }
     }
 
     if (!sendFrame(EZSP_FRAME_GET_NETWORK_PARAMETERS))
@@ -729,15 +733,9 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&network, m_replyData.constData() + 2 + statusOffset(), sizeof(network));
 
-    if (m_replyData.at(1 + statusOffset()) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel || m_stackStatus != EZSP_STACK_STATUS_NETWORK_UP)
+    if (m_replyData.at(1 + statusOffset()) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel)
     {
         logWarning << "Adapter network parameters doesn't match configuration";
-        logWarning << "  nodeType:" << QString::asprintf("0x%02x", static_cast <quint8> (m_replyData.at(1 + statusOffset()))) << "(expected 0x01)";
-        logWarning << "  extendedPanId match:" << (network.extendedPanId == ieeeAddress);
-        logWarning << "  panId match:" << (network.panId == qToLittleEndian(m_panId));
-        logWarning << "  channel:" << network.channel << "(expected" << m_channel << ")";
-        logWarning << "  stackStatus:" << QString::asprintf("0x%02x", m_stackStatus) << "(expected 0x90)";
-        logWarning << "  replyData:" << m_replyData.toHex(':');
         check = true;
     }
 
