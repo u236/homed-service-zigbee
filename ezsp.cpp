@@ -885,7 +885,7 @@ bool EZSP::permitJoin(bool enabled)
         if (m_version == 13)
             request.append(1, 0x00);
 
-        if (!sendFrame(m_version < 13 ? EZSP_FRAME_IMPORT_TRANSIENT_KEY : EZSP_FRAME_IMPORT_TRANSIENT_KEY, request) || m_replyStatus)
+        if (!sendFrame(m_version < 13 ? EZSP_FRAME_ADD_TRANSIENT_LINK_KEY : EZSP_FRAME_IMPORT_TRANSIENT_KEY, request) || m_replyStatus)
         {
             logWarning << "Add transient key request failed";
             return false;
