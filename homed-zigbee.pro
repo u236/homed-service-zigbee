@@ -2,6 +2,7 @@ include(../homed-common/homed-color.pri)
 include(../homed-common/homed-common.pri)
 include(../homed-common/homed-endpoint.pri)
 include(../homed-common/homed-gpio.pri)
+include(../homed-common/homed-parser.pri)
 
 HEADERS += \
     action.h \
