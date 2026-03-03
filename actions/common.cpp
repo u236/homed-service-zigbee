@@ -129,6 +129,9 @@ QVariant Actions::Thermostat::request(const QString &name, const QVariant &data)
         {
             qint8 value = listIndex({"off", "auto", "cool", "heat", "fan", "dry"}, data);
 
+            if (modelName() == "lumi.airrtc.agl001")
+                break;
+
             if (value > 1)
                 value += value > 3 ? 3 : 1;
 

@@ -122,6 +122,11 @@ void Properties::Thermostat::parseAttribute(quint16, quint16 attributeId, const 
 
         case 0x001C:
         {
+            QString mode;
+
+            if (modelName() == "lumi.airrtc.agl001")
+                break;
+
             switch (static_cast <quint8> (data.at(0)))
             {
                 case 0x00: map.insert("systemMode", "off"); break;
