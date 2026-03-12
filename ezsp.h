@@ -166,6 +166,21 @@ struct ezspSendUnicastStruct
     quint8  length;
 };
 
+struct ezspV14SendUnicastStruct
+{
+    quint8  type;
+    quint16 networkAddress;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint16 tag;
+    quint8  length;
+};
+
 struct ezspSendMulticastStruct
 {
     quint16 profileId;
@@ -178,6 +193,23 @@ struct ezspSendMulticastStruct
     quint8  hops;
     quint8  radius;
     quint8  tag;
+    quint8  length;
+};
+
+struct ezspV14SendMulticastStruct
+{
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint8  hops;
+    quint16 broadcastAddress;
+    quint16 alias;
+    quint8  networkSequence;
+    quint16 tag;
     quint8  length;
 };
 
@@ -225,6 +257,22 @@ struct ezspMessageSentStruct
     quint8  length;
 };
 
+struct ezspV14MessageSentStruct
+{
+    quint32 status;
+    quint8  type;
+    quint16 networkAddress;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint16 tag;
+    quint8  length;
+};
+
 struct ezspIncomingMessageStruct
 {
     quint8  type;
@@ -243,12 +291,56 @@ struct ezspIncomingMessageStruct
     quint8  length;
 };
 
+struct ezspV14IncomingMessageStruct
+{
+    quint8  type;
+    quint16 profileId;
+    quint16 clusterId;
+    quint8  srcEndpointId;
+    quint8  dstEndpointId;
+    quint16 options;
+    quint16 groupId;
+    quint8  sequence;
+    quint16 networkAddress;
+    quint64 ieeeAddress;
+    quint8  bindingIndex;
+    quint8  addressIndex;
+    quint8  linkQuality;
+    quint8  rssi;
+    quint32 timestamp;
+    quint8  length;
+};
+
 struct ezspMacFilterMessageStruct
 {
     quint8  index;
     quint8  type;
     quint8  linkQuality;
     quint8  rssi;
+    quint8  length;
+    quint16 ieeeFrameControl;
+    quint8  sequence;
+    quint16 dstPanId;
+    quint64 dstAddress;
+    quint16 srcPanId;
+    quint64 srcAddress;
+    quint16 networkFrameControl;
+    quint8  appFrameControl;
+    quint16 clusterId;
+    quint16 profileId;
+};
+
+struct ezspV14MacFilterMessageStruct
+{
+    quint8  index;
+    quint8  type;
+    quint16 networkAddress;
+    quint64 ieeeAddress;
+    quint8  bindingIndex;
+    quint8  addressIndex;
+    quint8  linkQuality;
+    quint8  rssi;
+    quint32 timestamp;
     quint8  length;
     quint16 ieeeFrameControl;
     quint8  sequence;
@@ -329,6 +421,8 @@ private:
 
     QList <ezspSetConfigStruct> m_config, m_policy;
     QList <ezspSetValueStruct> m_values;
+
+    inline quint8 statusOffset(void) { return m_version < 14 ? 0 : 3; }
 
     quint16 getCRC(quint8 *data, quint32 length);
     void randomize(QByteArray &data);
