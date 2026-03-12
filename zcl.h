@@ -76,6 +76,7 @@
 #define CLUSTER_TIME                            0x000A
 #define CLUSTER_ANALOG_INPUT                    0x000C
 #define CLUSTER_ANALOG_OUTPUT                   0x000D
+#define CLUSTER_BINARY_INPUT                    0x000F
 #define CLUSTER_BINARY_OUTPUT                   0x0010
 #define CLUSTER_MULTISTATE_INPUT                0x0012
 #define CLUSTER_MULTISTATE_OUTPUT               0x0013

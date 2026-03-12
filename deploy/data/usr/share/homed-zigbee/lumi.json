@@ -624,8 +624,8 @@
       "description":    "Aqara Air Quality Sensor VOCKQJK11LM",
       "modelNames":     ["lumi.airmonitor.acn01"],
       "properties":     ["batteryVoltage", "temperature", "humidity"],
-      "bindings":       ["battery", "temperature", "humidity", "analogInput"],
-      "reportings":     ["batteryVoltage", "temperature", "humidity", "analogInput"],
+      "bindings":       ["battery", "analogInput", "temperature", "humidity"],
+      "reportings":     ["batteryVoltage", "analogInput", "temperature", "humidity", "analogInput"],
       "exposes":        ["battery", "temperature", "humidity", "voc", "airQuality"],
       "options":        {
                           "customAttributes":

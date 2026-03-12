@@ -101,7 +101,16 @@ namespace Reportings
 
     public:
 
-        AnalogInput(void) : ReportingObject("analogInput", CLUSTER_ANALOG_INPUT, {0x0055, 0x001C}, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
+        AnalogInput(void) : ReportingObject("analogInput", CLUSTER_ANALOG_INPUT, {0x001C, 0x0055}, DATA_TYPE_SINGLE_PRECISION, 10, 3600) {}
+
+    };
+
+    class BinaryInput : public ReportingObject
+    {
+
+    public:
+
+        BinaryInput(void) : ReportingObject("binaryInput", CLUSTER_ANALOG_INPUT, {0x001C, 0x0055}, DATA_TYPE_BOOLEAN, 1, 3600) {}
 
     };
 

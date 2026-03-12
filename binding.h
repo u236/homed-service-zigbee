@@ -90,6 +90,15 @@ namespace Bindings
 
     };
 
+    class BinaryInput : public BindingObject
+    {
+
+    public:
+
+        BinaryInput(void) : BindingObject("binaryInput", CLUSTER_BINARY_INPUT) {}
+
+    };
+
     class PollControl : public BindingObject
     {
 

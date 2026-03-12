@@ -1542,7 +1542,7 @@
       "modelNames":     ["_TZE200_grgol3xp", "_TZE200_rhgsbacq", "_TZE200_uli8wasj", "_TZE200_y8jijhba"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["battery", "occupancy", "temperature", "humidity", "illuminance", "sensitivity", "fadingTime", "temperatureOffset", "humidityOffset", "indicator"],
+      "exposes":        ["battery", "occupancy", "illuminance", "temperature", "humidity", "sensitivity", "fadingTime", "temperatureOffset", "humidityOffset", "indicator"],
       "options":        {
                           "tuyaDataPoints":
                           {
