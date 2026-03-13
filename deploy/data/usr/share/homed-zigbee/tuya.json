@@ -1291,6 +1291,23 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Smoke Detector (Type C)",
+      "modelNames":     ["_TZE204_kgaxpvxr", "_TZE284_n4ttsck2"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["battery", "smoke", "concentration", "test", "fault"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "smoke", "type": "bool", "invert": true},
+                            "15":   {"name": "battery", "type": "value"},
+                            "101":  {"name": "test", "type": "bool"},
+                            "102":  {"name": "sensitivity", "type": "enum"}
+                          },
+                          "test": {"type": "binary"},
+                          "sensitivity": {"type": "select", "enum": ["checking", "success", "failed", "other"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Carbon Monoxide Detector",
       "modelNames":     ["_TZE200_hr0tdd47", "_TZE200_rjxqso4a", "_TZE284_rjxqso4a"],
       "properties":     ["tuyaDataPoints"],
