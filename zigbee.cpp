@@ -918,7 +918,7 @@ bool ZigBee::bindingRequest(const Endpoint &endpoint, quint16 clusterId, const Q
             break;
         }
 
-        if (check)
+        if (!unbind && check)
             endpoint->bindings().append(binding);
 
         m_devices->storeDatabase(true);
@@ -2253,7 +2253,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (request->debug())
             {
                 emit deviceEvent(device.data(), Event::requestFinished, {{"status", status}});
-                return;
+                break;
             }
 
             if (status)
@@ -2290,7 +2290,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (device->removed() || device->logicalType() == LogicalType::Coordinator)
                 break;
 
-            logInfo << device << "removed";
+            logInfo << device << "removed" << (status ? "(force)" : "(graceful)");
             emit deviceEvent(device.data(), Event::deviceRemoved);
 
             m_devices->removeDevice(device);
