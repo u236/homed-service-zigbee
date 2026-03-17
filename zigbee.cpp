@@ -1502,7 +1502,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             {
                 connect(device->timer(), &QTimer::timeout, this, &ZigBee::otaTimeout, Qt::UniqueConnection);
                 device->timer()->setSingleShot(true);
-                device->timer()->start(NETWORK_REQUEST_TIMEOUT);
+                device->timer()->start(OTA_UPGRADE_TIMEOUT);
             }
 
             return;
