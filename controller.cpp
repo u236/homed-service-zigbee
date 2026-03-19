@@ -99,6 +99,9 @@ void Controller::serviceOnline(void)
         mqttSubscribe(m_haStatus);
     }
 
+    m_lastSeen.clear();
+    updateDeviceData();
+
     m_zigbee->devices()->storeDatabase();
     mqttPublishStatus();
 }
