@@ -1,8 +1,0 @@
-pkgname = homed-zigbee
-pkgver =
-arch =
-pkgdesc = HOMEd ZigBee Service
-maintainer = u236 <mail@u236.org>
-depend = homed-common
-depend = homed-qt
-backup = etc/homed/homed-zigbee.conf

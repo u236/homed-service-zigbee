@@ -1,0 +1,4 @@
+name = homed-zigbee
+description = HOMEd ZigBee Service
+maintainer = u236 <mail@u236.org>
+depends = homed-common homed-qt
