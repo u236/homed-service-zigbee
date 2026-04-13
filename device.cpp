@@ -77,7 +77,8 @@ int DeviceObject::checkVersion(const QString &version)
 
 DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
 {
-    QFile file(config->value("device/expose", reinterpret_cast <HOMEd*> (parent)->basePath().append("share/homed-common/expose.json")).toString());
+    HOMEd *homed = reinterpret_cast <HOMEd*> (parent);
+    QFile file(config->value("device/expose", homed->basePath().append("share/homed-common/expose.json")).toString());
 
     PropertyObject::registerMetaTypes();
     ActionObject::registerMetaTypes();
@@ -90,7 +91,7 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     m_propertiesFile.setFileName(config->value("device/properties", "/opt/homed-zigbee/properties.json").toString());
     m_optionsFile.setFileName(config->value("device/options", "/opt/homed-zigbee/options.json").toString());
 
-    m_libraryDir.setPath(config->value("device/library", reinterpret_cast <HOMEd*> (parent)->basePath().append("share/homed-zigbee")).toString());
+    m_libraryDir.setPath(config->value("device/library", homed->basePath().append("share/homed-zigbee")).toString());
     m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
     m_otaDir.setPath(config->value("device/ota", "/opt/homed-zigbee/ota").toString());
 
@@ -1588,9 +1589,10 @@ QJsonObject DeviceList::serializeProperties(void)
 
 void DeviceList::writeDatabase(void)
 {
+    HOMEd *homed = reinterpret_cast <HOMEd*> (parent());
     QJsonObject json = {{"devices", serializeDevices()}, {"names", m_names}, {"permitJoin", m_permitJoin}, {"timestamp", QDateTime::currentSecsSinceEpoch()}, {"version", SERVICE_VERSION}};
 
-    emit statusUpdated(json);
+    homed->mqttPublishStatus(json);
 
     if (!m_sync)
         return;
@@ -1599,7 +1601,7 @@ void DeviceList::writeDatabase(void)
     json.remove("permitJoin");
     m_sync = false;
 
-    if (reinterpret_cast <HOMEd*> (parent())->writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
+    if (homed->writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
 
     logWarning << "Database not stored";

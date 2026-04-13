@@ -235,7 +235,6 @@ signals:
     void networkStarted(void);
     void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json = QJsonObject());
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
-    void statusUpdated(const QJsonObject &json);
     void replyReceived(void);
     void groupRequestFinished(void);
 

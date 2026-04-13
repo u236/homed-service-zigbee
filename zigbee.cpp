@@ -18,7 +18,6 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     m_cloud = m_config->value("default/cloud", true).toBool();
     m_debug = m_config->value("debug/zigbee", false).toBool();
 
-    connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
     connect(m_devices, &DeviceList::endpointUpdated, this, &ZigBee::endpointUpdated);
     connect(m_devices, &DeviceList::pollRequest, this, &ZigBee::pollRequest);
     connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);

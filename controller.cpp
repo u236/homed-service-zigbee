@@ -63,8 +63,6 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
     connect(m_zigbee, &ZigBee::networkStarted, this, &Controller::networkStarted);
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
-    connect(m_zigbee, &ZigBee::statusUpdated, this, &Controller::statusUpdated);
-
     m_deviceDataTimer->start(UPDATE_DEVICE_DATA_INTERVAL);
     m_propertiesTimer->setSingleShot(true);
 
@@ -103,7 +101,7 @@ void Controller::serviceOnline(void)
     updateDeviceData();
 
     m_zigbee->devices()->storeDatabase();
-    mqttPublishStatus();
+    mqttPublishService();
 }
 
 void Controller::quit(void)
@@ -388,9 +386,4 @@ void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)
         mqttPublish(mqttTopic("fd/%1/%2/%3").arg(serviceTopic(), m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')).arg(endpointId), QJsonObject::fromVariantMap(endpointMap), retain);
 
     mqttPublish(mqttTopic("fd/%1/%2").arg(serviceTopic(), m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(deviceMap), retain);
-}
-
-void Controller::statusUpdated(const QJsonObject &json)
-{
-    mqttPublish(mqttTopic("status/%1").arg(serviceTopic()), json, true);
 }

@@ -321,7 +321,6 @@ private slots:
 
 signals:
 
-    void statusUpdated(const QJsonObject &json);
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 
