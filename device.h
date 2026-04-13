@@ -289,7 +289,7 @@ private:
     QTimer *m_databaseTimer, *m_propertiesTimer;
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
-    QDir m_otaDir, m_externalDir, m_libraryDir;
+    QDir m_libraryDir, m_externalDir, m_otaDir;
     bool m_names, m_debounce, m_sync, m_permitJoin;
 
     QMap <QString, QVariant> m_exposeOptions;
