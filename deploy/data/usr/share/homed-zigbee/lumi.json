@@ -419,7 +419,7 @@
       "properties":     ["status", "level", "colorTemperature", "lumiData"],
       "actions":        ["status", "level", "colorTemperature", "lumiLightStatusMemory"],
       "exposes":        ["light", "statusMemory"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}, "skipAttributeRead": true}
     },
     {
       "description":    "Aqara Dimmable Bulb with Changable Color Temperature ZNLDP13LM",
