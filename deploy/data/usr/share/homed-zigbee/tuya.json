@@ -457,6 +457,34 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 3-Channel Switch with Human Presence Sensor",
+      "modelNames":     ["_TZE200_cqtamhh5", "_TZE200_df04ghrb", "_TZE200_khzbklyh", "_TZE200_llvwkkde", "_TZE200_toeldckg", "_TZE200_xlnzk169"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch_1", "switch_2", "switch_3", "occupancy", "powerOnStatus", "backlight", "sensitivity", "fadingTime", "autoOn", "autoOff"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "status_1", "type": "bool", "action": true},
+                            "2":    {"name": "status_2", "type": "bool", "action": true},
+                            "3":    {"name": "status_3", "type": "bool", "action": true},
+                            "14":   {"name": "powerOnStatus", "type": "enum", "action": true},
+                            "16":   {"name": "backlight", "type": "bool", "action": true},
+                            "101":  {"name": "occupancy", "type": "bool"},
+                            "102":  {"name": "sensitivity", "type": "value", "action": true},
+                            "103":  {"name": "fadingTime", "type": "value", "action": true},
+                            "104":  {"name": "autoOn", "type": "enum", "action": true},
+                            "105":  {"name": "autoOff", "type": "enum", "action": true}
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "sensitivity": {"min": 0, "max": 19},
+                          "fadingTime": {"min": 0, "max": 28800, "step": 10},
+                          "autoOn": {"type": "select", "enum": ["off", "all", "1", "2", "3", "1+2", "2+3", "1+3"], "icon": "mdi:motion-sensor"},
+                          "autoOff": {"type": "select", "enum": ["off", "all", "1", "2", "3", "1+2", "2+3", "1+3"], "icon": "mdi:motion-sensor-off"}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Fan Controller (Type A)",
       "modelNames":     ["_TZE200_r32ctezx", "_TZE204_r32ctezx"],
       "properties":     ["tuyaDataPoints"],
