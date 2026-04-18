@@ -2252,7 +2252,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (request->debug())
             {
                 emit deviceEvent(device.data(), Event::requestFinished, {{"status", status}});
-                break;
+                return;
             }
 
             if (status)
