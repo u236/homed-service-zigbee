@@ -1146,7 +1146,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Smart Water Valve",
+      "description":    "TUYA TS0601 Smart Water Valve (Type A)",
       "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1165,11 +1165,29 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Smart Water Valve (Type B)",
+      "modelNames":     ["_TZE204_dsagrkvg", "_TZE284_zm8zpwas"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "lock", "valveStatus"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "8":    {"name": "valveStatus", "type": "enum"},
+                            "101":  {"name": "battery", "type": "value"}
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "valveStatus": {"type": "sensor", "enum": ["unknown", "open", "closed"]},
+                          "lock": "valve"
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Dual Water Valve",
       "modelNames":     ["_TZE284_eaet5qt5", "_TZE284_fhvpaltk"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["lock_1", "lock_2", "timer_1", "timer_2", "duration_1", "duration_2", "valveStatus_1", "valveStatus_2", "battery"],
+      "exposes":        ["battery", "lock_1", "lock_2", "timer_1", "timer_2", "duration_1", "duration_2", "valveStatus_1", "valveStatus_2"],
       "options":        {
                           "tuyaDataPoints":
                           {
