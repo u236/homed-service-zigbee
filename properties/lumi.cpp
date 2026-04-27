@@ -448,7 +448,7 @@ void PropertiesLUMI::Cover::parseAttribute(quint16, quint16 attributeId, const Q
     if (value > 100)
         return;
 
-    if (!option("invertCover").toBool())
+    if (option("invertCover").toBool())
         value = 100 - value;
 
     map.insert("cover", value ? "open" : "closed");
