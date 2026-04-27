@@ -469,20 +469,8 @@
       "description":    "Aqara Curtain Motor SRSC-M01 or ZNCLDJ11LM",
       "modelNames":     ["lumi.curtain", "lumi.curtain.aq2"],
       "properties":     ["lumiCover"],
-      "actions":        ["coverStatus", "lumiCoverPosition"],
+      "actions":        ["lumiCoverStatus", "lumiCoverStop", "lumiCoverPosition"],
       "exposes":        ["cover"]
-    },
-    {
-      "description":    "Aqara Curtain Motor ZNCLBL01LM",
-      "modelNames":     ["lumi.curtain.acn003", "lumi.curtain.agl001"],
-      "properties":     ["batteryPercentage", "lumiData", "lumiCover"],
-      "actions":        ["coverStatus", "lumiCoverPosition"],
-      "exposes":        ["battery", "cover", "calibration", "temperature"],
-      "options":        {
-                          "customAttributes": {"calibration": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1031, "dataType": 32, "action": true}},
-                          "calibration": {"type": "select", "enum": ["reset", "start", "stop"], "icon": "mdi:swap-horizontal-bold"},
-                          "temperature": {"diagnostic": true}
-                        }
     },
     {
       "description":    "Aqara Roller Blind Motor ZNJLBL01LM",
@@ -491,6 +479,19 @@
       "actions":        ["lumiCoverStatus", "lumiCoverStop", "lumiCoverPosition"],
       "exposes":        ["battery", "cover", "temperature"],
       "options":        {"temperature": {"diagnostic": true}, "powerSource": 3}
+    },
+    {
+      "description":    "Aqara Curtain Motor ZNCLBL01LM",
+      "modelNames":     ["lumi.curtain.acn003", "lumi.curtain.agl001"],
+      "properties":     ["batteryPercentage", "coverPosition", "lumiData"],
+      "actions":        ["coverStatus", "coverPosition"],
+      "exposes":        ["battery", "cover", "calibration", "temperature"],
+      "options":        {
+                          "customAttributes": {"calibration": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1031, "dataType": 32, "action": true}},
+                          "calibration": {"type": "select", "enum": ["reset", "start", "stop"], "icon": "mdi:swap-horizontal-bold"},
+                          "temperature": {"diagnostic": true},
+                          "invertCover": true
+                        }
     },
     {
       "description":    "Aqara T1 Gas/Water Valve Motor VC-X01D",
