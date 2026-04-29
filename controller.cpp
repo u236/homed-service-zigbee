@@ -63,11 +63,9 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
     connect(m_zigbee, &ZigBee::networkStarted, this, &Controller::networkStarted);
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
+
     m_deviceDataTimer->start(UPDATE_DEVICE_DATA_INTERVAL);
     m_propertiesTimer->setSingleShot(true);
-
-    m_zigbee->devices()->setNames(getConfig()->value("mqtt/names", false).toBool());
-    m_zigbee->devices()->setDebounce(getConfig()->value("mqtt/debounce", true).toBool());
     m_zigbee->init();
 }
 

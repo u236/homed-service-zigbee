@@ -95,6 +95,9 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
     m_otaDir.setPath(config->value("device/ota", "/opt/homed-zigbee/ota").toString());
 
+    m_names = config->value("mqtt/names", false).toBool();
+    m_debounce = config->value("mqtt/debounce", true).toBool();
+
     if (file.open(QFile::ReadOnly))
     {
         m_exposeOptions = QJsonDocument::fromJson(file.readAll()).object().toVariantMap();

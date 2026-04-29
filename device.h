@@ -263,12 +263,8 @@ public:
     ~DeviceList(void);
 
     inline QDir otaDir(void) { return m_otaDir; }
-
     inline bool names(void) { return m_names; }
-    inline void setNames(bool value) { m_names = value; }
-
     inline bool debounce(void) { return m_debounce; }
-    inline void setDebounce(bool value) { m_debounce = value; }
 
     inline bool permitJoin(void) { return m_permitJoin; }
     inline void setPermitJoin(bool value) { m_permitJoin = value; }
