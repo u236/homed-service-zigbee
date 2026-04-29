@@ -42,6 +42,8 @@ ZigBee::~ZigBee(void)
 
     GPIO::setStatus(m_statusLedPin, false);
     GPIO::setStatus(m_blinkLedPin, false);
+
+    delete m_devices;
 }
 
 void ZigBee::init(void)
