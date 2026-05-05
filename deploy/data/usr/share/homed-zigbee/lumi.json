@@ -565,8 +565,8 @@
       "options":        {"occupancyResetTimeout": 60, "illuminance": {"raw": true}, "temperature": {"diagnostic": true}}
     },
     {
-      "description":    "Aqara P1 Motion Sensor MS-S02",
-      "modelNames":     ["lumi.motion.ac02"],
+      "description":    "Aqara Motion Sensor RTCGQ12LM, RTCGQ14LM or RTCGQ15LM",
+      "modelNames":     ["lumi.motion.ac02", "lumi.motion.acn001", "lumi.motion.agl02"],
       "properties":     ["lumiData"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
       "options":        {"lumiDataResetTimeout": 60, "temperature": {"diagnostic": true}}

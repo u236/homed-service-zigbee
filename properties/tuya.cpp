@@ -180,8 +180,8 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
 
 void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVariant &data)
 {
-    QList <QVariant> list = option("programDataPoints").toList();
     QMap <QString, QVariant> map = m_value.toMap();
+    QList <QVariant> list = option("programDataPoints").toList();
 
     if (list.contains(dataPoint))
     {
