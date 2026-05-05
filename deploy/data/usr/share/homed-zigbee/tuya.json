@@ -552,7 +552,7 @@
     },
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
-      "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
+      "modelNames":     ["_TZ3000_9djocypn", "_TZ3000_air9m6af", "_TZ3000_bppxj3sf", "_TZ3000_cfnprab5", "_TZ3000_gdyjfvgm", "_TZ3000_o005nuxx", "_TZ3000_pl5v1yyy"],
       "properties":     ["tuyaChildLock", "tuyaPowerOnStatus"],
       "actions":        ["tuyaChildLock", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "childLock"],
@@ -560,7 +560,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["_TZ3000_cfnprab5", "_TZ3000_o005nuxx"],
+      "modelNames":     ["_TZ3000_9djocypn", "_TZ3000_air9m6af", "_TZ3000_bppxj3sf", "_TZ3000_cfnprab5", "_TZ3000_gdyjfvgm", "_TZ3000_o005nuxx", "_TZ3000_pl5v1yyy"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
