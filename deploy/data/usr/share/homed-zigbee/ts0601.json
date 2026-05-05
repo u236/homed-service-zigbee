@@ -291,7 +291,7 @@
     },
     {
       "description":    "TUYA TS0601 2-Channel Dimmer (Type A)",
-      "modelNames":     ["_TZE204_bxoo2swd", "_TZE200_tsxpl0d0"],
+      "modelNames":     ["_TZE200_tsxpl0d0", "_TZE204_bxoo2swd"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["light_1", "lightType_1", "light_2", "lightType_2", "powerOnStatus"],
@@ -442,7 +442,7 @@
     },
     {
       "description":    "TUYA TS0601 3-Channel Switch",
-      "modelNames":     ["_TZE200_2hf7x9n3", "_TZE204_2imwyigp", "_TZE200_atpwqgml", "_TZE200_bynnczcb", "_TZE200_go3tvswy", "_TZE200_kyfqmmyl", "_TZE204_atpwqgml"],
+      "modelNames":     ["_TZE200_2hf7x9n3", "_TZE200_atpwqgml", "_TZE200_bynnczcb", "_TZE200_go3tvswy", "_TZE200_kyfqmmyl", "_TZE204_2imwyigp", "_TZE204_atpwqgml"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch_1", "switch_2", "switch_3"],
@@ -565,7 +565,7 @@
     },
     {
       "description":    "TUYA TS0601 Radiator Thermostat (Type B)",
-      "modelNames":     ["_TZE200_6rdj8dzm", "_TZE200_9xfjixap", "_TZE200_bvu2wnxz", "_TZE200_hvaxb2tc", "_TZE200_jkfbph7l", "_TZE200_p3dbf6qs", "_TZE200_rxntag7i", "_TZE200_rxq4iti9", "_TZE200_yqgbrdyo", "_TZE204_o3x45p96", "_TZE204_ogx8u5z6", "_TZE284_p3dbf6qs", "_TZE284_c6wv4xyo", "_TZE284_o3x45p96"],
+      "modelNames":     ["_TZE200_6rdj8dzm", "_TZE200_9xfjixap", "_TZE200_bvu2wnxz", "_TZE200_hvaxb2tc", "_TZE200_jkfbph7l", "_TZE200_p3dbf6qs", "_TZE200_rxntag7i", "_TZE200_rxq4iti9", "_TZE200_yqgbrdyo", "_TZE204_o3x45p96", "_TZE204_ogx8u5z6", "_TZE284_c6wv4xyo", "_TZE284_o3x45p96", "_TZE284_p3dbf6qs"],
       "properties":     ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaDailyThermostatProgram"],
       "exposes":        ["thermostat", "batteryLow", "childLock", "frostProtection", "temperatureOffset", "thermostatProgram"],
@@ -1261,7 +1261,7 @@
     },
     {
       "description":    "TUYA TS0601 Garage Door Controller",
-      "modelNames":     ["_TZE200_wfxuhoea", "_TZE200_nklqjk62", "_TZE204_nklqjk62"],
+      "modelNames":     ["_TZE200_nklqjk62", "_TZE200_wfxuhoea", "_TZE204_nklqjk62"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["trigger", "contact"],
@@ -1428,7 +1428,7 @@
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type A)",
-      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_iadro9bf", "_TZE204_qasjif9e", "_TZE204_ztqnh5cg", "_TZE204_ztc6ggyl", "_TZE204_ztqnh5cg", "_TZE284_iadro9bf"],
+      "modelNames":     ["_TZE200_holel4dk", "_TZE200_ikvncluo", "_TZE200_jva8ink8", "_TZE200_lyetpprm", "_TZE200_wukb7rhc", "_TZE200_ztc6ggyl", "_TZE204_iadro9bf", "_TZE204_qasjif9e", "_TZE204_ztc6ggyl", "_TZE204_ztqnh5cg", "_TZE204_ztqnh5cg", "_TZE284_iadro9bf"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["occupancy", "targetDistance", "illuminance", "sensitivity", "distanceMin", "distanceMax", "detectionDelay", "fadingTime"],
