@@ -69,6 +69,7 @@ DISTFILES += \
     deploy/data/usr/share/homed-zigbee/efekta.json \
     deploy/data/usr/share/homed-zigbee/gledopto.json \
     deploy/data/usr/share/homed-zigbee/gs.json \
+    deploy/data/usr/share/homed-zigbee/hobeian.json \
     deploy/data/usr/share/homed-zigbee/homed.json \
     deploy/data/usr/share/homed-zigbee/hue.json \
     deploy/data/usr/share/homed-zigbee/ikea.json \
