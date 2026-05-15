@@ -240,6 +240,15 @@ namespace Reportings
 
     };
 
+    class VOC : public ReportingObject
+    {
+
+    public:
+
+        VOC(void) : ReportingObject("voc", CLUSTER_VOC_CONCENTRATION, 0x0000, DATA_TYPE_SINGLE_PRECISION, 10, 3600, 0) {}
+
+    };
+
     class Energy : public ReportingObject
     {
 

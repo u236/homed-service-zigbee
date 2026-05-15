@@ -846,6 +846,13 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->exposes().append(Expose(new SensorObject("pm25")));
                     break;
 
+                case CLUSTER_VOC_CONCENTRATION:
+                    it.value()->properties().append(Property(new Properties::VOC));
+                    it.value()->bindings().append(Binding(new Bindings::VOC));
+                    it.value()->reportings().append(Reporting(new Reportings::VOC));
+                    it.value()->exposes().append(Expose(new SensorObject("voc")));
+                    break;
+
                 case CLUSTER_SMART_ENERGY_METERING:
                     it.value()->properties().append(Property(new Properties::Energy));
                     it.value()->bindings().append(Binding(new Bindings::Energy));

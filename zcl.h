@@ -101,6 +101,7 @@
 #define CLUSTER_PH_MEASUREMENT                  0x0409
 #define CLUSTER_CO2_CONCENTRATION               0x040D
 #define CLUSTER_PM25_CONCENTRATION              0x042A
+#define CLUSTER_VOC_CONCENTRATION               0x042E
 #define CLUSTER_IAS_ZONE                        0x0500
 #define CLUSTER_IAS_ACE                         0x0501
 #define CLUSTER_IAS_WD                          0x0502

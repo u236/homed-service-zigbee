@@ -225,6 +225,15 @@ namespace Bindings
 
     };
 
+    class VOC : public BindingObject
+    {
+
+    public:
+
+        VOC(void) : BindingObject("voc", CLUSTER_VOC_CONCENTRATION) {}
+
+    };
+
     class Energy : public BindingObject
     {
 
