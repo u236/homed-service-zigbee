@@ -218,7 +218,7 @@ QVariant ActionsLUMI::BasicStatusMemory::request(const QString &, const QVariant
 
 QVariant ActionsLUMI::CoverStatus::request(const QString &, const QVariant &data)
 {
-    QList <QString> list = option("invertCover").toBool() ? QList <QString> {"open", "close"} : QList <QString> {"close", "open"};
+    QList <QString> list = option("invertCover").toBool() ? QList <QString> {"close", "open"} : QList <QString> {"open", "close"};
     float value;
 
     switch (list.indexOf(data.toString()))
@@ -245,7 +245,7 @@ QVariant ActionsLUMI::CoverPosition::request(const QString &, const QVariant &da
     if (value > 100)
         value = 100;
 
-    if (!option("invertCover").toBool())
+    if (option("invertCover").toBool())
         value = 100 - value;
 
     value = qToLittleEndian(value);

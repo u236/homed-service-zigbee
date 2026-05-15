@@ -69,6 +69,7 @@ DISTFILES += \
     deploy/data/usr/share/homed-zigbee/efekta.json \
     deploy/data/usr/share/homed-zigbee/gledopto.json \
     deploy/data/usr/share/homed-zigbee/gs.json \
+    deploy/data/usr/share/homed-zigbee/hobeian.json \
     deploy/data/usr/share/homed-zigbee/homed.json \
     deploy/data/usr/share/homed-zigbee/hue.json \
     deploy/data/usr/share/homed-zigbee/ikea.json \
@@ -82,6 +83,7 @@ DISTFILES += \
     deploy/data/usr/share/homed-zigbee/pushok.json \
     deploy/data/usr/share/homed-zigbee/slacky.json \
     deploy/data/usr/share/homed-zigbee/sonoff.json \
+    deploy/data/usr/share/homed-zigbee/ts0601.json \
     deploy/data/usr/share/homed-zigbee/tuya.json \
     deploy/data/usr/share/homed-zigbee/yandex.json
 

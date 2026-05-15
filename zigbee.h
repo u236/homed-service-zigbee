@@ -12,7 +12,7 @@
 #define STATUS_LED_TIMEOUT              500
 
 #define TIME_OFFSET                     946684800
-#define OTA_MAX_LENGTH                  10485760
+#define OTA_UPGRADE_TIMEOUT             60000
 #define IAS_ZONE_ID                     0x42
 
 #include <QMetaEnum>
@@ -235,7 +235,6 @@ signals:
     void networkStarted(void);
     void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json = QJsonObject());
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
-    void statusUpdated(const QJsonObject &json);
     void replyReceived(void);
     void groupRequestFinished(void);
 

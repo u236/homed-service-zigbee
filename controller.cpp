@@ -63,13 +63,9 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
     connect(m_zigbee, &ZigBee::networkStarted, this, &Controller::networkStarted);
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
-    connect(m_zigbee, &ZigBee::statusUpdated, this, &Controller::statusUpdated);
 
     m_deviceDataTimer->start(UPDATE_DEVICE_DATA_INTERVAL);
     m_propertiesTimer->setSingleShot(true);
-
-    m_zigbee->devices()->setNames(getConfig()->value("mqtt/names", false).toBool());
-    m_zigbee->devices()->setDebounce(getConfig()->value("mqtt/debounce", true).toBool());
     m_zigbee->init();
 }
 
@@ -77,7 +73,7 @@ void Controller::publishExposes(DeviceObject *device, bool remove)
 {
     device->publishExposes(this, device->ieeeAddress().toHex(':'), device->ieeeAddress().toHex(), m_haPrefix, m_haEnabled, m_haUpdate, m_zigbee->devices()->names(), remove);
 
-    if (!m_haEnabled || remove)
+    if (remove)
         return;
 
     m_propertiesTimer->start(UPDATE_PROPERTIES_DELAY);
@@ -99,8 +95,11 @@ void Controller::serviceOnline(void)
         mqttSubscribe(m_haStatus);
     }
 
+    m_lastSeen.clear();
+    updateDeviceData();
+
     m_zigbee->devices()->storeDatabase();
-    mqttPublishStatus();
+    mqttPublishService();
 }
 
 void Controller::quit(void)
@@ -278,6 +277,9 @@ void Controller::updateProperties(void)
     {
         const Device &device = it.value();
 
+        if (!device->active())
+            continue;
+
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
         {
             if (it.value()->properties().isEmpty())
@@ -385,9 +387,4 @@ void Controller::endpointUpdated(DeviceObject *device, quint8 endpointId)
         mqttPublish(mqttTopic("fd/%1/%2/%3").arg(serviceTopic(), m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')).arg(endpointId), QJsonObject::fromVariantMap(endpointMap), retain);
 
     mqttPublish(mqttTopic("fd/%1/%2").arg(serviceTopic(), m_zigbee->devices()->names() ? device->name() : device->ieeeAddress().toHex(':')), QJsonObject::fromVariantMap(deviceMap), retain);
-}
-
-void Controller::statusUpdated(const QJsonObject &json)
-{
-    mqttPublish(mqttTopic("status/%1").arg(serviceTopic()), json, true);
 }

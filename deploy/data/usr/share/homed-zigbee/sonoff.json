@@ -113,7 +113,7 @@
     },
     {
       "description":    "Sonoff Wireless Button SNZB-01 or SNZB-01P",
-      "modelNames":     ["SNZB-01P", "WB01", "WB-01"],
+      "modelNames":     ["SNZB-01P", "WB-01", "WB01"],
       "properties":     ["batteryPercentage"],
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],

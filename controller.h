@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define SERVICE_VERSION                 "3.13.0"
+#define SERVICE_VERSION                 "3.13.2"
 #define UPDATE_DEVICE_DATA_INTERVAL     5000
 #define UPDATE_PROPERTIES_DELAY         1000
 
@@ -71,8 +71,6 @@ private slots:
     void networkStarted(void);
     void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json);
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
-    void statusUpdated(const QJsonObject &json);
-
 };
 
 #endif

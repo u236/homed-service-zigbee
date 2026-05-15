@@ -263,12 +263,8 @@ public:
     ~DeviceList(void);
 
     inline QDir otaDir(void) { return m_otaDir; }
-
     inline bool names(void) { return m_names; }
-    inline void setNames(bool value) { m_names = value; }
-
     inline bool debounce(void) { return m_debounce; }
-    inline void setDebounce(bool value) { m_debounce = value; }
 
     inline bool permitJoin(void) { return m_permitJoin; }
     inline void setPermitJoin(bool value) { m_permitJoin = value; }
@@ -289,7 +285,7 @@ private:
     QTimer *m_databaseTimer, *m_propertiesTimer;
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
-    QDir m_otaDir, m_externalDir, m_libraryDir;
+    QDir m_libraryDir, m_externalDir, m_otaDir;
     bool m_names, m_debounce, m_sync, m_permitJoin;
 
     QMap <QString, QVariant> m_exposeOptions;
@@ -321,7 +317,6 @@ private slots:
 
 signals:
 
-    void statusUpdated(const QJsonObject &json);
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 

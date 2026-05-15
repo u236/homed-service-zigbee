@@ -77,7 +77,8 @@ int DeviceObject::checkVersion(const QString &version)
 
 DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
 {
-    QFile file(config->value("device/expose", "/usr/share/homed-common/expose.json").toString());
+    HOMEd *homed = reinterpret_cast <HOMEd*> (parent);
+    QFile file(config->value("device/expose", homed->basePath().append("share/homed-common/expose.json")).toString());
 
     PropertyObject::registerMetaTypes();
     ActionObject::registerMetaTypes();
@@ -90,9 +91,12 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
     m_propertiesFile.setFileName(config->value("device/properties", "/opt/homed-zigbee/properties.json").toString());
     m_optionsFile.setFileName(config->value("device/options", "/opt/homed-zigbee/options.json").toString());
 
-    m_otaDir.setPath(config->value("device/ota", "/opt/homed-zigbee/ota").toString());
+    m_libraryDir.setPath(config->value("device/library", homed->basePath().append("share/homed-zigbee")).toString());
     m_externalDir.setPath(config->value("device/external", "/opt/homed-zigbee/external").toString());
-    m_libraryDir.setPath(config->value("device/library", "/usr/share/homed-zigbee").toString());
+    m_otaDir.setPath(config->value("device/ota", "/opt/homed-zigbee/ota").toString());
+
+    m_names = config->value("mqtt/names", false).toBool();
+    m_debounce = config->value("mqtt/debounce", true).toBool();
 
     if (file.open(QFile::ReadOnly))
     {
@@ -842,6 +846,13 @@ void DeviceList::recognizeDevice(const Device &device)
                     it.value()->exposes().append(Expose(new SensorObject("pm25")));
                     break;
 
+                case CLUSTER_VOC_CONCENTRATION:
+                    it.value()->properties().append(Property(new Properties::VOC));
+                    it.value()->bindings().append(Binding(new Bindings::VOC));
+                    it.value()->reportings().append(Reporting(new Reportings::VOC));
+                    it.value()->exposes().append(Expose(new SensorObject("voc")));
+                    break;
+
                 case CLUSTER_SMART_ENERGY_METERING:
                     it.value()->properties().append(Property(new Properties::Energy));
                     it.value()->bindings().append(Binding(new Bindings::Energy));
@@ -1588,9 +1599,10 @@ QJsonObject DeviceList::serializeProperties(void)
 
 void DeviceList::writeDatabase(void)
 {
+    HOMEd *homed = reinterpret_cast <HOMEd*> (parent());
     QJsonObject json = {{"devices", serializeDevices()}, {"names", m_names}, {"permitJoin", m_permitJoin}, {"timestamp", QDateTime::currentSecsSinceEpoch()}, {"version", SERVICE_VERSION}};
 
-    emit statusUpdated(json);
+    homed->mqttPublishStatus(json);
 
     if (!m_sync)
         return;
@@ -1599,7 +1611,7 @@ void DeviceList::writeDatabase(void)
     json.remove("permitJoin");
     m_sync = false;
 
-    if (reinterpret_cast <Controller*> (parent())->writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
+    if (homed->writeFile(m_databaseFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
 
     logWarning << "Database not stored";
@@ -1609,7 +1621,7 @@ void DeviceList::writeProperties(void)
 {
     QJsonObject json = serializeProperties();
 
-    if (reinterpret_cast <Controller*> (parent())->writeFile(m_propertiesFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
+    if (reinterpret_cast <HOMEd*> (parent())->writeFile(m_propertiesFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
         return;
 
     logWarning << "Properties not stored";

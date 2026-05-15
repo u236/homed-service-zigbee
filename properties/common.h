@@ -236,6 +236,16 @@ namespace Properties
 
     };
 
+    class VOC : public PropertyObject
+    {
+
+    public:
+
+        VOC(void) : PropertyObject("voc", CLUSTER_VOC_CONCENTRATION, 0x0000) {}
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+
+    };
+
     class Energy : public PropertyObject
     {
 

@@ -366,6 +366,18 @@ void Properties::PM25::parseAttribute(quint16, quint16 attributeId, const QByteA
     m_value = qFromLittleEndian(value);
 }
 
+
+void Properties::VOC::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
+{
+    float value = 0;
+
+    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
+        return;
+
+    memcpy(&value, data.constData(), data.length());
+    m_value = qFromLittleEndian(value);
+}
+
 void Properties::Energy::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();

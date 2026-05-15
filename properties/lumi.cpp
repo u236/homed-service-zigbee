@@ -29,8 +29,9 @@ void PropertiesLUMI::Data::parseAttribute(quint16, quint16 attributeId, const QB
 void PropertiesLUMI::Data::resetValue(void)
 {
     QMap <QString, QVariant> map = m_value.toMap();
+    QList <QString> list = {"lumi.motion.ac02", "lumi.motion.acn001", "lumi.motion.agl02"};
 
-    if (modelName() == "lumi.motion.ac02")
+    if (list.contains(modelName()))
         map.insert("occupancy", false);
 
     m_value = map;
@@ -221,9 +222,10 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
 
         case 0x0112:
         {
+            QList <QString> list = {"lumi.motion.ac02", "lumi.motion.acn001", "lumi.motion.agl02"};
             quint32 value = 0;
 
-            if (modelName() != "lumi.motion.ac02" || static_cast <size_t> (data.length()) > sizeof(value))
+            if (!list.contains(modelName()) || static_cast <size_t> (data.length()) > sizeof(value))
                 break;
 
             memcpy(&value, data.constData(), data.length());
@@ -448,7 +450,7 @@ void PropertiesLUMI::Cover::parseAttribute(quint16, quint16 attributeId, const Q
     if (value > 100)
         return;
 
-    if (!option("invertCover").toBool())
+    if (option("invertCover").toBool())
         value = 100 - value;
 
     map.insert("cover", value ? "open" : "closed");

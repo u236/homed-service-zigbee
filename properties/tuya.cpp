@@ -180,8 +180,8 @@ void PropertiesTUYA::HolidayThermostatProgram::update(quint8 dataPoint, const QV
 
 void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVariant &data)
 {
-    QList <QVariant> list = option("programDataPoints").toList();
     QMap <QString, QVariant> map = m_value.toMap();
+    QList <QVariant> list = option("programDataPoints").toList();
 
     if (list.contains(dataPoint))
     {
@@ -311,7 +311,7 @@ void PropertiesTUYA::CoverMotor::update(quint8 dataPoint, const QVariant &data)
     {
         quint8 value = static_cast <quint8> (option("invertCover").toBool() ? data.toInt() : 100 - data.toInt());
         map.insert("cover", value ? "open" : "closed");
-        map.insert("position", static_cast <quint8> (value));
+        map.insert("position", value);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

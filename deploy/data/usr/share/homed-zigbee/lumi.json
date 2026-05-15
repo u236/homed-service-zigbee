@@ -237,7 +237,7 @@
     },
     {
       "description":    "Aqara E1/H1 1-Channel Wall Switch QBKG38LM, QBKG40LM, WS-EUK01 or ZNQBKG24LM",
-      "modelNames":     ["lumi.switch.acn029", "lumi.switch.b1nc01", "lumi.switch.b1lc04", "lumi.switch.l1aeu1"],
+      "modelNames":     ["lumi.switch.acn029", "lumi.switch.b1lc04", "lumi.switch.b1nc01", "lumi.switch.l1aeu1"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiIndicatorMode", "lumiSwitchMode", "lumiSwitchStatusMemory"],
       "exposes":        ["switch", "action", "temperature", "indicatorMode", "switchMode", "statusMemory"],
@@ -245,18 +245,18 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.switch.acn029", "lumi.switch.b1nc01", "lumi.switch.b1lc04", "lumi.switch.l1aeu1"],
+      "modelNames":     ["lumi.switch.acn029", "lumi.switch.b1lc04", "lumi.switch.b1nc01", "lumi.switch.l1aeu1"],
       "properties":     ["lumiSwitchAction"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick"]}},
       "endpointId":     41
     },
     {
       "description":    "Aqara E1/H1 2-Channel Wall Switch QBKG39LM, QBKG41LM, WS-EUK02 or ZNQBKG25LM",
-      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2nc01", "lumi.switch.b2lc04", "lumi.switch.l2aeu1"],
+      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2lc04", "lumi.switch.b2nc01", "lumi.switch.l2aeu1"],
       "options":        {"endpointName": {"1": "Left", "2": "Right", "41": "Left", "42": "Right", "51": "Both"}}
     },
     {
-      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2nc01", "lumi.switch.b2lc04", "lumi.switch.l2aeu1"],
+      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2lc04", "lumi.switch.b2nc01", "lumi.switch.l2aeu1"],
       "properties":     ["lumiData"],
       "actions":        ["lumiIndicatorMode", "lumiSwitchStatusMemory"],
       "exposes":        ["temperature", "indicatorMode", "statusMemory"],
@@ -264,7 +264,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2nc01", "lumi.switch.b2lc04", "lumi.switch.l2aeu1"],
+      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2lc04", "lumi.switch.b2nc01", "lumi.switch.l2aeu1"],
       "properties":     ["status", "lumiData"],
       "actions":        ["status", "lumiSwitchMode"],
       "exposes":        ["switch", "switchMode"],
@@ -272,7 +272,7 @@
       "endpointId":     [1, 2]
     },
     {
-      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2nc01", "lumi.switch.b2lc04", "lumi.switch.l2aeu1"],
+      "modelNames":     ["lumi.switch.acn030", "lumi.switch.b2lc04", "lumi.switch.b2nc01", "lumi.switch.l2aeu1"],
       "properties":     ["lumiSwitchAction"],
       "exposes":        ["action"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick"]}},
@@ -419,7 +419,7 @@
       "properties":     ["status", "level", "colorTemperature", "lumiData"],
       "actions":        ["status", "level", "colorTemperature", "lumiLightStatusMemory"],
       "exposes":        ["light", "statusMemory"],
-      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}}
+      "options":        {"light": ["level", "colorTemperature"], "colorTemperature": {"min": 153, "max": 370}, "skipAttributeRead": true}
     },
     {
       "description":    "Aqara Dimmable Bulb with Changable Color Temperature ZNLDP13LM",
@@ -469,20 +469,8 @@
       "description":    "Aqara Curtain Motor SRSC-M01 or ZNCLDJ11LM",
       "modelNames":     ["lumi.curtain", "lumi.curtain.aq2"],
       "properties":     ["lumiCover"],
-      "actions":        ["coverStatus", "lumiCoverPosition"],
+      "actions":        ["lumiCoverStatus", "lumiCoverStop", "lumiCoverPosition"],
       "exposes":        ["cover"]
-    },
-    {
-      "description":    "Aqara Curtain Motor ZNCLBL01LM",
-      "modelNames":     ["lumi.curtain.acn003", "lumi.curtain.agl001"],
-      "properties":     ["batteryPercentage", "lumiData", "lumiCover"],
-      "actions":        ["coverStatus", "lumiCoverPosition"],
-      "exposes":        ["battery", "cover", "calibration", "temperature"],
-      "options":        {
-                          "customAttributes": {"calibration": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1031, "dataType": 32, "action": true}},
-                          "calibration": {"type": "select", "enum": ["reset", "start", "stop"], "icon": "mdi:swap-horizontal-bold"},
-                          "temperature": {"diagnostic": true}
-                        }
     },
     {
       "description":    "Aqara Roller Blind Motor ZNJLBL01LM",
@@ -491,6 +479,19 @@
       "actions":        ["lumiCoverStatus", "lumiCoverStop", "lumiCoverPosition"],
       "exposes":        ["battery", "cover", "temperature"],
       "options":        {"temperature": {"diagnostic": true}, "powerSource": 3}
+    },
+    {
+      "description":    "Aqara Curtain Motor ZNCLBL01LM",
+      "modelNames":     ["lumi.curtain.acn003", "lumi.curtain.agl001"],
+      "properties":     ["batteryPercentage", "coverPosition", "lumiData"],
+      "actions":        ["coverStatus", "coverPosition"],
+      "exposes":        ["battery", "cover", "calibration", "temperature"],
+      "options":        {
+                          "customAttributes": {"calibration": {"type": "enum", "clusterId": 64704, "manufacturerCode": 4447, "attributeId": 1031, "dataType": 32, "action": true}},
+                          "calibration": {"type": "select", "enum": ["reset", "start", "stop"], "icon": "mdi:swap-horizontal-bold"},
+                          "temperature": {"diagnostic": true},
+                          "invertCover": true
+                        }
     },
     {
       "description":    "Aqara T1 Gas/Water Valve Motor VC-X01D",
@@ -564,8 +565,8 @@
       "options":        {"occupancyResetTimeout": 60, "illuminance": {"raw": true}, "temperature": {"diagnostic": true}}
     },
     {
-      "description":    "Aqara P1 Motion Sensor MS-S02",
-      "modelNames":     ["lumi.motion.ac02"],
+      "description":    "Aqara Motion Sensor RTCGQ12LM, RTCGQ14LM or RTCGQ15LM",
+      "modelNames":     ["lumi.motion.ac02", "lumi.motion.acn001", "lumi.motion.agl02"],
       "properties":     ["lumiData"],
       "exposes":        ["battery", "illuminance", "occupancy", "temperature"],
       "options":        {"lumiDataResetTimeout": 60, "temperature": {"diagnostic": true}}
@@ -602,7 +603,7 @@
     },
     {
       "description":    "Xiaomi Temperature and Humidity Sensor WSDCGQ01LM",
-      "modelNames":     ["lumi.sensor_ht", "lumi.sens"],
+      "modelNames":     ["lumi.sens", "lumi.sensor_ht"],
       "properties":     ["temperature", "humidity", "lumiData"],
       "exposes":        ["battery", "temperature", "humidity"]
     },
@@ -662,7 +663,7 @@
     },
     {
       "description":    "Aqara Wireless Button WXKG11LM",
-      "modelNames":     ["lumi.sensor_switch.aq2", "lumi.remote.b1acn01"],
+      "modelNames":     ["lumi.remote.b1acn01", "lumi.sensor_switch.aq2"],
       "properties":     ["lumiData", "lumiSwitchAction"],
       "exposes":        ["battery", "action", "temperature"],
       "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "release"]}, "temperature": {"diagnostic": true}}

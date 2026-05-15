@@ -10,7 +10,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, this)), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0), m_interPanLock(false)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, parent)), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0), m_interPanLock(false)
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
@@ -18,7 +18,6 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     m_cloud = m_config->value("default/cloud", true).toBool();
     m_debug = m_config->value("debug/zigbee", false).toBool();
 
-    connect(m_devices, &DeviceList::statusUpdated, this, &ZigBee::statusUpdated);
     connect(m_devices, &DeviceList::endpointUpdated, this, &ZigBee::endpointUpdated);
     connect(m_devices, &DeviceList::pollRequest, this, &ZigBee::pollRequest);
     connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
@@ -43,6 +42,8 @@ ZigBee::~ZigBee(void)
 
     GPIO::setStatus(m_statusLedPin, false);
     GPIO::setStatus(m_blinkLedPin, false);
+
+    delete m_devices;
 }
 
 void ZigBee::init(void)
@@ -333,7 +334,7 @@ void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint1
         return;
 
     request = zclHeader(global ? 0x00 : FC_CLUSTER_SPECIFIC, m_requestId, commandId, manufacturerCode).append(payload);
-    logInfo << "Device" << device->name() << "endpoint" << QString::asprintf("0x%02x", endpointId ? endpointId : 0x01) << "cluster" << QString::asprintf("0x%04x", clusterId) << "request" << m_requestId << "enqueued with data" << request.toHex(':');
+    logInfo << device << "endpoint" << QString::asprintf("0x%02x", endpointId ? endpointId : 0x01) << "cluster" << QString::asprintf("0x%04x", clusterId) << "request" << m_requestId << "enqueued with data" << request.toHex(':');
     enqueueRequest(device, endpointId ? endpointId : 0x01, clusterId, request, QString("request %1").arg(m_requestId), true);
 }
 
@@ -1502,7 +1503,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
             {
                 connect(device->timer(), &QTimer::timeout, this, &ZigBee::otaTimeout, Qt::UniqueConnection);
                 device->timer()->setSingleShot(true);
-                device->timer()->start(NETWORK_REQUEST_TIMEOUT);
+                device->timer()->start(OTA_UPGRADE_TIMEOUT);
             }
 
             return;
@@ -2253,7 +2254,7 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
             if (request->debug())
             {
                 emit deviceEvent(device.data(), Event::requestFinished, {{"status", status}});
-                break;
+                return;
             }
 
             if (status)
