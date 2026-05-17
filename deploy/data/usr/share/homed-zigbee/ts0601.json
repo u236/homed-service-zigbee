@@ -2116,7 +2116,7 @@
     },
     {
       "description":    "TUYA TS0601 Remote Control PCI-E Card",
-      "modelNames":     ["_TZE204_6fk3gewc"],
+      "modelNames":     ["_TZE204_6fk3gewc", "_TZE284_6fk3gewc"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["switch", "powerOnStatus", "restartMode", "childLock", "buzzerFeedback", "remoteControl", "pairing"],
