@@ -392,25 +392,22 @@
   ],
 
 
-
-  "Wirenboard":
+  "Wiren Board":
   [
     {
       "description":    "MSW TEST",
-      "modelNames":     ["WB-MSW-ZIGBEE"],
-      "exposes":        ["connectivity", "occupancy", "occupancyLevel", "noise", "noiseLevel", "illuminance", "temperature", "humidity", "co2", "voc", "noiseThreshold", "noiseTimeout", "occupancySensitivity", "occupancyTimeout", "temperatureOffset", "slaveId", "serialNumber", "firmwareVersion", "firmwareSignature", "bootVersion"],
+      "modelNames":     ["WB-MSW-TEST"],
+      "exposes":        ["connectivity", "occupancy", "occupancyLevel", "noise", "noiseLevel", "illuminance", "temperature", "humidity", "co2", "voc", "noiseThreshold", "noiseTimeout", "occupancySensitivity", "occupancyTimeout", "temperatureOffset", "indicator", "slaveId", "serialNumber", "firmwareVersion", "firmwareSignature", "bootVersion"],
       "options":        {
                           "customAttributes_1":
                           {
-
                             "slaveId":              {"type": "value",  "clusterId": 0,    "attributeId": 4096, "dataType": 32},
                             "serialNumber":         {"type": "value",  "clusterId": 0,    "attributeId": 4097, "dataType": 35},
                             "firmwareVersion":      {"type": "string", "clusterId": 0,    "attributeId": 4098, "dataType": 66},
                             "firmwareSignature":    {"type": "string", "clusterId": 0,    "attributeId": 4099, "dataType": 66},
                             "bootVersion":          {"type": "string", "clusterId": 0,    "attributeId": 4100, "dataType": 66},
                             "connectivity":         {"type": "bool",   "clusterId": 15,   "attributeId": 85,   "dataType": 16},
-
-
+                            "indicator":            {"type": "bool",   "clusterId": 16,   "attributeId": 85,   "dataType": 16, "action": true},
                             "noiseLevel":           {"type": "value",  "clusterId": 12,   "attributeId": 85,   "dataType": 57},
                             "noise":                {"type": "bool",   "clusterId": 12,   "attributeId": 4096, "dataType": 16},
                             "noiseThreshold":       {"type": "value",  "clusterId": 12,   "attributeId": 4097, "dataType": 33, "action": true},
@@ -420,19 +417,13 @@
                             "occupancySensitivity": {"type": "value",  "clusterId": 1030, "attributeId": 4097, "dataType": 33, "action": true},
                             "occupancyTimeout":     {"type": "value",  "clusterId": 1030, "attributeId": 4098, "dataType": 33, "action": true}
                           },
-                          "customAttributes_2":
-                          {
-                            "voc":                  {"type": "value", "clusterId": 12,   "attributeId": 85,   "dataType": 57}
-                          },
-
+                          "endpointName": {"2": "Beeper", "3": "Heater", "4": "Red", "5": "Green"},
                           "slaveId": {"type": "sensor"},
                           "serialNumber": {"type": "sensor"},
                           "firmwareVersion": {"type": "sensor"},
                           "firmwareSignature": {"type": "sensor"},
                           "bootVersion": {"type": "sensor"},
                           "connectivity": {"type": "binary"},
-
-                          "endpointName": {"3": "Beeper", "4": "Heater", "5": "Red", "6": "Green"},
                           "noiseLevel": {"type": "sensor", "unit": "dBA", "round": 1, "icon": "mdi:ear-hearing"},
                           "noiseThreshold": {"type": "number", "min": 0, "max": 150, "unit": "dBA", "icon": "mdi:ear-hearing"},
                           "noiseTimeout": {"type": "number", "min": 0, "max": 2000, "unit": "sec", "icon": "mdi:timer"},
@@ -443,30 +434,22 @@
                         }
     },
     {
-      "modelNames":     ["WB-MSW-ZIGBEE"],
-      "properties":     ["occupancy", "illuminance", "temperature", "humidity", "co2"],
-      "bindings":       ["analogInput", "binaryInput", "occupancy", "illuminance", "temperature", "humidity", "co2"],
-      "reportings":     ["analogInput", "binaryInput", "occupancy", "illuminance", "temperature", "humidity", "co2"],
+      "modelNames":     ["WB-MSW-TEST"],
+      "properties":     ["occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
+      "bindings":       ["analogInput", "binaryInput", "occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
+      "reportings":     ["analogInput", "binaryInput", "occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
       "endpointId":     1
     },
     {
-      "modelNames":     ["WB-MSW-ZIGBEE"],
-      "bindings":       ["analogInput"],
-      "reportings":     ["analogInput"],
-      "endpointId":     2
-    },
-    {
-      "modelNames":     ["WB-MSW-ZIGBEE"],
+      "modelNames":     ["WB-MSW-TEST"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
       "reportings":     ["status"],
       "exposes":        ["switch"],
-      "endpointId":     [3, 4, 5, 6]
+      "endpointId":     [2, 3, 4, 5]
     }
   ],
-
-
 
 
   "Xiaomi":
