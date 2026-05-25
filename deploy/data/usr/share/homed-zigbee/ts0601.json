@@ -1347,10 +1347,10 @@
                             "1":    {"name": "smoke", "type": "bool", "invert": true},
                             "15":   {"name": "battery", "type": "value"},
                             "101":  {"name": "test", "type": "bool"},
-                            "102":  {"name": "sensitivity", "type": "enum"}
+                            "102":  {"name": "sensitivity", "type": "enum", "action": true}
                           },
                           "test": {"type": "binary"},
-                          "sensitivity": {"type": "select", "enum": ["checking", "success", "failed", "other"]}
+                          "sensitivity": {"type": "select", "enum": ["low", "medium", "high"]}
                         }
     },
     {
@@ -1367,6 +1367,20 @@
                             "15":   {"name": "battery", "type": "value"}
                           },
                           "test": {"enum": ["checking", "success", "failed", "other"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Smoke and Carbon Monoxide Detector",
+      "modelNames":     ["_TZE284_6ycgarab"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["battery", "smoke", "carbonMonoxide"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "smoke", "type": "bool", "invert": true},
+                            "15":   {"name": "battery", "type": "value"},
+                            "18":   {"name": "carbonMonoxide", "type": "bool", "invert": true}
+                          }
                         }
     },
     {
