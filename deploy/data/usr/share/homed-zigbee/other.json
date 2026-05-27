@@ -437,7 +437,6 @@
       "modelNames":     ["WB-MSW-TEST"],
       "properties":     ["occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
       "bindings":       ["analogInput", "binaryInput", "occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
-      "reportings":     ["analogInput", "binaryInput", "occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
       "endpointId":     1
     },
     {
@@ -445,7 +444,6 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
-      "reportings":     ["status"],
       "exposes":        ["switch"],
       "endpointId":     [2, 3, 4, 5]
     }
