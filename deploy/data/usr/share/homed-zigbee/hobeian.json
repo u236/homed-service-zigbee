@@ -94,6 +94,34 @@
                         }
     },
     {
+      "description":    "HOBEIAN ZG-302Z1 1-Channel Switch",
+      "modelNames":     ["ZG-302Z1"],
+      "properties":     ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus", "indicatorMode"],
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}}
+    },
+    {
+      "description":    "HOBEIAN ZG-302Z2 2-Channel Switch",
+      "modelNames":     ["ZG-302Z2"],
+      "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "exposes":        ["powerOnStatus", "indicatorMode"],
+      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["ZG-302Z2"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch"],
+      "endpointId":     [1, 2]
+    },
+    {
       "description":    "HOBEIAN Door and Window Sensor",
       "modelNames":     ["ZG-102Z"],
       "properties":     ["batteryPercentage", "iasContact"],
