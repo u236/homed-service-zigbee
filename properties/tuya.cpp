@@ -1,6 +1,7 @@
 #include <QtEndian>
 #include <QtMath>
 #include "color.h"
+#include "expose.h"
 #include "tuya.h"
 
 void PropertiesTUYA::Data::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
@@ -133,6 +134,23 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
 
             if ((hasMin && value < min) || (hasMax && value > max))
                 break;
+
+            if (name == "position")
+            {
+                const QList <Expose> list = reinterpret_cast <AbstractEndpointObject*> (m_parent)->exposes();
+
+                for (int i = 0; i < list.count(); i++)
+                {
+                    if (list.at(i)->name() != "cover")
+                        continue;
+
+                    if (option("invertCover").toBool())
+                        value = 100 - value;
+
+                    map.insert("cover", value ? "open" : "closed");
+                    break;
+                }
+            }
 
             map.insert(name, value);
             break;

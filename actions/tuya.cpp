@@ -93,10 +93,17 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
                     if (value > max)
                         value = max;
                 }
-                else if (option(name, "type").toString() == "toggle")
-                    value = data.toBool() ? 0x01 : 0x00;
+                else if (option(name, "type").toString() != "toggle")
+                {
+                    QList <QString> list = option(name, "enum").toStringList();
+
+                    if (name == "cover" && list.isEmpty())
+                        list = {"open", "stop", "close"};
+
+                    value = static_cast <qint8> (list.indexOf(data.toString()));
+                }
                 else
-                    value = static_cast <qint8> (option(name, "enum").toStringList().indexOf(data.toString()));
+                    value = data.toBool() ? 0x01 : 0x00;
 
                 return value < 0 ? QByteArray() : makeRequest(m_transactionId++, commandId, static_cast <quint8> (it.key().toInt()), TUYA_TYPE_ENUM, &value);
             }
