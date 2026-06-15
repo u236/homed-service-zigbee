@@ -397,7 +397,7 @@
     {
       "description":    "MSW TEST",
       "modelNames":     ["WB-MSW-TEST"],
-      "exposes":        ["connectivity", "occupancy", "occupancyLevel", "noise", "noiseLevel", "illuminance", "temperature", "humidity", "co2", "voc", "noiseThreshold", "noiseTimeout", "occupancySensitivity", "occupancyTimeout", "temperatureOffset", "indicator", "slaveId", "serialNumber", "firmwareVersion", "firmwareSignature", "bootVersion"],
+      "exposes":        ["connectivity", "occupancy", "occupancyLevel", "noise", "noiseLevel", "illuminance", "temperature", "humidity", "co2", "voc", "noiseThreshold", "noiseTimeout", "occupancySensitivity", "occupancyTimeout", "temperatureOffset", "indicator", "slaveId", "serialNumber", "firmwareVersion", "firmwareSignature", "bootVersion", "componentVersion", "componentSignature"],
       "options":        {
                           "customAttributes_1":
                           {
@@ -406,6 +406,8 @@
                             "firmwareVersion":      {"type": "string", "clusterId": 0,    "attributeId": 4098, "dataType": 66},
                             "firmwareSignature":    {"type": "string", "clusterId": 0,    "attributeId": 4099, "dataType": 66},
                             "bootVersion":          {"type": "string", "clusterId": 0,    "attributeId": 4100, "dataType": 66},
+                            "componentVersion":     {"type": "string", "clusterId": 0,    "attributeId": 4101, "dataType": 66},
+                            "componentSignature":   {"type": "string", "clusterId": 0,    "attributeId": 4102, "dataType": 66},
                             "connectivity":         {"type": "bool",   "clusterId": 15,   "attributeId": 85,   "dataType": 16},
                             "indicator":            {"type": "bool",   "clusterId": 16,   "attributeId": 85,   "dataType": 16, "action": true},
                             "noiseLevel":           {"type": "value",  "clusterId": 12,   "attributeId": 85,   "dataType": 57},
@@ -423,6 +425,8 @@
                           "firmwareVersion": {"type": "sensor"},
                           "firmwareSignature": {"type": "sensor"},
                           "bootVersion": {"type": "sensor"},
+                          "componentVersion": {"type": "sensor"},
+                          "componentSignature": {"type": "sensor"},
                           "connectivity": {"type": "binary"},
                           "noiseLevel": {"type": "sensor", "unit": "dBA", "round": 1, "icon": "mdi:ear-hearing"},
                           "noiseThreshold": {"type": "number", "min": 0, "max": 150, "unit": "dBA", "icon": "mdi:ear-hearing"},
