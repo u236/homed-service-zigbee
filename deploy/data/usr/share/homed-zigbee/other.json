@@ -408,7 +408,7 @@
                             "bootVersion":          {"type": "string", "clusterId": 0,    "attributeId": 4100, "dataType": 66},
                             "componentVersion":     {"type": "string", "clusterId": 0,    "attributeId": 4101, "dataType": 66},
                             "componentSignature":   {"type": "string", "clusterId": 0,    "attributeId": 4102, "dataType": 66},
-                            "connectivity":         {"type": "bool",   "clusterId": 15,   "attributeId": 85,   "dataType": 16},
+                            "connectivity":         {"type": "enum",   "clusterId": 18,   "attributeId": 85,   "dataType": 33, "binding": true},
                             "indicator":            {"type": "bool",   "clusterId": 16,   "attributeId": 85,   "dataType": 16, "action": true},
                             "noiseLevel":           {"type": "value",  "clusterId": 12,   "attributeId": 85,   "dataType": 57},
                             "noise":                {"type": "bool",   "clusterId": 12,   "attributeId": 4096, "dataType": 16},
@@ -427,7 +427,7 @@
                           "bootVersion": {"type": "sensor"},
                           "componentVersion": {"type": "sensor"},
                           "componentSignature": {"type": "sensor"},
-                          "connectivity": {"type": "binary"},
+                          "connectivity": {"enum": {"0": "offline", "1": "online", "2": "firmwareUpdate", "3": "componentUpdate"}},
                           "noiseLevel": {"type": "sensor", "unit": "dBA", "round": 1, "icon": "mdi:ear-hearing"},
                           "noiseThreshold": {"type": "number", "min": 0, "max": 150, "unit": "dBA", "icon": "mdi:ear-hearing"},
                           "noiseTimeout": {"type": "number", "min": 0, "max": 2000, "unit": "sec", "icon": "mdi:timer"},
@@ -440,7 +440,7 @@
     {
       "modelNames":     ["WB-MSW-TEST"],
       "properties":     ["occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
-      "bindings":       ["analogInput", "binaryInput", "occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
+      "bindings":       ["analogInput", "occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
       "endpointId":     1
     },
     {
