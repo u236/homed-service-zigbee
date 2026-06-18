@@ -9,6 +9,7 @@ void BindingObject::registerMetaTypes(void)
     qRegisterMetaType <Bindings::Level>                 ("levelBinding");
     qRegisterMetaType <Bindings::AnalogInput>           ("analogInputBinding");
     qRegisterMetaType <Bindings::BinaryInput>           ("binaryInputBinding");
+    qRegisterMetaType <Bindings::MultistateInput>       ("multistateInputBinding");
     qRegisterMetaType <Bindings::PollControl>           ("pollControlBinding");
     qRegisterMetaType <Bindings::Cover>                 ("coverBinding");
     qRegisterMetaType <Bindings::Thermostat>            ("thermostatBinding");

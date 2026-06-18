@@ -6,15 +6,15 @@
       "modelNames":     ["AirQ_Monitor_S01"],
       "properties":     ["illuminance", "temperature", "humidity", "pressure", "co2", "switchMode", "displayMode"],
       "actionc":        ["switchMode", "displayMode"],
-      "bindings":       ["illuminance", "temperature", "humidity", "pressure", "co2"],
+      "bindings":       ["analogInput", "illuminance", "temperature", "humidity", "pressure", "co2"],
       "reportings":     ["illuminance", "temperature", "humidity", "pressure", "co2"],
       "exposes":        ["illuminance", "temperature", "humidity", "pressure", "co2", "voc", "invertDisplay", "rotateDisplay", "displayMode", "brightness", "sound", "readInterval", "temperatureOffset", "co2Relay", "co2Low", "co2High", "vocRelay", "vocLow", "vocHigh", "switchMode", "sensorFetures", "lifeTime", "co2Correction"],
       "options":        {
                           "customAttributes":
                           {
                             "brightness":         {"type": "value", "clusterId": 8,    "attributeId": 0,     "dataType": 32,  "action": true},
-                            "lifeTime":           {"type": "value", "clusterId": 10,   "attributeId": 0,     "dataType": 226, "binding": true, "reporting": {"minInterval": 60, "maxInterval": 3600}},
-                            "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57,  "binding": true, "reporting": {"minInterval": 10, "maxInterval": 3600, "valueChange": 10}},
+                            "lifeTime":           {"type": "value", "clusterId": 10,   "attributeId": 0,     "dataType": 226, "reporting": {"minInterval": 60, "maxInterval": 3600}, "binding": true},
+                            "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57,  "reporting": {"minInterval": 10, "maxInterval": 3600, "valueChange": 10}},
                             "vocRelay":           {"type": "bool",  "clusterId": 12,   "attributeId": 61445, "dataType": 16,  "action": true},
                             "vocLow":             {"type": "value", "clusterId": 12,   "attributeId": 61446, "dataType": 33,  "action": true},
                             "vocHigh":            {"type": "value", "clusterId": 12,   "attributeId": 61447, "dataType": 33,  "action": true},
@@ -27,7 +27,7 @@
                             "co2Relay":           {"type": "bool",  "clusterId": 1037, "attributeId": 61442, "dataType": 16,  "action": true},
                             "co2Low":             {"type": "value", "clusterId": 1037, "attributeId": 61443, "dataType": 33,  "action": true},
                             "co2High":            {"type": "value", "clusterId": 1037, "attributeId": 61444, "dataType": 33,  "action": true},
-                            "co2Correction":      {"type": "value", "clusterId": 1037, "attributeId": 61448, "dataType": 41,  "binding": true, "reporting": {"maxInterval": 64800}}
+                            "co2Correction":      {"type": "value", "clusterId": 1037, "attributeId": 61448, "dataType": 41,  "reporting": {"maxInterval": 64800}}
                           },
                           "brightness": {"type": "number", "min": 0, "max": 255},
                           "lifeTime": {"type": "sensor", "unit": "h"},
@@ -175,8 +175,8 @@
       "modelNames":     ["TS0001_power-SlD"],
       "properties":     ["status", "statusAction", "powerOnStatus", "switchMode", "energy", "voltage", "current", "power", "frequency"],
       "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status", "energy", "power"],
-      "reportings":     ["energy", "voltage", "current", "power", "frequency"],
+      "bindings":       ["status", "multistateInput", "energy", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power", "frequency"],
       "exposes":        ["switch", "action", "powerOnStatus", "operationMode", "switchType", "switchMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime", "resetEnergy"],
       "options":        {
                           "customCommands":
@@ -187,7 +187,7 @@
                           {
                             "switchType":       {"type": "enum",  "clusterId": 7,    "attributeId": 61440, "dataType": 48, "action": true},
                             "operationMode":    {"type": "enum",  "clusterId": 7,    "attributeId": 61441, "dataType": 48, "action": true},
-                            "action":           {"type": "enum",  "clusterId": 18,   "attributeId": 85,    "dataType": 33, "binding": true},
+                            "action":           {"type": "enum",  "clusterId": 18,   "attributeId": 85,    "dataType": 33},
                             "voltageMax":       {"type": "value", "clusterId": 2820, "attributeId": 2055,  "dataType": 41, "divider": 100, "action": true},
                             "voltageMin":       {"type": "value", "clusterId": 2820, "attributeId": 2056,  "dataType": 41, "divider": 100, "action": true},
                             "currentMax":       {"type": "value", "clusterId": 2820, "attributeId": 61442, "dataType": 33, "divider": 100, "action": true},
