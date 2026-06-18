@@ -99,6 +99,15 @@ namespace Bindings
 
     };
 
+    class MultistateInput : public BindingObject
+    {
+
+    public:
+
+        MultistateInput(void) : BindingObject("multistateInput", CLUSTER_MULTISTATE_INPUT) {}
+
+    };
+
     class PollControl : public BindingObject
     {
 
@@ -185,7 +194,7 @@ namespace Bindings
 
     public:
 
-        Humidity(void) : BindingObject("temperature", CLUSTER_HUMIDITY_MEASUREMENT) {}
+        Humidity(void) : BindingObject("humidity", CLUSTER_HUMIDITY_MEASUREMENT) {}
 
     };
 
