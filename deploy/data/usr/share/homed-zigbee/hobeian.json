@@ -101,11 +101,11 @@
       "options":        {
                           "tuyaDataPoints":
                           {
-                            "1":    {"name": "alarm", "type": "bool"},
-                            "103":  {"name": "temperature", "type": "value", "divider": 10},
-                            "107":  {"name": "moisture", "type": "value"},
-                            "108":  {"name": "battery", "type": "value"},
-                            "109":  {"name": "humidity", "type": "value"}
+                            "3":    {"name": "moisture", "type": "value"},
+                            "5":    {"name": "temperature", "type": "value", "divider": 10},
+                            "15":   {"name": "battery", "type": "value"},
+                            "109":  {"name": "humidity", "type": "value"},
+                            "106":  {"name": "alarm", "type": "bool"}
                           }
                         }
     },
