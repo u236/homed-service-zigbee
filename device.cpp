@@ -1292,8 +1292,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
                 if (json.contains("endpointId"))
                 {
-                    quint8 endpointId = static_cast <quint8> (json.value("endpointId").toInt());
-                    Endpoint endpoint(new EndpointObject(endpointId, device));
+                    Endpoint endpoint(new EndpointObject(static_cast <quint8> (json.value("endpointId").toInt()), device));
                     QJsonArray inClusters = json.value("inClusters").toArray(), outClusters = json.value("outClusters").toArray(), bindings = json.value("bindings").toArray(), groups = json.value("groups").toArray();
 
                     for (auto it = inClusters.begin(); it != inClusters.end(); it++)
@@ -1330,7 +1329,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
                     endpoint->setDeviceId(static_cast <quint16> (json.value("deviceId").toInt()));
                     endpoint->meta().insert(json.value("meta").toObject().toVariantMap());
 
-                    device->endpoints().insert(endpointId, endpoint);
+                    device->endpoints().insert(endpoint->id(), endpoint);
                 }
             }
 

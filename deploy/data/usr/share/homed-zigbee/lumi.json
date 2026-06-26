@@ -40,7 +40,7 @@
       "modelNames":     ["lumi.airrtc.pcacn2"],
       "properties":     ["lumiData", "humidity"],
       "actions":        ["lumiElectricThermostat", "lumiLanguage"],
-      "exposes":        ["thermostat", "fanMode", "humidity", "language"],
+      "exposes":        ["thermostat", "humidity", "language"],
       "options":        {
                           "targetTemperature": {"min": 16, "max": 32, "step": 0.5},
                           "systemMode": {"enum": ["off", "heat", "cool", "fan"]},

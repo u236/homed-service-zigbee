@@ -745,10 +745,9 @@ void ZigBee::interviewFinished(const Device &device)
         {
             const Action &action = it.value()->actions().at(i);
 
-            if (action->attributes().isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes())))
+            if (action->attributes().isEmpty() || dataRequest(it.value(), action->clusterId(), readAttributesRequest(m_requestId, action->manufacturerCode(), action->attributes()), QString("read %1 request").arg(action->name())))
             {
                 map.insert(action->clusterId(), action->attributes());
-                m_requestId++;
                 continue;
             }
 
@@ -774,11 +773,8 @@ void ZigBee::interviewFinished(const Device &device)
                 attributes.append(attributeId);
             }
 
-            if (attributes.isEmpty() || m_adapter->unicastRequest(m_requestId, device->networkAddress(), 0x01, it.key(), clusterId, readAttributesRequest(m_requestId, 0x0000, attributes)))
-            {
-                m_requestId++;
+            if (attributes.isEmpty() || dataRequest(it.value(), clusterId, readAttributesRequest(m_requestId, 0x0000, attributes), QString("read %1 request").arg(property->name())))
                 continue;
-            }
 
             break;
         }
@@ -1116,6 +1112,8 @@ bool ZigBee::dataRequest(const Endpoint &endpoint, quint16 clusterId, const QByt
             logWarning << device << endpoint << name.toUtf8().constData() << "failed, status code:" << QString::asprintf("0x%02x", m_requestStatus);
             return false;
         }
+
+        break;
     }
 
     logInfo << device << endpoint << name.toUtf8().constData() << "finished successfully";

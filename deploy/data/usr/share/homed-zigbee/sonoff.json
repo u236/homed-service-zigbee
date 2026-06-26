@@ -15,7 +15,8 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
-      "exposes":        ["switch"]
+      "exposes":        ["switch"],
+      "options":        {"powerSource": 1}
     },
     {
       "description":    "Sonoff 2-Channel Relay E220-KR2N0Z0-HA, SWITCH-ZR03-2 or ZB-SW02",
