@@ -395,8 +395,8 @@
   "Wiren Board":
   [
     {
-      "description":    "MSW TEST",
-      "modelNames":     ["WB-MSW-TEST"],
+      "description":    "Wiren Board Multifunctional Sensor WB-MSW-ZIGBEE v.4",
+      "modelNames":     ["WB-MSW-ZIGBEE v.4"],
       "exposes":        ["connectivity", "occupancy", "occupancyLevel", "noise", "noiseLevel", "illuminance", "temperature", "humidity", "co2", "voc", "noiseThreshold", "noiseTimeout", "occupancySensitivity", "occupancyTimeout", "temperatureOffset", "indicator", "slaveId", "serialNumber", "firmwareVersion", "firmwareSignature", "bootVersion", "componentVersion", "componentSignature"],
       "options":        {
                           "customAttributes_1":
@@ -438,13 +438,13 @@
                         }
     },
     {
-      "modelNames":     ["WB-MSW-TEST"],
+      "modelNames":     ["WB-MSW-ZIGBEE v.4"],
       "properties":     ["occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
       "bindings":       ["analogInput", "multistateInput", "occupancy", "illuminance", "temperature", "humidity", "co2", "voc"],
       "endpointId":     1
     },
     {
-      "modelNames":     ["WB-MSW-TEST"],
+      "modelNames":     ["WB-MSW-ZIGBEE v.4"],
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
