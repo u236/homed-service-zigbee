@@ -23,7 +23,6 @@ void OTA::refresh(const QDir &dir)
 
         m_fileName.clear();
         m_fileVersion = 0;
-        m_imageOffset = 0;
 
         if (!file.open(QFile::ReadOnly))
             continue;

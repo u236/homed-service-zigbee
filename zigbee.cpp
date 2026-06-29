@@ -1433,7 +1433,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                         break;
                     }
 
-                    file.seek(device->ota().imageOffset() + qFromLittleEndian(request->fileOffset));
+                    file.seek(qFromLittleEndian(request->fileOffset));
                     buffer = file.read(request->maxDataSize);
                     file.close();
 

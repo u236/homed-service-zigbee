@@ -71,7 +71,6 @@ public:
     inline void clearFileName(void) { m_fileName.clear(); }
 
     inline quint32 fileVersion(void) { return m_fileVersion; }
-    inline quint32 imageOffset(void) { return m_imageOffset; }
     inline quint32 imageSize(void) { return m_imageSize; }
 
     inline bool available(void) { return m_available; }
@@ -95,7 +94,7 @@ private:
     quint32 m_currentVersion;
 
     QString m_fileName;
-    quint32 m_fileVersion, m_imageOffset, m_imageSize;
+    quint32 m_fileVersion, m_imageSize;
 
     bool m_available, m_upgrade, m_running;
     double m_progress;
