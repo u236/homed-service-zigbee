@@ -450,6 +450,20 @@
       "bindings":       ["status"],
       "exposes":        ["switch"],
       "endpointId":     [2, 3, 4, 5]
+    },
+    {
+      "modelNames":     ["WB-MSW-ZIGBEE v.4"],
+      "exposes":        ["irAction", "irRomId"],
+      "options":        {
+                          "customAttributes_6":
+                          {
+                            "irAction": {"type": "enum",  "clusterId": 19, "attributeId": 85,   "dataType": 33, "action": true, "binding": true},
+                            "irRomId":  {"type": "value", "clusterId": 19, "attributeId": 4096, "dataType": 33, "action": true}
+                          },
+                          "irAction": {"type": "select", "enum": ["stop", "learnRam", "learnRom", "playRam", "playRom", "clearAllRom"], "icon": "mdi:remote"},
+                          "irRomId":  {"type": "number", "min": 0, "max": 79, "icon": "mdi:memory", "collapse": true}
+                        },
+      "endpointId":     6
     }
   ],
 
