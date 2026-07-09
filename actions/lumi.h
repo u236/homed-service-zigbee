@@ -170,6 +170,21 @@ namespace ActionsLUMI
 
     };
 
+    class Feeder : public ActionObject
+    {
+
+    public:
+
+        Feeder(void) : ActionObject("lumiFeeder", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0xFFF1, {"feed", "mode", "childLock", "ledIndicator", "servingSize", "portionWeight"}), m_sequence(0) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    private:
+
+        quint8 m_sequence;
+        QByteArray payload(quint32 command, const QByteArray &value);
+
+    };
+
 }
 
 #endif

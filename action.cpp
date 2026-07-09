@@ -44,6 +44,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::IndicatorMode>              ("lumiIndicatorModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchMode>                 ("lumiSwitchModeAction");
     qRegisterMetaType <ActionsLUMI::Language>                   ("lumiLanguageAction");
+    qRegisterMetaType <ActionsLUMI::Feeder>                     ("lumiFeederAction");
 
     qRegisterMetaType <ActionsTUYA::DataPoints>                 ("tuyaDataPointsAction");
     qRegisterMetaType <ActionsTUYA::HolidayThermostatProgram>   ("tuyaHolidayThermostatProgramAction");

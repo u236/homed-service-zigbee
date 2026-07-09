@@ -640,3 +640,80 @@ void PropertiesLUMI::Vibration::resetValue(void)
     map.insert("vibration", false);
     m_value = map;
 }
+
+void PropertiesLUMI::Feeder::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    quint32 command;
+    quint8 length;
+
+    if (attributeId != 0xFFF1 || data.length() < 8)
+        return;
+
+    memcpy(&command, data.constData() + 3, sizeof(command));
+    command = qFromBigEndian(command);
+    length = static_cast <quint8> (data.at(7));
+
+    QByteArray payload = data.mid(8, length);
+
+    switch (command)
+    {
+        case 0x041502bc: // feeding report
+        {
+            QString report = QString::fromLatin1(payload);
+            map.insert("feedingSource", enumValue("feedingSource", report.mid(0, 2).toInt()));
+            map.insert("feedingSize", report.mid(3, 1).toInt());
+            break;
+        }
+
+        case 0x0d680055: // portions per day
+        {
+            quint16 value = 0;
+
+            if (payload.length() < static_cast <int> (sizeof(value)))
+                break;
+
+            memcpy(&value, payload.constData(), sizeof(value));
+            map.insert("portionsPerDay", qFromBigEndian(value));
+            break;
+        }
+
+        case 0x0d690055: // weight per day
+        {
+            quint32 value = 0;
+
+            if (payload.length() < static_cast <int> (sizeof(value)))
+                break;
+
+            memcpy(&value, payload.constData(), sizeof(value));
+            map.insert("weightPerDay", qFromBigEndian(value));
+            break;
+        }
+
+        case 0x0d0b0055: // error
+            map.insert("error", payload.at(0) ? true : false);
+            break;
+
+        case 0x04170055: // led indicator
+            map.insert("ledIndicator", payload.at(0) ? true : false);
+            break;
+
+        case 0x04160055: // child lock
+            map.insert("childLock", payload.at(0) ? true : false);
+            break;
+
+        case 0x04180055: // mode
+            map.insert("mode", enumValue("mode", static_cast <quint8> (payload.at(0))));
+            break;
+
+        case 0x0e5c0055: // serving size
+            map.insert("servingSize", static_cast <quint8> (payload.at(0)));
+            break;
+
+        case 0x0e5f0055: // portion weight
+            map.insert("portionWeight", static_cast <quint8> (payload.at(0)));
+            break;
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}

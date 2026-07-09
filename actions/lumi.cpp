@@ -262,3 +262,79 @@ QVariant ActionsLUMI::VibrationSensitivity::request(const QString &, const QVari
     value = value * 10 + 1;
     return writeAttribute(DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value));
 }
+
+QByteArray ActionsLUMI::Feeder::payload(quint32 command, const QByteArray &value)
+{
+    quint32 code = qToBigEndian(command);
+    QByteArray data;
+
+    data.append(static_cast <char> (0x00));
+    data.append(static_cast <char> (0x02));
+    data.append(static_cast <char> (m_sequence++));
+    data.append(reinterpret_cast <char*> (&code), sizeof(code));
+    data.append(static_cast <char> (value.length()));
+    data.append(value);
+
+    return data;
+}
+
+QVariant ActionsLUMI::Feeder::request(const QString &name, const QVariant &data)
+{
+    QByteArray value;
+    quint32 command;
+
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // feed
+
+            if (!data.toBool())
+                return QByteArray();
+
+            command = 0x04150055;
+            value.append(static_cast <char> (0x01));
+            break;
+
+        case 1: // mode
+        {
+            int index = enumIndex(name, data);
+
+            if (index < 0)
+                return QByteArray();
+
+            command = 0x04180055;
+            value.append(static_cast <char> (index));
+            break;
+        }
+
+        case 2: // childLock
+            command = 0x04160055;
+            value.append(static_cast <char> (data.toBool() ? 0x01 : 0x00));
+            break;
+
+        case 3: // ledIndicator
+            command = 0x04170055;
+            value.append(static_cast <char> (data.toBool() ? 0x01 : 0x00));
+            break;
+
+        case 4: // servingSize
+        {
+            quint32 size = qToBigEndian <quint32> (data.toInt());
+            command = 0x0E5C0055;
+            value.append(reinterpret_cast <char*> (&size), sizeof(size));
+            break;
+        }
+
+        case 5: // portionWeight
+        {
+            quint32 weight = qToBigEndian <quint32> (data.toInt());
+            command = 0x0E5F0055;
+            value.append(reinterpret_cast <char*> (&weight), sizeof(weight));
+            break;
+        }
+
+        default:
+            return QByteArray();
+    }
+
+    return writeAttribute(DATA_TYPE_OCTET_STRING, payload(command, value));
+}
