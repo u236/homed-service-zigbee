@@ -394,6 +394,18 @@ void DeviceList::identityHandler(const Device &device, QString &manufacturerName
     manufacturerName = device->manufacturerName();
     modelName = device->modelName();
 
+    if (manufacturerName.isEmpty() && modelName.startsWith("aqara"))
+    {
+        device->setManufacturerName(manufacturerName = "LUMI"); // persistent
+        return;
+    }
+
+    if (manufacturerName == "\u0002KE")
+    {
+        device->setManufacturerName(manufacturerName = "IKEA of Sweden"); // persistent
+        return;
+    }
+
     if (lumi.contains(manufacturerName))
     {
         manufacturerName = "LUMI";
