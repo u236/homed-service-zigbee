@@ -71,7 +71,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesLUMI::CubeRotation>                ("lumiCubeRotationProperty");
     qRegisterMetaType <PropertiesLUMI::CubeMovement>                ("lumiCubeMovementProperty");
     qRegisterMetaType <PropertiesLUMI::Vibration>                   ("lumiVibrationProperty");
-    qRegisterMetaType <PropertiesLUMI::Feeder>                     ("lumiFeederProperty");
 
     qRegisterMetaType <PropertiesTUYA::DataPoints>                  ("tuyaDataPointsProperty");
     qRegisterMetaType <PropertiesTUYA::HolidayThermostatProgram>    ("tuyaHolidayThermostatProgramProperty");

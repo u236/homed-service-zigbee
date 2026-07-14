@@ -16,6 +16,20 @@ namespace ActionsLUMI
 
     };
 
+    class PetFeeder : public ActionObject
+    {
+
+    public:
+
+        PetFeeder(void) : ActionObject("petFeeder", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0xFFF1, {"feed", "childLock", "indicator", "operationMode", "servingSize", "portionWeight"}), m_sequence(0) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    private:
+
+        quint8 m_sequence;
+
+    };
+
     class RadiatorThermostat : public ActionObject
     {
 
@@ -167,21 +181,6 @@ namespace ActionsLUMI
     public:
 
         Language(void) : EnumAction("language", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x0210, DATA_TYPE_8BIT_UNSIGNED) {}
-
-    };
-
-    class Feeder : public ActionObject
-    {
-
-    public:
-
-        Feeder(void) : ActionObject("lumiFeeder", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0xFFF1, {"feed", "mode", "childLock", "ledIndicator", "servingSize", "portionWeight"}), m_sequence(0) {}
-        QVariant request(const QString &name, const QVariant &data) override;
-
-    private:
-
-        quint8 m_sequence;
-        QByteArray payload(quint32 command, const QByteArray &value);
 
     };
 

@@ -126,16 +126,6 @@ namespace PropertiesLUMI
         void resetValue(void) override;
 
     };
-
-    class Feeder : public PropertyObject
-    {
-
-    public:
-
-        Feeder(void) : PropertyObject("lumiFeeder", CLUSTER_LUMI, 0xFFF1) {}
-        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
 }
 
 #endif

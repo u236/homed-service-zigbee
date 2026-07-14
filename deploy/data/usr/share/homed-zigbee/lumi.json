@@ -2,22 +2,21 @@
   "LUMI":
   [
     {
-      "description":    "Aqara Smart Pet Feeder C1 ZNCWWSQ01LM",
+      "description":    "Aqara C1 Smart Pet Feeder ZNCWWSQ01LM",
       "modelNames":     ["aqara.feeder.acn001"],
-      "properties":     ["lumiFeeder"],
-      "actions":        ["lumiFeeder"],
-      "exposes":        ["feed", "feedingSource", "feedingSize", "portionsPerDay", "weightPerDay", "error", "mode", "childLock", "ledIndicator", "servingSize", "portionWeight"],
+      "properties":     ["lumiData"],
+      "actions":        ["lumiPetFeeder"],
+      "exposes":        ["feed", "operationMode", "servingSize", "portionWeight", "childLock", "indicator", "feedingSource", "feedingSize", "portionsPerDay", "weightPerDay", "error"],
       "options":        {
-                          "feed":           {"type": "button"},
-                          "feedingSource":  {"type": "sensor", "enum": ["schedule", "manual", "remote"], "icon": "mdi:information-outline"},
-                          "feedingSize":    {"type": "sensor", "unit": "portion", "icon": "mdi:weight"},
+                          "feed": {"type": "button"},
+                          "operationMode": {"type": "select", "enum": ["manual", "program"]},
+                          "servingSize": {"type": "number", "min": 1, "max": 10, "step": 1, "unit": "portion"},
+                          "portionWeight": {"type": "number", "min": 1, "max": 20, "step": 1, "unit": "g"},
+                          "feedingSource": {"type": "sensor", "enum": ["schedule", "manual", "remote"], "icon": "mdi:information-outline"},
+                          "feedingSize": {"type": "sensor", "unit": "portion", "icon": "mdi:weight"},
                           "portionsPerDay": {"type": "sensor", "icon": "mdi:counter"},
-                          "weightPerDay":   {"type": "sensor", "unit": "g", "icon": "mdi:weight-gram"},
-                          "error":          {"type": "binary", "icon": "mdi:alert-circle"},
-                          "mode":           {"type": "select", "enum": ["manual", "schedule"]},
-                          "ledIndicator":   {"type": "toggle", "icon": "mdi:led-on"},
-                          "servingSize":    {"type": "number", "min": 1, "max": 10, "step": 1, "unit": "portion"},
-                          "portionWeight":  {"type": "number", "min": 1, "max": 20, "step": 1, "unit": "g"}
+                          "weightPerDay": {"type": "sensor", "unit": "g", "icon": "mdi:weight-gram"},
+                          "error": {"type": "binary", "icon": "mdi:alert-circle"}
                         }
     },
     {
