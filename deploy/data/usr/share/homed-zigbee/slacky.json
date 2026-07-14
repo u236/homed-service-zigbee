@@ -6,7 +6,7 @@
       "modelNames":     ["AirQ_Monitor_S01"],
       "properties":     ["illuminance", "temperature", "humidity", "pressure", "co2", "switchMode", "displayMode"],
       "actionc":        ["switchMode", "displayMode"],
-      "bindings":       ["analogInput", "illuminance", "temperature", "humidity", "pressure", "co2"],
+      "bindings":       ["analogInput", "illuminance", "temperature", "pressure", "humidity", "co2"],
       "reportings":     ["illuminance", "temperature", "humidity", "pressure", "co2"],
       "exposes":        ["illuminance", "temperature", "humidity", "pressure", "co2", "voc", "invertDisplay", "rotateDisplay", "displayMode", "brightness", "sound", "readInterval", "temperatureOffset", "co2Relay", "co2Low", "co2High", "vocRelay", "vocLow", "vocHigh", "switchMode", "sensorFetures", "lifeTime", "co2Correction"],
       "options":        {
@@ -22,7 +22,7 @@
                             "rotateDisplay":      {"type": "enum",  "clusterId": 516,  "attributeId": 61450, "dataType": 48,  "action": true},
                             "invertDisplay":      {"type": "enum",  "clusterId": 516,  "attributeId": 61451, "dataType": 48,  "action": true},
                             "sound":              {"type": "bool",  "clusterId": 516,  "attributeId": 61452, "dataType": 16,  "action": true},
-                            "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 61440, "dataType": 41,  "divider": 100,  "action": true},
+                            "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 61440, "dataType": 41,  "divider": 100, "action": true},
                             "readInterval":       {"type": "value", "clusterId": 1026, "attributeId": 61441, "dataType": 33,  "action": true},
                             "co2Relay":           {"type": "bool",  "clusterId": 1037, "attributeId": 61442, "dataType": 16,  "action": true},
                             "co2Low":             {"type": "value", "clusterId": 1037, "attributeId": 61443, "dataType": 33,  "action": true},
@@ -47,7 +47,7 @@
                         }
     },
     {
-      "description":    "Slacky DIY Water Meter",
+      "description":    "Slacky Water Meter",
       "modelNames":     ["Watermeter_TLSR8258"],
       "options":        {"endpointName": {"1": "Hot", "2": "Cold"}}
     },
@@ -202,7 +202,7 @@
                           "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
                           "voltageMin": {"type": "number", "min": 0, "max": 300, "unit": "V"},
                           "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
-                          "powerMax":   {"type": "number", "min": 0, "max": 3600, "unit": "W"},
+                          "powerMax": {"type": "number", "min": 0, "max": 3600, "unit": "W"},
                           "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
                           "protection": {"type": "toggle"},
                           "automaticRestart": {"type": "toggle"},
@@ -243,7 +243,7 @@
                           "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
                           "voltageMin": {"type": "number", "min": 0, "max": 300, "unit": "V"},
                           "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
-                          "powerMax":   {"type": "number", "min": 0, "max": 3600, "unit": "W"},
+                          "powerMax": {"type": "number", "min": 0, "max": 3600, "unit": "W"},
                           "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
                           "protection": {"type": "toggle"},
                           "automaticRestart": {"type": "toggle"},
@@ -262,6 +262,111 @@
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "waterLeak", "switchMode"],
       "options":        {"switchMode": {"enum": ["off", "on"]}}
+    },
+    {
+      "description":    "Slacky FreePad 20-Button Keypad",
+      "modelNames":     ["FreePad-20K-SlD"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["FreePad-20K-SlD"],
+      "properties":     ["status", "statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["scene", "status", "level", "multistateInput", "color"],
+      "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "brightnessLevel", "brightnessLevelUp", "brightnessLevelDown", "moveToColorTemperature", "moveToColorTemperatureUp", "moveToColorTemperatureDown", "scene"], "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        },
+      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    },
+    {
+      "description":    "Slacky FreePad 12-Button Keypad",
+      "modelNames":     ["FreePad-12K-SlD"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["FreePad-12K-SlD"],
+      "properties":     ["status", "statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["scene", "status", "level", "multistateInput", "color"],
+      "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "brightnessLevel", "brightnessLevelUp", "brightnessLevelDown", "moveToColorTemperature", "moveToColorTemperatureUp", "moveToColorTemperatureDown", "scene"], "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        },
+      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    },
+    {
+      "description":    "Slacky FreePad 8-Button Keypad",
+      "modelNames":     ["FreePad-08K-SlD"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["FreePad-08K-SlD"],
+      "properties":     ["status", "statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["scene", "status", "level", "multistateInput", "color"],
+      "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "brightnessLevel", "brightnessLevelUp", "brightnessLevelDown", "moveToColorTemperature", "moveToColorTemperatureUp", "moveToColorTemperatureDown", "scene"], "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        },
+      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
     }
   ]
 }
