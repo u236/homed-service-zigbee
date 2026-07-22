@@ -16,7 +16,8 @@
                           "feedingSize": {"type": "sensor", "unit": "portion", "icon": "mdi:weight"},
                           "portionsPerDay": {"type": "sensor", "icon": "mdi:counter"},
                           "weightPerDay": {"type": "sensor", "unit": "g", "icon": "mdi:weight-gram"},
-                          "error": {"type": "binary", "icon": "mdi:alert-circle"}
+                          "error": {"type": "binary", "icon": "mdi:alert-circle"},
+                          "powerSource": 1
                         }
     },
     {
