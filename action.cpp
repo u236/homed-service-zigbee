@@ -80,7 +80,8 @@ void ActionObject::registerMetaTypes(void)
 
 QByteArray ActionObject::ieeeAddress(void)
 {
-    return static_cast <EndpointObject*> (m_parent)->device()->ieeeAddress();
+    Device device = m_parent ? static_cast <EndpointObject*> (m_parent)->device() : Device();
+    return device.isNull() ? QByteArray() : device->ieeeAddress();
 }
 
 Property ActionObject::endpointProperty(const QString &name)

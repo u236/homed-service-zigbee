@@ -1640,9 +1640,10 @@ void DeviceList::writeProperties(void)
 void DeviceList::updateEndpoint(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
+    Device device = endpoint->device();
     qint64 time = QDateTime::currentMSecsSinceEpoch();
 
-    if (!endpoint->device()->active())
+    if (device.isNull() || !device->active())
         return;
 
     for (int i = 0; i < endpoint->properties().count(); i++)
