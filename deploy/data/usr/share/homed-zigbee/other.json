@@ -115,7 +115,7 @@
   "Lytko":
   [
     {
-      "description":    "Lytko Themostat L101Z-SBN",
+      "description":    "Lytko Thermostat L101Z-SBN",
       "modelNames":     ["L101Z-SBN"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis"],
       "options":        {
@@ -143,7 +143,7 @@
       "endpointId":     3
     },
     {
-      "description":    "Lytko Themostat L101Ze-SBN",
+      "description":    "Lytko Thermostat L101Ze-SBN",
       "modelNames":     ["L101Ze-SBN"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis"],
       "options":        {
@@ -434,7 +434,7 @@
                           "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
                           "occupancyLevel": {"type": "sensor", "icon": "mdi:motion-sensor"},
                           "occupancySensitivity": {"type": "number", "min": 0, "max": 2000, "icon": "mdi:motion-sensor"},
-                          "occupancyTimeout": {"type": "number", "min": 0, "max": 2000, "unit": "sec", "icon": "mdi:timer"}
+                          "occupancyTimeout": {"min": 0, "max": 2000}
                         }
     },
     {

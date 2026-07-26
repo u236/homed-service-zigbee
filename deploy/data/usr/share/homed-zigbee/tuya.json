@@ -923,7 +923,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"enum": ["singleClick", "doubleClick", "hold"]}}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold"]}}
     },
     {
       "description":    "TUYA TS004F Wireless Dimmer (Type B)",
@@ -933,7 +933,7 @@
       "bindings":       ["battery", "status"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}, "action": {"enum": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}}
+      "options":        {"action": {"enum": ["singleClick", "doubleClick", "hold", "rotateLeft", "rotateRight"]}}
     },
     {
       "description":    "TUYA TS004F Wireless Dimmer (Type C)",
@@ -942,8 +942,7 @@
       "actions":        ["tuyaOperationMode"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "operationMode", "action"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}}
+      "exposes":        ["battery", "operationMode", "action"]
     },
     {
       "modelNames":     ["_TZ3000_g9g2xnch", "_TZ3000_pcqjmcud"],
@@ -968,8 +967,7 @@
       "actions":        ["tuyaOperationMode"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery", "operationMode"],
-      "options":        {"operationMode": {"enum": ["command", "event"]}}
+      "exposes":        ["battery", "operationMode"]
     },
     {
       "modelNames":     ["_TZ3000_0ht8dnxj", "_TZ3000_11pg3ima", "_TZ3000_b3mgfu0d", "_TZ3000_czuyt8lz", "_TZ3000_et7afzxz", "_TZ3000_nuombroo", "_TZ3000_xabckq1v"],

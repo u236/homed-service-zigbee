@@ -558,7 +558,6 @@
                           "systemMode": {"enum": ["auto", "heat", "off"]},
                           "comfortTemperature": {"min": 5, "max": 35},
                           "ecoTemperature": {"min": 5, "max": 35},
-                          "position": {"type": "sensor", "icon": "mdi:valve"},
                           "awayTemperature": {"min": 5, "max": 35},
                           "awayDays": {"min": 0, "max": 100}
                         }
@@ -662,7 +661,6 @@
                           "thrustMode": {"type": "select", "enum": ["high", "medium", "low"]},
                           "displayBrightness": {"type": "select", "enum": ["high", "medium", "low"]},
                           "displayOrientation": {"type": "select", "enum": ["up", "down"]},
-                          "position": {"type": "sensor", "icon": "mdi:valve"},
                           "comfortTemperature": {"min": 5, "max": 35},
                           "ecoTemperature": {"min": 5, "max": 35},
                           "awayTemperature": {"min": 5, "max": 35},
@@ -702,7 +700,6 @@
                           "temperatureLow": {"min": 1, "max": 15},
                           "temperatureHigh": {"min": 15, "max": 35},
                           "temperatureOffset": {"min": -30, "max": 30, "step": 0.1},
-                          "position": {"type": "sensor", "icon": "mdi:valve"},
                           "displayBrightness": {"type": "select", "enum": ["high", "medium", "low"]},
                           "displayOrientation": {"type": "select", "enum": ["up", "right", "down", "left"]},
                           "controlMode": {"type": "select", "enum": ["pid", "toggle"]},
@@ -900,7 +897,6 @@
                           "operationMode": {"enum": ["program", "manual", "temporary", "away"]},
                           "targetTemperature": {"min": 10, "max": 30},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10},
-                          "position": {"type": "sensor", "icon": "mdi:valve"},
                           "temperatureOffset": {"min": -9, "max": 9},
                           "ecoTemperature": {"min": 10, "max": 30},
                           "temperatureHigh": {"min": 15, "max": 45},
@@ -1060,7 +1056,7 @@
                             "21":   {"name": "melody", "type": "enum", "action": true}
                           },
                           "duration": {"min": 1, "max": 1800},
-                          "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
+                          "alarm": {"type": "toggle", "control": true},
                           "melody": {"min": 0, "max": 17}
                         }
     },
@@ -1081,23 +1077,23 @@
                             "106":  {"name": "humidity", "type": "value"},
                             "107":  {"name": "temperatureLow", "type": "value", "action": true},
                             "108":  {"name": "temperatureHigh", "type": "value", "action": true},
-                            "109":  {"name": "humidityLow", "type": "value", "aaction": true},
+                            "109":  {"name": "humidityLow", "type": "value", "action": true},
                             "110":  {"name": "humidityHigh", "type": "value", "action": true},
                             "113":  {"name": "temperatureAlarm", "type": "bool", "action": true},
                             "114":  {"name": "humidityAlarm", "type": "bool", "action": true},
                             "116":  {"name": "volumeMode", "type": "enum", "action": true}
                           },
-                          "batteryStatus": {"enum": ["full", "high", "meduim", "low", "usb"]},
+                          "batteryStatus": {"enum": ["full", "high", "medium", "low", "usb"]},
                           "melody": {"min": 0, "max": 17},
                           "duration": {"min": 1, "max": 1800},
-                          "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
+                          "alarm": {"type": "toggle", "control": true},
                           "temperatureLow": {"min": -20, "max": 80},
                           "temperatureHigh": {"min": -20, "max": 80},
                           "humidityLow": {"min": 0, "max": 100},
                           "humidityHigh": {"min": 0, "max": 100},
                           "temperatureAlarm": {"type": "toggle", "control": true, "icon": "mdi:thermometer-alert"},
                           "humidityAlarm": {"type": "toggle", "control": true, "icon": "mdi:water-percent-alert"},
-                          "volumeMode": {"enum": ["high", "meduim", "low"]}
+                          "volumeMode": {"enum": ["high", "medium", "low"]}
                         }
     },
     {
@@ -1120,7 +1116,7 @@
                           "volumeMode": {"enum": ["low", "medium", "high", "mute"]},
                           "powerStatus": {"type": "sensor", "enum": ["normal", "backup"], "icon": "mdi:power-plug-battery"},
                           "duration": {"min": 1, "max": 60, "unit": "min"},
-                          "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
+                          "alarm": {"type": "toggle", "control": true},
                           "batteryStatus": {"enum": ["low", "medium", "high"]},
                           "melody": {"min": 0, "max": 12}
                         }
@@ -1140,8 +1136,8 @@
                             "21":   {"name": "melody", "type": "enum", "action": true}
                           },
                           "volumeMode": {"enum": ["low", "medium", "high", "mute"]},
-                          "duration": {"min": 1, "max": 380, "unit": "sec"},
-                          "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
+                          "duration": {"min": 1, "max": 380},
+                          "alarm": {"type": "toggle", "control": true},
                           "melody": {"min": 0, "max": 31}
                         }
     },
@@ -1160,7 +1156,7 @@
                           },
                           "status": {"enum": ["off", "on"]},
                           "timer": {"min": 0, "max": 600},
-                          "threshold": {"min": 0, "max": 100, "step": 10, "unit": "%", "control": true, "icon": "mdi:percent"},
+                          "threshold": {"min": 0, "max": 100, "step": 10, "control": true, "unit": "%", "icon": "mdi:percent"},
                           "lock": "valve"
                         }
     },
@@ -1203,7 +1199,7 @@
                           },
                           "status": {"enum": ["off", "on"]},
                           "timer": {"min": 0, "max": 1440},
-                          "duration": {"type": "sensor", "unit": "sec"},
+                          "duration": {"type": "sensor"},
                           "valveStatus": {"type": "sensor", "enum": ["manual", "auto", "idle"]},
                           "lock": "valve"
                         }
@@ -1228,8 +1224,8 @@
                           "operationMode": {"enum": ["duration", "calpacity"]},
                           "status": {"enum": ["off", "on"]},
                           "count": {"type": "number", "min": 0, "max": 100},
-                          "target": {"type": "number", "min": 0, "max": 43200, "unut": "sec|L"},
-                          "interval": {"type": "number", "min": 0, "max": 43200, "unut": "sec"},
+                          "target": {"type": "number", "min": 0, "max": 43200, "unit": "sec|L"},
+                          "interval": {"type": "number", "min": 0, "max": 43200, "unit": "sec"},
                           "lock": "valve"
                         }
     },
@@ -1340,7 +1336,7 @@
       "description":    "TUYA TS0601 Smoke Detector (Type C)",
       "modelNames":     ["_TZE204_kgaxpvxr", "_TZE284_n4ttsck2"],
       "properties":     ["tuyaDataPoints"],
-      "exposes":        ["battery", "smoke", "concentration", "test", "fault"],
+      "exposes":        ["battery", "smoke", "test", "sensitivity"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -1416,7 +1412,7 @@
                             "103":  {"name": "volume", "type": "value", "action": true},
                             "104":  {"name": "duration", "type": "value", "action": true}
                           },
-                          "alarm": {"type": "toggle", "control": true, "icon": "mdi:bell"},
+                          "alarm": {"type": "toggle", "control": true},
                           "volume": {"type": "number", "min": 1, "max": 100, "unit": "%"},
                           "duration": {"min": 3, "max": 180}
                         }
@@ -1791,7 +1787,7 @@
                             "1":    {"name": "illuminanceStatus", "type": "enum"},
                             "2":    {"name": "illuminance", "type": "value"}
                           },
-                          "illuminanceStatus": {"type": "sensor", "enum": ["low", "meduim", "high", "max"], "icon": "mdi:brightness-5"}
+                          "illuminanceStatus": {"type": "sensor", "enum": ["low", "medium", "high", "max"], "icon": "mdi:brightness-5"}
                         }
     },
     {

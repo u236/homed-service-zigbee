@@ -97,16 +97,18 @@
       "description":    "HOBEIAN ZG-303Z Soil Moisture Sensor",
       "modelNames":     ["ZG-303Z"],
       "properties":     ["tuyaDataPoints"],
-      "exposes":        ["battery", "alarm", "temperature", "humidity", "moisture"],
+      "exposes":        ["battery", "alarm", "temperature", "humidity", "moisture", "threshold"],
       "options":        {
                           "tuyaDataPoints":
                           {
                             "3":    {"name": "moisture", "type": "value"},
                             "5":    {"name": "temperature", "type": "value", "divider": 10},
                             "15":   {"name": "battery", "type": "value"},
+                            "106":  {"name": "alarm", "type": "bool"},
                             "109":  {"name": "humidity", "type": "value"},
-                            "106":  {"name": "alarm", "type": "bool"}
-                          }
+                            "110":  {"name": "threshold", "type": "value", "action": true}
+                          },
+                          "threshold": {"min": 0, "max": 100, "unit": "%", "icon": "mdi:water-alert"}
                         }
     },
     {
