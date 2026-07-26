@@ -485,6 +485,7 @@ void Properties::LevelAction::parseCommand(quint16, quint8 commandId, const QByt
     switch (commandId)
     {
         case 0x00:
+        case 0x04:
         {
             const moveToLevelStruct *data = reinterpret_cast <const moveToLevelStruct*> (payload.constData());
             m_value = QMap <QString, QVariant> {{"action", "moveToLevel"}, {"level", data->level}, {"moveTime", qFromLittleEndian(data->time)}};
