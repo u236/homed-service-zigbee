@@ -8,6 +8,7 @@
 #define ZSTACK_NOT_STARTED_AUTOMATICALLY        0x00
 #define ZSTACK_COORDINATOR_STARTED              0x09
 
+#define ZSTACK_AF_ACK_REQUEST                   0x10
 #define ZSTACK_AF_DISCV_ROUTE                   0x20
 #define ZSTACK_AF_DEFAULT_RADIUS                0x0F
 

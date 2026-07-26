@@ -26,7 +26,7 @@ bool ZStack::unicastRequest(quint8 id, quint16 networkAddress, quint8 srcEndPoin
     request.srcEndpointId = srcEndPointId;
     request.clusterId = qToLittleEndian(clusterId);
     request.transactionId = id;
-    request.options = ZSTACK_AF_DISCV_ROUTE;
+    request.options = m_extendedTimeout ? ZSTACK_AF_DISCV_ROUTE | ZSTACK_AF_ACK_REQUEST : ZSTACK_AF_DISCV_ROUTE;
     request.radius = ZSTACK_AF_DEFAULT_RADIUS;
     request.length = static_cast <quint8> (payload.length());
 

@@ -274,7 +274,7 @@
     },
     {
       "modelNames":     ["FreePad-20K-SlD"],
-      "properties":     ["status", "statusAction", "switchMode", "levelAction", "colorAction"],
+      "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
       "actions":        ["switchMode"],
       "bindings":       ["scene", "status", "level", "multistateInput", "color"],
       "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
@@ -309,7 +309,7 @@
     },
     {
       "modelNames":     ["FreePad-12K-SlD"],
-      "properties":     ["status", "statusAction", "switchMode", "levelAction", "colorAction"],
+      "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
       "actions":        ["switchMode"],
       "bindings":       ["scene", "status", "level", "multistateInput", "color"],
       "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
@@ -344,7 +344,7 @@
     },
     {
       "modelNames":     ["FreePad-08K-SlD"],
-      "properties":     ["status", "statusAction", "switchMode", "levelAction", "colorAction"],
+      "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
       "actions":        ["switchMode"],
       "bindings":       ["scene", "status", "level", "multistateInput", "color"],
       "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
