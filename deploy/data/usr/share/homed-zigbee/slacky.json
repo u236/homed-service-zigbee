@@ -13,8 +13,8 @@
                           "customAttributes":
                           {
                             "brightness":         {"type": "value", "clusterId": 8,    "attributeId": 0,     "dataType": 32,  "action": true},
-                            "lifeTime":           {"type": "value", "clusterId": 10,   "attributeId": 0,     "dataType": 226, "reporting": {"minInterval": 60, "maxInterval": 3600}, "binding": true},
-                            "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57,  "reporting": {"minInterval": 10, "maxInterval": 3600, "valueChange": 10}},
+                            "lifeTime":           {"type": "value", "clusterId": 10,   "attributeId": 0,     "dataType": 226, "reporting": {"minInterval": 60}, "binding": true},
+                            "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57,  "reporting": {"minInterval": 10, "valueChange": 10}},
                             "vocRelay":           {"type": "bool",  "clusterId": 12,   "attributeId": 61445, "dataType": 16,  "action": true},
                             "vocLow":             {"type": "value", "clusterId": 12,   "attributeId": 61446, "dataType": 33,  "action": true},
                             "vocHigh":            {"type": "value", "clusterId": 12,   "attributeId": 61447, "dataType": 33,  "action": true},
@@ -114,8 +114,54 @@
                         }
     },
     {
+      "description":    "HOBEIAN ZG-807Z Router with Slacky Firmware",
+      "modelNames":     ["Router-ZG-807Z-SlD"],
+      "properties":     ["batteryPercentage", "switchMode"],
+      "actions":        ["switchMode"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "batteryLow", "transmitPower", "switchMode", "uptime"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "batteryLow":     {"type": "bool",  "clusterId": 1,     "attributeId": 62, "dataType": 28,  "reporting": {"valueChange": 0}},
+                            "uptime":         {"type": "value", "clusterId": 10,    "attributeId": 0,  "dataType": 226, "reporting": {"minInterval": 60}, "binding": true},
+                            "transmitPower":  {"type": "enum",  "clusterId": 65381, "attributeId": 0,  "dataType": 48,  "action": true}
+                          },
+                          "uptime": {"type": "sensor", "unit": "sec"},
+                          "transmitPower": {"type": "select", "enum": ["0 dBm", "5 dBm", "10 dBm"]},
+                          "switchMode": {"enum": ["off", "on", "toggle"]},
+                          "powerSource": 3
+                        }
+    },
+    {
+      "description":    "TUYA TS0203 Door and Window Sensor with Slacky Firmware",
+      "modelNames":     ["TS0203-z20-SlD"],
+      "properties":     ["batteryPercentage", "iasContact", "switchMode"],
+      "actions":        ["switchMode"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "contact", "switchMode", "delayOn", "delayOff", "disableOn", "disableOff", "modelNumber"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "modelNumber":  {"type": "string", "clusterId": 0, "attributeId": 14,    "dataType": 66},
+                            "delayOn":      {"type": "value",  "clusterId": 7, "attributeId": 61443, "dataType": 32, "action": true},
+                            "delayOff":     {"type": "value",  "clusterId": 7, "attributeId": 61444, "dataType": 32, "action": true},
+                            "disableOn":    {"type": "bool",   "clusterId": 7, "attributeId": 61445, "dataType": 16, "action": true},
+                            "disableOff":   {"type": "bool",   "clusterId": 7, "attributeId": 61446, "dataType": 16, "action": true}
+                          },
+                          "modelNumber": {"type": "sensor"},
+                          "delayOn": {"type": "number", "min": 0, "max": 120, "unit": "sec"},
+                          "delayOff": {"type": "number", "min": 0, "max": 120, "unit": "sec"},
+                          "disableOn": {"type": "toggle"},
+                          "disableOff": {"type": "toggle"},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        }
+    },
+    {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor with Slacky Firmware",
-      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD"],
+      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD", "TS0201-z28-SlD", "TS0201-z29-SlD", "TS0201-z2C-SlD"],
       "properties":     ["batteryPercentage", "temperature", "humidity"],
       "bindings":       ["battery", "temperature", "humidity"],
       "reportings":     ["batteryPercentage", "temperature", "humidity"],
@@ -146,7 +192,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD"],
+      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD", "TS0201-z28-SlD", "TS0201-z29-SlD", "TS0201-z2C-SlD"],
       "properties":     ["switchMode"],
       "actions":        ["switchMode"],
       "exposes":        ["switchMode"],
@@ -154,7 +200,7 @@
       "endpointId":     [1]
     },
     {
-      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD"],
+      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD", "TS0201-z28-SlD", "TS0201-z29-SlD", "TS0201-z2C-SlD"],
       "properties":     ["switchMode"],
       "actions":        ["switchMode"],
       "exposes":        ["switchMode"],
@@ -197,8 +243,9 @@
                             "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
                           },
                           "resetEnergy": {"type": "button", "enum": {"128": true}},
-                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "multifunction"}},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction"]},
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "5": "quintupleClick", "255": "release"}},
+                          "operationMode": {"enum": ["relay", "decoupled"]},
                           "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
                           "voltageMin": {"type": "number", "min": 0, "max": 300, "unit": "V"},
                           "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
@@ -214,12 +261,39 @@
                         }
     },
     {
+      "description":    "TUYA TSM1 1-Gang Switch Module with Slacky Firmware",
+      "modelNames":     ["TSM1-0025-SlD", "TSM1-SlD"],
+      "properties":     ["status", "powerOnStatus", "switchMode", "statusAction", "levelAction"],
+      "actions":        ["status", "powerOnStatus", "switchMode"],
+      "bindings":       ["status", "level", "multistateInput"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "action", "powerOnStatus", "operationMode", "switchType", "switchMode", "levelMin", "levelMax", "modelNumber"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "modelNumber":    {"type": "string", "clusterId": 0,  "attributeId": 14,    "dataType": 66},
+                            "switchType":     {"type": "enum",   "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "operationMode":  {"type": "enum",   "clusterId": 7,  "attributeId": 61441, "dataType": 48, "action": true},
+                            "levelMin":       {"type": "value",  "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":       {"type": "value",  "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":         {"type": "enum",   "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "modelNumber": {"type": "sensor"},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "level"]},
+                          "operationMode": {"enum": ["relay", "decoupled"]},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on"]}
+                        }
+    },
+    {
       "description":    "TUYA TS011F Plug with Slacky Firmware",
       "modelNames":     ["TS011F-SlD"],
       "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power", "frequency"],
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status", "energy", "power"],
-      "reportings":     ["energy", "voltage", "current", "power", "frequency"],
+      "reportings":     ["status", "energy", "voltage", "current", "power", "frequency"],
       "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime", "resetEnergy"],
       "options":        {
                           "customCommands":
@@ -254,6 +328,45 @@
                         }
     },
     {
+      "description":    "EKF 16A Smart Plug with Slacky Firmware",
+      "modelNames":     ["RCS-ST16-z-SlD"],
+      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "protection", "voltageMin", "voltageMax", "currentMax", "powerMax", "automaticRestart", "reloadTime", "resetEnergy"],
+      "options":        {
+                          "customCommands":
+                          {
+                            "resetEnergy":      {"clusterId": 1794, "action": true}
+                          },
+                          "customAttributes":
+                          {
+                            "childLock":        {"type": "bool",  "clusterId": 6,    "attributeId": 61440, "dataType": 16, "action": true},
+                            "indicatorMode":    {"type": "enum",  "clusterId": 6,    "attributeId": 61441, "dataType": 48, "action": true},
+                            "voltageMax":       {"type": "value", "clusterId": 2820, "attributeId": 2055,  "dataType": 41, "divider": 100, "action": true},
+                            "voltageMin":       {"type": "value", "clusterId": 2820, "attributeId": 2056,  "dataType": 41, "divider": 100, "action": true},
+                            "currentMax":       {"type": "value", "clusterId": 2820, "attributeId": 61442, "dataType": 33, "divider": 100, "action": true},
+                            "powerMax":         {"type": "value", "clusterId": 2820, "attributeId": 61443, "dataType": 41, "action": true},
+                            "reloadTime":       {"type": "value", "clusterId": 2820, "attributeId": 61444, "dataType": 33, "action": true},
+                            "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
+                            "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
+                          },
+                          "resetEnergy": {"type": "button", "enum": {"128": true}},
+                          "indicatorMode": {"enum": ["off", "on", "default", "inverted"]},
+                          "voltageMax": {"type": "number", "min": 0, "max": 300, "unit": "V"},
+                          "voltageMin": {"type": "number", "min": 0, "max": 300, "unit": "V"},
+                          "currentMax": {"type": "number", "min": 0, "max": 16, "step": 0.1, "unit": "A"},
+                          "powerMax": {"type": "number", "min": 0, "max": 3600, "unit": "W"},
+                          "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
+                          "protection": {"type": "toggle"},
+                          "automaticRestart": {"type": "toggle"},
+                          "energyDivider": 1000000,
+                          "acVoltageDivider": 100,
+                          "acCurrentDivider": 100
+                        }
+    },
+    {
       "description":    "TUYA TS0207 Water Leak Sensor with Slacky Firmware",
       "modelNames":     ["SNZB-05-z-SlD", "ZG-222Z-z-SlD", "ZG-222ZA-z-SlD"],
       "properties":     ["batteryPercentage", "switchMode", "iasWaterLeak"],
@@ -264,8 +377,8 @@
       "options":        {"switchMode": {"enum": ["off", "on"]}}
     },
     {
-      "description":    "Slacky FreePad 20-Button Keypad",
-      "modelNames":     ["FreePad-20K-SlD"],
+      "description":    "Slacky FreePad 8-Button Keypad",
+      "modelNames":     ["FreePad-08K-SlD"],
       "properties":     ["batteryPercentage"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -273,7 +386,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["FreePad-20K-SlD"],
+      "modelNames":     ["FreePad-08K-SlD"],
       "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
       "actions":        ["switchMode"],
       "bindings":       ["scene", "status", "level", "multistateInput", "color"],
@@ -296,7 +409,7 @@
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
                           "switchMode": {"enum": ["off", "on", "toggle"]}
                         },
-      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
     },
     {
       "description":    "Slacky FreePad 12-Button Keypad",
@@ -334,8 +447,8 @@
       "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     },
     {
-      "description":    "Slacky FreePad 8-Button Keypad",
-      "modelNames":     ["FreePad-08K-SlD"],
+      "description":    "Slacky FreePad 20-Button Keypad",
+      "modelNames":     ["FreePad-20K-SlD"],
       "properties":     ["batteryPercentage"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -343,7 +456,7 @@
       "endpointId":     1
     },
     {
-      "modelNames":     ["FreePad-08K-SlD"],
+      "modelNames":     ["FreePad-20K-SlD"],
       "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
       "actions":        ["switchMode"],
       "bindings":       ["scene", "status", "level", "multistateInput", "color"],
@@ -366,7 +479,174 @@
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
                           "switchMode": {"enum": ["off", "on", "toggle"]}
                         },
-      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8]
+      "endpointId":     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    },
+    {
+      "description":    "TUYA TS0041 1-Button Wireless Switch with Slacky Firmware",
+      "modelNames":     ["TS0041-M001-SlD", "TS0041-M002-SlD", "TS0041-M005-SlD"],
+      "properties":     ["batteryPercentage", "statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["battery", "scene", "status", "level", "multistateInput", "color"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "multifunction", "3": "level", "6": "colorTemperature", "9": "scene"}, "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0042 2-Button Wireless Switch with Slacky Firmware",
+      "modelNames":     ["TS0042-z-SlD", "TS0042-M003-SlD", "TS0042-M006-SlD"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0042-z-SlD", "TS0042-M003-SlD", "TS0042-M006-SlD"],
+      "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["scene", "status", "level", "multistateInput", "color"],
+      "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "level", "levelUp", "levelDown", "colorTemperature", "colorTemperatureUp", "colorTemperatureDown", "scene"], "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        },
+      "endpointId":     [1, 2]
+    },
+    {
+      "description":    "TUYA TS0043 3-Button Wireless Switch with Slacky Firmware",
+      "modelNames":     ["TS0043-z-SlD", "TS0043-M007-SlD"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0043-z-SlD", "TS0043-M007-SlD"],
+      "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["scene", "status", "level", "multistateInput", "color"],
+      "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "level", "levelUp", "levelDown", "colorTemperature", "colorTemperatureUp", "colorTemperatureDown", "scene"], "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        },
+      "endpointId":     [1, 2, 3]
+    },
+    {
+      "description":    "TUYA TS0044 4-Button Wireless Switch with Slacky Firmware",
+      "modelNames":     ["TS0044-z-SlD", "TS0044-M004-SlD"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0044-z-SlD", "TS0044-M004-SlD"],
+      "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["scene", "status", "level", "multistateInput", "color"],
+      "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "level", "levelUp", "levelDown", "colorTemperature", "colorTemperatureUp", "colorTemperatureDown", "scene"], "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        },
+      "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "TUYA TS0046 6-Button Wireless Switch with Slacky Firmware",
+      "modelNames":     ["TS0046-z-SlD"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["TS0046-z-SlD"],
+      "properties":     ["statusAction", "switchMode", "levelAction", "colorAction"],
+      "actions":        ["switchMode"],
+      "bindings":       ["scene", "status", "level", "multistateInput", "color"],
+      "exposes":        ["action", "switchType", "switchMode", "sceneId", "groupId", "levelMin", "levelMax"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "sceneId":    {"type": "value", "clusterId": 5,  "attributeId": 61440, "dataType": 32, "action": true},
+                            "groupId":    {"type": "value", "clusterId": 5,  "attributeId": 61441, "dataType": 33, "action": true},
+                            "switchType": {"type": "enum",  "clusterId": 7,  "attributeId": 61440, "dataType": 48, "action": true},
+                            "levelMin":   {"type": "value", "clusterId": 8,  "attributeId": 2,     "dataType": 32, "action": true},
+                            "levelMax":   {"type": "value", "clusterId": 8,  "attributeId": 3,     "dataType": 32, "action": true},
+                            "action":     {"type": "enum",  "clusterId": 18, "attributeId": 85,    "dataType": 33}
+                          },
+                          "sceneId": {"type": "number", "min": 0, "max": 255},
+                          "groupId": {"type": "number", "min": 0, "max": 65527},
+                          "switchType": {"enum": ["toggle", "momentary", "multifunction", "level", "levelUp", "levelDown", "colorTemperature", "colorTemperatureUp", "colorTemperatureDown", "scene"], "collapse": true},
+                          "levelMin": {"type": "number", "min": 1, "max": 255},
+                          "levelMax": {"type": "number", "min": 1, "max": 255},
+                          "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "255": "release"}},
+                          "switchMode": {"enum": ["off", "on", "toggle"]}
+                        },
+      "endpointId":     [1, 2, 3, 4, 5, 6]
     }
   ]
 }
