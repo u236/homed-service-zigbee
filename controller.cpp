@@ -5,6 +5,7 @@
 Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, configFile, true), m_deviceDataTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_zigbee(nullptr), m_commands(QMetaEnum::fromType <Command> ()), m_networkStarted(false)
 {
     bool panId = getConfig()->value("zigbee/panid").toString().isEmpty(), key = getConfig()->value("security/key").toString().isEmpty();
+    QJsonObject backup;
 
     if (panId || key)
     {
@@ -52,21 +53,29 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
 
     m_zigbee = new ZigBee(getConfig(), this);
 
+    m_backup.setFileName(getConfig()->value("backup/file", "/opt/homed-zigbee/backup.json").toString());
     m_haPrefix = getConfig()->value("homeassistant/prefix", "homeassistant").toString();
     m_haStatus = getConfig()->value("homeassistant/status", "homeassistant/status").toString();
     m_haEnabled = getConfig()->value("homeassistant/enabled", false).toBool();
     m_haUpdate = getConfig()->value("homeassistant/update", false).toBool();
 
+    if (m_backup.open(QFile::ReadOnly))
+    {
+        backup = QJsonDocument::fromJson(m_backup.readAll()).object();
+        m_backup.close();
+    }
+
     connect(m_deviceDataTimer, &QTimer::timeout, this, &Controller::updateDeviceData);
     connect(m_propertiesTimer, &QTimer::timeout, this, &Controller::updateProperties);
 
     connect(m_zigbee, &ZigBee::networkStarted, this, &Controller::networkStarted);
+    connect(m_zigbee, &ZigBee::backupUpdated, this, &Controller::backupUpdated);
     connect(m_zigbee, &ZigBee::deviceEvent, this, &Controller::deviceEvent);
     connect(m_zigbee, &ZigBee::endpointUpdated, this, &Controller::endpointUpdated);
 
     m_deviceDataTimer->start(UPDATE_DEVICE_DATA_INTERVAL);
     m_propertiesTimer->setSingleShot(true);
-    m_zigbee->init();
+    m_zigbee->init(backup);
 }
 
 void Controller::publishExposes(DeviceObject *device, bool remove)
@@ -294,6 +303,14 @@ void Controller::networkStarted(void)
 {
     m_networkStarted = true;
     serviceOnline();
+}
+
+void Controller::backupUpdated(const QJsonObject &backup)
+{
+    if (writeFile(m_backup, QJsonDocument(backup).toJson(QJsonDocument::Compact)))
+        return;
+
+    logInfo << "Backup not stored";
 }
 
 void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json)

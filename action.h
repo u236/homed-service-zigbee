@@ -1,8 +1,6 @@
 #ifndef ACTION_H
 #define ACTION_H
 
-#include <QSharedPointer>
-#include <QVariant>
 #include "property.h"
 
 class ActionObject;

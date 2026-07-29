@@ -48,6 +48,8 @@ private:
     ZigBee *m_zigbee;
 
     QMetaEnum m_commands;
+    QFile m_backup;
+
     QString m_haPrefix, m_haStatus;
     bool m_haEnabled, m_haUpdate, m_networkStarted;
 
@@ -69,6 +71,7 @@ private slots:
     void updateProperties(void);
 
     void networkStarted(void);
+    void backupUpdated(const QJsonObject &backup);
     void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json);
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
 };
