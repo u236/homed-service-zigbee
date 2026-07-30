@@ -5,6 +5,8 @@
 #define ZSTACK_SKIP_BOOTLOADER                  0xEF
 #define ZSTACK_PACKET_FLAG                      0xFE
 
+#define ZSTACK_NVSYS_ZSTACK                     0x01
+
 #define ZSTACK_NOT_STARTED_AUTOMATICALLY        0x00
 #define ZSTACK_COORDINATOR_STARTED              0x09
 
@@ -13,9 +15,15 @@
 #define ZSTACK_AF_DEFAULT_RADIUS                0x0F
 
 #define ZSTACK_SYS_VERSION                      0x2102
+#define ZSTACK_SYS_OSAL_NV_ITEM_INIT            0x2107
 #define ZSTACK_SYS_OSAL_NV_READ                 0x2108
 #define ZSTACK_SYS_OSAL_NV_WRITE                0x2109
+#define ZSTACK_SYS_OSAL_NV_LENGTH               0x2113
 #define ZSTACK_SYS_SET_TX_POWER                 0x2114
+#define ZSTACK_SYS_OSAL_NV_READ_EXT             0x211C
+#define ZSTACK_SYS_NV_LENGTH                    0x2132
+#define ZSTACK_SYS_NV_READ                      0x2133
+#define ZSTACK_SYS_NV_WRITE                     0x2134
 #define ZSTACK_AF_REGISTER                      0x2400
 #define ZSTACK_AF_DATA_REQUEST                  0x2401
 #define ZSTACK_AF_DATA_REQUEST_EXT              0x2402
@@ -23,7 +31,6 @@
 #define ZSTACK_ZDO_MGMT_PERMIT_JOIN_REQ         0x2536
 #define ZSTACK_ZDO_MSG_CB_REGISTER              0x253E
 #define ZSTACK_ZDO_STARTUP_FROM_APP             0x2540
-#define ZSTACK_ZDO_ADD_GROUP                    0x254B
 #define ZSTACK_ZB_READ_CONFIGURATION            0x2604
 #define ZSTACK_ZB_WRITE_CONFIGURATION           0x2605
 #define ZSTACK_UTIL_GET_DEVICE_INFO             0x2700
@@ -46,14 +53,25 @@
 #define ZSTACK_ZDO_MSG_CB_INCOMING              0x45FF
 #define ZSTACK_APP_CNF_BDB_COMMISSIONING        0x4F80
 
+#define ZCD_NV_EXTADDR                          0x0001
 #define ZCD_NV_STARTUP_OPTION                   0x0003
+#define ZCD_NV_NIB                              0x0021
+#define ZCD_NV_EXTENDED_PAN_ID                  0x002D
+#define ZCD_NV_NWK_ACTIVE_KEY_INFO              0x003A
+#define ZCD_NV_NWK_ALTERN_KEY_INFO              0x003B
+#define ZCD_NV_APS_USE_EXT_PANID                0x0047
 #define ZCD_NV_PRECFGKEY                        0x0062
 #define ZCD_NV_PRECFGKEYS_ENABLE                0x0063
+#define ZCD_NV_NWKKEY                           0x0082
 #define ZCD_NV_PANID                            0x0083
 #define ZCD_NV_CHANLIST                         0x0084
 #define ZCD_NV_LOGICAL_TYPE                     0x0087
 #define ZCD_NV_ZDO_DIRECT_CB                    0x008F
-#define ZCD_NV_TCLK_TABLE                       0x0101
+#define ZCD_NV_LEGACY_TCLK_TABLE_START          0x0101
+
+#define ZCD_NV_EX_ADDRMGR                       0x0001
+#define ZCD_NV_EX_TCLK_TABLE                    0x0004
+#define ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE        0x0007
 
 #include "adapter.h"
 
@@ -125,10 +143,30 @@ struct zstackSetChannelStruct
     quint32 channel;
 };
 
+struct zstackNvLengthStruct
+{
+    quint8  system;
+    quint16 id;
+    quint16 subId;
+};
+
+struct zstackNvInitStruct
+{
+    quint16 id;
+    quint16 length;
+    quint8  count;
+};
+
 struct zstackNvReadStruct
 {
     quint16 id;
     quint8  offset;
+};
+
+struct zstackNvReadExtendedStruct
+{
+    quint16 id;
+    quint16 offset;
 };
 
 struct zstackNvReplyStruct
@@ -141,6 +179,15 @@ struct zstackNvWriteStruct
 {
     quint16 id;
     quint8  offset;
+    quint8  length;
+};
+
+struct zstackNvItemStruct
+{
+    quint8  system;
+    quint16 id;
+    quint16 subId;
+    quint16 offset;
     quint8  length;
 };
 
@@ -252,6 +299,7 @@ private:
     QByteArray m_replyData;
 
     QMap <quint16, QByteArray> m_nvItems;
+    QMap <quint16, quint8> m_nvItemSize;
     QList <quint16> m_zdoClusters;
 
     bool extendedRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false);
@@ -260,7 +308,18 @@ private:
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
     void parsePacket(quint16 command, const QByteArray &data);
 
+    int nvItemLength(quint16 id);
+    int nvItemLength(quint16 id, quint16 subId);
+    int nvItemSize(quint16 id);
+
+    bool initNvItem(quint16 id, const QByteArray &data);
+
+    bool readNvItem(quint16 id, QByteArray &data);
+    bool readNvItem(quint16 id, quint16 subId, QByteArray &data, int length = 0);
+
     bool writeNvItem(quint16 id, const QByteArray &data);
+    bool writeNvItem(quint16 id, quint16 subId, const QByteArray &data);
+
     bool writeConfiguration(quint16 id, const QByteArray &data);
     bool startCoordinator(void);
 

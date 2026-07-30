@@ -252,6 +252,121 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
     }
 }
 
+int ZStack::nvItemLength(quint16 id)
+{
+    quint16 value = qToLittleEndian(id);
+
+    if (!sendRequest(ZSTACK_SYS_OSAL_NV_LENGTH, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))) || static_cast <size_t> (m_replyData.length()) < sizeof(value))
+        return -1;
+
+    memcpy(&value, m_replyData.constData(), sizeof(value));
+    return qFromLittleEndian(value);
+}
+
+int ZStack::nvItemLength(quint16 id, quint16 subId)
+{
+    zstackNvLengthStruct request;
+
+    request.system = ZSTACK_NVSYS_ZSTACK;
+    request.id = qToLittleEndian(id);
+    request.subId = qToLittleEndian(subId);
+
+    if (!sendRequest(ZSTACK_SYS_NV_LENGTH, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.isEmpty())
+        return -1;
+
+    return static_cast <quint8> (m_replyData.at(0));
+}
+
+int ZStack::nvItemSize(quint16 id)
+{
+    int length = m_nvItemSize.value(id, 0);
+
+    if (!length)
+    {
+        length = nvItemLength(id, 0);
+
+        if (length > 0)
+            m_nvItemSize.insert(id, static_cast <quint8> (length));
+    }
+
+    return length;
+}
+
+bool ZStack::initNvItem(quint16 id, const QByteArray &data)
+{
+    if (nvItemLength(id) != data.length())
+    {
+        zstackNvInitStruct request;
+        quint8 count = static_cast <quint8> (data.length() > 240 ? 240 : data.length());
+
+        request.id = qToLittleEndian(id);
+        request.length = qToLittleEndian <quint16> (data.length());
+        request.count = count;
+
+        sendRequest(ZSTACK_SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data.mid(0, count)));
+    }
+
+    return writeNvItem(id, data);
+}
+
+bool ZStack::readNvItem(quint16 id, QByteArray &data)
+{
+    int length = nvItemLength(id);
+
+    if (length < 0)
+        return false;
+
+    data.clear();
+
+    while (data.length() < length)
+    {
+        zstackNvReadExtendedStruct request;
+        zstackNvReplyStruct *reply;
+
+        request.id = qToLittleEndian(id);
+        request.offset = qToLittleEndian <quint16> (data.length());
+
+        if (!sendRequest(ZSTACK_SYS_OSAL_NV_READ_EXT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || static_cast <size_t> (m_replyData.length()) < sizeof(zstackNvReplyStruct) || m_replyData.at(0))
+            return false;
+
+        reply = reinterpret_cast <zstackNvReplyStruct*> (m_replyData.data());
+
+        if (!reply->length)
+            break;
+
+        data.append(m_replyData.mid(sizeof(zstackNvReplyStruct), reply->length));
+    }
+
+    return true;
+}
+
+bool ZStack::readNvItem(quint16 id, quint16 subId, QByteArray &data, int length)
+{
+    zstackNvItemStruct request;
+    zstackNvReplyStruct *reply;
+
+    data.clear();
+
+    if (!length)
+        length = nvItemLength(id, subId);
+
+    if (length <= 0)
+        return length ? false : true;
+
+    request.system = ZSTACK_NVSYS_ZSTACK;
+    request.id = qToLittleEndian(id);
+    request.subId = qToLittleEndian(subId);
+    request.offset = 0x0000;
+    request.length = static_cast <quint8> (length);
+
+    if (!sendRequest(ZSTACK_SYS_NV_READ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || static_cast <size_t> (m_replyData.length()) < sizeof(zstackNvReplyStruct) || m_replyData.at(0))
+        return false;
+
+    reply = reinterpret_cast <zstackNvReplyStruct*> (m_replyData.data());
+    data = m_replyData.mid(sizeof(zstackNvReplyStruct), reply->length);
+    return true;
+}
+
 bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 {
     zstackNvWriteStruct request;
@@ -262,7 +377,26 @@ bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 
     if (!sendRequest(ZSTACK_SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
     {
-        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "wtite request failed";
+        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "write request failed";
+        return false;
+    }
+
+    return true;
+}
+
+bool ZStack::writeNvItem(quint16 id, quint16 subId, const QByteArray &data)
+{
+    zstackNvItemStruct request;
+
+    request.system = ZSTACK_NVSYS_ZSTACK;
+    request.id = qToLittleEndian(id);
+    request.subId = qToLittleEndian(subId);
+    request.offset = 0x0000;
+    request.length = static_cast <quint8> (data.length());
+
+    if (!sendRequest(ZSTACK_SYS_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
+    {
+        logWarning << "NV item" << QString::asprintf("0x%04x:%d", id, subId) << "write request failed";
         return false;
     }
 
@@ -278,7 +412,7 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 
     if (!sendRequest(ZSTACK_ZB_WRITE_CONFIGURATION, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
     {
-        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "wtite request failed";
+        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "write request failed";
         return false;
     }
 
