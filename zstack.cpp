@@ -310,7 +310,8 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
         addressItem.networkAddress = qToLittleEndian <quint16> (device.value("networkAddress").toInt());
         addressItem.ieeeAddress = qToLittleEndian(qFromBigEndian(addressItem.ieeeAddress));
 
-        writeNvItem(ZCD_NV_EX_ADDRMGR, i, QByteArray(reinterpret_cast <char*> (&addressItem), sizeof(addressItem)));
+        if (addressItem.networkAddress)
+            writeNvItem(ZCD_NV_EX_ADDRMGR, i, QByteArray(reinterpret_cast <char*> (&addressItem), sizeof(addressItem)));
 
         if (linkKey.length() != 16 || keySeed.length() != 16)
             continue;

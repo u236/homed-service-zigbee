@@ -196,7 +196,6 @@ public:
 
     virtual bool backupSupported(void) { return false; }
     virtual bool createBackup(QJsonObject &) { return false; }
-    virtual bool restoreBackup(const QJsonObject &) { return false; }
 
 protected:
 
