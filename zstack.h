@@ -1,24 +1,19 @@
 #ifndef ZSTACK_H
 #define ZSTACK_H
 
-#define ZSTACK_REQUEST_TIMEOUT                  10000
 #define ZSTACK_SKIP_BOOTLOADER                  0xEF
 #define ZSTACK_PACKET_FLAG                      0xFE
+#define ZSTACK_NVSYS_ZSTACK                     0x01
 
-// TODO: celan it
-
-#define ZSTACK_FRAME_COUNTER_RESERVE            1250
-#define ZSTACK_NWKKEY_UNALIGNED_LENGTH          21
-
-#define ZSTACK_NIB_LENGTH                       116
-#define ZSTACK_NIB_LENGTH_UNALIGNED             110
+#define ZSTACK_REQUEST_TIMEOUT                  10000
+#define ZSTACK_FRAME_COUNTER_MARGIN             1250
 
 #define ZSTACK_READ_NIB_RETRY_INTERVAL          3000
 #define ZSTACK_READ_NIB_RETRIES                 10
 
-//
-
-#define ZSTACK_NVSYS_ZSTACK                     0x01
+#define ZSTACK_NWKKEY_UNALIGNED_LENGTH          21
+#define ZSTACK_NIB_LENGTH                       116
+#define ZSTACK_NIB_LENGTH_UNALIGNED             110
 
 #define ZSTACK_NOT_STARTED_AUTOMATICALLY        0x00
 #define ZSTACK_COORDINATOR_STARTED              0x09
@@ -313,6 +308,13 @@ enum class ZStackVersion
     ZStack12x
 };
 
+enum class RestoreStatus
+{
+    Unknown,
+    Pending,
+    Running
+};
+
 class ZStack : public Adapter
 {
     Q_OBJECT
@@ -337,6 +339,7 @@ public:
 private:
 
     ZStackVersion m_version;
+    RestoreStatus m_restore;
 
     quint8 m_status;
     bool m_aligned, m_clear; // TODO: remove m_aligned
@@ -363,11 +366,12 @@ private:
 
     bool writeNvItem(quint16 id, const QByteArray &data);
     bool writeNvItem(quint16 id, quint16 subId, const QByteArray &data);
-
-    bool writeConfiguration(quint16 id, const QByteArray &data);
+    bool writeConfig(quint16 id, const QByteArray &data);
 
     bool readNetworkInfo(zstackNetworkInfoStruct &info);
     bool writeNetworkInfo(const zstackNetworkInfoStruct &info);
+
+    bool startCommissioning(void);
     bool startCoordinator(void);
 
     void softReset(void) override;
