@@ -5,6 +5,19 @@
 #define ZSTACK_SKIP_BOOTLOADER                  0xEF
 #define ZSTACK_PACKET_FLAG                      0xFE
 
+// TODO: celan it
+
+#define ZSTACK_FRAME_COUNTER_RESERVE            1250
+#define ZSTACK_NWKKEY_UNALIGNED_LENGTH          21
+
+#define ZSTACK_NIB_LENGTH                       116
+#define ZSTACK_NIB_LENGTH_UNALIGNED             110
+
+#define ZSTACK_READ_NIB_RETRY_INTERVAL          3000
+#define ZSTACK_READ_NIB_RETRIES                 10
+
+//
+
 #define ZSTACK_NVSYS_ZSTACK                     0x01
 
 #define ZSTACK_NOT_STARTED_AUTOMATICALLY        0x00
@@ -204,6 +217,35 @@ struct zstackWriteConfigurationStruct
     quint8  length;
 };
 
+struct zstackNetworkInfoStruct
+{
+    quint64 extendedPanId;
+    quint16 panId;
+    quint8  channel;
+};
+
+struct zstackAddressManagerStruct
+{
+    quint16 networkAddress;
+    quint64 ieeeAddress;
+};
+
+struct zstackTcLinkKeyStruct
+{
+    quint32 txCounter;
+    quint32 rxCounter;
+    quint64 ieeeAddress;
+    quint8  keyAttributes;
+    quint8  keyType;
+    quint8  seedShift;
+};
+
+struct zstackSecurityMaterialStruct
+{
+    quint32 frameCounter;
+    quint64 extendedPanId;
+};
+
 struct zstackDataConfirmStruct
 {
     quint8  status;
@@ -288,15 +330,19 @@ public:
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPanChannel(void) override;
 
+    bool backupSupported(void) override { return m_version == ZStackVersion::ZStack3x0; }
+    bool createBackup(QJsonObject &backup) override;
+    bool restoreBackup(const QJsonObject &backup) override;
+
 private:
 
     ZStackVersion m_version;
 
     quint8 m_status;
-    bool m_clear;
+    bool m_aligned, m_clear; // TODO: remove m_aligned
 
     quint16 m_command;
-    QByteArray m_replyData;
+    QByteArray m_replyData, m_nibData;
 
     QMap <quint16, QByteArray> m_nvItems;
     QMap <quint16, quint8> m_nvItemSize;
@@ -312,8 +358,6 @@ private:
     int nvItemLength(quint16 id, quint16 subId);
     int nvItemSize(quint16 id);
 
-    bool initNvItem(quint16 id, const QByteArray &data);
-
     bool readNvItem(quint16 id, QByteArray &data);
     bool readNvItem(quint16 id, quint16 subId, QByteArray &data, int length = 0);
 
@@ -321,6 +365,9 @@ private:
     bool writeNvItem(quint16 id, quint16 subId, const QByteArray &data);
 
     bool writeConfiguration(quint16 id, const QByteArray &data);
+
+    bool readNetworkInfo(zstackNetworkInfoStruct &info);
+    bool writeNetworkInfo(const zstackNetworkInfoStruct &info);
     bool startCoordinator(void);
 
     void softReset(void) override;
