@@ -10,7 +10,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_backupTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, parent)), m_events(QMetaEnum::fromType <Event> ()), m_backupRetry(0), m_requestId(0), m_interPanLock(false)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_backupTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, parent)), m_events(QMetaEnum::fromType <Event> ()), m_backupRetry(0), m_requestId(0), m_interPanLock(false)
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
@@ -1911,7 +1911,7 @@ void ZigBee::coordinatorReady(void)
 
     connect(m_requestTimer, &QTimer::timeout, this, &ZigBee::handleRequests, Qt::UniqueConnection);
     connect(m_backupTimer, &QTimer::timeout, this, &ZigBee::updateBackup, Qt::UniqueConnection);
-    connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
+    connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
     connect(m_pingTimer, &QTimer::timeout, this, &ZigBee::pingDevices, Qt::UniqueConnection);
 
     logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':');
@@ -1923,8 +1923,8 @@ void ZigBee::coordinatorReady(void)
         m_backupRetry = 0;
     }
 
-    if (!m_neignborsTimer->isActive())
-        m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+    if (!m_neighborsTimer->isActive())
+        m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
 
     if (!m_pingTimer->isActive())
     {

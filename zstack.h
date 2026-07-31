@@ -13,7 +13,6 @@
 
 #define ZSTACK_NWKKEY_UNALIGNED_LENGTH          21
 #define ZSTACK_NIB_LENGTH                       116
-#define ZSTACK_NIB_LENGTH_UNALIGNED             110
 
 #define ZSTACK_NOT_STARTED_AUTOMATICALLY        0x00
 #define ZSTACK_COORDINATOR_STARTED              0x09
@@ -221,6 +220,8 @@ struct zstackNetworkInfoStruct
 
 struct zstackAddressManagerStruct
 {
+    quint8  user;
+    quint8  padding;
     quint16 networkAddress;
     quint64 ieeeAddress;
 };
@@ -233,6 +234,7 @@ struct zstackTcLinkKeyStruct
     quint8  keyAttributes;
     quint8  keyType;
     quint8  seedShift;
+    quint8  padding;
 };
 
 struct zstackSecurityMaterialStruct
@@ -342,7 +344,7 @@ private:
     RestoreStatus m_restore;
 
     quint8 m_status;
-    bool m_aligned, m_clear; // TODO: remove m_aligned
+    bool m_clear;
 
     quint16 m_command;
     QByteArray m_replyData, m_nibData;
@@ -352,7 +354,7 @@ private:
     QList <quint16> m_zdoClusters;
 
     bool extendedRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false);
-    bool extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &paylaod, bool group = false);
+    bool extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group = false);
 
     bool sendRequest(quint16 command, const QByteArray &data = QByteArray());
     void parsePacket(quint16 command, const QByteArray &data);

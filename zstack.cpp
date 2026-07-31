@@ -5,7 +5,7 @@
 #include "logger.h"
 #include "zstack.h"
 
-ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_restore(RestoreStatus::Unknown), m_status(0), m_aligned(true), m_clear(false)
+ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_restore(RestoreStatus::Unknown), m_status(0), m_clear(false)
 {
     quint32 channelList = qToLittleEndian <quint32> (1 << m_channel);
 
@@ -76,6 +76,12 @@ bool ZStack::createBackup(QJsonObject &backup)
     QByteArray keySeed = QByteArray::fromHex(m_backup.value("keySeed").toString().toUtf8());
     QJsonArray devices = m_backup.value("devices").toArray();
     qint64 frameCounter = 0;
+
+    if (nvItemLength(ZCD_NV_NWKKEY) == ZSTACK_NWKKEY_UNALIGNED_LENGTH)
+    {
+        logWarning << "Backup failed, unaligned NV memory layout is not supported";
+        return false;
+    }
 
     if (!readNetworkInfo(networkInfo))
     {
@@ -158,17 +164,21 @@ bool ZStack::createBackup(QJsonObject &backup)
         if (!readNvItem(ZCD_NV_EX_ADDRMGR, i, data, nvItemSize(ZCD_NV_EX_ADDRMGR)) || data.isEmpty())
             break;
 
-        if (static_cast <size_t> (data.length()) < (m_aligned ? 2 : 1) + sizeof(zstackAddressManagerStruct) || !data.at(0) || data.at(0) == static_cast <char> (0xFF))
+        if (static_cast <size_t> (data.length()) < sizeof(zstackAddressManagerStruct))
             continue;
 
-        memcpy(&item, data.constData() + (m_aligned ? 2 : 1), sizeof(item));
+        memcpy(&item, data.constData(), sizeof(item));
+
+        if (!item.user || item.user == 0xFF)
+            continue;
+
         item.networkAddress = qFromLittleEndian(item.networkAddress);
         item.ieeeAddress = qToBigEndian(qFromLittleEndian(item.ieeeAddress));
 
         json = map.value(item.ieeeAddress);
         json.insert("networkAddress", item.networkAddress);
         json.insert("ieeeAddress", QString(QByteArray(reinterpret_cast <char*> (&item.ieeeAddress), sizeof(item.ieeeAddress)).toHex()));
-        json.insert("directChild", data.at(0) & 0x01 ? true : false);
+        json.insert("directChild", item.user & 0x01 ? true : false);
 
         devices.append(json);
     }
@@ -217,15 +227,18 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
     QByteArray ieeeAddress = QByteArray::fromHex(backup.value("ieeeAddress").toString().toUtf8()), keySeed = QByteArray::fromHex(backup.value("keySeed").toString().toUtf8()), keyData = QByteArray(1, 0x00).append(m_networkKey);
     QJsonArray devices = backup.value("devices").toArray();
     quint32 frameCounter = qToLittleEndian <quint32> (backup.value("frameCounter").toVariant().toLongLong() + ZSTACK_FRAME_COUNTER_MARGIN);
-
-
-    int keyCount = 0;
     bool check = false;
-
+    int count = 0;
 
     if (m_version != ZStackVersion::ZStack3x0)
     {
         logWarning << "Network restore is not supported for this Z-Stack version";
+        return false;
+    }
+
+    if (nvItemLength(ZCD_NV_NWKKEY) == ZSTACK_NWKKEY_UNALIGNED_LENGTH)
+    {
+        logWarning << "Network restore failed, unaligned NV memory layout is not supported";
         return false;
     }
 
@@ -292,10 +305,12 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
 
         memcpy(&addressItem.ieeeAddress, ieeeAddress.constData(), sizeof(addressItem.ieeeAddress));
 
+        addressItem.user = device.value("directChild").toBool() ? 0x03 : 0x02;
+        addressItem.padding = 0xFF;
         addressItem.networkAddress = qToLittleEndian <quint16> (device.value("networkAddress").toInt());
         addressItem.ieeeAddress = qToLittleEndian(qFromBigEndian(addressItem.ieeeAddress));
 
-        writeNvItem(ZCD_NV_EX_ADDRMGR, i, QByteArray(1, device.value("directChild").toBool() ? 0x03 : 0x02).append(m_aligned ? 1 : 0, 0xFF).append(reinterpret_cast <char*> (&addressItem), sizeof(addressItem)));
+        writeNvItem(ZCD_NV_EX_ADDRMGR, i, QByteArray(reinterpret_cast <char*> (&addressItem), sizeof(addressItem)));
 
         if (linkKey.length() != 16 || keySeed.length() != 16)
             continue;
@@ -324,11 +339,12 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
         keyItem.keyAttributes = 0x02;
         keyItem.keyType = 0x00;
         keyItem.seedShift = static_cast <quint8> (shift);
+        keyItem.padding = 0x00;
 
-        writeNvItem(ZCD_NV_EX_TCLK_TABLE, keyCount++, QByteArray(reinterpret_cast <char*> (&keyItem), sizeof(keyItem)).append(m_aligned ? 1 : 0, 0x00));
+        writeNvItem(ZCD_NV_EX_TCLK_TABLE, count++, QByteArray(reinterpret_cast <char*> (&keyItem), sizeof(keyItem)));
     }
 
-    logInfo << "Network restored," << devices.count() << "devices," << keyCount << "link keys, frame counter:" << frameCounter;
+    logInfo << "Network restored," << devices.count() << "devices," << count << "link keys, frame counter:" << frameCounter;
     return true;
 }
 
@@ -361,10 +377,10 @@ bool ZStack::extendedRequest(quint8 id, const QByteArray &address, quint8 dstEnd
     return sendRequest(ZSTACK_AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) && !m_replyStatus;
 }
 
-bool ZStack::extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &paylaod, bool group)
+bool ZStack::extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
     address = qToLittleEndian(address);
-    return extendedRequest(id, QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, paylaod, group);
+    return extendedRequest(id, QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, payload, group);
 }
 
 bool ZStack::sendRequest(quint16 command, const QByteArray &data)
@@ -707,17 +723,15 @@ bool ZStack::writeConfig(quint16 id, const QByteArray &data)
 
 bool ZStack::readNetworkInfo(zstackNetworkInfoStruct &info)
 {
-    m_aligned = nvItemLength(ZCD_NV_NWKKEY) != ZSTACK_NWKKEY_UNALIGNED_LENGTH;
-
-    if (!readNvItem(ZCD_NV_NIB, m_nibData) || m_nibData.length() < (m_aligned ? ZSTACK_NIB_LENGTH : ZSTACK_NIB_LENGTH_UNALIGNED))
+    if (!readNvItem(ZCD_NV_NIB, m_nibData) || m_nibData.length() < ZSTACK_NIB_LENGTH)
         return false;
 
-    memcpy(&info.panId, m_nibData.constData() + (m_aligned ? 36 : 33), sizeof(info.panId));
-    memcpy(&info.extendedPanId, m_nibData.constData() + (m_aligned ? 57 : 53), sizeof(info.extendedPanId));
+    memcpy(&info.panId, m_nibData.constData() + 36, sizeof(info.panId));
+    memcpy(&info.extendedPanId, m_nibData.constData() + 57, sizeof(info.extendedPanId));
 
     info.extendedPanId = qToBigEndian(qFromLittleEndian(info.extendedPanId));
     info.panId = qFromLittleEndian(info.panId);
-    info.channel = static_cast <quint8> (m_nibData.at(m_aligned ? 24 : 22));
+    info.channel = static_cast <quint8> (m_nibData.at(24));
     return true;
 }
 
@@ -727,13 +741,13 @@ bool ZStack::writeNetworkInfo(const zstackNetworkInfoStruct &info)
     quint16 panId = qToLittleEndian(info.panId);
     quint32 channelList = qToLittleEndian <quint32> (1 << info.channel);
 
-    if (m_nibData.length() < (m_aligned ? ZSTACK_NIB_LENGTH : ZSTACK_NIB_LENGTH_UNALIGNED))
+    if (m_nibData.length() < ZSTACK_NIB_LENGTH)
         return false;
 
-    m_nibData.replace(m_aligned ? 24 : 22, sizeof(info.channel), reinterpret_cast <const char*> (&info.channel), sizeof(info.channel));
-    m_nibData.replace(m_aligned ? 36 : 33, sizeof(panId), reinterpret_cast <char*> (&panId), sizeof(panId));
-    m_nibData.replace(m_aligned ? 57 : 53, sizeof(extendedPanId), reinterpret_cast <char*> (&extendedPanId), sizeof(extendedPanId));
-    m_nibData.replace(m_aligned ? 40 : 36, sizeof(channelList), reinterpret_cast <char*> (&channelList), sizeof(channelList));
+    m_nibData.replace(24, sizeof(info.channel), reinterpret_cast <const char*> (&info.channel), sizeof(info.channel));
+    m_nibData.replace(36, sizeof(panId), reinterpret_cast <char*> (&panId), sizeof(panId));
+    m_nibData.replace(57, sizeof(extendedPanId), reinterpret_cast <char*> (&extendedPanId), sizeof(extendedPanId));
+    m_nibData.replace(40, sizeof(channelList), reinterpret_cast <char*> (&channelList), sizeof(channelList));
     return writeNvItem(ZCD_NV_NIB, m_nibData);
 }
 
@@ -863,7 +877,7 @@ bool ZStack::startCoordinator(void)
 
             if (status || data != it.value())
             {
-                logWarning << "Adapter network parameters doesn't match configuration";
+                logWarning << "Adapter network parameters don't match configuration";
                 return startCommissioning();
             }
         }

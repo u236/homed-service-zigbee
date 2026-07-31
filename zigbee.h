@@ -164,7 +164,7 @@ public:
 private:
 
     QSettings *m_config;
-    QTimer *m_requestTimer, *m_backupTimer, *m_neignborsTimer, *m_pingTimer, *m_statusLedTimer;
+    QTimer *m_requestTimer, *m_backupTimer, *m_neighborsTimer, *m_pingTimer, *m_statusLedTimer;
 
     Adapter *m_adapter;
     DeviceList *m_devices;
