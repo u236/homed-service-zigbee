@@ -79,13 +79,13 @@ bool ZStack::createBackup(QJsonObject &backup)
 
     if (nvItemLength(ZCD_NV_NWKKEY) == ZSTACK_NWKKEY_UNALIGNED_LENGTH)
     {
-        logWarning << "Backup failed, unaligned NV memory layout is not supported";
+        logWarning << "Backup aborted, unaligned NV memory layout is not supported";
         return false;
     }
 
     if (!readNetworkInfo(networkInfo))
     {
-        logWarning << "Backup failed, NIB item is too short or empty";
+        logWarning << "Backup aborted, NIB item is too short or empty";
         return false;
     }
 
@@ -176,9 +176,9 @@ bool ZStack::createBackup(QJsonObject &backup)
         item.ieeeAddress = qToBigEndian(qFromLittleEndian(item.ieeeAddress));
 
         json = map.value(item.ieeeAddress);
+        json.insert("directChild", item.user & 0x01 ? true : false);
         json.insert("networkAddress", item.networkAddress);
         json.insert("ieeeAddress", QString(QByteArray(reinterpret_cast <char*> (&item.ieeeAddress), sizeof(item.ieeeAddress)).toHex()));
-        json.insert("directChild", item.user & 0x01 ? true : false);
 
         devices.append(json);
     }
@@ -334,7 +334,7 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
             continue;
         }
 
-        keyItem.txCounter = qToLittleEndian <quint32> (device.value("txCounter").toVariant().toULongLong() + ZSTACK_FRAME_COUNTER_MARGIN);
+        keyItem.txCounter = qToLittleEndian <quint32> (device.value("txCounter").toVariant().toLongLong() + ZSTACK_FRAME_COUNTER_MARGIN);
         keyItem.rxCounter = 0x00000000;
         keyItem.ieeeAddress = addressItem.ieeeAddress;
         keyItem.keyAttributes = 0x02;
@@ -775,7 +775,6 @@ bool ZStack::startCommissioning(void)
     writeNvItem(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
     m_clear = true;
     reset();
-
     return true;
 }
 

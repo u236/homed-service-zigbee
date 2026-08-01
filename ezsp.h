@@ -10,6 +10,9 @@
 #define ASH_CONTROL_RSTACK                                  0xC1
 #define ASH_CONTROL_ERROR                                   0xC2
 
+#define EZSP_TOKEN_RESTORED_EUI64                           0x0001E12A
+#define EZSP_FRAME_COUNTER_MARGIN                           1250
+
 #define EZSP_FRAME_VERSION                                  0x0000
 #define EZSP_FRAME_REGISTER_ENDPOINT                        0x0002
 #define EZSP_FRAME_SET_CONCENTRATOR                         0x0010
@@ -17,7 +20,7 @@
 #define EZSP_FRAME_NETWORK_INIT                             0x0017
 #define EZSP_FRAME_NETWORK_STATUS                           0x0018
 #define EZSP_FRAME_STACK_STATUS_HANDLER                     0x0019
-#define EZSP_FRAME_FORM_NERWORK                             0x001E
+#define EZSP_FRAME_FORM_NETWORK                             0x001E
 #define EZSP_FRAME_LEAVE_NETWORK                            0x0020
 #define EZSP_FRAME_PERMIT_JOINING                           0x0022
 #define EZSP_FRAME_TRUST_CENTER_JOIN_HANDLER                0x0024
@@ -28,6 +31,7 @@
 #define EZSP_FRAME_MESSAGE_SENT_HANDLER                     0x003F
 #define EZSP_FRAME_INCOMING_MESSAGE_HANDLER                 0x0045
 #define EZSP_FRAME_MAC_FILTER_MATCH_MESSAGE_HANDLER         0x0046
+#define EZSP_FRAME_GET_CONFIGURATION_VALUE                  0x0052
 #define EZSP_FRAME_SET_CONFIG                               0x0053
 #define EZSP_FRAME_SET_POLICY                               0x0055
 #define EZSP_FRAME_SET_SOURCE_ROUTE_DISCOVERY_MODE          0x005A
@@ -44,8 +48,12 @@
 #define EZSP_FRAME_ADD_TRANSIENT_LINK_KEY                   0x00AF
 #define EZSP_FRAME_CLEAR_KEY_TABLE                          0x00B1
 #define EZSP_FRAME_SET_CHANNEL                              0x00B9
+#define EZSP_FRAME_SET_TOKEN_DATA                           0x0103
+#define EZSP_FRAME_IMPORT_LINK_KEY                          0x010E
+#define EZSP_FRAME_EXPORT_LINK_KEY_BY_INDEX                 0x010F
 #define EZSP_FRAME_IMPORT_TRANSIENT_KEY                     0x0111
 #define EZSP_FRAME_EXPORT_KEY                               0x0114
+#define EZSP_FRAME_GET_NETWORK_KEY_INFO                     0x0116
 
 #define EZSP_CONFIG_PACKET_BUFFER_COUNT                     0x01
 #define EZSP_CONFIG_STACK_PROFILE                           0x0C
@@ -55,6 +63,7 @@
 #define EZSP_CONFIG_TRUST_CENTER_ADDRESS_CACHE_SIZE         0x19
 #define EZSP_CONFIG_FRAGMENT_WINDOW_SIZE                    0x1C
 #define EZSP_CONFIG_FRAGMENT_DELAY_MS                       0x1D
+#define EZSP_CONFIG_KEY_TABLE_SIZE                          0x1E
 #define EZSP_CONFIG_PAN_ID_CONFLICT_REPORT_THRESHOLD        0x22
 #define EZSP_CONFIG_RETRY_QUEUE_SIZE                        0x34
 #define EZSP_CONFIG_TC_REJOINS_WELL_KNOWN_KEY_TIMEOUT_S     0x38
@@ -68,12 +77,14 @@
 #define EZSP_SECURITY_HAVE_PRECONFIGURED_KEY                0x0100
 #define EZSP_SECURITY_HAVE_NETWORK_KEY                      0x0200
 #define EZSP_SECURITY_REQUIRE_ENCRYPTED_KEY                 0x0800
+#define EZSP_SECURITY_NO_FRAME_COUNTER_RESET                0x1000
 
 #define EZSP_VALUE_MAXIMUM_INCOMING_TRANSFER_SIZE           0x05
 #define EZSP_VALUE_MAXIMUM_OUTGOING_TRANSFER_SIZE           0x06
 #define EZSP_VALUE_STACK_TOKEN_WRITING                      0x07
 #define EZSP_VALUE_VERSION_INFO                             0x11
 #define EZSP_VALUE_CCA_THRESHOLD                            0x15
+#define EZSP_VALUE_NWK_FRAME_COUNTER                        0x23
 #define EZSP_VALUE_END_DEVICE_KEEP_ALIVE_SUPPORT_MODE       0x3F
 #define EZSP_VALUE_TRANSIENT_DEVICE_TIMEOUT                 0x43
 
@@ -367,6 +378,13 @@ struct ezspSetValueStruct
     quint16 value;
 };
 
+struct ezspSetTokenStruct
+{
+    quint32 token;
+    quint32 index;
+    quint32 length;
+};
+
 struct ezspAddGroupStruct
 {
     quint16 groupId;
@@ -391,6 +409,23 @@ struct ezspVersionStruct
     quint8  patch;
 };
 
+struct ezspNetworkKeyInfoStruct
+{
+    quint8  networkKeySet;
+    quint8  alternateKeySet;
+    quint8  sequenceNumber;
+    quint8  alternateSequenceNumber;
+    quint32 frameCounter;
+};
+
+struct ezspSecurityManagerMetadataStruct
+{
+    quint16 bitmask;
+    quint32 outgoingFrameCounter;
+    quint32 incomingFrameCounter;
+    quint16 ttl;
+};
+
 #pragma pack(pop)
 
 class EZSP : public Adapter
@@ -409,6 +444,9 @@ public:
 
     bool setInterPanChannel(quint8 channel) override;
     void resetInterPanChannel(void) override;
+
+    bool backupSupported(void) override { return m_version >= 13; }
+    bool createBackup(QJsonObject &backup) override;
 
 private:
 

@@ -1,4 +1,5 @@
 #include <QtEndian>
+#include <QJsonArray>
 #include <QRandomGenerator>
 #include "ezsp.h"
 #include "logger.h"
@@ -463,10 +464,73 @@ void EZSP::parsePacket(const QByteArray &payload)
 
         default:
         {
-            logDebug(m_adapterDebug) << "Unrecognozed frame id:" << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId));
+            logDebug(m_adapterDebug) << "Unrecognized frame id:" << QString::asprintf("0x%04x", qFromLittleEndian(header->frameId));
             break;
         }
     }
+}
+
+bool EZSP::createBackup(QJsonObject &backup)
+{
+    ezspNetworkKeyInfoStruct keyInfo;
+    QJsonArray devices;
+    quint8 size;
+
+    if (!sendFrame(EZSP_FRAME_GET_NETWORK_KEY_INFO))
+    {
+        logWarning << "Backup aborted, network key info request failed";
+        return false;
+    }
+
+    memcpy(&keyInfo, m_replyData.constData() + (m_version == 13 ? 0 : 4), sizeof(keyInfo));
+
+    if (!sendFrame(EZSP_FRAME_GET_CONFIGURATION_VALUE, QByteArray(1, EZSP_CONFIG_KEY_TABLE_SIZE)) || m_replyStatus)
+    {
+        logWarning << "Backup aborted, key table size request failed";
+        return false;
+    }
+
+    size = static_cast <quint8> (m_replyData.at(statusOffset() + 1));
+
+    for (quint8 i = 0; i < size; i++)
+    {
+        ezspSecurityManagerMetadataStruct metadata;
+        QJsonObject json;
+        quint32 status;
+        quint64 ieeeAddress;
+
+        if (!sendFrame(EZSP_FRAME_EXPORT_LINK_KEY_BY_INDEX, QByteArray(1, static_cast <char> (i))))
+        {
+            logWarning << "Backup aborted, link key export request failed";
+            return false;
+        }
+
+        memcpy(&status, m_replyData.constData() + (m_version < 14 ? 36 : 0), sizeof(status));
+
+        if (status)
+            continue;
+
+        memcpy(&ieeeAddress, m_replyData.constData() + (m_version < 14 ? 0 : 8), sizeof(ieeeAddress));
+        memcpy(&metadata, m_replyData.constData() + (m_version < 14 ? 24 : 38), sizeof(metadata));
+
+        ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
+
+        json.insert("ieeeAddress", QString(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)).toHex()));
+        json.insert("linkKey", QString(m_replyData.mid(m_version < 14 ? 8 : 22, 16).toHex()));
+        json.insert("txCounter", QJsonValue::fromVariant(qFromLittleEndian(metadata.outgoingFrameCounter)));
+
+        devices.append(json);
+    }
+
+    backup.insert("ieeeAddress", QString(m_ieeeAddress.toHex()));
+    backup.insert("panId", m_panId);
+    backup.insert("channel", m_channel);
+    backup.insert("networkKey", QString(m_networkKey.toHex()));
+    backup.insert("frameCounter", QJsonValue::fromVariant(qFromLittleEndian(keyInfo.frameCounter)));
+    backup.insert("devices", devices);
+
+    logInfo << "Backup created," << devices.count() << "link keys, frame counter:" << qFromLittleEndian(keyInfo.frameCounter);
+    return true;
 }
 
 bool EZSP::startNetwork(quint64 extendedPanId)
@@ -475,7 +539,13 @@ bool EZSP::startNetwork(quint64 extendedPanId)
     ezspNetworkParametersStruct network;
     ezspSetValueStruct value;
 
-    logInfo << "Starting new network...";
+    if (!m_backup.isEmpty() && (m_backup.value("panId").toInt() != m_panId || m_backup.value("channel").toInt() != m_channel || QByteArray::fromHex(m_backup.value("networkKey").toString().toUtf8()) != m_networkKey))
+    {
+        logWarning << "Backup data doesn't match configuration, startup aborted to protect existing network, update configuration values to match backup, or remove backup file to start new network";
+        return false;
+    }
+
+    logInfo << (m_backup.isEmpty() ? "Starting new network..." : "Restoring network from backup...");
 
     if (!sendFrame(EZSP_FRAME_NETWORK_STATUS))
     {
@@ -493,7 +563,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
             return false;
         }
 
-        if (m_version < 14 && !m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
+        if (!m_replyStatus && !m_stackStatus && !waitForSignal(this, SIGNAL(stackStatusReceived()), ADAPTER_REQUEST_TIMEOUT))
         {
             logWarning << "Stack status handler timed out";
             return false;
@@ -518,8 +588,38 @@ bool EZSP::startNetwork(quint64 extendedPanId)
         return false;
     }
 
+    if (!m_backup.isEmpty())
+    {
+        QJsonArray devices = m_backup.value("devices").toArray();
+        quint32 frameCounter = qToLittleEndian <quint32> (m_backup.value("frameCounter").toVariant().toLongLong() + EZSP_FRAME_COUNTER_MARGIN);
+
+        if (!sendFrame(EZSP_FRAME_SET_VALUE, QByteArray(1, EZSP_VALUE_NWK_FRAME_COUNTER).append(1, sizeof(frameCounter)).append(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter))) || m_replyStatus)
+        {
+            logWarning << "Set network frame counter request failed";
+            return false;
+        }
+
+        for (int i = 0; i < devices.count(); i++)
+        {
+            QJsonObject device = devices.at(i).toObject();
+            QByteArray ieeeAddress = QByteArray::fromHex(device.value("ieeeAddress").toString().toUtf8()), linkKey = QByteArray::fromHex(device.value("linkKey").toString().toUtf8());
+            quint64 address;
+
+            if (ieeeAddress.length() != 8 || linkKey.length() != 16)
+                continue;
+
+            memcpy(&address, ieeeAddress.constData(), sizeof(address));
+            address = qToLittleEndian(qFromBigEndian(address));
+
+            if (sendFrame(EZSP_FRAME_IMPORT_LINK_KEY, QByteArray(1, static_cast <char> (i)).append(reinterpret_cast <char*> (&address), sizeof(address)).append(linkKey)) && !m_replyStatus)
+                continue;
+
+            logWarning << "Device" << ieeeAddress.toHex(':') << "link key import failed";
+        }
+    }
+
     memset(&security, 0, sizeof(security));
-    security.bitmask = qToLittleEndian <quint16> (EZSP_SECURITY_TRUST_CENTER_USES_HASHED_LINK_KEY | EZSP_SECURITY_REQUIRE_ENCRYPTED_KEY | EZSP_SECURITY_HAVE_PRECONFIGURED_KEY | EZSP_SECURITY_HAVE_NETWORK_KEY);
+    security.bitmask = qToLittleEndian <quint16> (EZSP_SECURITY_TRUST_CENTER_USES_HASHED_LINK_KEY | EZSP_SECURITY_REQUIRE_ENCRYPTED_KEY | EZSP_SECURITY_HAVE_PRECONFIGURED_KEY | EZSP_SECURITY_HAVE_NETWORK_KEY | (m_backup.isEmpty() ? 0x0000 : EZSP_SECURITY_NO_FRAME_COUNTER_RESET));
 
     for (quint8 i = 0; i < sizeof(security.preconfiguredKey); i += 4)
     {
@@ -543,7 +643,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
     network.channel = m_channel;
     network.channelList = qToLittleEndian(1 << m_channel);
 
-    if (!sendFrame(EZSP_FRAME_FORM_NERWORK, QByteArray(reinterpret_cast <char*> (&network), sizeof(network))) || m_replyStatus)
+    if (!sendFrame(EZSP_FRAME_FORM_NETWORK, QByteArray(reinterpret_cast <char*> (&network), sizeof(network))) || m_replyStatus)
     {
         logWarning << "Form network request failed";
         return false;
@@ -576,7 +676,7 @@ bool EZSP::startCoordinator(void)
     ezspSetConcentratorStruct concentrator;
     ezspNetworkParametersStruct network;
     ezspVersionStruct version;
-    quint64 ieeeAddress;
+    quint64 ieeeAddress, extendedPanId;
     bool check = false;
 
     if (!sendFrame(EZSP_FRAME_VERSION, QByteArray(), true))
@@ -618,6 +718,32 @@ bool EZSP::startCoordinator(void)
     }
 
     memcpy(&ieeeAddress, m_replyData.constData(), sizeof(ieeeAddress));
+    extendedPanId = ieeeAddress;
+
+    if (!m_backup.isEmpty())
+    {
+        memcpy(&extendedPanId, QByteArray::fromHex(m_backup.value("ieeeAddress").toString().toUtf8()).constData(), sizeof(extendedPanId));
+        extendedPanId = qToLittleEndian(qFromBigEndian(extendedPanId));
+    }
+
+    if (ieeeAddress != extendedPanId)
+    {
+        ezspSetTokenStruct request;
+
+        request.token = qToLittleEndian <quint32> (EZSP_TOKEN_RESTORED_EUI64);
+        request.index = 0x00000000;
+        request.length = qToLittleEndian <quint32> (sizeof(extendedPanId));
+
+        if (!sendFrame(EZSP_FRAME_SET_TOKEN_DATA, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(reinterpret_cast <char*> (&extendedPanId), sizeof(extendedPanId))) || m_replyStatus)
+        {
+            logWarning << "Restore coordinator address request failed";
+            return false;
+        }
+
+        m_reset = true;
+        reset();
+        return true;
+    }
 
     if (m_version < 12)
         config.append({EZSP_CONFIG_PACKET_BUFFER_COUNT, qToLittleEndian <quint16> (0x00FF)});
@@ -727,7 +853,7 @@ bool EZSP::startCoordinator(void)
 
     memcpy(&network, m_replyData.constData() + statusOffset() + 2, sizeof(network));
 
-    if (m_replyData.at(statusOffset() + 1) != 0x01 || network.extendedPanId != ieeeAddress || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel)
+    if (m_replyData.at(statusOffset() + 1) != 0x01 || network.extendedPanId != extendedPanId || network.panId != qToLittleEndian(m_panId) || network.channel != m_channel)
     {
         logWarning << "Adapter network parameters doesn't match configuration";
         check = true;
@@ -753,9 +879,9 @@ bool EZSP::startCoordinator(void)
             return false;
         }
 
-        if (!startNetwork(ieeeAddress))
+        if (!startNetwork(extendedPanId))
         {
-            logWarning << "Network starup failed";
+            logWarning << "Network startup failed";
             return false;
         }
     }
