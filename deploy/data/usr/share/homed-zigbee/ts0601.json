@@ -775,7 +775,7 @@
     },
     {
       "description":    "TUYA TS0601 Electric Thermostat (Type A)",
-      "modelNames":     ["_TZE200_viy9ihs7", "_TZE204_lzriup1j", "_TZE204_xnbkhhdr"],
+      "modelNames":     ["_TZE200_viy9ihs7", "_TZE204_gops3slb", "_TZE204_lzriup1j", "_TZE204_oh8y8pv8", "_TZE204_xnbkhhdr", "_TZE204_zjhoqbrd", "_TZE284_gops3slb", "_TZE284_xnbkhhdr", "_TZE284_zjhoqbrd"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
       "exposes":        ["thermostat", "childLock", "frostProtection", "temperatureHigh", "temperatureOffset", "hysteresis"],
