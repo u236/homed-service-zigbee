@@ -1142,6 +1142,29 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Siren (Type E)",
+      "modelNames":     ["_TZE200_p2pggtpu"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "alarm", "volumeMode", "duration", "doorbell", "doorbellMode"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "alarm", "type": "enum", "action": true},
+                            "5":    {"name": "volumeMode", "type": "enum", "action": true},
+                            "7":    {"name": "duration", "type": "value", "action": true},
+                            "15":   {"name": "battery", "type": "value"},
+                            "101":  {"name": "doorbellMode", "type": "enum", "action": true},
+                            "102":  {"name": "doorbell", "type": "bool", "action": true}
+                          },
+                          "alarm": {"type": "select", "enum": ["sound", "light", "both", "off"], "icon": "mdi:bell"},
+                          "volumeMode": {"enum": ["low", "medium", "high", "mute"]},
+                          "duration": {"min": 0, "max": 1800},
+                          "doorbellMode": {"type": "select", "enum": ["low", "medium", "high", "mute"], "icon": "mdi:volume-high"},
+                          "doorbell": {"type": "toggle", "control": true, "icon": "mdi:bell-ring"}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Smart Water Valve (Type A)",
       "modelNames":     ["_TZE200_1n2zev06", "_TZE200_5uodvhgc", "_TZE200_wt9agwf3"],
       "properties":     ["tuyaDataPoints"],

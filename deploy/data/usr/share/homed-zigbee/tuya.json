@@ -20,10 +20,6 @@
                         }
     },
     {
-      "description":    "TUYA TS0207 Network Router",
-      "modelNames":     ["_TZ3000_5k5vh43t", "_TZ3000_gszjt2xx", "_TZ3000_m0vaazab", "_TZ3000_misw04hq", "_TZ3000_nkkl7uzv", "_TZ3000_nlsszmzl", "_TZ3000_ufttklsz", "_TZ3000_wlquqiiz"]
-    },
-    {
       "description":    "TUYA TS0225 Dual Band Human Presence Sensor (Type A)",
       "modelNames":     ["_TZE200_2aaelwxk", "_TZE200_crq3r3la"],
       "properties":     ["tuyaDataPoints"],
@@ -182,6 +178,18 @@
                           "delay": {"min": 0, "max": 10, "unit": "min"},
                           "delayMode": {"type": "toggle"}
                         }
+    },
+    {
+      "description":    "TUYA TS0207 Network Router",
+      "modelNames":     ["_TZ3000_5k5vh43t", "_TZ3000_gszjt2xx", "_TZ3000_m0vaazab", "_TZ3000_misw04hq", "_TZ3000_nkkl7uzv", "_TZ3000_nlsszmzl", "_TZ3000_ufttklsz", "_TZ3000_wlquqiiz"]
+    },
+    {
+      "description":    "TUYA TS0224 Siren",
+      "modelNames":     ["TS0224"],
+      "properties":     ["iasWarning"],
+      "actions":        ["iasWarning"],
+      "exposes":        ["sirenMode", "sirenLevel", "strobe", "duration"],
+      "options":        {"sirenMode": {"enum": ["stop", "alarm"]}, "duration": {"min": 1, "max": 3600}}
     },
     {
       "description":    "TUYA TS0001 1-Channel USB Switch",
