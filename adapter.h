@@ -2,6 +2,8 @@
 #define ADAPTER_H
 
 #define BUFFER_LENGTH_LIMIT             8192
+#define FRAME_COUNTER_MARGIN            2000
+
 #define ADAPTER_REQUEST_TIMEOUT         2000
 #define WATCHDOG_ERROR_COUNT            10
 
@@ -40,10 +42,10 @@
 #define ADDRESS_MODE_BROADCAST          0xFF
 
 #include <QHostAddress>
+#include <QJsonObject>
 #include <QQueue>
 #include <QSerialPort>
 #include <QSettings>
-#include <QSharedPointer>
 #include <QTcpSocket>
 #include <QTimer>
 
@@ -182,6 +184,9 @@ public:
     inline void setPermitJoinAddress(quint16 value) { m_permitJoinAddress = value; }
     inline void setRequestParameters(const QByteArray &value, bool extendedTimeout = true) { m_requestAddress = value; m_extendedTimeout = extendedTimeout; }
 
+    inline bool hasBackup(void) { return !m_backup.isEmpty(); }
+    inline bool updateBackup(const QJsonObject &value) { if (m_backup == value) return false; m_backup = value; return true; }
+
     void init(void);
     bool waitForSignal(const QObject *sender, const char *signal, int tiomeout);
 
@@ -192,6 +197,9 @@ public:
     virtual bool bindRequest(quint8 id, quint16 networkAddress, quint8 endpointId, quint16 clusterId, const QByteArray &address, quint8 dstEndpointId, bool unbind = false);
     virtual bool leaveRequest(quint8 id, quint16 networkAddress);
     virtual bool lqiRequest(quint8 id, quint16 networkAddress, quint8 index);
+
+    virtual bool backupSupported(void) { return false; }
+    virtual bool createBackup(QJsonObject &) { return false; }
 
 protected:
 
@@ -223,6 +231,8 @@ protected:
 
     QByteArray m_buffer;
     quint8 m_replyStatus, m_errorCount;
+
+    QJsonObject m_backup;
 
     QMap <quint8, EndpointData> m_endpoints;
     QList <quint16> m_multicast;

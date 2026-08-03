@@ -1,9 +1,11 @@
 #include <QtEndian>
+#include <QJsonArray>
+#include <QRandomGenerator>
 #include <QThread>
 #include "logger.h"
 #include "zstack.h"
 
-ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_status(0), m_clear(false)
+ZStack::ZStack(QSettings *config, QObject *parent) : Adapter(config, parent), m_restore(RestoreStatus::Unknown), m_status(0), m_clear(false)
 {
     quint32 channelList = qToLittleEndian <quint32> (1 << m_channel);
 
@@ -67,6 +69,286 @@ void ZStack::resetInterPanChannel(void)
     logWarning << "Reset Inter-PAN request failed";
 }
 
+bool ZStack::createBackup(QJsonObject &backup)
+{
+    zstackNetworkInfoStruct networkInfo;
+    QMap <quint64, QJsonObject> map;
+    QByteArray keySeed = QByteArray::fromHex(m_backup.value("keySeed").toString().toUtf8());
+    QJsonArray devices = m_backup.value("devices").toArray();
+    qint64 frameCounter = 0;
+
+    if (nvItemLength(ZCD_NV_NWKKEY) == ZSTACK_NWKKEY_UNALIGNED_LENGTH)
+    {
+        logWarning << "Backup aborted, unaligned NV memory layout is not supported";
+        return false;
+    }
+
+    if (!readNetworkInfo(networkInfo))
+    {
+        logWarning << "Backup aborted, NIB item is too short or empty";
+        return false;
+    }
+
+    if (networkInfo.panId != m_panId)
+    {
+        logDebug(m_adapterDebug) << "Backup skipped, PAN ID" << QString::asprintf("0x%04x", networkInfo.panId) << "doesn't match configuration value";
+        return false;
+    }
+
+    if (memcmp(&networkInfo.extendedPanId, m_ieeeAddress.constData(), sizeof(networkInfo.extendedPanId)))
+        logWarning << "Extended PAN ID" << QByteArray(reinterpret_cast <char*> (&networkInfo.extendedPanId), sizeof(networkInfo.extendedPanId)).toHex(':') << "differs from coordinator IEEE address, backup restore may be inaccurate";
+
+    if (keySeed.length() != 16)
+        readNvItem(ZCD_NV_LEGACY_TCLK_TABLE_START, keySeed);
+
+    for (int i = 0; i < devices.count(); i++)
+    {
+        QJsonObject json = devices.at(i).toObject();
+        quint64 ieeeAddress;
+
+        if (!json.contains("linkKey"))
+            continue;
+
+        memcpy(&ieeeAddress, QByteArray::fromHex(json.value("ieeeAddress").toString().toUtf8()).constData(), sizeof(ieeeAddress));
+        map.insert(ieeeAddress, {{"linkKey", json.value("linkKey")}, {"txCounter", json.value("txCounter")}});
+    }
+
+    if (keySeed.length() == 16)
+    {
+        for (int i = 0; i < 256; i++)
+        {
+            zstackTcLinkKeyStruct item;
+            QByteArray data;
+            QJsonObject json;
+            quint64 ieeeAddress;
+
+            if (!readNvItem(ZCD_NV_EX_TCLK_TABLE, i, data, nvItemSize(ZCD_NV_EX_TCLK_TABLE)) || data.isEmpty())
+                break;
+
+            if (static_cast <size_t> (data.length()) < sizeof(zstackTcLinkKeyStruct))
+                continue;
+
+            memcpy(&item, data.constData(), sizeof(item));
+
+            if (item.keyAttributes == 0xFF)
+                continue;
+
+            ieeeAddress = qToBigEndian(qFromLittleEndian(item.ieeeAddress));
+            json = map.value(ieeeAddress);
+
+            if (!json.contains("linkKey"))
+            {
+                QByteArray linkKey = keySeed.mid(item.seedShift).append(keySeed.mid(0, item.seedShift));
+
+                for (int j = 0; j < linkKey.length(); j++)
+                    linkKey[j] = linkKey.at(j) ^ reinterpret_cast <const char*> (&item.ieeeAddress)[j % sizeof(item.ieeeAddress)];
+
+                json.insert("linkKey", QString(linkKey.toHex()));
+            }
+
+            json.insert("txCounter", QJsonValue::fromVariant(qFromLittleEndian(item.txCounter)));
+            map.insert(ieeeAddress, json);
+        }
+
+        backup.insert("keySeed", QString(keySeed.toHex()));
+    }
+
+    devices = QJsonArray();
+
+    for (int i = 0; i < 256; i++)
+    {
+        zstackAddressManagerStruct item;
+        QByteArray data;
+        QJsonObject json;
+
+        if (!readNvItem(ZCD_NV_EX_ADDRMGR, i, data, nvItemSize(ZCD_NV_EX_ADDRMGR)) || data.isEmpty())
+            break;
+
+        if (static_cast <size_t> (data.length()) < sizeof(zstackAddressManagerStruct))
+            continue;
+
+        memcpy(&item, data.constData(), sizeof(item));
+
+        if (!item.user || item.user == 0xFF)
+            continue;
+
+        item.networkAddress = qFromLittleEndian(item.networkAddress);
+        item.ieeeAddress = qToBigEndian(qFromLittleEndian(item.ieeeAddress));
+
+        json = map.value(item.ieeeAddress);
+        json.insert("directChild", item.user & 0x01 ? true : false);
+        json.insert("networkAddress", item.networkAddress);
+        json.insert("ieeeAddress", QString(QByteArray(reinterpret_cast <char*> (&item.ieeeAddress), sizeof(item.ieeeAddress)).toHex()));
+
+        devices.append(json);
+    }
+
+    for (int i = 0; i < 256; i++)
+    {
+        zstackSecurityMaterialStruct item;
+        QByteArray data;
+
+        if (!readNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, i, data, nvItemSize(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE)) || data.isEmpty())
+            break;
+
+        if (static_cast <size_t> (data.length()) < sizeof(zstackSecurityMaterialStruct))
+            continue;
+
+        memcpy(&item, data.constData(), sizeof(item));
+        item.frameCounter = qFromLittleEndian(item.frameCounter);
+        item.extendedPanId = qToBigEndian(qFromLittleEndian(item.extendedPanId));
+
+        if (item.extendedPanId == networkInfo.extendedPanId)
+        {
+            frameCounter = item.frameCounter;
+            break;
+        }
+
+        if (item.extendedPanId != 0xFFFFFFFFFFFFFFFF)
+            continue;
+
+        frameCounter = item.frameCounter;
+    }
+
+    backup.insert("ieeeAddress", QString(m_ieeeAddress.toHex()));
+    backup.insert("panId", m_panId);
+    backup.insert("channel", m_channel);
+    backup.insert("networkKey", QString(m_networkKey.toHex()));
+    backup.insert("devices", devices);
+    backup.insert("frameCounter", frameCounter);
+
+    logInfo << "Backup created, frame counter:" << frameCounter;
+    return true;
+}
+
+bool ZStack::restoreBackup(const QJsonObject &backup)
+{
+    zstackNetworkInfoStruct networkInfo;
+    QByteArray ieeeAddress = QByteArray::fromHex(backup.value("ieeeAddress").toString().toUtf8()), keySeed = QByteArray::fromHex(backup.value("keySeed").toString().toUtf8()), keyData = QByteArray(1, 0x00).append(m_networkKey);
+    QJsonArray devices = backup.value("devices").toArray();
+    quint32 frameCounter = qToLittleEndian <quint32> (backup.value("frameCounter").toVariant().toLongLong() + FRAME_COUNTER_MARGIN);
+    bool check = false;
+    int count = 0;
+
+    if (m_version != ZStackVersion::ZStack3x0)
+    {
+        logWarning << "Network restore is not supported for this Z-Stack version";
+        return false;
+    }
+
+    if (nvItemLength(ZCD_NV_NWKKEY) == ZSTACK_NWKKEY_UNALIGNED_LENGTH)
+    {
+        logWarning << "Network restore failed, unaligned NV memory layout is not supported";
+        return false;
+    }
+
+    if (ieeeAddress.length() != 8)
+    {
+        logWarning << "Network restore failed, backup data is not valid";
+        return false;
+    }
+
+    for (int i = 0; i < ZSTACK_READ_NIB_RETRIES; i++)
+    {
+        check = readNetworkInfo(networkInfo) && networkInfo.panId != 0xFFFF;
+
+        if (check)
+            break;
+
+        QThread::msleep(ZSTACK_READ_NIB_RETRY_INTERVAL);
+    }
+
+    if (!check)
+    {
+        logWarning << "Network restore failed, temporary network not formed";
+        return false;
+    }
+
+    memcpy(&networkInfo.extendedPanId, ieeeAddress.constData(), sizeof(networkInfo.extendedPanId));
+    networkInfo.panId = m_panId;
+    networkInfo.channel = m_channel;
+
+    if (!writeNetworkInfo(networkInfo))
+    {
+        logWarning << "Network restore failed, failed to write NIB data";
+        return false;
+    }
+
+    networkInfo.extendedPanId = qToLittleEndian(qFromBigEndian(networkInfo.extendedPanId));
+    networkInfo.panId = qToLittleEndian(networkInfo.panId);
+    ieeeAddress = QByteArray(reinterpret_cast <char*> (&networkInfo.extendedPanId), sizeof(networkInfo.extendedPanId));
+
+    writeNvItem(ZCD_NV_EXTADDR, ieeeAddress);
+    writeNvItem(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x00));
+    writeNvItem(ZCD_NV_EXTENDED_PAN_ID, ieeeAddress);
+    writeNvItem(ZCD_NV_NWK_ACTIVE_KEY_INFO, keyData);
+    writeNvItem(ZCD_NV_NWK_ALTERN_KEY_INFO, keyData);
+    writeNvItem(ZCD_NV_APS_USE_EXT_PANID, ieeeAddress);
+    writeNvItem(ZCD_NV_PANID, QByteArray(reinterpret_cast <char*> (&networkInfo.panId), sizeof(networkInfo.panId)));
+
+    if (keySeed.length() == 16)
+        writeNvItem(ZCD_NV_LEGACY_TCLK_TABLE_START, keySeed);
+
+    writeNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, 0, QByteArray(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter)).append(ieeeAddress));
+    writeNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, 1, QByteArray(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter)).append(8, 0xFF));
+
+    for (int i = 0; i < devices.count(); i++)
+    {
+        zstackAddressManagerStruct addressItem;
+        zstackTcLinkKeyStruct keyItem;
+        QJsonObject device = devices.at(i).toObject();
+        QByteArray ieeeAddress = QByteArray::fromHex(device.value("ieeeAddress").toString().toUtf8()), linkKey = QByteArray::fromHex(device.value("linkKey").toString().toUtf8());
+        int shift = -1;
+
+        if (ieeeAddress.length() != 8)
+            continue;
+
+        memcpy(&addressItem.ieeeAddress, ieeeAddress.constData(), sizeof(addressItem.ieeeAddress));
+
+        addressItem.user = device.value("directChild").toBool() ? 0x03 : 0x02;
+        addressItem.padding = 0xFF;
+        addressItem.networkAddress = qToLittleEndian <quint16> (device.value("networkAddress").toInt());
+        addressItem.ieeeAddress = qToLittleEndian(qFromBigEndian(addressItem.ieeeAddress));
+
+        if (addressItem.networkAddress)
+            writeNvItem(ZCD_NV_EX_ADDRMGR, i, QByteArray(reinterpret_cast <char*> (&addressItem), sizeof(addressItem)));
+
+        if (linkKey.length() != 16 || keySeed.length() != 16)
+            continue;
+
+        for (int j = 0; j < linkKey.length(); j++)
+            linkKey[j] = linkKey.at(j) ^ reinterpret_cast <const char*> (&addressItem.ieeeAddress)[j % sizeof(addressItem.ieeeAddress)];
+
+        for (int j = 0; j < linkKey.length(); j++)
+        {
+            if (QByteArray(keySeed).mid(j).append(keySeed.mid(0, j)) != linkKey)
+                continue;
+
+            shift = j;
+            break;
+        }
+
+        if (shift < 0)
+        {
+            logWarning << "Device" << ieeeAddress.toHex(':') << "link key is not derived from the seed and can't be restored";
+            continue;
+        }
+
+        keyItem.txCounter = qToLittleEndian <quint32> (device.value("txCounter").toVariant().toLongLong() + FRAME_COUNTER_MARGIN);
+        keyItem.rxCounter = 0x00000000;
+        keyItem.ieeeAddress = addressItem.ieeeAddress;
+        keyItem.keyAttributes = 0x02;
+        keyItem.keyType = 0x00;
+        keyItem.seedShift = static_cast <quint8> (shift);
+        keyItem.padding = 0x00;
+
+        writeNvItem(ZCD_NV_EX_TCLK_TABLE, count++, QByteArray(reinterpret_cast <char*> (&keyItem), sizeof(keyItem)));
+    }
+
+    logInfo << "Network restored," << devices.count() << "devices," << count << "link keys, frame counter:" << frameCounter;
+    return true;
+}
+
 bool ZStack::extendedRequest(quint8 id, const QByteArray &address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
     zstackExtendedRequestStruct data;
@@ -96,10 +378,10 @@ bool ZStack::extendedRequest(quint8 id, const QByteArray &address, quint8 dstEnd
     return sendRequest(ZSTACK_AF_DATA_REQUEST_EXT, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)).append(payload)) && !m_replyStatus;
 }
 
-bool ZStack::extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &paylaod, bool group)
+bool ZStack::extendedRequest(quint8 id, quint16 address, quint8 dstEndpointId, quint16 dstPanId, quint8 srcEndpointId, quint16 clusterId, const QByteArray &payload, bool group)
 {
     address = qToLittleEndian(address);
-    return extendedRequest(id, QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, paylaod, group);
+    return extendedRequest(id, QByteArray(reinterpret_cast <char*> (&address), sizeof(address)), dstEndpointId, dstPanId, srcEndpointId, clusterId, payload, group);
 }
 
 bool ZStack::sendRequest(quint16 command, const QByteArray &data)
@@ -237,8 +519,34 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
 
             switch (m_status)
             {
-                case ZSTACK_NOT_STARTED_AUTOMATICALLY: logWarning << "Network not started, PAN ID collision detected"; break;
-                case ZSTACK_COORDINATOR_STARTED: m_ready = true; emit coordinatorReady(); break;
+                case ZSTACK_NOT_STARTED_AUTOMATICALLY:
+                    logWarning << "Network not started, check for PAN ID collision or adapter configuration";
+                    break;
+
+                case ZSTACK_COORDINATOR_STARTED:
+
+                    if (m_restore == RestoreStatus::Running || m_ready)
+                        break;
+
+                    if (m_restore == RestoreStatus::Pending)
+                    {
+                        m_restore = RestoreStatus::Running;
+
+                        if (restoreBackup(m_backup))
+                        {
+                            logInfo << "Network restored from backup, restarting adapter...";
+                            reset();
+                        }
+                        else
+                            logWarning << "Network restore failed";
+
+                        m_restore = RestoreStatus::Unknown;
+                        break;
+                    }
+
+                    m_ready = true;
+                    emit coordinatorReady();
+                    break;
             };
 
             break;
@@ -252,9 +560,119 @@ void ZStack::parsePacket(quint16 command, const QByteArray &data)
     }
 }
 
+int ZStack::nvItemLength(quint16 id)
+{
+    quint16 value = qToLittleEndian(id);
+
+    if (!sendRequest(ZSTACK_SYS_OSAL_NV_LENGTH, QByteArray(reinterpret_cast <char*> (&value), sizeof(value))) || static_cast <size_t> (m_replyData.length()) < sizeof(value))
+        return -1;
+
+    memcpy(&value, m_replyData.constData(), sizeof(value));
+    return qFromLittleEndian(value);
+}
+
+int ZStack::nvItemLength(quint16 id, quint16 subId)
+{
+    zstackNvLengthStruct request;
+
+    request.system = ZSTACK_NVSYS_ZSTACK;
+    request.id = qToLittleEndian(id);
+    request.subId = qToLittleEndian(subId);
+
+    if (!sendRequest(ZSTACK_SYS_NV_LENGTH, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyData.isEmpty())
+        return -1;
+
+    return static_cast <quint8> (m_replyData.at(0));
+}
+
+int ZStack::nvItemSize(quint16 id)
+{
+    int length = m_nvItemSize.value(id, 0);
+
+    if (!length)
+    {
+        length = nvItemLength(id, 0);
+
+        if (length > 0)
+            m_nvItemSize.insert(id, static_cast <quint8> (length));
+    }
+
+    return length;
+}
+
+bool ZStack::readNvItem(quint16 id, QByteArray &data)
+{
+    int length = nvItemLength(id);
+
+    if (length < 0)
+        return false;
+
+    data.clear();
+
+    while (data.length() < length)
+    {
+        zstackNvReadExtendedStruct request;
+        zstackNvReplyStruct *reply;
+
+        request.id = qToLittleEndian(id);
+        request.offset = qToLittleEndian <quint16> (data.length());
+
+        if (!sendRequest(ZSTACK_SYS_OSAL_NV_READ_EXT, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || static_cast <size_t> (m_replyData.length()) < sizeof(zstackNvReplyStruct) || m_replyData.at(0))
+            return false;
+
+        reply = reinterpret_cast <zstackNvReplyStruct*> (m_replyData.data());
+
+        if (!reply->length)
+            break;
+
+        data.append(m_replyData.mid(sizeof(zstackNvReplyStruct), reply->length));
+    }
+
+    return true;
+}
+
+bool ZStack::readNvItem(quint16 id, quint16 subId, QByteArray &data, int length)
+{
+    zstackNvItemStruct request;
+    zstackNvReplyStruct *reply;
+
+    data.clear();
+
+    if (!length)
+        length = nvItemLength(id, subId);
+
+    if (length <= 0)
+        return length ? false : true;
+
+    request.system = ZSTACK_NVSYS_ZSTACK;
+    request.id = qToLittleEndian(id);
+    request.subId = qToLittleEndian(subId);
+    request.offset = 0x0000;
+    request.length = static_cast <quint8> (length);
+
+    if (!sendRequest(ZSTACK_SYS_NV_READ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || static_cast <size_t> (m_replyData.length()) < sizeof(zstackNvReplyStruct) || m_replyData.at(0))
+        return false;
+
+    reply = reinterpret_cast <zstackNvReplyStruct*> (m_replyData.data());
+    data = m_replyData.mid(sizeof(zstackNvReplyStruct), reply->length);
+    return true;
+}
+
 bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 {
     zstackNvWriteStruct request;
+
+    if (nvItemLength(id) != data.length())
+    {
+        zstackNvInitStruct init;
+        quint8 count = static_cast <quint8> (data.length() > 240 ? 240 : data.length());
+
+        init.id = qToLittleEndian(id);
+        init.length = qToLittleEndian <quint16> (data.length());
+        init.count = count;
+
+        sendRequest(ZSTACK_SYS_OSAL_NV_ITEM_INIT, QByteArray(reinterpret_cast <char*> (&init), sizeof(init)).append(data.mid(0, count)));
+    }
 
     request.id = qToLittleEndian(id);
     request.offset = 0x00;
@@ -262,14 +680,33 @@ bool ZStack::writeNvItem(quint16 id, const QByteArray &data)
 
     if (!sendRequest(ZSTACK_SYS_OSAL_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
     {
-        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "wtite request failed";
+        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "write request failed";
         return false;
     }
 
     return true;
 }
 
-bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
+bool ZStack::writeNvItem(quint16 id, quint16 subId, const QByteArray &data)
+{
+    zstackNvItemStruct request;
+
+    request.system = ZSTACK_NVSYS_ZSTACK;
+    request.id = qToLittleEndian(id);
+    request.subId = qToLittleEndian(subId);
+    request.offset = 0x0000;
+    request.length = static_cast <quint8> (data.length());
+
+    if (!sendRequest(ZSTACK_SYS_NV_WRITE, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
+    {
+        logWarning << "NV item" << QString::asprintf("0x%04x:%d", id, subId) << "write request failed";
+        return false;
+    }
+
+    return true;
+}
+
+bool ZStack::writeConfig(quint16 id, const QByteArray &data)
 {
     zstackWriteConfigurationStruct request;
 
@@ -278,10 +715,66 @@ bool ZStack::writeConfiguration(quint16 id, const QByteArray &data)
 
     if (!sendRequest(ZSTACK_ZB_WRITE_CONFIGURATION, QByteArray(reinterpret_cast <char*> (&request), sizeof(request)).append(data)) || m_replyStatus)
     {
-        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "wtite request failed";
+        logWarning << "NV item" << QString::asprintf("0x%04x", id) << "write request failed";
         return false;
     }
 
+    return true;
+}
+
+bool ZStack::readNetworkInfo(zstackNetworkInfoStruct &info)
+{
+    if (!readNvItem(ZCD_NV_NIB, m_nibData) || m_nibData.length() < ZSTACK_NIB_LENGTH)
+        return false;
+
+    memcpy(&info.panId, m_nibData.constData() + 36, sizeof(info.panId));
+    memcpy(&info.extendedPanId, m_nibData.constData() + 57, sizeof(info.extendedPanId));
+
+    info.extendedPanId = qToBigEndian(qFromLittleEndian(info.extendedPanId));
+    info.panId = qFromLittleEndian(info.panId);
+    info.channel = static_cast <quint8> (m_nibData.at(24));
+    return true;
+}
+
+bool ZStack::writeNetworkInfo(const zstackNetworkInfoStruct &info)
+{
+    quint64 extendedPanId = qToLittleEndian(qFromBigEndian(info.extendedPanId));
+    quint16 panId = qToLittleEndian(info.panId);
+    quint32 channelList = qToLittleEndian <quint32> (1 << info.channel);
+
+    if (m_nibData.length() < ZSTACK_NIB_LENGTH)
+        return false;
+
+    m_nibData.replace(24, sizeof(info.channel), reinterpret_cast <const char*> (&info.channel), sizeof(info.channel));
+    m_nibData.replace(36, sizeof(panId), reinterpret_cast <char*> (&panId), sizeof(panId));
+    m_nibData.replace(57, sizeof(extendedPanId), reinterpret_cast <char*> (&extendedPanId), sizeof(extendedPanId));
+    m_nibData.replace(40, sizeof(channelList), reinterpret_cast <char*> (&channelList), sizeof(channelList));
+    return writeNvItem(ZCD_NV_NIB, m_nibData);
+}
+
+bool ZStack::startCommissioning(void)
+{
+    if (!m_write)
+    {
+        logWarning << "Adapter configuration can't be changed, write protection enabled";
+        return false;
+    }
+
+    if (!m_backup.isEmpty())
+    {
+        if (m_backup.value("panId").toInt() != m_panId || m_backup.value("channel").toInt() != m_channel || QByteArray::fromHex(m_backup.value("networkKey").toString().toUtf8()) != m_networkKey)
+        {
+            logWarning << "Backup data doesn't match configuration, startup aborted to protect existing network, update configuration values to match backup, or remove backup file to start new network";
+            return false;
+        }
+
+        logInfo << "Network will be restored from backup";
+        m_restore = RestoreStatus::Pending;
+    }
+
+    writeNvItem(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
+    m_clear = true;
+    reset();
     return true;
 }
 
@@ -333,6 +826,17 @@ bool ZStack::startCoordinator(void)
         ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
         m_ieeeAddress = QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress));
 
+        if (m_version == ZStackVersion::ZStack3x0)
+        {
+            zstackNetworkInfoStruct info;
+
+            if (!readNetworkInfo(info) || info.panId == 0xFFFF)
+            {
+                logWarning << "Adapter has no existing network";
+                return startCommissioning();
+            }
+        }
+
         for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {
             QByteArray data;
@@ -343,7 +847,7 @@ bool ZStack::startCoordinator(void)
                 zstackNvReadStruct request;
                 zstackNvReplyStruct *reply;
 
-                request.id = qToLittleEndian <quint16> (it.key());
+                request.id = qToLittleEndian(it.key());
                 request.offset = 0x00;
 
                 if (!sendRequest(ZSTACK_SYS_OSAL_NV_READ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
@@ -353,7 +857,7 @@ bool ZStack::startCoordinator(void)
                 }
 
                 reply = reinterpret_cast <zstackNvReplyStruct*> (m_replyData.data());
-                data = m_replyData.mid(sizeof(zstackNvReplyStruct));
+                data = m_replyData.mid(sizeof(zstackNvReplyStruct), reply->length);
                 status = reply->status;
             }
             else
@@ -367,47 +871,43 @@ bool ZStack::startCoordinator(void)
                 }
 
                 reply = reinterpret_cast <zstackReadConfigurationStruct*> (m_replyData.data());
-                data = m_replyData.mid(sizeof(zstackReadConfigurationStruct));
+                data = m_replyData.mid(sizeof(zstackReadConfigurationStruct), reply->length);
                 status = reply->status;
             }
 
             if (status || data != it.value())
             {
-                logWarning << "NV item" << QString::asprintf("0x%04x", it.key()) << "value" << (data.isEmpty() ? "(empty)" : data.toHex(':')) << "doesn't match configuration value" << it.value().toHex(':');
-
-                if (!m_write)
-                {
-                    logWarning << "Adapter configuration can't be changed, write protection enabled";
-                    return false;
-                }
-
-                writeNvItem(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
-                m_clear = true;
-                reset();
-
-                return true;
+                logWarning << "Adapter network parameters don't match configuration";
+                return startCommissioning();
             }
         }
     }
     else
     {
-        logInfo << "Starting new network...";
+        quint16 panId = static_cast <quint16> (QRandomGenerator::global()->bounded(1, 0xFFFE));
+
+        logInfo << "Starting" << (m_restore == RestoreStatus::Pending ? "temporary network for restore..." : "new network...");
         m_clear = false;
 
         for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {
+            QByteArray value = it.value();
+
+            if (m_restore == RestoreStatus::Pending && it.key() == ZCD_NV_PANID)
+                value = QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId));
+
             if (m_version != ZStackVersion::ZStack12x || it.key() != ZCD_NV_PRECFGKEY)
             {
-                if (!writeNvItem(it.key(), it.value()))
+                if (!writeNvItem(it.key(), value))
                     return false;
             }
             else
             {
-                if (!writeConfiguration(it.key(), it.value()) || !writeNvItem(ZCD_NV_TCLK_TABLE, QByteArray(8, 0xFF).append(m_defaultKey).append(8, 0x00)))
+                if (!writeConfig(it.key(), value) || !writeNvItem(ZCD_NV_LEGACY_TCLK_TABLE_START, QByteArray(8, 0xFF).append(m_defaultKey).append(8, 0x00)))
                     return false;
             }
 
-            logWarning << "NV item" << QString::asprintf("0x%04x", it.key()) << "value set to" << it.value().toHex(':');
+            logDebug(m_adapterDebug) << "NV item" << QString::asprintf("0x%04x", it.key()) << "value set to" << value.toHex(':');
         }
     }
 

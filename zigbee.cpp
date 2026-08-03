@@ -1,19 +1,18 @@
 #include <QtEndian>
-#include <QEventLoop>
 #include <QRandomGenerator>
 #include "ezsp.h"
 #include "gpio.h"
 #include "logger.h"
 #include "zboss.h"
-#include "zcl.h"
 #include "zigate.h"
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_neignborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, parent)), m_events(QMetaEnum::fromType <Event> ()), m_requestId(0), m_interPanLock(false)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_backupTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, parent)), m_events(QMetaEnum::fromType <Event> ()), m_backupRetry(0), m_requestId(0), m_interPanLock(false)
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
+    m_backup = m_config->value("backup/enabled", true).toBool();
     m_discovery = m_config->value("default/discovery", true).toBool();
     m_cloud = m_config->value("default/cloud", true).toBool();
     m_debug = m_config->value("debug/zigbee", false).toBool();
@@ -21,6 +20,8 @@ ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(c
     connect(m_devices, &DeviceList::endpointUpdated, this, &ZigBee::endpointUpdated);
     connect(m_devices, &DeviceList::pollRequest, this, &ZigBee::pollRequest);
     connect(m_statusLedTimer, &QTimer::timeout, this, &ZigBee::updateStatusLed);
+
+    m_backupTimer->setSingleShot(true);
 
     GPIO::direction(m_statusLedPin, GPIO::Output);
     GPIO::setStatus(m_statusLedPin, m_statusLedPin != m_blinkLedPin);
@@ -46,7 +47,7 @@ ZigBee::~ZigBee(void)
     delete m_devices;
 }
 
-void ZigBee::init(void)
+void ZigBee::init(const QJsonObject &backup)
 {
     QList <QString> list = {"ezsp", "zboss", "zigate", "znp"};
     QString adapterType = m_config->value("zigbee/adapter", "znp").toString();
@@ -59,6 +60,9 @@ void ZigBee::init(void)
         case 3:  m_adapter = new ZStack(m_config, this); break;
         default: logWarning << "Unrecognized adapter type" << adapterType; return;
     }
+
+    if (m_backup)
+        m_adapter->updateBackup(backup);
 
     connect(m_adapter, &Adapter::adapterReset, this, &ZigBee::adapterReset);
     connect(m_adapter, &Adapter::coordinatorReady, this, &ZigBee::coordinatorReady);
@@ -1862,6 +1866,7 @@ void ZigBee::blink(quint16 timeout)
 void ZigBee::adapterReset(void)
 {
     m_requestTimer->stop();
+    m_backupTimer->stop();
 }
 
 void ZigBee::coordinatorReady(void)
@@ -1903,14 +1908,21 @@ void ZigBee::coordinatorReady(void)
     connect(m_adapter, &Adapter::rawMessageReveived, this, &ZigBee::rawMessageReveived, Qt::UniqueConnection);
 
     connect(m_requestTimer, &QTimer::timeout, this, &ZigBee::handleRequests, Qt::UniqueConnection);
-    connect(m_neignborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
+    connect(m_backupTimer, &QTimer::timeout, this, &ZigBee::updateBackup, Qt::UniqueConnection);
+    connect(m_neighborsTimer, &QTimer::timeout, this, &ZigBee::updateNeighbors, Qt::UniqueConnection);
     connect(m_pingTimer, &QTimer::timeout, this, &ZigBee::pingDevices, Qt::UniqueConnection);
 
     logInfo << "Coordinator ready, address:" << device->ieeeAddress().toHex(':');
     m_adapter->setPermitJoin(m_devices->permitJoin());
 
-    if (!m_neignborsTimer->isActive())
-        m_neignborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
+    if (m_backup && m_adapter->backupSupported() && !m_backupTimer->isActive())
+    {
+        m_backupTimer->start(m_adapter->hasBackup() ? UPDATE_BACKUP_INTERVAL : BACKUP_RETRY_INTERVAL);
+        m_backupRetry = 0;
+    }
+
+    if (!m_neighborsTimer->isActive())
+        m_neighborsTimer->start(UPDATE_NEIGHBORS_INTERVAL);
 
     if (!m_pingTimer->isActive())
     {
@@ -2283,11 +2295,11 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
         {
             const Device &device = qvariant_cast <Device> (it.value()->data());
 
+            if (!m_devices->contains(device->ieeeAddress()) || device->removed() || device->logicalType() == LogicalType::Coordinator)
+                break;
+
             if (status)
                 logWarning << device << "leave request failed, status code:" << QString::asprintf("0x%02x", status);
-
-            if (device->removed() || device->logicalType() == LogicalType::Coordinator)
-                break;
 
             logInfo << device << "removed" << (status ? "(force)" : "(graceful)");
             emit deviceEvent(device.data(), Event::deviceRemoved);
@@ -2400,6 +2412,41 @@ void ZigBee::handleRequests(void)
     }
 
     m_requestTimer->stop();
+}
+
+void ZigBee::updateBackup(void)
+{
+    QJsonObject backup;
+    QJsonArray devices;
+    bool check = m_adapter->createBackup(backup), retry = !check && m_backupRetry < BACKUP_RETRIES;
+
+    m_backupTimer->start(retry ? BACKUP_RETRY_INTERVAL : UPDATE_BACKUP_INTERVAL);
+    m_backupRetry = retry ? m_backupRetry + 1 : 0;
+
+    if (!check)
+        return;
+
+    devices = backup.value("devices").toArray();
+
+    for (auto it = devices.begin(); it != devices.end(); NULL)
+    {
+        const Device &device = m_devices->value(QByteArray::fromHex((*it).toObject().value("ieeeAddress").toString().toUtf8()));
+
+        if (device.isNull() || device->removed())
+        {
+            it = devices.erase(it);
+            continue;
+        }
+
+        it++;
+    }
+
+    backup.insert("devices", devices);
+
+    if (!m_adapter->updateBackup(backup))
+        return;
+
+    emit backupUpdated(backup);
 }
 
 void ZigBee::updateNeighbors(void)

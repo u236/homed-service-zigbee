@@ -1,8 +1,12 @@
 #ifndef ZIGBEE_H
 #define ZIGBEE_H
 
+#define UPDATE_BACKUP_INTERVAL          28800000
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define PING_DEVICES_INTERVAL           300000
+
+#define BACKUP_RETRY_INTERVAL           3000
+#define BACKUP_RETRIES                  10
 
 #define NETWORK_REQUEST_TIMEOUT         8000
 #define NETWORK_REQUEST_RETRIES         2
@@ -132,7 +136,7 @@ public:
     inline DeviceList *devices(void) { return m_devices; }
     inline const char *eventName(Event event) { return m_events.valueToKey(static_cast <int> (event)); }
 
-    void init(void);
+    void init(const QJsonObject &backup);
     void setPermitJoin(const QString &deviceName, bool enabled);
     void togglePermitJoin(void);
 
@@ -160,17 +164,17 @@ public:
 private:
 
     QSettings *m_config;
-    QTimer *m_requestTimer, *m_neignborsTimer, *m_pingTimer, *m_statusLedTimer;
+    QTimer *m_requestTimer, *m_backupTimer, *m_neighborsTimer, *m_pingTimer, *m_statusLedTimer;
 
     Adapter *m_adapter;
     DeviceList *m_devices;
 
     QMetaEnum m_events;
-    quint8 m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
+    quint8 m_backupRetry, m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
     bool m_replyReceived, m_groupRequestFinished, m_groupsUpdated, m_interPanLock;
 
     QString m_statusLedPin, m_blinkLedPin;
-    bool m_discovery, m_cloud, m_debug;
+    bool m_backup, m_discovery, m_cloud, m_debug;
 
     QMap <quint8, Request> m_requests;
 
@@ -219,6 +223,7 @@ private slots:
     void requestFinished(quint8 id, quint8 status);
 
     void handleRequests(void);
+    void updateBackup(void);
     void updateNeighbors(void);
     void pingDevices(void);
 
@@ -233,8 +238,10 @@ private slots:
 signals:
 
     void networkStarted(void);
+    void backupUpdated(const QJsonObject &backup);
     void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json = QJsonObject());
     void endpointUpdated(DeviceObject *device, quint8 endpointId);
+
     void replyReceived(void);
     void groupRequestFinished(void);
 

@@ -2,8 +2,6 @@
 #define PROPERTY_H
 
 #include <QQueue>
-#include <QSharedPointer>
-#include <QVariant>
 #include "endpoint.h"
 
 struct PropertyRequest

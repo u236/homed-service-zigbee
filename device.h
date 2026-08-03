@@ -6,17 +6,12 @@
 #define STORE_PROPERTIES_DELAY      1000
 #define UPDATE_ENDPOINT_INTERVAL    100
 
-#include <QDateTime>
 #include <QDir>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include "action.h"
 #include "adapter.h"
 #include "binding.h"
 #include "expose.h"
 #include "poll.h"
-#include "property.h"
 #include "reporting.h"
 
 enum class InterviewStatus
