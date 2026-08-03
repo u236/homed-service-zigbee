@@ -2,6 +2,8 @@
 #define ADAPTER_H
 
 #define BUFFER_LENGTH_LIMIT             8192
+#define FRAME_COUNTER_MARGIN            2000
+
 #define ADAPTER_REQUEST_TIMEOUT         2000
 #define WATCHDOG_ERROR_COUNT            10
 
@@ -181,6 +183,8 @@ public:
 
     inline void setPermitJoinAddress(quint16 value) { m_permitJoinAddress = value; }
     inline void setRequestParameters(const QByteArray &value, bool extendedTimeout = true) { m_requestAddress = value; m_extendedTimeout = extendedTimeout; }
+
+    inline bool hasBackup(void) { return !m_backup.isEmpty(); }
     inline bool updateBackup(const QJsonObject &value) { if (m_backup == value) return false; m_backup = value; return true; }
 
     void init(void);

@@ -10,9 +10,6 @@
 #define ASH_CONTROL_RSTACK                                  0xC1
 #define ASH_CONTROL_ERROR                                   0xC2
 
-#define EZSP_TOKEN_RESTORED_EUI64                           0x0001E12A
-#define EZSP_FRAME_COUNTER_MARGIN                           1250
-
 #define EZSP_FRAME_VERSION                                  0x0000
 #define EZSP_FRAME_REGISTER_ENDPOINT                        0x0002
 #define EZSP_FRAME_SET_CONCENTRATOR                         0x0010
@@ -107,6 +104,7 @@
 #define EZSP_APS_OPTION_ENABLE_ADDRESS_DISCOVERY            0x1000
 
 #define EZSP_NETWORK_STATUS_JOINED                          0x02
+#define EZSP_TOKEN_RESTORED_EUI64                           0x0001E12A
 
 #include "adapter.h"
 

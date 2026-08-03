@@ -310,7 +310,7 @@ void Controller::backupUpdated(const QJsonObject &backup)
     if (writeFile(m_backup, QJsonDocument(backup).toJson(QJsonDocument::Compact)))
         return;
 
-    logInfo << "Backup not stored";
+    logWarning << "Backup not stored";
 }
 
 void Controller::deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json)

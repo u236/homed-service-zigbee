@@ -217,7 +217,7 @@ bool ZStack::createBackup(QJsonObject &backup)
     backup.insert("devices", devices);
     backup.insert("frameCounter", frameCounter);
 
-    logInfo << "Backup created," << devices.count() << "devices," << map.count() << "link keys, frame counter:" << frameCounter;
+    logInfo << "Backup created, frame counter:" << frameCounter;
     return true;
 }
 
@@ -226,7 +226,7 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
     zstackNetworkInfoStruct networkInfo;
     QByteArray ieeeAddress = QByteArray::fromHex(backup.value("ieeeAddress").toString().toUtf8()), keySeed = QByteArray::fromHex(backup.value("keySeed").toString().toUtf8()), keyData = QByteArray(1, 0x00).append(m_networkKey);
     QJsonArray devices = backup.value("devices").toArray();
-    quint32 frameCounter = qToLittleEndian <quint32> (backup.value("frameCounter").toVariant().toLongLong() + ZSTACK_FRAME_COUNTER_MARGIN);
+    quint32 frameCounter = qToLittleEndian <quint32> (backup.value("frameCounter").toVariant().toLongLong() + FRAME_COUNTER_MARGIN);
     bool check = false;
     int count = 0;
 
@@ -334,7 +334,7 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
             continue;
         }
 
-        keyItem.txCounter = qToLittleEndian <quint32> (device.value("txCounter").toVariant().toLongLong() + ZSTACK_FRAME_COUNTER_MARGIN);
+        keyItem.txCounter = qToLittleEndian <quint32> (device.value("txCounter").toVariant().toLongLong() + FRAME_COUNTER_MARGIN);
         keyItem.rxCounter = 0x00000000;
         keyItem.ieeeAddress = addressItem.ieeeAddress;
         keyItem.keyAttributes = 0x02;

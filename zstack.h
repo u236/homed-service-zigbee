@@ -6,8 +6,6 @@
 #define ZSTACK_NVSYS_ZSTACK                     0x01
 
 #define ZSTACK_REQUEST_TIMEOUT                  10000
-#define ZSTACK_FRAME_COUNTER_MARGIN             1250
-
 #define ZSTACK_READ_NIB_RETRY_INTERVAL          3000
 #define ZSTACK_READ_NIB_RETRIES                 10
 

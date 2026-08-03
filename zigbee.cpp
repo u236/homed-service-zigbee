@@ -1917,7 +1917,7 @@ void ZigBee::coordinatorReady(void)
 
     if (m_backup && m_adapter->backupSupported() && !m_backupTimer->isActive())
     {
-        m_backupTimer->start(BACKUP_RETRY_INTERVAL);
+        m_backupTimer->start(m_adapter->hasBackup() ? UPDATE_BACKUP_INTERVAL : BACKUP_RETRY_INTERVAL);
         m_backupRetry = 0;
     }
 

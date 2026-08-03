@@ -487,7 +487,7 @@ bool EZSP::createBackup(QJsonObject &backup)
         return false;
     }
 
-    memcpy(&keyInfo, m_replyData.constData() + (m_version == 13 ? 0 : 4), sizeof(keyInfo));
+    memcpy(&keyInfo, m_replyData.constData() + (m_version < 14 ? 0 : 4), sizeof(keyInfo));
 
     if (!sendFrame(EZSP_FRAME_GET_CONFIGURATION_VALUE, QByteArray(1, EZSP_CONFIG_KEY_TABLE_SIZE)) || m_replyStatus)
     {
@@ -534,7 +534,7 @@ bool EZSP::createBackup(QJsonObject &backup)
     backup.insert("frameCounter", QJsonValue::fromVariant(qFromLittleEndian(keyInfo.frameCounter)));
     backup.insert("devices", devices);
 
-    logInfo << "Backup created," << devices.count() << "link keys, frame counter:" << qFromLittleEndian(keyInfo.frameCounter);
+    logInfo << "Backup created, frame counter:" << qFromLittleEndian(keyInfo.frameCounter);
     return true;
 }
 
@@ -596,7 +596,7 @@ bool EZSP::startNetwork(quint64 extendedPanId)
     if (!m_backup.isEmpty())
     {
         QJsonArray devices = m_backup.value("devices").toArray();
-        quint32 frameCounter = qToLittleEndian <quint32> (m_backup.value("frameCounter").toVariant().toLongLong() + EZSP_FRAME_COUNTER_MARGIN);
+        quint32 frameCounter = qToLittleEndian <quint32> (m_backup.value("frameCounter").toVariant().toLongLong() + FRAME_COUNTER_MARGIN);
 
         if (!sendFrame(EZSP_FRAME_SET_VALUE, QByteArray(1, EZSP_VALUE_NWK_FRAME_COUNTER).append(1, sizeof(frameCounter)).append(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter))) || m_replyStatus)
         {
