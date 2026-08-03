@@ -1,11 +1,9 @@
 #include <QtEndian>
-#include <QEventLoop>
 #include <QRandomGenerator>
 #include "ezsp.h"
 #include "gpio.h"
 #include "logger.h"
 #include "zboss.h"
-#include "zcl.h"
 #include "zigate.h"
 #include "zigbee.h"
 #include "zstack.h"
@@ -2297,11 +2295,11 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
         {
             const Device &device = qvariant_cast <Device> (it.value()->data());
 
+            if (!m_devices->contains(device->ieeeAddress()) || device->removed() || device->logicalType() == LogicalType::Coordinator)
+                break;
+
             if (status)
                 logWarning << device << "leave request failed, status code:" << QString::asprintf("0x%02x", status);
-
-            if (device->removed() || device->logicalType() == LogicalType::Coordinator)
-                break;
 
             logInfo << device << "removed" << (status ? "(force)" : "(graceful)");
             emit deviceEvent(device.data(), Event::deviceRemoved);
@@ -2419,12 +2417,33 @@ void ZigBee::handleRequests(void)
 void ZigBee::updateBackup(void)
 {
     QJsonObject backup;
+    QJsonArray devices;
     bool check = m_adapter->createBackup(backup), retry = !check && m_backupRetry < BACKUP_RETRIES;
 
     m_backupTimer->start(retry ? BACKUP_RETRY_INTERVAL : UPDATE_BACKUP_INTERVAL);
     m_backupRetry = retry ? m_backupRetry + 1 : 0;
 
-    if (!check || !m_adapter->updateBackup(backup))
+    if (!check)
+        return;
+
+    devices = backup.value("devices").toArray();
+
+    for (auto it = devices.begin(); it != devices.end(); NULL)
+    {
+        const Device &device = m_devices->value(QByteArray::fromHex((*it).toObject().value("ieeeAddress").toString().toUtf8()));
+
+        if (device.isNull() || device->removed())
+        {
+            it = devices.erase(it);
+            continue;
+        }
+
+        it++;
+    }
+
+    backup.insert("devices", devices);
+
+    if (!m_adapter->updateBackup(backup))
         return;
 
     emit backupUpdated(backup);

@@ -356,10 +356,15 @@ void EZSP::parsePacket(const QByteArray &payload)
             {
                 case EZSP_TRUST_CENTER_UNSECURED_JOIN:
                 {
-                    sendFrame(EZSP_FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01));
+                    quint8 index;
 
-                    if (m_replyStatus != 0xFF)
-                        sendFrame(EZSP_FRAME_ERASE_KEY_TABLE_ENTRY, m_replyData);
+                    if (!sendFrame(EZSP_FRAME_FIND_KEY_TABLE_ENTRY, QByteArray(reinterpret_cast <const char*> (&message->ieeeAddress), sizeof(message->ieeeAddress)).append(1, 0x01)) || m_replyData.length() <= statusOffset())
+                        break;
+
+                    index = static_cast <quint8> (m_replyData.at(statusOffset()));
+
+                    if (index != 0xFF)
+                        sendFrame(EZSP_FRAME_ERASE_KEY_TABLE_ENTRY, QByteArray(1, static_cast <char> (index)));
 
                     break;
                 }
