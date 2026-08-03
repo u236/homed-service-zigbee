@@ -377,6 +377,9 @@ void ZiGate::parseData(void)
         int length = m_buffer.indexOf(0x03);
         QByteArray frame, packet;
 
+        if (length < 0)
+            break;
+
         if (m_buffer.at(0) != 0x01 || length < 6) // TODO: use offset
         {
             m_buffer.clear();

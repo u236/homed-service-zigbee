@@ -373,6 +373,9 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
         }
     }
 
+    if (type != ZBOSS_TYPE_RESPONSE)
+        return;
+
     emit requestFinished(static_cast <quint8> (data.at(0)), static_cast <quint8> (data.at(2)));
 }
 
@@ -629,21 +632,18 @@ void ZBoss::parseData(void)
             return;
 
         lowLevelHeader = reinterpret_cast <zbossLowLevelHeaderStruct*> (m_buffer.data() + offset);
-        length = qFromLittleEndian(lowLevelHeader->length) + 2;
-
-        if (m_buffer.length() < length)
-        {
-            logWarning << QString("Frame %1 length (%2 bytes) is less thаn expected (%3 bytes)").arg(QString(m_buffer.mid(offset, length).toHex(':'))).arg(m_buffer.length()).arg(length);
-            m_buffer.clear();
-            return;
-        }
 
         if (lowLevelHeader->crc != getCRC8(reinterpret_cast <quint8*> (lowLevelHeader) + 2, sizeof(zbossLowLevelHeaderStruct) - 3))
         {
-            logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(m_buffer.mid(offset, length).toHex(':')));
-            m_buffer.clear();
-            return;
+            logWarning << QString("Frame %1 low level header CRC mismatch").arg(QString(m_buffer.mid(offset, sizeof(zbossLowLevelHeaderStruct)).toHex(':')));
+            m_buffer.remove(0, offset + sizeof(signature));
+            continue;
         }
+
+        length = qFromLittleEndian(lowLevelHeader->length) + 2;
+
+        if (m_buffer.length() - offset < length)
+            return;
 
         logDebug(m_portDebug) << "Frame received:" << m_buffer.mid(offset, length).toHex(':');
 
@@ -666,8 +666,8 @@ void ZBoss::parseData(void)
             if (*(reinterpret_cast <quint16*> (m_buffer.data() + offset + 7)) != getCRC16(reinterpret_cast <quint8*> (m_buffer.data() + offset + 9), length - 9))
             {
                 logWarning << QString("Packet %1 CRC mismatch").arg(QString(m_buffer.mid(offset, length).toHex(':')));
-                m_buffer.clear();
-                return;
+                m_buffer.remove(0, offset + sizeof(signature));
+                continue;
             }
 
             m_queue.enqueue(m_buffer.mid(offset + 9, length - 9));
