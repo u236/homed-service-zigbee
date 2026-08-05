@@ -487,7 +487,7 @@ bool EZSP::createBackup(QJsonObject &backup)
         return false;
     }
 
-    memcpy(&keyInfo, m_replyData.constData() + (m_version < 14 ? 0 : 4), sizeof(keyInfo));
+    memcpy(&keyInfo, m_replyData.constData() + 4, sizeof(keyInfo));
 
     if (!sendFrame(EZSP_FRAME_GET_CONFIGURATION_VALUE, QByteArray(1, EZSP_CONFIG_KEY_TABLE_SIZE)) || m_replyStatus)
     {
