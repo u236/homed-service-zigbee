@@ -339,7 +339,7 @@ void DeviceList::setupDevice(const Device &device)
         device->setPowerSource(static_cast <quint8> (device->options().value("powerSource").toInt()));
 
     if (device->options().value("ikeaBattery").toBool() && device->checkVersion("2.4.0") < 0)
-        device->options().insert("battery", QMap <QString, QVariant> {{"undivided", true}});
+        device->updateOption("battery", "undivided", true);
 
     addCommonExposes(device);
 }
