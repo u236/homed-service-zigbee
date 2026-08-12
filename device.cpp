@@ -103,7 +103,8 @@ DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_
         file.close();
     }
 
-    m_specialExposes = {"switch", "lock", "light", "cover", "thermostat", "thermostatProgram"};
+    m_specialExposes = ExposeObject::special().keys();
+    m_specialExposes.append("thermostatProgram");
 
     connect(m_databaseTimer, &QTimer::timeout, this, &DeviceList::writeDatabase);
     connect(m_propertiesTimer, &QTimer::timeout, this, &DeviceList::writeProperties);
