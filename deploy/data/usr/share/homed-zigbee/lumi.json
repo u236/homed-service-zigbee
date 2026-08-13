@@ -497,7 +497,7 @@
       "properties":     ["lumiData", "lumiCover"],
       "actions":        ["lumiCoverStatus", "lumiCoverStop", "lumiCoverPosition"],
       "exposes":        ["battery", "cover", "temperature"],
-      "options":        {"temperature": {"diagnostic": true}, "powerSource": 3}
+      "options":        {"temperature": {"diagnostic": true}, "cover": "blind", "powerSource": 3}
     },
     {
       "description":    "Aqara Curtain Motor ZNCLBL01LM",

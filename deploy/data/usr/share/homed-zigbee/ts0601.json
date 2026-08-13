@@ -2068,7 +2068,8 @@
                             "5":    {"name": "reverse", "type": "bool", "action": true},
                             "105":  {"name": "speed", "type": "value", "action": true}
                           },
-                          "speed": {"min": 1, "max": 255}
+                          "speed": {"min": 1, "max": 255},
+                          "cover": "blind"
                         }
     },
     {

@@ -299,7 +299,8 @@
         "actions":        ["coverStatus", "coverPosition"],
         "bindings":       ["cover"],
         "reportings":     ["coverPosition"],
-        "exposes":        ["cover"]
+        "exposes":        ["cover"],
+        "options":        {"cover": "window"}
       }
   ],
 
