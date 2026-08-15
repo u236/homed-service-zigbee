@@ -1202,6 +1202,28 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Smart Water Valve (Type C)",
+      "modelNames":     ["_TZE200_yltivvzb"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "lock", "cleaningMode", "alarm", "fault"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "status", "type": "bool", "action": true},
+                            "4":    {"name": "fault", "type": "bool"},
+                            "101":  {"name": "alarm", "type": "bool", "action": true},
+                            "102":  {"name": "battery", "type": "value", "divider": 0.1, "offset": 10},
+                            "104":  {"name": "cleaningMode", "type": "bool", "action": true}
+                          },
+                          "status": {"enum": ["off", "on"]},
+                          "alarm": {"type": "toggle", "control": true},
+                          "battery": {"max": 100},
+                          "cleaningMode": {"type": "toggle", "control": true, "icon": "mdi:broom"},
+                          "lock": "valve"
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Dual Water Valve",
       "modelNames":     ["_TZE284_eaet5qt5", "_TZE284_fhvpaltk"],
       "properties":     ["tuyaDataPoints"],
