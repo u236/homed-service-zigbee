@@ -15,6 +15,73 @@
     }
   ],
 
+  "DTS1XM9":
+  [
+    {
+      "description":    "Excellux Water Quality Sensor ZG-109TDS",
+      "modelNames":     ["Excellux"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "waterTemperature", "temperature", "humidity", "tds", "ec", "salinity", "sg", "waterType", "readInterval", "waterTemperatureOffset", "waterTemperatureLow", "waterTemperatureHigh", "waterTemperatureAlarm", "temperatureOffset", "temperatureLow", "temperatureHigh", "temperatureAlarm", "humidityOffset", "humidityLow", "humidityHigh", "humidityAlarm", "tdsHigh", "tdsAlarm", "ecLow", "ecHigh", "ecAlarm"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "waterTemperature", "type": "value", "divider": 10},
+                            "4":    {"name": "battery", "type": "value"},
+                            "5":    {"name": "temperature", "type": "value", "divider": 100},
+                            "101":  {"name": "readInterval", "type": "value", "action": true},
+                            "108":  {"name": "waterTemperatureOffset", "type": "value", "divider": 10, "action": true},
+                            "109":  {"name": "waterTemperatureLow", "type": "value", "divider": 10, "action": true},
+                            "110":  {"name": "waterTemperatureHigh", "type": "value", "divider": 10, "action": true},
+                            "112":  {"name": "waterTemperatureAlarm", "type": "enum"},
+                            "114":  {"name": "temperatureOffset", "type": "value", "divider": 100, "action": true},
+                            "115":  {"name": "temperatureLow", "type": "value", "divider": 100, "action": true},
+                            "116":  {"name": "temperatureHigh", "type": "value", "divider": 100, "action": true},
+                            "117":  {"name": "temperatureAlarm", "type": "enum"},
+                            "118":  {"name": "humidity", "type": "value", "divider": 100},
+                            "119":  {"name": "humidityOffset", "type": "value", "divider": 100, "action": true},
+                            "120":  {"name": "humidityLow", "type": "value", "divider": 100, "action": true},
+                            "121":  {"name": "humidityHigh", "type": "value", "divider": 100, "action": true},
+                            "122":  {"name": "humidityAlarm", "type": "enum"},
+                            "124":  {"name": "tds", "type": "value"},
+                            "125":  {"name": "tdsHigh", "type": "value", "action": true},
+                            "126":  {"name": "tdsAlarm", "type": "enum"},
+                            "127":  {"name": "ec", "type": "value"},
+                            "128":  {"name": "ecLow", "type": "value", "action": true},
+                            "129":  {"name": "ecHigh", "type": "value", "action": true},
+                            "130":  {"name": "ecAlarm", "type": "enum"},
+                            "131":  {"name": "salinity", "type": "value", "divider": 10},
+                            "132":  {"name": "sg", "type": "value", "divider": 1000},
+                            "133":  {"name": "waterType", "type": "enum", "action": true}
+                          },
+                          "waterTemperature": {"type": "sensor", "unit": "°C", "round": 1, "icon": "mdi:thermometer-water"},
+                          "readInterval": {"min": 5, "max": 1200, "step": 5},
+                          "waterTemperatureOffset": {"type": "number", "min": -2, "max": 2, "step": 0.1, "unit": "°C", "icon": "mdi:thermometer-water"},
+                          "waterTemperatureLow": {"type": "number", "min": -40, "max": 125, "step": 0.1, "unit": "°C", "icon": "mdi:thermometer-water"},
+                          "waterTemperatureHigh": {"type": "number", "min": -40, "max": 125, "step": 0.1, "unit": "°C", "icon": "mdi:thermometer-water"},
+                          "waterTemperatureAlarm": {"type": "sensor", "enum": ["none", "low", "high"], "icon": "mdi:bell"},
+                          "temperatureOffset": {"min": -2, "max": 2, "step": 0.01},
+                          "temperatureLow": {"min": -40, "max": 85, "step": 0.01},
+                          "temperatureHigh": {"min": -40, "max": 85, "step": 0.01},
+                          "temperatureAlarm": {"enum": ["none", "low", "high"]},
+                          "humidityOffset": {"min": -10, "max": 10, "step": 0.01},
+                          "humidityLow": {"min": 0, "max": 100, "step": 0.01},
+                          "humidityHigh": {"min": 0, "max": 100, "step": 0.01},
+                          "humidityAlarm": {"enum": ["none", "low", "high"]},
+                          "tds": {"type": "sensor", "unit": "ppm", "icon": "mdi:water-opacity"},
+                          "tdsHigh": {"type": "number", "min": 0, "max": 13000, "unit": "ppm", "icon": "mdi:water-opacity"},
+                          "tdsAlarm": {"type": "sensor", "enum": ["none", "high"], "icon": "mdi:bell"},
+                          "ec": {"type": "sensor", "unit": "µS/cm", "icon": "mdi:lightning-bolt"},
+                          "ecLow": {"type": "number", "min": 0, "max": 20000, "unit": "µS/cm", "icon": "mdi:lightning-bolt"},
+                          "ecHigh": {"type": "number", "min": 0, "max": 20000, "unit": "µS/cm", "icon": "mdi:lightning-bolt"},
+                          "ecAlarm": {"type": "sensor", "enum": ["none", "low", "high"], "icon": "mdi:bell"},
+                          "salinity": {"type": "sensor", "unit": "‰", "round": 1, "icon": "mdi:shaker"},
+                          "sg": {"type": "sensor", "round": 3, "icon": "mdi:weight"},
+                          "waterType": {"type": "select", "enum": ["fresh", "sea"], "icon": "mdi:waves"}
+                        }
+    }
+  ],
+
   "Feibit Inc co.":
   [
     {
