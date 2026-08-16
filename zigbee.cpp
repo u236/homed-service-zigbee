@@ -102,7 +102,6 @@ void ZigBee::interviewDevice(const QString &deviceName, bool force)
     if (force)
         device->setInterviewStatus(InterviewStatus::NodeDescriptor);
 
-
     logInfo << device << "interview started...";
     interviewDevice(device);
 }

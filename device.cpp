@@ -1326,7 +1326,7 @@ void DeviceList::unserializeDevices(const QJsonArray &devices)
 
                         if (json.contains("groupId"))
                         {
-                            quint16 groupId = qFromLittleEndian <quint16> (json.value("groupId").toInt());
+                            quint16 groupId = qToLittleEndian <quint16> (json.value("groupId").toInt());
                             endpoint->bindings().append(Binding(new BindingObject(static_cast <quint16> (json.value("clusterId").toInt()), QByteArray(reinterpret_cast <char*> (&groupId), sizeof(groupId)), 0xFF)));
                             continue;
                         }
