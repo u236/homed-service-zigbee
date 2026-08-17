@@ -345,18 +345,18 @@ struct tuyaHeaderStruct
     quint8  length;
 };
 
-struct tuyaTimeStruct
-{
-    quint16 payloadSize;
-    quint32 utcTimestamp;
-    quint32 localTimestamp;
-};
-
 struct tuyaThresholdStruct
 {
     quint8  dataPoint;
     quint8  protection;
     quint16 threshold;
+};
+
+struct tuyaTimeStruct
+{
+    quint16 payloadSize;
+    quint32 utcTimestamp;
+    quint32 localTimestamp;
 };
 
 #pragma pack(pop)
