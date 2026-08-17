@@ -83,6 +83,7 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::ButtonAction>                ("tuyaButtonActionProperty");
     qRegisterMetaType <PropertiesTUYA::ButtonScene>                 ("tuyaButtonSceneProperty");
     qRegisterMetaType <PropertiesTUYA::Level>                       ("tuyaLevelProperty");
+    qRegisterMetaType <PropertiesTUYA::Threshold>                   ("tuyaThresholdProperty");
     qRegisterMetaType <PropertiesTUYA::IRCode>                      ("tuyaIRCodeProperty");
     qRegisterMetaType <PropertiesTUYA::OperationMode>               ("tuyaOperationModeProperty");
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>               ("tuyaIndicatorModeProperty");

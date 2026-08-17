@@ -120,6 +120,16 @@ namespace ActionsTUYA
 
     };
 
+    class Threshold : public ActionObject
+    {
+
+    public:
+
+        Threshold(void) : ActionObject("tuyaThreshold", CLUSTER_TUYA_SWITCH_MODE, 0x0000, {}, {"currentThreshold", "currentProtection", "voltageHigh", "voltageProtectionHigh", "voltageLow", "voltageProtectionLow", "temperatureThreshold", "temperatureProtection", "powerThreshold", "powerProtection"}) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
     class IRCode : public ActionObject
     {
 

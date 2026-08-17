@@ -339,6 +339,32 @@ QVariant ActionsTUYA::Level::request(const QString &, const QVariant &data)
     return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0xF0).append(QByteArray(reinterpret_cast <char*> (&value), sizeof(value))).append(QByteArray(reinterpret_cast <char*> (&time), sizeof(time)));
 }
 
+QVariant ActionsTUYA::Threshold::request(const QString &name, const QVariant &data)
+{
+    QMap <QString, QVariant> map = endpointProperty()->value().toMap();
+    int index = m_actions.indexOf(name);
+    tuyaThresholdStruct payload;
+    quint8 commandId;
+
+    if (index < 0)
+        return QByteArray();
+
+    switch (index / 2)
+    {
+        case 0:  payload.dataPoint = 0x01; commandId = 0xE7; break; // current
+        case 1:  payload.dataPoint = 0x03; commandId = 0xE7; break; // voltage high
+        case 2:  payload.dataPoint = 0x04; commandId = 0xE7; break; // voltage low
+        case 3:  payload.dataPoint = 0x05; commandId = 0xE6; break; // temperature
+        case 4:  payload.dataPoint = 0x07; commandId = 0xE6; break; // power
+        default: return QByteArray();
+    }
+
+    payload.protection = (index % 2 ? data.toBool() : map.value(m_actions.at(index + 1), true).toBool()) ? 0x01 : 0x00;
+    payload.threshold = qToBigEndian <quint16> (index % 2 ? map.value(m_actions.at(index - 1)).toInt() : data.toInt());
+
+    return !payload.threshold ? QByteArray() : zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, commandId).append(reinterpret_cast <char*> (&payload), sizeof(payload));
+}
+
 QVariant ActionsTUYA::IRCode::request(const QString &, const QVariant &data)
 {
     QByteArray message = QJsonDocument(QJsonObject {{"delay", 300}, {"key1", QJsonObject {{"freq", 38000}, {"key_code", data.toString()}, {"num", 1}, {"type", 1}}}, {"key_num", 1}}).toJson(QJsonDocument::Compact);

@@ -148,6 +148,16 @@ namespace PropertiesTUYA
 
     };
 
+    class Threshold : public PropertyObject
+    {
+
+    public:
+
+        Threshold(void) : PropertyObject("tuyaThreshold", CLUSTER_TUYA_SWITCH_MODE) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
+
     class IRCode : public PropertyObject
     {
 

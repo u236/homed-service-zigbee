@@ -506,13 +506,49 @@
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring (Type B)",
-      "modelNames":     ["_TZ3000_303avxxt", "_TZ3000_cayepv1a", "_TZ3000_lepzuhto", "_TZ3000_qystbcjg", "_TZ3000_zjchz7pd", "_TZ3000_zrm3oxsh"],
-      "properties":     ["status", "energy", "voltage", "current", "power", "temperature", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "modelNames":     ["_TZ3000_cayepv1a", "_TZ3000_lepzuhto", "_TZ3000_qystbcjg", "_TZ3000_yi0n4xfd", "_TZ3000_zrm3oxsh", "_TZ3000_zv6x8bt2"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "temperature", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaThreshold"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaThreshold"],
       "bindings":       ["status", "energy", "power", "temperature"],
       "reportings":     ["status", "energy", "voltage", "current", "power", "temperature"],
-      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power", "temperature"],
-      "options":        {"powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000}
+      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power", "temperature", "voltageHigh", "voltageProtectionHigh", "voltageLow", "voltageProtectionLow", "currentThreshold", "currentProtection", "powerThreshold", "powerProtection", "temperatureThreshold", "temperatureProtection"],
+      "options":        {
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "voltageHigh": {"min": 90, "max": 265},
+                          "voltageProtectionHigh": {"type": "toggle", "control": true, "icon": "mdi:sine-wave"},
+                          "voltageLow": {"min": 75, "max": 240},
+                          "voltageProtectionLow": {"type": "toggle", "control": true, "icon": "mdi:sine-wave"},
+                          "currentThreshold": {"min": 1, "max": 65},
+                          "currentProtection": {"type": "toggle", "control": true, "icon": "mdi:current-ac"},
+                          "powerThreshold": {"min": 1, "max": 26, "unit": "kW"},
+                          "powerProtection": {"type": "toggle", "control": true, "icon": "mdi:flash"},
+                          "temperatureThreshold": {"min": 40, "max": 100},
+                          "temperatureProtection": {"type": "toggle", "control": true, "icon": "mdi:thermometer"},
+                          "energyDivider": 100,
+                          "acCurrentDivider": 1000
+                        }
+    },
+    {
+      "description":    "TUYA TS011F 1-Channel Relay with Power Monitoring (Type C)",
+      "modelNames":     ["_TZ3000_303avxxt", "_TZ3000_ibefeicf", "_TZ3000_zjchz7pd"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaThreshold"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaThreshold"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power", "voltageHigh", "voltageProtectionHigh", "voltageLow", "voltageProtectionLow", "currentThreshold", "currentProtection", "powerThreshold", "powerProtection"],
+      "options":        {
+                          "powerOnStatus": {"enum": ["off", "on", "previous"]},
+                          "voltageHigh": {"min": 90, "max": 265},
+                          "voltageProtectionHigh": {"type": "toggle", "control": true, "icon": "mdi:sine-wave"},
+                          "voltageLow": {"min": 75, "max": 240},
+                          "voltageProtectionLow": {"type": "toggle", "control": true, "icon": "mdi:sine-wave"},
+                          "currentThreshold": {"min": 1, "max": 65},
+                          "currentProtection": {"type": "toggle", "control": true, "icon": "mdi:current-ac"},
+                          "powerThreshold": {"min": 1, "max": 26, "unit": "kW"},
+                          "powerProtection": {"type": "toggle", "control": true, "icon": "mdi:flash"},
+                          "energyDivider": 100,
+                          "acCurrentDivider": 1000
+                        }
     },
     {
       "description":    "TUYA TS011F 1-Channel Relay LoraTap RR400ZB",

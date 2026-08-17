@@ -352,6 +352,13 @@ struct tuyaTimeStruct
     quint32 localTimestamp;
 };
 
+struct tuyaThresholdStruct
+{
+    quint8  dataPoint;
+    quint8  protection;
+    quint16 threshold;
+};
+
 #pragma pack(pop)
 
 QByteArray zclHeader(quint8 frameControl, quint8 transactionId, quint8 commandId, quint16 manufacturerCode = 0);

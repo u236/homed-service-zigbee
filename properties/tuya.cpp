@@ -413,6 +413,52 @@ void PropertiesTUYA::Level::parseAttribute(quint16, quint16 attributeId, const Q
     m_value = round(qFromLittleEndian(value) / 1000.0 * 255);
 }
 
+void PropertiesTUYA::Threshold::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    if (commandId != 0xE6 && commandId != 0xE7)
+        return;
+
+    for (int i = 0; i < payload.length() - 3; i += 4)
+    {
+        tuyaThresholdStruct data;
+
+        memcpy(&data, payload.constData() + i, sizeof(data));
+        data.threshold = qFromBigEndian(data.threshold);
+
+        switch (data.dataPoint)
+        {
+            case 0x01:
+                map.insert("currentThreshold", data.threshold);
+                map.insert("currentProtection", data.protection ? true : false);
+                break;
+
+            case 0x03:
+                map.insert("voltageHigh", data.threshold);
+                map.insert("voltageProtectionHigh", data.protection ? true : false);
+                break;
+
+            case 0x04:
+                map.insert("voltageLow", data.threshold);
+                map.insert("voltageProtectionLow", data.protection ? true : false);
+                break;
+
+            case 0x05:
+                map.insert("temperatureThreshold", data.threshold);
+                map.insert("temperatureProtection", data.protection ? true : false);
+                break;
+
+            case 0x07:
+                map.insert("powerThreshold", data.threshold);
+                map.insert("powerProtection", data.protection ? true : false);
+                break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
 void PropertiesTUYA::IRCode::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)
