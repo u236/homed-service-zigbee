@@ -1374,18 +1374,25 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                 {
                     const otaNextImageRequestStruct *request = reinterpret_cast <const otaNextImageRequestStruct*> (payload.constData());
                     otaNextImageResponseStruct response;
+                    QString file = device->ota().fileName();
+                    bool store = false;
 
-                    device->ota().setManufacturerCode(qFromLittleEndian(request->manufacturerCode));
-                    device->ota().setImageType(qFromLittleEndian(request->imageType));
-                    device->ota().setCurrentVersion(qFromLittleEndian(request->currentVersion));
-                    device->ota().setAvailable();
+                    if (device->ota().manufacturerCode() != qFromLittleEndian(request->manufacturerCode) || device->ota().imageType() != qFromLittleEndian(request->imageType) || device->ota().currentVersion() != qFromLittleEndian(request->currentVersion) || !device->ota().available())
+                    {
+                        device->ota().setManufacturerCode(qFromLittleEndian(request->manufacturerCode));
+                        device->ota().setImageType(qFromLittleEndian(request->imageType));
+                        device->ota().setCurrentVersion(qFromLittleEndian(request->currentVersion));
+                        device->ota().setAvailable();
+                        store = true;
+                    }
 
                     logDebug(m_debug) << device << "OTA upgrade image request received, manufacturer code is" << QString::asprintf("0x%04x", device->ota().manufacturerCode()) << "and image type is" << QString::asprintf("0x%04x", device->ota().imageType());
 
                     if (device->ota().fileName().isEmpty())
                         device->ota().refresh(m_devices->otaDir());
 
-                    m_devices->storeDatabase(true);
+                    if (store || file != device->ota().fileName())
+                        m_devices->storeDatabase(true);
 
                     if (device->ota().fileName().isEmpty())
                     {
