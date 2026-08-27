@@ -211,6 +211,69 @@ void EZSP::resetInterPanChannel(void)
     logWarning << "Reset Inter-PAN request failed";
 }
 
+bool EZSP::createBackup(QJsonObject &backup)
+{
+    ezspNetworkKeyInfoStruct keyInfo;
+    QJsonArray devices;
+    quint8 size;
+
+    if (!sendFrame(EZSP_FRAME_GET_NETWORK_KEY_INFO))
+    {
+        logWarning << "Backup aborted, network key info request failed";
+        return false;
+    }
+
+    memcpy(&keyInfo, m_replyData.constData() + 4, sizeof(keyInfo));
+
+    if (!sendFrame(EZSP_FRAME_GET_CONFIGURATION_VALUE, QByteArray(1, EZSP_CONFIG_KEY_TABLE_SIZE)) || m_replyStatus)
+    {
+        logWarning << "Backup aborted, key table size request failed";
+        return false;
+    }
+
+    size = static_cast <quint8> (m_replyData.at(statusOffset() + 1));
+
+    for (quint8 i = 0; i < size; i++)
+    {
+        ezspSecurityManagerMetadataStruct metadata;
+        QJsonObject json;
+        quint32 status;
+        quint64 ieeeAddress;
+
+        if (!sendFrame(EZSP_FRAME_EXPORT_LINK_KEY_BY_INDEX, QByteArray(1, static_cast <char> (i))))
+        {
+            logWarning << "Backup aborted, link key export request failed";
+            return false;
+        }
+
+        memcpy(&status, m_replyData.constData() + (m_version < 14 ? 36 : 0), sizeof(status));
+
+        if (status)
+            continue;
+
+        memcpy(&ieeeAddress, m_replyData.constData() + (m_version < 14 ? 0 : 8), sizeof(ieeeAddress));
+        memcpy(&metadata, m_replyData.constData() + (m_version < 14 ? 24 : 38), sizeof(metadata));
+
+        ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
+
+        json.insert("ieeeAddress", QString(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)).toHex()));
+        json.insert("linkKey", QString(m_replyData.mid(m_version < 14 ? 8 : 22, 16).toHex()));
+        json.insert("txCounter", QJsonValue::fromVariant(qFromLittleEndian(metadata.outgoingFrameCounter)));
+
+        devices.append(json);
+    }
+
+    backup.insert("ieeeAddress", QString(m_ieeeAddress.toHex()));
+    backup.insert("panId", m_panId);
+    backup.insert("channel", m_channel);
+    backup.insert("networkKey", QString(m_networkKey.toHex()));
+    backup.insert("frameCounter", QJsonValue::fromVariant(qFromLittleEndian(keyInfo.frameCounter)));
+    backup.insert("devices", devices);
+
+    logInfo << "Backup created, frame counter:" << qFromLittleEndian(keyInfo.frameCounter);
+    return true;
+}
+
 quint16 EZSP::getCRC(quint8 *data, quint32 length)
 {
     quint16 crc = 0xFFFF;
@@ -473,69 +536,6 @@ void EZSP::parsePacket(const QByteArray &payload)
             break;
         }
     }
-}
-
-bool EZSP::createBackup(QJsonObject &backup)
-{
-    ezspNetworkKeyInfoStruct keyInfo;
-    QJsonArray devices;
-    quint8 size;
-
-    if (!sendFrame(EZSP_FRAME_GET_NETWORK_KEY_INFO))
-    {
-        logWarning << "Backup aborted, network key info request failed";
-        return false;
-    }
-
-    memcpy(&keyInfo, m_replyData.constData() + 4, sizeof(keyInfo));
-
-    if (!sendFrame(EZSP_FRAME_GET_CONFIGURATION_VALUE, QByteArray(1, EZSP_CONFIG_KEY_TABLE_SIZE)) || m_replyStatus)
-    {
-        logWarning << "Backup aborted, key table size request failed";
-        return false;
-    }
-
-    size = static_cast <quint8> (m_replyData.at(statusOffset() + 1));
-
-    for (quint8 i = 0; i < size; i++)
-    {
-        ezspSecurityManagerMetadataStruct metadata;
-        QJsonObject json;
-        quint32 status;
-        quint64 ieeeAddress;
-
-        if (!sendFrame(EZSP_FRAME_EXPORT_LINK_KEY_BY_INDEX, QByteArray(1, static_cast <char> (i))))
-        {
-            logWarning << "Backup aborted, link key export request failed";
-            return false;
-        }
-
-        memcpy(&status, m_replyData.constData() + (m_version < 14 ? 36 : 0), sizeof(status));
-
-        if (status)
-            continue;
-
-        memcpy(&ieeeAddress, m_replyData.constData() + (m_version < 14 ? 0 : 8), sizeof(ieeeAddress));
-        memcpy(&metadata, m_replyData.constData() + (m_version < 14 ? 24 : 38), sizeof(metadata));
-
-        ieeeAddress = qToBigEndian(qFromLittleEndian(ieeeAddress));
-
-        json.insert("ieeeAddress", QString(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)).toHex()));
-        json.insert("linkKey", QString(m_replyData.mid(m_version < 14 ? 8 : 22, 16).toHex()));
-        json.insert("txCounter", QJsonValue::fromVariant(qFromLittleEndian(metadata.outgoingFrameCounter)));
-
-        devices.append(json);
-    }
-
-    backup.insert("ieeeAddress", QString(m_ieeeAddress.toHex()));
-    backup.insert("panId", m_panId);
-    backup.insert("channel", m_channel);
-    backup.insert("networkKey", QString(m_networkKey.toHex()));
-    backup.insert("frameCounter", QJsonValue::fromVariant(qFromLittleEndian(keyInfo.frameCounter)));
-    backup.insert("devices", devices);
-
-    logInfo << "Backup created, frame counter:" << qFromLittleEndian(keyInfo.frameCounter);
-    return true;
 }
 
 bool EZSP::startNetwork(quint64 extendedPanId)

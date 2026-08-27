@@ -708,6 +708,16 @@ void ZBoss::resetManufacturerCode(void)
     setManufacturerCode(MANUFACTURER_CODE_NORDIC);
 }
 
+void ZBoss::handleQueue(void)
+{
+    while (!m_queue.isEmpty())
+    {
+        QByteArray packet = m_queue.dequeue();
+        const zbossCommonHeaderStruct *header = reinterpret_cast <const zbossCommonHeaderStruct*> (packet.constData());
+        parsePacket(header->type, qFromLittleEndian(header->id), packet.mid(sizeof(zbossCommonHeaderStruct)));
+    }
+}
+
 void ZBoss::serialError(QSerialPort::SerialPortError error)
 {
     if (error != QSerialPort::SerialPortError::ReadError)
@@ -719,14 +729,4 @@ void ZBoss::serialError(QSerialPort::SerialPortError error)
     m_serial->close();
     QThread::msleep(ZBOSS_RESET_DELAY);
     m_serial->open(QIODevice::ReadWrite);
-}
-
-void ZBoss::handleQueue(void)
-{
-    while (!m_queue.isEmpty())
-    {
-        QByteArray packet = m_queue.dequeue();
-        const zbossCommonHeaderStruct *header = reinterpret_cast <const zbossCommonHeaderStruct*> (packet.constData());
-        parsePacket(header->type, qFromLittleEndian(header->id), packet.mid(sizeof(zbossCommonHeaderStruct)));
-    }
 }
