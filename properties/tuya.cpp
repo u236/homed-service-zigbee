@@ -217,10 +217,10 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
                 for (int i = 0; i < 6; i++)
                 {
                     QString key = QString("%1P%2").arg(type).arg(i + 1);
-                    quint16 time = qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4))) & 0x0FFF;
+                    quint16 time = qFromBigEndian <quint16> (program.constData() + i * 4) & 0x0FFF;
                     map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
                     map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
-                    map.insert(QString("%1Temperature").arg(key), (qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) & 0x0FFF) / 10.0);
+                    map.insert(QString("%1Temperature").arg(key), (qFromBigEndian <quint16> (program.constData() + i * 4 + 2) & 0x0FFF) / 10.0);
                 }
 
                 break;
@@ -243,7 +243,7 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
 
                     map.insert(QString("%1Hour").arg(key), hour);
                     map.insert(QString("%1Minute").arg(key), minute);
-                    map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 3 + 1))) / 10.0);
+                    map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (program.constData() + i * 3 + 1) / 10.0);
                 }
 
                 break;
@@ -258,7 +258,7 @@ void PropertiesTUYA::DailyThermostatProgram::update(quint8 dataPoint, const QVar
                     QString key = QString("%1P%2").arg(type).arg(i + 1);
                     map.insert(QString("%1Hour").arg(key), static_cast <quint8> (program.at(i * 4)));
                     map.insert(QString("%1Minute").arg(key), static_cast <quint8> (program.at(i * 4 + 1)));
-                    map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (program.constData() + i * 4 + 2))) / 10.0);
+                    map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (program.constData() + i * 4 + 2) / 10.0);
                 }
 
                 break;
@@ -303,7 +303,7 @@ void PropertiesTUYA::LedController::update(quint8 dataPoint, const QVariant &dat
         {
             case 0:
             {
-                Color color = Color::fromHS(qFromBigEndian(*reinterpret_cast <const quint16*> (payload.constData() + 5)) / 360.0, qFromBigEndian(*reinterpret_cast <const quint16*> (payload.constData() + 7)) / 1000.0);
+                Color color = Color::fromHS(qFromBigEndian <quint16> (payload.constData() + 5) / 360.0, qFromBigEndian <quint16> (payload.constData() + 7) / 1000.0);
                 map.insert("color", QList <QVariant> {static_cast <quint8> (color.r() * 0xFF), static_cast <quint8> (color.g() * 0xFF), static_cast <quint8> (color.b() * 0xFF)});
                 map.insert("colorMode", true);
                 break;
@@ -311,7 +311,7 @@ void PropertiesTUYA::LedController::update(quint8 dataPoint, const QVariant &dat
 
             case 1:
             {
-                map.insert("colorTemperature", round((1000 - qFromBigEndian(*reinterpret_cast <const quint16*> (payload.constData() + 7))) * 347 / 1000.0 + 153));
+                map.insert("colorTemperature", round((1000 - qFromBigEndian <quint16> (payload.constData() + 7)) * 347 / 1000.0 + 153));
                 map.insert("colorMode", false);
                 break;
             }

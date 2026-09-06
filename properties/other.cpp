@@ -139,11 +139,11 @@ void PropertiesCustom::Attribute::parseAttribute(quint16, quint16 attributeId, c
         case DATA_TYPE_16BIT_BITMAP:
         case DATA_TYPE_16BIT_UNSIGNED:
         case DATA_TYPE_16BIT_ENUM:
-            value = qFromLittleEndian <quint16> (*(reinterpret_cast <quint16*> (buffer.data())));
+            value = qFromLittleEndian <quint16> (buffer.constData());
             break;
 
         case DATA_TYPE_16BIT_SIGNED:
-            value = qFromLittleEndian <qint16> (*(reinterpret_cast <qint16*> (buffer.data())));
+            value = qFromLittleEndian <qint16> (buffer.constData());
             break;
 
         case DATA_TYPE_24BIT_BITMAP:
@@ -151,12 +151,12 @@ void PropertiesCustom::Attribute::parseAttribute(quint16, quint16 attributeId, c
         case DATA_TYPE_24BIT_UNSIGNED:
         case DATA_TYPE_32BIT_UNSIGNED:
         case DATA_TYPE_UTC_TIME:
-            value = qFromLittleEndian <quint32> (*(reinterpret_cast <quint32*> (buffer.data())));
+            value = qFromLittleEndian <quint32> (buffer.constData());
             break;
 
         case DATA_TYPE_24BIT_SIGNED:
         case DATA_TYPE_32BIT_SIGNED:
-            value = qFromLittleEndian <qint32> (*(reinterpret_cast <qint32*> (buffer.data())));
+            value = qFromLittleEndian <qint32> (buffer.constData());
             break;
 
         case DATA_TYPE_40BIT_BITMAP:
@@ -167,22 +167,22 @@ void PropertiesCustom::Attribute::parseAttribute(quint16, quint16 attributeId, c
         case DATA_TYPE_48BIT_UNSIGNED:
         case DATA_TYPE_56BIT_UNSIGNED:
         case DATA_TYPE_64BIT_UNSIGNED:
-            value = qFromLittleEndian <quint64> (*(reinterpret_cast <quint64*> (buffer.data())));
+            value = qFromLittleEndian <quint64> (buffer.constData());
             break;
 
         case DATA_TYPE_40BIT_SIGNED:
         case DATA_TYPE_48BIT_SIGNED:
         case DATA_TYPE_56BIT_SIGNED:
         case DATA_TYPE_64BIT_SIGNED:
-            value = qFromLittleEndian <qint64> (*(reinterpret_cast <qint64*> (buffer.data())));
+            value = qFromLittleEndian <qint64> (buffer.constData());
             break;
 
         case DATA_TYPE_SINGLE_PRECISION:
-            value = qFromLittleEndian <float> (*(reinterpret_cast <float*> (buffer.data())));
+            value = qFromLittleEndian <float> (buffer.constData());
             break;
 
         case DATA_TYPE_DOUBLE_PRECISION:
-            value = qFromLittleEndian <double> (*(reinterpret_cast <double*> (buffer.data())));
+            value = qFromLittleEndian <double> (buffer.constData());
             break;
     }
 

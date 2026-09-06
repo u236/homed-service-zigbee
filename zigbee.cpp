@@ -850,7 +850,7 @@ bool ZigBee::bindingRequest(const Endpoint &endpoint, quint16 clusterId, const Q
     switch (address.length())
     {
         case 0: name.append("coordinator"); break;
-        case 2: name.append(QString::asprintf("group %d", qFromLittleEndian <quint16> (*(reinterpret_cast <const quint16*> (address.data()))))); break;
+        case 2: name.append(QString::asprintf("group %d", qFromLittleEndian <quint16> (address.constData()))); break;
 
         default:
         {

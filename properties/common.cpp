@@ -173,10 +173,10 @@ void Thermostat::parseCommand(quint16, quint8 commandId, const QByteArray &paylo
     for (int i = 0; i < payload.at(0); i++)
     {
         QString key = QString("%1P%2").arg(type).arg(i + 1);
-        quint16 time = qFromLittleEndian <quint16> (*(reinterpret_cast <const quint16*> (payload.constData() + i * 4 + 3)));
+        quint16 time = qFromLittleEndian <quint16> (payload.constData() + i * 4 + 3);
         map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
         map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
-        map.insert(QString("%1Temperature").arg(key), (qFromLittleEndian <quint16> (*(reinterpret_cast <const quint16*> (payload.constData() + i * 4 + 5)))) / 100.0);
+        map.insert(QString("%1Temperature").arg(key), (qFromLittleEndian <quint16> (payload.constData() + i * 4 + 5)) / 100.0);
     }
 
     m_value = map.isEmpty() ? QVariant() : map;

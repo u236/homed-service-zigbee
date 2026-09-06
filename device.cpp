@@ -1513,7 +1513,7 @@ QJsonArray DeviceList::serializeDevices(void)
 
                 if (binding->endpointId() == 0xFF)
                 {
-                    bindings.append(QJsonObject {{"clusterId", binding->clusterId()}, {"groupId", qFromLittleEndian <quint16> (*(reinterpret_cast <quint16*> (binding->address().data())))}});
+                    bindings.append(QJsonObject {{"clusterId", binding->clusterId()}, {"groupId", qFromLittleEndian <quint16> (binding->address().constData())}});
                     continue;
                 }
 

@@ -331,10 +331,10 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
             for (int i = 0; i < 4; i++)
             {
                 QString key = QString("scheduleP%1").arg(i + 1);
-                quint16 time = qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (data.constData() + i * 6 + 2))) & 0x7FFF;
+                quint16 time = qFromBigEndian <quint16> (data.constData() + i * 6 + 2) & 0x7FFF;
                 map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
                 map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
-                map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (*(reinterpret_cast <const quint16*> (data.constData() + i * 6 + 6))) / 100.0);
+                map.insert(QString("%1Temperature").arg(key), qFromBigEndian <quint16> (data.constData() + i * 6 + 6) / 100.0);
             }
 
             break;
