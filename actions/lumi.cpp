@@ -226,8 +226,8 @@ QVariant ActionsLUMI::ThermostatProgram::request(const QString &name, const QVar
     for (int i = 0; i < 4; i++)
     {
         QString key = QString("scheduleP%1").arg(i + 1);
-        quint16 time = qToBigEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
-        quint16 temperature = qToBigEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
+        quint16 time = qToBigEndian(static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 6).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        quint16 temperature = qToBigEndian(static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
         payload.append(reinterpret_cast <char*> (&time), sizeof(time));
         payload.append(2, 0x00);
         payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));

@@ -62,7 +62,7 @@ bool ZiGate::bindRequest(quint8 id, quint16, quint8 endpointId, quint16 clusterI
 
     if (request.dstAddressMode == ADDRESS_MODE_GROUP)
     {
-        quint16 value = qToBigEndian <quint16> (qFromLittleEndian(dstAddress));
+        quint16 value = qToBigEndian(qFromLittleEndian(dstAddress));
         memcpy(&dstAddress, &value, sizeof(value));
     }
 

@@ -936,7 +936,7 @@ bool ZStack::startCoordinator(void)
 
     for (int i = 0; i < m_zdoClusters.count(); i++)
     {
-        quint16 request = qToLittleEndian(m_zdoClusters.at(i) | 0x8000);
+        quint16 request = qToLittleEndian <quint16> (m_zdoClusters.at(i) | 0x8000);
 
         if (!sendRequest(ZSTACK_ZDO_MSG_CB_REGISTER, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))))
         {

@@ -164,8 +164,8 @@ QVariant Actions::ThermostatProgram::request(const QString &name, const QVariant
     for (int i = 0; i < payload.at(0); i++)
     {
         QString key = QString("%1P%2").arg(type).arg(i + 1);
-        quint16 time = qToLittleEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
-        quint16 temperature = qToLittleEndian <quint16> (static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
+        quint16 time = qToLittleEndian(static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        quint16 temperature = qToLittleEndian(static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
         payload.append(reinterpret_cast <char*> (&time), sizeof(time));
         payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
     }

@@ -695,7 +695,7 @@ bool ZBoss::permitJoin(bool enabled)
         return false;
     }
 
-    request.dstAddress = qToLittleEndian <quint16> (networkAddress);
+    request.dstAddress = qToLittleEndian(networkAddress);
 
     if (!m_esp && (!sendRequest(ZBOSS_ZDO_PERMIT_JOINING_REQ, QByteArray(reinterpret_cast <char*> (&request), sizeof(request))) || m_replyStatus))
     {
