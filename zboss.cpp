@@ -193,7 +193,7 @@ quint16 ZBoss::getCRC16(quint8 *data, quint32 length)
     while (length--)
         crc = static_cast <quint16> (crc >> 8) ^ crc16Table[(crc ^ *data++) & 0xFF];
 
-    return qToLittleEndian(crc);
+    return crc;
 }
 
 bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
@@ -222,7 +222,7 @@ bool ZBoss::sendRequest(quint16 command, const QByteArray &data, quint8 id)
     payload.append(static_cast <char> (id));
     payload.append(data);
 
-    crc = getCRC16(reinterpret_cast <quint8*> (payload.data()), payload.length());
+    crc = qToLittleEndian(getCRC16(reinterpret_cast <quint8*> (payload.data()), payload.length()));
     sendData(QByteArray(reinterpret_cast <char*> (&lowLevelHeader), sizeof(lowLevelHeader)).append(reinterpret_cast <char*> (&crc), sizeof(crc)).append(payload));
 
     if (waitForSignal(this, command & 0x0200 && command != ZBOSS_ZDO_PERMIT_JOINING_REQ ? SIGNAL(acknowledgeReceived()) : SIGNAL(dataReceived()), ADAPTER_REQUEST_TIMEOUT))
@@ -338,7 +338,7 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
         case ZBOSS_ZDO_DEV_ANNCE_IND:
         {
             const zbossDeviceAnnounceStruct *message = reinterpret_cast <const zbossDeviceAnnounceStruct*> (data.constData());
-            quint64 address = qToBigEndian <quint64> (message->ieeeAddress);
+            quint64 address = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
             QByteArray ieeeAddress(reinterpret_cast <char*> (&address), sizeof(address));
 
             if (ieeeAddress.startsWith(QByteArray::fromHex("04cffc")) || ieeeAddress.startsWith(QByteArray::fromHex("54ef44")))
@@ -347,21 +347,21 @@ void ZBoss::parsePacket(quint8 type, quint16 command, const QByteArray &data)
                 m_timer->start(20000);
             }
 
-            emit deviceJoined(ieeeAddress, message->networkAddress);
+            emit deviceJoined(ieeeAddress, qFromLittleEndian(message->networkAddress));
             break;
         }
 
         case ZBOSS_APSDE_DATA_IND:
         {
             const zbossIncomingMessageStruct *message = reinterpret_cast <const zbossIncomingMessageStruct*> (data.constData());
-            emit zclMessageReveived(message->srcAddress, message->srcEndpointId, message->clusterId, message->linkQuality, data.mid(sizeof(zbossIncomingMessageStruct), message->dataLength));
+            emit zclMessageReveived(qFromLittleEndian(message->srcAddress), message->srcEndpointId, qFromLittleEndian(message->clusterId), message->linkQuality, data.mid(sizeof(zbossIncomingMessageStruct), qFromLittleEndian(message->dataLength)));
             break;
         }
 
         case ZBOSS_NWK_LEAVE_IND:
         {
             const zbossDeviceLeaveStruct *message = reinterpret_cast <const zbossDeviceLeaveStruct*> (data.constData());
-            quint64 ieeeAddress = qToBigEndian <quint64> (message->ieeeAddress);
+            quint64 ieeeAddress = qToBigEndian(qFromLittleEndian(message->ieeeAddress));
             emit deviceLeft(QByteArray(reinterpret_cast <char*> (&ieeeAddress), sizeof(ieeeAddress)));
             break;
         }
@@ -394,8 +394,9 @@ void ZBoss::handleReset(void)
 
 bool ZBoss::startCoordinator(void)
 {
-    quint32 channelMask = qToLittleEndian <quint32> (1 << m_channel);
+    quint32 channelMask = 1 << m_channel;
     quint64 ieeeAddress;
+    quint16 panId;
 
     if (!sendRequest(ZBOSS_GET_LOCAL_IEEE_ADDR, QByteArray(1, 0x00)) || m_replyStatus)
     {
@@ -449,7 +450,7 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (*(reinterpret_cast <quint32*> (m_replyData.data() + 2)) != channelMask)
+        if (qFromLittleEndian <quint32> (m_replyData.constData() + 2) != channelMask)
         {
             logWarning << "Adapter channel doesn't match configuration";
             check = true;
@@ -461,7 +462,7 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (*(reinterpret_cast <quint16*> (m_replyData.data())) != qToLittleEndian(m_panId))
+        if (qFromLittleEndian <quint16> (m_replyData.constData()) != m_panId)
         {
             if (m_check)
             {
@@ -497,6 +498,8 @@ bool ZBoss::startCoordinator(void)
         zbossNetworkForamtionStruct network;
 
         logInfo << "Starting new network...";
+        channelMask = qToLittleEndian(channelMask);
+        panId = qToLittleEndian(m_panId);
         m_clear = false;
 
         if (!sendRequest(ZBOSS_SET_ZIGBEE_ROLE, QByteArray(1, static_cast <char> (LogicalType::Coordinator))) || m_replyStatus)
@@ -511,7 +514,7 @@ bool ZBoss::startCoordinator(void)
             return false;
         }
 
-        if (!sendRequest(ZBOSS_SET_PAN_ID, QByteArray(reinterpret_cast <char*> (&m_panId), sizeof(m_panId))) || m_replyStatus)
+        if (!sendRequest(ZBOSS_SET_PAN_ID, QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId))) || m_replyStatus)
         {
             logWarning << "Set PAN ID request failed";
             return false;
@@ -663,7 +666,7 @@ void ZBoss::parseData(void)
 
         if (length > 9)
         {
-            if (*(reinterpret_cast <quint16*> (m_buffer.data() + offset + 7)) != getCRC16(reinterpret_cast <quint8*> (m_buffer.data() + offset + 9), length - 9))
+            if (qFromLittleEndian <quint16> (m_buffer.constData() + offset + 7) != getCRC16(reinterpret_cast <quint8*> (m_buffer.data() + offset + 9), length - 9))
             {
                 logWarning << QString("Packet %1 CRC mismatch").arg(QString(m_buffer.mid(offset, length).toHex(':')));
                 m_buffer.remove(0, offset + sizeof(signature));

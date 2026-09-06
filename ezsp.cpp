@@ -469,7 +469,7 @@ void EZSP::parsePacket(const QByteArray &payload)
             {
                 const ezspIncomingMessageStruct *message = reinterpret_cast <const ezspIncomingMessageStruct*> (data.constData());
                 networkAddress = qFromLittleEndian(message->networkAddress);
-                profileId = message->profileId;
+                profileId = qFromLittleEndian(message->profileId);
                 clusterId = qFromLittleEndian(message->clusterId);
                 endpointId = message->srcEndpointId;
                 linkQuality = message->linkQuality;
@@ -479,7 +479,7 @@ void EZSP::parsePacket(const QByteArray &payload)
             {
                 const ezspV14IncomingMessageStruct *message = reinterpret_cast <const ezspV14IncomingMessageStruct*> (data.constData());
                 networkAddress = qFromLittleEndian(message->networkAddress);
-                profileId = message->profileId;
+                profileId = qFromLittleEndian(message->profileId);
                 clusterId = qFromLittleEndian(message->clusterId);
                 endpointId = message->srcEndpointId;
                 linkQuality = message->linkQuality;
