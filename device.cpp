@@ -1015,9 +1015,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
     QList <QString> typeList = {"*", "#", "Wh", "V", "A", "W", "Hz", "pf"}, binaryList = {"c", "g", "n", "o", "p", "m", "s", "t", "v", "w"}, itemList;
     QString description = endpoint(device, 0x01)->meta().value("ptvoDescription").toString();
 
-    if (description.isEmpty() || description == "unknown")
-        return;
-
     itemList = description.split(0x0d);
 
     for (int i = 0; i < itemList.count(); i++)

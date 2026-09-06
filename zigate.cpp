@@ -273,7 +273,7 @@ bool ZiGate::startCoordinator(bool clear)
 
     m_manufacturerName = "NXP";
     m_modelName = "ZiGate";
-    m_firmware = QString::asprintf("%x.%x", m_replyData.at(2), m_replyData.at(3));
+    m_firmware = QString::asprintf("%x.%x", static_cast <quint8> (m_replyData.at(2)), static_cast <quint8> (m_replyData.at(3)));
 
     logInfo << "Adapter type: ZiGate" << m_firmware.toUtf8().constData();
 
