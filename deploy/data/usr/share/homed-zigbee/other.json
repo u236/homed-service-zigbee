@@ -269,8 +269,30 @@
   "NXP":
   [
     {
-      "description":    "OpenLumi Router (JN5169)",
+      "description":    "OpenLumi Router (outdated firmware, update required)",
       "modelNames":     ["openlumi.gw_router.jn5169"],
+      "properties":     ["deviceTemperature"],
+      "bindings":       ["deviceTemperature"],
+      "reportings":     ["deviceTemperature"],
+      "exposes":        ["temperature"],
+      "options":        {"temperature": {"diagnostic": true}}
+    }
+  ],
+
+  "OpenLumi":
+  [
+    {
+      "description":    "OpenLumi Router (for Xiaomi DGNWG05LM)",
+      "modelNames":     ["openlumi.gw_router.dgnwg05lm"],
+      "properties":     ["deviceTemperature"],
+      "bindings":       ["deviceTemperature"],
+      "reportings":     ["deviceTemperature"],
+      "exposes":        ["temperature"],
+      "options":        {"temperature": {"diagnostic": true}}
+    },
+    {
+      "description":    "OpenLumi Router (for Aqara ZHWG11LM)",
+      "modelNames":     ["openlumi.gw_router.zhwg11lm"],
       "properties":     ["deviceTemperature"],
       "bindings":       ["deviceTemperature"],
       "reportings":     ["deviceTemperature"],
