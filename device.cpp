@@ -1215,17 +1215,17 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
     {
-        if (it.value()->inClusters().contains(CLUSTER_MULTISTATE_INPUT))
-        {
-            it.value()->properties().append(Property(new PropertiesPTVO::ButtonAction));
-            it.value()->exposes().append(Expose(new SensorObject("action")));
-            device->options().insert(QString("action_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QList <QVariant> {"release", "singleClick", "doubleClick", "tripleClick", "hold"}}});
-        }
-
         if (it.value()->inClusters().contains(CLUSTER_MULTISTATE_VALUE))
         {
             it.value()->properties().append(Property(new PropertiesPTVO::SerialData));
             it.value()->actions().append(Action(new ActionsPTVO::SerialData));
+        }
+
+        if (it.value()->outClusters().contains(CLUSTER_MULTISTATE_INPUT))
+        {
+            it.value()->properties().append(Property(new PropertiesPTVO::ButtonAction));
+            it.value()->exposes().append(Expose(new SensorObject("action")));
+            device->options().insert(QString("action_%1").arg(it.key()), QMap <QString, QVariant> {{"enum", QList <QVariant> {"release", "singleClick", "doubleClick", "tripleClick", "hold"}}});
         }
     }
 }
