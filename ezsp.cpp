@@ -270,7 +270,6 @@ bool EZSP::createBackup(QJsonObject &backup)
     backup.insert("frameCounter", QJsonValue::fromVariant(qFromLittleEndian(keyInfo.frameCounter)));
     backup.insert("devices", devices);
 
-    logInfo << "Backup created, frame counter:" << qFromLittleEndian(keyInfo.frameCounter);
     return true;
 }
 

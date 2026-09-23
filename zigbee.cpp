@@ -8,7 +8,7 @@
 #include "zigbee.h"
 #include "zstack.h"
 
-ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_backupTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, parent)), m_events(QMetaEnum::fromType <Event> ()), m_backupRetry(0), m_requestId(0), m_interPanLock(false)
+ZigBee::ZigBee(QSettings *config, QObject *parent) : QObject(parent), m_config(config), m_requestTimer(new QTimer(this)), m_backupTimer(new QTimer(this)), m_neighborsTimer(new QTimer(this)), m_pingTimer(new QTimer(this)), m_statusLedTimer(new QTimer(this)), m_adapter(nullptr), m_devices(new DeviceList(m_config, parent)), m_events(QMetaEnum::fromType <Event> ()), m_backupRetry(0), m_requestId(0), m_busy(false)
 {
     m_statusLedPin = m_config->value("gpio/status", "-1").toString();
     m_blinkLedPin = m_config->value("gpio/blink", "-1").toString();
@@ -343,10 +343,10 @@ void ZigBee::clusterRequest(const QString &deviceName, quint8 endpointId, quint1
 
 void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, bool reset)
 {
-    if (!m_adapter->ready() || m_interPanLock)
+    if (!m_adapter->ready() || m_busy)
         return;
 
-    m_interPanLock = true;
+    m_busy = true;
 
     if (reset)
         touchLinkReset(ieeeAddress, channel);
@@ -356,9 +356,9 @@ void ZigBee::touchLinkRequest(const QByteArray &ieeeAddress, quint8 channel, boo
     m_adapter->resetInterPanChannel();
 
     if (!m_requests.isEmpty())
-        m_requestTimer->start();
+        m_requestTimer->start(0);
 
-    m_interPanLock = false;
+    m_busy = false;
 }
 
 void ZigBee::deviceAction(const QString &deviceName, quint8 endpointId, const QString &name, const QVariant &data)
@@ -437,8 +437,8 @@ void ZigBee::enqueueRequest(const Device &device, quint8 endpointId, quint16 clu
     if (!m_adapter->ready())
         return;
 
-    if (!m_requestTimer->isActive() && !m_interPanLock)
-        m_requestTimer->start();
+    if (!m_requestTimer->isActive())
+        m_requestTimer->start(0);
 
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(request), RequestType::Data)));
 }
@@ -448,8 +448,8 @@ void ZigBee::enqueueRequest(const Device &device, RequestType type)
     if (!m_adapter->ready())
         return;
 
-    if (!m_requestTimer->isActive() && !m_interPanLock)
-        m_requestTimer->start();
+    if (!m_requestTimer->isActive())
+        m_requestTimer->start(0);
 
     m_requests.insert(m_requestId++, Request(new RequestObject(QVariant::fromValue(device), type)));
 }
@@ -2337,6 +2337,14 @@ void ZigBee::requestFinished(quint8 id, quint8 status)
 
 void ZigBee::handleRequests(void)
 {
+    if (m_busy)
+    {
+        m_requestTimer->start(BUSY_RETRY_INTERVAL);
+        return;
+    }
+
+    m_busy = true;
+
     for (auto it = m_requests.begin(); it != m_requests.end(); it++)
     {
         if (it.value()->status() != RequestStatus::Pending)
@@ -2418,13 +2426,25 @@ void ZigBee::handleRequests(void)
     }
 
     m_requestTimer->stop();
+    m_busy = false;
 }
 
 void ZigBee::updateBackup(void)
 {
     QJsonObject backup;
     QJsonArray devices;
-    bool check = m_adapter->createBackup(backup), retry = !check && m_backupRetry < BACKUP_RETRIES;
+    bool check, retry;
+
+    if (m_busy)
+    {
+        m_backupTimer->start(BUSY_RETRY_INTERVAL);
+        return;
+    }
+
+    m_busy = true;
+    check = m_adapter->createBackup(backup);
+    retry = !check && m_backupRetry < BACKUP_RETRIES;
+    m_busy = false;
 
     m_backupTimer->start(retry ? BACKUP_RETRY_INTERVAL : UPDATE_BACKUP_INTERVAL);
     m_backupRetry = retry ? m_backupRetry + 1 : 0;
@@ -2447,6 +2467,7 @@ void ZigBee::updateBackup(void)
         it++;
     }
 
+    logInfo << "Backup created with" << devices.count() << "devices and frame counter" << backup.value("frameCounter").toVariant().toLongLong();
     backup.insert("devices", devices);
 
     if (!m_adapter->updateBackup(backup))

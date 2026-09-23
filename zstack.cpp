@@ -115,7 +115,7 @@ bool ZStack::createBackup(QJsonObject &backup)
 
     if (keySeed.length() == 16)
     {
-        for (int i = 0; i < 256; i++)
+        for (int i = 0; i < 512; i++)
         {
             zstackTcLinkKeyStruct item;
             QByteArray data;
@@ -123,7 +123,13 @@ bool ZStack::createBackup(QJsonObject &backup)
             quint64 ieeeAddress;
 
             if (!readNvItem(ZCD_NV_EX_TCLK_TABLE, i, data, nvItemSize(ZCD_NV_EX_TCLK_TABLE)) || data.isEmpty())
-                break;
+            {
+                if (!nvItemLength(ZCD_NV_EX_TCLK_TABLE, i))
+                    break;
+
+                logWarning << "Backup aborted, link key table item" << i << "read request failed";
+                return false;
+            }
 
             if (static_cast <size_t> (data.length()) < sizeof(zstackTcLinkKeyStruct))
                 continue;
@@ -155,14 +161,20 @@ bool ZStack::createBackup(QJsonObject &backup)
 
     devices = QJsonArray();
 
-    for (int i = 0; i < 256; i++)
+    for (int i = 0; i < 512; i++)
     {
         zstackAddressManagerStruct item;
         QByteArray data;
         QJsonObject json;
 
         if (!readNvItem(ZCD_NV_EX_ADDRMGR, i, data, nvItemSize(ZCD_NV_EX_ADDRMGR)) || data.isEmpty())
-            break;
+        {
+            if (!nvItemLength(ZCD_NV_EX_ADDRMGR, i))
+                break;
+
+            logWarning << "Backup aborted, address manager table item" << i << "read request failed";
+            return false;
+        }
 
         if (static_cast <size_t> (data.length()) < sizeof(zstackAddressManagerStruct))
             continue;
@@ -183,13 +195,19 @@ bool ZStack::createBackup(QJsonObject &backup)
         devices.append(json);
     }
 
-    for (int i = 0; i < 256; i++)
+    for (int i = 0; i < 512; i++)
     {
         zstackSecurityMaterialStruct item;
         QByteArray data;
 
         if (!readNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, i, data, nvItemSize(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE)) || data.isEmpty())
-            break;
+        {
+            if (!nvItemLength(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, i))
+                break;
+
+            logWarning << "Backup aborted, security material table item" << i << "read request failed";
+            return false;
+        }
 
         if (static_cast <size_t> (data.length()) < sizeof(zstackSecurityMaterialStruct))
             continue;
@@ -204,7 +222,7 @@ bool ZStack::createBackup(QJsonObject &backup)
             break;
         }
 
-        if (item.extendedPanId != 0xFFFFFFFFFFFFFFFF)
+        if (item.frameCounter == 0xFFFFFFFF || item.extendedPanId != 0xFFFFFFFFFFFFFFFF)
             continue;
 
         frameCounter = item.frameCounter;
@@ -214,10 +232,9 @@ bool ZStack::createBackup(QJsonObject &backup)
     backup.insert("panId", m_panId);
     backup.insert("channel", m_channel);
     backup.insert("networkKey", QString(m_networkKey.toHex()));
-    backup.insert("devices", devices);
     backup.insert("frameCounter", frameCounter);
+    backup.insert("devices", devices);
 
-    logInfo << "Backup created, frame counter:" << frameCounter;
     return true;
 }
 
@@ -345,7 +362,7 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
         writeNvItem(ZCD_NV_EX_TCLK_TABLE, count++, QByteArray(reinterpret_cast <char*> (&keyItem), sizeof(keyItem)));
     }
 
-    logInfo << "Network restored," << devices.count() << "devices," << count << "link keys, frame counter:" << frameCounter;
+    logInfo << "Network restored with" << devices.count() << "devices and frame counter" << frameCounter;
     return true;
 }
 

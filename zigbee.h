@@ -4,6 +4,7 @@
 #define UPDATE_BACKUP_INTERVAL          28800000
 #define UPDATE_NEIGHBORS_INTERVAL       3600000
 #define PING_DEVICES_INTERVAL           300000
+#define BUSY_RETRY_INTERVAL             100
 
 #define BACKUP_RETRY_INTERVAL           3000
 #define BACKUP_RETRIES                  10
@@ -171,7 +172,7 @@ private:
 
     QMetaEnum m_events;
     quint8 m_backupRetry, m_requestId, m_requestStatus, m_replyId, m_interPanChannel;
-    bool m_replyReceived, m_groupRequestFinished, m_groupsUpdated, m_interPanLock;
+    bool m_busy, m_replyReceived, m_groupRequestFinished, m_groupsUpdated;
 
     QString m_statusLedPin, m_blinkLedPin;
     bool m_backup, m_discovery, m_cloud, m_debug;
