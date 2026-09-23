@@ -2467,6 +2467,9 @@ void ZigBee::updateBackup(void)
         it++;
     }
 
+    if (devices.isEmpty())
+        return;
+
     logInfo << "Backup created with" << devices.count() << "devices and frame counter" << backup.value("frameCounter").toVariant().toLongLong();
     backup.insert("devices", devices);
 
