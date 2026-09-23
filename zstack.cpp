@@ -306,9 +306,6 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
     if (keySeed.length() == 16)
         writeNvItem(ZCD_NV_LEGACY_TCLK_TABLE_START, keySeed);
 
-    writeNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, 0, QByteArray(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter)).append(ieeeAddress));
-    writeNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, 1, QByteArray(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter)).append(8, 0xFF));
-
     for (int i = 0; i < devices.count(); i++)
     {
         zstackAddressManagerStruct addressItem;
@@ -361,6 +358,9 @@ bool ZStack::restoreBackup(const QJsonObject &backup)
 
         writeNvItem(ZCD_NV_EX_TCLK_TABLE, count++, QByteArray(reinterpret_cast <char*> (&keyItem), sizeof(keyItem)));
     }
+
+    writeNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, 0, QByteArray(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter)).append(ieeeAddress));
+    writeNvItem(ZCD_NV_EX_NWK_SEC_MATERIAL_TABLE, 1, QByteArray(reinterpret_cast <char*> (&frameCounter), sizeof(frameCounter)).append(8, 0xFF));
 
     logInfo << "Network restored with" << devices.count() << "devices and frame counter" << frameCounter;
     return true;
@@ -792,6 +792,7 @@ bool ZStack::startCommissioning(void)
     writeNvItem(ZCD_NV_STARTUP_OPTION, QByteArray(1, 0x03));
     m_clear = true;
     reset();
+
     return true;
 }
 
@@ -901,17 +902,23 @@ bool ZStack::startCoordinator(void)
     }
     else
     {
-        quint16 panId = static_cast <quint16> (QRandomGenerator::global()->bounded(1, 0xFFFE));
+        logInfo << "Starting" << (m_restore == RestoreStatus::Pending ? "temporary network..." : "new network...");
 
-        logInfo << "Starting" << (m_restore == RestoreStatus::Pending ? "temporary network for restore..." : "new network...");
-        m_clear = false;
+        if (m_restore == RestoreStatus::Pending)
+        {
+            quint64 data = QRandomGenerator::global()->generate64();
+            writeNvItem(ZCD_NV_EXTENDED_PAN_ID, QByteArray(reinterpret_cast <char*> (&data), sizeof(data)));
+        }
 
         for (auto it = m_nvItems.begin(); it != m_nvItems.end(); it++)
         {
             QByteArray value = it.value();
 
             if (m_restore == RestoreStatus::Pending && it.key() == ZCD_NV_PANID)
-                value = QByteArray(reinterpret_cast <char*> (&panId), sizeof(panId));
+            {
+                quint16 data = static_cast <quint16> (QRandomGenerator::global()->bounded(1, 0xFFFE));
+                value = QByteArray(reinterpret_cast <char*> (&data), sizeof(data));
+            }
 
             if (m_version != ZStackVersion::ZStack12x || it.key() != ZCD_NV_PRECFGKEY)
             {
@@ -926,6 +933,8 @@ bool ZStack::startCoordinator(void)
 
             logDebug(m_adapterDebug) << "NV item" << QString::asprintf("0x%04x", it.key()) << "value set to" << value.toHex(':');
         }
+
+        m_clear = false;
     }
 
     if (m_version != ZStackVersion::ZStack12x)
