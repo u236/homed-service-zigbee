@@ -79,8 +79,8 @@
       "exposes":        ["battery", "contact", "batteryLow", "tamper"]
     },
     {
-      "description":    "Sonoff Door and Window Sensor SNZB-04P",
-      "modelNames":     ["SNZB-04P"],
+      "description":    "Sonoff Door and Window Sensor SNZB-04P or SNZB-04PR2",
+      "modelNames":     ["SNZB-04P", "SNZB-04PR2"],
       "properties":     ["batteryPercentage", "iasContact"],
       "bindings":       ["battery"],
       "reportings":     ["batteryPercentage"],
@@ -226,6 +226,28 @@
                           "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
                           "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
                           "switchMode": {"enum": ["relay", "decoupled"]}
+                        }
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay MINI-ZB1GS",
+      "modelNames":     ["MINI-ZB1GS"],
+      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "powerOnStatus", "indicator", "switchType", "transmitPower", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":      {"type": "bool", "clusterId": 64529, "attributeId": 1,  "dataType": 16, "action": true},
+                            "transmitPower":  {"type": "enum", "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
+                            "switchType":     {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true}
+                          },
+                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
+                          "energyDivider": 1000,
+                          "acVoltageDivider": 100,
+                          "acCurrentDivider": 100
                         }
     },
     {

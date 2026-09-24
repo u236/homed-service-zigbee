@@ -511,7 +511,7 @@
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaThreshold"],
       "bindings":       ["status", "energy", "power", "temperature"],
       "reportings":     ["status", "energy", "voltage", "current", "power", "temperature"],
-      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power", "temperature", "voltageLow", "voltageProtectionLow", "voltageHigh", "voltageProtectionHigh", "currentThreshold", "currentProtection", "powerThreshold", "powerProtection", "temperatureThreshold", "temperatureProtection"],
+      "exposes":        ["switch", "powerOnStatus", "indicatorMode", "energy", "voltage", "current", "power", "temperature", "voltageLow", "voltageProtectionLow", "voltageHigh", "voltageProtectionHigh", "currentThreshold", "currentProtection", "powerThreshold", "powerProtection", "temperatureThreshold", "temperatureProtection"],
       "options":        {
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "voltageLow": {"min": 75, "max": 240},
@@ -535,7 +535,7 @@
       "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus", "tuyaThreshold"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "indicatorMode", "powerOnStatus", "energy", "voltage", "current", "power", "voltageLow", "voltageProtectionLow", "voltageHigh", "voltageProtectionHigh", "currentThreshold", "currentProtection", "powerThreshold", "powerProtection"],
+      "exposes":        ["switch", "powerOnStatus", "indicatorMode", "energy", "voltage", "current", "power", "voltageLow", "voltageProtectionLow", "voltageHigh", "voltageProtectionHigh", "currentThreshold", "currentProtection", "powerThreshold", "powerProtection"],
       "options":        {
                           "powerOnStatus": {"enum": ["off", "on", "previous"]},
                           "voltageLow": {"min": 75, "max": 240},
@@ -891,7 +891,7 @@
       "modelNames":     ["_TZ3210_3ulg9kpo"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["action_1", "action_2", "battery"],
+      "exposes":        ["battery", "action_1", "action_2"],
       "options":        {
                           "tuyaDataPoints":
                           {

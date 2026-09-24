@@ -77,11 +77,21 @@
       "exposes":        ["battery", "temperature", "humidity"]
     },
     {
-      "description":    "PushOk Hardware Temperature and Contact Sensor POK010",
+      "description":    "PushOk Hardware Temperature, Humidity and Contact Sensor POK010",
       "modelNames":     ["POK010"],
-      "properties":     ["batteryPercentage", "temperature"],
-      "exposes":        ["battery", "temperature", "contact"],
-      "options":        {"customAttributes": {"contact": {"type": "bool", "clusterId": 15, "attributeId": 85, "dataType": 16}}}
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "exposes":        ["battery", "temperature", "humidity", "contact", "count", "frequency", "operationMode"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "frequency":      {"type": "value", "clusterId": 13, "attributeId": 85,  "dataType": 57},
+                            "count":          {"type": "value", "clusterId": 13, "attributeId": 256, "dataType": 35},
+                            "contact":        {"type": "bool",  "clusterId": 15, "attributeId": 85,  "dataType": 16},
+                            "operationMode":  {"type": "enum",  "clusterId": 18, "attributeId": 85,  "dataType": 33, "action": true}
+                          },
+                          "frequency": {"icon": "mdi:square-wave"},
+                          "operationMode": {"enum": {"1": "contact", "2": "counter"}}
+                        }
     }
   ]
 }

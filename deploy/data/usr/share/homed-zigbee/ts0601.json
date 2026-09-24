@@ -211,7 +211,7 @@
       "modelNames":     ["_TZE284_a14rjslz"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["energy", "producedEnergy", "voltage_1", "current_1", "power_1", "voltage_2", "current_2", "power_2", "voltage_3", "current_3", "power_3", "powerFactor"],
+      "exposes":        ["energy", "producedEnergy", "powerFactor", "voltage_1", "current_1", "power_1", "voltage_2", "current_2", "power_2", "voltage_3", "current_3", "power_3"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -222,6 +222,43 @@
                             "23":   {"name": "producedEnergy", "type": "value", "divider": 100},
                             "50":   {"name": "powerFactor", "type": "value", "divider": 100}
                           }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 3-Phase Electricity Meter (Type C)",
+      "modelNames":     ["_TZE200_dikb3dp6", "_TZE204_dikb3dp6", "_TZE284_dikb3dp6"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["energy", "producedEnergy", "power", "powerFactor", "frequency", "energy_1", "producedEnergy_1", "voltage_1", "current_1", "power_1", "powerFactor_1", "energy_2", "producedEnergy_2", "voltage_2", "current_2", "power_2", "powerFactor_2", "energy_3", "producedEnergy_3", "voltage_3", "current_3", "power_3", "powerFactor_3", "reportingDelay"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "energy", "type": "value", "divider": 100},
+                            "23":   {"name": "producedEnergy", "type": "value", "divider": 100},
+                            "29":   {"name": "power", "type": "value"},
+                            "32":   {"name": "frequency", "type": "value", "divider": 100},
+                            "50":   {"name": "powerFactor", "type": "value"},
+                            "102":  {"name": "reportingDelay", "type": "value", "action": true},
+                            "103":  {"name": "voltage_1", "type": "value", "divider": 10},
+                            "104":  {"name": "current_1", "type": "value", "divider": 1000},
+                            "105":  {"name": "power_1", "type": "value"},
+                            "108":  {"name": "powerFactor_1", "type": "value"},
+                            "109":  {"name": "energy_1", "type": "value", "divider": 100},
+                            "110":  {"name": "producedEnergy_1", "type": "value", "divider": 100},
+                            "112":  {"name": "voltage_2", "type": "value", "divider": 10},
+                            "113":  {"name": "current_2", "type": "value", "divider": 1000},
+                            "114":  {"name": "power_2", "type": "value"},
+                            "117":  {"name": "powerFactor_2", "type": "value"},
+                            "118":  {"name": "energy_2", "type": "value", "divider": 100},
+                            "119":  {"name": "producedEnergy_2", "type": "value", "divider": 100},
+                            "121":  {"name": "voltage_3", "type": "value", "divider": 10},
+                            "122":  {"name": "current_3", "type": "value", "divider": 1000},
+                            "123":  {"name": "power_3", "type": "value"},
+                            "126":  {"name": "powerFactor_3", "type": "value"},
+                            "127":  {"name": "energy_3", "type": "value", "divider": 100},
+                            "128":  {"name": "producedEnergy_3", "type": "value", "divider": 100}
+                          },
+                          "reportingDelay": {"min": 5, "max": 3600}
                         }
     },
     {
@@ -1426,6 +1463,19 @@
     },
     {
       "description":    "TUYA TS0601 Door and Window Sensor",
+      "modelNames":     ["_TZE200_n8dljorx"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["battery", "contact"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "contact", "type": "bool"},
+                            "2":    {"name": "battery", "type": "value"}
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Door and Window Sensor with Illuminance",
       "modelNames":     ["_TZE200_ijey4q29", "_TZE200_pay2byax"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1772,6 +1822,30 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type M)",
+      "modelNames":     ["_TZE284_gnpflcoq"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "occupancy", "illuminance", "temperature", "humidity", "sensitivity", "sensitivityMode", "distanceMax", "fadingTime"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "occupancy", "type": "bool", "invert": true},
+                            "2":    {"name": "sensitivity", "type": "value", "action": true},
+                            "4":    {"name": "battery", "type": "value"},
+                            "7":    {"name": "temperature", "type": "value", "divider": 10},
+                            "8":    {"name": "humidity", "type": "value"},
+                            "9":    {"name": "sensitivityMode", "type": "enum", "action": true},
+                            "11":   {"name": "illuminance", "type": "value"},
+                            "12":   {"name": "fadingTime", "type": "value", "action": true},
+                            "13":   {"name": "distanceMax", "type": "value", "action": true}
+                          },
+                          "sensitivity": {"min": 0, "max": 10},
+                          "fadingTime": {"min": 10, "max": 180},
+                          "distanceMax": {"min": 1, "max": 10}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Human Presence Sensor with PIR",
       "modelNames":     ["_TZE200_kb5noeto", "_TZE200_tyffvoij", "_TZE200_yflzeeqj"],
       "properties":     ["tuyaDataPoints"],
@@ -1985,6 +2059,13 @@
                           },
                           "batteryStatus": {"enum": ["low", "medium", "high"]}
                         }
+    },
+    {
+      "description":    "TUYA TS0601 External Temperature Sensor",
+      "modelNames":     ["_TZE284_7gy9mqca"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["temperature"],
+      "options":        {"tuyaDataPoints": {"1": {"name": "temperature", "type": "value", "divider": 10}}}
     },
     {
       "description":    "TUYA TS0601 Soil Moisture Sensor",
