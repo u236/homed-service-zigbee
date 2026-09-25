@@ -269,8 +269,21 @@
   "NXP":
   [
     {
-      "description":    "OpenLumi Router (JN5169)",
+      "description":    "OpenLumi Router (outdated firmware)",
       "modelNames":     ["openlumi.gw_router.jn5169"],
+      "properties":     ["deviceTemperature"],
+      "bindings":       ["deviceTemperature"],
+      "reportings":     ["deviceTemperature"],
+      "exposes":        ["temperature"],
+      "options":        {"temperature": {"diagnostic": true}}
+    }
+  ],
+
+  "OpenLumi":
+  [
+    {
+      "description":    "OpenLumi Router",
+      "modelNames":     ["openlumi.gw_router.dgnwg05lm", "openlumi.gw_router.zhwg11lm"],
       "properties":     ["deviceTemperature"],
       "bindings":       ["deviceTemperature"],
       "reportings":     ["deviceTemperature"],
