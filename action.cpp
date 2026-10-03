@@ -75,6 +75,9 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
 
+    qRegisterMetaType <ActionsSonoff::Thermostat>               ("sonoffThermostatAction");
+    qRegisterMetaType <ActionsSonoff::ThermostatProgram>        ("sonoffThermostatProgramAction");
+
     qRegisterMetaType <ActionsYandex::CommonSettings>           ("yandexCommonSettingsAction");
     qRegisterMetaType <ActionsYandex::SwitchSettings>           ("yandexSwitchSettingsAction");
 }

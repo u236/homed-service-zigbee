@@ -94,6 +94,8 @@ quint8 zclDataSize(quint8 dataType)
 
 quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
 {
+    int size, total = data.length() - *offset;
+
     switch (dataType)
     {
         case DATA_TYPE_OCTET_STRING:
@@ -101,9 +103,30 @@ quint8 zclDataSize(quint8 dataType, const QByteArray &data, quint8 *offset)
             return static_cast <quint8> (data.at((*offset)++));
 
         case DATA_TYPE_ARRAY:
+        {
+            quint8 length = total < 3 ? 0 : zclDataSize(static_cast <quint8> (data.at(*offset)));
+            size = length ? 3 + qFromLittleEndian <quint16> (data.constData() + *offset + 1) * length : total;
+            break;
+        }
+
         case DATA_TYPE_STRUCTURE:
-            return static_cast <quint8> (data.length() - *offset);
+        {
+            int count = total < 2 ? 0 : qFromLittleEndian <quint16> (data.constData() + *offset);
+
+            size = 2;
+
+            for (int i = 0; i < count && size < total; i++)
+            {
+                quint8 length = zclDataSize(static_cast <quint8> (data.at(*offset + size)));
+                size += length ? length + 1 : total;
+            }
+
+            break;
+        }
+
+        default:
+            return zclDataSize(dataType);
     }
 
-    return zclDataSize(dataType);
+    return static_cast <quint8> (size < total ? size : total);
 }

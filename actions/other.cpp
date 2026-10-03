@@ -2,6 +2,65 @@
 #include "other.h"
 #include "zcl.h"
 
+QVariant ActionsSonoff::Thermostat::request(const QString &name, const QVariant &data)
+{
+    QMap <QString, QVariant> map = endpointProperty()->value().toMap();
+
+    map.insert(name, data);
+
+    switch (m_actions.indexOf(name))
+    {
+        case 0: // sensorType
+        case 1: // externalTemperature
+        {
+            QByteArray payload = QByteArray::fromHex("2008000101000103");
+            qint16 value = qToLittleEndian <qint16> (map.value("externalTemperature").toDouble() * 100);
+            int index = enumIndex("sensorType", map.value("sensorType", "internal"));
+            return index < 0 ? QByteArray() : writeAttribute(0x601E, DATA_TYPE_ARRAY, payload.append(static_cast <char> (index)).append(reinterpret_cast <char*> (&value), sizeof(value)));
+        }
+
+        case 2: // hysteresisLow
+        case 3: // hysteresisHigh
+        {
+            QByteArray payload = QByteArray::fromHex("0200");
+            qint16 low = qToLittleEndian <qint16> (map.value("hysteresisLow", -0.2).toDouble() * 100), high = qToLittleEndian <qint16> (map.value("hysteresisHigh", 0.2).toDouble() * 100);
+            return writeAttribute(0x601F, DATA_TYPE_STRUCTURE, payload.append(DATA_TYPE_16BIT_SIGNED).append(reinterpret_cast <char*> (&low), sizeof(low)).append(DATA_TYPE_16BIT_SIGNED).append(reinterpret_cast <char*> (&high), sizeof(high)));
+        }
+    }
+
+    return QByteArray();
+}
+
+QVariant ActionsSonoff::ThermostatProgram::request(const QString &name, const QVariant &data)
+{
+    const Property &property = endpointProperty("sonoffThermostat");
+    QList <QString> typeList = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
+    QString type = name.mid(0, name.indexOf('P'));
+    QByteArray payload = QByteArray::fromHex("01010006");
+
+    payload.append(static_cast <char> (1 << typeList.indexOf(type)));
+    payload.append(0x01);
+
+    if (m_data.isEmpty() || meta(QString("%1Program").arg(type)).toBool())
+    {
+        m_data = property->value().toMap();
+        setMeta(QString("%1Program").arg(type), false);
+    }
+
+    m_data.insert(name, data);
+
+    for (int i = 0; i < 6; i++)
+    {
+        QString key = QString("%1P%2").arg(type).arg(i + 1);
+        quint16 time = qToLittleEndian(static_cast <quint16> (m_data.value(QString("%1Hour").arg(key), i * 4).toInt() * 60 + m_data.value(QString("%1Minute").arg(key), 0).toInt()));
+        quint16 temperature = qToLittleEndian(static_cast <quint16> (m_data.value(QString("%1Temperature").arg(key), 21).toDouble() * 100));
+        payload.append(reinterpret_cast <char*> (&time), sizeof(time));
+        payload.append(reinterpret_cast <char*> (&temperature), sizeof(temperature));
+    }
+
+    return QList <QVariant> {zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x13).append(payload), zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x13).append(QByteArray::fromHex("010000"))};
+}
+
 QVariant ActionsYandex::CommonSettings::request(const QString &name, const QVariant &data)
 {
     int index = m_actions.indexOf(name);

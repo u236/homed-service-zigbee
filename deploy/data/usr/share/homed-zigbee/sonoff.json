@@ -163,6 +163,45 @@
                         }
     },
     {
+      "description":    "Sonoff Electric Thermostat TP-WGZBA",
+      "modelNames":     ["TP-WGZBA"],
+      "properties":     ["thermostat", "sonoffThermostat"],
+      "actions":        ["thermostat", "sonoffThermostat", "sonoffThermostatProgram"],
+      "bindings":       ["thermostat"],
+      "reportings":     ["thermostat"],
+      "exposes":        ["thermostat", "childLock", "windowDetection", "awayTemperature", "floorTemperature", "relayMode", "sensorType", "externalTemperature", "temperatureProtection", "temperatureThreshold", "temperatureOffset", "hysteresisLow", "hysteresisHigh", "motionDetection", "motionSensitivity", "thermostatProgram"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "childLock":              {"type": "bool",  "clusterId": 64529, "attributeId": 0,     "dataType": 16, "action": true},
+                            "windowDetection":        {"type": "bool",  "clusterId": 64529, "attributeId": 24576, "dataType": 16, "action": true},
+                            "awayTemperature":        {"type": "value", "clusterId": 64529, "attributeId": 24578, "dataType": 41, "divider": 100, "action": true},
+                            "motionSensitivity":      {"type": "enum",  "clusterId": 64529, "attributeId": 24608, "dataType": 32, "action": true},
+                            "relayMode":              {"type": "enum",  "clusterId": 64529, "attributeId": 24616, "dataType": 24, "action": true},
+                            "temperatureThreshold":   {"type": "value", "clusterId": 64529, "attributeId": 24626, "dataType": 41, "divider": 100, "action": true},
+                            "temperatureProtection":  {"type": "bool",  "clusterId": 64529, "attributeId": 24628, "dataType": 16, "action": true},
+                            "motionDetection":        {"type": "bool",  "clusterId": 64529, "attributeId": 24629, "dataType": 16, "action": true}
+                          },
+                          "systemMode": {"enum": ["off", "auto", "heat"]},
+                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "awayTemperature": {"min": 5, "max": 15, "step": 0.5},
+                          "motionSensitivity": {"type": "select", "enum": ["low", "medium", "high"]},
+                          "relayMode": {"type": "select", "enum": ["default", "relayInvert", "contactInvert", "invert"]},
+                          "temperatureThreshold": {"min": 20, "max": 50, "step": 0.5},
+                          "temperatureProtection": {"type": "toggle", "icon": "mdi:thermometer"},
+                          "motionDetection": {"type": "toggle"},
+                          "floorTemperature": {"type": "sensor", "unit": "°C"},
+                          "sensorType": {"enum": ["internal", "external"]},
+                          "externalTemperature": {"min": 0, "max": 60, "step": 0.1},
+                          "temperatureOffset": {"min": -10, "max": 10, "step": 0.2},
+                          "hysteresisLow": {"type": "number", "min": -2.6, "max": -0.2, "step": 0.2, "unit": "°C", "icon": "mdi:thermometer"},
+                          "hysteresisHigh": {"type": "number", "min": 0, "max": 2.6, "step": 0.2, "unit": "°C", "icon": "mdi:thermometer"},
+                          "thermostatProgram": "daily",
+                          "programTransitions": 6,
+                          "runningStatus": true
+                        }
+    },
+    {
       "description":    "Sonoff Smart Water Valve SWV",
       "modelNames":     ["SWV"],
       "properties":     ["batteryPercentage", "status", "flow"],

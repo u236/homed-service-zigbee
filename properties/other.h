@@ -12,8 +12,8 @@ namespace PropertiesByun
     public:
 
         Sensor(const QString &name, QList <quint16> clusters) : PropertyObject(name, clusters) {}
-        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
         void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     };
 
@@ -64,6 +64,20 @@ namespace PropertiesIKEA
     public:
 
         ArrowAction(void) : PropertyObject("action", CLUSTER_SCENES) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
+}
+
+namespace PropertiesSonoff
+{
+    class Thermostat : public PropertyObject
+    {
+
+    public:
+
+        Thermostat(void) : PropertyObject("sonoffThermostat", CLUSTER_SONOFF, {0x601E, 0x601F, 0x6031}) {}
+        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
         void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
 
     };

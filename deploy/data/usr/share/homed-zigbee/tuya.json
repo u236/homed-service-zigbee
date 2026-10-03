@@ -1085,7 +1085,7 @@
       "modelNames":     ["_TZE200_mfamvsdb"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["action_1", "action_2", "action_3", "action_4", "backlight", "approach", "vibration"],
+      "exposes":        ["action_1", "action_2", "action_3", "action_4", "backlight", "motionDetection", "vibration"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -1094,11 +1094,11 @@
                             "3":    {"name": "action_3", "type": "enum"},
                             "4":    {"name": "action_4", "type": "enum"},
                             "105":  {"name": "backlight", "type": "enum", "action": true},
-                            "107":  {"name": "approach", "type": "enum", "action": true},
+                            "107":  {"name": "motionDetection", "type": "enum", "action": true},
                             "108":  {"name": "vibration", "type": "enum", "action": true}
                           },
                           "action": {"enum": ["singleClick"]},
-                          "approach": {"type": "toggle"},
+                          "motionDetection": {"type": "toggle"},
                           "vibration": {"type": "toggle"},
                           "checkTransactionId": true
                         }

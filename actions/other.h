@@ -4,6 +4,33 @@
 #include "action.h"
 #include "zcl.h"
 
+namespace ActionsSonoff
+{
+    class Thermostat : public ActionObject
+    {
+
+    public:
+
+        Thermostat(void) : ActionObject("sonoffThermostat", CLUSTER_SONOFF, 0x0000, {0x601E, 0x601F}, {"sensorType", "externalTemperature", "hysteresisLow", "hysteresisHigh"}) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
+    class ThermostatProgram : public ActionObject
+    {
+
+    public:
+
+        ThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_SONOFF, 0x0000) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    private:
+
+        QMap <QString, QVariant> m_data;
+
+    };
+}
+
 namespace ActionsYandex
 {
     class CommonSettings : public ActionObject

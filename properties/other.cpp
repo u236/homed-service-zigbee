@@ -1,21 +1,6 @@
 #include <QtEndian>
 #include "other.h"
 
-void PropertiesByun::Sensor::parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload)
-{
-    quint16 value = 0;
-
-    if (clusterId != CLUSTER_IAS_ZONE || commandId != 0x00)
-        return;
-
-    memcpy(&value, payload.constData(), sizeof(value));
-
-    if (qFromLittleEndian(value) != 0x0021)
-        return;
-
-    m_value = true;
-}
-
 void PropertiesByun::Sensor::parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data)
 {
     qint16 value = 0;
@@ -29,6 +14,21 @@ void PropertiesByun::Sensor::parseAttribute(quint16 clusterId, quint16 attribute
         return;
 
     m_value = false;
+}
+
+void PropertiesByun::Sensor::parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload)
+{
+    quint16 value = 0;
+
+    if (clusterId != CLUSTER_IAS_ZONE || commandId != 0x00)
+        return;
+
+    memcpy(&value, payload.constData(), sizeof(value));
+
+    if (qFromLittleEndian(value) != 0x0021)
+        return;
+
+    m_value = true;
 }
 
 void PropertiesIKEA::Occupancy::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
@@ -88,6 +88,81 @@ void PropertiesIKEA::ArrowAction::parseCommand(quint16, quint8 commandId, const 
             clearMeta("arrow");
             break;
     }
+}
+
+void PropertiesSonoff::Thermostat::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+
+    switch (attributeId)
+    {
+        case 0x601E:
+
+            if (data.length() < 11 || !data.at(3) || data.at(6) != 0x01)
+            {
+                map.insert("sensorType", "internal");
+                break;
+            }
+
+            map.insert("sensorType", enumValue("sensorType", static_cast <quint8> (data.at(8))));
+            map.insert("externalTemperature", qFromLittleEndian <qint16> (data.constData() + 9) / 100.0);
+            break;
+
+        case 0x601F:
+
+            if (data.length() < 8)
+                break;
+
+            map.insert("hysteresisLow", qFromLittleEndian <qint16> (data.constData() + 3) / 100.0);
+            map.insert("hysteresisHigh", qFromLittleEndian <qint16> (data.constData() + 6) / 100.0);
+            break;
+
+        case 0x6031:
+        {
+            qint16 value = qFromLittleEndian <qint16> (data.constData());
+
+            if (value > -27314)
+                map.insert("floorTemperature", value / 100.0);
+            else
+                map.remove("floorTemperature");
+
+            break;
+        }
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
+}
+
+void PropertiesSonoff::Thermostat::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
+{
+    QMap <QString, QVariant> map = m_value.toMap();
+    QList <QString> typeList = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"};
+    QString type;
+
+    if (commandId != 0x13 || payload.length() < 6 || payload.at(0) != 0x01 || payload.at(1) || payload.at(5) != 0x01 || payload.length() < payload.at(3) * 4 + 6)
+        return;
+
+    for (int i = 0; i < typeList.count(); i++)
+    {
+        if (payload.at(4) & (1 << i))
+        {
+            type = typeList.at(i);
+            break;
+        }
+    }
+
+    setMeta(QString("%1Program").arg(type), true);
+
+    for (int i = 0; i < payload.at(3); i++)
+    {
+        QString key = QString("%1P%2").arg(type).arg(i + 1);
+        quint16 time = qFromLittleEndian <quint16> (payload.constData() + i * 4 + 6);
+        map.insert(QString("%1Hour").arg(key), static_cast <quint8> (time / 60));
+        map.insert(QString("%1Minute").arg(key), static_cast <quint8> (time % 60));
+        map.insert(QString("%1Temperature").arg(key), (qFromLittleEndian <quint16> (payload.constData() + i * 4 + 8)) / 100.0);
+    }
+
+    m_value = map.isEmpty() ? QVariant() : map;
 }
 
 void PropertiesYandex::Settings::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)

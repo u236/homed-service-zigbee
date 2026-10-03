@@ -111,6 +111,7 @@
 
 #define CLUSTER_BYUN                            0x040A
 #define CLUSTER_YANDEX                          0xFC03
+#define CLUSTER_SONOFF                          0xFC11
 #define CLUSTER_LUMI                            0xFCC0
 
 #define CLUSTER_TUYA_DATA                       0xEF00
