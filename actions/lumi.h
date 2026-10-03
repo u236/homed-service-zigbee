@@ -35,7 +35,7 @@ namespace ActionsLUMI
 
     public:
 
-        RadiatorThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x027E, {"sensorType", "externalTemperature"}) {}
+        RadiatorThermostat(void) : ActionObject("radiatorThermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x027E, {"sensorType", "externalTemperature"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
@@ -49,7 +49,7 @@ namespace ActionsLUMI
 
     public:
 
-        ElectricThermostat(void) : ActionObject("thermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x024F, {"targetTemperature", "systemMode", "fanMode"}) {}
+        ElectricThermostat(void) : ActionObject("electricThermostat", CLUSTER_LUMI, MANUFACTURER_CODE_LUMI, 0x024F, {"targetTemperature", "systemMode", "fanMode"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
