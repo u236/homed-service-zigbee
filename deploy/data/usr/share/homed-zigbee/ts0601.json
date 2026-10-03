@@ -1934,6 +1934,32 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Noise Sensor",
+      "modelNames":     ["_TZE204_r6kfl9ta"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["noiseStatus", "noiseLevel", "noiseLow", "noiseHigh", "detectionDelay", "noiseTimeout", "reportingThreshold"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "noiseLevel", "type": "value"},
+                            "8":    {"name": "noiseStatus", "type": "enum"},
+                            "16":   {"name": "noiseLow", "type": "value", "action": true},
+                            "20":   {"name": "noiseHigh", "type": "value", "action": true},
+                            "22":   {"name": "noiseTimeout", "type": "value", "action": true},
+                            "102":  {"name": "reportingThreshold", "type": "enum", "action": true},
+                            "103":  {"name": "detectionDelay", "type": "value", "action": true}
+                          },
+                          "noiseLevel": {"type": "sensor", "unit": "dB", "icon": "mdi:ear-hearing"},
+                          "noiseStatus": {"type": "sensor", "enum": ["low", "medium", "high"], "icon": "mdi:ear-hearing"},
+                          "noiseLow": {"type": "number", "min": 0, "max": 60, "unit": "dB", "icon": "mdi:ear-hearing"},
+                          "noiseHigh": {"type": "number", "min": 10, "max": 100, "unit": "dB", "icon": "mdi:ear-hearing"},
+                          "noiseTimeout": {"type": "number", "min": 0, "max": 300, "unit": "sec", "icon": "mdi:timer"},
+                          "reportingThreshold": {"type": "select", "enum": ["1 dB", "3 dB", "5 dB", "10 dB", "20 dB", "off"], "icon": "mdi:tune-variant"},
+                          "detectionDelay": {"min": 0, "max": 300}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Temperature and Humidity Sensor (Type A)",
       "modelNames":     ["_TZE200_44af8vyi", "_TZE200_bq5c8xfe", "_TZE200_ysm4dsb1"],
       "properties":     ["tuyaDataPoints"],
