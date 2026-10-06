@@ -209,7 +209,7 @@ protected:
     QTcpSocket *m_socket;
     QIODevice *m_device;
 
-    bool m_ready, m_serialError, m_connected;
+    bool m_ready, m_connected;
 
     QHostAddress m_adddress;
     quint16 m_port;

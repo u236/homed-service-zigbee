@@ -8,7 +8,7 @@
 #include "logger.h"
 #include "zcl.h"
 
-Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_ready(false), m_serialError(false), m_connected(false), m_permitJoinAddress(PERMIT_JOIN_BROARCAST_ADDRESS), m_permitJoin(false), m_errorCount(0)
+Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiveTimer(new QTimer(this)), m_resetTimer(new QTimer(this)), m_permitJoinTimer(new QTimer(this)), m_serial(new QSerialPort(this)), m_socket(new QTcpSocket(this)), m_ready(false), m_connected(false), m_permitJoinAddress(PERMIT_JOIN_BROARCAST_ADDRESS), m_permitJoin(false), m_errorCount(0)
 {
     QString portName = config->value("zigbee/port", "/dev/ttyUSB0").toString();
 
@@ -288,16 +288,14 @@ void Adapter::sendData(const QByteArray &buffer)
 void Adapter::serialError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::SerialPortError::NoError)
-    {
-        m_serialError = false;
         return;
-    }
 
-    if (!m_serialError)
-        logWarning << "Serial port error:" << error;
+    logWarning << "Serial port error:" << error;
+
+    if (m_serial->isOpen())
+        m_serial->close();
 
     m_resetTimer->start(RESET_TIMEOUT);
-    m_serialError = true;
 }
 
 void Adapter::socketError(QTcpSocket::SocketError error)
