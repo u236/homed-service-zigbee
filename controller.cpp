@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <QRandomGenerator>
 #include "controller.h"
 #include "logger.h"
@@ -12,7 +13,7 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
         QFile file(getConfig()->fileName());
         bool check = false;
 
-        if (file.open(QFile::ReadWrite))
+        if (file.open(QFile::ReadWrite | QFile::Unbuffered))
         {
             QByteArray data = file.readAll();
 
@@ -41,8 +42,8 @@ Controller::Controller(const QString &configFile) : HOMEd(SERVICE_VERSION, confi
             if (file.write(data) == data.length())
                 check = true;
 
+            fsync(file.handle());
             file.close();
-            system("sync");
         }
 
         if (!check)
