@@ -1,5 +1,4 @@
 #include "actions/common.h"
-#include "actions/efekta.h"
 #include "actions/ias.h"
 #include "actions/lumi.h"
 #include "actions/other.h"
@@ -33,7 +32,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsLUMI::RadiatorThermostat>         ("lumiRadiatorThermostatAction");
     qRegisterMetaType <ActionsLUMI::ElectricThermostat>         ("lumiElectricThermostatAction");
     qRegisterMetaType <ActionsLUMI::ThermostatProgram>          ("lumiThermostatProgramAction");
-    qRegisterMetaType <ActionsLUMI::ButtonMode>                 ("lumiButtonModeAction");
     qRegisterMetaType <ActionsLUMI::SwitchStatusMemory>         ("lumiSwitchStatusMemoryAction");
     qRegisterMetaType <ActionsLUMI::LightStatusMemory>          ("lumiLightStatusMemoryAction");
     qRegisterMetaType <ActionsLUMI::BasicStatusMemory>          ("lumiBasicStatusMemoryAction");
@@ -53,7 +51,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::LedController>              ("tuyaLedControllerAction");
     qRegisterMetaType <ActionsTUYA::CoverMotor>                 ("tuyaCoverMotorAction");
     qRegisterMetaType <ActionsTUYA::CoverSwitch>                ("tuyaCoverSwitchAction");
-    qRegisterMetaType <ActionsTUYA::ChildLock>                  ("tuyaChildLockAction");
     qRegisterMetaType <ActionsTUYA::Level>                      ("tuyaLevelAction");
     qRegisterMetaType <ActionsTUYA::Threshold>                  ("tuyaThresholdAction");
     qRegisterMetaType <ActionsTUYA::IRCode>                     ("tuyaIRCodeAction");
@@ -62,13 +59,6 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsTUYA::IndicatorMode>              ("tuyaIndicatorModeAction");
     qRegisterMetaType <ActionsTUYA::SwitchType>                 ("tuyaSwitchTypeAction");
     qRegisterMetaType <ActionsTUYA::PowerOnStatus>              ("tuyaPowerOnStatusAction");
-
-    qRegisterMetaType <ActionsEfekta::ReadInterval>             ("efektaReadIntervalAction");
-    qRegisterMetaType <ActionsEfekta::TemperatureSettings>      ("efektaTemperatureSettingsAction");
-    qRegisterMetaType <ActionsEfekta::HumiditySettings>         ("efektaHumiditySettingsAction");
-    qRegisterMetaType <ActionsEfekta::CO2Settings>              ("efektaCO2SettingsAction");
-    qRegisterMetaType <ActionsEfekta::PMSensor>                 ("efektaPMSensorAction");
-    qRegisterMetaType <ActionsEfekta::VOCSensor>                ("efektaVOCSensorAction");
 
     qRegisterMetaType <ActionsPTVO::ChangePattern>              ("ptvoChangePatternAction");
     qRegisterMetaType <ActionsPTVO::Count>                      ("ptvoCountAction");

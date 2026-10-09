@@ -776,7 +776,7 @@ void ZigBee::interviewFinished(const Device &device)
                 attributes.append(attributeId);
             }
 
-            if (attributes.isEmpty() || dataRequest(it.value(), clusterId, readAttributesRequest(m_requestId, 0x0000, attributes), QString("read %1 request").arg(property->name())))
+            if (attributes.isEmpty() || dataRequest(it.value(), clusterId, readAttributesRequest(m_requestId, property->manufacturerCode(), attributes), QString("read %1 request").arg(property->name())))
                 continue;
 
             break;

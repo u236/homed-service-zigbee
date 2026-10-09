@@ -322,12 +322,6 @@ QVariant ActionsTUYA::CoverSwitch::request(const QString &name, const QVariant &
     return QByteArray();
 }
 
-QVariant ActionsTUYA::ChildLock::request(const QString &, const QVariant &data)
-{
-    qint8 value = data.toBool() ? 0x01 : 0x00;
-    return writeAttribute(DATA_TYPE_BOOLEAN, &value, sizeof(value));
-}
-
 QVariant ActionsTUYA::Level::request(const QString &, const QVariant &data)
 {
     const Property &property = endpointProperty("status");

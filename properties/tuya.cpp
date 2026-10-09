@@ -359,14 +359,6 @@ void PropertiesTUYA::CoverSwitch::parseAttribute(quint16, quint16 attributeId, c
     m_value = map.isEmpty() ? QVariant() : map;
 }
 
-void PropertiesTUYA::ChildLock::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != m_attributes.at(0))
-        return;
-
-    m_value = data.at(0) ? true : false;
-}
-
 void PropertiesTUYA::ButtonAction::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
 {
     switch (commandId)

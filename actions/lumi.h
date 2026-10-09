@@ -68,16 +68,6 @@ namespace ActionsLUMI
 
     };
 
-    class ButtonMode : public ActionObject
-    {
-
-    public:
-
-        ButtonMode(void) : ActionObject("buttonMode", CLUSTER_BASIC, MANUFACTURER_CODE_LUMI, {0xFF22, 0xFF23}, {"buttonMode", "leftMode", "rightMode"}) {}
-        QVariant request(const QString &name, const QVariant &data) override;
-
-    };
-
     class SwitchStatusMemory : public ActionObject
     {
 

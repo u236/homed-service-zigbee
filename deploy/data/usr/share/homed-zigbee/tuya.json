@@ -580,10 +580,13 @@
     {
       "description":    "TUYA TS011F Smart Plug with USB",
       "modelNames":     ["_TZ3000_2xlvlnez", "_TZ3000_cymsnfvf"],
-      "properties":     ["tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "indicatorMode", "childLock"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "options":        {"customAttributes_1": {"childLock": {"type": "bool", "clusterId": 6, "attributeId": 32768, "dataType": 16, "action": true}}, "switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}}
+    },
+    {
+      "modelNames":     ["_TZ3000_2xlvlnez", "_TZ3000_cymsnfvf"],
+      "properties":     ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "endpointId":     1
     },
     {
@@ -607,10 +610,13 @@
     {
       "description":    "TUYA TS011F 4-Channel Smart Plug with USB",
       "modelNames":     ["_TZ3000_9djocypn", "_TZ3000_air9m6af", "_TZ3000_bppxj3sf", "_TZ3000_cfnprab5", "_TZ3000_gdyjfvgm", "_TZ3000_o005nuxx", "_TZ3000_pl5v1yyy"],
-      "properties":     ["tuyaChildLock", "tuyaPowerOnStatus"],
-      "actions":        ["tuyaChildLock", "tuyaPowerOnStatus"],
       "exposes":        ["powerOnStatus", "childLock"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}},
+      "options":        {"customAttributes_1": {"childLock": {"type": "bool", "clusterId": 6, "attributeId": 32768, "dataType": 16, "action": true}}, "switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}}
+    },
+    {
+      "modelNames":     ["_TZ3000_9djocypn", "_TZ3000_air9m6af", "_TZ3000_bppxj3sf", "_TZ3000_cfnprab5", "_TZ3000_gdyjfvgm", "_TZ3000_o005nuxx", "_TZ3000_pl5v1yyy"],
+      "properties":     ["tuyaPowerOnStatus"],
+      "actions":        ["tuyaPowerOnStatus"],
       "endpointId":     1
     },
     {
@@ -624,21 +630,21 @@
     {
       "description":    "TUYA TS011F Smart Plug with Power Monitoring Polling",
       "modelNames":     ["_TZ3000_0yxeawjt", "_TZ3000_5f43h46b", "_TZ3000_cphmq0q7", "_TZ3000_ohifjqrm", "_TZ3000_okaz9tjs", "_TZ3000_ps3dmato", "_TZ3000_u5u4cakc", "_TZ3000_wzmuk9ai"],
-      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "polls":          ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "indicatorMode", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000, "pollInterval": 30}
+      "options":        {"customAttributes": {"childLock": {"type": "bool", "clusterId": 6, "attributeId": 32768, "dataType": 16, "action": true}}, "switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000, "pollInterval": 30}
     },
     {
       "description":    "TUYA TS011F Smart Plug with Power Monitoring",
       "modelNames":     ["TS011F"],
-      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
-      "actions":        ["status", "tuyaChildLock", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "properties":     ["status", "energy", "voltage", "current", "power", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
+      "actions":        ["status", "tuyaIndicatorMode", "tuyaPowerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
       "exposes":        ["switch", "powerOnStatus", "indicatorMode", "childLock", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000}
+      "options":        {"customAttributes": {"childLock": {"type": "bool", "clusterId": 6, "attributeId": 32768, "dataType": 16, "action": true}}, "switch": "outlet", "powerOnStatus": {"enum": ["off", "on", "previous"]}, "energyDivider": 100, "acCurrentDivider": 1000}
     },
     {
       "description":    "TUYA TS011F 1-Channel Switch",

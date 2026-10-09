@@ -49,21 +49,10 @@
     {
       "description":    "Slacky Water Meter",
       "modelNames":     ["Watermeter_TLSR8258"],
-      "options":        {"endpointName": {"1": "Hot", "2": "Cold"}}
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "properties":     ["batteryPercentage"],
-      "bindings":       ["battery"],
-      "reportings":     ["batteryPercentage"],
-      "exposes":        ["battery"],
-      "endpointId":     1
-    },
-    {
-      "modelNames":     ["Watermeter_TLSR8258"],
-      "exposes":        ["hotPreset", "coldPreset", "pulseVolume"],
+      "exposes":        ["battery", "waterLeak", "hotPreset", "coldPreset", "pulseVolume"],
       "options":        {
-                          "customAttributes":
+                          "endpointName": {"1": "Hot", "2": "Cold"},
+                          "customAttributes_3":
                           {
                             "hotPreset":    {"type": "value", "clusterId": 1794, "attributeId": 61440, "dataType": 35, "action": true},
                             "coldPreset":   {"type": "value", "clusterId": 1794, "attributeId": 61441, "dataType": 35, "action": true},
@@ -72,13 +61,23 @@
                           "hotPreset": {"min": 0, "max": 1000000000},
                           "coldPreset": {"min": 0, "max": 1000000000},
                           "pulseVolume": {"min": 1, "max": 100}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "properties":     ["batteryPercentage"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "endpointId":     1
+    },
+    {
+      "modelNames":     ["Watermeter_TLSR8258"],
+      "note":           "custom attributes endpoint",
       "endpointId":     3
     },
     {
       "modelNames":     ["Watermeter_TLSR8258"],
       "properties":     ["iasWaterLeak"],
-      "exposes":        ["waterLeak"],
       "endpointId":     4
     },
     {
@@ -162,12 +161,9 @@
     {
       "description":    "TUYA TS0201 Temperature and Humidity Sensor with Slacky Firmware",
       "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD", "TS0201-z28-SlD", "TS0201-z29-SlD", "TS0201-z2C-SlD"],
-      "properties":     ["batteryPercentage", "temperature", "humidity"],
-      "bindings":       ["battery", "temperature", "humidity"],
-      "reportings":     ["batteryPercentage", "temperature", "humidity"],
       "exposes":        ["battery", "temperature", "humidity", "readInterval", "temperatureOffset", "humidityOffset", "temperatureRelay", "temperatureLow", "temperatureHigh", "humidityRelay", "humidityLow", "humidityHigh", "repeatCommand"],
       "options":        {
-                          "customAttributes":
+                          "customAttributes_1":
                           {
                             "readInterval":       {"type": "value", "clusterId": 1026, "attributeId": 61440, "dataType": 33, "action": true},
                             "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 61441, "dataType": 41, "divider": 100, "action": true},
@@ -188,7 +184,13 @@
                           "humidityOffset": {"min": -10, "max": 10},
                           "humidityLow": {"min": 0, "max": 100},
                           "humidityHigh": {"min": 0, "max": 100}
-                        },
+                        }
+    },
+    {
+      "modelNames":     ["TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD", "TS0201-z28-SlD", "TS0201-z29-SlD", "TS0201-z2C-SlD"],
+      "properties":     ["batteryPercentage", "temperature", "humidity"],
+      "bindings":       ["battery", "temperature", "humidity"],
+      "reportings":     ["batteryPercentage", "temperature", "humidity"],
       "endpointId":     1
     },
     {

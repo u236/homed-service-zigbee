@@ -449,47 +449,6 @@ void PropertiesLUMI::Data::parseData(quint16 dataPoint, const QByteArray &data, 
     }
 }
 
-void PropertiesLUMI::ButtonMode::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
-{
-    QMap <QString, QVariant> map = m_value.toMap();
-    bool check = modelName() == "lumi.ctrl_neutral1";
-    QString value;
-
-    switch (static_cast <quint8> (data.at(0)))
-    {
-        case 0x12: value = check ? "relay" : "leftRelay"; break;
-        case 0x22: value = "rightRelay"; break;
-        case 0xFE: value = "decoupled"; break;
-    }
-
-    switch (attributeId)
-    {
-        case 0xFF22: map.insert(check ? "buttonMode" : "leftMode", value); break;
-        case 0xFF23: map.insert("rightMode", value); break;
-    }
-
-    m_value = map.isEmpty() ? QVariant() : map;
-}
-
-void PropertiesLUMI::Contact::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
-{
-    if (attributeId != m_attributes.at(0))
-        return;
-
-    m_value = data.at(0) ? true : false;
-}
-
-void PropertiesLUMI::Power::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
-{
-    float value = 0;
-
-    if (attributeId != m_attributes.at(0) || static_cast <size_t> (data.length()) > sizeof(value))
-        return;
-
-    memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value);
-}
-
 void PropertiesLUMI::Cover::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map;

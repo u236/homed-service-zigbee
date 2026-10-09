@@ -1,5 +1,4 @@
 #include "properties/common.h"
-#include "properties/efekta.h"
 #include "properties/ias.h"
 #include "properties/lumi.h"
 #include "properties/other.h"
@@ -61,9 +60,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIAS::ContolAction>                 ("iasContolActionProperty");
 
     qRegisterMetaType <PropertiesLUMI::Data>                        ("lumiDataProperty");
-    qRegisterMetaType <PropertiesLUMI::ButtonMode>                  ("lumiButtonModeProperty");
-    qRegisterMetaType <PropertiesLUMI::Contact>                     ("lumiContactProperty");
-    qRegisterMetaType <PropertiesLUMI::Power>                       ("lumiPowerProperty");
     qRegisterMetaType <PropertiesLUMI::Cover>                       ("lumiCoverProperty");
     qRegisterMetaType <PropertiesLUMI::ButtonAction>                ("lumiButtonActionProperty");
     qRegisterMetaType <PropertiesLUMI::SwitchAction>                ("lumiSwitchActionProperty");
@@ -79,7 +75,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::LedController>               ("tuyaLedControllerProperty");
     qRegisterMetaType <PropertiesTUYA::CoverMotor>                  ("tuyaCoverMotorProperty");
     qRegisterMetaType <PropertiesTUYA::CoverSwitch>                 ("tuyaCoverSwitchProperty");
-    qRegisterMetaType <PropertiesTUYA::ChildLock>                   ("tuyaChildLockProperty");
     qRegisterMetaType <PropertiesTUYA::ButtonAction>                ("tuyaButtonActionProperty");
     qRegisterMetaType <PropertiesTUYA::ButtonScene>                 ("tuyaButtonSceneProperty");
     qRegisterMetaType <PropertiesTUYA::Level>                       ("tuyaLevelProperty");
@@ -89,13 +84,6 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesTUYA::IndicatorMode>               ("tuyaIndicatorModeProperty");
     qRegisterMetaType <PropertiesTUYA::SwitchType>                  ("tuyaSwitchTypeProperty");
     qRegisterMetaType <PropertiesTUYA::PowerOnStatus>               ("tuyaPowerOnStatusProperty");
-
-    qRegisterMetaType <PropertiesEfekta::ReadInterval>              ("efektaReadIntervalProperty");
-    qRegisterMetaType <PropertiesEfekta::TemperatureSettings>       ("efektaTemperatureSettingsProperty");
-    qRegisterMetaType <PropertiesEfekta::HumiditySettings>          ("efektaHumiditySettingsProperty");
-    qRegisterMetaType <PropertiesEfekta::CO2Settings>               ("efektaCO2SettingsProperty");
-    qRegisterMetaType <PropertiesEfekta::PMSensor>                  ("efektaPMSensorProperty");
-    qRegisterMetaType <PropertiesEfekta::VOCSensor>                 ("efektaVOCSensorProperty");
 
     qRegisterMetaType <PropertiesPTVO::ChangePattern>               ("ptvoChangePatternProperty");
     qRegisterMetaType <PropertiesPTVO::WaterLeak>                   ("ptvoWaterLeakProperty");

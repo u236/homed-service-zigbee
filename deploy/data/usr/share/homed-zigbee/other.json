@@ -186,7 +186,7 @@
       "modelNames":     ["L101Z-SBN"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis"],
       "options":        {
-                          "customAttributes": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 30464, "dataType": 48, "action": true}},
+                          "customAttributes_3": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 30464, "dataType": 48, "action": true}},
                           "systemMode": {"enum": ["off", "heat"]},
                           "targetTemperature": {"min": 15, "max": 35, "step": 0.5},
                           "temperatureOffset": {"min": -3, "max": 3, "step": 0.1},
@@ -214,7 +214,7 @@
       "modelNames":     ["L101Ze-SBN"],
       "exposes":        ["thermostat", "childLock", "sensorType", "temperatureOffset", "hysteresis"],
       "options":        {
-                          "customAttributes": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 65280, "dataType": 48, "action": true}},
+                          "customAttributes_3": {"sensorType": {"type": "enum", "clusterId": 513, "manufacturerCode": 30583, "attributeId": 65280, "dataType": 48, "action": true}},
                           "systemMode": {"enum": ["off", "heat"]},
                           "targetTemperature": {"min": 15, "max": 35, "step": 0.5},
                           "temperatureOffset": {"min": -2.5, "max": 2.5, "step": 0.1},
@@ -334,8 +334,9 @@
     {
       "description":    "Perenio Door and Window Sensor PECWS01 with RE Firmware",
       "modelNames":     ["lumi.sensor_magnet.aq2"],
-      "properties":     ["lumiData", "lumiContact"],
-      "exposes":        ["battery", "contact"]
+      "properties":     ["lumiData"],
+      "exposes":        ["battery", "contact"],
+      "options":        {"customAttributes": {"contact": {"type": "bool", "clusterId": 6, "attributeId": 0, "dataType": 16}}}
     }
   ],
 
@@ -492,8 +493,9 @@
     {
       "description":    "Wiren Board Multifunctional Sensor WB-MSW-ZIGBEE v.4",
       "modelNames":     ["WB-MSW-ZIGBEE v.4"],
-      "exposes":        ["connectivity", "occupancy", "occupancyLevel", "noise", "noiseLevel", "illuminance", "temperature", "humidity", "co2", "voc", "noiseThreshold", "noiseTimeout", "occupancySensitivity", "occupancyTimeout", "temperatureOffset", "indicator", "slaveId", "serialNumber", "firmwareVersion", "firmwareSignature", "bootVersion", "componentVersion", "componentSignature"],
+      "exposes":        ["connectivity", "occupancy", "occupancyLevel", "noise", "noiseLevel", "illuminance", "temperature", "humidity", "co2", "voc", "noiseThreshold", "noiseTimeout", "occupancySensitivity", "occupancyTimeout", "indicator", "temperatureOffset", "slaveId", "serialNumber", "firmwareVersion", "firmwareSignature", "bootVersion", "componentVersion", "componentSignature", "irAction", "irRomId"],
       "options":        {
+                          "endpointName": {"2": "Beeper", "3": "Heater", "4": "Red", "5": "Green"},
                           "customAttributes_1":
                           {
                             "noiseLevel":           {"type": "value",  "clusterId": 12,   "attributeId": 85,   "dataType": 57},
@@ -514,7 +516,11 @@
                             "occupancySensitivity": {"type": "value",  "clusterId": 1030, "attributeId": 4097, "dataType": 33, "action": true},
                             "occupancyTimeout":     {"type": "value",  "clusterId": 1030, "attributeId": 4098, "dataType": 33, "action": true}
                           },
-                          "endpointName": {"2": "Beeper", "3": "Heater", "4": "Red", "5": "Green"},
+                          "customAttributes_6":
+                          {
+                            "irAction":             {"type": "enum",   "clusterId": 19,   "attributeId": 85,   "dataType": 33, "action": true, "binding": true},
+                            "irRomId":              {"type": "value",  "clusterId": 19,   "attributeId": 4096, "dataType": 33, "action": true}
+                          },
                           "noiseLevel": {"type": "sensor", "unit": "dBA", "round": 1, "icon": "mdi:ear-hearing"},
                           "noiseThreshold": {"type": "number", "min": 0, "max": 150, "unit": "dBA", "icon": "mdi:ear-hearing"},
                           "noiseTimeout": {"type": "number", "min": 0, "max": 2000, "unit": "sec", "icon": "mdi:timer"},
@@ -529,7 +535,9 @@
                           "temperatureOffset": {"min": -10, "max": 10, "step": 0.1},
                           "occupancyLevel": {"type": "sensor", "icon": "mdi:motion-sensor"},
                           "occupancySensitivity": {"type": "number", "min": 0, "max": 2000, "icon": "mdi:motion-sensor"},
-                          "occupancyTimeout": {"min": 0, "max": 2000}
+                          "occupancyTimeout": {"min": 0, "max": 2000},
+                          "irAction": {"type": "select", "enum": ["stop", "learnRam", "learnRom", "playRam", "playRom", "clearAllRom"], "icon": "mdi:remote"},
+                          "irRomId": {"type": "number", "min": 0, "max": 79, "icon": "mdi:memory", "collapse": true}
                         }
     },
     {
@@ -548,16 +556,7 @@
     },
     {
       "modelNames":     ["WB-MSW-ZIGBEE v.4"],
-      "exposes":        ["irAction", "irRomId"],
-      "options":        {
-                          "customAttributes_6":
-                          {
-                            "irAction": {"type": "enum",  "clusterId": 19, "attributeId": 85,   "dataType": 33, "action": true, "binding": true},
-                            "irRomId":  {"type": "value", "clusterId": 19, "attributeId": 4096, "dataType": 33, "action": true}
-                          },
-                          "irAction": {"type": "select", "enum": ["stop", "learnRam", "learnRom", "playRam", "playRom", "clearAllRom"], "icon": "mdi:remote"},
-                          "irRomId":  {"type": "number", "min": 0, "max": 79, "icon": "mdi:memory", "collapse": true}
-                        },
+      "note":           "custom attributes endpoint",
       "endpointId":     6
     }
   ],

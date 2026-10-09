@@ -19,13 +19,13 @@ class PropertyObject : public AbstractMetaObject
 public:
 
     PropertyObject(const QString &name, QList <quint16> clusters = {}) :
-        AbstractMetaObject(name), m_multiple(false), m_timeout(0), m_time(0), m_transactionId(0), m_clusters(clusters) {}
+        AbstractMetaObject(name), m_multiple(false), m_timeout(0), m_time(0), m_manufacturerCode(0), m_transactionId(0), m_clusters(clusters) {}
 
     PropertyObject(const QString &name, quint16 clusterId, QList <quint16> attributes = {}) :
-        AbstractMetaObject(name), m_multiple(false), m_timeout(0), m_time(0), m_transactionId(0), m_clusters({clusterId}), m_attributes({attributes}) {}
+        AbstractMetaObject(name), m_multiple(false), m_timeout(0), m_time(0), m_manufacturerCode(0), m_transactionId(0), m_clusters({clusterId}), m_attributes({attributes}) {}
 
     PropertyObject(const QString &name, quint16 clusterId, quint16 attributeId) :
-        AbstractMetaObject(name), m_multiple(false), m_timeout(0), m_time(0), m_transactionId(0), m_clusters({clusterId}), m_attributes({attributeId}) {}
+        AbstractMetaObject(name), m_multiple(false), m_timeout(0), m_time(0), m_manufacturerCode(0), m_transactionId(0), m_clusters({clusterId}), m_attributes({attributeId}) {}
 
     virtual ~PropertyObject(void) {}
     virtual void parseAttribute(quint16, quint16, const QByteArray &) {}
@@ -40,6 +40,9 @@ public:
 
     inline qint64 time(void) { return m_time; }
     inline void setTime(qint64 value) { m_time = value; }
+
+    inline quint16 manufacturerCode(void) { return m_manufacturerCode; }
+    inline void setManufacturerCode(quint16 value) { m_manufacturerCode = value; }
 
     inline quint8 transactionId(void) { return m_transactionId; }
     inline void setTransactionId(quint8 value) { m_transactionId = value; }
@@ -61,6 +64,7 @@ protected:
     quint32 m_timeout;
     qint64 m_time;
 
+    quint16 m_manufacturerCode;
     quint8 m_transactionId;
     QVariant m_value;
 

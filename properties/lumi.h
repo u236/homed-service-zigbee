@@ -21,36 +21,6 @@ namespace PropertiesLUMI
 
     };
 
-    class ButtonMode : public PropertyObject
-    {
-
-    public:
-
-        ButtonMode(void) : PropertyObject("buttonMode", CLUSTER_BASIC, {0xFF22, 0xFF23}) {}
-        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class Contact : public PropertyObject
-    {
-
-    public:
-
-        Contact(void) : PropertyObject("contact", CLUSTER_ON_OFF, 0x0000) {}
-        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
-    class Power : public PropertyObject
-    {
-
-    public:
-
-        Power(void) : PropertyObject("power", CLUSTER_ANALOG_INPUT, 0x0055) {}
-        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class Cover : public PropertyObject
     {
 

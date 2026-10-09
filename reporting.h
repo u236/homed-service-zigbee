@@ -340,25 +340,4 @@ namespace Reportings
     };
 }
 
-namespace ReportingsEfekta
-{
-    class PMSensor : public ReportingObject
-    {
-
-    public:
-
-        PMSensor(void) : ReportingObject("pmSensor", CLUSTER_PM25_CONCENTRATION, {0x0000, 0x00C8, 0x00C9}, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
-
-    };
-
-    class VOCSensor : public ReportingObject
-    {
-
-    public:
-
-        VOCSensor(void) : ReportingObject("vocSensor", CLUSTER_ANALOG_INPUT, 0x0055, DATA_TYPE_SINGLE_PRECISION, 0, 600, 0) {}
-
-    };
-}
-
 #endif

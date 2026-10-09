@@ -108,16 +108,6 @@ namespace PropertiesTUYA
 
     };
 
-    class ChildLock : public PropertyObject
-    {
-
-    public:
-
-        ChildLock(void) : PropertyObject("childLock", CLUSTER_ON_OFF, 0x8000) {}
-        void parseAttribute(quint16 clusterId, quint16 attributeId, const QByteArray &data) override;
-
-    };
-
     class ButtonAction : public PropertyObject
     {
 

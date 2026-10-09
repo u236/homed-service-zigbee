@@ -583,7 +583,7 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
     {
         QMap <QString, QVariant> option = it.value().toMap();
         QString type = option.value("type").toString();
-        quint16 clusterId = static_cast <quint16> (option.value("clusterId").toInt()), attributeId = static_cast <quint16> (option.value("attributeId").toInt());
+        quint16 clusterId = static_cast <quint16> (option.value("clusterId").toInt()), attributeId = static_cast <quint16> (option.value("attributeId").toInt()), manufacturerCode = static_cast <quint16> (option.value("manufacturerCode").toInt());
         quint8 dataType =static_cast <quint8> (option.value("dataType").toInt());
         double divider = option.value("divider").toDouble();
         Property property;
@@ -594,11 +594,12 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         property = Property(new PropertiesCustom::Attribute(it.key(), type, clusterId, attributeId, dataType, divider));
         property->setParent(endpoint.data());
         property->setMultiple(multiple);
+        property->setManufacturerCode(manufacturerCode);
         endpoint->properties().append(property);
 
         if (option.value("action").toBool())
         {
-            Action action(new ActionsCustom::Attribute(it.key(), type, clusterId, static_cast <quint16> (option.value("manufacturerCode").toInt()), attributeId, dataType, divider));
+            Action action(new ActionsCustom::Attribute(it.key(), type, clusterId, manufacturerCode, attributeId, dataType, divider));
             action->setParent(endpoint.data());
             endpoint->actions().append(action);
         }

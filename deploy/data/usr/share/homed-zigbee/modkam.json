@@ -21,8 +21,8 @@
                           "customAttributes":
                           {
                             "temperatureOffset":  {"type": "value", "clusterId": 1026, "attributeId": 528, "dataType": 41, "action": true},
-                            "humidityOffset":     {"type": "value", "clusterId": 1029, "attributeId": 528, "dataType": 41, "action": true},
                             "pressureOffset":     {"type": "value", "clusterId": 1027, "attributeId": 528, "dataType": 43, "divider": 10, "action": true},
+                            "humidityOffset":     {"type": "value", "clusterId": 1029, "attributeId": 528, "dataType": 41, "action": true},
                             "co2AutoCalibration": {"type": "bool",  "clusterId": 1037, "attributeId": 514, "dataType": 16, "action": true},
                             "ledFeedback":        {"type": "bool",  "clusterId": 1037, "attributeId": 515, "dataType": 16, "action": true},
                             "co2Low":             {"type": "value", "clusterId": 1037, "attributeId": 516, "dataType": 33, "action": true},
@@ -68,15 +68,14 @@
     {
       "description":    "MODKAM Flower Soil Moisture Sensor",
       "modelNames":     ["DIYRuZ_Flower"],
-      "options":        {"endpointName": {"1": "BME", "2": "DS"}, "reporting": {"minInterval": 0, "valueChange": 0}}
+      "exposes":        ["battery", "illuminance", "humidity", "moisture", "pressure"],
+      "options":        {"endpointName": {"1": "BME", "2": "DS"}, "illuminance": {"raw": true}, "reporting": {"minInterval": 0, "valueChange": 0}}
     },
     {
       "modelNames":     ["DIYRuZ_Flower"],
       "properties":     ["batteryPercentage", "illuminance", "humidity", "moisture", "pressure"],
       "bindings":       ["battery", "illuminance", "humidity", "moisture", "pressure"],
       "reportings":     ["batteryPercentage", "illuminance", "humidity", "moisture", "pressure"],
-      "exposes":        ["battery", "illuminance", "humidity", "moisture", "pressure"],
-      "options":        {"illuminance": {"raw": true}},
       "endpointId":     1
     },
     {
@@ -132,13 +131,13 @@
     {
       "description":    "MODKAM 3-Channel Switch with Relay",
       "modelNames":     ["ptvo_switch_3ch"],
+      "exposes":        ["battery", "switch"],
       "options":        {"endpointName": {"2": "CH1", "3": "CH2", "4": "CH3"}}
     },
     {
       "modelNames":     ["ptvo_switch_3ch"],
       "properties":     ["batteryPercentage", "status"],
       "actions":        ["status"],
-      "exposes":        ["battery", "switch"],
       "endpointId":     2
     },
     {
@@ -151,12 +150,12 @@
     {
       "description":    "MODKAM 2-Channel Pulse Counter",
       "modelNames":     ["ptvo_counter_2ch"],
+      "exposes":        ["battery", "waterLeak"],
       "options":        {"endpointName": {"3": "CH1", "5": "CH2"}}
     },
     {
       "modelNames":     ["ptvo_counter_2ch"],
       "properties":     ["batteryPercentage"],
-      "exposes":        ["battery"],
       "endpointId":     1
     },
     {
@@ -170,7 +169,6 @@
     {
       "modelNames":     ["ptvo_counter_2ch"],
       "properties":     ["ptvoWaterLeak"],
-      "exposes":        ["waterLeak"],
       "endpointId":     6
     },
     {

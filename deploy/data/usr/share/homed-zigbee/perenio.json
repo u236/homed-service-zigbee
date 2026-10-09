@@ -27,7 +27,7 @@
       "properties":     ["status"],
       "actions":        ["status"],
       "bindings":       ["status"],
-      "reportings":     ["status", "perenioVoltage", "perenioPower", "perenioEnergy"],
+      "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "power"],
       "options":        {
                           "customAttributes":

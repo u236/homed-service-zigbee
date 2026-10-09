@@ -236,27 +236,6 @@ QVariant ActionsLUMI::ThermostatProgram::request(const QString &name, const QVar
     return writeAttribute(DATA_TYPE_OCTET_STRING, payload);
 }
 
-QVariant ActionsLUMI::ButtonMode::request(const QString &name, const QVariant &data)
-{
-    QList <QString> list = {"relay", "leftRelay", "rightRelay", "decoupled"};
-    qint8 value;
-
-    switch (list.indexOf(data.toString()))
-    {
-        case 0:  value = 0x12; break; // relay
-        case 1:  value = 0x12; break; // leftRelay
-        case 2:  value = 0x22; break; // rightRelay
-        case 3:  value = 0xFE; break; // decoupled
-        default: return QByteArray();
-    }
-
-    switch (m_actions.indexOf(name))
-    {
-        case 2:  return writeAttribute(0xFF23, DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value)); // rightMode
-        default: return writeAttribute(0xFF22, DATA_TYPE_8BIT_UNSIGNED, &value, sizeof(value)); // leftMode, buttonMode
-    }
-}
-
 QVariant ActionsLUMI::SwitchStatusMemory::request(const QString &, const QVariant &data)
 {
     quint8 value = data.toBool() ? 0x01 : 0x00;

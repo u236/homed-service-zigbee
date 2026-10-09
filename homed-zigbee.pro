@@ -7,7 +7,6 @@ include(../homed-common/homed-parser.pri)
 HEADERS += \
     action.h \
     actions/common.h \
-    actions/efekta.h \
     actions/ias.h \
     actions/lumi.h \
     actions/other.h \
@@ -20,7 +19,6 @@ HEADERS += \
     ezsp.h \
     poll.h \
     properties/common.h \
-    properties/efekta.h \
     properties/ias.h \
     properties/lumi.h \
     properties/other.h \
@@ -37,7 +35,6 @@ HEADERS += \
 SOURCES += \
     action.cpp \
     actions/common.cpp \
-    actions/efekta.cpp \
     actions/ias.cpp \
     actions/lumi.cpp \
     actions/other.cpp \
@@ -50,7 +47,6 @@ SOURCES += \
     ezsp.cpp \
     poll.cpp \
     properties/common.cpp \
-    properties/efekta.cpp \
     properties/ias.cpp \
     properties/lumi.cpp \
     properties/other.cpp \

@@ -100,16 +100,6 @@ namespace ActionsTUYA
 
     };
 
-    class ChildLock : public ActionObject
-    {
-
-    public:
-
-        ChildLock(void) : ActionObject("childLock", CLUSTER_ON_OFF, 0x0000, 0x8000) {}
-        QVariant request(const QString &name, const QVariant &data) override;
-
-    };
-
     class Level : public ActionObject
     {
 
