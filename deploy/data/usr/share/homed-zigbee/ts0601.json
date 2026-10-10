@@ -811,6 +811,28 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Radiator Thermostat (Type H)",
+      "modelNames":     ["_TZE200_04yfvweb", "_TZE200_2cs6g9i7", "_TZE200_hhrtiq0x", "_TZE200_jeaxp72v", "_TZE200_kfvq6avy", "_TZE200_lrznf59v", "_TZE200_owwdxjbx", "_TZE200_ps5v5jor", "_TZE200_zivfvd7h", "_TZE204_woww89ip"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["battery", "thermostat", "childLock", "windowDetection", "valveDetection"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    {"name": "targetTemperature", "type": "value", "divider": 10, "action": true},
+                            "3":    {"name": "temperature", "type": "value", "divider": 10},
+                            "4":    {"name": "systemMode", "type": "enum", "action": true},
+                            "7":    {"name": "childLock", "type": "bool", "action": true},
+                            "18":   {"name": "windowDetection", "type": "bool", "action": true},
+                            "20":   {"name": "valveDetection", "type": "bool", "action": true},
+                            "21":   {"name": "battery", "type": "value"}
+                          },
+                          "systemMode": {"enum": ["off", "auto", "heat"]},
+                          "targetTemperature": {"min": 5, "max": 30, "step": 0.5},
+                          "valveDetection": {"type": "toggle", "icon": "mdi:valve"}
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Electric Thermostat (Type A)",
       "modelNames":     ["_TZE200_viy9ihs7", "_TZE204_gops3slb", "_TZE204_lzriup1j", "_TZE204_oh8y8pv8", "_TZE204_xnbkhhdr", "_TZE204_zjhoqbrd", "_TZE284_gops3slb", "_TZE284_xnbkhhdr", "_TZE284_zjhoqbrd"],
       "properties":     ["tuyaDataPoints"],
