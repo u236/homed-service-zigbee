@@ -249,7 +249,7 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status"],
       "reportings":     ["status"],
-      "exposes":        ["switch", "powerOnStatus", "switchType", "switchMode", "transmitPower", "action"],
+      "exposes":        ["switch", "powerOnStatus", "indicator", "delayedPowerOnState", "delayedPowerOnTime", "switchType", "switchMode", "transmitPower", "action"],
       "options":        {
                           "customCommands":
                           {
@@ -257,11 +257,16 @@
                           },
                           "customAttributes":
                           {
-                            "transmitPower":  {"type": "enum", "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
-                            "switchType":     {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
-                            "switchMode":     {"type": "enum", "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true}
+                            "indicator":            {"type": "bool",  "clusterId": 64529, "attributeId": 1,  "dataType": 16, "action": true},
+                            "delayedPowerOnState":  {"type": "bool",  "clusterId": 64529, "attributeId": 20, "dataType": 16, "action": true},
+                            "delayedPowerOnTime":   {"type": "value", "clusterId": 64529, "attributeId": 21, "dataType": 33, "divider": 2, "action": true},
+                            "transmitPower":        {"type": "enum",  "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
+                            "switchType":           {"type": "enum",  "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
+                            "switchMode":           {"type": "enum",  "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true}
                           },
                           "action": {"enum": {"2": "toggle"}},
+                          "delayedPowerOnState": {"type": "toggle", "control": true, "icon": "mdi:timer"},
+                          "delayedPowerOnTime": {"type": "number", "min": 0.5, "max": 3599.5, "step": 0.5, "unit": "sec", "icon": "mdi:timer"},
                           "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
                           "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
                           "switchMode": {"enum": ["relay", "decoupled"]}
@@ -287,6 +292,95 @@
                           "energyDivider": 1000,
                           "acVoltageDivider": 100,
                           "acCurrentDivider": 100
+                        }
+    },
+    {
+      "description":    "Sonoff Zigbee Smart Plug BASIC-ZB1GSP",
+      "modelNames":     ["BASIC-ZB1GSP"],
+      "properties":     ["status", "powerOnStatus", "energy"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy"],
+      "reportings":     ["status", "energy"],
+      "exposes":        ["switch", "powerOnStatus", "indicator", "outletControlProtect", "currentProtection", "currentThreshold", "voltageProtection", "voltageHigh", "powerProtection", "powerThreshold", "faultCode", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":            {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
+                            "faultCode":            {"type": "value", "clusterId": 64529, "attributeId": 16,    "dataType": 35},
+                            "voltage":              {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000},
+                            "current":              {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
+                            "power":                {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 35, "divider": 1000},
+                            "outletControlProtect": {"type": "bool",  "clusterId": 64529, "attributeId": 28679, "dataType": 32, "action": true},
+                            "currentProtection":    {"type": "bool",  "clusterId": 64529, "attributeId": 28684, "dataType": 32, "action": true},
+                            "currentThreshold":     {"type": "value", "clusterId": 64529, "attributeId": 28685, "dataType": 35, "divider": 1000, "action": true},
+                            "voltageProtection":    {"type": "bool",  "clusterId": 64529, "attributeId": 28686, "dataType": 32, "action": true},
+                            "voltageHigh":          {"type": "value", "clusterId": 64529, "attributeId": 28687, "dataType": 35, "divider": 1000, "action": true},
+                            "powerProtection":      {"type": "bool",  "clusterId": 64529, "attributeId": 28688, "dataType": 32, "action": true},
+                            "powerThreshold":       {"type": "value", "clusterId": 64529, "attributeId": 28689, "dataType": 35, "divider": 1000, "action": true}
+                          },
+                          "outletControlProtect": {"type": "toggle", "control": true, "icon": "mdi:shield-alert"},
+                          "currentProtection":    {"type": "toggle", "control": true, "icon": "mdi:current-ac"},
+                          "currentThreshold":     {"min": 0.1, "max": 32, "step": 0.1},
+                          "voltageProtection":    {"type": "toggle", "control": true, "icon": "mdi:sine-wave"},
+                          "voltageHigh":          {"min": 85, "max": 277, "step": 1},
+                          "powerProtection":      {"type": "toggle", "control": true, "icon": "mdi:flash"},
+                          "powerThreshold":       {"min": 10, "max": 7680, "step": 1},
+                          "switch": "outlet",
+                          "energyDivider": 1000,
+                          "resetOnPowerOff": ["current", "power"]
+                        }
+    },
+    {
+      "description":    "Sonoff Zigbee Smart Switch MINI-ZB1GSP",
+      "modelNames":     ["MINI-ZB1GSP"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus", "indicator", "delayedPowerOnState", "delayedPowerOnTime", "switchType", "switchMode", "transmitPower", "faultCode", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":            {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
+                            "delayedPowerOnState":  {"type": "bool",  "clusterId": 64529, "attributeId": 20,    "dataType": 16, "action": true},
+                            "delayedPowerOnTime":   {"type": "value", "clusterId": 64529, "attributeId": 21,    "dataType": 33, "divider": 2,    "action": true},
+                            "switchType":           {"type": "enum",  "clusterId": 64529, "attributeId": 22,    "dataType": 32, "action": true},
+                            "switchMode":           {"type": "enum",  "clusterId": 64529, "attributeId": 25,    "dataType": 32, "action": true},
+                            "transmitPower":        {"type": "enum",  "clusterId": 64529, "attributeId": 18,    "dataType": 41, "action": true},
+                            "faultCode":            {"type": "value", "clusterId": 64529, "attributeId": 16,    "dataType": 35},
+                            "voltage":              {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000},
+                            "current":              {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
+                            "power":                {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 35, "divider": 1000},
+                            "energy":               {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000}
+                          },
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
+                          "switchMode": {"enum": ["relay", "decoupled"]},
+                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
+                          "delayedPowerOnState": {"type": "toggle", "control": true, "icon": "mdi:timer"},
+                          "delayedPowerOnTime": {"type": "number", "min": 0.5, "max": 3599.5, "step": 0.5, "unit": "sec", "icon": "mdi:timer"},
+                          "switch": "outlet"
+                        }
+    },
+    {
+      "description":    "Sonoff Zigbee Smart Power Monitoring Sensor MINI-ZB1GP",
+      "modelNames":     ["MINI-ZB1GP"],
+      "properties":     [],
+      "actions":        [],
+      "bindings":       [],
+      "reportings":     [],
+      "exposes":        ["indicator", "transmitPower", "faultCode", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":       {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
+                            "transmitPower":   {"type": "enum",  "clusterId": 64529, "attributeId": 18,    "dataType": 41, "action": true},
+                            "faultCode":       {"type": "value", "clusterId": 64529, "attributeId": 16,    "dataType": 35},
+                            "voltage":         {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000},
+                            "current":         {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
+                            "power":           {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 35, "divider": 1000},
+                            "energy":          {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000}
+                          },
+                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}}
                         }
     },
     {
