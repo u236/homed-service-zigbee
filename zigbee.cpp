@@ -1444,7 +1444,7 @@ void ZigBee::clusterCommandReceived(const Endpoint &endpoint, quint16 clusterId,
                     }
 
                     file.seek(qFromLittleEndian(request->fileOffset));
-                    buffer = file.read(request->maxDataSize);
+                    buffer = file.read(m_devices->otaBlock() && m_devices->otaBlock() < request->maxDataSize ? m_devices->otaBlock() : request->maxDataSize);
                     file.close();
 
                     response.status = 0x00;

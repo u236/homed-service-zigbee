@@ -257,6 +257,7 @@ public:
     ~DeviceList(void);
 
     inline QDir otaDir(void) { return m_otaDir; }
+    inline quint8 otaBlock(void) { return m_otaBlock; }
     inline bool names(void) { return m_names; }
     inline bool debounce(void) { return m_debounce; }
 
@@ -280,6 +281,7 @@ private:
 
     QFile m_databaseFile, m_propertiesFile, m_optionsFile;
     QDir m_libraryDir, m_externalDir, m_otaDir;
+    quint8 m_otaBlock;
     bool m_names, m_debounce, m_sync, m_permitJoin;
 
     QMap <QString, QVariant> m_exposeOptions;
