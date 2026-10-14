@@ -60,32 +60,10 @@ SOURCES += \
     zstack.cpp \
     zboss.cpp
 
-DISTFILES += \
-    deploy/data/usr/share/homed-zigbee/bacchus.json \
-    deploy/data/usr/share/homed-zigbee/efekta.json \
-    deploy/data/usr/share/homed-zigbee/gledopto.json \
-    deploy/data/usr/share/homed-zigbee/gs.json \
-    deploy/data/usr/share/homed-zigbee/hobeian.json \
-    deploy/data/usr/share/homed-zigbee/homed.json \
-    deploy/data/usr/share/homed-zigbee/hue.json \
-    deploy/data/usr/share/homed-zigbee/ikea.json \
-    deploy/data/usr/share/homed-zigbee/konke.json \
-    deploy/data/usr/share/homed-zigbee/lifecontrol.json \
-    deploy/data/usr/share/homed-zigbee/lumi.json \
-    deploy/data/usr/share/homed-zigbee/modkam.json \
-    deploy/data/usr/share/homed-zigbee/orvibo.json \
-    deploy/data/usr/share/homed-zigbee/other.json \
-    deploy/data/usr/share/homed-zigbee/perenio.json \
-    deploy/data/usr/share/homed-zigbee/pushok.json \
-    deploy/data/usr/share/homed-zigbee/slacky.json \
-    deploy/data/usr/share/homed-zigbee/sonoff.json \
-    deploy/data/usr/share/homed-zigbee/ts0601.json \
-    deploy/data/usr/share/homed-zigbee/tuya.json \
-    deploy/data/usr/share/homed-zigbee/yandex.json
-
+DISTFILES += $$files(deploy/data/usr/share/homed-zigbee/*, true)
 QT += serialport
 
-deploy.files = $${DISTFILES}
+deploy.files = deploy/data/usr/share/homed-zigbee/*
 deploy.path = /usr/share/homed-zigbee
 
 INSTALLS += deploy
