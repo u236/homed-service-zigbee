@@ -668,16 +668,10 @@ void DeviceList::recognizeDevice(const Device &device)
 {
     QList <quint16> list =
     {
-        CLUSTER_POWER_CONFIGURATION,
         CLUSTER_ON_OFF,
         CLUSTER_ANALOG_INPUT,
-        CLUSTER_ANALOG_OUTPUT,
-        CLUSTER_WINDOW_COVERING,
-        CLUSTER_THERMOSTAT,
-        CLUSTER_FAN_CONTROL,
         CLUSTER_SMART_ENERGY_METERING,
-        CLUSTER_ELECTRICAL_MEASUREMENT,
-        CLUSTER_IAS_ZONE
+        CLUSTER_ELECTRICAL_MEASUREMENT
     };
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
