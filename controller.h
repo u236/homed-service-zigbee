@@ -73,7 +73,7 @@ private slots:
     void networkStarted(void);
     void backupUpdated(const QJsonObject &backup);
     void deviceEvent(DeviceObject *device, ZigBee::Event event, const QJsonObject &json);
-    void endpointUpdated(DeviceObject *device, quint8 endpointId);
+    void endpointUpdated(DeviceObject *device, quint8 endpointId, bool common = true);
 };
 
 #endif

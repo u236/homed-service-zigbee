@@ -315,6 +315,7 @@ void ZigBee::otaControl(const QString &deviceName, bool refresh, bool upgrade)
 void ZigBee::getProperties(const QString &deviceName)
 {
     const Device &device = m_devices->byName(deviceName);
+    bool common = true;
 
     if (device.isNull() || device->removed() || !device->active() || device->logicalType() == LogicalType::Coordinator)
         return;
@@ -324,7 +325,8 @@ void ZigBee::getProperties(const QString &deviceName)
         if (it.value()->properties().isEmpty() && !it.value()->inClusters().contains(CLUSTER_BASIC))
             continue;
 
-        emit endpointUpdated(device.data(), it.key());
+        emit endpointUpdated(device.data(), it.key(), common);
+        common = false;
     }
 }
 

@@ -315,7 +315,7 @@ private slots:
 
 signals:
 
-    void endpointUpdated(DeviceObject *device, quint8 endpointId);
+    void endpointUpdated(DeviceObject *device, quint8 endpointId, bool common = true);
     void pollRequest(EndpointObject *endpoint, const Poll &poll);
 
 };
