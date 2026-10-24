@@ -41,6 +41,7 @@ Adapter::Adapter(QSettings *config, QObject *parent) : QObject(parent), m_receiv
 
         connect(m_socket, &QTcpSocket::errorOccurred, this, &Adapter::socketError);
         connect(m_socket, &QTcpSocket::connected, this, &Adapter::socketConnected);
+        connect(m_socket, &QTcpSocket::disconnected, this, &Adapter::socketDisconnected);
     }
 
     m_receiveTimeout = static_cast <quint16> (config->value("zigbee/timeout", 10).toInt());
@@ -157,8 +158,11 @@ void Adapter::init(void)
             return;
         }
 
-        if (m_connected)
-            m_socket->disconnectFromHost();
+        if (m_socket->state() != QAbstractSocket::UnconnectedState)
+        {
+            m_socket->abort();
+            m_connected = false;
+        }
 
         m_socket->connectToHost(m_adddress, m_port);
     }
@@ -318,6 +322,13 @@ void Adapter::socketConnected(void)
     logInfo << "Successfully connected to" << QString("%1:%2").arg(m_adddress.toString()).arg(m_port);
     m_connected = true;
     reset();
+}
+
+void Adapter::socketDisconnected(void)
+{
+    logWarning << "Disconnected";
+    m_resetTimer->start(RESET_TIMEOUT);
+    m_connected = false;
 }
 
 void Adapter::startTimer(void)
