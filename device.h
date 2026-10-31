@@ -4,6 +4,7 @@
 #define OTA_FILE_BUFFER_SIZE        1048576
 #define STORE_DATABASE_DELAY        20
 #define STORE_PROPERTIES_DELAY      1000
+#define STORE_PROPERTIES_INTERVAL   60000
 #define UPDATE_ENDPOINT_INTERVAL    100
 
 #include <QDir>
@@ -284,6 +285,7 @@ private:
     QDir m_libraryDir, m_externalDir, m_otaDir;
     quint8 m_otaBlock;
 
+    qint64 m_propertiesTime;
     bool m_names, m_debounce, m_sync, m_permitJoin;
 
     QMap <QString, QVariant> m_exposeOptions;

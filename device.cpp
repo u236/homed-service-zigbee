@@ -74,7 +74,7 @@ int DeviceObject::checkVersion(const QString &version)
     return 0;
 }
 
-DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_permitJoin(false)
+DeviceList::DeviceList(QSettings *config, QObject *parent) : QObject(parent), m_databaseTimer(new QTimer(this)), m_propertiesTimer(new QTimer(this)), m_propertiesTime(0), m_permitJoin(false)
 {
     HOMEd *homed = reinterpret_cast <HOMEd*> (parent);
     QFile file(config->value("device/expose", homed->basePath().append("share/homed-common/expose.json")).toString());
@@ -151,7 +151,8 @@ void DeviceList::storeDatabase(bool sync)
 
 void DeviceList::storeProperties(void)
 {
-    m_propertiesTimer->start(STORE_PROPERTIES_DELAY);
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    m_propertiesTimer->start(m_propertiesTime + STORE_PROPERTIES_INTERVAL > now ? m_propertiesTime + STORE_PROPERTIES_INTERVAL - now : STORE_PROPERTIES_DELAY);
 }
 
 Device DeviceList::byName(const QString &name)
@@ -1634,7 +1635,10 @@ void DeviceList::writeProperties(void)
     QJsonObject json = serializeProperties();
 
     if (reinterpret_cast <HOMEd*> (parent())->writeFile(m_propertiesFile, QJsonDocument(json).toJson(QJsonDocument::Compact)))
+    {
+        m_propertiesTime = QDateTime::currentMSecsSinceEpoch();
         return;
+    }
 
     logWarning << "Properties not stored";
 }
