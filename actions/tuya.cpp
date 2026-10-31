@@ -55,6 +55,9 @@ QVariant ActionsTUYA::DataPoints::request(const QString &name, const QVariant &d
                 qint8 value = static_cast <qint8> (actionList.indexOf(data.toString()));
                 bool check = item.value("invert").toBool() ? !data.toBool() : data.toBool();
 
+                if (value >= 0 && item.value("invert").toBool())
+                    value = !value;
+
                 if (value < 0)
                     value = name.split('_').value(0) == "status" ? (endpointProperty()->value().toMap().value(name).toString() != "on" ? 0x01 : 0x00) : (check ? 0x01 : 0x00);
 
