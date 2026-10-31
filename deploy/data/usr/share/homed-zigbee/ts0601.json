@@ -1667,20 +1667,53 @@
                             "11":   {"name": "motionStatus", "type": "enum"},
                             "12":   {"name": "fadingTime", "type": "value", "action": true},
                             "13":   {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
-                            "15":   {"name": "sensitivity", "type": "value", "action": true},
-                            "16":   {"name": "motionSensitivity", "type": "value", "action": true},
+                            "15":   {"name": "motionSensitivity", "type": "value", "action": true},
+                            "16":   {"name": "sensitivity", "type": "value", "action": true},
                             "19":   {"name": "targetDistance", "type": "value", "divider": 100}
                           },
 
                           "motionStatus": {"enum": ["none", "small", "large"]},
                           "fadingTime": {"min": 0, "max": 300, "step": 10},
                           "distanceMax": {"min": 1.5, "max": 6, "step": 0.1},
-                          "sensitivity": {"min": 0, "max": 7},
-                          "motionSensitivity": {"min": 1, "max": 7}
+                          "motionSensitivity": {"min": 0, "max": 7},
+                          "sensitivity": {"min": 1, "max": 7}
                         }
     },
     {
       "description":    "TUYA TS0601 Human Presence Sensor (Type F)",
+      "modelNames":     ["_TZE204_1youk3hj", "_TZE284_1youk3hj", "_TZE28C1000000_1youk3hj"],
+      "properties":     ["tuyaDataPoints"],
+      "actions":        ["tuyaDataPoints"],
+      "exposes":        ["switch", "occupancy", "motionStatus", "targetDistance", "operationMode", "sensitivity", "motionSensitivity", "distanceMax", "fadingTime", "threshold", "duration", "indicator"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "1":    {"name": "occupancy", "type": "bool"},
+                            "11":   {"name": "motionStatus", "type": "enum"},
+                            "12":   {"name": "fadingTime", "type": "value", "action": true},
+                            "13":   {"name": "distanceMax", "type": "value", "divider": 100, "action": true},
+                            "15":   {"name": "motionSensitivity", "type": "value", "action": true},
+                            "16":   {"name": "sensitivity", "type": "value", "action": true},
+                            "19":   {"name": "targetDistance", "type": "value", "divider": 100},
+                            "101":  {"name": "operationMode", "type": "enum", "action": true},
+                            "102":  {"name": "threshold", "type": "enum", "action": true},
+                            "103":  {"name": "duration", "type": "value", "action": true},
+                            "104":  {"name": "status", "type": "bool", "action": true},
+                            "105":  {"name": "indicator", "type": "bool", "action": true}
+                          },
+                          "motionStatus": {"enum": ["none", "small", "large"]},
+                          "fadingTime": {"min": 0, "max": 300, "step": 10},
+                          "distanceMax": {"min": 1.5, "max": 6, "step": 0.1},
+                          "motionSensitivity": {"min": 0, "max": 7},
+                          "sensitivity": {"min": 0, "max": 7},
+                          "operationMode": {"enum": ["manual", "auto"]},
+                          "threshold": {"type": "select", "enum": ["10lux", "20lux", "50lux", "always"]},
+                          "duration": {"min": 10, "max": 1800},
+                          "status": {"enum": ["off", "on"]}
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Human Presence Sensor (Type G)",
       "modelNames":     ["_TZE204_uxllnywp"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1703,7 +1736,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor (Type G)",
+      "description":    "TUYA TS0601 Human Presence Sensor (Type H)",
       "modelNames":     ["_TZE204_laokfqwu"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1728,7 +1761,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor (Type H)",
+      "description":    "TUYA TS0601 Human Presence Sensor (Type I)",
       "modelNames":     ["_TZE200_grgol3xp", "_TZE200_rhgsbacq", "_TZE200_uli8wasj"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1756,7 +1789,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor (Type I)",
+      "description":    "TUYA TS0601 Human Presence Sensor (Type J)",
       "modelNames":     ["_TZE284_1lvln0x6", "_TZE284_debczeci"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1773,7 +1806,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor (Type J)",
+      "description":    "TUYA TS0601 Human Presence Sensor (Type K)",
       "modelNames":     ["_TZE200_gkfbdvyx", "_TZE200_ya4ft0w4", "_TZE204_gkfbdvyx", "_TZE204_ya4ft0w4"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1798,7 +1831,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor (Type K)",
+      "description":    "TUYA TS0601 Human Presence Sensor (Type L)",
       "modelNames":     ["_TZE204_dapwryy7"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1822,7 +1855,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor (Type L)",
+      "description":    "TUYA TS0601 Human Presence Sensor (Type M)",
       "modelNames":     ["_TZE200_4pm4pekt", "_TZE200_cq8lu23i", "_TZE200_y8jijhba"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
@@ -1844,7 +1877,7 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Human Presence Sensor (Type M)",
+      "description":    "TUYA TS0601 Human Presence Sensor (Type N)",
       "modelNames":     ["_TZE284_gnpflcoq"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
