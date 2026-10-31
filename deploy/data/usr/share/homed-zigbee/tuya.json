@@ -101,40 +101,6 @@
                         }
     },
     {
-      "description": "TUYA NAS-PS10B2 Human Presence Sensor",
-      "modelNames": ["_TZE204_1youk3hj", "_TZE284_1youk3hj", "_TZE28C1000000_1youk3hj"],
-      "properties": ["tuyaDataPoints"],
-      "actions": ["tuyaDataPoints"],
-      "exposes": ["presence", "humanMotionState", "disCurrent", "presenceTime", "motionFarDetection", "motionSensitivity", "motionlessSensitivity", "workMode", "outputSwitch", "outputTime", "ledSwitch", "luxValue"],
-      "options": {
-        "tuyaDataPoints": {
-          "1": {"name": "presence", "type": "bool"},
-          "11": {"name": "humanMotionState", "type": "enum"},
-          "12": {"name": "presenceTime", "type": "value", "action": true},
-          "13": {"name": "motionFarDetection", "type": "value", "action": true},
-          "15": {"name": "motionSensitivity", "type": "value", "action": true},
-          "16": {"name": "motionlessSensitivity", "type": "value", "action": true},
-          "19": {"name": "disCurrent", "type": "value"},
-          "101": {"name": "workMode", "type": "enum", "action": true},
-          "102": {"name": "luxValue", "type": "enum", "action": true},
-          "103": {"name": "outputTime", "type": "value", "action": true},
-          "104": {"name": "outputSwitch", "type": "bool", "action": true},
-          "105": {"name": "ledSwitch", "type": "bool", "action": true}
-        },
-        "humanMotionState": {"type": "sensor", "enum": ["none", "small", "large"]},
-        "disCurrent": {"type": "sensor", "unit": "cm", "icon": "mdi:arrow-left-right"},
-        "presenceTime": {"type": "number", "min": 3, "max": 600, "step": 1, "unit": "s"},
-        "motionFarDetection": {"type": "number", "min": 150, "max": 600, "step": 75, "unit": "cm", "icon": "mdi:arrow-left-right"},
-        "motionSensitivity": {"type": "number", "min": 0, "max": 7, "step": 1, "icon": "mdi:radar"},
-        "motionlessSensitivity": {"type": "number", "min": 0, "max": 7, "step": 1, "icon": "mdi:radar"},
-        "workMode": {"type": "select", "enum": ["manual", "auto"]},
-        "outputSwitch": {"type": "select", "enum": ["off", "on"]},
-        "outputTime": {"type": "number", "min": 10, "max": 1800, "step": 1, "unit": "s", "icon": "mdi:timer-outline"},
-        "ledSwitch": {"type": "select", "enum": ["off", "on"]},
-        "luxValue": {"type": "select", "enum": ["10_lux", "20_lux", "50_lux", "24h"]}
-        }
-    },
-    {
       "description":    "TUYA TS000F 4-Channel Relay with Temperature and Humidity Sensor",
       "modelNames":     ["_TZ3218_ya5d6wth"],
       "properties":     ["tuyaDataPoints"],
