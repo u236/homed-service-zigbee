@@ -2265,6 +2265,19 @@
                         }
     },
     {
+      "description":    "TUYA TS0601 Curtain Motor (Type C)",
+      "modelNames":     ["_TZE200_zxxfv8wi"],
+      "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
+      "actions":        ["tuyaDataPoints", "tuyaCoverMotor"],
+      "exposes":        ["cover", "reverse"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "5":    {"name": "reverse", "type": "bool", "action": true}
+                          }
+                        }
+    },
+    {
       "description":    "TUYA TS0601 Tubular Motor (Type A)",
       "modelNames":     ["_TZE200_3ylew7b4", "_TZE200_5sbebbzs", "_TZE200_68nvbio9", "_TZE200_llm0epxg", "_TZE200_udank5zs", "_TZE200_zuz7f94z"],
       "properties":     ["tuyaDataPoints", "tuyaCoverMotor"],
