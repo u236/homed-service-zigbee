@@ -2496,13 +2496,13 @@ void ZigBee::updateNeighbors(void)
 
 void ZigBee::pingDevices(void)
 {
-    qint64 time = QDateTime::currentSecsSinceEpoch();
+    qint64 now = QDateTime::currentSecsSinceEpoch();
 
     for (auto it = m_devices->begin(); it != m_devices->end(); it++)
     {
         const Device &device = it.value();
 
-        if (it.value()->removed() || !device->active() || it.value()->batteryPowered() || time - device->lastSeen() < PING_DEVICES_INTERVAL / 1000)
+        if (it.value()->removed() || !device->active() || it.value()->batteryPowered() || now - device->lastSeen() < PING_DEVICES_INTERVAL / 1000)
             continue;
 
         for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)

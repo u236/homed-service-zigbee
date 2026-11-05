@@ -252,7 +252,7 @@ void Controller::mqttReceived(const QByteArray &message, const QMqttTopicName &t
 
 void Controller::updateDeviceData(void)
 {
-    qint64 time = QDateTime::currentSecsSinceEpoch();
+    qint64 now = QDateTime::currentSecsSinceEpoch();
     QJsonObject json;
 
     for (auto it = m_zigbee->devices()->begin(); it != m_zigbee->devices()->end(); it++)
@@ -266,7 +266,7 @@ void Controller::updateDeviceData(void)
         if (!timeout)
             timeout = it.value()->batteryPowered() ? 86400 : 600;
 
-        it.value()->setAvailability(it.value()->active() && time - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline);
+        it.value()->setAvailability(it.value()->active() && now - it.value()->lastSeen() <= timeout ? Availability::Online : Availability::Offline);
 
         if (it.value()->availability() == check && m_lastSeen.value(it.value()->ieeeAddress()) == it.value()->lastSeen())
             continue;

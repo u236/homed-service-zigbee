@@ -1647,7 +1647,7 @@ void DeviceList::updateEndpoint(void)
 {
     EndpointObject *endpoint = reinterpret_cast <EndpointObject*> (sender()->parent());
     Device device = endpoint->device();
-    qint64 time = QDateTime::currentMSecsSinceEpoch();
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
 
     if (device.isNull() || !device->active())
         return;
@@ -1659,7 +1659,7 @@ void DeviceList::updateEndpoint(void)
         if (!property->time() || !property->timeout())
             continue;
 
-        if (time - property->time() >= property->timeout())
+        if (now - property->time() >= property->timeout())
         {
             QVariant value = property->value();
 
@@ -1673,11 +1673,11 @@ void DeviceList::updateEndpoint(void)
         }
     }
 
-    if (!endpoint->pollInterval() || time - endpoint->pollTime() < endpoint->pollInterval())
+    if (!endpoint->pollInterval() || now - endpoint->pollTime() < endpoint->pollInterval())
         return;
 
     for (int i = 0; i < endpoint->polls().count(); i++)
         emit pollRequest(endpoint, endpoint->polls().at(i));
 
-    endpoint->setPollTime(time);
+    endpoint->setPollTime(now);
 }
