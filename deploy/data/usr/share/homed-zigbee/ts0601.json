@@ -172,7 +172,7 @@
       "modelNames":     ["_TZE204_81yrt3lo", "_TZE284_81yrt3lo"],
       "properties":     ["tuyaDataPoints"],
       "actions":        ["tuyaDataPoints"],
-      "exposes":        ["voltage", "frequency", "energy_1", "producedEnergy_1", "current_1", "power_1", "energy_2", "producedEnergy_2", "current_2", "power_2"],
+      "exposes":        ["voltage", "frequency", "energy_1", "producedEnergy_1", "current_1", "power_1", "powerFactor_1", "energy_2", "producedEnergy_2", "current_2", "power_2", "powerFactor_2", "updateFrequency"],
       "options":        {
                           "tuyaDataPoints":
                           {
@@ -182,11 +182,17 @@
                             "107":  {"name": "producedEnergy_1", "type": "value", "divider": 100},
                             "108":  {"name": "energy_2", "type": "value", "divider": 100},
                             "109":  {"name": "producedEnergy_2", "type": "value", "divider": 100},
+                            "110":  {"name": "powerFactor_1", "type": "value", "divider": 100},
                             "111":  {"name": "frequency", "type": "value", "divider": 100},
                             "112":  {"name": "voltage", "type": "value", "divider": 10},
                             "113":  {"name": "current_1", "type": "value", "divider": 1000},
-                            "114":  {"name": "current_2", "type": "value", "divider": 1000}
-                          }
+                            "114":  {"name": "current_2", "type": "value", "divider": 1000},
+                            "121":  {"name": "powerFactor_2", "type": "value", "divider": 100},
+                            "129":  {"name": "updateFrequency", "type": "value", "action": true}
+                          },
+                          "powerFactor_1": {"type": "sensor", "round": 2},
+                          "powerFactor_2": {"type": "sensor", "round": 2},
+                          "updateFrequency": {"type": "number", "unit": "sec", "min": 3, "max": 60, "icon": "mdi:timer"}
                         }
     },
     {
