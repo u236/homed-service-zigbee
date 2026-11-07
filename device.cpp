@@ -934,6 +934,7 @@ void DeviceList::recognizeDevice(const Device &device)
         {
             it.value()->meta().remove("ptvo");
             it.value()->bindings().clear();
+            it.value()->reportings().clear();
         }
 
         if (!it.value()->properties().isEmpty())
@@ -1019,7 +1020,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
     {
         QString item = itemList.at(i), id;
         QList <QString> valueList = item.split(',');
-        Reporting reporting;
         bool offset = item.startsWith("10"), check = false;
         const Endpoint &endpoint = device->endpoints().value(offset ? 0x10 : item.mid(0, 1).toInt(nullptr, 16));
 
@@ -1037,7 +1037,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 endpoint->properties().append(Property(new Properties::Status));
                 endpoint->actions().append(Action(new Actions::Status));
                 endpoint->exposes().append(recognizeLight(device) ? Expose(new LightObject) : Expose(new SwitchObject));
-                reporting = Reporting(new Reportings::Status);
                 break;
 
             case 1: // #
@@ -1060,7 +1059,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
                 endpoint->properties().append(Property(new PropertiesPTVO::Status(name)));
                 endpoint->exposes().append(Expose(new BinaryObject(name)));
-                reporting = Reporting(new Reportings::Status);
                 break;
             }
 
@@ -1075,7 +1073,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 endpoint->properties().append(Property(new Properties::Energy));
                 endpoint->exposes().append(Expose(new SensorObject("energy")));
                 device->options().insert(QString("energyDivider_%1").arg(endpoint->id()), 1000);
-                reporting = Reporting(new Reportings::Energy);
                 break;
 
             case 3: // V
@@ -1089,7 +1086,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 endpoint->properties().append(Property(new Properties::Voltage));
                 endpoint->exposes().append(Expose(new SensorObject("voltage")));
                 device->options().insert({{QString("acVoltageDivider_%1").arg(endpoint->id()), 100}, {QString("dcVoltageDivider_%1").arg(endpoint->id()), 100}});
-                reporting = Reporting(new Reportings::Voltage);
                 break;
 
             case 4: // A
@@ -1103,7 +1099,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 endpoint->properties().append(Property(new Properties::Current));
                 endpoint->exposes().append(Expose(new SensorObject("current")));
                 device->options().insert({{QString("acCurrentDivider_%1").arg(endpoint->id()), 1000}, {QString("dcCurrentDivider_%1").arg(endpoint->id()), 1000}});
-                reporting = Reporting(new Reportings::Current);
                 break;
 
             case 5: // W
@@ -1117,7 +1112,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 endpoint->properties().append(Property(new Properties::Power));
                 endpoint->exposes().append(Expose(new SensorObject("power")));
                 device->options().insert(QString("dcPowerDivider_%1").arg(endpoint->id()), 10);
-                reporting = Reporting(new Reportings::Power);
                 break;
 
             case 6: // Hz
@@ -1131,7 +1125,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 endpoint->properties().append(Property(new Properties::Frequency));
                 endpoint->exposes().append(Expose(new SensorObject("frequency")));
                 device->options().insert(QString("frequencyDivider_%1").arg(endpoint->id()), 10);
-                reporting = Reporting(new Reportings::Frequency);
                 break;
 
             case 7: // pf
@@ -1144,7 +1137,6 @@ void DeviceList::recognizePtvoDevice(const Device &device)
 
                 endpoint->properties().append(Property(new Properties::PowerFactor));
                 endpoint->exposes().append(Expose(new SensorObject("powerFactor")));
-                reporting = Reporting(new Reportings::PowerFactor);
                 break;
 
             default:
@@ -1190,25 +1182,9 @@ void DeviceList::recognizePtvoDevice(const Device &device)
                 option.insert("unit", unit);
 
             device->options().insert(QString("analogInput_%2").arg(endpoint->id()), option);
-            reporting = Reporting(new Reportings::AnalogInput);
         }
-
-        check = false;
-
-        for (int j = 0; j < endpoint->reportings().count(); j++)
-        {
-            if (endpoint->reportings().at(j)->name() != reporting->name())
-                continue;
-
-            check = true;
-            break;
-        }
-
-        if (check)
-            continue;
 
         endpoint->meta().insert("ptvo", true);
-        endpoint->reportings().append(reporting);
     }
 
     for (auto it = device->endpoints().begin(); it != device->endpoints().end(); it++)
