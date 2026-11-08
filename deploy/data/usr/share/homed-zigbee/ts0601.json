@@ -2179,8 +2179,24 @@
                         }
     },
     {
-      "description":    "TUYA TS0601 Air Quality Sensor",
-      "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_ryfmq5rl", "_TZE200_yvx5lh6k", "_TZE204_c2fmom5z", "_TZE204_yvx5lh6k"],
+      "description":    "TUYA TS0601 Air Quality Sensor (Type A)",
+      "modelNames":     ["_TZE200_8ygsuhe1", "_TZE200_c2fmom5z", "_TZE200_yvx5lh6k", "_TZE204_c2fmom5z", "_TZE204_yvx5lh6k"],
+      "properties":     ["tuyaDataPoints"],
+      "exposes":        ["temperature", "humidity", "co2", "voc", "formaldehyde"],
+      "options":        {
+                          "tuyaDataPoints":
+                          {
+                            "2":    {"name": "co2", "type": "value"},
+                            "18":   {"name": "temperature", "type": "value", "divider": 10},
+                            "19":   {"name": "humidity", "type": "value", "divider": 10},
+                            "21":   {"name": "voc", "type": "value"},
+                            "22":   {"name": "formaldehyde", "type": "value"}
+                          }
+                        }
+    },
+    {
+      "description":    "TUYA TS0601 Air Quality Sensor (Type B)",
+      "modelNames":     ["_TZE200_ryfmq5rl"],
       "properties":     ["tuyaDataPoints"],
       "exposes":        ["temperature", "humidity", "co2", "voc", "formaldehyde"],
       "options":        {
@@ -2189,8 +2205,8 @@
                             "2":    {"name": "formaldehyde", "type": "value", "divider": 100},
                             "18":   {"name": "temperature", "type": "value", "divider": 10},
                             "19":   {"name": "humidity", "type": "value", "divider": 10},
-                            "21":   {"name": "voc", "type": "value", "divider": 100},
-                            "22":   {"name": "co2", "type": "value", "divider": 100}
+                            "21":   {"name": "voc", "type": "value", "divider": 10},
+                            "22":   {"name": "co2", "type": "value"}
                           }
                         }
     },
