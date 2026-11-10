@@ -221,160 +221,7 @@
                         }
     },
     {
-      "description":    "Sonoff 1-Channel Relay BASICZBR3",
-      "modelNames":     ["BASICZBR3"],
-      "properties":     ["status"],
-      "actions":        ["status"],
-      "exposes":        ["switch"]
-    },
-    {
-      "description":    "Sonoff 1-Channel Relay ZBMINI",
-      "modelNames":     ["01MINIZB"],
-      "properties":     ["status"],
-      "actions":        ["status"],
-      "exposes":        ["switch"],
-      "options":        {"powerSource": 1}
-    },
-    {
-      "description":    "Sonoff 1-Channel Relay ZBMINI-L or ZBMINI-L2",
-      "modelNames":     ["ZBMINI-L", "ZBMINIL2"],
-      "properties":     ["status", "powerOnStatus"],
-      "actions":        ["status", "powerOnStatus"],
-      "exposes":        ["switch", "powerOnStatus"]
-    },
-    {
-      "description":    "Sonoff 1-Channel Relay ZBMINI-R2",
-      "modelNames":     ["ZBMINIR2"],
-      "properties":     ["status", "powerOnStatus"],
-      "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status"],
-      "reportings":     ["status"],
-      "exposes":        ["switch", "powerOnStatus", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower", "action", "action_detach"],
-      "options":        {
-                          "customCommands":
-                          {
-                            "action":         {"clusterId": 6}
-                          },
-                          "customAttributes":
-                          {
-                            "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,  "dataType": 16, "action": true},
-                            "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
-                            "delayMode":      {"type": "bool",  "clusterId": 64529, "attributeId": 20, "dataType": 16, "action": true},
-                            "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21, "dataType": 33, "divider": 2, "action": true},
-                            "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
-                            "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true},
-                            "action_detach":  {"type": "enum",  "clusterId": 64529, "attributeId": 40, "dataType": 32, "binding": true}
-                          },
-                          "action": {"enum": {"2": "toggle"}},
-                          "action_detach": {"type": "sensor", "icon": "mdi:gesture-double-tap", "title": "External switch", "enum": {"2": "doubleClick", "3": "hold"}},
-                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
-                          "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
-                          "delay": {"min": 0.5, "max": 3599.5, "step": 0.5},
-                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
-                          "switchMode": {"enum": ["relay", "decoupled"]}
-                        }
-    },
-    {
-      "description":    "Sonoff 1-Channel Relay MINI-ZB1GS",
-      "modelNames":     ["MINI-ZB1GS"],
-      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status", "energy", "power"],
-      "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "powerOnStatus", "indicator", "switchType", "transmitPower", "energy", "voltage", "current", "power"],
-      "options":        {
-                          "customAttributes":
-                          {
-                            "indicator":      {"type": "bool", "clusterId": 64529, "attributeId": 1,  "dataType": 16, "action": true},
-                            "transmitPower":  {"type": "enum", "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
-                            "switchType":     {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true}
-                          },
-                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
-                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
-                          "energyDivider": 1000,
-                          "acVoltageDivider": 100,
-                          "acCurrentDivider": 100
-                        }
-    },
-    {
-      "description":    "Sonoff 1-Channel Relay MINI-ZB1GSP",
-      "modelNames":     ["MINI-ZB1GSP"],
-      "properties":     ["status", "powerOnStatus"],
-      "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status"],
-      "reportings":     ["status"],
-      "exposes":        ["switch", "powerOnStatus", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower", "energy", "voltage", "current", "power", "action"],
-      "options":        {
-                          "customAttributes":
-                          {
-                            "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
-                            "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18,    "dataType": 41, "action": true},
-                            "delayMode":      {"type": "bool",  "clusterId": 64529, "attributeId": 20,    "dataType": 16, "action": true},
-                            "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21,    "dataType": 33, "divider": 2, "action": true},
-                            "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22,    "dataType": 32, "action": true},
-                            "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 25,    "dataType": 24, "action": true},
-                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
-                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000},
-                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000, "binding": true},
-                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000},
-                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40,    "dataType": 32, "binding": true}
-                          },
-                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
-                          "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
-                          "delay": {"min": 0.5, "max": 3599.5, "step": 0.5},
-                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
-                          "switchMode": {"enum": ["relay", "decoupled"]},
-                          "action": {"enum": {"1": "singleClick", "2": "doubleClick", "3": "hold", "4": "switchOn", "5": "switchOff"}},
-                          "resetOnPowerOff": ["current", "power"]
-                        }
-    },
-    {
-      "description":    "Sonoff Power Monitor MINI-ZB1GP",
-      "modelNames":     ["MINI-ZB1GP"],
-      "exposes":        ["energy", "voltage", "current", "power", "indicator", "transmitPower"],
-      "options":        {
-                          "customAttributes":
-                          {
-                            "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
-                            "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18,    "dataType": 41, "action": true},
-                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
-                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000},
-                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000, "binding": true},
-                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000}
-                          },
-                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}}
-                        }
-    },
-    {
-      "description":    "Sonoff Cover Relay/Switch MINI-ZBRBS",
-      "modelNames":     ["MINI-ZBRBS"],
-      "properties":     ["coverPosition"],
-      "actions":        ["coverStatus", "coverPosition"],
-      "bindings":       ["cover"],
-      "reportings":     ["coverPosition"],
-      "exposes":        ["cover", "switchType"],
-      "options":        {"customAttributes": {"switchType": {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true}}, "switchType": {"enum": ["toggle", "momentary"]}}
-    },
-    {
-      "description":    "Sonoff 16A Smart Plug S26R2ZB",
-      "modelNames":     ["S26R2ZB"],
-      "properties":     ["status"],
-      "actions":        ["status"],
-      "exposes":        ["switch"],
-      "options":        {"switch": "outlet"}
-    },
-    {
-      "description":    "Sonoff 16A Smart Plug S60ZBTPF or S60ZBTPG",
-      "modelNames":     ["S60ZBTPF", "S60ZBTPG"],
-      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status", "energy", "power"],
-      "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
-      "options":        {"switch": "outlet", "energyDivider": 1000, "acVoltageDivider": 100, "acCurrentDivider": 100, "resetOnPowerOff": ["current", "power"]}
-    },
-    {
-      "description":    "SONOFF DIN Rail Smart Switch BASIC-ZB1GSP",
+      "description":    "Sonoff 1-Channel Relay BASIC-ZB1GSP",
       "modelNames":     ["BASIC-ZB1GSP"],
       "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
       "actions":        ["status", "powerOnStatus"],
@@ -400,12 +247,168 @@
                           "voltageThreshold": {"min": 85, "max": 277, "step": 1},
                           "powerProtection": {"type": "toggle", "control": true, "icon": "mdi:flash"},
                           "powerThreshold": {"min": 10, "max": 7680, "step": 1},
-                          "switch": "outlet",
                           "energyDivider": 1000,
                           "acVoltageDivider": 100,
                           "acCurrentDivider": 100,
                           "resetOnPowerOff": ["current", "power"]
                         }
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay BASICZBR3",
+      "modelNames":     ["BASICZBR3"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"]
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay ZBMINI",
+      "modelNames":     ["01MINIZB"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"],
+      "options":        {"powerSource": 1}
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay ZBMINI-L or ZBMINI-L2",
+      "modelNames":     ["ZBMINI-L", "ZBMINIL2"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "exposes":        ["switch", "powerOnStatus"]
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay ZBMINI-R2",
+      "modelNames":     ["MINI-ZBD", "ZBMINIR2"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus", "action", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower"],
+      "options":        {
+                          "customCommands":
+                          {
+                            "action":         {"clusterId": 6}
+                          },
+                          "customAttributes":
+                          {
+                            "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,  "dataType": 16, "action": true},
+                            "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
+                            "delayMode":      {"type": "bool",  "clusterId": 64529, "attributeId": 20, "dataType": 16, "action": true},
+                            "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21, "dataType": 33, "divider": 2, "action": true},
+                            "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
+                            "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true},
+                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40, "dataType": 32, "offset": 10, "binding": true}
+                          },
+                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
+                          "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
+                          "delay": {"min": 0.5, "max": 3599.5, "step": 0.5},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
+                          "switchMode": {"enum": ["relay", "decoupled"]},
+                          "action": {"enum": {"2": "toggle", "12": "doubleClick", "13": "hold", "14": "on", "15": "off"}}
+                        }
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay MINI-ZB1GS",
+      "modelNames":     ["MINI-ZB1GS"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus", "action", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,  "dataType": 16, "action": true},
+                            "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18, "dataType": 41, "action": true},
+                            "delayMode":      {"type": "bool",  "clusterId": 64529, "attributeId": 20, "dataType": 16, "action": true},
+                            "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21, "dataType": 33, "divider": 2, "action": true},
+                            "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
+                            "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 25, "dataType": 24, "action": true},
+                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40, "dataType": 32, "binding": true}
+                          },
+                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
+                          "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
+                          "delay": {"min": 0.5, "max": 3599.5, "step": 0.5},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
+                          "switchMode": {"enum": ["relay", "decoupled"]},
+                          "action": {"enum": {"1": "singleClick", "2": "doubleClick", "3": "hold", "4": "on", "5": "off"}}
+                        }
+    },
+    {
+      "description":    "Sonoff 1-Channel Relay MINI-ZB1GSP",
+      "modelNames":     ["MINI-ZB1GSP"],
+      "properties":     ["status", "powerOnStatus"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status"],
+      "reportings":     ["status"],
+      "exposes":        ["switch", "powerOnStatus", "action", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
+                            "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18,    "dataType": 41, "action": true},
+                            "delayMode":      {"type": "bool",  "clusterId": 64529, "attributeId": 20,    "dataType": 16, "action": true},
+                            "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21,    "dataType": 33, "divider": 2, "action": true},
+                            "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22,    "dataType": 32, "action": true},
+                            "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 25,    "dataType": 24, "action": true},
+                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40,    "dataType": 32, "binding": true},
+                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000, "binding": true},
+                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000, "binding": true},
+                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000, "binding": true},
+                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000, "binding": true}
+                          },
+                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
+                          "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
+                          "delay": {"min": 0.5, "max": 3599.5, "step": 0.5},
+                          "switchType": {"enum": {"0": "toggle", "1": "momentary", "2": "followOff", "130": "followOn"}},
+                          "switchMode": {"enum": ["relay", "decoupled"]},
+                          "action": {"enum": {"1": "singleClick", "2": "doubleClick", "3": "hold", "4": "on", "5": "off"}},
+                          "resetOnPowerOff": ["current", "power"]
+                        }
+    },
+    {
+      "description":    "Sonoff Cover Relay/Switch MINI-ZBRBS",
+      "modelNames":     ["MINI-ZBRBS"],
+      "properties":     ["coverPosition"],
+      "actions":        ["coverStatus", "coverPosition"],
+      "bindings":       ["cover"],
+      "reportings":     ["coverPosition"],
+      "exposes":        ["cover", "switchType"],
+      "options":        {"customAttributes": {"switchType": {"type": "enum", "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true}}, "switchType": {"enum": ["toggle", "momentary"]}}
+    },
+    {
+      "description":    "Sonoff Power Monitor MINI-ZB1GP",
+      "modelNames":     ["MINI-ZB1GP"],
+      "exposes":        ["indicator", "transmitPower", "energy", "voltage", "current", "power"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
+                            "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18,    "dataType": 41, "action": true},
+                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000, "binding": true},
+                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000, "binding": true},
+                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000, "binding": true},
+                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000, "binding": true}
+                          },
+                          "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}}
+                        }
+    },
+    {
+      "description":    "Sonoff 16A Smart Plug S26R2ZB",
+      "modelNames":     ["S26R2ZB"],
+      "properties":     ["status"],
+      "actions":        ["status"],
+      "exposes":        ["switch"],
+      "options":        {"switch": "outlet"}
+    },
+    {
+      "description":    "Sonoff 16A Smart Plug S60ZBTPF or S60ZBTPG",
+      "modelNames":     ["S60ZBTPF", "S60ZBTPG"],
+      "properties":     ["status", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "actions":        ["status", "powerOnStatus"],
+      "bindings":       ["status", "energy", "power"],
+      "reportings":     ["status", "energy", "voltage", "current", "power"],
+      "exposes":        ["switch", "powerOnStatus", "energy", "voltage", "current", "power"],
+      "options":        {"switch": "outlet", "energyDivider": 1000, "acVoltageDivider": 100, "acCurrentDivider": 100, "resetOnPowerOff": ["current", "power"]}
     },
     {
       "description":    "Sonoff USB Plug ZBMicro",
@@ -418,7 +421,7 @@
       "options":        {"switch": "outlet"}
     },
     {
-      "description":    "Sonoff Human Presense Sensor SNZB-06P",
+      "description":    "Sonoff Human Presence Sensor SNZB-06P",
       "modelNames":     ["SNZB-06P"],
       "properties":     ["occupancy"],
       "exposes":        ["occupancy", "occupancyTimeout", "sensitivityMode", "illumination"],
