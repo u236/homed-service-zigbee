@@ -71,8 +71,8 @@ namespace ActionsCustom
 
     public:
 
-        Attribute(const QString &name, const QString &type, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId, quint8 dataType, double divider) :
-            ActionObject(name, clusterId, manufacturerCode, attributeId), m_type(type), m_dataType(dataType), m_divider(divider > 0 ? divider : 1) {}
+        Attribute(const QString &name, const QString &type, quint16 clusterId, quint16 manufacturerCode, quint16 attributeId, quint8 dataType, double divider, double offset) :
+            ActionObject(name, clusterId, manufacturerCode, attributeId), m_type(type), m_dataType(dataType), m_divider(divider > 0 ? divider : 1), m_offset(offset) {}
 
         QVariant request(const QString &name, const QVariant &data) override;
 
@@ -80,7 +80,7 @@ namespace ActionsCustom
 
         QString m_type;
         quint8 m_dataType;
-        double m_divider;
+        double m_divider, m_offset;
 
     };
 }

@@ -116,7 +116,7 @@ QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data
     switch (types.indexOf(m_type))
     {
         case 0: value = data.toBool() ? 0x01 : 0x00; break; // bool
-        case 1: value = data.toDouble() * m_divider; break; // value
+        case 1: value = (data.toDouble() - m_offset) * m_divider; break; // value
 
         case 2: // enum
         {
@@ -125,7 +125,7 @@ QVariant ActionsCustom::Attribute::request(const QString &, const QVariant &data
             if (index < 0)
                 return QByteArray();
 
-            value = index;
+            value = index - static_cast <int> (m_offset);
             break;
         }
 
