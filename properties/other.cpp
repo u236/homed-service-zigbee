@@ -264,8 +264,8 @@ void PropertiesCustom::Attribute::parseAttribute(quint16, quint16 attributeId, c
     switch (types.indexOf(m_type))
     {
         case 0: m_value = value.toInt() ? true : false; break;                                                    // bool
-        case 1: m_value = value.toDouble() / m_divider; break;                                                    // value
-        case 2: m_value = enumValue(m_name, value.toInt()); break;                                                // enum
+        case 1: m_value = value.toDouble() / m_divider + m_offset; break;                                         // value
+        case 2: m_value = enumValue(m_name, value.toInt() + static_cast <int> (m_offset)); break;                 // enum
         case 3: m_value = QString::asprintf("%02d:%02d", value.toInt() / 3600, value.toInt() % 3600 / 60); break; // time
         case 4: m_value = QString(data); break;                                                                   // string
     }
