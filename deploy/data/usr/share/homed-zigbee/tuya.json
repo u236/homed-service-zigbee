@@ -127,7 +127,7 @@
     },
     {
       "description":    "TUYA TS0001 Fingerbot",
-      "modelNames":     ["_TZ3210_dse8ogfy", "_TZ3210_j4pdtz9v"],
+      "modelNames":     ["_TZ3210_dse8ogfy", "_TZ3210_j4pdtz9v", "_TZ3210_7vgttna6"],
       "properties":     ["status", "tuyaDataPoints"],
       "actions":        ["status", "tuyaDataPoints"],
       "exposes":        ["battery", "switch", "operationMode", "reverse", "touchControl", "lowerLimit", "upperLimit", "delay"],
