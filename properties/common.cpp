@@ -278,7 +278,7 @@ void Properties::Pressure::parseAttribute(quint16, quint16 attributeId, const QB
         return;
 
     memcpy(&value, data.constData(), data.length());
-    m_value = qFromLittleEndian(value) / 10.0;
+    m_value = qFromLittleEndian(value) / (option(m_name, "unit").toString() == "mmHg" ? 1.33322 : 10.0);
 }
 
 void Properties::Flow::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
