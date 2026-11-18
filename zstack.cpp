@@ -1007,11 +1007,8 @@ bool ZStack::startCoordinator(void)
         logInfo << "Endpoint" << QString::asprintf("0x%02x", it.key()) << "registered successfully";
     }
 
-    if (!sendRequest(ZSTACK_AF_INTER_PAN_CTL, QByteArray(1, 0x02).append(0x0C)) || m_replyStatus)
-    {
+    if (!sendRequest(ZSTACK_AF_INTER_PAN_CTL, QByteArray::fromHex("020c")) || m_replyStatus)
         logWarning << "Set Inter-PAN endpoint request failed";
-        return false;
-    }
 
     if (!sendRequest(ZSTACK_SYS_SET_TX_POWER, QByteArray(1, static_cast <char> (m_power))) || m_replyStatus)
         logWarning << "Set TX power request failed";
