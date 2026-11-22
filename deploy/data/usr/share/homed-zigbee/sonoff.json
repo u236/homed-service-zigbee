@@ -280,7 +280,7 @@
       "modelNames":     ["MINI-ZBD", "ZBMINIR2"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status"],
+      "bindings":       ["status", 64529],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "action", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower"],
       "options":        {
@@ -296,7 +296,7 @@
                             "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21, "dataType": 33, "divider": 2, "action": true},
                             "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
                             "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 23, "dataType": 16, "action": true},
-                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40, "dataType": 32, "offset": 10, "binding": true}
+                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40, "dataType": 32, "offset": 10}
                           },
                           "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
                           "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
@@ -311,7 +311,7 @@
       "modelNames":     ["MINI-ZB1GS"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status"],
+      "bindings":       ["status", 64529],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "action", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower"],
       "options":        {
@@ -323,7 +323,7 @@
                             "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21, "dataType": 33, "divider": 2, "action": true},
                             "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22, "dataType": 32, "action": true},
                             "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 25, "dataType": 24, "action": true},
-                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40, "dataType": 32, "binding": true}
+                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40, "dataType": 32}
                           },
                           "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
                           "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
@@ -338,7 +338,7 @@
       "modelNames":     ["MINI-ZB1GSP"],
       "properties":     ["status", "powerOnStatus"],
       "actions":        ["status", "powerOnStatus"],
-      "bindings":       ["status"],
+      "bindings":       ["status", 64529],
       "reportings":     ["status"],
       "exposes":        ["switch", "powerOnStatus", "action", "indicator", "delayMode", "delay", "switchType", "switchMode", "transmitPower", "energy", "voltage", "current", "power"],
       "options":        {
@@ -350,11 +350,11 @@
                             "delay":          {"type": "value", "clusterId": 64529, "attributeId": 21,    "dataType": 33, "divider": 2, "action": true},
                             "switchType":     {"type": "enum",  "clusterId": 64529, "attributeId": 22,    "dataType": 32, "action": true},
                             "switchMode":     {"type": "enum",  "clusterId": 64529, "attributeId": 25,    "dataType": 24, "action": true},
-                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40,    "dataType": 32, "binding": true},
-                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000, "binding": true},
-                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000, "binding": true},
-                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000, "binding": true},
-                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000, "binding": true}
+                            "action":         {"type": "enum",  "clusterId": 64529, "attributeId": 40,    "dataType": 32},
+                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
+                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000},
+                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000},
+                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000}
                           },
                           "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}},
                           "delayMode": {"type": "toggle", "control": true, "icon": "mdi:timer"},
@@ -378,16 +378,17 @@
     {
       "description":    "Sonoff Power Monitor MINI-ZB1GP",
       "modelNames":     ["MINI-ZB1GP"],
+      "bindings":       [64529],
       "exposes":        ["indicator", "transmitPower", "energy", "voltage", "current", "power"],
       "options":        {
                           "customAttributes":
                           {
                             "indicator":      {"type": "bool",  "clusterId": 64529, "attributeId": 1,     "dataType": 16, "action": true},
                             "transmitPower":  {"type": "enum",  "clusterId": 64529, "attributeId": 18,    "dataType": 41, "action": true},
-                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000, "binding": true},
-                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000, "binding": true},
-                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000, "binding": true},
-                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000, "binding": true}
+                            "current":        {"type": "value", "clusterId": 64529, "attributeId": 28676, "dataType": 35, "divider": 1000},
+                            "voltage":        {"type": "value", "clusterId": 64529, "attributeId": 28677, "dataType": 35, "divider": 1000},
+                            "power":          {"type": "value", "clusterId": 64529, "attributeId": 28678, "dataType": 43, "divider": 1000},
+                            "energy":         {"type": "value", "clusterId": 64529, "attributeId": 28702, "dataType": 35, "divider": 1000}
                           },
                           "transmitPower": {"type": "select", "enum": {"9": "9 dBm", "20": "20 dBm"}}
                         }

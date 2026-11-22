@@ -6,14 +6,14 @@
       "modelNames":     ["AirQ_Monitor_S01"],
       "properties":     ["illuminance", "temperature", "humidity", "pressure", "co2", "switchMode", "displayMode"],
       "actions":        ["switchMode", "displayMode"],
-      "bindings":       ["analogInput", "illuminance", "temperature", "pressure", "humidity", "co2"],
+      "bindings":       ["time", "analogInput", "illuminance", "temperature", "pressure", "humidity", "co2"],
       "reportings":     ["illuminance", "temperature", "humidity", "pressure", "co2"],
       "exposes":        ["illuminance", "temperature", "humidity", "pressure", "co2", "voc", "rotateDisplay", "displayMode", "brightness", "sound", "readInterval", "temperatureOffset", "co2Relay", "co2Low", "co2High", "vocRelay", "vocLow", "vocHigh", "switchMode", "sensorFeatures", "lifeTime", "co2Correction"],
       "options":        {
                           "customAttributes":
                           {
                             "brightness":         {"type": "value", "clusterId": 8,    "attributeId": 0,     "dataType": 32,  "action": true},
-                            "lifeTime":           {"type": "value", "clusterId": 10,   "attributeId": 0,     "dataType": 226, "reporting": {"minInterval": 60}, "binding": true},
+                            "lifeTime":           {"type": "value", "clusterId": 10,   "attributeId": 0,     "dataType": 226, "reporting": {"minInterval": 60}},
                             "voc":                {"type": "value", "clusterId": 12,   "attributeId": 85,    "dataType": 57,  "reporting": {"minInterval": 10, "valueChange": 10}},
                             "vocRelay":           {"type": "bool",  "clusterId": 12,   "attributeId": 61445, "dataType": 16,  "action": true},
                             "vocLow":             {"type": "value", "clusterId": 12,   "attributeId": 61446, "dataType": 33,  "action": true},
@@ -82,8 +82,9 @@
     },
     {
       "modelNames":     ["Watermeter_TLSR8258"],
+      "bindings":       ["energy"],
       "exposes":        ["volume"],
-      "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37, "binding": true, "reporting": {"minInterval": 10, "maxInterval": 600}}}},
+      "options":        {"customAttributes": {"volume": {"type": "value", "clusterId": 1794, "attributeId": 0, "dataType": 37, "reporting": {"minInterval": 10, "maxInterval": 600}}}},
       "endpointId":     [1, 2]
     },
     {
@@ -117,14 +118,14 @@
       "modelNames":     ["Router-ZG-807Z-SlD"],
       "properties":     ["batteryPercentage", "switchMode"],
       "actions":        ["switchMode"],
-      "bindings":       ["battery"],
+      "bindings":       ["battery", "time"],
       "reportings":     ["batteryPercentage"],
       "exposes":        ["battery", "batteryLow", "transmitPower", "switchMode", "uptime"],
       "options":        {
                           "customAttributes":
                           {
                             "batteryLow":     {"type": "bool",  "clusterId": 1,     "attributeId": 62, "dataType": 28,  "reporting": {"valueChange": 0}},
-                            "uptime":         {"type": "value", "clusterId": 10,    "attributeId": 0,  "dataType": 226, "reporting": {"minInterval": 60}, "binding": true},
+                            "uptime":         {"type": "value", "clusterId": 10,    "attributeId": 0,  "dataType": 226, "reporting": {"minInterval": 60}},
                             "transmitPower":  {"type": "enum",  "clusterId": 65381, "attributeId": 0,  "dataType": 48,  "action": true}
                           },
                           "uptime": {"type": "sensor", "unit": "sec"},

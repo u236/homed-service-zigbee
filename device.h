@@ -129,8 +129,6 @@ public:
     inline QList <Poll> &polls(void) { return m_polls; }
     inline QList <quint16> &groups(void) { return m_groups; }
 
-    bool bindingExists(quint16 clusterId);
-
 private:
 
     QTimer *m_timer;

@@ -47,15 +47,6 @@ void OTA::refresh(const QDir &dir)
     }
 }
 
-bool EndpointObject::bindingExists(quint16 clusterId)
-{
-    for (int i = 0; i < m_bindings.count(); i++)
-        if (m_bindings.at(i)->clusterId() == clusterId)
-            return true;
-
-    return false;
-}
-
 int DeviceObject::checkVersion(const QString &version)
 {
     QList <QString> a = m_firmware.split('.'), b = version.split('.');
@@ -523,9 +514,9 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
     {
         int type = QMetaType::type(QString(it->toString()).append("Binding").toUtf8());
 
-        if (type)
+        if (type || it->isDouble())
         {
-            Binding binding(reinterpret_cast <BindingObject*> (QMetaType::create(type)));
+            Binding binding(type ? reinterpret_cast <BindingObject*> (QMetaType::create(type)) : new BindingObject(it->toVariant().toString(), static_cast <quint16> (it->toInt())));
             endpoint->bindings().insert(bindingIndex++, binding);
             continue;
         }
@@ -571,9 +562,6 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
         property->setMultiple(multiple);
         endpoint->properties().append(property);
 
-        if (option.value("binding").toBool() && !endpoint->bindingExists(clusterId))
-            endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
-
         if (option.value("action").toBool())
         {
             Action action(new ActionsCustom::Command(it.key(), clusterId, static_cast <quint16> (option.value("manufacturerCode").toInt())));
@@ -606,9 +594,6 @@ void DeviceList::setupEndpoint(const Endpoint &endpoint, const QJsonObject &json
             action->setParent(endpoint.data());
             endpoint->actions().append(action);
         }
-
-        if (option.value("binding").toBool() && !endpoint->bindingExists(clusterId))
-            endpoint->bindings().append(Binding(new BindingObject(it.key(), clusterId)));
 
         if (option.contains("reporting"))
         {

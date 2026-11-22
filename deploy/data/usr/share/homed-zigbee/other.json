@@ -518,7 +518,7 @@
                           },
                           "customAttributes_6":
                           {
-                            "irAction":             {"type": "enum",   "clusterId": 19,   "attributeId": 85,   "dataType": 33, "action": true, "binding": true},
+                            "irAction":             {"type": "enum",   "clusterId": 19,   "attributeId": 85,   "dataType": 33, "action": true},
                             "irRomId":              {"type": "value",  "clusterId": 19,   "attributeId": 4096, "dataType": 33, "action": true}
                           },
                           "noiseLevel": {"type": "sensor", "unit": "dBA", "round": 1, "icon": "mdi:ear-hearing"},
@@ -557,6 +557,7 @@
     {
       "modelNames":     ["WB-MSW-ZIGBEE v.4"],
       "note":           "custom attributes endpoint",
+      "bindings":       ["multistateOutput"],
       "endpointId":     6
     }
   ],

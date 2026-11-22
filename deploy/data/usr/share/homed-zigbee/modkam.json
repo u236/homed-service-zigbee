@@ -99,9 +99,10 @@
       "modelNames":     ["DIYRuZ_FreePad", "FreePadLeTV8"],
       "properties":     ["switchType", "switchMode"],
       "actions":        ["switchType", "switchMode"],
+      "bindings":       ["multistateInput"],
       "exposes":        ["action", "switchType", "switchMode"],
       "options":        {
-                          "customAttributes": {"action": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33, "binding": true}},
+                          "customAttributes": {"action": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33}},
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "255": "release"}},
                           "switchType": {"enum": {"1": "momentary", "2": "multifunction"}}
                         },
@@ -120,9 +121,10 @@
       "modelNames":     ["FreePad_LeTV_8"],
       "properties":     ["switchType", "switchMode"],
       "actions":        ["switchType", "switchMode"],
+      "bindings":       ["multistateInput"],
       "exposes":        ["action", "switchType", "switchMode"],
       "options":        {
-                          "customAttributes": {"action": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33, "binding": true}},
+                          "customAttributes": {"action": {"type": "enum", "clusterId": 18, "attributeId": 85, "dataType": 33}},
                           "action": {"enum": {"0": "hold", "1": "singleClick", "2": "doubleClick", "3": "tripleClick", "4": "quadrupleClick", "255": "release"}},
                           "switchType": {"enum": {"1": "momentary", "2": "multifunction"}}
                         },

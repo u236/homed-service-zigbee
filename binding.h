@@ -81,6 +81,15 @@ namespace Bindings
 
     };
 
+    class Time : public BindingObject
+    {
+
+    public:
+
+        Time(void) : BindingObject("time", CLUSTER_TIME) {}
+
+    };
+
     class AnalogInput : public BindingObject
     {
 
@@ -105,6 +114,15 @@ namespace Bindings
     public:
 
         MultistateInput(void) : BindingObject("multistateInput", CLUSTER_MULTISTATE_INPUT) {}
+
+    };
+
+    class MultistateOutput : public BindingObject
+    {
+
+    public:
+
+        MultistateOutput(void) : BindingObject("multistateOutput", CLUSTER_MULTISTATE_OUTPUT) {}
 
     };
 

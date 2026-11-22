@@ -179,8 +179,9 @@
     },
     {
       "modelNames":     ["SOMRIG shortcut button"],
+      "bindings":       [64640],
       "exposes":        ["action"],
-      "options":        {"customCommands": {"action": {"clusterId": 64640, "binding": true}}, "action": {"enum": {"1": "initialClick", "2": "hold", "3": "singleClick", "4": "release", "6": "doubleClick"}}},
+      "options":        {"customCommands": {"action": {"clusterId": 64640}}, "action": {"enum": {"1": "initialClick", "2": "hold", "3": "singleClick", "4": "release", "6": "doubleClick"}}},
       "endpointId":     [1, 2]
     }
   ]
