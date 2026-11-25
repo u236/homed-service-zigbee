@@ -2,6 +2,15 @@
   "Yandex":
   [
     {
+      "description":    "Yandex Water Leak Sensor YNDX-00527",
+      "modelNames":     ["YNDX-00527"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak", "batteryLow", "tamper"],
+      "endpointId":     1
+    },
+    {
       "description":    "Yandex 1-Channel Switch YNDX-00531",
       "modelNames":     ["YNDX-00531"],
       "properties":     ["status", "powerOnStatus", "yandexSettings"],
