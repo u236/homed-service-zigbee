@@ -118,6 +118,15 @@
       "exposes":        ["action"],
       "options":        {"customCommands": {"action": {"clusterId": 6}}, "action": {"enum": ["hold", "doubleClick", "singleClick"]}},
       "endpointId":     [1, 2, 3, 4]
+    },
+    {
+      "description":    "Yandex Water Leak Sensor YNDX-00527",
+      "modelNames":     ["YNDX-00527"],
+      "properties":     ["batteryPercentage", "iasWaterLeak"],
+      "bindings":       ["battery"],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "waterLeak", "batteryLow"],
+      "endpointId":     1
     }
   ]
 }
