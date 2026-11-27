@@ -226,7 +226,7 @@
       "actions":        ["status", "powerOnStatus", "switchMode"],
       "bindings":       ["status", "multistateInput", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power", "frequency"],
-      "exposes":        ["switch", "action", "powerOnStatus", "operationMode", "switchType", "switchMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageLow", "voltageHigh", "currentThreshold", "powerThreshold", "automaticRestart", "reloadTime", "resetEnergy"],
+      "exposes":        ["switch", "action", "powerOnStatus", "operationMode", "switchType", "switchMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageLow", "voltageHigh", "currentThreshold", "powerThreshold", "autoRestart", "reloadTime", "resetEnergy"],
       "options":        {
                           "customCommands":
                           {
@@ -243,7 +243,7 @@
                             "powerThreshold":   {"type": "value", "clusterId": 2820, "attributeId": 61443, "dataType": 41, "action": true},
                             "reloadTime":       {"type": "value", "clusterId": 2820, "attributeId": 61444, "dataType": 33, "action": true},
                             "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
-                            "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
+                            "autoRestart":      {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
                           },
                           "resetEnergy": {"type": "button", "enum": {"128": true}},
                           "switchType": {"enum": ["toggle", "momentary", "multifunction"]},
@@ -255,7 +255,6 @@
                           "powerThreshold": {"min": 0, "max": 3600},
                           "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
                           "protection": {"type": "toggle"},
-                          "automaticRestart": {"type": "toggle"},
                           "switchMode": {"enum": ["off", "on"]},
                           "energyDivider": 100,
                           "acVoltageDivider": 100,
@@ -297,7 +296,7 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power", "frequency"],
-      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageLow", "voltageHigh", "currentThreshold", "powerThreshold", "automaticRestart", "reloadTime", "resetEnergy"],
+      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "frequency", "protection", "voltageLow", "voltageHigh", "currentThreshold", "powerThreshold", "autoRestart", "reloadTime", "resetEnergy"],
       "options":        {
                           "customCommands":
                           {
@@ -313,7 +312,7 @@
                             "powerThreshold":   {"type": "value", "clusterId": 2820, "attributeId": 61443, "dataType": 41, "action": true},
                             "reloadTime":       {"type": "value", "clusterId": 2820, "attributeId": 61444, "dataType": 33, "action": true},
                             "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
-                            "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
+                            "autoRestart":      {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
                           },
                           "resetEnergy": {"type": "button", "enum": {"128": true}},
                           "indicatorMode": {"enum": ["off", "on", "default"]},
@@ -323,7 +322,6 @@
                           "powerThreshold": {"min": 0, "max": 3600},
                           "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
                           "protection": {"type": "toggle"},
-                          "automaticRestart": {"type": "toggle"},
                           "energyDivider": 100,
                           "acVoltageDivider": 100,
                           "acCurrentDivider": 100,
@@ -337,7 +335,7 @@
       "actions":        ["status", "powerOnStatus"],
       "bindings":       ["status", "energy", "power"],
       "reportings":     ["status", "energy", "voltage", "current", "power"],
-      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "protection", "voltageLow", "voltageHigh", "currentThreshold", "powerThreshold", "automaticRestart", "reloadTime", "resetEnergy"],
+      "exposes":        ["switch", "powerOnStatus", "childLock", "indicatorMode", "energy", "voltage", "current", "power", "protection", "voltageLow", "voltageHigh", "currentThreshold", "powerThreshold", "autoRestart", "reloadTime", "resetEnergy"],
       "options":        {
                           "customCommands":
                           {
@@ -353,7 +351,7 @@
                             "powerThreshold":   {"type": "value", "clusterId": 2820, "attributeId": 61443, "dataType": 41, "action": true},
                             "reloadTime":       {"type": "value", "clusterId": 2820, "attributeId": 61444, "dataType": 33, "action": true},
                             "protection":       {"type": "bool",  "clusterId": 2820, "attributeId": 61445, "dataType": 16, "action": true},
-                            "automaticRestart": {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
+                            "autoRestart":      {"type": "bool",  "clusterId": 2820, "attributeId": 61446, "dataType": 16, "action": true}
                           },
                           "resetEnergy": {"type": "button", "enum": {"128": true}},
                           "indicatorMode": {"enum": ["off", "on", "default", "inverted"]},
@@ -363,7 +361,6 @@
                           "powerThreshold": {"min": 0, "max": 3600},
                           "reloadTime": {"type": "number", "min": 5, "max": 60, "unit": "sec"},
                           "protection": {"type": "toggle"},
-                          "automaticRestart": {"type": "toggle"},
                           "energyDivider": 1000000,
                           "acVoltageDivider": 100,
                           "acCurrentDivider": 100
