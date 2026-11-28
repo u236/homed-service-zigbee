@@ -16,7 +16,7 @@ namespace PropertiesPTVO
 
     };
 
-    class AnalogInput: public PropertyObject
+    class AnalogInput : public PropertyObject
     {
 
     public:
@@ -69,7 +69,7 @@ namespace PropertiesPTVO
 
     };
 
-    class Count: public AnalogInput
+    class Count : public AnalogInput
     {
 
     public:
@@ -78,7 +78,7 @@ namespace PropertiesPTVO
 
     };
 
-    class Pattern: public AnalogInput
+    class Pattern : public AnalogInput
     {
 
     public:

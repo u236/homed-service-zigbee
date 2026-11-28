@@ -21,7 +21,7 @@ namespace ActionsSonoff
 
     public:
 
-        ThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_SONOFF, 0x0000) {}
+        ThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_SONOFF) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:

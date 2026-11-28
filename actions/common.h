@@ -61,7 +61,7 @@ namespace Actions
 
     public:
 
-        ThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_THERMOSTAT, 0x0000) {}
+        ThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_THERMOSTAT) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
@@ -75,7 +75,7 @@ namespace Actions
 
     public:
 
-        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0000, 0x0001, 0x0008}) {}
+        ColorHS(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0000, 0x0001, 0x0008}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -85,7 +85,7 @@ namespace Actions
 
     public:
 
-        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0003, 0x0004, 0x0008}) {}
+        ColorXY(void) : ActionObject("color", CLUSTER_COLOR_CONTROL, 0x0000, {0x0003, 0x0004, 0x0008}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -95,7 +95,7 @@ namespace Actions
 
     public:
 
-        ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0000, QList <quint16> {0x0007, 0x0008}) {}
+        ColorTemperature(void) : ActionObject("colorTemperature", CLUSTER_COLOR_CONTROL, 0x0000, {0x0007, 0x0008}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };

@@ -33,7 +33,7 @@ namespace ActionsTUYA
 
     public:
 
-        HolidayThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_TUYA_DATA, 0x0000) {}
+        HolidayThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_TUYA_DATA) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
@@ -47,7 +47,7 @@ namespace ActionsTUYA
 
     public:
 
-        DailyThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_TUYA_DATA, 0x0000) {}
+        DailyThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_TUYA_DATA) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
@@ -61,7 +61,7 @@ namespace ActionsTUYA
 
     public:
 
-        MoesThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_TUYA_DATA, 0x0000) {}
+        MoesThermostatProgram(void) : ActionObject("thermostatProgram", CLUSTER_TUYA_DATA) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     private:
@@ -70,12 +70,12 @@ namespace ActionsTUYA
 
     };
 
-    class LedController: public Request, public ActionObject
+    class LedController : public Request, public ActionObject
     {
 
     public:
 
-        LedController(void) : ActionObject("ledController", CLUSTER_TUYA_DATA, {}, {"color", "colorTemperature"}) {}
+        LedController(void) : ActionObject("ledController", CLUSTER_TUYA_DATA, 0x0000, {}, {"color", "colorTemperature"}) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -125,7 +125,7 @@ namespace ActionsTUYA
 
     public:
 
-        IRCode(void) : ActionObject("irCode", CLUSTER_TUYA_IR_DATA, 0x0000) {}
+        IRCode(void) : ActionObject("irCode", CLUSTER_TUYA_IR_DATA) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
@@ -135,7 +135,7 @@ namespace ActionsTUYA
 
     public:
 
-        IRLearn(void) : ActionObject("learn", CLUSTER_TUYA_IR_CONTROL, 0x0000) {}
+        IRLearn(void) : ActionObject("learn", CLUSTER_TUYA_IR_CONTROL) {}
         QVariant request(const QString &name, const QVariant &data) override;
 
     };
