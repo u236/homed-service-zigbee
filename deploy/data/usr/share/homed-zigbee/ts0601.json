@@ -935,7 +935,7 @@
     },
     {
       "description":    "TUYA TS0601 MOES Radiator Thermostat",
-      "modelNames":     ["_TZE200_b6wax7g0"],
+      "modelNames":     ["_TZE200_6y7kyjga", "_TZE200_b6wax7g0", "_TZE200_qsoecqlk"],
       "properties":     ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "actions":        ["tuyaDataPoints", "tuyaMoesThermostatProgram"],
       "exposes":        ["battery", "thermostat", "position", "childLock", "ecoMode", "ecoTemperature", "boost", "boostTimeout", "temperatureLow", "temperatureHigh", "temperatureOffset", "thermostatProgram"],
@@ -958,7 +958,7 @@
                             "109":  {"name": "temperatureLow", "type": "value", "action": true}
                           },
                           "operationMode": {"enum": ["program", "manual", "temporary", "away"]},
-                          "targetTemperature": {"min": 10, "max": 30},
+                          "targetTemperature": {"min": 10, "max": 35},
                           "boostTimeout": {"min": 60, "max": 900, "step": 10},
                           "temperatureOffset": {"min": -9, "max": 9},
                           "ecoTemperature": {"min": 10, "max": 30},
@@ -2191,7 +2191,7 @@
                           "tuyaDataPoints":
                           {
                             "2":    {"name": "co2", "type": "value"},
-                            "18":   {"name": "temperature", "type": "value", "divider": 10},
+                            "18":   {"name": "temperature", "type": "value", "divider": 10, "short": true},
                             "19":   {"name": "humidity", "type": "value", "divider": 10},
                             "21":   {"name": "voc", "type": "value"},
                             "22":   {"name": "formaldehyde", "type": "value"}
@@ -2207,7 +2207,7 @@
                           "tuyaDataPoints":
                           {
                             "2":    {"name": "formaldehyde", "type": "value", "divider": 100},
-                            "18":   {"name": "temperature", "type": "value", "divider": 10},
+                            "18":   {"name": "temperature", "type": "value", "divider": 10, "short": true},
                             "19":   {"name": "humidity", "type": "value", "divider": 10},
                             "21":   {"name": "voc", "type": "value", "divider": 10},
                             "22":   {"name": "co2", "type": "value"}

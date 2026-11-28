@@ -127,7 +127,7 @@ void PropertiesTUYA::DataPoints::update(quint8 dataPoint, const QVariant &data)
         case 2: // value
         {
             bool hasMin, hasMax;
-            double min = option(name, "min").toDouble(&hasMin), max = option(name, "max").toDouble(&hasMax), value = data.toInt() / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
+            double min = option(name, "min").toDouble(&hasMin), max = option(name, "max").toDouble(&hasMax), value = (item.value("short").toBool() ? static_cast <qint16> (data.toInt()) : data.toInt()) / item.value("divider", 1).toDouble() / item.value("propertyDivider", 1).toDouble() + item.value("offset").toDouble();
 
             if (item.value("round").toBool())
                 value = round(value);
