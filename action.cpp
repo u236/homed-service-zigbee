@@ -65,6 +65,7 @@ void ActionObject::registerMetaTypes(void)
     qRegisterMetaType <ActionsPTVO::Pattern>                    ("ptvoPatternAction");
     qRegisterMetaType <ActionsPTVO::SerialData>                 ("ptvoSerialDataAction");
 
+    qRegisterMetaType <ActionsSonoff::Alarm>                    ("sonoffAlarmAction");
     qRegisterMetaType <ActionsSonoff::Thermostat>               ("sonoffThermostatAction");
     qRegisterMetaType <ActionsSonoff::ThermostatProgram>        ("sonoffThermostatProgramAction");
 

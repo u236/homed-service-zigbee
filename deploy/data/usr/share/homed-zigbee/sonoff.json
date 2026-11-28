@@ -202,6 +202,34 @@
                         }
     },
     {
+      "description":    "Sonoff Siren SNZB-09P",
+      "modelNames":     ["SNZB-09P"],
+      "properties":     ["batteryPercentage", "sonoffAlarm"],
+      "actions":        ["sonoffAlarm"],
+      "bindings":       ["battery", 64529],
+      "reportings":     ["batteryPercentage"],
+      "exposes":        ["battery", "alarm", "alarmSound", "alarmLight", "melody", "volumeMode", "duration", "tamper", "powerStatus"],
+      "options":        {
+                          "customAttributes":
+                          {
+                            "powerStatus":  {"type": "enum",  "clusterId": 64529, "attributeId": 36,   "dataType": 48},
+                            "tamper":       {"type": "bool",  "clusterId": 64529, "attributeId": 8192, "dataType": 32},
+                            "alarmLight":   {"type": "bool",  "clusterId": 64529, "attributeId": 8226, "dataType": 16, "action": true},
+                            "melody":       {"type": "value", "clusterId": 64529, "attributeId": 8227, "dataType": 48, "action": true},
+                            "volumeMode":   {"type": "enum",  "clusterId": 64529, "attributeId": 8228, "dataType": 48, "action": true},
+                            "duration":     {"type": "value", "clusterId": 64529, "attributeId": 8229, "dataType": 33, "action": true},
+                            "alarmSound":   {"type": "bool",  "clusterId": 64529, "attributeId": 8230, "dataType": 16, "action": true}
+                          },
+                          "powerStatus": {"type": "sensor", "enum": ["backup", "normal"], "icon": "mdi:power-plug-battery"},
+                          "alarmLight": {"type": "toggle", "icon": "mdi:alarm-light"},
+                          "melody": {"min": 0, "max": 9},
+                          "volumeMode": {"enum": ["low", "medium", "high", "max"]},
+                          "duration": {"min": 1, "max": 900},
+                          "alarmSound": {"type": "toggle", "icon": "mdi:volume-high"},
+                          "alarm": {"type": "toggle", "control": true}
+                        }
+    },
+    {
       "description":    "Sonoff Smart Water Valve SWV",
       "modelNames":     ["SWV"],
       "properties":     ["batteryPercentage", "status", "flow"],

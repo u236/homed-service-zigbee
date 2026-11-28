@@ -102,7 +102,9 @@ void PropertyObject::registerMetaTypes(void)
     qRegisterMetaType <PropertiesIKEA::StatusAction>                ("ikeaStatusActionProperty");
     qRegisterMetaType <PropertiesIKEA::ArrowAction>                 ("ikeaArrowActionProperty");
 
+    qRegisterMetaType <PropertiesSonoff::Alarm>                     ("sonoffAlarmProperty");
     qRegisterMetaType <PropertiesSonoff::Thermostat>                ("sonoffThermostatProperty");
+
     qRegisterMetaType <PropertiesYandex::Settings>                  ("yandexSettingsProperty");
 }
 

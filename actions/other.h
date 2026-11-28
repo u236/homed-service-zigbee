@@ -6,6 +6,16 @@
 
 namespace ActionsSonoff
 {
+    class Alarm : public ActionObject
+    {
+
+    public:
+
+        Alarm(void) : ActionObject("alarm", CLUSTER_SONOFF) {}
+        QVariant request(const QString &name, const QVariant &data) override;
+
+    };
+
     class Thermostat : public ActionObject
     {
 

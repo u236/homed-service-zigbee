@@ -90,6 +90,14 @@ void PropertiesIKEA::ArrowAction::parseCommand(quint16, quint8 commandId, const 
     }
 }
 
+void PropertiesSonoff::Alarm::parseCommand(quint16, quint8 commandId, const QByteArray &payload)
+{
+    if (commandId != 0x0F || payload.length() < 2 || payload.at(0) != 0x04)
+        return;
+
+    m_value = payload.at(1) ? true : false;
+}
+
 void PropertiesSonoff::Thermostat::parseAttribute(quint16, quint16 attributeId, const QByteArray &data)
 {
     QMap <QString, QVariant> map = m_value.toMap();

@@ -2,6 +2,11 @@
 #include "other.h"
 #include "zcl.h"
 
+QVariant ActionsSonoff::Alarm::request(const QString &, const QVariant &data)
+{
+    return zclHeader(FC_CLUSTER_SPECIFIC, m_transactionId++, 0x0F).append(static_cast <char> (data.toBool() ? 0x00 : 0x01));
+}
+
 QVariant ActionsSonoff::Thermostat::request(const QString &name, const QVariant &data)
 {
     QMap <QString, QVariant> map = endpointProperty()->value().toMap();

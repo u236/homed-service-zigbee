@@ -71,6 +71,16 @@ namespace PropertiesIKEA
 
 namespace PropertiesSonoff
 {
+    class Alarm : public PropertyObject
+    {
+
+    public:
+
+        Alarm(void) : PropertyObject("alarm", CLUSTER_SONOFF) {}
+        void parseCommand(quint16 clusterId, quint8 commandId, const QByteArray &payload) override;
+
+    };
+
     class Thermostat : public PropertyObject
     {
 
